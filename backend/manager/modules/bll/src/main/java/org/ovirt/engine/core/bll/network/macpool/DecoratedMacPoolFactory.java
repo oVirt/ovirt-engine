@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -16,7 +16,7 @@ public class DecoratedMacPoolFactory {
     @Inject
     private LockedObjectFactory lockedObjectFactory;
 
-    private final Map<Guid, ReentrantReadWriteLock> poolLocks = new ConcurrentHashMap<>();
+    private final Map<Guid, ReentrantReadWriteLock> poolLocks = new HashMap<>();
 
     public DecoratedMacPoolFactory() {
     }
@@ -30,7 +30,7 @@ public class DecoratedMacPoolFactory {
         return lockedObjectFactory.createLockingInstance(decoratedPool, MacPool.class, lockForMacPool(macPoolId));
     }
 
-    private ReentrantReadWriteLock lockForMacPool(Guid macPoolId) {
+    private synchronized ReentrantReadWriteLock lockForMacPool(Guid macPoolId) {
         if (poolLocks.containsKey(macPoolId)) {
             return poolLocks.get(macPoolId);
         }
