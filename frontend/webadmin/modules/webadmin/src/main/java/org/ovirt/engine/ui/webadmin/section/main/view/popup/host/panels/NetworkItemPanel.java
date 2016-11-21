@@ -33,6 +33,7 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -179,8 +180,10 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
     protected void initTooltip() {
         tooltip = new WidgetTooltip(getContents());
         tooltip.setPlacement(Placement.BOTTOM);
-        String tooltipContent = infoPopup.getTooltipContent(item, this);
-        tooltip.setText(tooltipContent);
+        SafeHtml tooltipContent = infoPopup.getTooltipContent(item);
+        if (tooltipContent != null) {
+            tooltip.setHtml(tooltipContent);
+        }
     }
 
     /**
