@@ -133,7 +133,6 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
             if (file.exists() && file.canRead()) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
                     nodes.add(mapper.readTree(reader));
-                    log.info("Successfully read CSH mapping file '{}'", file.getAbsolutePath()); //$NON-NLS-1$
                 }
                 catch (IOException e) {
                     log.error("Exception parsing documentation mapping file '{}': {}", //$NON-NLS-1$
@@ -183,9 +182,9 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
         List<String> locales = new ArrayList<>();
 
         if (!manualDir.exists() || !manualDir.canRead()) {
-            log.info("Context-sensitive help is not installed. Manual directory doesn't exist: " + manualDir); //$NON-NLS-1$
             return locales;
         }
+
         File[] manualFiles = manualDir.listFiles();
         if (manualFiles != null) {
             for (File dir : manualFiles) {
