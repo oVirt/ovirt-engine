@@ -161,7 +161,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     @Override
     protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
         for (DiskImage diskImage : disksList) {
-            List<DiskImage> snapshots = getAllImageSnapshots(diskImage);
+            List<DiskImage> snapshots = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
             diskImage.getSnapshots().addAll(snapshots);
         }
         return validate(storageDomainValidator.hasSpaceForClonedDisks(disksList));

@@ -198,7 +198,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         }
         StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
         if (validate(storageDomainValidator.isDomainWithinThresholds())) {
-            getImage().getSnapshots().addAll(getAllImageSnapshots());
+            getImage().getSnapshots().addAll(diskImageDao.getAllSnapshotsForLeaf(getImage().getImageId()));
             return validate(storageDomainValidator.hasSpaceForDiskWithSnapshots(getImage()));
         }
         return false;
@@ -220,10 +220,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     protected SnapshotsValidator getSnapshotsValidator() {
         return new SnapshotsValidator();
-    }
-
-    protected List<DiskImage> getAllImageSnapshots() {
-        return ImagesHandler.getAllImageSnapshots(getImage().getImageId());
     }
 
     protected boolean checkIfNeedToBeOverride() {

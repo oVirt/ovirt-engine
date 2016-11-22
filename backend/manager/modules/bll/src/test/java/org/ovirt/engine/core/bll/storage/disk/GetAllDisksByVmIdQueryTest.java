@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 
 /**
@@ -48,6 +49,9 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
 
     @Mock
     private DiskDao diskDaoMock;
+
+    @Mock
+    private DiskImageDao diskImageDao;
 
     @Mock
     private DiskVmElementDao diskVmElementDao;
@@ -81,13 +85,13 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
 
         // Snapshots
         doReturn(new ArrayList<>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND,
-                createDiskSnapshot(pluggedDisk.getId())))).when(getQuery()).getAllImageSnapshots(pluggedDisk);
-        doReturn(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, createDiskSnapshot(unpluggedDisk.getId()))).when(getQuery())
-                .getAllImageSnapshots(unpluggedDisk);
+                createDiskSnapshot(pluggedDisk.getId())))).when(diskImageDao).getAllSnapshotsForLeaf(pluggedDisk.getImageId());
+        doReturn(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, createDiskSnapshot(unpluggedDisk.getId()))).when(diskImageDao)
+                .getAllSnapshotsForLeaf(unpluggedDisk.getImageId());
         doReturn(new ArrayList<>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND,
-                createDiskSnapshot(pluggedDiskSnapshot.getId())))).when(getQuery()).getAllImageSnapshots(pluggedDiskSnapshot);
-        doReturn(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, createDiskSnapshot(unpluggedDiskSnapshot.getId()))).when(getQuery())
-                .getAllImageSnapshots(unpluggedDiskSnapshot);
+                createDiskSnapshot(pluggedDiskSnapshot.getId())))).when(diskImageDao).getAllSnapshotsForLeaf(pluggedDiskSnapshot.getImageId());
+        doReturn(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, createDiskSnapshot(unpluggedDiskSnapshot.getId()))).when(diskImageDao)
+                .getAllSnapshotsForLeaf(unpluggedDiskSnapshot.getImageId());
     }
 
     private DiskImage createDiskImage(boolean active) {

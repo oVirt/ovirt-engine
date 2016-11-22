@@ -425,16 +425,6 @@ public final class ImagesHandler {
         return imageStorageDomainMap;
     }
 
-    /**
-     * This function was developed especially for GUI needs. It returns a list of all the snapshots of current image of
-     * a specific VM. If there are two images mapped to same VM, it's assumed that this is a TryBackToImage case and the
-     * function returns a list of snapshots of inactive images. In this case the parent of the active image appears to
-     * be trybackfrom image
-     */
-    public static List<DiskImage> getAllImageSnapshots(Guid imageId) {
-        return DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForLeaf(imageId);
-    }
-
     public static String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId, Guid vdsId) {
         if (StringUtils.isEmpty(windowsPath)) {
             return ""; // empty string is used for 'eject'
@@ -549,7 +539,9 @@ public final class ImagesHandler {
         for (Disk disk : vm.getDiskMap().values()) {
             if (disk.getDiskStorageType().isInternal()) {
                 DiskImage diskImage = (DiskImage) disk;
-                diskImage.getSnapshots().addAll(getAllImageSnapshots(diskImage.getImageId()));
+                diskImage.getSnapshots().addAll(DbFacade.getInstance()
+                        .getDiskImageDao()
+                        .getAllSnapshotsForLeaf(diskImage.getImageId()));
             }
         }
     }
@@ -823,7 +815,7 @@ public final class ImagesHandler {
     public static DiskImage createDiskImageWithExcessData(DiskImage diskImage, Guid sdId) {
         DiskImage dummy = DiskImage.copyOf(diskImage);
         dummy.setStorageIds(new ArrayList<>(Collections.singletonList(sdId)));
-        dummy.getSnapshots().addAll(getAllImageSnapshots(dummy.getImageId()));
+        dummy.getSnapshots().addAll(DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForLeaf(dummy.getImageId()));
         return dummy;
     }
 

@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -99,6 +100,9 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     @Mock
     VmDeviceDao vmDeviceDao;
+
+    @Mock
+    DiskImageDao diskImageDao;
 
     @Spy
     @InjectMocks
@@ -291,8 +295,8 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     protected void mockGetAllSnapshots() {
         doAnswer(invocation -> {
             Object[] args = invocation.getArguments();
-            DiskImage arg = (DiskImage) args[0];
-            return createDiskSnapshot(arg.getId(), 3);
-        }).when(cmd).getAllImageSnapshots(any(DiskImage.class));
+            Guid arg = (Guid) args[0];
+            return createDiskSnapshot(arg, 3);
+        }).when(diskImageDao).getAllSnapshotsForLeaf(any(Guid.class));
     }
 }

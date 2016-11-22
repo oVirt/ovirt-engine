@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -45,6 +46,9 @@ public class OvfHelper {
 
     @Inject
     private VmStaticDao vmStaticDao;
+
+    @Inject
+    private DiskImageDao diskImageDao;
 
     @Inject
     private VmHandler vmHandler;
@@ -124,7 +128,7 @@ public class OvfHelper {
         List<DiskImage> filteredDisks = DisksFilter.filterImageDisks(vm.getDiskList(), ONLY_SNAPABLE, ONLY_ACTIVE);
 
         for (DiskImage diskImage : filteredDisks) {
-            List<DiskImage> images = ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
+            List<DiskImage> images = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
             images.stream().forEach(d -> d.setDiskVmElements(Collections.singletonList(diskImage.getDiskVmElementForVm(vm.getId()))));
             allVmImages.addAll(images);
         }

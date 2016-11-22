@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -17,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 
 public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
@@ -25,6 +25,9 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
 
     @Inject
     private DiskVmElementDao diskVmElementDao;
+
+    @Inject
+    DiskImageDao diskImageDao;
 
     public GetAllDisksByVmIdQuery(P parameters) {
         super(parameters);
@@ -42,16 +45,12 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE
                     || disk.getDiskStorageType() == DiskStorageType.CINDER) {
                 DiskImage diskImage = (DiskImage) disk;
-                diskImage.getSnapshots().addAll(getAllImageSnapshots(diskImage));
+                diskImage.getSnapshots().addAll(diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId()));
             }
             disk.setDiskVmElements(Collections.singletonList(getDiskVmElement(disk)));
             disks.add(disk);
         }
         getQueryReturnValue().setReturnValue(disks);
-    }
-
-    protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
-        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
     }
 
     private DiskVmElement getDiskVmElement(BaseDisk disk) {

@@ -15,7 +15,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -29,6 +28,7 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -48,6 +48,9 @@ public class OvfUpdateProcessHelper {
 
     @Inject
     private DiskVmElementDao diskVmElementDao;
+
+    @Inject
+    private DiskImageDao diskImageDao;
 
     @Inject
     private ResourceManager resourceManager;
@@ -106,17 +109,12 @@ public class OvfUpdateProcessHelper {
         }
     }
 
-    protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
-        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
-    }
-
-
     public ArrayList<DiskImage> getVmImagesFromDb(VM vm) {
         ArrayList<DiskImage> allVmImages = new ArrayList<>();
         List<DiskImage> filteredDisks = DisksFilter.filterImageDisks(vm.getDiskList(), ONLY_SNAPABLE, ONLY_ACTIVE);
 
         for (DiskImage diskImage : filteredDisks) {
-            allVmImages.addAll(getAllImageSnapshots(diskImage));
+            allVmImages.addAll(diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId()));
         }
 
         for (DiskImage disk : allVmImages) {
