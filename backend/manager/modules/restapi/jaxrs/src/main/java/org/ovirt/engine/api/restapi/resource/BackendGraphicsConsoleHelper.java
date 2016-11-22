@@ -21,12 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsConsoles;
 import org.ovirt.engine.api.model.GraphicsType;
+import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
@@ -37,14 +39,16 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGraphicsConsoleHelper {
 
-    public static org.ovirt.engine.core.common.businessentities.GraphicsType asGraphicsType(BaseBackendResource resource, String consoleId) {
+    public static org.ovirt.engine.core.common.businessentities.GraphicsType asGraphicsType(String consoleId) {
         String consoleString = HexUtils.hex2string(consoleId);
 
         GraphicsType type = GraphicsType.fromValue(consoleString);
-        return resource.getMappingLocator().getMapper(
-            GraphicsType.class,
-            org.ovirt.engine.core.common.businessentities.GraphicsType.class
-        ).map(type, null);
+        return VmMapper.map(type, null);
+    }
+
+    public static String asConsoleId(org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType) {
+        GraphicsType type = VmMapper.map(graphicsType, null);
+        return HexUtils.string2hex(type.value());
     }
 
     public static GraphicsConsole get(Supplier<GraphicsConsoles> list, String consoleId) {
@@ -60,7 +64,7 @@ public class BackendGraphicsConsoleHelper {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
         }
 
-        org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = asGraphicsType(resource, consoleId);
+        org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = asGraphicsType(consoleId);
         return devices.stream()
             .filter(device -> device.getGraphicsType().equals(graphicsType))
             .findFirst()

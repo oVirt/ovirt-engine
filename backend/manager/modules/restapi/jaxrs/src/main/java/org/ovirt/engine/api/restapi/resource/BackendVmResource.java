@@ -16,23 +16,20 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.core.utils.Ticketing.generateOTP;
-
 import java.util.List;
 import java.util.Set;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
-import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedAffinityLabelsResource;
@@ -75,7 +72,6 @@ import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetHaMaintenanceParameters;
-import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
@@ -104,7 +100,6 @@ public class BackendVmResource
         extends AbstractBackendActionableResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
         implements VmResource {
 
-    private static final long DEFAULT_TICKET_EXPIRY = 120 * 60; // 2 hours
     private BackendVmsResource parent;
 
     public static final String DETACH_ONLY = "detach_only";
@@ -487,21 +482,9 @@ public class BackendVmResource
 
     @Override
     public Response ticket(Action action) {
-        final Response response = doAction(VdcActionType.SetVmTicket,
-                new SetVmTicketParameters(guid,
-                        getTicketValue(action),
-                        getTicketExpiry(action),
-                        deriveGraphicsType()),
-                action);
-
-        final Action actionResponse = (Action) response.getEntity();
-
-        if (CreationStatus.FAILED.value().equals(actionResponse.getStatus())) {
-            actionResponse.getTicket().setValue(null);
-            actionResponse.getTicket().setExpiry(null);
-        }
-
-        return response;
+        GraphicsType graphicsType = deriveGraphicsType();
+        String consoleId = BackendGraphicsConsoleHelper.asConsoleId(graphicsType);
+        return getGraphicsConsolesResource().getConsoleResource(consoleId).ticket(action);
     }
 
     private GraphicsType deriveGraphicsType() {
@@ -511,27 +494,6 @@ public class BackendVmResource
         return (vm == null)
                 ? null
                 : VmMapper.deriveGraphicsType(vm.getGraphicsInfos());
-    }
-
-    protected String getTicketValue(Action action) {
-        if (!ensureTicket(action).isSetValue()) {
-            action.getTicket().setValue(generateOTP());
-        }
-        return action.getTicket().getValue();
-    }
-
-    protected int getTicketExpiry(Action action) {
-        if (!ensureTicket(action).isSetExpiry()) {
-            action.getTicket().setExpiry(DEFAULT_TICKET_EXPIRY);
-        }
-        return action.getTicket().getExpiry().intValue();
-    }
-
-    protected Ticket ensureTicket(Action action) {
-        if (!action.isSetTicket()) {
-            action.setTicket(new Ticket());
-        }
-        return action.getTicket();
     }
 
     @Override
