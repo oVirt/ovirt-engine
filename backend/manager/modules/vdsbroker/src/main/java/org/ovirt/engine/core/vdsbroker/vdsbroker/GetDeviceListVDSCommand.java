@@ -109,10 +109,13 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
                     if (xcon.containsKey(PHYSICAL_DEVICE_FIELD) && xcon.containsKey(DEVICE_PATH_CAPACITY_FIELD)) {
                         // set name and capacity
                         Long size = IrsBrokerCommand.assignLongValue(xcon, DEVICE_PATH_CAPACITY_FIELD);
-                        lun.getPathsCapacity()
-                                .put(xcon.get(PHYSICAL_DEVICE_FIELD).toString(),
-                                        SizeConverter.convert(size,
-                                                SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB).intValue());
+                        if (size != null) {
+                            lun.getPathsCapacity()
+                                    .put(xcon.get(PHYSICAL_DEVICE_FIELD).toString(),
+                                            SizeConverter.convert(size,
+                                                    SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB)
+                                                    .intValue());
+                        }
                     }
                 }
             }
