@@ -364,7 +364,9 @@ install_artifacts:
 	install -dm 0755 "$(DESTDIR)$(PKG_EAR_DIR)"
 	find "$(MAVEN_OUTPUT_DIR)" -name '*.ear' -type f | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_EAR_DIR)"
 	install -dm 0755 "$(DESTDIR)$(DATA_DIR)/restapi.war"
-	find "$(MAVEN_OUTPUT_DIR)" -name 'restapi-*.war' -type f | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(DATA_DIR)/restapi.war"
+	find "$(MAVEN_OUTPUT_DIR)" -name 'restapi-webapp-*.war' -type f | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(DATA_DIR)/restapi.war"
+	install -dm 0755 "$(DESTDIR)$(DATA_DIR)/apidoc.war"
+	find "$(MAVEN_OUTPUT_DIR)" -name 'restapi-apidoc-*.war' -type f | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(DATA_DIR)/apidoc.war"
 	install -dm 0755 "$(DESTDIR)$(PKG_HTML_DIR)"
 	find "$(MAVEN_OUTPUT_DIR)" -name '*-javadoc.jar' -type f | grep -v tmp.repos | while read f; do \
 		comp="$$(basename "$${f}" | sed 's/-[0-9].*//')"; \

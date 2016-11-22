@@ -82,6 +82,7 @@
 %global engine_name ovirt-engine
 %global engine_pki %{_sysconfdir}/pki/%{engine_name}
 %global engine_restapi_war %{engine_data}/restapi.war
+%global engine_apidoc_war %{engine_data}/apidoc.war
 %global engine_run %{_localstatedir}/run/%{engine_name}
 %global engine_state %{_localstatedir}/lib/%{engine_name}
 %global engine_tmp %{_localstatedir}/tmp/%{engine_name}
@@ -1031,6 +1032,7 @@ fi
 %files restapi -f .mfiles-restapi
 %license LICENSE
 %{engine_restapi_war}/
+%{engine_apidoc_war}/
 
 %files userportal
 %license LICENSE
