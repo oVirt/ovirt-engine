@@ -22,6 +22,11 @@
         .floatLeft {
             float: left;
         }
+
+        .publicLabel {
+            padding-left: 5px;
+            padding-right: 5px
+        }
     </ui:style>
 
     <g:FlowPanel>
@@ -29,7 +34,7 @@
             <b:Column size="LG_4">
                 <ge:StringEntityModelTextBoxOnlyEditor ui:field="nameEditor" />
             </b:Column>
-            <b:Column size="LG_3">
+            <b:Column size="LG_3" addStyleNames="{style.publicLabel}">
                 <ge:EntityModelCheckBoxEditor ui:field="publicUseEditor" addStyleNames="{style.floatLeft}" label="{constants.profilePublicUseInstanceTypeLabel}" />
                 <d:InfoIcon ui:field="publicInfo" addStyleNames="{style.infoIcon}"/>
             </b:Column>
