@@ -252,7 +252,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
         if (completedChildren == 0) {
             // Lock all disk images in advance
-            ImagesHandler.updateAllDiskImageSnapshotsStatus(getImageGroupId(), ImageStatus.LOCKED);
+            imageDao.updateStatusOfImagesByImageGroupId(getImageGroupId(), ImageStatus.LOCKED);
         }
 
         return isLiveMerge() ?
@@ -425,7 +425,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 }
             }
         } else {
-            ImagesHandler.updateAllDiskImageSnapshotsStatus(getParameters().getImageGroupID(), ImageStatus.OK);
+            imageDao.updateStatusOfImagesByImageGroupId(getParameters().getImageGroupID(), ImageStatus.OK);
         }
     }
 

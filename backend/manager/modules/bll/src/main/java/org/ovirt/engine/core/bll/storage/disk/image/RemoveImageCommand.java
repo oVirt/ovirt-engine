@@ -267,7 +267,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             imageStorageDomainMapDao.remove(
                     new ImageStorageDomainMapId(getParameters().getImageId(),
                             getParameters().getStorageDomainId()));
-            ImagesHandler.updateAllDiskImageSnapshotsStatus(getRelevantDiskImage().getId(),
+            imageDao.updateStatusOfImagesByImageGroupId(getRelevantDiskImage().getId(),
                     getRelevantDiskImage().getImageStatus());
             return null;
         });

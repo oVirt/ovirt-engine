@@ -54,8 +54,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void unLockImage() {
-        ImagesHandler.updateAllDiskImageSnapshotsStatus(getRelevantDiskImage().getId(),
-                ImageStatus.OK);
+        imageDao.updateStatusOfImagesByImageGroupId(getRelevantDiskImage().getId(), ImageStatus.OK);
     }
 
     @Override

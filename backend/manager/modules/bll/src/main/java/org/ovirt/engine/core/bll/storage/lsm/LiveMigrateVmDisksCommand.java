@@ -153,7 +153,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
                                 parameters, ExecutionHandler.createInternalJobContext());
 
                 if (!vdcReturnValue.getSucceeded()) {
-                    ImagesHandler.updateAllDiskImageSnapshotsStatus(parameters.getImageGroupID(), ImageStatus.OK);
+                    imageDao.updateStatusOfImagesByImageGroupId(parameters.getImageGroupID(), ImageStatus.OK);
                 }
             }
             updateStage(LiveMigrateStage.LIVE_MIGRATE_DISK_EXEC_COMPLETED);

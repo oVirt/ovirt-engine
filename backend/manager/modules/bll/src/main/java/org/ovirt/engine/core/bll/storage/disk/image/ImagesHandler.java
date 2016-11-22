@@ -711,15 +711,11 @@ public final class ImagesHandler {
 
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
                 for (Guid diskId : diskIds) {
-                    updateAllDiskImageSnapshotsStatus(diskId, status);
+                    DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
                 }
                 return null;
             });
         }
-    }
-
-    public static void updateAllDiskImageSnapshotsStatus(Guid diskId, ImageStatus status) {
-        DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
     }
 
     private static DiskImage getDiskImageById(Guid id, Iterable<DiskImage> diskImages) {
