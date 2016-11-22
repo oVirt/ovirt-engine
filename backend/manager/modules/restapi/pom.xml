@@ -17,6 +17,7 @@
     <module>jaxrs</module>
     <module>webapp</module>
     <module>interface</module>
+    <module>apidoc</module>
   </modules>
 
   <dependencyManagement>

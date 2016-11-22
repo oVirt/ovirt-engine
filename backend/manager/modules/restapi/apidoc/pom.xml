@@ -1,0 +1,77 @@
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.api</groupId>
+    <artifactId>restapi-parent</artifactId>
+    <version>4.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>restapi-apidoc</artifactId>
+  <packaging>war</packaging>
+  <name>oVirt RESTful API Documentation</name>
+
+  <build>
+    <plugins>
+
+      <!-- Extract the API documentation contained in the model
+           documentation artifact, so that it can then be added
+           to the generated .war file: -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>extract-model-documentation</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.ovirt.engine.api</groupId>
+                  <artifactId>model</artifactId>
+                  <version>${model.version}</version>
+                  <type>jar</type>
+                  <classifier>javadoc</classifier>
+                  <outputDirectory>${project.basedir}/target/generated-resources</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+
+          <!-- Add the extracted API documentation to the generated
+               .war file: -->
+          <webResources>
+            <resource>
+              <directory>${project.basedir}/target/generated-resources</directory>
+            </resource>
+          </webResources>
+
+          <!-- Don't include Maven metadata or empty classes directory
+               in the generated .jar file: -->
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+          <packagingExcludes>WEB-INF/classes</packagingExcludes>
+
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>
