@@ -183,14 +183,16 @@ In browser, open http://127.0.0.1:9876 and bookmark "Dev Mode On".
 Visit GWT application URL (without `gwt.codesvr`), click "Dev Mode On",
 then click "Compile" to reflect any UI code changes in browser.
 
-DEV_EXTRA_BUILD_FLAGS:: Any maven build flags requires for building.
+DEV_EXTRA_BUILD_FLAGS:: Any maven build flags required for building.
 +
 For example, if your machine is low on memory, limit maximum
 simultaneous GWT permutation worker threads:
 +
   DEV_EXTRA_BUILD_FLAGS="-Dgwt.compiler.localWorkers=1"
 
-DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS:: By default, GWT applications are
+DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS:: Any maven build flags required for building GWT applications.
++
+By default, GWT applications are
 built for Firefox only. To build for additional browsers, provide
 comma-separated list of user agents, see
 `frontend/webadmin/modules/pom.xml` for full list.
@@ -200,6 +202,13 @@ For example, to build for Firefox and Chrome:
   DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS="-Dgwt.userAgent=gecko1_8,safari"
 +
 To build for all supported browsers, use `BUILD_ALL_USER_AGENTS=1`.
++
+For example, to build only the English and Japanese locale:
++
+  DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS="-Dgwt.locale=en_US,ja_JP"
++
+To build for all supported locales, use `BUILD_LOCALES=1`.
+
 
 DEV_REBUILD:: Disable if only packaging components were modified.
 Default is `1`.
