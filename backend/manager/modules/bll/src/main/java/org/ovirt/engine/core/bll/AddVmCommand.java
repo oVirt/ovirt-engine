@@ -1660,4 +1660,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return clusterUpgradeValidator;
     }
 
+    protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
+        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
+    }
 }

@@ -287,4 +287,12 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         sd.setId(STORAGE_DOMAIN_ID_1);
         return sd;
     }
+
+    protected void mockGetAllSnapshots() {
+        doAnswer(invocation -> {
+            Object[] args = invocation.getArguments();
+            DiskImage arg = (DiskImage) args[0];
+            return createDiskSnapshot(arg.getId(), 3);
+        }).when(cmd).getAllImageSnapshots(any(DiskImage.class));
+    }
 }

@@ -167,10 +167,6 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         return validate(storageDomainValidator.hasSpaceForClonedDisks(disksList));
     }
 
-    protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
-        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
-    }
-
     @Override
     protected boolean verifySourceDomains() {
         Map<Guid, StorageDomain> poolDomainsMap = Entities.businessEntitiesById(getPoolDomains());

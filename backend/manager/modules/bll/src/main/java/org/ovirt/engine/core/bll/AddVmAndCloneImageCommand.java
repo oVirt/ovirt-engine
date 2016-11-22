@@ -267,10 +267,6 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         return validate(storageDomainValidator.hasSpaceForClonedDisks(disksList));
     }
 
-    protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
-        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
-    }
-
     /**
      * Logs error if one or more active domains are missing for disk images
      */
