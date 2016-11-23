@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
+import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostDevListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 
+@Logged(executionLevel = Logged.LogLevel.DEBUG)
 public class HostDevListByCapsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> extends VdsBrokerCommand<P> {
 
     private HostDevListReturnForXmlRpc hostDevListReturnForXmlRpc;
