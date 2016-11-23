@@ -75,6 +75,13 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
     }
 
     @Override
+    public String allocateNewMac() {
+        String allocatedMacAddress = super.allocateNewMac();
+        getStrategyForMacAllocation().forEach(e->e.releaseMacsInCaseOfRollback(Collections.singletonList(allocatedMacAddress)));
+        return allocatedMacAddress;
+    }
+
+    @Override
     public final List<String> allocateMacAddresses(int numberOfAddresses) {
         List<String> allocatedMacAddresses = super.allocateMacAddresses(numberOfAddresses);
         getStrategyForMacAllocation().forEach(e->e.releaseMacsInCaseOfRollback(allocatedMacAddresses));
