@@ -62,7 +62,7 @@ public class DelegatingMacPoolDecorator implements MacPoolDecorator {
     }
 
     @Override
-    public final void setMacPool(MacPool macPool) {
+    public void setMacPool(MacPool macPool) {
         this.macPool = macPool;
     }
 
