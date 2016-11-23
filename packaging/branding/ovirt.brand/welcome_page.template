@@ -4,7 +4,11 @@
     <div class="welcome-link"><a id="WelcomePage_webadmin" href="webadmin/?locale={userLocale}">{portal_admin}</a></div>
 </div>
 <div class="col-sm-4 col-md-4 col-lg-3 details">
-    <div class="welcome-section-title"><span class="">{downloads_title}</div>
+    <div class="welcome-section-title">{downloads_title}</div>
     <div class="welcome-link"><a id="WelcomePage_ccr" href="{console_client_resources_url}" target="_blank">{console_client_resources}</a></div>
     <div class="welcome-link"><a id="WelcomePage_movirt" href="https://play.google.com/store/apps/details?id=org.ovirt.mobile.movirt" target="_blank">{movirt_for_android}</a></div>
+</div>
+<div class="col-sm-4 col-md-4 col-lg-4" details>
+    <div class="welcome-section-title">{documentation_technical_reference_category}</div>
+    <div class="welcome-link"><a id="WelcomePage_rest_api" href="apidoc">{rest_api}</a></div>
 </div>
