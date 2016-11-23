@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.utils;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -49,5 +51,24 @@ public class PermissionSubject {
 
     public EngineMessage getMessage(){
         return message;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (o instanceof PermissionSubject) {
+            PermissionSubject other = (PermissionSubject) o;
+            return Objects.equals(other.objectId, objectId) &&
+                    Objects.equals(other.ObjectType, ObjectType) &&
+                    Objects.equals(other.actionGroup, actionGroup);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(objectId, ObjectType, actionGroup);
     }
 }
