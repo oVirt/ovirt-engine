@@ -628,4 +628,16 @@ public class JsonRpcIIrsServer implements IIrsServer {
                 new FutureMap(this.client, request).withResponseKey("uuid");
         return new OneUuidReturn(response);
     }
+
+    @Override
+    public OneUuidReturn finalizeMerge(String spUUID, Map<String, String> subchainInfo) {
+        JsonRpcRequest request =
+                new RequestBuilder("StoragePool.finalizeMerge")
+                        .withParameter("storagepoolID", spUUID)
+                        .withParameter("subchainInfo", subchainInfo)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("uuid");
+        return new OneUuidReturn(response);
+    }
 }

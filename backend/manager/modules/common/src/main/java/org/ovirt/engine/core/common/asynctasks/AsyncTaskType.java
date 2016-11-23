@@ -15,6 +15,7 @@ public enum AsyncTaskType {
     uploadImageToStream,
     downloadImageFromStream,
     prepareMerge,
+    finalizeMerge,
     notSupported;
 
     public int getValue() {

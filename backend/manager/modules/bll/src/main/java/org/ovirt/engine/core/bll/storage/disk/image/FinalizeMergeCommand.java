@@ -9,19 +9,19 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
-public class PrepareMergeCommand<T extends ColdMergeCommandParameters> extends MergeSPMBaseCommand<T> {
+public class FinalizeMergeCommand<T extends ColdMergeCommandParameters> extends MergeSPMBaseCommand<T> {
 
-    public PrepareMergeCommand(T parameters, CommandContext cmdContext) {
+    public FinalizeMergeCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 
     @Override
     protected void executeCommand() {
-        executeSPMMergeCommand(VDSCommandType.PrepareMerge);
+        executeSPMMergeCommand(VDSCommandType.FinalizeMerge);
     }
 
     @Override
     protected AsyncTaskType getTaskType() {
-        return AsyncTaskType.prepareMerge;
+        return AsyncTaskType.finalizeMerge;
     }
 }

@@ -231,6 +231,7 @@ public enum VDSCommandType {
 
     // Cold merge related commands
     PrepareMerge("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    FinalizeMerge("org.ovirt.engine.core.vdsbroker.irsbroker"),
 
     /**
      * Get Host capabilities

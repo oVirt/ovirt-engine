@@ -104,4 +104,6 @@ public interface IIrsServer {
     StatusReturn setVolumeLegality(String spID, String sdID, String imageID, String volumeID, String legality);
 
     OneUuidReturn prepareMerge(String spUUID, Map<String, String> subchainInfo);
+
+    OneUuidReturn finalizeMerge(String spUUID, Map<String, String> subchainInfo);
 }

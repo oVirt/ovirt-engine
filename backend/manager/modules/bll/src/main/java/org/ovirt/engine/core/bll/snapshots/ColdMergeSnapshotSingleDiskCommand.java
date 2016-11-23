@@ -70,6 +70,9 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
                 getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.FINALIZE_MERGE);
                 break;
             case FINALIZE_MERGE:
+                nextCommand = new Pair<>(VdcActionType.FinalizeMerge,
+                        buildColdMergeParameters(getImageId(), getDestinationImageId()));
+                getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE);
                 break;
             case DESTROY_IMAGE:
                 break;
