@@ -1,9 +1,7 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -12,10 +10,8 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.LockedObjectFactory;
@@ -36,110 +32,97 @@ public class DecoratedMacPoolFactoryTest {
     @Mock
     private MacPool macPool;
 
-    @Spy
-    private MacPoolDecorator macPoolDecoratorA = new DelegatingMacPoolDecorator();
-
-    @Spy
-    private MacPoolDecorator macPoolDecoratorB = new DelegatingMacPoolDecorator();
+    @Mock
+    private MacPoolDecorator macPoolDecoratorA;
 
     @Mock
-    private LockedObjectFactory lockedObjectFactoryMock;
+    private MacPoolDecorator macPoolDecoratorB;
 
-    @Spy
-    private LockedObjectFactory lockedObjectFactorySpy = new LockedObjectFactory();
+    @Mock
+    private LockedObjectFactory lockedObjectFactory;
 
     private Guid poolId = Guid.newGuid();
 
     @Test
     public void testCreateDecoratedPoolWhenNoDecoratorsAreRequested() {
-        doAnswer(invocation -> invocation.getArguments()[0])
-                .when(lockedObjectFactoryMock).createLockingInstance(any(), eq(MacPool.class), any());
         MacPool decoratedPool = decoratePoolWhileNotUsingLocking(Collections.emptyList());
         assertThat(decoratedPool, is(macPool));
     }
 
     @Test
-    public void testCreateDecoratedPoolByTwoDecorators() {
-        doAnswer(invocation -> invocation.getArguments()[0])
-                .when(lockedObjectFactoryMock).createLockingInstance(any(), eq(MacPool.class), any());
-
-        //decorate macPool in order by decorators A and then B.
-        MacPool decoratedPool = decoratePoolWhileNotUsingLocking(Arrays.asList(macPoolDecoratorA, macPoolDecoratorB));
-
-        //assert that last decorator is B.
-        assertThat(decoratedPool, is(macPoolDecoratorB));
-
-        //verify, that value mocked at start of chain propagates to the top, somehow.
-        String macToPropagate = "macToPropagate";
-        when(macPool.allocateNewMac()).thenReturn(macToPropagate);
-        String propagatedMac = decoratedPool.allocateNewMac();
-        assertThat(propagatedMac, is(macToPropagate));
-
-        /*
-         * make sure, that allocateNewMac() was called on each instance on chain, and nothing else was.
-         * This, propagation, and last decorator in chain (of length 3) should grant that object is
-         * properly decorated.
-         */
-        verify(macPoolDecoratorA).allocateNewMac();
-        verify(macPoolDecoratorB).allocateNewMac();
-        verify(macPool).allocateNewMac();
-        verifyNoMoreInteractions(macPoolDecoratorA);
-        verifyNoMoreInteractions(macPoolDecoratorB);
-        verifyNoMoreInteractions(macPool);
+    public void testEqualyDecoratedPoolsUseSameLock() {
+        multipleDecoratorsUsesSameLock(macPoolDecoratorA, macPoolDecoratorA);
     }
 
     @Test
-    public void testCreateDecoratedTwoRequestsToGetEquallyDecoratedSamePoolUseSameLock() {
-        DecoratedMacPoolFactory factory = new DecoratedMacPoolFactory(lockedObjectFactorySpy);
+    public void testDifferenlyDecoratedPoolsUseSameLock() {
+        multipleDecoratorsUsesSameLock(macPoolDecoratorA, macPoolDecoratorB);
+    }
 
-        assertThat(factory.createDecoratedPool(poolId, macPool, singletonList(macPoolDecoratorA)),
-                instanceOf(Proxy.class));
+    private void multipleDecoratorsUsesSameLock(MacPoolDecorator... decorators) {
+        DecoratedMacPoolFactory factory = new DecoratedMacPoolFactory(lockedObjectFactory);
 
-        assertThat(factory.createDecoratedPool(poolId, macPool, singletonList(macPoolDecoratorA)),
-                instanceOf(Proxy.class));
+        Arrays.stream(decorators)
+                .forEach(decorator -> factory.createDecoratedPool(poolId, macPool, singletonList(decorator)));
 
         ArgumentCaptor<ReentrantReadWriteLock> captor = ArgumentCaptor.forClass(ReentrantReadWriteLock.class);
-        verify(lockedObjectFactorySpy, times(2)).createLockingInstance(eq(macPoolDecoratorA), eq(MacPool.class), captor.capture());
+        verify(lockedObjectFactory, times(2))
+                .createLockingInstance(eq(macPool), eq(MacPool.class), captor.capture());
 
-
-        List<ReentrantReadWriteLock> capturesValues = captor.getAllValues();
-        assertEquals(capturesValues.get(0), capturesValues.get(1));
+        //there's is one distinct item —> all locks are same.
+        assertThat(captor.getAllValues().stream().distinct().count(), is(1L));
     }
 
     @Test
-    public void testCreateDecoratedTwoRequestsToGetDifferentlyDecoratedSamePoolUseSameLock() {
-        DecoratedMacPoolFactory factory = new DecoratedMacPoolFactory(lockedObjectFactorySpy);
+    public void verifyDecoratorOrder() {
+        DecoratedMacPoolFactory factory = createDecoratedMacPoolFactoryWithDisabledLocking();
+        MacPool decoratedPool = factory.createDecoratedPool(poolId,
+                macPool,
+                Arrays.asList(macPoolDecoratorA, macPoolDecoratorB));
 
-        assertThat(factory.createDecoratedPool(poolId, macPool, singletonList(macPoolDecoratorA)),
-                instanceOf(Proxy.class));
-        assertThat(factory.createDecoratedPool(poolId, macPool, singletonList(macPoolDecoratorB)),
-                instanceOf(Proxy.class));
+        assertThat(decoratedPool, is(macPoolDecoratorB));
 
-        ArgumentCaptor<ReentrantReadWriteLock> captor1 = ArgumentCaptor.forClass(ReentrantReadWriteLock.class);
-        verify(lockedObjectFactorySpy).createLockingInstance(eq(macPoolDecoratorA), eq(MacPool.class), captor1.capture());
+        ArgumentCaptor<MacPool> firstDecoratorMacPoolArgumentCaptor = ArgumentCaptor.forClass(MacPool.class);
+        verify(macPoolDecoratorB).setMacPool(firstDecoratorMacPoolArgumentCaptor.capture());
+        verify(macPoolDecoratorB).setMacPoolId(any());
+        assertThat(firstDecoratorMacPoolArgumentCaptor.getValue(), is(macPoolDecoratorA));
 
-        ArgumentCaptor<ReentrantReadWriteLock> captor2 = ArgumentCaptor.forClass(ReentrantReadWriteLock.class);
-        verify(lockedObjectFactorySpy).createLockingInstance(eq(macPoolDecoratorB), eq(MacPool.class), captor2.capture());
+        ArgumentCaptor<MacPool> secondDecoratorMacPoolArgumentCaptor = ArgumentCaptor.forClass(MacPool.class);
+        verify(macPoolDecoratorA).setMacPool(secondDecoratorMacPoolArgumentCaptor.capture());
+        verify(macPoolDecoratorA).setMacPoolId(any());
+        assertThat(secondDecoratorMacPoolArgumentCaptor.getValue(), is(macPool));
 
-        assertEquals(captor1.getValue(), captor2.getValue());
+        Mockito.verifyNoMoreInteractions(macPoolDecoratorA, macPoolDecoratorB, macPool);
     }
 
     @Test
-    public void testCreateDecoratedTwoRequestsToGetDifferentPoolUseSameLock() {
-        DecoratedMacPoolFactory factory = new DecoratedMacPoolFactory(lockedObjectFactorySpy);
-
-        assertThat(factory.createDecoratedPool(poolId, macPool, Collections.emptyList()), instanceOf(Proxy.class));
-
+    public void testTwoDifferentPoolsShouldUsesDifferentLock() {
+        List<MacPoolDecorator> noDecorators = Collections.emptyList();
         Guid anotherPooldId = Guid.newGuid();
         MacPool anotherMacPool = mock(MacPool.class);
-        assertThat(factory.createDecoratedPool(anotherPooldId, anotherMacPool, Collections.emptyList()),
-                instanceOf(Proxy.class));
+
+        /*
+         * here we just want to return some proxied 'locked' MacPool. 'Any' should not be problem, as this argument
+         * is verified below. Here we just want to return different 'locked' MacPool for different calls, and check if
+         * they were returned.
+         */
+        MacPool dummyLockedMacPool1 = mock(MacPool.class);
+        MacPool dummyLockedMacPool2 = mock(MacPool.class);
+        when(lockedObjectFactory.createLockingInstance(eq(macPool), eq(MacPool.class), any()))
+                .thenReturn(dummyLockedMacPool1);
+        when(lockedObjectFactory.createLockingInstance(eq(anotherMacPool), eq(MacPool.class), any()))
+                .thenReturn(dummyLockedMacPool2);
+
+        DecoratedMacPoolFactory factory = new DecoratedMacPoolFactory(lockedObjectFactory);
+
+        assertThat(factory.createDecoratedPool(poolId, macPool, noDecorators), is(dummyLockedMacPool1));
+        assertThat(factory.createDecoratedPool(anotherPooldId, anotherMacPool, noDecorators), is(dummyLockedMacPool2));
 
         ArgumentCaptor<ReentrantReadWriteLock> captor1 = ArgumentCaptor.forClass(ReentrantReadWriteLock.class);
-        verify(lockedObjectFactorySpy).createLockingInstance(eq(macPool), eq(MacPool.class), captor1.capture());
+        verify(lockedObjectFactory).createLockingInstance(eq(macPool), eq(MacPool.class), captor1.capture());
 
         ArgumentCaptor<ReentrantReadWriteLock> captor2 = ArgumentCaptor.forClass(ReentrantReadWriteLock.class);
-        verify(lockedObjectFactorySpy).createLockingInstance(eq(anotherMacPool), eq(MacPool.class), captor2.capture());
+        verify(lockedObjectFactory).createLockingInstance(eq(anotherMacPool), eq(MacPool.class), captor2.capture());
 
         assertNotEquals(captor1.getValue(), captor2.getValue());
     }
@@ -150,9 +133,8 @@ public class DecoratedMacPoolFactoryTest {
 
     private DecoratedMacPoolFactory createDecoratedMacPoolFactoryWithDisabledLocking() {
         doAnswer(invocation -> invocation.getArguments()[0])
-                .when(lockedObjectFactoryMock).createLockingInstance(any(), eq(MacPool.class), any());
+                .when(lockedObjectFactory).createLockingInstance(any(), eq(MacPool.class), any());
 
-        return new DecoratedMacPoolFactory(lockedObjectFactoryMock);
+        return new DecoratedMacPoolFactory(lockedObjectFactory);
     }
-
 }

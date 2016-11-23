@@ -25,9 +25,13 @@ public class DecoratedMacPoolFactory {
         this.lockedObjectFactory = lockedObjectFactory;
     }
 
-    public MacPool createDecoratedPool(Guid macPoolId, MacPool poolById, List<MacPoolDecorator> decorators) {
-        MacPool decoratedPool = decoratePool(macPoolId, poolById, decorators);
-        return lockedObjectFactory.createLockingInstance(decoratedPool, MacPool.class, lockForMacPool(macPoolId));
+    public MacPool createDecoratedPool(Guid macPoolId, MacPool macPool, List<MacPoolDecorator> decorators) {
+        MacPool lockedPool =
+                lockedObjectFactory.createLockingInstance(macPool, MacPool.class, lockForMacPool(macPoolId));
+
+        MacPool decoratedPool = decoratePool(macPoolId, lockedPool, decorators);
+
+        return decoratedPool;
     }
 
     private synchronized ReentrantReadWriteLock lockForMacPool(Guid macPoolId) {
