@@ -298,6 +298,7 @@
         <include name="common/businessentities/VdsmImageInfo.java" />
         <include name="common/businessentities/ConnectionMethod.java" />
         <include name="common/businessentities/ExternalLocationInfo.java" />
+        <include name="common/businessentities/SubchainInfo.java" />
 
         <!-- Misc -->
         <include name="common/AuditLogType.java" />

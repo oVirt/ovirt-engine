@@ -11,10 +11,12 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.action.ColdMergeCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -58,6 +60,9 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
         Pair<VdcActionType, ? extends VdcActionParametersBase> nextCommand = null;
         switch (getParameters().getCommandStep()) {
             case PREPARE_MERGE:
+                nextCommand = new Pair<>(VdcActionType.PrepareMerge,
+                        buildColdMergeParameters(getImageId(), getDestinationImageId()));
+                getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.MERGE);
                 break;
             case MERGE:
                 break;
@@ -70,7 +75,13 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
         }
 
         persistCommandIfNeeded();
-        return false;
+        if (nextCommand != null) {
+            runInternalActionWithTasksContext(nextCommand.getFirst(), nextCommand.getSecond());
+            // Add the child, but wait, it's a race!  child will start, task may spawn, get polled, and we won't have the child id
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -81,5 +92,16 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         return Collections.emptyList();
+    }
+
+    private ColdMergeCommandParameters buildColdMergeParameters(Guid baseVolumeId, Guid topVolumeId) {
+        SubchainInfo subchainInfo = new SubchainInfo(getDiskImage().getStorageIds().get(0), getImageGroupId(),
+                baseVolumeId, topVolumeId);
+        ColdMergeCommandParameters parameters = new ColdMergeCommandParameters(
+                getDiskImage().getStoragePoolId(), subchainInfo);
+        parameters.setEndProcedure(VdcActionParametersBase.EndProcedure.COMMAND_MANAGED);
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        return parameters;
     }
 }
