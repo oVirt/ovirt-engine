@@ -910,19 +910,25 @@ public final class ImagesHandler {
             Guid newImageId,
             boolean shouldPrepareAndTeardown) {
         Guid vdsId = VdsCommandsHelper.getHostForExecution(storagePoolId, Collections.emptyList());
+        QemuImageInfo qemuImageInfo = null;
         if (shouldPrepareAndTeardown) {
             prepareImage(storagePoolId, newStorageDomainID, newImageGroupId, newImageId, vdsId);
         }
-        QemuImageInfo qemuImageInfo = (QemuImageInfo) Backend.getInstance()
-                .getResourceManager()
-                .runVdsCommand(VDSCommandType.GetQemuImageInfo,
-                        new GetVolumeInfoVDSCommandParameters(vdsId,
-                                storagePoolId,
-                                newStorageDomainID,
-                                newImageGroupId,
-                                newImageId)).getReturnValue();
-        if (shouldPrepareAndTeardown) {
-            teardownImage(storagePoolId, newStorageDomainID, newImageGroupId, newImageId, vdsId);
+        try {
+            qemuImageInfo = (QemuImageInfo) Backend.getInstance()
+                    .getResourceManager()
+                    .runVdsCommand(VDSCommandType.GetQemuImageInfo,
+                            new GetVolumeInfoVDSCommandParameters(vdsId,
+                                    storagePoolId,
+                                    newStorageDomainID,
+                                    newImageGroupId,
+                                    newImageId)).getReturnValue();
+        } catch (Exception e) {
+            log.error("Unable to get qemu image info from storage", e);
+        } finally {
+            if (shouldPrepareAndTeardown) {
+                teardownImage(storagePoolId, newStorageDomainID, newImageGroupId, newImageId, vdsId);
+            }
         }
         return qemuImageInfo;
     }

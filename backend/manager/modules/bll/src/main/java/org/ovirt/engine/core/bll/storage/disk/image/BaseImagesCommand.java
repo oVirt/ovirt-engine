@@ -371,7 +371,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                     // Set volume type/format before updating DB in the 'finally' branch
                     getDestinationDiskImage().getImage().setVolumeType(newImageIRS.getVolumeType());
                     getDestinationDiskImage().getImage().setVolumeFormat(newImageIRS.getVolumeFormat());
-                    if (newImageIRS.getVolumeFormat().equals(VolumeFormat.COW)) {
+                    if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())
+                            && newImageIRS.getVolumeFormat().equals(VolumeFormat.COW)) {
                         QemuImageInfo qemuImageInfo = ImagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
                                 newStorageDomainID,
                                 newImageGroupId,

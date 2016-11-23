@@ -1914,5 +1914,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     PassDiscardSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    QcowCompatSupported,
+
     Invalid
 }
