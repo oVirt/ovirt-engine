@@ -87,7 +87,7 @@ public class DiskImageBase extends Disk {
     }
 
     public boolean isQcowFormat() {
-        return getImage().getVolumeFormat().equals(VolumeFormat.COW);
+        return VolumeFormat.COW == getImage().getVolumeFormat();
     }
 
     @Override
