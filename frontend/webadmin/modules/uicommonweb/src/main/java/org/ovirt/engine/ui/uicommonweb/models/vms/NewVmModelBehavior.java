@@ -156,6 +156,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     getModel().getCopyPermissions().setIsAvailable(false);
                     getModel().setDisks(null);
                     getModel().setIsDisksAvailable(false);
+                    getModel().getInstanceImages().setIsChangeable(true);
                 }
 
                 getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
