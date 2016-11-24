@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -187,16 +186,6 @@ public class IrsProxy {
 
     private void setmIrsPort(int value) {
         privatemIrsPort = value;
-    }
-
-    private VdsProtocol privateProtocol;
-
-    private VdsProtocol getProtocol() {
-        return this.privateProtocol;
-    }
-
-    private void setProtocol(VdsProtocol value) {
-        this.privateProtocol = value;
     }
 
     public Guid getFencedIrs() {
@@ -597,7 +586,6 @@ public class IrsProxy {
         currentVdsId = vds.getId();
         setmIrsPort(vds.getPort());
         privatemCurrentIrsHost = vds.getHostName();
-        setProtocol(vds.getProtocol());
     }
 
     public boolean failover() {
@@ -652,7 +640,7 @@ public class IrsProxy {
                     int connectionTimeOut = Config.<Integer> getValue(ConfigValues.vdsConnectionTimeout) * 1000;
                     int heartbeat = Config.<Integer> getValue(ConfigValues.vdsHeartbeatInSeconds) * 1000;
                     int clientRetries = Config.<Integer> getValue(ConfigValues.vdsRetries);
-                    irsProxy = TransportFactory.createIrsServer(getProtocol(),
+                    irsProxy = TransportFactory.createIrsServer(
                                     host,
                                     getmIrsPort(),
                                     clientTimeOut,

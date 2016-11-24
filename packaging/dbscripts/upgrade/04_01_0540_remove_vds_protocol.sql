@@ -1,0 +1,1 @@
+SELECT fn_db_drop_column('vds_static', 'protocol');

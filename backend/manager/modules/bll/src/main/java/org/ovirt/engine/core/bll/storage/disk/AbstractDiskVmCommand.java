@@ -43,12 +43,12 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBase> extends VmCommand<T> {
 
@@ -240,7 +240,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         String address = vmDevice.getAddress();
         if (diskInterface != DiskInterface.VirtIO_SCSI && diskInterface != DiskInterface.SPAPR_VSCSI) {
             if (StringUtils.isNotBlank(address)) {
-                return XmlRpcStringUtils.string2Map(address);
+                return StringMapUtils.string2Map(address);
             }
         } else {
             EngineLock vmDiskHotPlugEngineLock = null;
@@ -278,7 +278,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         // If address has been already set before, verify its uniqueness;
         // Otherwise, set address according to the next available unit.
         if (StringUtils.isNotBlank(address)) {
-            addressMap = XmlRpcStringUtils.string2Map(address);
+            addressMap = StringMapUtils.string2Map(address);
             int unit = Integer.parseInt(addressMap.get(VdsProperties.Unit));
             if (vmDeviceUnitMap.containsValue(unit)) {
                 addressMap = vmInfoBuildUtils.createAddressForScsiDisk(controllerIndex, availableUnit);

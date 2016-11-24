@@ -209,11 +209,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     EntityModelCheckBoxEditor overrideIpTablesEditor;
 
     @UiField(provided = true)
-    @Path(value = "protocol.entity")
-    @WithElementId("protocol")
-    EntityModelCheckBoxEditor protocolEditor;
-
-    @UiField(provided = true)
     @Path(value = "isPm.entity")
     @WithElementId("isPm")
     EntityModelCheckBoxEditor pmEnabledEditor;
@@ -530,7 +525,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         disableAutomaticPowerManagementEditor.setUsePatternFly(true);
         externalHostProviderEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         overrideIpTablesEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        protocolEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         rbPassword = new RadioButton("1"); //$NON-NLS-1$
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
@@ -586,7 +580,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         rbPublicKeyLabel.setText(constants.hostPopupPublicKeyLabel());
         fingerprintLabel.setText(constants.hostPopupHostFingerprintLabel());
         overrideIpTablesEditor.setLabel(constants.hostPopupOverrideIpTablesLabel());
-        protocolEditor.setLabel(constants.hostPopupProtocolLabel());
         externalHostProviderEnabledEditor.setLabel(constants.hostPopupEnableExternalHostProvider());
         externalHostNameEditor.setLabel(constants.hostPopupExternalHostName());
         publicKeyEditor.setTitle(constants.publicKeyUsage());

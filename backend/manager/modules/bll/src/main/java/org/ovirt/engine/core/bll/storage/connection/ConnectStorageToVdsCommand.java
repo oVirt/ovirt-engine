@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
+import org.ovirt.engine.core.utils.StringMapUtils;
 
 @InternalCommandAttribute
 public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParametersBase> extends
@@ -128,7 +128,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
 
         List<String> disallowedOptions =
                 getConnection().getStorageType() == StorageType.POSIXFS ? POSIX_MANAGED_OPTIONS : NFS_MANAGED_OPTIONS;
-        Map<String, String> optionsMap = XmlRpcStringUtils.string2Map(mountOptions);
+        Map<String, String> optionsMap = StringMapUtils.string2Map(mountOptions);
 
         Set<String> optionsKeys = new HashSet<>();
         for (String option : optionsMap.keySet()) {

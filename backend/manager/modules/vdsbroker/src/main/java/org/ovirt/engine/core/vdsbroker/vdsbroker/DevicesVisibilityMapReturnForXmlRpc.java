@@ -2,8 +2,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
 
 public class DevicesVisibilityMapReturnForXmlRpc extends StatusReturnForXmlRpc {
 
@@ -26,7 +26,7 @@ public class DevicesVisibilityMapReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.toStringBuilder(devicesVisibilityResult, builder);
+        ObjectDescriptor.toStringBuilder(devicesVisibilityResult, builder);
         return builder.toString();
     }
 

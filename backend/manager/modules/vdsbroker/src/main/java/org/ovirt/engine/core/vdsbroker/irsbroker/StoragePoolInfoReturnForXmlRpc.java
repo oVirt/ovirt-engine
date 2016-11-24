@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
+import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
 
 public final class StoragePoolInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String INFO = "info";
@@ -20,8 +20,8 @@ public final class StoragePoolInfoReturnForXmlRpc extends StatusReturnForXmlRpc 
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.toStringBuilder(storagePoolInfo, builder);
-        XmlRpcObjectDescriptor.toStringBuilder(domainsList, builder);
+        ObjectDescriptor.toStringBuilder(storagePoolInfo, builder);
+        ObjectDescriptor.toStringBuilder(domainsList, builder);
         return builder.toString();
     }
 

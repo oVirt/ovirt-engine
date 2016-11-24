@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -49,7 +48,6 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
         newStaticVds = new VdsStatic();
         newStaticVds.setHostName("farkle.redhat.com");
         newStaticVds.setClusterId(existingVds.getClusterId());
-        newStaticVds.setProtocol(VdsProtocol.STOMP);
         newDynamicVds = new VdsDynamic();
     }
 

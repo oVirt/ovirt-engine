@@ -36,13 +36,10 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.Config;
@@ -80,20 +77,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     public AddVdsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setClusterId(parameters.getvds().getClusterId());
-    }
-
-    @Override
-    public void init() {
-        // Parameters completion should be performed prior to validation step, to assure completed values are valid
-        VdsStatic vdsStatic = getParameters().getVdsStaticData();
-        if (vdsStatic.getProtocol() == null) {
-            Cluster cluster = getCluster();
-            if (cluster != null) {
-                vdsStatic.setProtocol(VdsProtocol.STOMP);
-            } else {
-                vdsStatic.setProtocol(VdsProtocol.XML);
-            }
-        }
     }
 
     @Override
@@ -328,7 +311,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     && validate(validator.passwordNotEmpty(params.isPending(),
                             params.getAuthMethod(),
                             params.getPassword()))
-                    && validate(validator.protocolIsNotXmlrpc())
                     && validate(validator.supportsDeployingHostedEngine(params.getHostedEngineDeployConfiguration()));
         }
 

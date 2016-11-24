@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.xmlrpc;
+package org.ovirt.engine.core.utils;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-public class XmlRpcStringUtilsTest {
+public class StringMapUtilsTest {
 
     private static final String ONE_KEY_VAL = "key1=val1";
     private static final String MUL_KEY_VAL = "key1=val1,key2=val2,key3=val3,key4=val4";
@@ -16,31 +16,31 @@ public class XmlRpcStringUtilsTest {
 
     @Test
     public void testOneKeyVal() {
-        Map<String, String> map = XmlRpcStringUtils.string2Map(ONE_KEY_VAL);
+        Map<String, String> map = StringMapUtils.string2Map(ONE_KEY_VAL);
         assertEquals(1, map.size());
     }
 
     @Test
     public void testMulKeyVal() {
-        Map<String, String> map = XmlRpcStringUtils.string2Map(MUL_KEY_VAL);
+        Map<String, String> map = StringMapUtils.string2Map(MUL_KEY_VAL);
         assertEquals(4, map.size());
     }
 
     @Test
     public void testEmptyKeyVal() {
-        Map<String, String> map = XmlRpcStringUtils.string2Map(EMPTY_KEY_VAL);
+        Map<String, String> map = StringMapUtils.string2Map(EMPTY_KEY_VAL);
         assertEquals(2, map.size());
     }
 
     @Test
     public void testEmptySignKeyVal() {
-        Map<String, String> map = XmlRpcStringUtils.string2Map(EMPTY_SIGN_KEY_VAL);
+        Map<String, String> map = StringMapUtils.string2Map(EMPTY_SIGN_KEY_VAL);
         assertEquals(1, map.size());
     }
 
     @Test
     public void testNullKeyVal() {
-        Map<String, String> map = XmlRpcStringUtils.string2Map(NULL_KEY_VAL);
+        Map<String, String> map = StringMapUtils.string2Map(NULL_KEY_VAL);
         assertEquals(0, map.size());
     }
 }

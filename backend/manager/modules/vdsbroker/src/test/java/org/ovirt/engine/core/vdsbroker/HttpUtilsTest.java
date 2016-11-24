@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.xmlrpc;
+package org.ovirt.engine.core.vdsbroker;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class XmlRpcUtilsTest {
+public class HttpUtilsTest {
 
     private static final String HOSTNAME = "hostname";
     private static final int PORT = 1234;
@@ -26,7 +26,7 @@ public class XmlRpcUtilsTest {
 
     @Test
     public void testGetConnectionUrl1() throws MalformedURLException {
-        final Pair<String, URL> actual = XmlRpcUtils.getConnectionUrl(HOSTNAME, PORT, PATH, true);
+        final Pair<String, URL> actual = HttpUtils.getConnectionUrl(HOSTNAME, PORT, PATH, true);
 
         final String expectedUrl = String.format("https://%s:%d/%s", HOSTNAME, PORT, PATH);
 
@@ -36,7 +36,7 @@ public class XmlRpcUtilsTest {
 
     @Test
     public void testGetConnectionUrl2() throws MalformedURLException {
-        final Pair<String, URL> actual = XmlRpcUtils.getConnectionUrl(HOSTNAME, PORT, null, false);
+        final Pair<String, URL> actual = HttpUtils.getConnectionUrl(HOSTNAME, PORT, null, false);
 
         final String expectedUrl = String.format("http://%s:%d", HOSTNAME, PORT);
 
@@ -46,7 +46,7 @@ public class XmlRpcUtilsTest {
 
     @Test
     public void testGetConnectionUrlWithIpv4Address() throws MalformedURLException {
-        final Pair<String, URL> actual = XmlRpcUtils.getConnectionUrl(IPV4_ADDRESS, PORT, null, false);
+        final Pair<String, URL> actual = HttpUtils.getConnectionUrl(IPV4_ADDRESS, PORT, null, false);
 
         final String expectedUrl = String.format("http://%s:%d", IPV4_ADDRESS, PORT);
 
@@ -56,7 +56,7 @@ public class XmlRpcUtilsTest {
 
     @Test
     public void testGetConnectionUrlWithIpv6Address() throws MalformedURLException {
-        final Pair<String, URL> actual = XmlRpcUtils.getConnectionUrl(IPV6_ADDRESS, PORT, null, false);
+        final Pair<String, URL> actual = HttpUtils.getConnectionUrl(IPV6_ADDRESS, PORT, null, false);
 
         final String expectedUrl = String.format("http://[%s]:%d", IPV6_ADDRESS, PORT);
 
@@ -67,7 +67,7 @@ public class XmlRpcUtilsTest {
     @Test
     public void testGetConnectionUrlWithWrappedIpv6Address() throws MalformedURLException {
         final String wrappedIpv6Address = String.format("[%s]", IPV6_ADDRESS);
-        final Pair<String, URL> actual = XmlRpcUtils.getConnectionUrl(wrappedIpv6Address, PORT, null, true);
+        final Pair<String, URL> actual = HttpUtils.getConnectionUrl(wrappedIpv6Address, PORT, null, true);
 
         final String expectedUrl = String.format("https://[%s]:%d", IPV6_ADDRESS, PORT);
 

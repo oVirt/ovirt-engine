@@ -120,7 +120,6 @@ public class AddVdsCommandTest {
                 any(ExternalComputeResource.class));
         doReturn(ValidationResult.VALID).when(validator).provisioningHostGroupValid(any(Boolean.class),
                 any(ExternalHostGroup.class));
-        doReturn(ValidationResult.VALID).when(validator).protocolIsNotXmlrpc();
         doReturn(ValidationResult.VALID).when(validator).supportsDeployingHostedEngine(any(HostedEngineDeployConfiguration.class));
         when(validator.passwordNotEmpty(any(Boolean.class),
                 any(AuthenticationMethod.class),

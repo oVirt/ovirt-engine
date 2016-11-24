@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfigura
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -117,11 +116,6 @@ public class HostValidator {
     public ValidationResult provisioningHostGroupValid(boolean provisioned, ExternalHostGroup hostGroup) {
         return ValidationResult.failWith(EngineMessage.VDS_PROVIDER_PROVISION_MISSING_HOSTGROUP)
                 .when(provisioned && hostGroup == null);
-    }
-
-    public ValidationResult protocolIsNotXmlrpc() {
-        return ValidationResult.failWith(EngineMessage.NOT_SUPPORTED_PROTOCOL_FOR_CLUSTER_VERSION)
-                .when(VdsProtocol.XML == host.getProtocol());
     }
 
     protected boolean haveSecurityKey() {

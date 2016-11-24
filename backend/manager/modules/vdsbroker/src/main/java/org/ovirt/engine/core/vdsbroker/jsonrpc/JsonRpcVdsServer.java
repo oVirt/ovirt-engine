@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.vdsbroker.HttpUtils;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHostsPubKeyReturnForXmlRpc;
@@ -70,7 +71,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMNamesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VolumeInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
@@ -100,7 +100,7 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @Override
     public void close() {
-        XmlRpcUtils.shutDownConnection(this.httpClient);
+        HttpUtils.shutDownConnection(this.httpClient);
         this.client.close();
     }
 

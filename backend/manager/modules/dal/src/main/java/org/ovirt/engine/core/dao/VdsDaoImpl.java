@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -278,7 +277,6 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setServerSslEnabled(rs.getBoolean("server_SSL_enabled"));
         entity.setHostName(rs.getString("host_name"));
         entity.setPort(rs.getInt("port"));
-        entity.setProtocol(VdsProtocol.fromValue(rs.getInt("protocol")));
         entity.setSshPort(rs.getInt("ssh_port"));
         entity.setSshUsername(rs.getString("ssh_username"));
         entity.setStatus(VDSStatus.forValue(rs.getInt("status")));

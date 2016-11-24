@@ -48,10 +48,10 @@ import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NetworkQosMapper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -380,7 +380,7 @@ public class VmInfoBuildUtils {
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
             if (dve.getDiskInterface() == scsiInterface) {
                 VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
-                Map<String, String> address = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
+                Map<String, String> address = StringMapUtils.string2Map(vmDevice.getAddress());
                 String unitStr = address.get(VdsProperties.Unit);
 
                 // If unit property is available adding to 'vmDeviceUnitMap';
@@ -421,7 +421,7 @@ public class VmInfoBuildUtils {
     }
 
     void addAddress(VmDevice vmDevice, Map<String, Object> struct) {
-        Map<String, String> addressMap = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
+        Map<String, String> addressMap = StringMapUtils.string2Map(vmDevice.getAddress());
         if (!addressMap.isEmpty()) {
             struct.put(VdsProperties.Address, addressMap);
         }

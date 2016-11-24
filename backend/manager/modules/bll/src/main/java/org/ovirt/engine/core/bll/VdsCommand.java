@@ -16,9 +16,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.Config;
@@ -83,20 +81,6 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         runVdsCommand(VDSCommandType.RemoveVds,
                         new RemoveVdsVDSCommandParameters(getVdsId(), newHost));
         runVdsCommand(VDSCommandType.AddVds, new AddVdsVDSCommandParameters(getVdsId()));
-    }
-
-    /**
-     * Updates the host protocol to {@code VdsProtocol.STOMP} and reestablish connections according to the
-     * updated protocol
-     */
-    protected void reestablishConnectionIfNeeded() {
-        VDS host = getVds();
-        if (host.getProtocol() == VdsProtocol.XML && host.getHostOs() != null) {
-            VdsStatic hostStaticData = host.getStaticData();
-            hostStaticData.setProtocol(VdsProtocol.STOMP);
-            vdsStaticDao.update(hostStaticData);
-            resourceManager.reestablishConnection(getVdsId());
-        }
     }
 
     @Override

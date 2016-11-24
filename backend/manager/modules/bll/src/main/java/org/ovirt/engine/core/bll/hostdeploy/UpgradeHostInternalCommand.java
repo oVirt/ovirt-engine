@@ -122,7 +122,6 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
         vdsDynamicDao.update(dynamicHostData);
 
         if (getVds().getVdsType() == VDSType.VDS) {
-            reestablishConnectionIfNeeded();
             if (getParameters().getInitialStatus() == VDSStatus.Maintenance) {
                 setVdsStatus(VDSStatus.Maintenance);
             } else {

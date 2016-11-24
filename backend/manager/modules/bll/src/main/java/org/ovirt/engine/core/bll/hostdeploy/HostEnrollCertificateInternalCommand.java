@@ -1,20 +1,14 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute
 public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionParameters> {
-
-    @Inject
-    private ResourceManager resourceManager;
 
     public HostEnrollCertificateInternalCommand(VdsActionParameters parameters, CommandContext context) {
         super(parameters, context);
@@ -32,7 +26,6 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
             vdsDeploy.useDefaultKeyPair();
             vdsDeploy.execute();
 
-            resourceManager.reestablishConnection(getVdsId());
             setVdsStatus(VDSStatus.Maintenance);
             setSucceeded(true);
         } catch (final Exception e) {

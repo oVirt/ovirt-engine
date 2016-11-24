@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.PmProxies;
 import org.ovirt.engine.api.model.PmProxyType;
@@ -28,7 +27,6 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         while (from.getPort() == 0) {
             from.setPort(MappingTestHelper.rand(65535));
         }
-        from.setProtocol(MappingTestHelper.shuffle(HostProtocol.class));
         from.getSpm().setPriority(3);
         from.getPowerManagement().setPmProxies(new PmProxies());
         return from;
@@ -42,7 +40,6 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         inverse.setHostName(to.getHostName());
         inverse.setClusterId(to.getClusterId());
         inverse.setPort(to.getPort());
-        inverse.setProtocol(to.getProtocol());
         inverse.setSshKeyFingerprint(to.getSshKeyFingerprint());
         inverse.setHostProviderId(to.getHostProviderId());
         inverse.setSshPort(to.getSshPort());

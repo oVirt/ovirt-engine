@@ -17,8 +17,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 
 public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends BrokerCommandBase<P> {
     private final IVdsServer vdsBroker;
@@ -117,7 +117,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         } catch (VDSExceptionBase ex) {
             printReturnValue();
             throw ex;
-        } catch (XmlRpcRunTimeException ex) {
+        } catch (TransportRunTimeException ex) {
             VDSNetworkException networkException = createNetworkException(ex);
             printReturnValue();
             networkError.fire(networkException);

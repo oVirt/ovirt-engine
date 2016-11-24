@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
+import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
                     if (alertCode == null || EngineError.forValue(alertCode) == null) {
                         log.warn("Unrecognized alert code: {}.", alertCode);
                         StringBuilder alertStringBuilder = new StringBuilder();
-                        XmlRpcObjectDescriptor.toStringBuilder(alert, alertStringBuilder);
+                        ObjectDescriptor.toStringBuilder(alert, alertStringBuilder);
                         log.info("The received alert is: {}", alertStringBuilder);
                     } else {
                         alerts.add(EngineError.forValue(alertCode));

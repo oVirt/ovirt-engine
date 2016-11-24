@@ -100,8 +100,7 @@ public class UpdateHostValidator extends HostValidator {
 
     public ValidationResult changeProtocolAllowed() {
         return ValidationResult.failWith(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE)
-                .when(getHost().getProtocol() != oldHost.getProtocol()
-                        && oldHost.getStatus() != VDSStatus.Maintenance
+                .when(oldHost.getStatus() != VDSStatus.Maintenance
                         && oldHost.getStatus() != VDSStatus.InstallingOS);
     }
 

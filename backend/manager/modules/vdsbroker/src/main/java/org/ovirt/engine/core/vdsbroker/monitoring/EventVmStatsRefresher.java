@@ -11,10 +11,10 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                     return;
                 }
                 StringBuilder sb = new StringBuilder();
-                XmlRpcObjectDescriptor.toStringBuilder(map, sb);
+                ObjectDescriptor.toStringBuilder(map, sb);
 
                 log.debug("processing event for host {} data:\n{}", vdsManager.getVdsName(), sb);
             }

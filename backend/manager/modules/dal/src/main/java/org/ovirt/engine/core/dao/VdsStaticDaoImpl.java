@@ -10,7 +10,6 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
@@ -84,7 +83,6 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
                 .addValue("free_text_comment", vds.getComment())
                 .addValue("vds_unique_id", vds.getUniqueID())
                 .addValue("port", vds.getPort())
-                .addValue("protocol", vds.getProtocol())
                 .addValue("cluster_id", vds.getClusterId())
                 .addValue("vds_id", vds.getId())
                 .addValue("vds_name", vds.getName())
@@ -126,7 +124,6 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
         entity.setComment(rs.getString("free_text_comment"));
         entity.setUniqueID(rs.getString("vds_unique_id"));
         entity.setPort(rs.getInt("port"));
-        entity.setProtocol(VdsProtocol.fromValue(rs.getInt("protocol")));
         entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
         entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
         entity.setSshPort(rs.getInt("ssh_port"));

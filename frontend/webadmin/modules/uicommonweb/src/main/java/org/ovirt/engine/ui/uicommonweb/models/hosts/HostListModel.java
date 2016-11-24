@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -56,7 +55,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -693,26 +691,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             }
         });
 
-        hostModel.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ListModel<Cluster> clusterModel = hostModel.getCluster();
-                if (clusterModel.getSelectedItem() != null) {
-                    Cluster cluster = clusterModel.getSelectedItem();
-                    if (Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0) {
-                        hostModel.getProtocol().setIsAvailable(false);
-                        hostModel.getProtocol().setIsChangeable(false);
-                    } else {
-                        hostModel.getProtocol().setIsAvailable(true);
-                        hostModel.getProtocol().setIsChangeable(true);
-                    }
-                    hostModel.getProtocol().setEntity(true);
-                    hostModel.getProtocol().setIsChangeable(true);
-                }
-            }
-        });
-
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
             @Override
             public void onSuccess(List<StoragePool> dataCenters) {
@@ -901,7 +879,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         host.setComment(model.getComment().getEntity());
         host.setHostName(model.getHost().getEntity().trim());
         host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
-        host.setProtocol(model.getProtocol().getEntity() ? VdsProtocol.STOMP : VdsProtocol.XML);
         host.setSshPort(Integer.parseInt(model.getAuthSshPort().getEntity().toString()));
         boolean sshUsernameSet = model.getUserName().getEntity() != null;
         host.setSshUsername(sshUsernameSet ? model.getUserName().getEntity() : null);

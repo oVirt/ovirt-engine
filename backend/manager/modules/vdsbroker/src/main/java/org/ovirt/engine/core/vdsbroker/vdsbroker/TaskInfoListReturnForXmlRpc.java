@@ -2,8 +2,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
 
 public final class TaskInfoListReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String ALL_TASKS_INFO = "allTasksInfo";
@@ -19,7 +19,7 @@ public final class TaskInfoListReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.toStringBuilder(taskInfoList, builder);
+        ObjectDescriptor.toStringBuilder(taskInfoList, builder);
         return builder.toString();
     }
 

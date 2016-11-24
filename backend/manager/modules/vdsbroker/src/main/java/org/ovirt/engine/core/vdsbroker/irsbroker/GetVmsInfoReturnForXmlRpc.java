@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
+import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
 
 public final class GetVmsInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String VM_LIST = "vmlist";
@@ -16,7 +16,7 @@ public final class GetVmsInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.toStringBuilder(vmlist, builder);
+        ObjectDescriptor.toStringBuilder(vmlist, builder);
         return builder.toString();
     }
 

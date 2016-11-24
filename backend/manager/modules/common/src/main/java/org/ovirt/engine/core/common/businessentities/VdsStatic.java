@@ -58,9 +58,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
             message = "VALIDATION_VDS_PORT_RANGE")
     private int port;
 
-    @EditableVdsField
-    private VdsProtocol protocol;
-
     @EditableVdsField(
             onStatuses = { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
                     VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval, VDSStatus.InstallingOS })
@@ -236,14 +233,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public void setPort(int value) {
         port = value;
-    }
-
-    public VdsProtocol getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(VdsProtocol value) {
-        protocol = value;
     }
 
     public int getSshPort() {
@@ -452,7 +441,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 pmEnabled,
                 pmKdumpDetection,
                 port,
-                protocol,
                 sshPort,
                 sshUsername,
                 serverSslEnabled,
@@ -490,7 +478,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && pmEnabled == other.pmEnabled
                 && pmKdumpDetection == other.isPmKdumpDetection()
                 && port == other.port
-                && protocol == other.protocol
                 && sshPort == other.sshPort
                 && Objects.equals(sshUsername, other.sshUsername)
                 && Objects.equals(serverSslEnabled, other.serverSslEnabled)

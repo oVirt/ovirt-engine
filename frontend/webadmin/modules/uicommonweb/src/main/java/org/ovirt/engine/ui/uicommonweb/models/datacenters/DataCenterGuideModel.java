@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -67,11 +66,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ITaskTarget;
@@ -1349,25 +1345,6 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         model.getDataCenter().setItems(Collections.singletonList(getEntity()), getEntity());
         model.getDataCenter().setIsChangeable(false);
 
-        model.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                ListModel<Cluster> clusterModel = model.getCluster();
-                if (clusterModel.getSelectedItem() != null) {
-                    Cluster cluster = clusterModel.getSelectedItem();
-                    if (clusterModel.getSelectedItem() != null) {
-                        if (Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0) {
-                            model.getProtocol().setIsAvailable(false);
-                        } else {
-                            model.getProtocol().setIsAvailable(true);
-                        }
-                    }
-                    model.getProtocol().setEntity(true);
-                }
-            }
-        });
-
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnConfirmPMHost", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
@@ -1415,7 +1392,6 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         host.setVdsName(model.getName().getEntity());
         host.setHostName(model.getHost().getEntity());
         host.setPort(model.getPort().getEntity());
-        host.setProtocol(model.getProtocol().getEntity() ? VdsProtocol.STOMP : VdsProtocol.XML);
         host.setSshPort(model.getAuthSshPort().getEntity());
         host.setSshUsername(model.getUserName().getEntity());
         host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity());

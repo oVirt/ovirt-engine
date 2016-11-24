@@ -83,8 +83,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             return;
         }
 
-        reestablishConnectionIfNeeded();
-
         vdsInitialStatus = getVds().getStatus();
         installHost();
     }

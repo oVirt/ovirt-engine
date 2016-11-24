@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
+import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
@@ -63,14 +63,14 @@ public class FutureMap implements Map<String, Object> {
      *
      * @param client - Client object used to send request.
      * @param request - Request to be sent.
-     * @throws XmlRpcRunTimeException when there are connection issues.
+     * @throws TransportRunTimeException when there are connection issues.
      */
     public FutureMap(JsonRpcClient client, JsonRpcRequest request) {
         try {
             this.response = client.call(request);
             this.client = client;
         } catch (ClientConnectionException e) {
-            throw new XmlRpcRunTimeException("Connection issues during send request", e);
+            throw new TransportRunTimeException("Connection issues during send request", e);
         }
     }
 
@@ -82,7 +82,7 @@ public class FutureMap implements Map<String, Object> {
      * @param timeout - Timeout which is used when populating response map.
      * @param unit - Time unit for timeout.
      * @param cleanOnTimeout - If timeout occur and set to <code>true</code> the request is removed from tracker.
-     * @throws XmlRpcRunTimeException when there are connection issues.
+     * @throws TransportRunTimeException when there are connection issues.
      */
     public FutureMap(JsonRpcClient client, JsonRpcRequest request, long timeout, TimeUnit unit, boolean cleanOnTimeout) {
         try {
@@ -92,7 +92,7 @@ public class FutureMap implements Map<String, Object> {
             this.cleanOnTimeout = cleanOnTimeout;
             this.client = client;
         } catch (ClientConnectionException e) {
-            throw new XmlRpcRunTimeException("Connection issues during send request", e);
+            throw new TransportRunTimeException("Connection issues during send request", e);
         }
     }
 

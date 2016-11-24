@@ -15,9 +15,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -518,17 +516,6 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
                      model.getCommands().add(tempVar2);
                  }
              }));
-
-        ListModel<Cluster> clusterModel = model.getCluster();
-        if (clusterModel.getSelectedItem() != null) {
-            Cluster cluster = clusterModel.getSelectedItem();
-            if (Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0) {
-                model.getProtocol().setIsAvailable(false);
-            } else {
-                model.getProtocol().setIsAvailable(true);
-            }
-            model.getProtocol().setEntity(true);
-        }
     }
 
     public void onConfirmPMHost() {
@@ -606,7 +593,6 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
         host.setVdsName(model.getName().getEntity());
         host.setHostName(model.getHost().getEntity());
         host.setPort(model.getPort().getEntity());
-        host.setProtocol(model.getProtocol().getEntity() ? VdsProtocol.STOMP : VdsProtocol.XML);
         host.setSshPort(model.getAuthSshPort().getEntity());
         host.setSshUsername(model.getUserName().getEntity());
         host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity());

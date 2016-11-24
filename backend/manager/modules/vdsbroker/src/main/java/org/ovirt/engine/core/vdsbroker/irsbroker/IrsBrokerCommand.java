@@ -29,9 +29,9 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
+import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BrokerCommandBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +113,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
                 }
                 failover();
-            } catch (XmlRpcRunTimeException ex) {
+            } catch (TransportRunTimeException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
                 getVDSReturnValue().setExceptionObject(ex);
                 if (ex.isNetworkError()) {

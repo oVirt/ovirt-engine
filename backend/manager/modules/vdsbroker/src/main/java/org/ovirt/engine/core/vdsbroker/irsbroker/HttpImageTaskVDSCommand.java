@@ -22,11 +22,11 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ImageHttpAccessVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.vdsbroker.HttpUtils;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 
 public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extends ImageHttpAccessVDSCommandParameters> extends VdsBrokerCommand<P> {
     private T method;
@@ -128,7 +128,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
         if (method == null) {
             VdsStatic vdsStatic = getAndSetVdsStatic();
 
-            Pair<String, URL> urlInfo = XmlRpcUtils.getConnectionUrl(vdsStatic.getHostName(),
+            Pair<String, URL> urlInfo = HttpUtils.getConnectionUrl(vdsStatic.getHostName(),
                     vdsStatic.getPort(),
                     "",
                     Config.getValue(ConfigValues.EncryptHostCommunication));

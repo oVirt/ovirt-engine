@@ -56,7 +56,6 @@ import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
@@ -91,9 +90,6 @@ public class HostMapper {
             entity.setPort(model.getPort());
         } else {
             entity.setPort(DEFAULT_VDSM_PORT);
-        }
-        if (model.isSetProtocol()) {
-            map(model.getProtocol(), entity);
         }
         if (model.isSetSsh()) {
             map(model.getSsh(), entity);
@@ -209,7 +205,8 @@ public class HostMapper {
         if (entity.getPort() > 0) {
             model.setPort(entity.getPort());
         }
-        model.setProtocol(map(entity.getProtocol(), null));
+        // We return always STOMP because support for XML-RPC was removed in version 4.1 of the engine.
+        model.setProtocol(HostProtocol.STOMP);
         HostStatus status = map(entity.getStatus(), null);
         model.setStatus(status);
         if (entity.getExternalStatus() != null) {
@@ -656,40 +653,6 @@ public class HostMapper {
             }
         }
         return result;
-    }
-
-    @Mapping(from = VdsProtocol.class, to = HostProtocol.class)
-    public static HostProtocol map(VdsProtocol protocol, HostProtocol template) {
-        HostProtocol result = null;
-        if (protocol != null) {
-            switch (protocol) {
-                case STOMP:
-                    result =  HostProtocol.STOMP;
-                    break;
-                case XML:
-                default:
-                    result = HostProtocol.XML;
-                    break;
-            }
-        }
-        return result;
-    }
-
-    @Mapping(from = HostProtocol.class, to = VdsStatic.class)
-    public static VdsStatic map(HostProtocol protocol, VdsStatic template) {
-        VdsStatic entity = template != null ? template : new VdsStatic();
-        VdsProtocol result = null;
-        switch (protocol) {
-            case STOMP:
-                result =  VdsProtocol.STOMP;
-                break;
-            case XML:
-            default:
-                result = VdsProtocol.XML;
-                break;
-        }
-        entity.setProtocol(result);
-        return entity;
     }
 
     public static SpmStatus mapSpmStatus(VdsSpmStatus status) {

@@ -2,8 +2,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
 
 @SuppressWarnings("unchecked")
 public final class OneStorageDomainInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
@@ -25,7 +25,7 @@ public final class OneStorageDomainInfoReturnForXmlRpc extends StatusReturnForXm
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.toStringBuilder(storageInfo, builder);
+        ObjectDescriptor.toStringBuilder(storageInfo, builder);
         return builder.toString();
     }
 }

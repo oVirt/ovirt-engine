@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.vdscommands.StorageJobVdsCommandParameters;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
+import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSGenericException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSNonOperationalException;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IRSProtocolException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSStoragePoolStatusException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSUnicodeArgumentException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsOperationFailedNoFailoverException;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 
 public abstract class StorageJobVDSCommand<P extends StorageJobVdsCommandParameters> extends VdsBrokerCommand<P> {
 
@@ -41,7 +41,7 @@ public abstract class StorageJobVDSCommand<P extends StorageJobVdsCommandParamet
             } else {
                 LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
             }
-        } catch (XmlRpcRunTimeException ex) {
+        } catch (TransportRunTimeException ex) {
             getVDSReturnValue().setExceptionString(ex.toString());
             getVDSReturnValue().setExceptionObject(ex);
             if (ex.isNetworkError()) {

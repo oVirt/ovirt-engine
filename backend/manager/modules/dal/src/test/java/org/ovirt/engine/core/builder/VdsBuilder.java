@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
@@ -71,9 +70,6 @@ public class VdsBuilder extends AbstractBuilder<VDS, VdsBuilder> {
 
         if (StringUtils.isEmpty(object.getHostName())) {
             object.setHostName(RandomUtils.instance().nextString(10));
-        }
-        if (object.getProtocol() == null) {
-            object.setProtocol(VdsProtocol.STOMP);
         }
     }
 

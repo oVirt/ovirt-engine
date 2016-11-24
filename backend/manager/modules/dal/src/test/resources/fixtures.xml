@@ -2037,7 +2037,6 @@
         <column>ssh_port</column>
         <column>ssh_username</column>
         <column>pm_detect_kdump</column>
-        <column>protocol</column>
         <column>host_provider_id</column>
         <column>kernel_cmdline</column>
         <column>last_stored_kernel_cmdline</column>
@@ -2060,7 +2059,6 @@
             <value>22</value>
             <value>root</value>
             <value>1</value>
-            <value>0</value>
             <null />
             <value>{"current":"kvm-intel.nested=on vfio_iommu_type1.allow_unsafe_interrupts=on","parsable":true,"iommu":false,"kvmNested":true,"unsafeInterrupts":true,"pciRealloc":false}</value>
             <value>kvm-intel.nested=on</value>
@@ -2083,7 +2081,6 @@
             <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
             <value>22</value>
             <value>root</value>
-            <value>1</value>
             <value>1</value>
             <null />
             <value>{"current":"kvm-intel.nested=on vfio_iommu_type1.allow_unsafe_interrupts=on","parsable":true,"iommu":false,"kvmNested":true,"unsafeInterrupts":true,"pciRealloc":false}</value>
@@ -2108,7 +2105,6 @@
             <value>22</value>
             <value>root</value>
             <value>1</value>
-            <value>2</value>
             <null />
             <value>{"current":"kvm-intel.nested=on vfio_iommu_type1.allow_unsafe_interrupts=on","parsable":true,"iommu":false,"kvmNested":true,"unsafeInterrupts":true,"pciRealloc":false}</value>
             <value>kvm-intel.nested=on</value>
@@ -2132,7 +2128,6 @@
             <value>22</value>
             <value>root</value>
             <value>1</value>
-            <value>0</value>
             <null />
             <null />
             <null />
@@ -2155,7 +2150,6 @@
             <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
             <value>22</value>
             <value>root</value>
-            <value>1</value>
             <value>1</value>
             <null />
             <value>{}</value>

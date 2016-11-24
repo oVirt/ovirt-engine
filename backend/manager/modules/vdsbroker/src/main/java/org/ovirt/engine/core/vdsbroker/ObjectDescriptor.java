@@ -1,9 +1,9 @@
-package org.ovirt.engine.core.vdsbroker.xmlrpc;
+package org.ovirt.engine.core.vdsbroker;
 
 import java.util.Arrays;
 import java.util.Map;
 
-public class XmlRpcObjectDescriptor {
+public class ObjectDescriptor {
     public static void toStringBuilder(Map<String, ?> map, StringBuilder builder) {
         if (map == null) {
             return;

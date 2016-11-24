@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfigura
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -83,12 +82,6 @@ public class HostValidatorTest {
         mockConfigRule.mockConfigValue(ConfigValues.InstallVds, Boolean.TRUE);
         VDS host = mock(VDS.class);
         when(host.getUniqueId()).thenReturn(value);
-        return new HostValidator(dbFacade, host, hostedEngineHelper);
-    }
-
-    private HostValidator mockHostForProtocol(VdsProtocol protocol) {
-        VDS host = mock(VDS.class);
-        when(host.getProtocol()).thenReturn(protocol);
         return new HostValidator(dbFacade, host, hostedEngineHelper);
     }
 
@@ -343,13 +336,6 @@ public class HostValidatorTest {
         validator = mockHostForActivation(VDSStatus.Up);
         assertThat(validator.validateStatusForEnrollCertificate(),
                 failsWith(EngineMessage.CANNOT_ENROLL_CERTIFICATE_HOST_STATUS_ILLEGAL));
-    }
-
-    @Test
-    public void testValidateXmlProtocolForCluster() {
-        validator = mockHostForProtocol(VdsProtocol.XML);
-        assertThat(validator.protocolIsNotXmlrpc(),
-                failsWith(EngineMessage.NOT_SUPPORTED_PROTOCOL_FOR_CLUSTER_VERSION));
     }
 
     @Test

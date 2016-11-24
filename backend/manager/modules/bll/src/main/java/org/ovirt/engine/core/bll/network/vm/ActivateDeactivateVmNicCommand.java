@@ -42,9 +42,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 /**
  * Activate or deactivate a virtual network interface of a VM in case it is in a valid status. If the VM is down, simply
@@ -274,11 +274,11 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         if (StringUtils.isEmpty(deviceAddress)){
             return false;
         }
-        Map<String, String> addressMapToHotplug = XmlRpcStringUtils.string2Map(deviceAddress);
+        Map<String, String> addressMapToHotplug = StringMapUtils.string2Map(deviceAddress);
         List<VmDevice> allVmDevices = vmDeviceDao.getVmDeviceByVmId(getVm().getId());
         for (VmDevice vmDevice : allVmDevices) {
             if (!vmDeviceToHotplug.getId().equals(vmDevice.getId())){
-                Map<String, String> deviceAddressMap = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
+                Map<String, String> deviceAddressMap = StringMapUtils.string2Map(vmDevice.getAddress());
                 if(deviceAddressMap.equals(addressMapToHotplug)) {
                     return true;
                 }

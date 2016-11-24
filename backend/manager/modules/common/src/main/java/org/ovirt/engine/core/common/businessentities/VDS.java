@@ -134,7 +134,6 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vds.setHostName(getHostName());
         vds.setComment(getComment());
         vds.setPort(getPort());
-        vds.setProtocol(getProtocol());
         vds.setSshPort(getSshPort());
         vds.setSshUsername(getSshUsername());
         vds.setStatus(getStatus());
@@ -341,14 +340,6 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
 
     public void setPort(int value) {
         vdsStatic.setPort(value);
-    }
-
-    public VdsProtocol getProtocol() {
-        return vdsStatic.getProtocol();
-    }
-
-    public void setProtocol(VdsProtocol value) {
-        vdsStatic.setProtocol(value);
     }
 
     public int getSshPort() {

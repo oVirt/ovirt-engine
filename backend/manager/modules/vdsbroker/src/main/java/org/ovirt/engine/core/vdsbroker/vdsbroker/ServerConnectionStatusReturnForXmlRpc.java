@@ -3,8 +3,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
 
 public final class ServerConnectionStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String STATUS_LIST = "statuslist";
@@ -19,7 +19,7 @@ public final class ServerConnectionStatusReturnForXmlRpc extends StatusReturnFor
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.toStringBuilder(statusList, builder);
+        ObjectDescriptor.toStringBuilder(statusList, builder);
         return builder.toString();
     }
 

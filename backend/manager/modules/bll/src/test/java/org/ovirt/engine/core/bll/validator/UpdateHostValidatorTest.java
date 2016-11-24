@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -281,33 +280,6 @@ public class UpdateHostValidatorTest {
         when(host.getClusterId()).thenReturn(Guid.newGuid());
 
         assertThat(validator.clusterNotChanged(), failsWith(EngineMessage.VDS_CANNOT_UPDATE_CLUSTER));
-    }
-
-    @Test
-    public void protocolNotChanged() {
-        VdsProtocol protocol = RandomUtils.instance().nextEnum(VdsProtocol.class);
-        when(oldHost.getProtocol()).thenReturn(protocol);
-        when(host.getProtocol()).thenReturn(protocol);
-
-        assertThat(validator.changeProtocolAllowed(), isValid());
-    }
-
-    @Test
-    public void changeProtocolAllowed() {
-        when(oldHost.getProtocol()).thenReturn(VdsProtocol.XML);
-        when(host.getProtocol()).thenReturn(VdsProtocol.STOMP);
-        when(oldHost.getStatus()).thenReturn(VDSStatus.Maintenance);
-
-        assertThat(validator.changeProtocolAllowed(), isValid());
-    }
-
-    @Test
-    public void changeProtocolNotAllowed() {
-        when(oldHost.getProtocol()).thenReturn(VdsProtocol.XML);
-        when(host.getProtocol()).thenReturn(VdsProtocol.STOMP);
-        when(oldHost.getStatus()).thenReturn(VDSStatus.Up);
-
-        assertThat(validator.changeProtocolAllowed(), failsWith(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE));
     }
 
     @SuppressWarnings("unchecked")

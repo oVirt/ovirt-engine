@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.junit.Before;
@@ -13,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
@@ -53,7 +53,6 @@ public class LabelDaoTest extends BaseDaoTestCase {
         host.setName("test-host");
         host.setHostName("host-ip");
         host.setClusterId(cluster.getId());
-        host.setProtocol(VdsProtocol.STOMP);
 
         vdsDao.save(host);
     }

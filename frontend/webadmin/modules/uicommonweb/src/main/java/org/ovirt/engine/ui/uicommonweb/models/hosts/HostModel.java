@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -28,7 +27,6 @@ import org.ovirt.engine.core.common.utils.CpuVendor;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.pm.PowerManagementUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -275,16 +273,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         privateOverrideIpTables = value;
     }
 
-    private EntityModel<Boolean> privateProtocol;
-
-    public EntityModel<Boolean> getProtocol() {
-        return privateProtocol;
-    }
-
-    private void setProtocol(EntityModel<Boolean> value) {
-        privateProtocol = value;
-    }
-
     private EntityModel<Boolean> privateIsPm;
 
     public EntityModel<Boolean> getIsPm() {
@@ -417,8 +405,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     public void setKernelCmdlinePciRealloc(EntityModel<Boolean> kernelCmdlinePciRealloc) {
         this.kernelCmdlinePciRealloc = kernelCmdlinePciRealloc;
     }
-
-    private VdsProtocol vdsProtocol;
 
     public String getPmProxyPreferences() {
         // Return null if power management is not enabled.
@@ -675,8 +661,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setFetchResult(new EntityModel<String>());
         setOverrideIpTables(new EntityModel<Boolean>());
         getOverrideIpTables().setEntity(false);
-        setProtocol(new EntityModel<Boolean>());
-        getProtocol().setEntity(true);
         setFenceAgents(new FenceAgentListModel());
 
         IEventListener<EventArgs> pmListener = new IEventListener<EventArgs>() {
@@ -990,16 +974,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             }
         }), cluster.getCompatibilityVersion());
 
-        boolean clusterSupportsJsonrpcOnly = cluster.getCompatibilityVersion().greaterOrEquals(Version.v3_6);
-
-        if (clusterSupportsJsonrpcOnly) {
-            getProtocol().setIsAvailable(false);
-            getProtocol().setEntity(true);
-        } else {
-            getProtocol().setIsAvailable(true);
-            getProtocol().setEntity(vdsProtocol == null ? true : VdsProtocol.STOMP == vdsProtocol);
-        }
-        getProtocol().setIsChangeable(true);
         //Match the appropriate selected data center to the selected cluster, don't fire update events.
         if (getDataCenter() != null && getDataCenter().getItems() != null) {
             for (StoragePool datacenter : getDataCenter().getItems()) {
@@ -1095,9 +1069,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setHostId(vds.getId());
         updateExternalHostModels(vds.getHostProviderId());
         getOverrideIpTables().setIsAvailable(showInstallationProperties());
-        vdsProtocol = vds.getProtocol();
-        getProtocol().setEntity(VdsProtocol.STOMP == vds.getProtocol());
-        getProtocol().setIsChangeable(editTransportProperties(vds));
         setSpmPriorityValue(vds.getVdsSpmPriority());
         setOriginalName(vds.getName());
         getName().setEntity(vds.getName());

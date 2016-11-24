@@ -1,9 +1,9 @@
-package org.ovirt.engine.core.vdsbroker.xmlrpc;
+package org.ovirt.engine.core.utils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class XmlRpcStringUtils {
+public class StringMapUtils {
     private static final String KEY_VALUE_SEPARATOR = "=";
     private static final String PAIRS_SEPARATOR = ",";
 

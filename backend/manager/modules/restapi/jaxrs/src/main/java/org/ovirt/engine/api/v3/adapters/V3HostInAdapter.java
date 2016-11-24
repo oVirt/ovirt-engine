@@ -22,7 +22,6 @@ import org.ovirt.engine.api.model.AutoNumaStatus;
 import org.ovirt.engine.api.model.ExternalStatus;
 import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.HostType;
 import org.ovirt.engine.api.model.KatelloErrata;
@@ -134,9 +133,6 @@ public class V3HostInAdapter implements V3Adapter<V3Host, Host> {
         }
         if (from.isSetPowerManagement()) {
             to.setPowerManagement(adaptIn(from.getPowerManagement()));
-        }
-        if (from.isSetProtocol()) {
-            to.setProtocol(HostProtocol.fromValue(from.getProtocol()));
         }
         if (from.isSetRootPassword()) {
             to.setRootPassword(from.getRootPassword());
