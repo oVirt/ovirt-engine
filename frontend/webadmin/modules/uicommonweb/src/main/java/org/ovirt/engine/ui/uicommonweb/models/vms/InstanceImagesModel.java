@@ -63,8 +63,9 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
         List<Disk> disksToRemove = Arrays.asList(lineModel.getDiskModel().getEntity().getDisk());
         VM vm = lineModel.getVm();
 
-        getParentListModel().setWindow(null);
-        getParentListModel().setWindow(removeDiskModel);
+        if (getParentListModel() instanceof HasDiskWindow) {
+            ((HasDiskWindow) getParentListModel()).setDiskWindow(removeDiskModel);
+        }
 
         removeDiskModel.initialize(vm, disksToRemove, this);
     }
@@ -85,8 +86,9 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
     }
 
     private void hideRemoveDiskAndShowEditVm() {
-        getParentListModel().setWindow(null);
-        getParentListModel().setWindow(getUnitVmModel());
+        if (getParentListModel() instanceof HasDiskWindow) {
+            ((HasDiskWindow) getParentListModel()).setDiskWindow(null);
+        }
     }
 
     @Override
