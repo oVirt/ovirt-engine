@@ -60,12 +60,12 @@ rpmbuild \
 # install any build requirements
 yum-builddep output/*src.rpm
 
-# create the rpms
+# build minimal rpms for CI, only using single permutation
 rpmbuild \
     -D "_rpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
     -D "release_suffix ${SUFFIX}" \
-    -D "ovirt_build_ut $BUILD_UT" \
+    -D "ovirt_build_minimal 1" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
     --rebuild output/*.src.rpm
 
