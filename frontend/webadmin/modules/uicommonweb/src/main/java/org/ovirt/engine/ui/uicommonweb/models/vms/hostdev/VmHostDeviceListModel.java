@@ -7,7 +7,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
-import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -55,19 +54,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
     }
 
     private void updateActionAvailability() {
-        boolean hasSelectedItems = getSelectedItems() != null && getSelectedItems().size() > 0;
-        getRemoveCommand().setIsExecutionAllowed(hasSelectedItems && !selectionContainsPlaceholderDevices());
-    }
-
-    private boolean selectionContainsPlaceholderDevices() {
-        if (getSelectedItems() != null) {
-            for (HostDeviceView hostDeviceView : getSelectedItems()) {
-                if (hostDeviceView.isIommuPlaceholder()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        getRemoveCommand().setIsExecutionAllowed(!getSelectedPrimaryDeviceNames().isEmpty());
     }
 
     @Override
@@ -134,7 +121,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
         window.setHelpTag(HelpTag.remove_host_device);
         window.setHashName("remove_host_device"); //$NON-NLS-1$
 
-        window.setItems(getSelectedDeviceNames());
+        window.setItems(getSelectedPrimaryDeviceNames());
 
         window.getCommands().add(UICommand.createDefaultOkUiCommand("OnRemove", this)); //$NON-NLS-1$
         window.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
@@ -203,7 +190,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
         }
 
         model.startProgress();
-        ArrayList<String> deviceNames = getSelectedDeviceNames();
+        ArrayList<String> deviceNames = getSelectedPrimaryDeviceNames();
         Frontend.getInstance().runAction(VdcActionType.RemoveVmHostDevices, new VmHostDevicesParameters(getEntity().getId(), deviceNames), new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
@@ -213,10 +200,19 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
         });
     }
 
-    private ArrayList<String> getSelectedDeviceNames() {
+    /**
+     * Returns list of primary (non-placeholder) device names from the current selection.
+     * Returns empty list when none or only placeholder devices are selected.
+     */
+    private ArrayList<String> getSelectedPrimaryDeviceNames() {
         ArrayList<String> deviceNames = new ArrayList<>();
-        for (HostDevice vmHostDevice : getSelectedItems()) {
-            deviceNames.add(vmHostDevice.getDeviceName());
+        if (getSelectedItems() != null) {
+            for (HostDeviceView vmHostDevice : getSelectedItems()) {
+                // only non-placeholder devices should be taken into account
+                if (!vmHostDevice.isIommuPlaceholder()) {
+                    deviceNames.add(vmHostDevice.getDeviceName());
+                }
+            }
         }
         return deviceNames;
     }
