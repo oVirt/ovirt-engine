@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -12,6 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
@@ -36,8 +39,8 @@ public class ModelBoundPopupHandler<M extends IModel> {
     private final Set<String> windowPropertyNames = new HashSet<>();
     private final Set<String> confirmWindowPropertyNames = new HashSet<>();
 
-    private AbstractModelBoundPopupPresenterWidget<?, ?> windowPopup;
-    private AbstractModelBoundPopupPresenterWidget<?, ?> confirmWindowPopup;
+    private Map<String, AbstractModelBoundPopupPresenterWidget<?, ?>> windowPopupInstances = new HashMap<>();
+    private Map<String, AbstractModelBoundPopupPresenterWidget<?, ?>> confirmWindowPopupInstances = new HashMap<>();
 
     private Provider<? extends AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?>> defaultConfirmPopupProvider;
 
@@ -45,8 +48,20 @@ public class ModelBoundPopupHandler<M extends IModel> {
         this.popupResolver = popupResolver;
         this.eventBus = eventBus;
 
+        init();
+    }
+
+    void init() {
         windowPropertyNames.addAll(Arrays.asList(popupResolver.getWindowPropertyNames()));
         confirmWindowPropertyNames.addAll(Arrays.asList(popupResolver.getConfirmWindowPropertyNames()));
+
+        for (String propName : windowPropertyNames) {
+            windowPopupInstances.put(propName, null);
+        }
+
+        for (String propName : confirmWindowPropertyNames) {
+            confirmWindowPopupInstances.put(propName, null);
+        }
     }
 
     /**
@@ -54,17 +69,18 @@ public class ModelBoundPopupHandler<M extends IModel> {
      *
      * TODO rename addWindowModelChangeListener
      */
-    public void addDialogModelListener(final M source) {
+    public void addDialogModelListener(final M model) {
         hideAndClearAllPopups();
-        source.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 String propName = args.propertyName;
 
                 if (windowPropertyNames.contains(propName)) {
-                    handleWindowModelChange(source, windowPopup, false, propName);
+                    handleWindowModelChange(model, propName, windowPopupInstances.get(propName), false);
                 } else if (confirmWindowPropertyNames.contains(propName)) {
-                    handleWindowModelChange(source, confirmWindowPopup, true, propName);
+                    handleWindowModelChange(model, propName, confirmWindowPopupInstances.get(propName), true);
                 }
             }
         });
@@ -77,9 +93,11 @@ public class ModelBoundPopupHandler<M extends IModel> {
 
     // TODO this should be redesigned -- way too complex. GS
     @SuppressWarnings("unchecked")
-    void handleWindowModelChange(M sourceModel, AbstractModelBoundPopupPresenterWidget<?, ?> currentPopup,
-            boolean isConfirmation, String propertyName) {
-        Model windowModel = isConfirmation ? popupResolver.getConfirmWindowModel(sourceModel, propertyName)
+    void handleWindowModelChange(M sourceModel, String propertyName,
+            AbstractModelBoundPopupPresenterWidget<?, ?> currentPopup,
+            boolean isConfirmation) {
+        Model windowModel = isConfirmation
+                ? popupResolver.getConfirmWindowModel(sourceModel, propertyName)
                 : popupResolver.getWindowModel(sourceModel, propertyName);
 
         // Reveal new popup
@@ -94,7 +112,7 @@ public class ModelBoundPopupHandler<M extends IModel> {
                 newPopup = popupResolver.getConfirmModelPopup(sourceModel, lastExecutedCommand);
 
                 if (newPopup == null && defaultConfirmPopupProvider != null) {
-                    // Fall back to basic confirmation popup if possible
+                    // Fall back to basic confirmation popup
                     newPopup = defaultConfirmPopupProvider.get();
                 }
             } else {
@@ -104,7 +122,7 @@ public class ModelBoundPopupHandler<M extends IModel> {
 
             // 2. Reveal
             if (newPopup != null) {
-                revealAndAssignPopup(windowModel,
+                revealAndAssignPopup(windowModel, propertyName,
                         (AbstractModelBoundPopupPresenterWidget<Model, ?>) newPopup,
                         isConfirmation);
             } else {
@@ -117,25 +135,24 @@ public class ModelBoundPopupHandler<M extends IModel> {
         }
 
         else if (windowModel == null && currentPopup != null) {
-            hideAndClearPopup(currentPopup, isConfirmation);
+            hideAndClearPopup(propertyName, currentPopup, isConfirmation);
         }
     }
 
     /**
-     * Reveals the popup (tells GWTP to actually show it)
+     * Reveals the popup (tells GWTP to show it).
      */
-    <T extends Model> void revealPopup(final T model,
-            final AbstractModelBoundPopupPresenterWidget<T, ?> popup) {
+    <T extends Model> void revealPopup(final T model, final AbstractModelBoundPopupPresenterWidget<T, ?> popup) {
         assert model != null : "Popup model must not be null"; //$NON-NLS-1$
 
         // Initialize popup
         popup.init(model);
 
-        // Add "PROGRESS" property change handler to Window model
+        // Add "progress" property change handler to Window model
         model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) { //$NON-NLS-1$
+                if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
                     updatePopupProgress(model, popup);
                 }
             }
@@ -155,43 +172,61 @@ public class ModelBoundPopupHandler<M extends IModel> {
     }
 
     /**
-     * Reveals the popup (tells GWTP to actually show it) and remembers its reference, so that it can be closed (hidden) later on.
+     * Reveals the popup (tells GWTP to show it) and remembers its reference,
+     * so that it can be closed (hidden) later on.
      */
-    protected <T extends Model> void revealAndAssignPopup(T model,
+    protected <T extends Model> void revealAndAssignPopup(T model, String propertyName,
             AbstractModelBoundPopupPresenterWidget<T, ?> popup, boolean isConfirm) {
         revealPopup(model, popup);
 
         // Assign popup reference
         if (isConfirm) {
-            confirmWindowPopup = popup;
+            confirmWindowPopupInstances.put(propertyName, popup);
         } else {
-            windowPopup = popup;
+            windowPopupInstances.put(propertyName, popup);
         }
     }
 
     /**
      * Hides a popup and clears its reference, so that another popup can be opened.
      */
-    protected void hideAndClearPopup(AbstractModelBoundPopupPresenterWidget<?, ?> popup, boolean isConfirm) {
+    protected void hideAndClearPopup(String propertyName,
+            AbstractModelBoundPopupPresenterWidget<?, ?> popup,
+            boolean isConfirm) {
         popup.hideAndUnbind();
 
         // Clear popup reference
         if (isConfirm) {
-            confirmWindowPopup = null;
+            confirmWindowPopupInstances.put(propertyName, null);
         } else {
-            windowPopup = null;
+            windowPopupInstances.put(propertyName, null);
         }
     }
 
     /**
      * Hides confirmation and window popups and clears their references.
+     *
+     * TODO(vs) this method existed so that all application popups can be
+     * shown again after auto-logout and re-login without having to reload
+     * WebAdmin page in browser. With SSO in place (no more GWT UI specific
+     * login screen), this use case is irrelevant and this method should be
+     * removed.
      */
     void hideAndClearAllPopups() {
-        if (confirmWindowPopup != null) {
-            hideAndClearPopup(confirmWindowPopup, true);
+        for (String propName : windowPropertyNames) {
+            AbstractModelBoundPopupPresenterWidget<?, ?> popup = windowPopupInstances.get(propName);
+
+            if (popup != null) {
+                hideAndClearPopup(propName, popup, false);
+            }
         }
-        if (windowPopup != null) {
-            hideAndClearPopup(windowPopup, false);
+
+        for (String propName : confirmWindowPropertyNames) {
+            AbstractModelBoundPopupPresenterWidget<?, ?> confirmPopup = confirmWindowPopupInstances.get(propName);
+
+            if (confirmPopup != null) {
+                hideAndClearPopup(propName, confirmPopup, true);
+            }
         }
     }
 
