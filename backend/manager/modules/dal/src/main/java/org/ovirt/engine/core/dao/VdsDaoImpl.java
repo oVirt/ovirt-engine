@@ -448,7 +448,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     private List<VDS> uniteAgentsPreserveSpmPrioritySorting(List<VDS> vdsList) {
 
         List<VDS> results = uniteAgents(vdsList);
-        // insure that list is ordered according to SPM priority DESC
+        // Ensure that the list is ordered according to SPM priority DESC
         Collections.sort(results, new HostSpmPriorityComparator());
         return results;
 
