@@ -128,8 +128,7 @@ public class InstanceImageLineModel extends EntityModel {
                     // needed because the "entity" instances are the same so the event is not fired
                     fillData();
 
-                    parentModel.getParentListModel().setWindow(null);
-                    parentModel.getParentListModel().setWindow(parentModel.getUnitVmModel());
+                    setDiskModel(null);
                 }
             }
 
@@ -188,8 +187,7 @@ public class InstanceImageLineModel extends EntityModel {
                     getDiskModel().setEntity(this);
                     InstanceImageLineModel.this.setChanged(true);
 
-                    parentModel.getParentListModel().setWindow(null);
-                    parentModel.getParentListModel().setWindow(parentModel.getUnitVmModel());
+                    setDiskModel(null);
                     // from now on only editing is possible
                     attachCommand.setIsAvailable(false);
 
@@ -228,7 +226,7 @@ public class InstanceImageLineModel extends EntityModel {
         setupModelAsDialog(model,
                 ConstantsManager.getInstance().getConstants().attachVirtualDiskTitle(),
                 HelpTag.attach_virtual_disk, "attach_virtual_disk"); //$NON-NLS-1$
-        showDialog(model);
+        setDiskModel(model);
         model.initialize(parentModel.getAllCurrentDisksModels());
         maybeLoadAttachableDisks(model);
     }
@@ -261,7 +259,7 @@ public class InstanceImageLineModel extends EntityModel {
             // needed to re-filter in case the OS or the compatibility version changed
             maybeLoadAttachableDisks((InstanceImagesAttachDiskModel) getDiskModel().getEntity());
         }
-        showDialog(getDiskModel().getEntity());
+        setDiskModel(getDiskModel().getEntity());
     }
 
     private void showNewDialog() {
@@ -273,8 +271,7 @@ public class InstanceImageLineModel extends EntityModel {
                     getDiskModel().setEntity(this);
                     InstanceImageLineModel.this.setChanged(true);
 
-                    parentModel.getParentListModel().setWindow(null);
-                    parentModel.getParentListModel().setWindow(parentModel.getUnitVmModel());
+                    setDiskModel(null);
                     // the "new" turns into "edit" - no need for attach anymore
                     attachCommand.setIsAvailable(false);
 
@@ -312,7 +309,7 @@ public class InstanceImageLineModel extends EntityModel {
                 ConstantsManager.getInstance().getConstants().newVirtualDiskTitle(),
                 HelpTag.new_virtual_disk, "new_virtual_disk"); //$NON-NLS-1$
 
-        showDialog(model);
+        setDiskModel(model);
 
         model.initialize(parentModel.getAllCurrentDisksModels());
 
@@ -364,9 +361,10 @@ public class InstanceImageLineModel extends EntityModel {
         model.setCancelCommand(cancelCommand);
     }
 
-    private void showDialog(AbstractDiskModel model) {
-        parentModel.getParentListModel().setWindow(null);
-        parentModel.getParentListModel().setWindow(model);
+    private void setDiskModel(AbstractDiskModel model) {
+        if (parentModel.getParentListModel() instanceof HasDiskWindow) {
+            ((HasDiskWindow) parentModel.getParentListModel()).setDiskWindow(model);
+        }
     }
 
     @Override
@@ -376,8 +374,7 @@ public class InstanceImageLineModel extends EntityModel {
             return;
         }
         if (CANCEL_DISK.equals(command.getName())) {
-            parentModel.getParentListModel().setWindow(null);
-            parentModel.getParentListModel().setWindow(parentModel.getUnitVmModel());
+            setDiskModel(null);
         } else if (command == createEditCommand) {
             createEditDisk();
         } else if (command == attachCommand) {
