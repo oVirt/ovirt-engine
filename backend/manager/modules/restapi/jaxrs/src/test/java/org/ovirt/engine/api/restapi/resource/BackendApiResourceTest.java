@@ -131,6 +131,7 @@ public class BackendApiResourceTest {
         "affinitylabels",
         "clusterlevels",
         "imagetransfers",
+        "externalvmimports"
     };
 
     private static final String[] relationshipsGlusterOnly = {
@@ -202,6 +203,7 @@ public class BackendApiResourceTest {
         BASE_PATH + "/affinitylabels",
         BASE_PATH + "/clusterlevels",
         BASE_PATH + "/imagetransfers",
+        BASE_PATH + "/externalvmimports"
     };
 
     private static final String[] hrefsGlusterOnly = {

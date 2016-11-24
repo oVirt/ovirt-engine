@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 import javax.ws.rs.Path;
 
 import org.ovirt.engine.api.model.ActionableResource;
@@ -51,6 +52,7 @@ import org.ovirt.engine.api.model.ExternalDiscoveredHost;
 import org.ovirt.engine.api.model.ExternalHost;
 import org.ovirt.engine.api.model.ExternalHostGroup;
 import org.ovirt.engine.api.model.ExternalHostProvider;
+import org.ovirt.engine.api.model.ExternalVmImport;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Filter;
 import org.ovirt.engine.api.model.GlusterBrick;
@@ -156,6 +158,7 @@ import org.ovirt.engine.api.resource.DiskSnapshotsResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
+import org.ovirt.engine.api.resource.ExternalVmImportsResource;
 import org.ovirt.engine.api.resource.FenceAgentResource;
 import org.ovirt.engine.api.resource.FenceAgentsResource;
 import org.ovirt.engine.api.resource.FileResource;
@@ -753,6 +756,9 @@ public class LinkHelper {
         map = new LocationByParentMap();
         map.add(DiskAttachmentResource.class, DiskAttachmentsResource.class, Vm.class);
         TYPES.put(DiskAttachment.class, map);
+
+        map = new LocationByParentMap(ExternalVmImportsResource.class, ExternalVmImportsResource.class);
+        TYPES.put(ExternalVmImport.class, map);
     }
 
     /**
@@ -1139,7 +1145,7 @@ public class LinkHelper {
      * resource_collection: DomainGroupsResource
      *--------------------------------------------------
      */
-    private static class EntityLocationMap extends HashMap<Class<? extends BaseResource>, LocationByParentMap> {}
+    private static class EntityLocationMap extends HashMap<Class<?>, LocationByParentMap> {}
 
 
     /**

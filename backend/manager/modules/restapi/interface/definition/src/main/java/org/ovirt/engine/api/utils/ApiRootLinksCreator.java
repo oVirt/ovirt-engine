@@ -68,6 +68,7 @@ public class ApiRootLinksCreator {
         links.add(createLink("affinitylabels", baseUri));
         links.add(createLink("clusterlevels", baseUri));
         links.add(createLink("imagetransfers", baseUri));
+        links.add(createLink("externalvmimports", baseUri));
         return links;
     }
 
