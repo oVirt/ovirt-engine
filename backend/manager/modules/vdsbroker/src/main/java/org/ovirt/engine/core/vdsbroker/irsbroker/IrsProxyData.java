@@ -742,6 +742,7 @@ public class IrsProxyData {
             Guid selectedVdsId = selectedVds.getId();
             Integer selectedVdsSpmId = selectedVds.getVdsSpmId();
             triedVdssList.add(selectedVdsId);
+            currentVdsId = selectedVds.getId();
             connectStoragePool(selectedVds, storagePool);
 
             VDSReturnValue returnValueFromVds = ResourceManager.getInstance().runVdsCommand(
@@ -751,7 +752,6 @@ public class IrsProxyData {
             boolean ignoreSpmStatusResult = returnValueFromVds.getVdsError() != null
                     && returnValueFromVds.getVdsError().getCode() == EngineError.InquireNotSupportedError;
             if (spmStatus != null || ignoreSpmStatusResult) {
-                currentVdsId = selectedVds.getId();
                 boolean performedPoolConnect = false;
                 log.info(
                         "hostFromVds::selectedVds - '{}', spmStatus '{}', storage pool '{}', storage pool version '{}'",
