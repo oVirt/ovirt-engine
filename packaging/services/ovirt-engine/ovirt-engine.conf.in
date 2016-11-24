@@ -334,6 +334,10 @@ ENGINE_SSO_AUTH_SEQUENCE_welcome=~
 # login page.
 ENGINE_SSO_INSTALLED_ON_ENGINE_HOST=true
 
+# The maximum size of the pool of HTTP connections that the engine uses
+# to communicate with the SSO service:
+ENGINE_SSO_SERVICE_CLIENT_POOL_SIZE=10
+
 #
 # SSO Configuration
 #
@@ -372,6 +376,10 @@ SSO_ENGINE_URL="http://${ENGINE_FQDN}${ENGINE_URI}"
 # access engine. Example: SSO_ALTERNATE_ENGINE_FQDNS="alias1.example.com alias2.example.com". It's possible to also
 # add IP addresses of engine host, but using IP addresses instead of DNS names is not considered to be a good practice.
 SSO_ALTERNATE_ENGINE_FQDNS=""
+
+# The maximum size of the pool of HTTP connections that the SSO service
+# uses to communicate with the engine:
+SSO_CALLBACK_CLIENT_POOL_SIZE=10
 
 #
 # Comma separated list of supported versions of the API. When the user

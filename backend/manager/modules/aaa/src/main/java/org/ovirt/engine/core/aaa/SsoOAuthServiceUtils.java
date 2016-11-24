@@ -7,13 +7,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,15 +22,24 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
-import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
-import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
-import org.ovirt.engine.core.uutils.net.URLBuilder;
+import org.ovirt.engine.core.utils.serialization.json.JsonExtMapMixIn;
+import org.ovirt.engine.core.uutils.net.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,25 +49,37 @@ public class SsoOAuthServiceUtils {
     private static final String authzSearchScope = "ovirt-ext=token-info:authz-search";
     private static final String publicAuthzSearchScope = "ovirt-ext=token-info:public-authz-search";
 
+    // Reference to the HTTP client used to send the requests to the SSO server:
+    private static volatile CloseableHttpClient client;
+    private static final ObjectMapper mapper;
+
+    static {
+        // Remember to close the client when going down:
+        Runtime.getRuntime().addShutdownHook(
+                new Thread(() -> IOUtils.closeQuietly(client))
+        );
+        mapper = new ObjectMapper()
+                .configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
+        mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+        mapper.getSerializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+    }
+
     public static Map<String, Object> authenticate(HttpServletRequest req, String scope) {
-        HttpURLConnection connection = null;
         try {
-            connection = createConnection("/oauth/token");
-            setClientIdSecretBasicAuthHeader(connection);
+            HttpPost request = createPost("/oauth/token");
+            setClientIdSecretBasicAuthHeader(request);
             String[] credentials = getUserCredentialsFromHeader(req);
-            postData(connection, new URLBuilder(connection.getURL()).addParameter("grant_type", "password")
-                    .addParameter("username", credentials[0])
-                    .addParameter("password", credentials[1])
-                    .addParameter("scope", scope).buildURL().getQuery());
-            return getData(connection);
+            List<BasicNameValuePair> form = new ArrayList<>(4);
+            form.add(new BasicNameValuePair("grant_type", "password"));
+            form.add(new BasicNameValuePair("username", credentials[0]));
+            form.add(new BasicNameValuePair("password", credentials[1]));
+            form.add(new BasicNameValuePair("scope", scope));
+            request.setEntity(new UrlEncodedFormEntity(form, StandardCharsets.UTF_8));
+            return getResponse(request);
         } catch (Exception ex) {
             return buildMapWithError("server_error", ex.getMessage());
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
         }
-
     }
 
     public static Map<String, Object> loginOnBehalf(String username, String scope, ExtMap authRecord) {
@@ -77,26 +95,30 @@ public class SsoOAuthServiceUtils {
             String password,
             String scope,
             ExtMap authRecord) {
-        HttpURLConnection connection = null;
         try {
-            connection = createConnection("/oauth/token");
-            setClientIdSecretBasicAuthHeader(connection);
-            URLBuilder urlBuilder = new URLBuilder(connection.getURL()).addParameter("grant_type", "password")
-                    .addParameter("username", username)
-                    .addParameter("password", password)
-                    .addParameter("scope", scope);
+            HttpPost request = createPost("/oauth/token");
+            setClientIdSecretBasicAuthHeader(request);
+            List<BasicNameValuePair> form = new ArrayList<>(5);
+            form.add(new BasicNameValuePair("grant_type", "password"));
+            form.add(new BasicNameValuePair("username", username));
+            form.add(new BasicNameValuePair("password", password));
+            form.add(new BasicNameValuePair("scope", scope));
             if (authRecord != null) {
-                urlBuilder.addParameter("ovirt_auth_record", new JsonObjectSerializer().serialize(authRecord));
+                form.add(new BasicNameValuePair("ovirt_auth_record", serialize(authRecord)));
             }
-            postData(connection, urlBuilder.buildURL().getQuery());
-            return getData(connection);
+            request.setEntity(new UrlEncodedFormEntity(form, StandardCharsets.UTF_8));
+            return getResponse(request);
         } catch (Exception ex) {
             return buildMapWithError("server_error", ex.getMessage());
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
         }
+    }
+
+    private static String serialize(Object obj) throws IOException {
+        return mapper.writeValueAsString(obj);
+    }
+
+    private static <T> T deserialize(String json, Class<T> type) throws IOException {
+        return mapper.readValue(json, type);
     }
 
     public static Map<String, Object> revoke(String token) {
@@ -104,41 +126,33 @@ public class SsoOAuthServiceUtils {
     }
 
     public static Map<String, Object> revoke(String token, String scope) {
-        HttpURLConnection connection = null;
         try {
-            connection = createConnection("/oauth/revoke");
-            setClientIdSecretBasicAuthHeader(connection);
-            postData(connection, new URLBuilder(connection.getURL()).addParameter("token", token)
-                    .addParameter("scope", scope).buildURL().getQuery());
-            return getData(connection);
+            HttpPost request = createPost("/oauth/revoke");
+            setClientIdSecretBasicAuthHeader(request);
+            List<BasicNameValuePair> form = new ArrayList<>(2);
+            form.add(new BasicNameValuePair("token", token));
+            form.add(new BasicNameValuePair("scope", scope));
+            request.setEntity(new UrlEncodedFormEntity(form, StandardCharsets.UTF_8));
+            return getResponse(request);
         } catch (Exception ex) {
             return buildMapWithError("server_error", ex.getMessage());
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
         }
-
     }
 
     public static Map<String, Object> getToken(String grantType, String code, String scope, String redirectUri) {
-        HttpURLConnection connection = null;
         try {
-            connection = createConnection("/oauth/token");
-            setClientIdSecretBasicAuthHeader(connection);
-            postData(connection, new URLBuilder(connection.getURL()).addParameter("grant_type", grantType)
-                    .addParameter("code", code)
-                    .addParameter("redirect_uri", redirectUri)
-                    .addParameter("scope", scope).buildURL().getQuery());
-            return getData(connection);
+            HttpPost request = createPost("/oauth/token");
+            setClientIdSecretBasicAuthHeader(request);
+            List<BasicNameValuePair> form = new ArrayList<>(4);
+            form.add(new BasicNameValuePair("grant_type", grantType));
+            form.add(new BasicNameValuePair("code", code));
+            form.add(new BasicNameValuePair("redirect_uri", redirectUri));
+            form.add(new BasicNameValuePair("scope", scope));
+            request.setEntity(new UrlEncodedFormEntity(form, StandardCharsets.UTF_8));
+            return getResponse(request);
         } catch (Exception ex) {
             return buildMapWithError("server_error", ex.getMessage());
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
         }
-
     }
 
     public static Map<String, Object> getTokenInfo(String token) {
@@ -146,20 +160,16 @@ public class SsoOAuthServiceUtils {
     }
 
     public static Map<String, Object> getTokenInfo(String token, String scope) {
-        HttpURLConnection connection = null;
         try {
-            connection = createConnection("/oauth/token-info");
-            setClientIdSecretBasicAuthHeader(connection);
-            String data = new URLBuilder(connection.getURL()).addParameter("token", token)
-                    .buildURL().getQuery();
-
+            HttpPost request = createPost("/oauth/token-info");
+            setClientIdSecretBasicAuthHeader(request);
+            List<BasicNameValuePair> form = new ArrayList<>(2);
+            form.add(new BasicNameValuePair("token", token));
             if (StringUtils.isNotEmpty(scope)) {
-                data = new URLBuilder(connection.getURL()).addParameter("token", token)
-                        .addParameter("scope", scope)
-                        .buildURL().getQuery();
+                form.add(new BasicNameValuePair("scope", scope));
             }
-            postData(connection, data);
-            Map<String, Object> jsonData = getData(connection);
+            request.setEntity(new UrlEncodedFormEntity(form, StandardCharsets.UTF_8));
+            Map<String, Object> jsonData = getResponse(request);
             Map<String, Object> ovirtData = (Map<String, Object>) jsonData.get("ovirt");
             if (ovirtData != null) {
                 Collection<ExtMap> groupIds = (Collection<ExtMap>) ovirtData.get("group_ids");
@@ -171,27 +181,16 @@ public class SsoOAuthServiceUtils {
         } catch (Exception ex) {
             return buildMapWithError("server_error", ex.getMessage());
         }
-        finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }
     }
 
     public static Map<String, Object> isSsoDeployed() {
-        HttpURLConnection connection = null;
         try {
-            connection = createConnection("/status");
-            return getData(connection);
+            HttpGet request = createGet("/status");
+            return getResponse(request);
         } catch (FileNotFoundException ex) {
             return buildMapWithError("server_error", "oVirt Engine is initializing.");
         } catch (Exception ex) {
             return buildMapWithError("server_error", ex.getMessage());
-        }
-        finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
         }
     }
 
@@ -302,27 +301,22 @@ public class SsoOAuthServiceUtils {
             Map<String, Object> params,
             String queryType,
             String scope) {
-        HttpURLConnection connection = null;
         try {
-            connection = createConnection("/oauth/token-info");
-            setClientIdSecretBasicAuthHeader(connection);
-            URLBuilder urlBuilder = new URLBuilder(connection.getURL())
-                    .addParameter("query_type", queryType)
-                    .addParameter("scope", scope);
+            HttpPost request = createPost("/oauth/token-info");
+            setClientIdSecretBasicAuthHeader(request);
+            List<BasicNameValuePair> form = new ArrayList<>(4);
+            form.add(new BasicNameValuePair("query_type", queryType));
+            form.add(new BasicNameValuePair("scope", scope));
             if (StringUtils.isNotEmpty(token)) {
-                urlBuilder.addParameter("token", token);
+                form.add(new BasicNameValuePair("token", token));
             }
             if (params != null) {
-                urlBuilder.addParameter("params", encode(new JsonObjectSerializer().serialize(params)));
+                form.add(new BasicNameValuePair("params", serialize(params)));
             }
-            postData(connection, urlBuilder.buildURL().getQuery());
-            return getData(connection);
+            request.setEntity(new UrlEncodedFormEntity(form, StandardCharsets.UTF_8));
+            return getResponse(request);
         } catch (Exception ex) {
             return buildMapWithError("server_error", ex.getMessage());
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
         }
     }
 
@@ -341,11 +335,12 @@ public class SsoOAuthServiceUtils {
         return new String[] {userName, passwd};
     }
 
-    private static void setClientIdSecretBasicAuthHeader(HttpURLConnection connection) {
+    private static void setClientIdSecretBasicAuthHeader(HttpUriRequest request) {
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
         byte[] encodedBytes = Base64.encodeBase64(String.format("%s:%s",
-                EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_CLIENT_ID"),
-                EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_CLIENT_SECRET")).getBytes());
-        connection.setRequestProperty(FiltersHelper.Constants.HEADER_AUTHORIZATION, String.format("Basic %s", new String(encodedBytes)));
+                config.getProperty("ENGINE_SSO_CLIENT_ID"),
+                config.getProperty("ENGINE_SSO_CLIENT_SECRET")).getBytes());
+        request.setHeader(FiltersHelper.Constants.HEADER_AUTHORIZATION, String.format("Basic %s", new String(encodedBytes)));
     }
 
     private static Map<String, Object> buildMapWithError(String error_code, String error) {
@@ -355,63 +350,74 @@ public class SsoOAuthServiceUtils {
         return response;
     }
 
-    private static HttpURLConnection createConnection(String uri) throws Exception {
-        HttpURLConnection connection = create(new URLBuilder(
-                EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_SERVICE_URL"),
-                uri).buildURL());
-        connection.setDoInput(true);
-        connection.setDoOutput(true);
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setRequestProperty("Content-Language", "en-US");
-        return connection;
+    private static HttpPost createPost(String path) throws Exception {
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
+        String base = config.getProperty("ENGINE_SSO_SERVICE_URL");
+        HttpPost request = new HttpPost();
+        request.setURI(new URI(base + path));
+        request.setHeader("Accept", "application/json");
+        request.setHeader("Content-Language", "en-US");
+        return request;
     }
 
-    private static Map getData(HttpURLConnection connection) throws Exception {
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            try (InputStream input = connection.getInputStream()) {
-                FiltersHelper.copy(input, os);
+    private static HttpGet createGet(String path) throws Exception {
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
+        String base = config.getProperty("ENGINE_SSO_SERVICE_URL");
+        HttpGet request = new HttpGet();
+        request.setURI(new URI(base + path));
+        request.setHeader("Accept", "application/json");
+        return request;
+    }
+
+    private static Map<String, Object> getResponse(HttpUriRequest request) throws Exception {
+        try (CloseableHttpResponse response = execute(request)) {
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+                throw new FileNotFoundException();
             }
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(SsoOAuthServiceUtils.class.getClassLoader());
-            try {
-                return new JsonObjectDeserializer().deserialize(
-                        new String(os.toByteArray(), StandardCharsets.UTF_8.name()),
-                        HashMap.class);
-            } finally {
-                Thread.currentThread().setContextClassLoader(loader);
+            try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+                try (InputStream input = response.getEntity().getContent()) {
+                    FiltersHelper.copy(input, os);
+                }
+                ClassLoader loader = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(SsoOAuthServiceUtils.class.getClassLoader());
+                try {
+                    return deserialize(
+                            new String(os.toByteArray(), StandardCharsets.UTF_8.name()),
+                            HashMap.class);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(loader);
+                }
             }
         }
     }
 
-    private static void postData(HttpURLConnection connection, String data) throws Exception {
-        connection.setRequestProperty("Content-Length", "" + data.length());
-        connection.connect();
-        try (OutputStreamWriter outputWriter = new OutputStreamWriter(connection.getOutputStream())) {
-            outputWriter.write(data);
-            outputWriter.flush();
+    private static CloseableHttpResponse execute(HttpUriRequest request) throws IOException, GeneralSecurityException {
+        // Make sure the client is created:
+        if (client == null) {
+            synchronized (SsoOAuthServiceUtils.class) {
+                if (client == null) {
+                    client = createClient();
+                }
+            }
         }
+
+        // Execute the request:
+        return client.execute(request);
     }
 
-    private static HttpURLConnection create(URL url) throws IOException, GeneralSecurityException {
-        return new HttpURLConnectionBuilder(url).setHttpsProtocol(EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_SERVICE_SSL_PROTOCOL"))
+    private static CloseableHttpClient createClient() throws IOException, GeneralSecurityException {
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
+        return new HttpClientBuilder()
+                .setSslProtocol(config.getProperty("ENGINE_SSO_SERVICE_SSL_PROTOCOL"))
+                .setPoolSize(config.getInteger("ENGINE_SSO_SERVICE_CLIENT_POOL_SIZE"))
                 .setReadTimeout(0)
                 .setTrustManagerAlgorithm(TrustManagerFactory.getDefaultAlgorithm())
-                .setTrustStore(EngineLocalConfig.getInstance().getProperty("ENGINE_HTTPS_PKI_TRUST_STORE"))
-                .setTrustStorePassword(EngineLocalConfig.getInstance().getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_PASSWORD"))
-                .setTrustStoreType(EngineLocalConfig.getInstance().getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_TYPE"))
-                .setURL(url)
-                .setVerifyChain(EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_SERVICE_SSL_VERIFY_CHAIN"))
-                .setVerifyHost(EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_SERVICE_SSL_VERIFY_HOST")).create();
-    }
-
-    private static String encode(String value) {
-        try {
-            return URLEncoder.encode(value, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+                .setTrustStore(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE"))
+                .setTrustStorePassword(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_PASSWORD"))
+                .setTrustStoreType(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_TYPE"))
+                .setVerifyChain(config.getBoolean("ENGINE_SSO_SERVICE_SSL_VERIFY_CHAIN"))
+                .setVerifyHost(config.getBoolean("ENGINE_SSO_SERVICE_SSL_VERIFY_HOST"))
+                .build();
     }
 
     /**
