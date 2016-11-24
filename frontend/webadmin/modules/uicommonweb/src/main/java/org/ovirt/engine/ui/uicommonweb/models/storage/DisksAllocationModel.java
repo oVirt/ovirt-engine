@@ -175,7 +175,6 @@ public class DisksAllocationModel extends EntityModel {
     private boolean isAliasChangable;
     private boolean isSourceStorageDomainAvailable;
     private boolean isSourceStorageDomainNameAvailable;
-    private boolean isWarningAvailable;
     private boolean isTargetAvailable = true;
 
     public DisksAllocationModel() {
@@ -457,14 +456,6 @@ public class DisksAllocationModel extends EntityModel {
 
     public void setIsSourceStorageDomainNameAvailable(boolean isSourceStorageDomainNameAvailable) {
         this.isSourceStorageDomainNameAvailable = isSourceStorageDomainNameAvailable;
-    }
-
-    public boolean isWarningAvailable() {
-        return isWarningAvailable;
-    }
-
-    public void setWarningAvailable(boolean isWarningAvailable) {
-        this.isWarningAvailable = isWarningAvailable;
     }
 
     private EntityModel<String> dynamicWarning;
