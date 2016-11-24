@@ -3,19 +3,13 @@ package org.ovirt.engine.core.aaa.filters;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Enumeration;
 import java.util.Map;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
@@ -30,7 +24,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
 
 public class FiltersHelper {
 
@@ -148,18 +141,6 @@ public class FiltersHelper {
         FiltersHelper.isStatusOk(response);
         response.put(SessionConstants.SSO_TOKEN_KEY, token);
         return response;
-    }
-
-    public static HttpURLConnection create(URL url) throws IOException, GeneralSecurityException {
-        return new HttpURLConnectionBuilder(url).setHttpsProtocol("TLSv1")
-                .setReadTimeout(0)
-                .setTrustManagerAlgorithm(TrustManagerFactory.getDefaultAlgorithm())
-                .setTrustStore(EngineLocalConfig.getInstance().getProperty("ENGINE_PKI_TRUST_STORE"))
-                .setTrustStorePassword(EngineLocalConfig.getInstance().getPKITrustStorePassword())
-                .setTrustStoreType(KeyStore.getDefaultType())
-                .setURL(url)
-                .setVerifyChain(true)
-                .setVerifyHost(false).create();
     }
 
     public static long copy(final InputStream input, final OutputStream output) throws IOException {

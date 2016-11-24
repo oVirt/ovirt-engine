@@ -99,7 +99,7 @@ public class InteractiveChangePasswdServlet extends HttpServlet {
 
     private Credentials getUserCredentials(HttpServletRequest request) throws AuthenticationException {
         try {
-            String username = SsoUtils.getParameter(request, USERNAME);
+            String username = SsoUtils.getFormParameter(request, USERNAME);
             String credentials = SsoUtils.getFormParameter(request, CREDENTIALS);
             String credentialsNew1 = SsoUtils.getFormParameter(request, CREDENTIALS_NEW1);
             String credentialsNew2 = SsoUtils.getFormParameter(request, CREDENTIALS_NEW2);

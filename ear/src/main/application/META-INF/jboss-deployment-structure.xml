@@ -16,6 +16,7 @@
       <module name="org.apache.commons.codec" export="true"/>
       <module name="org.apache.commons.collections" export="true"/>
       <module name="org.apache.commons.httpclient" export="true"/>
+      <module name="org.apache.commons.io" export="true"/>
       <module name="org.apache.commons.lang" export="true"/>
       <module name="org.apache.httpcomponents" export="true"/>
       <module name="org.apache.xmlrpc" export="true"/>

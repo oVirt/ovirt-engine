@@ -1,13 +1,11 @@
 package org.ovirt.engine.core.sso.utils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
@@ -25,15 +23,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
 import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpHeaders;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.api.extensions.ExtMap;
@@ -41,13 +45,27 @@ import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.uutils.crypto.EnvelopeEncryptDecrypt;
 import org.ovirt.engine.core.uutils.crypto.EnvelopePBE;
-import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
+import org.ovirt.engine.core.uutils.net.HttpClientBuilder;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SsoUtils {
     private static Logger log = LoggerFactory.getLogger(SsoUtils.class);
+
+    // We need to create an HTTP client for each SSO client, as they may have different SSL configuration
+    // parameters. They will be stored in this map, indexed by client id.
+    private static final Map<String, CloseableHttpClient> CLIENTS = new HashMap<>();
+
+    static {
+        // Remember to close the clients when going down:
+        Runtime.getRuntime().addShutdownHook(
+            new Thread(() -> {
+                CLIENTS.values().forEach(IOUtils::closeQuietly);
+                CLIENTS.clear();
+            })
+        );
+    }
 
     public static boolean isUserAuthenticated(HttpServletRequest request) {
         return getSsoSession(request).getStatus() == SsoSession.Status.authenticated;
@@ -192,13 +210,13 @@ public class SsoUtils {
             throws UnsupportedEncodingException {
         String value = request.getParameter(paramName);
         return value == null ?
-                null : decode(new String(value.getBytes("iso-8859-1")));
+                null : decode(new String(value.getBytes(StandardCharsets.UTF_8)));
     }
 
     public static String getFormParameter(HttpServletRequest request, String paramName)
             throws UnsupportedEncodingException {
         String value = request.getParameter(paramName);
-        return value == null ? null : new String(value.getBytes("iso-8859-1"));
+        return value == null ? null : new String(value.getBytes(StandardCharsets.ISO_8859_1));
     }
 
     public static String getRequestParameter(HttpServletRequest request, String paramName) throws Exception {
@@ -580,57 +598,55 @@ public class SsoUtils {
         ClientInfo clientInfo = ssoContext.getClienInfo(clientId);
         String url = clientInfo.getClientNotificationCallback();
         if (StringUtils.isNotEmpty(url)) {
-            HttpURLConnection connection = null;
-            try {
-                connection = createConnection(ssoContext.getSsoLocalConfig(), clientInfo, url);
-                String data = new URLBuilder(url).addParameter("event", "logout")
-                        .addParameter("token", token)
-                        .addParameter("token_type", "bearer").buildURL().getQuery();
-                connection.setRequestProperty("Content-Length", "" + data.length());
-                connection.connect();
-                try (OutputStreamWriter outputWriter = new OutputStreamWriter(connection.getOutputStream())) {
-                    outputWriter.write(data);
-                    outputWriter.flush();
-                }
-
-                try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-                    final byte[] buffer = new byte[8*1024];
-                    int n;
-                    try (InputStream input = connection.getInputStream()) {
-                        while ((n = input.read(buffer)) != -1) {
-                            os.write(buffer, 0, n);
-                        }
-                    }
-                }
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
+            HttpPost request = createPost(url);
+            List<BasicNameValuePair> form = new ArrayList<>(3);
+            form.add(new BasicNameValuePair("event", "logout"));
+            form.add(new BasicNameValuePair("token", token));
+            form.add(new BasicNameValuePair("token_type", "bearer"));
+            request.setEntity(new UrlEncodedFormEntity(form, StandardCharsets.UTF_8));
+            execute(request, ssoContext, clientId);
         }
     }
 
-    private static HttpURLConnection createConnection(
-            SsoLocalConfig config,
-            ClientInfo clientInfo,
-            String url) throws Exception {
-        HttpURLConnection connection = new HttpURLConnectionBuilder(url)
-                .setHttpsProtocol(clientInfo.getNotificationCallbackProtocol())
-                .setReadTimeout(config.getInteger("SSO_CALLBACK_READ_TIMEOUT"))
-                .setConnectTimeout(config.getInteger("SSO_CALLBACK_CONNECT_TIMEOUT"))
-                .setTrustManagerAlgorithm(TrustManagerFactory.getDefaultAlgorithm())
-                .setTrustStore(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE"))
-                .setTrustStorePassword(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_PASSWORD"))
-                .setTrustStoreType(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_TYPE"))
-                .setURL(url)
-                .setVerifyChain(clientInfo.isNotificationCallbackVerifyChain())
-                .setVerifyHost(clientInfo.isNotificationCallbackVerifyHost()).create();
-        connection.setDoInput(true);
-        connection.setDoOutput(true);
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty(HttpHeaders.ACCEPT, "application/json");
-        connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
-        return connection;
+    private static HttpPost createPost(String url) throws Exception {
+        HttpPost request = new HttpPost();
+        request.setURI(new URI(url));
+        request.setHeader("Accept", "application/json");
+        return request;
+    }
+
+    private static void execute(HttpUriRequest request, SsoContext ssoContext, String clientId) throws Exception {
+        // Get or create the HTTP client corresponding to the given SSO client:
+        CloseableHttpClient client;
+        synchronized (CLIENTS) {
+            client = CLIENTS.get(clientId);
+            if (client == null) {
+                client = createClient(ssoContext, clientId);
+                CLIENTS.put(clientId, client);
+            }
+        }
+
+        // Execute the request and discard completely the response:
+        try (CloseableHttpResponse response = client.execute(request)) {
+            EntityUtils.consumeQuietly(response.getEntity());
+        }
+    }
+
+    private static CloseableHttpClient createClient(SsoContext ssoContext, String clientId) throws Exception {
+        SsoLocalConfig config = ssoContext.getSsoLocalConfig();
+        ClientInfo clientInfo = ssoContext.getClienInfo(clientId);
+        return new HttpClientBuilder()
+            .setSslProtocol(clientInfo.getNotificationCallbackProtocol())
+            .setPoolSize(config.getInteger("SSO_CALLBACK_CLIENT_POOL_SIZE"))
+            .setReadTimeout(config.getInteger("SSO_CALLBACK_READ_TIMEOUT"))
+            .setConnectTimeout(config.getInteger("SSO_CALLBACK_CONNECT_TIMEOUT"))
+            .setTrustManagerAlgorithm(TrustManagerFactory.getDefaultAlgorithm())
+            .setTrustStore(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE"))
+            .setTrustStorePassword(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_PASSWORD"))
+            .setTrustStoreType(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_TYPE"))
+            .setVerifyChain(clientInfo.isNotificationCallbackVerifyChain())
+            .setVerifyHost(clientInfo.isNotificationCallbackVerifyHost())
+            .build();
     }
 
     /**
