@@ -13,9 +13,11 @@ import org.ovirt.engine.core.utils.RandomUtils;
 /** A test case for the {@link VdsHandler} class. */
 public class VdsHandlerTest {
 
+    private VdsHandler vdsHandler = new VdsHandler();
+
     @Before
     public void setUp() {
-        VdsHandler.init();
+        vdsHandler.init();
     }
 
     @Test
@@ -27,7 +29,7 @@ public class VdsHandlerTest {
         dest.setName(RandomUtils.instance().nextString(10));
 
         // When
-        boolean updateIsValid = VdsHandler.isUpdateValid(src, dest, VDSStatus.Up);
+        boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Up);
 
         // Then
         assertTrue("Update should be valid for different names", updateIsValid);
@@ -42,7 +44,7 @@ public class VdsHandlerTest {
         dest.setServerSslEnabled(false);
 
         // When
-        boolean updateIsValid = VdsHandler.isUpdateValid(src, dest, VDSStatus.Up);
+        boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Up);
 
         // Then
         assertFalse("Update should not be valid for different server SSL enabled states",
@@ -58,7 +60,7 @@ public class VdsHandlerTest {
         dest.setClusterId(Guid.newGuid());
 
         // When
-        boolean updateIsValid = VdsHandler.isUpdateValid(src, dest, VDSStatus.Up);
+        boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Up);
 
         // Then
         assertFalse("Update should not be valid for different cluster IDs on a running host",
@@ -76,7 +78,7 @@ public class VdsHandlerTest {
         dest.setSshPort(destSshPort);
 
         // When
-        boolean updateIsValid = VdsHandler.isUpdateValid(src, dest, VDSStatus.Down);
+        boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Down);
 
         // Then
         assertTrue("Update should be valid for different SSH ports in Down status",
@@ -92,7 +94,7 @@ public class VdsHandlerTest {
         dest.setName(RandomUtils.instance().nextString(10));
 
         // When
-        boolean updateIsValid = VdsHandler.isUpdateValid(src, dest, VDSStatus.Down);
+        boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Down);
 
         // Then
         assertTrue("Update should be valid for different names in down status",
@@ -108,7 +110,7 @@ public class VdsHandlerTest {
         dest.setServerSslEnabled(false);
 
         // When
-        boolean updateIsValid = VdsHandler.isUpdateValid(src, dest, VDSStatus.Down);
+        boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Down);
 
         // Then
         assertFalse("Update should not be valid for different server SSL enabled states",

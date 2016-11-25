@@ -23,13 +23,16 @@ public class UpdateHostValidator extends HostValidator {
     @Inject
     private ProviderDao providerDao;
 
+    @Inject
+    private VdsHandler vdsHandler;
+
     private Provider<?> provider;
 
     public static UpdateHostValidator createInstance(VDS oldHost, VDS updatedHost, boolean installHost) {
         return Injector.injectMembers(new UpdateHostValidator(oldHost, updatedHost, installHost));
     }
 
-    UpdateHostValidator(VDS oldHost, VDS updatedHost, boolean installHost) {
+    public UpdateHostValidator(VDS oldHost, VDS updatedHost, boolean installHost) {
         super(updatedHost);
         this.oldHost = oldHost;
         this.installHost = installHost;
@@ -46,7 +49,7 @@ public class UpdateHostValidator extends HostValidator {
     }
 
     protected boolean isUpdateValid() {
-        return VdsHandler.isUpdateValid(getHost().getStaticData(), oldHost.getStaticData(), oldHost.getStatus());
+        return vdsHandler.isUpdateValid(getHost().getStaticData(), oldHost.getStaticData(), oldHost.getStatus());
     }
 
     public ValidationResult updateHostAddressAllowed() {

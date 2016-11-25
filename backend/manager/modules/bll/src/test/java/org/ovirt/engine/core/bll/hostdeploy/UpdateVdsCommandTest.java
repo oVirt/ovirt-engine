@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.VdsHandler;
+import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -38,8 +39,19 @@ public class UpdateVdsCommandTest {
     private VdsDao vdsDaoMock;
 
     @Spy
+    private VdsHandler vdsHandler = new VdsHandler();
+
+    @Spy
     @InjectMocks
-    private UpdateVdsCommand<UpdateVdsActionParameters> commandMock = new UpdateVdsCommand<>(createParameters(), null);
+    private UpdateVdsCommand<UpdateVdsActionParameters> commandMock
+            = new UpdateVdsCommand<UpdateVdsActionParameters>(createParameters(), null) {
+        @Override
+        UpdateHostValidator getUpdateHostValidator() {
+            return new UpdateHostValidator(oldHost,
+                    getParameters().getvds(),
+                    getParameters().isInstallHost());
+        }
+    };
 
     private static VDS makeTestVds(Guid vdsId) {
         VDS newVdsData = new VDS();
@@ -77,11 +89,12 @@ public class UpdateVdsCommandTest {
         Guid vdsId = commandMock.getParameters().getVdsId();
         VDS vds = commandMock.getParameters().getvds();
         when(vdsDaoMock.get(vdsId)).thenReturn(vds);
+
         //now return the old vds data
         when(vdsDaoMock.getByName("BAR")).thenReturn(vds);
 
         when(commandMock.getDbFacade()).thenReturn(mock(DbFacade.class));
-        VdsHandler.init();
+        vdsHandler.init();
 
         assertFalse(commandMock.validate());
     }

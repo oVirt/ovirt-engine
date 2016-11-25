@@ -4,7 +4,11 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.EditableVdsField;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -20,20 +24,23 @@ import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VdsHandler extends BaseHandler {
+@Singleton
+public class VdsHandler extends BaseHandler implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(VdsHandler.class);
-    private static ObjectIdentityChecker updateVdsStatic;
+
+    private ObjectIdentityChecker updateVdsStatic;
 
     /**
-     * Initialize static list containers, for identity and permission check. The initialization should be executed
+     * Initialize list containers, for identity and permission check. The initialization should be executed
      * before calling ObjectIdentityChecker.
      *
-     * @see Backend#InitHandlers
+     * @see Backend#initHandlers
      */
-    public static void init() {
+    @PostConstruct
+    public void init() {
         Class<?>[] inspectedClasses = new Class<?>[] { VDS.class, VdsStatic.class, VdsDynamic.class };
-        updateVdsStatic =
-                new ObjectIdentityChecker(VdsHandler.class, Arrays.asList(inspectedClasses));
+        updateVdsStatic = new ObjectIdentityChecker(VdsHandler.class, Arrays.asList(inspectedClasses));
+        updateVdsStatic.setContainer(this);
 
         for (Pair<EditableVdsField, Field> pair : extractAnnotatedFields(EditableVdsField.class, inspectedClasses)) {
             List<VDSStatus> statusList = Arrays.asList(pair.getFirst().onStatuses());
@@ -47,16 +54,11 @@ public class VdsHandler extends BaseHandler {
         }
     }
 
-    public VdsHandler() {
-        updateVdsStatic.setContainer(this);
+    public boolean isUpdateValid(VdsStatic source, VdsStatic destination, VDSStatus status) {
+        return updateVdsStatic.isUpdateValid(source, destination, status);
     }
 
-    public static boolean isUpdateValid(VdsStatic source, VdsStatic distination, VDSStatus status) {
-
-        return updateVdsStatic.isUpdateValid(source, distination, status);
-    }
-
-    public static boolean isFieldsUpdated(VdsStatic source, VdsStatic destination, Iterable<String> list) {
+    public boolean isFieldsUpdated(VdsStatic source, VdsStatic destination, Iterable<String> list) {
         return updateVdsStatic.isFieldsUpdated(source, destination, list);
     }
 
