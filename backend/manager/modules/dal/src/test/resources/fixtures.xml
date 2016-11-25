@@ -6499,6 +6499,37 @@
         </row>
     </table>
 
+    <table name="vm_interface_filter_parameters">
+        <column>id</column>
+        <column>name</column>
+        <column>value</column>
+        <column>vm_interface_id</column>
+        <row>
+            <value>b2652c30-069c-4b42-a645-dde2e0c20f23</value>
+            <value>IP</value>
+            <value>10.0.0.1</value>
+            <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
+        </row>
+        <row>
+            <value>b2652c30-069c-4b42-a645-dde2e0c20f24</value>
+            <value>IP</value>
+            <value>10.0.0.2</value>
+            <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
+        </row>
+        <row>
+            <value>b2652c30-069c-4b42-a645-dde2e0c20f25</value>
+            <value>DSTPORTS</value>
+            <value>[ 80, 8080 ]</value>
+            <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
+        </row>
+        <row>
+            <value>b2652c30-069c-4b42-a645-dde2e0c20f26</value>
+            <value>IP</value>
+            <value>10.0.0.3</value>
+            <value>e2817b12-f873-4046-b0da-0098293c0000</value>
+        </row>
+    </table>
+
     <table name="vds_interface">
         <column>id</column>
         <column>name</column>

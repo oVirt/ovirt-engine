@@ -561,6 +561,17 @@ public class FixturesTool {
     public static final Guid TEMPLATE_NETWORK_INTERFACE = new Guid("e2817b12-f873-4046-b0da-0098293c0000");
 
     /**
+     * Predefined  VmNicFilterParameter with the following properties :
+     * <ul>
+     * <li>id: b2652c30-069c-4b42-a645-dde2e0c20f23</li>
+     * <li>name: IP</li>
+     * <li>value: 10.0.0.1<</li>
+     * <li>vm_interface_id: VM_NETWORK_INTERFACE</li>
+     * </ul>
+     */
+    public static final Guid VM_NETWORK_FILTER_PARAMETER = new Guid("b2652c30-069c-4b42-a645-dde2e0c20f23");
+
+    /**
      * Predefined VdsNetworkInterface with the following properties :
      * <ul>
      * <li>name: eth0</li>
@@ -665,6 +676,10 @@ public class FixturesTool {
     public static final int NUMBER_OF_VM_INTERFACE_VIEWS = 3;
 
     public static final int NUMBER_OF_VM_INTERFACES = 4;
+
+    public static final int NUMBER_OF_VM_NETWORK_FILTER_PARAMETERS = 4;
+
+    public static final int NUMBER_OF_VM_NETWORK_FILTER_PARAMETERS_OF_VM_NETWORK_INTERFACE = 3;
 
     public static final Guid NETWORK_ATTACHMENT = new Guid("fd81f1f1-785b-4579-ab75-1419ebb87051");
 
