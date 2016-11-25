@@ -40,7 +40,7 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
 
     @Override
     protected boolean validate() {
-        HostValidator hostValidator = new HostValidator(getVds());
+        HostValidator hostValidator = HostValidator.createInstance(getVds());
 
         return validate(hostValidator.hostExists()) && validate(hostValidator.isUp());
     }

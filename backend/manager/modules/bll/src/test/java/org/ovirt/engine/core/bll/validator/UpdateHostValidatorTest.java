@@ -4,22 +4,20 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 
-import javax.inject.Inject;
-
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -29,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -39,8 +36,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class UpdateHostValidatorTest {
 
     private static final int HOST_NAME_SIZE = 20;
-    @Mock
-    private DbFacade dbFacade;
 
     @Mock
     private VdsDao hostDao;
@@ -49,24 +44,17 @@ public class UpdateHostValidatorTest {
     private ProviderDao providerDao;
 
     @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule();
+    public MockConfigRule mockConfigRule = new MockConfigRule(
+            mockConfig(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE)
+    );
 
-    @Mock
-    private VDS host;
+    private VDS host = mock(VDS.class);
 
-    @Mock
-    private VDS oldHost;
+    private VDS oldHost = mock(VDS.class);
 
-    @Inject
-    private HostedEngineHelper hostedEngineHelper;
-
-    private UpdateHostValidator validator;
-
-    @Before
-    public void setup() {
-        mockConfigRule.mockConfigValue(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE);
-        validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
-    }
+    @Spy
+    @InjectMocks
+    private UpdateHostValidator validator = new UpdateHostValidator(oldHost, host, false);
 
     @Test
     public void hostExists() {
@@ -75,20 +63,19 @@ public class UpdateHostValidatorTest {
 
     @Test
     public void oldHostDoesNotExist() {
-        validator = new UpdateHostValidator(dbFacade, oldHost, null, false, hostedEngineHelper );
+        validator = new UpdateHostValidator(oldHost, null, false);
 
         assertThat(validator.hostExists(), failsWith(EngineMessage.VDS_INVALID_SERVER_ID));
     }
 
     @Test
     public void hostDoesNotExist() {
-        validator = new UpdateHostValidator(dbFacade, null, host, false, hostedEngineHelper);
+        validator = new UpdateHostValidator(null, host, false);
         assertThat(validator.hostExists(), failsWith(EngineMessage.VDS_INVALID_SERVER_ID));
     }
 
     @Test
     public void hostStatusValid() {
-        validator = spy(new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper));
         doReturn(true).when(validator).isUpdateValid();
 
         assertThat(validator.hostStatusValid(), isValid());
@@ -96,7 +83,6 @@ public class UpdateHostValidatorTest {
 
     @Test
     public void hostStatusInvalid() {
-        validator = spy(new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper));
         doReturn(false).when(validator).isUpdateValid();
 
         assertThat(validator.hostStatusValid(), failsWith(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE));
@@ -135,8 +121,6 @@ public class UpdateHostValidatorTest {
     public void nameNotUsed() {
         when(oldHost.getName()).thenReturn(generateRandomName());
         when(host.getName()).thenReturn(generateRandomName());
-        when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
 
         assertThat(validator.nameNotUsed(), isValid());
     }
@@ -146,8 +130,6 @@ public class UpdateHostValidatorTest {
         when(oldHost.getName()).thenReturn(generateRandomName());
         when(host.getName()).thenReturn(generateRandomName());
         when(hostDao.getByName(any(String.class))).thenReturn(mock(VDS.class));
-        when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
 
         assertThat(validator.nameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
@@ -166,8 +148,6 @@ public class UpdateHostValidatorTest {
         when(oldHost.getHostName()).thenReturn(generateRandomName());
         when(host.getHostName()).thenReturn(generateRandomName());
         when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.emptyList());
-        when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
 
         assertThat(validator.hostNameNotUsed(), isValid());
     }
@@ -177,16 +157,12 @@ public class UpdateHostValidatorTest {
         when(oldHost.getHostName()).thenReturn(generateRandomName());
         when(host.getHostName()).thenReturn(generateRandomName());
         when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.singletonList(mock(VDS.class)));
-        when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
 
         assertThat(validator.hostNameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST));
     }
 
     @Test
     public void anyStatusValidWhenNoInstallationRequired() {
-        validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
-
         assertThat(validator.statusSupportedForHostInstallation(), isValid());
     }
 
@@ -287,8 +263,6 @@ public class UpdateHostValidatorTest {
     public void hostProviderExists() {
         when(host.getHostProviderId()).thenReturn(Guid.newGuid());
         when(providerDao.get(any(Guid.class))).thenReturn(mock(Provider.class));
-        when(dbFacade.getProviderDao()).thenReturn(providerDao);
-        validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
 
         assertThat(validator.hostProviderExists(), isValid());
     }
@@ -296,8 +270,6 @@ public class UpdateHostValidatorTest {
     @Test
     public void hostProviderDoesNotExist() {
         when(host.getHostProviderId()).thenReturn(Guid.newGuid());
-        when(dbFacade.getProviderDao()).thenReturn(providerDao);
-        validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
 
         assertThat(validator.hostProviderExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST));
     }
@@ -314,8 +286,6 @@ public class UpdateHostValidatorTest {
         Provider provider = mock(Provider.class);
         when(provider.getType()).thenReturn(ProviderType.FOREMAN);
         when(providerDao.get(any(Guid.class))).thenReturn(provider);
-        when(dbFacade.getProviderDao()).thenReturn(providerDao);
-        validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
 
         assertThat(validator.hostProviderTypeMatches(), isValid());
     }
@@ -327,8 +297,6 @@ public class UpdateHostValidatorTest {
         Provider provider = mock(Provider.class);
         when(provider.getType()).thenReturn(ProviderType.OPENSTACK_IMAGE);
         when(providerDao.get(any(Guid.class))).thenReturn(provider);
-        when(dbFacade.getProviderDao()).thenReturn(providerDao);
-        validator = new UpdateHostValidator(dbFacade, oldHost, host, false, hostedEngineHelper);
 
         assertThat(validator.hostProviderTypeMatches(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH));
@@ -339,6 +307,6 @@ public class UpdateHostValidatorTest {
     }
 
     private UpdateHostValidator createValidatorForHostInstallation() {
-        return new UpdateHostValidator(dbFacade, oldHost, host, true, hostedEngineHelper);
+        return new UpdateHostValidator(oldHost, host, true);
     }
 }

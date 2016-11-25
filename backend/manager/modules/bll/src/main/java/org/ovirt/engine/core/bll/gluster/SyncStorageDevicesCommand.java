@@ -32,7 +32,7 @@ public class SyncStorageDevicesCommand<T extends SyncGlusterStorageDevicesParame
         //Host status will not checked in case of force. Storage devices will be synced as part of host install/activation
         //and host status will not be up during host activation. So BLL will be called with force in this case.
         if(!getParameters().isForceAction()){
-            HostValidator validator = new HostValidator(getVds());
+            HostValidator validator = HostValidator.createInstance(getVds());
             return validate(validator.isUp());
         }
 

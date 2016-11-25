@@ -5,19 +5,20 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
@@ -34,7 +35,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -46,8 +46,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class HostValidatorTest {
 
     private static final int HOST_NAME_SIZE = 20;
-    @Mock
-    private DbFacade dbFacade;
 
     @Mock
     private VdsStaticDao hostStaticDao;
@@ -59,7 +57,10 @@ public class HostValidatorTest {
     private StoragePoolDao storagePoolDao;
 
     @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule();
+    public MockConfigRule mockConfigRule = new MockConfigRule(
+            mockConfig(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE),
+            mockConfig(ConfigValues.EncryptHostCommunication, Boolean.TRUE)
+    );
 
     @Mock
     private VDS host;
@@ -70,27 +71,17 @@ public class HostValidatorTest {
     @Mock
     private ClusterDao clusterDao;
 
-    private HostValidator validator;
+    @Spy
+    @InjectMocks
+    private HostValidator validator = new HostValidator(host);
 
-    private HostValidator mockHostForActivation(VDSStatus status) {
-        VDS host = mock(VDS.class);
+    private void mockHostForActivation(VDSStatus status) {
         when(host.getStatus()).thenReturn(status);
-        return new HostValidator(dbFacade, host, hostedEngineHelper);
     }
 
-    private HostValidator mockHostForUniqueId(String value) {
+    private void mockHostForUniqueId(String value) {
         mockConfigRule.mockConfigValue(ConfigValues.InstallVds, Boolean.TRUE);
-        VDS host = mock(VDS.class);
         when(host.getUniqueId()).thenReturn(value);
-        return new HostValidator(dbFacade, host, hostedEngineHelper);
-    }
-
-    @Before
-    public void setup() {
-        mockConfigRule.mockConfigValue(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE);
-        mockConfigRule.mockConfigValue(ConfigValues.EncryptHostCommunication, Boolean.TRUE);
-        when(dbFacade.getClusterDao()).thenReturn(clusterDao);
-        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
     }
 
     @Test
@@ -129,17 +120,12 @@ public class HostValidatorTest {
 
     @Test
     public void nameNotUsed() {
-        when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
-
         assertThat(validator.nameNotUsed(), isValid());
     }
 
     @Test
     public void nameIsUsed() {
         when(hostDao.getByName(any(String.class))).thenReturn(mock(VDS.class));
-        when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.nameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
@@ -147,8 +133,6 @@ public class HostValidatorTest {
     @Test
     public void hostNameNotUsed() {
         when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.emptyList());
-        when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.hostNameNotUsed(), isValid());
     }
@@ -156,8 +140,6 @@ public class HostValidatorTest {
     @Test
     public void hostNameIsUsed() {
         when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.singletonList(mock(VDS.class)));
-        when(dbFacade.getVdsDao()).thenReturn(hostDao);
-        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.hostNameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST));
     }
@@ -187,9 +169,6 @@ public class HostValidatorTest {
 
     @Test
     public void hostAttachedToLocalStorageWithoutDataCenter() {
-        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
-        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
-
         assertThat(validator.validateSingleHostAttachedToLocalStorage(), isValid());
     }
 
@@ -198,10 +177,7 @@ public class HostValidatorTest {
         StoragePool dataCenter = mock(StoragePool.class);
         when(dataCenter.isLocal()).thenReturn(true);
         when(storagePoolDao.getForCluster(any(Guid.class))).thenReturn(dataCenter);
-        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
         when(hostStaticDao.getAllForCluster(any(Guid.class))).thenReturn(Collections.emptyList());
-        when(dbFacade.getVdsStaticDao()).thenReturn(hostStaticDao);
-        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.validateSingleHostAttachedToLocalStorage(), isValid());
     }
@@ -211,11 +187,8 @@ public class HostValidatorTest {
         StoragePool dataCenter = mock(StoragePool.class);
         when(dataCenter.isLocal()).thenReturn(true);
         when(storagePoolDao.getForCluster(any(Guid.class))).thenReturn(dataCenter);
-        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
         when(hostStaticDao.getAllForCluster(any(Guid.class)))
                 .thenReturn(Collections.singletonList(mock(VdsStatic.class)));
-        when(dbFacade.getVdsStaticDao()).thenReturn(hostStaticDao);
-        validator = new HostValidator(dbFacade, host, hostedEngineHelper);
 
         assertThat(validator.validateSingleHostAttachedToLocalStorage(),
                 failsWith(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE));
@@ -223,7 +196,6 @@ public class HostValidatorTest {
 
     @Test
     public void securityKeysExists() {
-        validator = spy(new HostValidator(dbFacade, host, hostedEngineHelper));
         doReturn(true).when(validator).haveSecurityKey();
 
         assertThat(validator.securityKeysExists(), isValid());
@@ -231,7 +203,6 @@ public class HostValidatorTest {
 
     @Test
     public void securityKeysDoesNotExist() {
-        validator = spy(new HostValidator(dbFacade, host, hostedEngineHelper));
         doReturn(false).when(validator).haveSecurityKey();
 
         assertThat(validator.securityKeysExists(),
@@ -291,49 +262,49 @@ public class HostValidatorTest {
 
     @Test
     public void testValidateStatusUpForActivation() {
-        validator = mockHostForActivation(VDSStatus.Up);
+        mockHostForActivation(VDSStatus.Up);
         assertThat(validator.validateStatusForActivation(), failsWith( EngineMessage.VDS_ALREADY_UP));
     }
 
     @Test
     public void testValidateStatusNonResponsiveForActivation() {
-        validator = mockHostForActivation(VDSStatus.NonResponsive);
+        mockHostForActivation(VDSStatus.NonResponsive);
         assertThat(validator.validateStatusForActivation(), failsWith( EngineMessage.VDS_NON_RESPONSIVE));
     }
 
     @Test
     public void testValidateNoUniqueId() {
-        validator = mockHostForUniqueId(StringUtils.EMPTY);
+        mockHostForUniqueId(StringUtils.EMPTY);
         assertThat(validator.validateUniqueId(), failsWith( EngineMessage.VDS_NO_UUID));
     }
 
     @Test
     public void testValidateUniqueId() {
-        validator = mockHostForUniqueId(Guid.newGuid().toString());
+        mockHostForUniqueId(Guid.newGuid().toString());
         assertThat(validator.validateUniqueId(), isValid());
     }
 
     @Test
     public void testIsNotUp() {
-        validator = mockHostForActivation(VDSStatus.Down);
+        mockHostForActivation(VDSStatus.Down);
         assertThat(validator.isUp(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL, "$hostStatus Up"));
     }
 
     @Test
     public void testIsUp() {
-        validator = mockHostForActivation(VDSStatus.Up);
+        mockHostForActivation(VDSStatus.Up);
         assertTrue(validator.isUp().isValid());
     }
 
     @Test
     public void testValidStatusForEnrollCertificate() {
-        validator = mockHostForActivation(VDSStatus.Maintenance);
+        mockHostForActivation(VDSStatus.Maintenance);
         assertThat(validator.validateStatusForEnrollCertificate(), isValid());
     }
 
     @Test
     public void testInvalidStatusForEnrollCertificate() {
-        validator = mockHostForActivation(VDSStatus.Up);
+        mockHostForActivation(VDSStatus.Up);
         assertThat(validator.validateStatusForEnrollCertificate(),
                 failsWith(EngineMessage.CANNOT_ENROLL_CERTIFICATE_HOST_STATUS_ILLEGAL));
     }

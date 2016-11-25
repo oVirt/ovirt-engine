@@ -58,7 +58,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
         }
 
-        HostValidator validator = new HostValidator(getVds());
+        HostValidator validator = HostValidator.createInstance(getVds());
         if (!validate(validator.isUp())) {
             return false;
         }

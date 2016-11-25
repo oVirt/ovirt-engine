@@ -92,7 +92,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
     @Override
     protected boolean validate() {
-        HostValidator validator = new HostValidator(getVds());
+        HostValidator validator = HostValidator.createInstance(getVds());
         return validate(validator.hostExists());
     }
 

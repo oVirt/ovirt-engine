@@ -80,12 +80,10 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Override
     protected boolean validate() {
         oldHost = vdsDao.get(getVdsId());
-        UpdateHostValidator validator =
-                new UpdateHostValidator(getDbFacade(),
-                        oldHost,
-                        getParameters().getvds(),
-                        getParameters().isInstallHost(),
-                        hostedEngineHelper);
+        UpdateHostValidator validator = UpdateHostValidator.createInstance(
+                oldHost,
+                getParameters().getvds(),
+                getParameters().isInstallHost());
 
         return validate(validator.hostExists())
                 && validate(validator.hostStatusValid())

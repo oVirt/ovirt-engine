@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
@@ -16,40 +18,45 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 
 public class HostValidator {
 
+    @Inject
     private VdsDao hostDao;
+
+    @Inject
     private StoragePoolDao storagePoolDao;
+
+    @Inject
     private VdsStaticDao hostStaticDao;
-    private VDS host;
+
+    @Inject
     private HostedEngineHelper hostedEngineHelper;
+
+    @Inject
     private ClusterDao clusterDao;
+
+    private VDS host;
+
+    public static HostValidator createInstance(VDS host) {
+        return Injector.injectMembers(new HostValidator(host));
+    }
+
+    protected HostValidator(VDS host) {
+        this.host = host;
+    }
 
     private ValidationResult validateStatus(VDSStatus hostStatus) {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
                 ReplacementUtils.createSetVariableString("hostStatus", hostStatus.name()))
                 .unless(hostStatus == host.getStatus());
-    }
-
-    public HostValidator(DbFacade dbFacade, VDS host, HostedEngineHelper hostedEngineHelper) {
-        this.hostDao = dbFacade.getVdsDao();
-        this.storagePoolDao = dbFacade.getStoragePoolDao();
-        this.hostStaticDao = dbFacade.getVdsStaticDao();
-        this.host = host;
-        this.hostedEngineHelper = hostedEngineHelper;
-        this.clusterDao = dbFacade.getClusterDao();
-    }
-
-    public HostValidator(VDS host) {
-        this.host = host;
     }
 
     public ValidationResult hostExists() {

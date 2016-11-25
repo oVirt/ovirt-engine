@@ -19,7 +19,7 @@ public class HostEnrollCertificateCommand extends VdsCommand<VdsActionParameters
 
     @Override
     public boolean validate() {
-        HostValidator hostValidator = new HostValidator(getVds());
+        HostValidator hostValidator = HostValidator.createInstance(getVds());
         return validate(hostValidator.hostExists())
                 && validate(hostValidator.validateStatusForEnrollCertificate());
     }

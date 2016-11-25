@@ -87,7 +87,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
     @Override
     protected boolean validate() {
-        HostValidator validator = new HostValidator(getVds());
+        HostValidator validator = HostValidator.createInstance(getVds());
         return validate(validator.hostExists()) &&
                 validate(validator.validateStatusForActivation()) &&
                 validate(validator.validateUniqueId());

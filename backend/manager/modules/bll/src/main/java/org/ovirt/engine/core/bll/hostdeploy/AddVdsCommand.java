@@ -341,7 +341,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     protected HostValidator getHostValidator() {
-        return new HostValidator(getDbFacade(), getParameters().getvds(), hostedEngineHelper);
+        return HostValidator.createInstance(getParameters().getvds());
     }
 
     private boolean clusterHasServers() {

@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll.validator;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsHandler;
-import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -11,22 +12,27 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class UpdateHostValidator extends HostValidator {
 
     private final VDS oldHost;
     private final boolean installHost;
-    private final ProviderDao providerDao;
+
+    @Inject
+    private ProviderDao providerDao;
+
     private Provider<?> provider;
 
-    public UpdateHostValidator(DbFacade dbFacade,
-            VDS oldHost, VDS updatedHost, boolean installHost, HostedEngineHelper hostedEngineHelper) {
-        super(dbFacade, updatedHost, hostedEngineHelper);
+    public static UpdateHostValidator createInstance(VDS oldHost, VDS updatedHost, boolean installHost) {
+        return Injector.injectMembers(new UpdateHostValidator(oldHost, updatedHost, installHost));
+    }
+
+    UpdateHostValidator(VDS oldHost, VDS updatedHost, boolean installHost) {
+        super(updatedHost);
         this.oldHost = oldHost;
         this.installHost = installHost;
-        providerDao = dbFacade.getProviderDao();
     }
 
     @Override
