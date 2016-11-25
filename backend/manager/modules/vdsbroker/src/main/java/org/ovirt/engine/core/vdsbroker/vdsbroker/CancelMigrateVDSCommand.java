@@ -1,11 +1,17 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class CancelMigrateVDSCommand<P extends CancelMigrationVDSParameters> extends VdsBrokerCommand<P> {
+
+    @Inject
+    private ResourceManager resourceManager;
+
     public CancelMigrateVDSCommand(P parameters) {
         super(parameters);
     }
@@ -16,7 +22,7 @@ public class CancelMigrateVDSCommand<P extends CancelMigrationVDSParameters> ext
         status = getBroker().migrateCancel(vmId.toString());
         proceedProxyReturnValue();
         if (!getParameters().isRerunAfterCancel()) {
-            ResourceManager.getInstance().removeAsyncRunningVm(vmId);
+            resourceManager.removeAsyncRunningVm(vmId);
         }
     }
 

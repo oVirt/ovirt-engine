@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
@@ -15,6 +17,10 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 
 public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends VdsBrokerCommand<P> {
+
+    @Inject
+    private ResourceManager resourceManager;
+
     public SpmStartVDSCommand(P parameters) {
         super(parameters);
         vdsId = parameters.getVdsId();
@@ -38,10 +44,8 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
         do {
             // TODO: make configurable
             ThreadUtils.sleep(1000L);
-            taskStatus = (AsyncTaskStatus) ResourceManager
-                    .getInstance()
-                    .runVdsCommand(VDSCommandType.HSMGetTaskStatus,
-                            new HSMTaskGuidBaseVDSCommandParameters(vdsId, taskId)).getReturnValue();
+            taskStatus = (AsyncTaskStatus) resourceManager.runVdsCommand(VDSCommandType.HSMGetTaskStatus,
+                    new HSMTaskGuidBaseVDSCommandParameters(vdsId, taskId)).getReturnValue();
             log.debug("spmStart polling - task status: '{}'", taskStatus.getStatus());
         } while (taskStatus.getStatus() != AsyncTaskStatusEnum.finished
                 && taskStatus.getStatus() != AsyncTaskStatusEnum.unknown);
@@ -52,10 +56,8 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
             log.error("Start SPM Task failed - result: '{}', message: {}", taskStatus.getResult(),
                     taskStatus.getMessage());
         }
-        SpmStatusResult spmStatus = (SpmStatusResult) ResourceManager
-                .getInstance()
-                .runVdsCommand(VDSCommandType.SpmStatus,
-                        new SpmStatusVDSCommandParameters(vdsId, getParameters().getStoragePoolId()))
+        SpmStatusResult spmStatus = (SpmStatusResult) resourceManager.runVdsCommand(VDSCommandType.SpmStatus,
+                new SpmStatusVDSCommandParameters(vdsId, getParameters().getStoragePoolId()))
                 .getReturnValue();
         if (spmStatus != null) {
             log.info("spmStart polling ended, spm status: {}", spmStatus.getSpmStatus());
@@ -63,7 +65,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
             log.error("spmStart polling ended, failed to get the spm status");
         }
         try {
-            ResourceManager.getInstance().runVdsCommand(VDSCommandType.HSMClearTask,
+            resourceManager.runVdsCommand(VDSCommandType.HSMClearTask,
                     new HSMTaskGuidBaseVDSCommandParameters(vdsId, taskId));
         } catch (Exception e) {
             log.error("Could not clear spmStart task '{}', continuing with SPM selection: {}", taskId, e.getMessage());

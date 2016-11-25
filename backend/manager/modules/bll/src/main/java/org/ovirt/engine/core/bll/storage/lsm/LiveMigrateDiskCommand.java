@@ -56,6 +56,9 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     @Inject
     private LiveStorageMigrationHelper liveStorageMigrationHelper;
 
+    @Inject
+    private ResourceManager resourceManager;
+
     public LiveMigrateDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -196,7 +199,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 getParameters().getImageGroupID(),
                 getParameters().getDestinationImageId());
 
-        VDSReturnValue ret = ResourceManager.getInstance().runVdsCommand(
+        VDSReturnValue ret = resourceManager.runVdsCommand(
                 VDSCommandType.VmReplicateDiskFinish, migrationStartParams);
 
         if (!ret.getSucceeded()) {
@@ -292,8 +295,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 getParameters().getTargetStorageDomainId(),
                 getParameters().getImageGroupID(),
                 getParameters().getDestinationImageId());
-        VDSReturnValue ret =
-                ResourceManager.getInstance().runVdsCommand(VDSCommandType.VmReplicateDiskStart, migrationStartParams);
+        VDSReturnValue ret = resourceManager.runVdsCommand(VDSCommandType.VmReplicateDiskStart, migrationStartParams);
 
         if (!ret.getSucceeded()) {
             log.error("Failed VmReplicateDiskStart (Disk '{}' , VM '{}')",
