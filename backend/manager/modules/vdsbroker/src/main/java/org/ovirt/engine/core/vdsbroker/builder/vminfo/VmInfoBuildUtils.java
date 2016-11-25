@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
@@ -44,6 +46,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.di.Injector;
@@ -67,6 +70,7 @@ public class VmInfoBuildUtils {
     private final StorageQosDao storageQosDao;
     private final VmDeviceDao vmDeviceDao;
     private final VnicProfileDao vnicProfileDao;
+    private final VmNicFilterParameterDao vmNicFilterParameterDao;
 
     @Inject
     VmInfoBuildUtils(
@@ -75,13 +79,15 @@ public class VmInfoBuildUtils {
             NetworkQoSDao networkQosDao,
             StorageQosDao storageQosDao,
             VmDeviceDao vmDeviceDao,
-            VnicProfileDao vnicProfileDao) {
+            VnicProfileDao vnicProfileDao,
+            VmNicFilterParameterDao vmNicFilterParameterDao) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
         this.storageQosDao = Objects.requireNonNull(storageQosDao);
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
         this.vnicProfileDao = Objects.requireNonNull(vnicProfileDao);
+        this.vmNicFilterParameterDao = Objects.requireNonNull(vmNicFilterParameterDao);
     }
 
     OsRepository getOsRepository() {
@@ -290,7 +296,21 @@ public class VmInfoBuildUtils {
         if (networkFilter != null) {
             final String networkFilterName = networkFilter.getName();
             struct.put(VdsProperties.NW_FILTER, networkFilterName);
+            final List<VmNicFilterParameter> vmNicFilterParameters =
+                    vmNicFilterParameterDao.getAllForVmNic(vmNic.getId());
+            struct.put(VdsProperties.NETWORK_FILTER_PARAMETERS, mapVmNicFilterParameter(vmNicFilterParameters));
         }
+    }
+
+    private List<Map<String, Object>> mapVmNicFilterParameter(List<VmNicFilterParameter> vmNicFilterParameters) {
+        return vmNicFilterParameters.stream().map(this::mapVmNicFilterParameter).collect(Collectors.toList());
+    }
+
+    private Map<String, Object> mapVmNicFilterParameter(VmNicFilterParameter nicFilterParameter) {
+        Map<String, Object> parameter = new HashMap<>();
+        parameter.put("name", nicFilterParameter.getName());
+        parameter.put("value", nicFilterParameter.getValue());
+        return parameter;
     }
 
     private NetworkFilter fetchVnicProfileNetworkFilter(VmNic vmNic) {

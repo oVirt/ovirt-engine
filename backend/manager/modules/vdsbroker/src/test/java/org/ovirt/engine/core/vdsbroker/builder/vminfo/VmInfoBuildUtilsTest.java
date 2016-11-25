@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils.MB_TO_BYTES;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -14,6 +18,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,12 +29,24 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmInfoBuildUtilsTest {
+
+    private static final Guid VNIC_PROFILE_ID = Guid.newGuid();
+    private static final Guid VM_NIC_ID = Guid.newGuid();
+    private static final Guid NETWORK_FILTER_ID = Guid.newGuid();
+    private static final String NETWORK_FILTER_NAME = "clean-traffic";
+    private static final Guid NETWORK_FILTER_PARAMETER_0_ID = Guid.newGuid();
+    private static final Guid NETWORK_FILTER_PARAMETER_1_ID = Guid.newGuid();
+    private static final String NETWORK_FILTER_PARAMETER_0_NAME = "IP";
+    private static final String NETWORK_FILTER_PARAMETER_0_VALUE = "10.0.0.1";
+    private static final String NETWORK_FILTER_PARAMETER_1_NAME = "IP";
+    private static final String NETWORK_FILTER_PARAMETER_1_VALUE = "10.0.0.2";
 
     @Mock
     private NetworkDao networkDao;
@@ -40,6 +60,8 @@ public class VmInfoBuildUtilsTest {
     private VmDeviceDao vmDeviceDao;
     @Mock
     private VnicProfileDao vnicProfileDao;
+    @Mock
+    private VmNicFilterParameterDao vmNicFilterParameterDao;
 
     @InjectMocks
     private VmInfoBuildUtils underTest;
@@ -58,6 +80,33 @@ public class VmInfoBuildUtilsTest {
         qos.setId(Guid.newGuid());
 
         vmDevice = new VmDevice();
+
+        VnicProfile vnicProfile = new VnicProfile();
+        vnicProfile.setNetworkFilterId(NETWORK_FILTER_ID);
+        when(vnicProfileDao.get(VNIC_PROFILE_ID)).thenReturn(vnicProfile);
+
+        NetworkFilter networkFilter = new NetworkFilter();
+        networkFilter.setName(NETWORK_FILTER_NAME);
+        when(networkFilterDao.getNetworkFilterById(NETWORK_FILTER_ID)).thenReturn(networkFilter);
+
+        when(vmNicFilterParameterDao.getAllForVmNic(VM_NIC_ID)).thenReturn(createVmNicFilterParameters());
+    }
+
+    List<VmNicFilterParameter> createVmNicFilterParameters() {
+        List<VmNicFilterParameter> vmNicFilterParameters = new ArrayList();
+        vmNicFilterParameters.add(new VmNicFilterParameter(
+                NETWORK_FILTER_PARAMETER_0_ID,
+                VM_NIC_ID,
+                NETWORK_FILTER_PARAMETER_0_NAME,
+                NETWORK_FILTER_PARAMETER_0_VALUE
+        ));
+        vmNicFilterParameters.add(new VmNicFilterParameter(
+                NETWORK_FILTER_PARAMETER_1_ID,
+                VM_NIC_ID,
+                NETWORK_FILTER_PARAMETER_1_NAME,
+                NETWORK_FILTER_PARAMETER_1_VALUE
+        ));
+        return vmNicFilterParameters;
     }
 
     void assertIoTune(Map<String, Long> ioTune,
@@ -99,6 +148,28 @@ public class VmInfoBuildUtilsTest {
     @SuppressWarnings("unchecked")
     private Map<String, Long> getIoTune(VmDevice vmDevice) {
         return (Map<String, Long>) vmDevice.getSpecParams().get(VdsProperties.Iotune);
+    }
+
+    @Test
+    public void testAddNetworkFiltersToNic() {
+        Map<String, Object> struct = new HashMap<>();
+        VmNic vmNic = new VmNic();
+        vmNic.setVnicProfileId(VNIC_PROFILE_ID);
+        vmNic.setId(VM_NIC_ID);
+
+        underTest.addNetworkFiltersToNic(struct, vmNic);
+        List<Map<String, Object>> parametersList =
+                (List<Map<String, Object>>) struct.get(VdsProperties.NETWORK_FILTER_PARAMETERS);
+
+        assertNotNull(struct.get(VdsProperties.NW_FILTER));
+        assertEquals(struct.get(VdsProperties.NW_FILTER), NETWORK_FILTER_NAME);
+        assertNotNull(parametersList);
+
+        assertEquals(2, parametersList.size());
+        assertEquals(NETWORK_FILTER_PARAMETER_0_NAME, parametersList.get(0).get("name"));
+        assertEquals(NETWORK_FILTER_PARAMETER_0_VALUE, parametersList.get(0).get("value"));
+        assertEquals(NETWORK_FILTER_PARAMETER_1_NAME, parametersList.get(1).get("name"));
+        assertEquals(NETWORK_FILTER_PARAMETER_1_VALUE, parametersList.get(1).get("value"));
     }
 
 }

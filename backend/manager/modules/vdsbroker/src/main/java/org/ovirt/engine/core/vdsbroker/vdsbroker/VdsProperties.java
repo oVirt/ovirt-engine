@@ -123,6 +123,7 @@ public final class VdsProperties {
     public static final String PORT_MIRRORING = "portMirroring";
     public static final String BRIDGE = "bridge";
     public static final String NW_FILTER = "filter";
+    public static final String NETWORK_FILTER_PARAMETERS = "filterParameters";
     public static final String MAC_ADDR = "macAddr";
     public static final String NETWORK_CUSTOM_PROPERTIES = "custom";
     public static final String BOND_XMIT_POLICY = "xmit_hash_policy";
