@@ -34,12 +34,14 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -383,14 +385,18 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     protected ValidationResult macAvailable() {
+        VmNic nic = getParameters().getNic();
+
         MacPool macPool = getMacPool();
         Boolean allowDupMacs = macPool.isDuplicateMacAddressesAllowed();
-        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(macPool);
-        if (allowDupMacs || !vmInterfaceManager.existsPluggedInterfaceWithSameMac(getParameters().getNic())) {
-            return ValidationResult.VALID;
-        } else {
-            return new ValidationResult(EngineMessage.NETWORK_MAC_ADDRESS_IN_USE);
-        }
+
+        boolean cannotUseThisMac = !allowDupMacs
+                && new VmInterfaceManager(macPool).existsPluggedInterfaceWithSameMac(nic);
+
+        EngineMessage failMessage = EngineMessage.NETWORK_MAC_ADDRESS_IN_USE;
+        return ValidationResult
+                .failWith(failMessage, ReplacementUtils.getVariableAssignmentString(failMessage, nic.getMacAddress()))
+                .when(cannotUseThisMac);
     }
 
     protected boolean checkSriovHotPlugSupported() {
