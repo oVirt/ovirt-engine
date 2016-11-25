@@ -16,6 +16,9 @@ public class GetVmTemplatesByImageGuidQuery<P extends IdQueryParameters> extends
     @Inject
     private VmTemplateDao vmTemplateDao;
 
+    @Inject
+    private VmTemplateHandler vmTemplateHandler;
+
     public GetVmTemplatesByImageGuidQuery(P parameters) {
         super(parameters);
     }
@@ -31,6 +34,6 @@ public class GetVmTemplatesByImageGuidQuery<P extends IdQueryParameters> extends
     }
 
     protected void updateDisksFromDb(VmTemplate t) {
-        VmTemplateHandler.updateDisksFromDb(t);
+        vmTemplateHandler.updateDisksFromDb(t);
     }
 }

@@ -168,7 +168,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         BaseConditionFieldAutoCompleter.tagsHandler = tagsDirector;
         serviceLoader.load(VmHandler.class);
         serviceLoader.load(VdsHandler.class);
-        VmTemplateHandler.init();
+        serviceLoader.load(VmTemplateHandler.class);
         log.info("Completed initializing handlers");
     }
 

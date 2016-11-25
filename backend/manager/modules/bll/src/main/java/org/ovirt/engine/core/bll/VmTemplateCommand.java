@@ -23,6 +23,9 @@ public abstract class VmTemplateCommand<T extends VmTemplateParameters> extends 
     @Inject
     protected VmHandler vmHandler;
 
+    @Inject
+    protected VmTemplateHandler vmTemplateHandler;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */

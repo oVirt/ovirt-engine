@@ -14,6 +14,9 @@ public class GetLatestTemplateInChainQuery<P extends IdQueryParameters> extends 
     @Inject
     private VmTemplateDao vmTemplateDao;
 
+    @Inject
+    private VmTemplateHandler vmTemplateHandler;
+
     public GetLatestTemplateInChainQuery(P parameters) {
         super(parameters);
     }
@@ -23,7 +26,7 @@ public class GetLatestTemplateInChainQuery<P extends IdQueryParameters> extends 
         VmTemplate vmt;
         vmt = vmTemplateDao.getTemplateWithLatestVersionInChain(getParameters().getId());
         if (vmt != null) {
-            VmTemplateHandler.updateDisksFromDb(vmt);
+            vmTemplateHandler.updateDisksFromDb(vmt);
             vmHandler.updateVmInitFromDB(vmt, true);
         }
         getQueryReturnValue().setReturnValue(vmt);

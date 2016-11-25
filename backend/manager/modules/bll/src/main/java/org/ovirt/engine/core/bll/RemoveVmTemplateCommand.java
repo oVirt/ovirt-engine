@@ -138,7 +138,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
 
         // check template images for selected domains
         for (Guid domainId : getParameters().getStorageDomainsList()) {
-            if (!validate(VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(),
+            if (!validate(vmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(),
                     domainId,
                     getParameters().isCheckDisksExists(),
                     true,
@@ -263,7 +263,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
         final List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(templateImages);
         final List<DiskImage> diskImages = DisksFilter.filterImageDisks(templateImages, ONLY_ACTIVE);
         // Set VM to lock status immediately, for reducing race condition.
-        VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
+        vmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
 
         if (!diskImages.isEmpty() || !cinderDisks.isEmpty()) {
             TransactionSupport.executeInNewTransaction(() -> {

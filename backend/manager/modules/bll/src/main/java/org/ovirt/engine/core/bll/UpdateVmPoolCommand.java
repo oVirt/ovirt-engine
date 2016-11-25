@@ -123,7 +123,7 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
     private void updatePoolVms(List<VM> vmsInPool) {
         boolean isUpdatedPoolLatest = getParameters().getVmStaticData().isUseLatestVersion(); // new latest value
 
-        VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
+        vmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
                 getCompensationContext());
         for (VM vm : vmsInPool) {
             VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
@@ -140,7 +140,7 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
             getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
             setSucceeded(getSucceeded() && result.getSucceeded());
         }
-        VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
+        vmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
     }
 
     private boolean isUpdateVmRequired(List<VM> vmsInPool) {

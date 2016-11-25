@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.network.template;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -58,7 +57,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             return false;
         }
 
-        VmTemplateHandler.updateDisksFromDb(getVmTemplate());
+        vmTemplateHandler.updateDisksFromDb(getVmTemplate());
 
         // not relevant for instance types - will be checked when a VM will be created out of it
         if (getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {

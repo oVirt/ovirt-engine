@@ -17,6 +17,9 @@ public class GetVmTemplatesFromStorageDomainQuery<P extends GetVmTemplatesFromSt
     @Inject
     private VmTemplateDao vmTemplateDao;
 
+    @Inject
+    private VmTemplateHandler vmTemplateHandler;
+
     public GetVmTemplatesFromStorageDomainQuery(P parameters) {
         super(parameters);
     }
@@ -29,7 +32,7 @@ public class GetVmTemplatesFromStorageDomainQuery<P extends GetVmTemplatesFromSt
                                 getParameters().isFiltered());
         if (getParameters().isWithDisks()) {
             for (VmTemplate template : returnValue) {
-                VmTemplateHandler.updateDisksFromDb(template);
+                vmTemplateHandler.updateDisksFromDb(template);
                 Collections.sort(template.getDiskList(), new DiskByDiskAliasComparator());
 
             }

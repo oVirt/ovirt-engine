@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -497,7 +496,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Override
     protected void endMoveOrCopyCommand() {
-        VmTemplateHandler.unlockVmTemplate(getVmTemplateId());
+        vmTemplateHandler.unlockVmTemplate(getVmTemplateId());
 
         endActionOnAllImageGroups();
 

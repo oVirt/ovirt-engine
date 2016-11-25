@@ -15,6 +15,9 @@ public class GetVmTemplateQuery<P extends GetVmTemplateParameters> extends Queri
     private VmHandler vmHandler;
 
     @Inject
+    private VmTemplateHandler vmTemplateHandler;
+
+    @Inject
     private VmTemplateDao vmTemplateDao;
 
     @Inject
@@ -37,7 +40,7 @@ public class GetVmTemplateQuery<P extends GetVmTemplateParameters> extends Queri
             vmt = vmTemplateDao.get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         }
         if (vmt != null) {
-            VmTemplateHandler.updateDisksFromDb(vmt);
+            vmTemplateHandler.updateDisksFromDb(vmt);
             vmHandler.updateVmInitFromDB(vmt, true);
         }
         getQueryReturnValue().setReturnValue(vmt);

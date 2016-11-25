@@ -82,6 +82,9 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     @Inject
     private CpuProfileHelper cpuProfileHelper;
 
+    @Inject
+    protected VmTemplateHandler vmTemplateHandler;
+
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Map<Guid, List<DiskImage>> storageToDisksMap;
     private Map<Guid, StorageDomain> destStorages = new HashMap<>();
@@ -164,7 +167,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
 
     protected void initTemplate() {
         if (getVmTemplate() != null) {
-            VmTemplateHandler.updateDisksFromDb(getVmTemplate());
+            vmTemplateHandler.updateDisksFromDb(getVmTemplate());
         }
     }
 
@@ -193,14 +196,14 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
 
         createOrUpdateVmPool();
         setActionReturnValue(getVmPool().getVmPoolId());
-        VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
+        vmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
                 getCompensationContext());
 
         addVmsToPool();
 
         getReturnValue().setValid(isAllAddVmsSucceeded());
         setSucceeded(isAllAddVmsSucceeded());
-        VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
+        vmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
         if (!isAnyAddVmSucceeded()) {
             onNoVmsAdded();
         }
@@ -418,7 +421,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     }
 
     protected boolean areTemplateImagesInStorageReady(Guid storageId) {
-        return validate(VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(),
+        return validate(vmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(),
                 storageId,
                 false,
                 true,

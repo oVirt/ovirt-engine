@@ -60,6 +60,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     @Inject
     protected VmHandler vmHandler;
 
+    @Inject
+    protected VmTemplateHandler vmTemplateHandler;
+
     protected final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     private Boolean skipCommandExecution;
 

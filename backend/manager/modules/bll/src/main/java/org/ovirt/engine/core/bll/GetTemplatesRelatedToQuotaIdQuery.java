@@ -14,6 +14,9 @@ public class GetTemplatesRelatedToQuotaIdQuery<P extends IdQueryParameters>
     @Inject
     private VmTemplateDao vmTemplateDao;
 
+    @Inject
+    private VmTemplateHandler vmTemplateHandler;
+
     public GetTemplatesRelatedToQuotaIdQuery(P parameters) {
         super(parameters);
     }
@@ -22,7 +25,7 @@ public class GetTemplatesRelatedToQuotaIdQuery<P extends IdQueryParameters>
     protected void executeQueryCommand() {
         List<VmTemplate> vmTemplates = vmTemplateDao.getAllTemplatesRelatedToQuotaId(getParameters().getId());
         for (VmTemplate vmTemplate : vmTemplates) {
-            VmTemplateHandler.updateDisksFromDb(vmTemplate);
+            vmTemplateHandler.updateDisksFromDb(vmTemplate);
         }
         getQueryReturnValue().setReturnValue(vmTemplates);
     }

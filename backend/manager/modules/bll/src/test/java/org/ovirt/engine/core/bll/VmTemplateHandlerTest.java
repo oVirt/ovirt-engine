@@ -12,9 +12,11 @@ import org.ovirt.engine.core.utils.RandomUtils;
 /** A test case for the {@link VmTemplateHandler} class. */
 public class VmTemplateHandlerTest {
 
+    private VmTemplateHandler vmTemplateHandler = new VmTemplateHandler();
+
     @Before
     public void setUp() {
-        VmTemplateHandler.init();
+        vmTemplateHandler.init();
     }
 
     @Test
@@ -26,7 +28,7 @@ public class VmTemplateHandlerTest {
         dest.setName(RandomUtils.instance().nextString(10));
 
         assertTrue("Update should be valid for different names",
-                VmTemplateHandler.isUpdateValid(src, dest));
+                vmTemplateHandler.isUpdateValid(src, dest));
     }
 
     @Test
@@ -38,7 +40,7 @@ public class VmTemplateHandlerTest {
         dest.setQuotaEnforcementType(QuotaEnforcementTypeEnum.HARD_ENFORCEMENT);
 
         assertTrue("Update should be valid for different quota enforcement types",
-                VmTemplateHandler.isUpdateValid(src, dest));
+                vmTemplateHandler.isUpdateValid(src, dest));
     }
 
     @Test
@@ -50,7 +52,7 @@ public class VmTemplateHandlerTest {
         dest.setQuotaDefault(false);
 
         assertTrue("Update should be valid for different quota default statuses",
-                VmTemplateHandler.isUpdateValid(src, dest));
+                vmTemplateHandler.isUpdateValid(src, dest));
     }
 
     @Test
@@ -62,7 +64,7 @@ public class VmTemplateHandlerTest {
         dest.setClusterId(Guid.newGuid());
 
         // When
-        boolean updateIsValid = VmTemplateHandler.isUpdateValid(src, dest);
+        boolean updateIsValid = vmTemplateHandler.isUpdateValid(src, dest);
 
         // Then
         assertTrue("Update should be valid for different cluster IDs", updateIsValid);

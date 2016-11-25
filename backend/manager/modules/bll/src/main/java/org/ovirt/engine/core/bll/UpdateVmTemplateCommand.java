@@ -117,7 +117,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         if (!isInstanceType && !isBlankTemplate) {
-            VmTemplateHandler.updateDisksFromDb(oldTemplate);
+            vmTemplateHandler.updateDisksFromDb(oldTemplate);
         }
 
         if (!StringUtils.equals(oldTemplate.getName(), getVmTemplate().getName())) {
@@ -143,7 +143,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         if (VmHandler.isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(),
                 getReturnValue().getValidationMessages()) && checkDomain()) {
-            returnValue = VmTemplateHandler.isUpdateValid(oldTemplate, getVmTemplate());
+            returnValue = vmTemplateHandler.isUpdateValid(oldTemplate, getVmTemplate());
             if (!returnValue) {
                 addValidationMessage(EngineMessage.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
             }

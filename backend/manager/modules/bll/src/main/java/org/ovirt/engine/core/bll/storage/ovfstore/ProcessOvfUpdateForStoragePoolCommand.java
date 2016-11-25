@@ -52,6 +52,9 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
     @Inject
     private VmHandler vmHandler;
 
+    @Inject
+    private VmTemplateHandler vmTemplateHandler;
+
     private int itemsCountPerUpdate;
     private List<Guid> proccessedIdsInfo;
     private List<Long> proccessedOvfGenerationsInfo;
@@ -220,7 +223,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
     }
 
     protected void updateTemplateDisksFromDb(VmTemplate template) {
-        VmTemplateHandler.updateDisksFromDb(template);
+        vmTemplateHandler.updateDisksFromDb(template);
     }
 
     protected void updateVmDisksFromDb(VM vm) {

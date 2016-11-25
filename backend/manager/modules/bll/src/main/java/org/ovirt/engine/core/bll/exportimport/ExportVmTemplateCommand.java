@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
-import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfUpdateProcessHelper;
@@ -164,7 +163,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
             }
 
-            if (validate(VmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(), null,
+            if (validate(vmTemplateHandler.isVmTemplateImagesReady(getVmTemplate(), null,
                     true, true, true, false, getTemplateDisks()))) {
                 setStoragePoolId(getVmTemplate().getStoragePoolId());
                 StorageDomainValidator sdValidator = createStorageDomainValidator(getStorageDomain());
@@ -236,7 +235,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         if (getParameters().getTaskGroupSuccess()) {
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary = new HashMap<>();
             ovfUpdateProcessHelper.loadTemplateData(getVmTemplate());
-            VmTemplateHandler.updateDisksFromDb(getVmTemplate());
+            vmTemplateHandler.updateDisksFromDb(getVmTemplate());
             // update the target (export) domain
             ovfUpdateProcessHelper.buildMetadataDictionaryForTemplate(getVmTemplate(), metaDictionary);
             ovfUpdateProcessHelper.executeUpdateVmInSpmCommand(getVmTemplate().getStoragePoolId(),

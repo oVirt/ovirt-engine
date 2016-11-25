@@ -13,6 +13,9 @@ public abstract class GetAllTemplateBasedEntityQuery<P extends VdcQueryParameter
     @Inject
     private VmTemplateDao vmTemplateDao;
 
+    @Inject
+    private VmTemplateHandler vmTemplateHandler;
+
     private final VmEntityType entityType;
 
     public GetAllTemplateBasedEntityQuery(P parameters, VmEntityType entityType) {
@@ -25,7 +28,7 @@ public abstract class GetAllTemplateBasedEntityQuery<P extends VdcQueryParameter
     protected void executeQueryCommand() {
         List<VmTemplate> retval = vmTemplateDao.getAll(getUserID(), getParameters().isFiltered(), entityType);
         for (VmTemplate template : retval) {
-            VmTemplateHandler.updateDisksFromDb(template);
+            vmTemplateHandler.updateDisksFromDb(template);
         }
         getQueryReturnValue().setReturnValue(retval);
     }

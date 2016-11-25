@@ -268,7 +268,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected void initTemplateDisks() {
         if (vmDisksSource != null) {
-            VmTemplateHandler.updateDisksFromDb(vmDisksSource);
+            vmTemplateHandler.updateDisksFromDb(vmDisksSource);
         }
     }
 
@@ -723,7 +723,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         for (StorageDomain storage : destStorages.values()) {
-            if (!validate(VmTemplateHandler.isVmTemplateImagesReady(vmDisksSource, storage.getId(),
+            if (!validate(vmTemplateHandler.isVmTemplateImagesReady(vmDisksSource, storage.getId(),
                     false, false, true, true,
                     storageToDisksMap.get(storage.getId())))) {
                 return false;

@@ -7,10 +7,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.EditableVmField;
 import org.ovirt.engine.core.common.businessentities.EditableVmTemplateField;
@@ -26,26 +31,44 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VmTemplateHandler {
+@Singleton
+public class VmTemplateHandler implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(VmTemplateHandler.class);
 
     public static final Guid BLANK_VM_TEMPLATE_ID = Guid.Empty;
     public static final String BLANK_VM_TEMPLATE_NAME = "Blank";
-    private static ObjectIdentityChecker updateVmTemplate;
+
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private DiskDao diskDao;
+
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
+    private ObjectIdentityChecker updateVmTemplate;
 
     /**
-     * Initialize static list containers, for identity and permission check. The initialization should be executed
+     * Initialize list containers, for identity and permission check. The initialization should be executed
      * before calling ObjectIdentityChecker.
      *
      * @see Backend#initHandlers()
      */
-    public static void init() {
+    @PostConstruct
+    public void init() {
         final Class<?>[] inspectedClassNames = new Class<?>[]{VmBase.class, VmTemplate.class};
         updateVmTemplate = new ObjectIdentityChecker(VmTemplateHandler.class);
 
@@ -65,15 +88,15 @@ public class VmTemplateHandler {
         }
     }
 
-    public static boolean isUpdateValid(VmTemplate source, VmTemplate destination) {
+    public boolean isUpdateValid(VmTemplate source, VmTemplate destination) {
         return updateVmTemplate.isUpdateValid(source, destination);
     }
 
-    public static void updateDisksFromDb(VmTemplate vmt) {
+    public void updateDisksFromDb(VmTemplate vmt) {
         vmt.getDiskTemplateMap().clear();
         vmt.getDiskImageMap().clear();
         vmt.getDiskList().clear();
-        List<Disk> diskList = DbFacade.getInstance().getDiskDao().getAllForVm(vmt.getId());
+        List<Disk> diskList = diskDao.getAllForVm(vmt.getId());
         for (Disk dit : diskList) {
             DiskImage diskImage = (DiskImage) dit;
             vmt.getDiskTemplateMap().put(dit.getId(), diskImage);
@@ -81,7 +104,7 @@ public class VmTemplateHandler {
             vmt.setSizeGB(Double.valueOf(dit.getSize()) / Double.valueOf(1024 * 1024 * 1024));
             vmt.getDiskImageMap().put(dit.getId(), diskImage);
 
-            DiskVmElement dve = DbFacade.getInstance().getDiskVmElementDao().get(new VmDeviceId(dit.getId(), vmt.getId()));
+            DiskVmElement dve = diskVmElementDao.get(new VmDeviceId(dit.getId(), vmt.getId()));
             dit.setDiskVmElements(Collections.singletonList(dve));
 
             vmt.getDiskList().add(diskImage);
@@ -97,7 +120,7 @@ public class VmTemplateHandler {
      * @param compensationContext
      *            The compensation context for saving the old status (can't be <code>null</code>).
      */
-    public static void lockVmTemplateInTransaction(final Guid vmTemplateGuid,
+    public void lockVmTemplateInTransaction(final Guid vmTemplateGuid,
             final CompensationContext compensationContext) {
         TransactionSupport.executeInNewTransaction(() -> {
             setVmTemplateStatus(vmTemplateGuid, VmTemplateStatus.Locked, compensationContext);
@@ -106,7 +129,7 @@ public class VmTemplateHandler {
         });
     }
 
-    public static void unlockVmTemplate(Guid vmTemplateGuid) {
+    public void unlockVmTemplate(Guid vmTemplateGuid) {
         setVmTemplateStatus(vmTemplateGuid, VmTemplateStatus.OK, null);
     }
 
@@ -121,15 +144,15 @@ public class VmTemplateHandler {
      *            The compensation context for saving the old status (can be <code>null</code> if the old status is not
      *            required to be saved).
      */
-    private static void setVmTemplateStatus(
+    private void setVmTemplateStatus(
             Guid vmTemplateGuid, VmTemplateStatus status, CompensationContext compensationContext) {
-        VmTemplate vmTemplate = DbFacade.getInstance().getVmTemplateDao().get(vmTemplateGuid);
+        VmTemplate vmTemplate = vmTemplateDao.get(vmTemplateGuid);
         if (vmTemplate != null) {
             if (compensationContext != null) {
                 compensationContext.snapshotEntityStatus(vmTemplate);
             }
             vmTemplate.setStatus(status);
-            DbFacade.getInstance().getVmTemplateDao().update(vmTemplate);
+            vmTemplateDao.update(vmTemplate);
         } else {
             log.warn(
                     "setVmTemplateStatus: vmTemplate is null, not setting status '{}' to vmTemplate",
@@ -137,7 +160,7 @@ public class VmTemplateHandler {
         }
     }
 
-    public static ValidationResult isVmTemplateImagesReady(VmTemplate vmTemplate,
+    public ValidationResult isVmTemplateImagesReady(VmTemplate vmTemplate,
             Guid storageDomainId,
             boolean checkImagesExists,
             boolean checkLocked,
@@ -146,7 +169,7 @@ public class VmTemplateHandler {
         List<DiskImage> vmtImages = providedVmtImages;
         if (checkStorageDomain) {
             StorageDomainValidator storageDomainValidator =
-                    new StorageDomainValidator(DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
+                    new StorageDomainValidator(storageDomainDao.getForStoragePool(
                             storageDomainId, vmTemplate.getStoragePoolId()));
             ValidationResult returnValue = storageDomainValidator.isDomainExistAndActive();
             if (!returnValue.isValid()) {
@@ -156,7 +179,7 @@ public class VmTemplateHandler {
         if (checkImagesExists) {
             if (vmtImages == null) {
                 vmtImages =
-                        DisksFilter.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmTemplate.getId()),
+                        DisksFilter.filterImageDisks(diskDao.getAllForVm(vmTemplate.getId()),
                                 ONLY_ACTIVE);
             }
             if (vmtImages.size() > 0

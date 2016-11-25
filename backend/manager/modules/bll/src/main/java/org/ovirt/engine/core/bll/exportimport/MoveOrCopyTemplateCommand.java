@@ -37,6 +37,9 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
     @Inject
     protected VmHandler vmHandler;
 
+    @Inject
+    protected VmTemplateHandler vmTemplateHandler;
+
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected Map<Guid, DiskImage> imageFromSourceDomainMap;
     private List<PermissionSubject> permissionCheckSubject;
@@ -65,7 +68,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
 
     protected List<DiskImage> getTemplateDisks() {
         if (templateDisks == null && getVmTemplate() != null) {
-            VmTemplateHandler.updateDisksFromDb(getVmTemplate());
+            vmTemplateHandler.updateDisksFromDb(getVmTemplate());
             templateDisks = getVmTemplate().getDiskList();
         }
         return templateDisks;
@@ -116,7 +119,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
             getVmDeviceUtils().setVmDevices(getVmTemplate());
             vmHandler.updateVmInitFromDB(getVmTemplate(), true);
             incrementDbGeneration();
-            VmTemplateHandler.unlockVmTemplate(getVmTemplateId());
+            vmTemplateHandler.unlockVmTemplate(getVmTemplateId());
         }
         else {
             setCommandShouldBeLogged(false);
