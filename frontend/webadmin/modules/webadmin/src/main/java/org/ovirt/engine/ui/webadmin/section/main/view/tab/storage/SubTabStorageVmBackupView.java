@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -155,7 +156,12 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
                 return object.getVmCreationDate();
             }
         };
-        creationDateColumn.makeSortable();
+        creationDateColumn.makeSortable(new Comparator<VM>() {
+            @Override
+            public int compare(VM vm1, VM vm2) {
+                return vm1.getVmCreationDate().compareTo(vm2.getVmCreationDate());
+            }
+        });
         getTable().addColumn(creationDateColumn, constants.creationDateVm(), "95px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> exportDateColumn = new AbstractFullDateTimeColumn<VM>() {
@@ -164,7 +170,12 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
                 return object.getExportDate();
             }
         };
-        exportDateColumn.makeSortable();
+        exportDateColumn.makeSortable(new Comparator<VM>() {
+            @Override
+            public int compare(VM vm1, VM vm2) {
+                return vm1.getExportDate().compareTo(vm2.getExportDate());
+            }
+        });
         getTable().addColumn(exportDateColumn, constants.exportDateVm(), "95px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.restoreVm()) {
