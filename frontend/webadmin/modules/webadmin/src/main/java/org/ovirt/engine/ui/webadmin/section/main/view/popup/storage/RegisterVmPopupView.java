@@ -4,20 +4,23 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
+import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
+import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterVmPopupPresenterWidget;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class RegisterVmPopupView extends RegisterEntityPopupView<VM>
+public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmModel>
         implements RegisterVmPopupPresenterWidget.ViewDef {
 
-    interface Driver extends UiCommonEditorDriver<RegisterEntityModel<VM>, RegisterEntityPopupView<VM>> {
+    interface Driver extends UiCommonEditorDriver<RegisterVmModel, RegisterEntityPopupView<VM, RegisterVmModel>> {
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -32,7 +35,7 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM>
     }
 
     @Override
-    protected void createEntityTable(RegisterEntityModel<VM> model) {
+    protected void createEntityTable(RegisterVmModel model) {
         AbstractTextColumn<Object> nameColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
@@ -94,8 +97,17 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM>
     }
 
     @Override
-    protected void createInfoPanel(RegisterEntityModel<VM> model) {
+    protected void createInfoPanel(RegisterVmModel model) {
         registerEntityInfoPanel = new RegisterVmInfoPanel(model);
         entityInfoContainer.add(registerEntityInfoPanel);
+    }
+
+    @Override
+    protected AbstractUiCommandButton createCommandButton(String label, String uniqueId) {
+        if (RegisterVmModel.VNIC_PROFILE_MAPPING_COMMAND.equals(uniqueId)) {
+            return new LeftAlignedUiCommandButton(label);
+        } else {
+            return super.createCommandButton(label, uniqueId);
+        }
     }
 }

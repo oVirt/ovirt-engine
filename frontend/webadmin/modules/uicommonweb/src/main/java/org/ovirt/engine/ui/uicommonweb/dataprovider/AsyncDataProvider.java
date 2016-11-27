@@ -2810,6 +2810,16 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetVnicProfilesByDataCenterId, new IdQueryParameters(dcId), aQuery);
     }
 
+    public void getVnicProfilesByClusterId(AsyncQuery<List<VnicProfileView>> aQuery, Guid clusterId) {
+        // do not replace a converter = just add if none provided
+        if (aQuery.converterCallback == null) {
+            aQuery.converterCallback = new ListConverter<>();
+        }
+        Frontend.getInstance().runQuery(VdcQueryType.GetVnicProfilesByClusterId,
+                new IdQueryParameters(clusterId),
+                aQuery);
+    }
+
     public void getNumberOfVmsInCluster(AsyncQuery aQuery, Guid clusterId) {
         Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfVmsInClusterByClusterId, new IdQueryParameters(clusterId),
                 aQuery);

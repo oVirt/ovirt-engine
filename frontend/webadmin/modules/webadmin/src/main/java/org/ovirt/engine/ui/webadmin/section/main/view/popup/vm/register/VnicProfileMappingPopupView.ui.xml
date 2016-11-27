@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui="urn:ui:com.google.gwt.uibinder"
+        xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+        xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+        xmlns:g="urn:import:com.google.gwt.user.client.ui"
+>
+
+    <ui:style>
+        .containerPanel {
+            border: 1px solid #333;
+        }
+
+        .containerPanelInner {
+            margin: 5px;
+            overflow: auto;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
+    </ui:style>
+
+
+    <d:SimpleDialogPanel width="600px" height="450px">
+        <d:content>
+            <g:FlowPanel addStyleNames="{style.containerPanel}">
+                <e:ListModelListBoxEditor ui:field="cluster"/>
+                <g:SimplePanel addStyleNames="{style.containerPanelInner}">
+                    <e:EntityModelCellTable ui:field="vnicProfileMappingTable"/>
+                </g:SimplePanel>
+            </g:FlowPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>
