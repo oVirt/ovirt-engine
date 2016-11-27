@@ -13,14 +13,18 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION GetImageUploadsByCommandId(v_command_id UUID)
+CREATE OR REPLACE FUNCTION GetImageUploadsByCommandId(v_command_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
 RETURNS SETOF image_transfers STABLE
 AS $PROCEDURE$
 BEGIN
     RETURN QUERY
     SELECT image_transfers.*
     FROM image_transfers
-    WHERE image_transfers.command_id = v_command_id;
+    WHERE image_transfers.command_id = v_command_id AND
+    (NOT v_is_filtered OR EXISTS (SELECT    1
+                                  FROM      user_disk_permissions_view
+                                  WHERE     user_disk_permissions_view.user_id = v_user_id AND
+                                            user_disk_permissions_view.entity_id = image_transfers.disk_id ));
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

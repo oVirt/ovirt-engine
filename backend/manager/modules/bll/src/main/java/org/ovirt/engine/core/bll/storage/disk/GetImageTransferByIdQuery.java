@@ -16,6 +16,8 @@ public class GetImageTransferByIdQuery<P extends IdQueryParameters> extends Quer
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(imageTransferDao.get(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(imageTransferDao.get(getParameters().getId(),
+                getUserID(),
+                getParameters().isFiltered()));
     }
 }
