@@ -3208,5 +3208,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String isHostedEngineVmTooltip();
 
     String arbiterVolume();
+
+    String externalLogicalNetwork();
+
+    String externalVnicProfile();
+
+    String externalVnicProfilesMapping();
+
+    String targetVnicProfile();
 }
 

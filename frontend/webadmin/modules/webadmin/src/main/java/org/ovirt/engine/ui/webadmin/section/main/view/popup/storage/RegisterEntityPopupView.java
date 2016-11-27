@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
+
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -31,8 +32,9 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
-public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopupView<RegisterEntityModel<E>>
-        implements AbstractModelBoundPopupPresenterWidget.ViewDef<RegisterEntityModel<E>> {
+public abstract class RegisterEntityPopupView<E, M extends RegisterEntityModel<E>>
+        extends AbstractModelBoundPopupView<M>
+        implements AbstractModelBoundPopupPresenterWidget.ViewDef<M> {
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, RegisterEntityPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -42,11 +44,11 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final UiCommonEditorDriver<RegisterEntityModel<E>, RegisterEntityPopupView<E>> driver;
+    protected final UiCommonEditorDriver<M, RegisterEntityPopupView<E, M>> driver;
 
     protected RegisterEntityInfoPanel<E> registerEntityInfoPanel;
 
-    private RegisterEntityModel<E> registerEntityModel;
+    private M registerEntityModel;
 
     @UiField
     SplitLayoutPanel splitLayoutPanel;
@@ -61,8 +63,7 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public RegisterEntityPopupView(EventBus eventBus,
-            UiCommonEditorDriver<RegisterEntityModel<E>, RegisterEntityPopupView<E>> driver) {
+    public RegisterEntityPopupView(EventBus eventBus, UiCommonEditorDriver<M, RegisterEntityPopupView<E, M>> driver) {
         super(eventBus);
         this.driver = driver;
 
@@ -74,8 +75,8 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
         asWidget().enableResizeSupport(true);
     }
 
-    protected abstract void createEntityTable(RegisterEntityModel<E> model);
-    protected abstract void createInfoPanel(RegisterEntityModel<E> model);
+    protected abstract void createEntityTable(M model);
+    protected abstract void createInfoPanel(M model);
 
     private void initTables() {
         // Create the entities main table
@@ -86,7 +87,7 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
         splitLayoutPanel = new SplitLayoutPanel(4);
     }
 
-    private void createTables(RegisterEntityModel<E> model) {
+    private void createTables(M model) {
         createEntityTable(model);
         createInfoPanel(model);
         entityTable.asEditor().edit(model.getEntities());
@@ -99,7 +100,7 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
     }
 
     @Override
-    public void edit(final RegisterEntityModel<E> model) {
+    public void edit(final M model) {
         registerEntityModel = model;
         driver.edit(model);
 
@@ -144,7 +145,7 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
     }
 
     @Override
-    public RegisterEntityModel<E> flush() {
+    public M flush() {
         return driver.flush();
     }
 

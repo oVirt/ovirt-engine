@@ -6,18 +6,19 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterTemplatePopupPresenterWidget;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplate>
+public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplate, RegisterTemplateModel>
         implements RegisterTemplatePopupPresenterWidget.ViewDef {
 
-    interface Driver extends UiCommonEditorDriver<RegisterEntityModel<VmTemplate>, RegisterEntityPopupView<VmTemplate>> {
+    interface Driver extends UiCommonEditorDriver<RegisterTemplateModel, RegisterEntityPopupView<VmTemplate, RegisterTemplateModel>> {
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -32,7 +33,7 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplat
     }
 
     @Override
-    protected void createEntityTable(RegisterEntityModel model) {
+    protected void createEntityTable(RegisterTemplateModel model) {
         AbstractTextColumn<Object> nameColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
@@ -94,18 +95,18 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplat
     }
 
     @Override
-    protected void createInfoPanel(RegisterEntityModel<VmTemplate> model) {
+    protected void createInfoPanel(RegisterTemplateModel model) {
         registerEntityInfoPanel = new RegisterTemplateInfoPanel(model);
         entityInfoContainer.add(registerEntityInfoPanel);
     }
 
     @Override
-    public void edit(RegisterEntityModel<VmTemplate> object) {
+    public void edit(RegisterTemplateModel object) {
         super.edit(object);
     }
 
     @Override
-    public RegisterEntityModel<VmTemplate> flush() {
+    public RegisterTemplateModel flush() {
         return super.flush();
     }
 }

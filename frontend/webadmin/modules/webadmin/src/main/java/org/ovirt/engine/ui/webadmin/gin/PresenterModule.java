@@ -131,6 +131,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCr
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCustomPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.register.VnicProfileMappingPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
@@ -409,6 +410,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCreateP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCustomPreviewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotPreviewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VncInfoPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.register.VnicProfileMappingPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDataCenterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDiskView;
@@ -1398,6 +1400,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(RegisterTemplatePopupPresenterWidget.class,
                 RegisterTemplatePopupPresenterWidget.ViewDef.class,
                 RegisterTemplatePopupView.class);
+        bindPresenterWidget(VnicProfileMappingPopupPresenterWidget.class,
+                VnicProfileMappingPopupPresenterWidget.ViewDef.class,
+                VnicProfileMappingPopupView.class);
         bindPresenterWidget(ImportCloneDialogPresenterWidget.class,
                 ImportCloneDialogPresenterWidget.ViewDef.class,
                 ImportCloneDialogPopupView.class);
