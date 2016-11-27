@@ -333,20 +333,12 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         return getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage();
     }
 
-    protected StorageDomainStatic loadStorageDomainStaticData(Guid domainId) {
-        return storageDomainStaticDao.get(domainId);
-    }
-
     protected DiskImage getVolumeInfo(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
                                          Guid newImageId) {
-        if (isDataOperationsBySpm(loadStorageDomainStaticData(newStorageDomainID))) {
-            return (DiskImage) runVdsCommand(
-                    VDSCommandType.GetImageInfo,
-                    new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
-                            newImageId)).getReturnValue();
-        } else {
-            return ImagesHandler.getVolumeInfoFromVdsm(storagePoolId, newStorageDomainID, newImageGroupId, newImageId);
-        }
+        return (DiskImage) runVdsCommand(
+                VDSCommandType.GetImageInfo,
+                new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
+                        newImageId)).getReturnValue();
     }
 
     @Override

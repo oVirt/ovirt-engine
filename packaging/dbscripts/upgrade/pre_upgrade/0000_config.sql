@@ -782,6 +782,7 @@ select fn_db_update_config_value('AutoStartVmsRunnerIntervalInSeconds','1','gene
 select fn_db_update_config_value('AllowEditingHostedEngine','true','general');
 select fn_db_update_config_value('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.1');
 select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.1');
+select fn_db_update_config_value('DataOperationsByHSM','true','4.1');
 
 -- enable migration, memory snapshot and suspend in the ppc64 architecture
 select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');

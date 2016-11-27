@@ -1831,7 +1831,7 @@ public enum ConfigValues {
     VMConsoleTicketTolerance,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     DataOperationsByHSM,
 
     @TypeConverterAttribute(Integer.class)
