@@ -20,10 +20,9 @@
 
 import argparse
 from collections import defaultdict
+import decimal
 import gettext
-import simplejson
-# 2.7.5 builtin "json" does not support Decimal, which we get from the
-# database for values typed "numeric". Current simplejson does.
+import json
 import os
 import sys
 
@@ -138,9 +137,16 @@ def get_hosts_rows(statement, host_name=None):
     )
 
 
+def formatted_value(v):
+    # simplejson natively support Decimal, but is not built into recent
+    # python. Handle Decimal specifically here, which we get from the
+    # database for values of type 'numeric'.
+    return str(v) if type(v) is decimal.Decimal else v
+
+
 def row_to_dict(row):
     return {
-        "ovirt_vds_%s" % k: v
+        "ovirt_vds_%s" % k: formatted_value(v)
         for k, v in row.items()
     }
 
@@ -185,7 +191,7 @@ def main():
             rows = get_hosts_rows(statement)
             result = get_groups(rows)
     print(
-        simplejson.dumps(
+        json.dumps(
             obj=result,
             sort_keys=args.pretty,
             indent=(4 if args.pretty else None),
