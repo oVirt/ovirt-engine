@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.DiskStorageType;
 import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.OpenStackVolumeType;
+import org.ovirt.engine.api.model.QcowVersion;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.Snapshot;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -104,6 +106,9 @@ public class DiskMapper {
         if (disk.isSetFormat()) {
             diskImage.setVolumeFormat(map(disk.getFormat(), null));
         }
+        if (disk.isSetQcowVersion()) {
+            diskImage.setQcowCompat(mapQcowVersion(disk.getQcowVersion()));
+        }
         if (disk.isSetStatus()) {
             diskImage.setImageStatus(mapDiskStatus(disk.getStatus()));
         }
@@ -175,6 +180,9 @@ public class DiskMapper {
         if (entity.getVolumeFormat() != null) {
             model.setFormat(map(entity.getVolumeFormat(), null));
         }
+        if (entity.getQcowCompat() != null) {
+            model.setQcowVersion(mapQcowCompat(entity.getQcowCompat()));
+        }
         if (entity.getImageStatus() != null) {
             model.setStatus(mapDiskStatus(entity.getImageStatus()));
         }
@@ -228,6 +236,28 @@ public class DiskMapper {
             return DiskFormat.COW;
         case RAW:
             return DiskFormat.RAW;
+        default:
+            return null;
+        }
+    }
+
+    public static QcowCompat mapQcowVersion(QcowVersion qcowVersion) {
+        switch (qcowVersion) {
+        case QCOW2_V2:
+            return QcowCompat.QCOW2_V2;
+        case QCOW2_V3:
+            return QcowCompat.QCOW2_V3;
+        default:
+            return QcowCompat.Undefined;
+        }
+    }
+
+    public static QcowVersion mapQcowCompat(QcowCompat qcowCompat) {
+        switch (qcowCompat) {
+        case QCOW2_V2:
+            return QcowVersion.QCOW2_V2;
+        case QCOW2_V3:
+            return QcowVersion.QCOW2_V3;
         default:
             return null;
         }
