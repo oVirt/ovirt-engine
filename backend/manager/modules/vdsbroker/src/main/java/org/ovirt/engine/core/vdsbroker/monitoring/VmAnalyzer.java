@@ -799,6 +799,7 @@ public class VmAnalyzer {
             return;
         }
 
+        dbVm.setStatisticsData(getVmManager().getStatistics());
         dbVm.getStatisticsData().updateRuntimeData(vdsmVm.getVmStatistics(), dbVm.getStaticData());
         saveStatistics();
         saveVmInterfaces();
