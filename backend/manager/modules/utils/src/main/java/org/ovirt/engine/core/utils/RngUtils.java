@@ -18,6 +18,10 @@ public class RngUtils {
     public static RngValidationResult validate(Cluster cluster, VmRngDevice rngDevice, Version effectiveVersion) {
         VmRngDevice.Source source = rngDevice.getSource();
 
+        if (cluster == null) {
+            return validateForNonClusterEntity(source);
+        }
+
         // This can be dropped when we stop to support 4.0 compatibility level
         if (cluster.getCompatibilityVersion() != null
                 && !cluster.getCompatibilityVersion().equals(effectiveVersion)
@@ -29,6 +33,18 @@ public class RngUtils {
 
         final boolean valid = cluster.getRequiredRngSources().contains(source);
         return valid ? RngValidationResult.VALID : RngValidationResult.INVALID;
+    }
+
+    /**
+     * Both {@link VmRngDevice.Source.URANDOM} and {@link VmRngDevice.Source.RANDOM} are encoded using
+     * {@link VmRngDevice.Source.URANDOM} for non-cluster entities.
+     */
+    private static RngValidationResult validateForNonClusterEntity(
+            VmRngDevice.Source source) {
+        final EnumSet<VmRngDevice.Source> allowedSources = EnumSet.allOf(VmRngDevice.Source.class);
+        allowedSources.remove(VmRngDevice.Source.RANDOM);
+
+        return allowedSources.contains(source) ? RngValidationResult.VALID : RngValidationResult.INVALID;
     }
 
     @SafeVarargs
