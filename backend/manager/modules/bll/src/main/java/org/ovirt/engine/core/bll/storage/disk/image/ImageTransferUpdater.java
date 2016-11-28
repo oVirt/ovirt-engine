@@ -39,7 +39,7 @@ public class ImageTransferUpdater {
 
             ImageTransfer entity = imageTransferDao.get(commandId);
             if (entity == null) {
-                log.error("Attempt to update non-existent ImageUpload entity");
+                log.error("Attempt to update non-existent ImageTransfer entity");
                 return null;
             }
 
@@ -54,7 +54,7 @@ public class ImageTransferUpdater {
                             ? String.format(" (image %s)", entity.getDiskId().toString()) : "";
                     String message = entity.getMessage() != null
                             ? String.format(" (message: '%s')", entity.getMessage()) : "";
-                    log.info("Updating image upload {}{} phase to {}{}",
+                    log.info("Updating image transfer {}{} phase to {}{}",
                             commandId,
                             disk,
                             updates.getPhase(),

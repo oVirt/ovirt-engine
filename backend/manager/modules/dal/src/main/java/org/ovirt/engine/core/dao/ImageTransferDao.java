@@ -5,9 +5,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 public interface ImageTransferDao extends GenericDao<ImageTransfer, Guid>, SearchDao<ImageTransfer> {
     /**
-     * Retrieves an ImageUpload entity based on its disk id
+     * Retrieves an ImageTransfer entity based on its disk id
      *
-     * @return ImageUpload entity
+     * @return ImageTransfer entity
      */
     ImageTransfer getByDiskId(Guid diskId);
 }
