@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -25,6 +24,8 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 public class VnicProfileMappingModel extends Model {
 
     private static final String OK_COMMAND = "OK"; //$NON-NLS-1$
+    private static final VnicProfileMappingItemComparator
+            VNIC_PROFILE_MAPPING_MODEL_COMPARATOR = new VnicProfileMappingItemComparator();
 
     private final ListModel<Cluster> targetCluster;
 
@@ -32,12 +33,12 @@ public class VnicProfileMappingModel extends Model {
 
     private final Model originModel;
 
-    private final Map<Cluster, Set<VnicProfileMappingItem>> shownMappingRows;
+    private final Map<Cluster, List<VnicProfileMappingItem>> shownMappingRows;
 
-    private Map<Cluster, Set<ExternalVnicProfileMapping>> externalVnicProfiles;
+    private Map<Cluster, Set<VnicProfileMappingEntity>> externalVnicProfiles;
 
     public VnicProfileMappingModel(Model originModel,
-            Map<Cluster, Set<ExternalVnicProfileMapping>> externalVnicProfiles) {
+            Map<Cluster, Set<VnicProfileMappingEntity>> externalVnicProfiles) {
         this.originModel = originModel;
         this.externalVnicProfiles = externalVnicProfiles;
         this.mappingModelRows = new ListModel<>();
@@ -83,10 +84,10 @@ public class VnicProfileMappingModel extends Model {
     }
 
     private void mergeShownRows() {
-        for (Entry<Cluster, Set<VnicProfileMappingItem>> showCluster : shownMappingRows.entrySet()) {
+        for (Entry<Cluster, List<VnicProfileMappingItem>> showCluster : shownMappingRows.entrySet()) {
             final Cluster cluster = showCluster.getKey();
-            final Set<VnicProfileMappingItem> showClusterRows = showCluster.getValue();
-            final Set<ExternalVnicProfileMapping> existingMappings;
+            final List<VnicProfileMappingItem> showClusterRows = showCluster.getValue();
+            final Set<VnicProfileMappingEntity> existingMappings;
             if (externalVnicProfiles.containsKey(cluster)) {
                 existingMappings = externalVnicProfiles.get(cluster);
             } else {
@@ -94,7 +95,7 @@ public class VnicProfileMappingModel extends Model {
                 externalVnicProfiles.put(cluster, existingMappings);
             }
             for (VnicProfileMappingItem shownRow : showClusterRows) {
-                final ExternalVnicProfileMapping shownMapping = shownRow.getEntity();
+                final VnicProfileMappingEntity shownMapping = shownRow.getEntity();
                 addOrReplace(existingMappings, shownMapping);
             }
         }
@@ -132,18 +133,32 @@ public class VnicProfileMappingModel extends Model {
 
     private void populateMappingRows(List<VnicProfileView> targetVnicProfiles) {
         final Cluster selectedCluster = targetCluster.getSelectedItem();
-        final Set<ExternalVnicProfileMapping> vnicProfilesToBeMapped = externalVnicProfiles.get(selectedCluster);
-        final List<VnicProfileMappingItem> mappingItems = new ArrayList<>();
+        final List<VnicProfileMappingItem> mappingItems;
+        if (shownMappingRows.containsKey(selectedCluster)) {
+            mappingItems = shownMappingRows.get(selectedCluster);
+        } else {
+            final Set<VnicProfileMappingEntity> clusterMappings = externalVnicProfiles.get(selectedCluster);
+            mappingItems = new ArrayList<>();
 
-        for (ExternalVnicProfileMapping externalVnicProfile : vnicProfilesToBeMapped) {
-            mappingItems.add(new VnicProfileMappingItem(externalVnicProfile, targetVnicProfiles));
+            for (VnicProfileMappingEntity mappingEntity : clusterMappings) {
+                mappingItems.add(createVnicProfileMappingItem(targetVnicProfiles, mappingEntity));
+            }
+            Collections.sort(mappingItems, VNIC_PROFILE_MAPPING_MODEL_COMPARATOR);
+            shownMappingRows.put(selectedCluster, mappingItems);
         }
-        Collections.sort(mappingItems, new VnicProfileMappingItemComparator());
         mappingModelRows.setItems(mappingItems);
-        shownMappingRows.put(selectedCluster, new HashSet<>(mappingItems));
+    }
+
+    private VnicProfileMappingItem createVnicProfileMappingItem(List<VnicProfileView> targetVnicProfiles,
+            VnicProfileMappingEntity mappingEntity) {
+        final VnicProfileMappingItem vnicProfileMappingItem =
+                new VnicProfileMappingItem(mappingEntity, targetVnicProfiles);
+        vnicProfileMappingItem.initialize();
+        return vnicProfileMappingItem;
     }
 
     // in use by view
+    @SuppressWarnings("unused")
     public ListModel<Cluster> getTargetCluster() {
         return targetCluster;
     }
@@ -151,5 +166,4 @@ public class VnicProfileMappingModel extends Model {
     public ListModel<VnicProfileMappingItem> getMappingModelRows() {
         return mappingModelRows;
     }
-
 }

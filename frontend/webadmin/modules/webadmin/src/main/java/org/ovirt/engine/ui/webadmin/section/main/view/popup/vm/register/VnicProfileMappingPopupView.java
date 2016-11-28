@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.register;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -16,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractListModelListBoxColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingItem;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -76,15 +76,15 @@ public class VnicProfileMappingPopupView
 
     private void initTable() {
         vnicProfileMappingTable = new EntityModelCellTable<>(SelectionMode.NONE);
-        vnicProfileMappingTable.addColumn(new AbstractEntityModelTextColumn<ExternalVnicProfileMapping>() {
+        vnicProfileMappingTable.addColumn(new AbstractEntityModelTextColumn<VnicProfileMappingEntity>() {
             @Override
-            protected String getText(ExternalVnicProfileMapping model) {
+            protected String getText(VnicProfileMappingEntity model) {
                 return model.getExternalNetworkName();
             }
         }, constants.externalLogicalNetwork());
-        vnicProfileMappingTable.addColumn(new AbstractEntityModelTextColumn<ExternalVnicProfileMapping>() {
+        vnicProfileMappingTable.addColumn(new AbstractEntityModelTextColumn<VnicProfileMappingEntity>() {
             @Override
-            protected String getText(ExternalVnicProfileMapping model) {
+            protected String getText(VnicProfileMappingEntity model) {
                 return model.getExternalNetworkProfileName();
             }
         }, constants.externalVnicProfile());

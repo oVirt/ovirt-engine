@@ -16,8 +16,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -29,7 +31,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM> {
 
     private VnicProfileMappingModel vnicProfileMappingModel;
     private UICommand vnicProfileMappingCommand;
-    private Map<Cluster, Set<ExternalVnicProfileMapping>> externalVnicProfilesPerTargetCluster;
+    private Map<Cluster, Set<VnicProfileMappingEntity>> externalVnicProfilesPerTargetCluster;
 
     public RegisterVmModel() {
         super();
@@ -78,30 +80,42 @@ public class RegisterVmModel extends RegisterEntityModel<VM> {
     }
 
     private void updateExternalVnicProfilesPerTargetCluster() {
+        final Map<Cluster, Set<VnicProfileMappingEntity>> result = new HashMap<>();
         for (ImportEntityData<VM> vmImportEntityData : getEntities().getItems()) {
             final Cluster cluster = vmImportEntityData.getCluster().getSelectedItem();
-            final Set<ExternalVnicProfileMapping> clusterVnicProfileMappings;
-            if (externalVnicProfilesPerTargetCluster.containsKey(cluster)) {
-                clusterVnicProfileMappings = externalVnicProfilesPerTargetCluster.get(cluster);
+            final Set<VnicProfileMappingEntity> clusterVnicProfileMappings;
+            if (result.containsKey(cluster)) {
+                clusterVnicProfileMappings = result.get(cluster);
             } else {
                 clusterVnicProfileMappings = new HashSet<>();
-                externalVnicProfilesPerTargetCluster.put(cluster, clusterVnicProfileMappings);
+                result.put(cluster, clusterVnicProfileMappings);
             }
-            final Set<ExternalVnicProfileMapping> vmVnicProfiles =
-                    getNewVnicProfileMappings(vmImportEntityData, clusterVnicProfileMappings);
+            final Set<VnicProfileMappingEntity> previousClusterVnicProfileMappings;
+            if (externalVnicProfilesPerTargetCluster.containsKey(cluster)) {
+                previousClusterVnicProfileMappings = externalVnicProfilesPerTargetCluster.get(cluster);
+            } else {
+                previousClusterVnicProfileMappings = new HashSet<>();
+            }
+            final Set<VnicProfileMappingEntity> vmVnicProfiles =
+                    getNewVnicProfileMappings(vmImportEntityData, previousClusterVnicProfileMappings);
             clusterVnicProfileMappings.addAll(vmVnicProfiles);
         }
+        externalVnicProfilesPerTargetCluster = result;
     }
 
-    private Set<ExternalVnicProfileMapping> getNewVnicProfileMappings(ImportEntityData<VM> vmImportEntityData,
-            Set<ExternalVnicProfileMapping> clusterVnicProfileMappings) {
-        final Set<ExternalVnicProfileMapping> result = new HashSet<>();
+    private Set<VnicProfileMappingEntity> getNewVnicProfileMappings(ImportEntityData<VM> vmImportEntityData,
+            Set<VnicProfileMappingEntity> previousClusterVnicProfileMappings) {
+        final Set<VnicProfileMappingEntity> result = new HashSet<>();
         for (VmNetworkInterface vnic : vmImportEntityData.getEntity().getInterfaces()) {
-            final ExternalVnicProfileMapping newMapping =
-                    new ExternalVnicProfileMapping(vnic.getNetworkName(), vnic.getVnicProfileName(), null);
-            if (!clusterVnicProfileMappings.contains(newMapping)) {
-                result.add(newMapping);
+            final VnicProfileMappingEntity newMapping =
+                    new VnicProfileMappingEntity(vnic.getNetworkName(), vnic.getVnicProfileName(), null);
+            final VnicProfileMappingEntity mapping;
+            if (previousClusterVnicProfileMappings.contains(newMapping)) {
+                mapping = Linq.retrieveFromSet(previousClusterVnicProfileMappings, newMapping);
+            } else {
+                mapping = newMapping;
             }
+            result.add(mapping);
         }
         return result;
     }
@@ -112,10 +126,8 @@ public class RegisterVmModel extends RegisterEntityModel<VM> {
             VM vm = entityData.getEntity();
             Cluster cluster = entityData.getCluster().getSelectedItem();
 
-            final Collection<ExternalVnicProfileMapping> externalVnicProfileMappings =
-                    externalVnicProfilesPerTargetCluster.get(cluster);
             ImportVmParameters params = new ImportVmParameters(
-                    externalVnicProfileMappings,
+                    getExternalVnicProfileMappings(cluster),
                     false);
             params.setContainerId(vm.getId());
             params.setStorageDomainId(getStorageDomainId());
@@ -140,6 +152,24 @@ public class RegisterVmModel extends RegisterEntityModel<VM> {
                 cancel();
             }
         }, this);
+    }
+
+    private Collection<ExternalVnicProfileMapping> getExternalVnicProfileMappings(Cluster cluster) {
+        final Set<VnicProfileMappingEntity> vnicProfileMappingEntities = getClusterVnicProfileMappingEntities(cluster);
+        final Collection<ExternalVnicProfileMapping> result = new ArrayList<>(vnicProfileMappingEntities.size());
+        for (VnicProfileMappingEntity vnicProfileMappingEntity : vnicProfileMappingEntities) {
+            result.add(vnicProfileMappingEntity.getExternalVnicProfileMapping());
+        }
+        return result;
+    }
+
+    private Set<VnicProfileMappingEntity> getClusterVnicProfileMappingEntities(Cluster cluster) {
+        final Set<VnicProfileMappingEntity> result = externalVnicProfilesPerTargetCluster.get(cluster);
+        if (result == null) {
+            return new HashSet<>();
+        } else {
+            return result;
+        }
     }
 
     public UICommand getVnicProfileMappingCommand() {
