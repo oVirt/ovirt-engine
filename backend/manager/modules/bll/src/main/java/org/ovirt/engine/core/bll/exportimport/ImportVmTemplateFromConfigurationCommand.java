@@ -37,6 +37,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
     private OvfEntityData ovfEntityData;
     VmTemplate vmTemplateFromConfiguration;
+    private ArrayList<DiskImage> imagesList;
 
     @Inject
     private OvfHelper ovfHelper;
@@ -163,8 +164,11 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     @Override
     protected ArrayList<DiskImage> getImages() {
-        return new ArrayList<>(getParameters().getDiskTemplateMap() != null ?
-                getParameters().getDiskTemplateMap().values() : getVmTemplate().getDiskTemplateMap().values());
+        if (imagesList == null) {
+            imagesList = new ArrayList<>(getParameters().getDiskTemplateMap() != null ?
+                    getParameters().getDiskTemplateMap().values() : getVmTemplate().getDiskTemplateMap().values());
+        }
+        return imagesList;
     }
 
     @Override
