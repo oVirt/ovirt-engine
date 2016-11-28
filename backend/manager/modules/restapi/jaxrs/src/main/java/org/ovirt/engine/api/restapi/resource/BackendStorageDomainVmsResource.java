@@ -20,7 +20,7 @@ public class BackendStorageDomainVmsResource
 
     static final String[] SUB_COLLECTIONS = {
         "disks",
-        "disksattachments",
+        "diskattachments",
     };
 
     public BackendStorageDomainVmsResource(Guid storageDomainId) {
