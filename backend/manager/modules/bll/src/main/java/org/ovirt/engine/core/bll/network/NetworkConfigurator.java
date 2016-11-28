@@ -10,9 +10,9 @@ import java.util.function.Function;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.host.HostConnectivityChecker;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.bll.network.host.HostSetupNetworkPoller;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
@@ -25,8 +25,6 @@ import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -45,7 +43,6 @@ import org.slf4j.LoggerFactory;
 
 public class NetworkConfigurator {
 
-    private static final int VDSM_RESPONSIVENESS_PERIOD_IN_SECONDS = 120;
     private static final String MANAGEMENT_NETWORK_CONFIG_ERR = "Failed to configure management network";
     private static final String NETWORK_CONFIG_LOG_ERR = "Failed to configure management network: {0}";
     private static final Logger log = LoggerFactory.getLogger(NetworkConfigurator.class);
@@ -123,20 +120,7 @@ public class NetworkConfigurator {
     }
 
     public boolean awaitVdsmResponse() {
-        final int checks =
-                VDSM_RESPONSIVENESS_PERIOD_IN_SECONDS
-                        / Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout);
-        HostSetupNetworkPoller poller = new HostSetupNetworkPoller();
-        for (int i = 0; i < checks; i++) {
-            if (poller.poll(host.getId())) {
-                log.info("Engine managed to communicate with VDSM agent on host '{}' ('{}')",
-                        host.getName(),
-                        host.getId());
-                return true;
-            }
-        }
-
-        return false;
+        return new HostConnectivityChecker().check(host);
     }
 
     public void refreshNetworkConfiguration() {
