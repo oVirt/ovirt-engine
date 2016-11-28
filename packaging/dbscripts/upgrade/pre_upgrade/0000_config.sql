@@ -765,7 +765,6 @@ select fn_db_update_config_value('RhevhLocalFSPath','/data/images/rhev','general
 select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.2.0,pc-i440fx-2.1,pseries-rhel7.2.0','3.6');
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','3.6,4.0,4.1','general');
-select fn_db_update_config_value('SupportedStorageFormats','0,2,3','3.6,4.0,4.1');
 select fn_db_update_config_value('SupportedVDSMVersions','4.17,4.18','general');
 select fn_db_update_config_value('VdcVersion','4.1.0.0','general');
 select fn_db_update_config_value('ProductRPMVersion','4.1.0.0','general');
