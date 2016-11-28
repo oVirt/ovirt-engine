@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.register;
 import java.util.List;
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -14,12 +13,12 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-public class VnicProfileMappingItem extends EntityModel<ExternalVnicProfileMapping> {
+public class VnicProfileMappingItem extends EntityModel<VnicProfileMappingEntity> {
 
     private final ListModel<VnicProfileView> targetVnicProfile;
 
-    public VnicProfileMappingItem(ExternalVnicProfileMapping entity, List<VnicProfileView> targetVnicProfiles) {
-        setEntity(new ExternalVnicProfileMapping(entity));
+    public VnicProfileMappingItem(VnicProfileMappingEntity entity, List<VnicProfileView> targetVnicProfiles) {
+        setEntity(new VnicProfileMappingEntity(entity));
         this.targetVnicProfile = new ListModel<>();
         this.targetVnicProfile.setItems(targetVnicProfiles);
     }
@@ -48,19 +47,19 @@ public class VnicProfileMappingItem extends EntityModel<ExternalVnicProfileMappi
 
     private void selectInitialTargetVnicProfile() {
         final IPredicate<VnicProfileView> predicate;
-        if (getEntity().getVnicProfileId() == null) {
+        if (getEntity().isChanged()) {
             predicate = new IPredicate<VnicProfileView>() {
                 @Override
                 public boolean match(VnicProfileView vnicProfile) {
-                    return Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getNetworkName())
-                            && Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getName());
+                    return Objects.equals(getEntity().getVnicProfileId(), vnicProfile.getId());
                 }
             };
         } else {
             predicate = new IPredicate<VnicProfileView>() {
                 @Override
                 public boolean match(VnicProfileView vnicProfile) {
-                    return Objects.equals(getEntity().getVnicProfileId(), vnicProfile.getId());
+                    return Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getNetworkName())
+                            && Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getName());
                 }
             };
         }
