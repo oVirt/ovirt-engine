@@ -21,4 +21,11 @@ public class PollVDSCommand<P extends VdsIdVDSCommandParametersBase> extends Fut
         httpTask = getBroker().poll();
     }
 
+    /**
+     * Since the polling is used only for connectivity testing and might be too repetitive, there is no value in logging
+     * it as an audit log
+     */
+    @Override
+    protected void logToAudit(){
+    }
 }

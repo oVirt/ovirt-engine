@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.host.HostConnectivityChecker;
 import org.ovirt.engine.core.bll.host.HostUpgradeManager;
 import org.ovirt.engine.core.bll.host.Updateable;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
@@ -76,6 +77,16 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
                     runInternalAction(VdcActionType.SshHostReboot,
                             params,
                             ExecutionHandler.createInternalJobContext());
+                } else {
+                    // letting the host a chance to recover from restarting the VDSM service after the upgrade
+                    if (!new HostConnectivityChecker().check(getVds())) {
+                        log.warn(
+                                "Engine failed to communicate with VDSM agent on host '{}' with address '{}' ('{}') " +
+                                        "after upgrade",
+                                getVds().getName(),
+                                getVds().getHostName(),
+                                getVds().getId());
+                    }
                 }
             } catch (Exception e) {
                 setVdsStatus(VDSStatus.InstallFailed);
