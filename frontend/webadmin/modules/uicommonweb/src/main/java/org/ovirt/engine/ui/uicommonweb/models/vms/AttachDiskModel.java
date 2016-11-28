@@ -146,12 +146,13 @@ public class AttachDiskModel extends NewDiskModel {
                     AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(new AsyncCallback<Boolean>() {
                         @Override
                         public void onSuccess(Boolean virtioScsiEnabledReturnValue) {
-                            if (Boolean.FALSE.equals(virtioScsiEnabledReturnValue)) {
+                            boolean virtioScsiEnabled = Boolean.TRUE.equals(virtioScsiEnabledReturnValue);
+                            if (!virtioScsiEnabled) {
                                 diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
                             }
                             for (DiskModel diskModel : diskModels) {
                                 diskModel.getDiskInterface().setItems(diskInterfaces);
-                                diskModel.getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
+                                diskModel.getDiskInterface().setSelectedItem(virtioScsiEnabled ? DiskInterface.VirtIO_SCSI : DiskInterface.VirtIO);
                                 if (getIsBootable().getIsChangable()) { // no point in adding a listener if the value cam't be changed
                                     diskModel.getIsBootable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
                                         @Override
