@@ -342,6 +342,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String storageImagesSubTabLabel();
 
+    String storageDRSubTabLabel();
+
     String storagePermissionSubTabLabel();
 
     String storageEventSubTabLabel();
@@ -3222,5 +3224,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String reassignBadMacs();
 
     String arbiter();
+
+    String storageDRHoursLabel();
+
+    String storageDRMinuteLabel();
+
+    String storageDRGeoRepSessionLabel();
 }
 

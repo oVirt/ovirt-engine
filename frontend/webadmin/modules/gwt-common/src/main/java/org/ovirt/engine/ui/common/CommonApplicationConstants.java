@@ -1629,6 +1629,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String emptyLeaseStorageDomain();
 
+    String newDRSetup();
+
     String graphicalConsoleOptionsVmPopup();
 
     String serialConsoleOptionsVmPopup();

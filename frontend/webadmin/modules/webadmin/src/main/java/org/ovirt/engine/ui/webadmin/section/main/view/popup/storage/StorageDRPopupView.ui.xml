@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
+            <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageDRPopupView.WidgetStyle">
+     .content {
+         margin-top: 40px;
+     }
+
+     .label {
+         color: #333333;
+         margin: 0 5px;
+         font-family: Verdana, sans-serif;
+     }
+
+     .editorContentWidget{
+         width: 50px;
+     }
+
+     .errorMsgLabel {
+         color: #CD2127;
+         margin-top: 20px;
+         margin-left: 5px;
+     }
+
+
+</ui:style>
+
+<d:SimpleDialogPanel width="550px" height="420px">
+  <d:content>
+    <g:FlowPanel addStyleNames="{style.content}">
+      <g:Label ui:field="errorMsgLabel" />
+      <e:ListModelListBoxEditor ui:field="geoRepSessionEditor" />
+      <e:ListModelListBoxEditor ui:field="frequencyEditor" />
+      <e:ListModelCheckBoxGroupEditor ui:field="daysEditor" />
+      <e:ListModelListBoxEditor ui:field="hoursEditor"/>
+      <e:ListModelListBoxEditor ui:field="minsEditor"/>
+    </g:FlowPanel>
+  </d:content>
+</d:SimpleDialogPanel>
+
+</ui:UiBinder>

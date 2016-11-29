@@ -99,6 +99,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSin
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterVmPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDRPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
@@ -233,6 +234,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuota
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDRPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDiskProfilePresenter;
@@ -374,6 +376,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDc
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.ImportExportImagePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.RegisterTemplatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.RegisterVmPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageDRPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageDestroyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageForceCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView;
@@ -512,6 +515,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaTempl
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaUserView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.StorageSubTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageDRView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageDataCenterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageDiskProfileView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageDiskView;
@@ -795,6 +799,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabStorageSnapshotPresenter.ViewDef.class,
                 SubTabStorageSnapshotView.class,
                 SubTabStorageSnapshotPresenter.ProxyDef.class);
+        bindPresenter(SubTabStorageDRPresenter.class,
+                SubTabStorageDRPresenter.ViewDef.class,
+                SubTabStorageDRView.class,
+                SubTabStorageDRPresenter.ProxyDef.class);
         bindPresenter(SubTabStoragePermissionPresenter.class,
                 SubTabStoragePermissionPresenter.ViewDef.class,
                 SubTabStoragePermissionView.class,
@@ -1418,6 +1426,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(UploadImagePopupPresenterWidget.class,
                 UploadImagePopupPresenterWidget.ViewDef.class,
                 UploadImagePopupView.class);
+        bindPresenterWidget(StorageDRPopupPresenterWidget.class,
+                StorageDRPopupPresenterWidget.ViewDef.class,
+                StorageDRPopupView.class);
 
         // Storage Remove
         bindPresenterWidget(StorageRemovePopupPresenterWidget.class,

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
@@ -24,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDRListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
@@ -47,6 +49,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSin
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterVmPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDRPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
@@ -505,6 +508,37 @@ public class StorageModule extends AbstractGinModule {
         return result;
     }
 
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<StorageDomainDR, StorageListModel, StorageDRListModel> getStorageDRListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<StorageDRPopupPresenterWidget> storageDRPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<StorageDRListModel> modelProvider) {
+
+        SearchableDetailTabModelProvider<StorageDomainDR, StorageListModel, StorageDRListModel> result =
+                new SearchableDetailTabModelProvider<StorageDomainDR, StorageListModel, StorageDRListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageDRListModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+                if (lastExecutedCommand == getModel().getNewCommand()) {
+                    return storageDRPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getEditCommand()) {
+                    return storageDRPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+
+        };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
+    }
+
+
     @Override
     protected void configure() {
         bind(StorageListModel.class).in(Singleton.class);
@@ -523,6 +557,7 @@ public class StorageModule extends AbstractGinModule {
         bind(VmBackupModel.class).in(Singleton.class);
         bind(StorageEventListModel.class).in(Singleton.class);
         bind(DiskProfileListModel.class).in(Singleton.class);
+        bind(StorageDRListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<StorageDomain>>(){}).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<DiskProfile>>(){}).in(Singleton.class);
         bind(StorageMainTabSelectedItems.class).asEagerSingleton();

@@ -101,5 +101,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     String bondStatus(String status);
 
     String bondActiveSlave(String activeSlave);
+
+    String geoRepRemoteSessionName(String slaveHostName, String slaveVolumeName);
 }
 

@@ -155,7 +155,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             final StorageRegisterDiskListModel storageRegisterDiskListModel,
             final StorageSnapshotListModel storageSnapshotListModel, final DiskProfileListModel diskProfileListModel,
             final StorageEventListModel storageEventListModel,
-            final PermissionListModel<StorageDomain> permissionListModel) {
+            final PermissionListModel<StorageDomain> permissionListModel,
+            final StorageDRListModel storageDRListModel) {
         generalModel = storageGeneralModel;
         dcListModel = storageDataCenterListModel;
         vmBackupModel = storageVmBackupModel;
@@ -170,6 +171,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         registerDiskListModel = storageRegisterDiskListModel;
         snapshotListModel = storageSnapshotListModel;
         this.diskProfileListModel = diskProfileListModel;
+        this.storageDRListModel = storageDRListModel;
 
         setDetailList(storageEventListModel, permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
@@ -210,6 +212,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         registerDiskListModel.setIsAvailable(false);
         snapshotListModel.setIsAvailable(false);
         this.diskProfileListModel.setIsAvailable(false);
+        this.storageDRListModel.setIsAvailable(false);
 
         List<HasEntity<StorageDomain>> list = new ArrayList<>();
         list.add(generalModel);
@@ -226,6 +229,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         list.add(registerDiskListModel);
         list.add(snapshotListModel);
         list.add(this.diskProfileListModel);
+        list.add(this.storageDRListModel);
         list.add(storageEventListModel);
         list.add(permissionListModel);
         setDetailModels(list);
@@ -245,6 +249,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     private final StorageRegisterDiskListModel registerDiskListModel;
     private final StorageSnapshotListModel snapshotListModel;
     private final DiskProfileListModel diskProfileListModel;
+    private final StorageDRListModel storageDRListModel;
 
     public StorageDomainStatic storageDomain;
     public TaskContext context;
@@ -859,6 +864,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             boolean isDataCenterAvailable = storage.getStorageType() != StorageType.GLANCE;
             boolean isGeneralAvailable = storage.getStorageType() != StorageType.GLANCE;
             boolean isCinderStorage = storage.getStorageType().isCinderDomain();
+            boolean isGlusterStorage = storage.getStorageType() == StorageType.GLUSTERFS;
 
             boolean isRegsiterEntityListModelSelected =
                     getActiveDetailModel() == vmRegisterListModel
@@ -882,6 +888,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             registerDiskListModel.setIsAvailable(isCinderStorage);
             snapshotListModel.setIsAvailable(isDataStorage || isCinderStorage);
             diskProfileListModel.setIsAvailable(isDataStorage);
+            storageDRListModel.setIsAvailable(isGlusterStorage);
 
             isoListModel.setIsAvailable(isImageStorage);
         }
