@@ -12,18 +12,14 @@ import org.ovirt.engine.ui.common.widget.editor.generic.ToStringEntityModelRende
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.text.shared.Parser;
 
 public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
     interface ViewIdHandler extends ElementIdHandler<PoolNewPopupWidget> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
-    }
-
-    public PoolNewPopupWidget(EventBus eventBus) {
-        super(eventBus);
     }
 
     @Override

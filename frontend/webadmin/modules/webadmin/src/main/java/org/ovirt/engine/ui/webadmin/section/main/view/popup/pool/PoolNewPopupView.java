@@ -17,7 +17,7 @@ public class PoolNewPopupView extends AbstractVmPopupView implements PoolNewPopu
 
     @Inject
     public PoolNewPopupView(EventBus eventBus, VmPopupResources resources) {
-        super(eventBus, new PoolNewPopupWidget(eventBus), resources);
+        super(eventBus, new PoolNewPopupWidget(), resources);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

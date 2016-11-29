@@ -17,7 +17,7 @@ public class VmPopupView extends AbstractVmPopupView implements VmPopupPresenter
 
     @Inject
     public VmPopupView(EventBus eventBus, VmPopupResources resources) {
-        super(eventBus, new VmPopupWidget(eventBus), resources);
+        super(eventBus, new VmPopupWidget(), resources);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

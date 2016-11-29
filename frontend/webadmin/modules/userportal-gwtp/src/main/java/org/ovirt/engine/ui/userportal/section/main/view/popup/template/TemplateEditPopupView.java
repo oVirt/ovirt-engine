@@ -20,7 +20,7 @@ public class TemplateEditPopupView extends AbstractVmPopupView implements Templa
 
     @Inject
     public TemplateEditPopupView(EventBus eventBus, VmPopupResources resources) {
-        super(eventBus, new TemplateEditPopupWidget(eventBus){
+        super(eventBus, new TemplateEditPopupWidget() {
             @Override
             protected PopupWidgetConfigMap createWidgetConfiguration() {
                 return super.createWidgetConfiguration().update(hostTab, hiddenField())

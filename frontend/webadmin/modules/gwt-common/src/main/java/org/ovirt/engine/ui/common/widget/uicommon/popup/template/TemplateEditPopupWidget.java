@@ -9,18 +9,14 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.uicommonweb.models.templates.BlankTemplateModel;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.Widget;
 
 public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
 
     interface ViewIdHandler extends ElementIdHandler<TemplateEditPopupWidget> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
-    }
-
-    public TemplateEditPopupWidget(EventBus eventBus) {
-        super(eventBus);
     }
 
     @Override

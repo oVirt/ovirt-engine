@@ -17,7 +17,7 @@ public class VmClonePopupView extends AbstractVmPopupView implements VmClonePopu
 
     @Inject
     public VmClonePopupView(EventBus eventBus, VmPopupResources resources) {
-        super(eventBus, new VmClonePopupWidget(eventBus), resources);
+        super(eventBus, new VmClonePopupWidget(), resources);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

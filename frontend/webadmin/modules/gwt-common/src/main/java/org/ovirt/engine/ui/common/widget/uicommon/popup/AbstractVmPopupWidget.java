@@ -114,7 +114,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.client.IntegerRenderer;
@@ -921,7 +920,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private final Map<TabName, DialogTab> tabMap = new HashMap<>();
 
-    public AbstractVmPopupWidget(EventBus eventBus) {
+    public AbstractVmPopupWidget() {
 
         initListBoxEditors();
         // Contains a special parser/renderer

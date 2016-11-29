@@ -17,7 +17,7 @@ public class TemplateEditPopupView extends AbstractVmPopupView implements Templa
 
     @Inject
     public TemplateEditPopupView(EventBus eventBus, VmPopupResources resources) {
-        super(eventBus, new TemplateEditPopupWidget(eventBus), resources);
+        super(eventBus, new TemplateEditPopupWidget(), resources);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

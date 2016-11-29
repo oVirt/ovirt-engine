@@ -20,7 +20,7 @@ public class VmPopupView extends AbstractVmPopupView implements VmPopupPresenter
 
     @Inject
     public VmPopupView(EventBus eventBus, VmPopupResources resources) {
-        super(eventBus, new VmPopupWidget(eventBus) {
+        super(eventBus, new VmPopupWidget() {
             @Override
             protected PopupWidgetConfigMap createWidgetConfiguration() {
                 return super.createWidgetConfiguration().update(hostTab, hiddenField())
