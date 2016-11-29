@@ -3361,4 +3361,19 @@ public class AsyncDataProvider {
                 new VdcQueryParametersBase(),
                 aQuery);
     }
+
+    public void getGlusterGeoRepSessionsForStorageDomain(AsyncQuery<List<GlusterGeoRepSession>> aQuery,
+            Guid storageDomainId) {
+        aQuery.converterCallback = new ListConverter<>();
+        Frontend.getInstance().runQuery(VdcQueryType.GetGeoRepSessionsForStorageDomain,
+                new IdQueryParameters(storageDomainId),
+                aQuery);
+    }
+
+    public void getGlusterVolumeGeoRepSessionById(AsyncQuery<GlusterGeoRepSession> aQuery, Guid geoRepSessionId) {
+        aQuery.converterCallback = new CastingConverter<>();
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeGeoRepSessionById,
+                new IdQueryParameters(geoRepSessionId),
+                aQuery);
+    }
 }

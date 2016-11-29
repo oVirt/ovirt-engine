@@ -212,6 +212,8 @@ public enum HelpTag {
 
     general("general", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
+    new_storage_dr("new_storage_dr", HelpTagType.WEBADMIN, "[storage] Storage -> DR Setup -> New"), //$NON-NLS-1$ //$NON-NLS-2$
+
     gluster_bricks("gluster_bricks", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     gluster_hook_resolve_conflicts("gluster_hook_resolve_conflicts", HelpTagType.WEBADMIN, "[gluster] Clusters main tab -> Gluster Hooks sub-tab -> 'Resolve Conflicts' dialog"), //$NON-NLS-1$ //$NON-NLS-2$

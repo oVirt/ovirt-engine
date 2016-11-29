@@ -83,6 +83,10 @@ public interface UIConstants extends Constants {
 
     String glusterSwiftTitle();
 
+    String storageDRTitle();
+
+    String newDRSetup();
+
     String clusterPolicyTitle();
 
     String editPolicyTitle();
@@ -2040,5 +2044,7 @@ public interface UIConstants extends Constants {
     String vnicProfilesMapping();
 
     String heHostRemovalWarning();
+
+    String storageDomainDRTitle();
 }
 
