@@ -60,7 +60,8 @@ public class ImportValidator {
      */
     public ValidationResult validateStorageExistForUnregisteredEntity(List<DiskImage> images,
             boolean allowPartial,
-            Map<Guid, Guid> imageToDestinationDomainMap) {
+            Map<Guid, Guid> imageToDestinationDomainMap,
+            Map<Guid, String> failedDisksToImport) {
         for (DiskImage image : new ArrayList<>(images)) {
             StorageDomain sd = getStorageDomainDao().getForStoragePool(
                     image.getStorageIds().get(0), getStoragePool().getId());
@@ -74,6 +75,7 @@ public class ImportValidator {
                 if (!allowPartial) {
                     return result;
                 }
+                failedDisksToImport.putIfAbsent(image.getId(), image.getDiskAlias());
                 imageToDestinationDomainMap.remove(image.getId());
                 images.remove(image);
             }

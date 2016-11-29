@@ -869,6 +869,8 @@ public enum AuditLogType {
             AuditLogTimeInterval.MINUTE.getValue()),
     IMPORTEXPORT_NO_PROXY_HOST_AVAILABLE_IN_DC(1186, AuditLogSeverity.ERROR),
     IMPORTEXPORT_HOST_CANNOT_SERVE_AS_PROXY(1187, AuditLogSeverity.ERROR),
+    IMPORTEXPORT_PARTIAL_VM_DISKS_NOT_EXISTS(1188, AuditLogSeverity.WARNING),
+
 
     // SR-IOV
     UPDATE_HOST_NIC_VFS_CONFIG(1201),

@@ -145,6 +145,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         when(validator.validateStorageExistForUnregisteredEntity(
                 anyListOf(DiskImage.class),
                 any(Boolean.class),
+                any(Map.class),
                 any(Map.class)))
                 .thenReturn(ValidationResult.VALID);
 
@@ -165,6 +166,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         when(validator.validateStorageExistForUnregisteredEntity(
                 anyListOf(DiskImage.class),
                 any(Boolean.class),
+                any(Map.class),
                 any(Map.class))).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
 
@@ -185,6 +187,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         when(validator.validateStorageExistForUnregisteredEntity(
                 anyListOf(DiskImage.class),
                 any(Boolean.class),
+                any(Map.class),
                 any(Map.class))).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
 

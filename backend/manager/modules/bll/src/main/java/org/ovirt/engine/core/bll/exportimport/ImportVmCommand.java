@@ -112,6 +112,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private MacPool macPool;
 
+    protected Map<Guid, String> failedDisksToImportForAuditLog = new HashMap<>();
+
     @Inject
     private DiskProfileHelper diskProfileHelper;
 
@@ -606,6 +608,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                         imageGUID,
                         storageDomainId);
                 getVm().getImages().remove(image);
+                failedDisksToImportForAuditLog.putIfAbsent(image.getId(), image.getDiskAlias());
             }
         }
         return true;
