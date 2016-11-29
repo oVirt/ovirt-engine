@@ -677,6 +677,22 @@ SELECT user_id,
     TRUE AS active,
     _create_date AS create_date,
     _update_date AS update_date
-FROM users;
+FROM users
+WHERE (
+        (
+            _create_date > (
+                SELECT var_datetime
+                FROM dwh_history_timekeeping
+                WHERE (var_name = 'lastSync')
+                )
+            )
+        OR (
+            _update_date > (
+                SELECT var_datetime
+                FROM dwh_history_timekeeping AS history_timekeeping_1
+                WHERE (var_name = 'lastSync')
+                )
+            )
+        );
 
 
