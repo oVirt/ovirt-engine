@@ -470,7 +470,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     protected boolean validateCreateAllSnapshotsFromVmCommand() {
         VdcReturnValueBase returnValue = CommandHelper.canDoAction(VdcActionType.CreateAllSnapshotsFromVm,
-                getCreateSnapshotParameters(), getContext().clone().getExecutionContext(), false);
+                getCreateSnapshotParameters(), getContext().clone().getExecutionContext(), true);
         if (!returnValue.isValid()) {
             getReturnValue().setValidationMessages(returnValue.getValidationMessages());
             return false;
