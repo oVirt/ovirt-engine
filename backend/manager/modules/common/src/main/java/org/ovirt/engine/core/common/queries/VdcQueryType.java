@@ -98,6 +98,7 @@ public enum VdcQueryType implements Serializable {
     // Vm Network
     GetVmInterfacesByVmId(VdcQueryAuthType.User),
     GetVmGuestAgentInterfacesByVmId(VdcQueryAuthType.User),
+    ValidateVmMacs,
 
     // Vnic Profiles
     GetAllVnicProfiles(VdcQueryAuthType.User),

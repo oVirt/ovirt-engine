@@ -2664,5 +2664,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_PROVIDER_NO_TENANT_NAME();
 
     String ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD();
+
+    String NETWORK_OUT_OF_RANGE_MACS();
 }
 
