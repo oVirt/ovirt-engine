@@ -44,18 +44,13 @@ public class VirtioScsiUtil {
                             model.getIsVirtioScsiEnabled().setChangeProhibitionReason(constants.cannotEnableVirtioScsiForOs());
                             callAfterUpdates();
                         } else {
-                            if (Guid.isNullOrEmpty(vmId)) {
-                                model.getIsVirtioScsiEnabled().setEntity(true);
-                                callAfterUpdates();
-                            } else {
-                                AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(model.asyncQuery(new AsyncCallback<Boolean>() {
-                                    @Override
-                                    public void onSuccess(Boolean returnValue) {
-                                        model.getIsVirtioScsiEnabled().setEntity(returnValue);
-                                        callAfterUpdates();
-                                    }
-                                }), vmId);
-                            }
+                            AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(model.asyncQuery(new AsyncCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean returnValue) {
+                                    model.getIsVirtioScsiEnabled().setEntity(returnValue);
+                                    callAfterUpdates();
+                                }
+                            }), vmId);
                         }
                     }
                 }));
