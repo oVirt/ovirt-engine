@@ -162,7 +162,7 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
         this.forceOverride = forceOverride;
     }
 
-    public boolean getAllowPartialImport() {
+    public boolean isAllowPartialImport() {
         return allowPartialImport;
     }
 

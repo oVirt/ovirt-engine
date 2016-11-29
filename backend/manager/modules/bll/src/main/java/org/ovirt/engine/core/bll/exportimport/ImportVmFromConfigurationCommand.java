@@ -81,7 +81,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
                 return false;
             }
             if (!validate(importValidator.validateStorageExistForUnregisteredEntity(getImages(),
-                    getParameters().getAllowPartialImport(),
+                    getParameters().isAllowPartialImport(),
                     imageToDestinationDomainMap,
                     failedDisksToImportForAuditLog))) {
                 return false;
@@ -230,7 +230,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     }
 
     private void addAuditLogForPartialVMs() {
-        if (getParameters().getAllowPartialImport() && !failedDisksToImportForAuditLog.isEmpty()) {
+        if (getParameters().isAllowPartialImport() && !failedDisksToImportForAuditLog.isEmpty()) {
             addCustomValue("DiskAliases", StringUtils.join(failedDisksToImportForAuditLog.values(), ", "));
             auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_PARTIAL_VM_DISKS_NOT_EXISTS);
         }

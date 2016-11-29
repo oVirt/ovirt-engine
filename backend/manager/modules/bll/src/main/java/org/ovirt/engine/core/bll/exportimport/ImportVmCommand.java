@@ -600,7 +600,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                             imageGUID));
 
             if (!retValue.getSucceeded()) {
-                if (!getParameters().getAllowPartialImport()) {
+                if (!getParameters().isAllowPartialImport()) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
                 }
                 log.warn("Disk image '{}/{}' doesn't exist on storage domain '{}'. Ignoring since force flag in on",
@@ -1135,7 +1135,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
      */
     private Collection<Disk> getDisksForDiskProfileValidation() {
         Collection<Disk> disks = getParameters().getVm().getDiskMap().values();
-        if (getParameters().getAllowPartialImport()) {
+        if (getParameters().isAllowPartialImport()) {
             disks = disks.stream().filter(disk -> getImages().stream()
                     .anyMatch(diskFromImagesList -> diskFromImagesList.getId().equals(disk.getId())))
                     .collect(Collectors.toList());
