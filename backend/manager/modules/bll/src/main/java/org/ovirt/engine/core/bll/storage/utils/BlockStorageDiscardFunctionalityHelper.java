@@ -43,9 +43,17 @@ public class BlockStorageDiscardFunctionalityHelper {
             StorageDomain storageDomain) {
         if (!isExistingPassDiscardFunctionalityPreserved(lunsToAdd, storageDomain)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_LUN_BREAKS_STORAGE_DOMAIN_PASS_DISCARD_SUPPORT,
-                    String.format("$storageDomainName %1$s", storageDomain.getName()));
+                    getStorageDomainNameVariableReplacement(storageDomain));
+        }
+        if (!isExistingDiscardAfterDeleteFunctionalityPreserved(lunsToAdd, storageDomain)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_LUN_BREAKS_STORAGE_DOMAIN_DISCARD_AFTER_DELETE,
+                    getStorageDomainNameVariableReplacement(storageDomain));
         }
         return ValidationResult.VALID;
+    }
+
+    private String getStorageDomainNameVariableReplacement(StorageDomain storageDomain) {
+        return String.format("$storageDomainName %1$s", storageDomain.getName());
     }
 
     protected boolean isExistingPassDiscardFunctionalityPreserved(Collection<LUNs> lunsToAdd,
@@ -91,6 +99,21 @@ public class BlockStorageDiscardFunctionalityHelper {
         return true;
     }
 
+    protected boolean isExistingDiscardAfterDeleteFunctionalityPreserved(Collection<LUNs> lunsToAdd,
+            StorageDomain storageDomain) {
+        if (!storageDomain.isDiscardAfterDelete()) {
+            // The storage domain's discard after delete property is already false so there's
+            // no need to check if the new luns break the discard after delete functionality.
+            return true;
+        }
+        if (!allLunsSupportDiscard(lunsToAdd)) {
+            // The storage domain's discard after delete property is true
+            // and there is at least one lun that doesn't support discard.
+            return false;
+        }
+        return true;
+    }
+
     public void logIfLunsBreakStorageDomainDiscardFunctionality(Collection<LUNs> luns, Guid storageDomainId) {
         Collection<LUNs> lunsThatBreakDiscardSupport = getLunsThatBreakDiscardFunctionality(luns, storageDomainId);
         if (!lunsThatBreakDiscardSupport.isEmpty()) {
@@ -112,7 +135,7 @@ public class BlockStorageDiscardFunctionalityHelper {
         }
     }
 
-    protected boolean allLunsSupportDiscard(Collection<LUNs> luns) {
+    public boolean allLunsSupportDiscard(Collection<LUNs> luns) {
         return luns.stream().allMatch(getLunSupportsDiscardPredicate());
     }
 

@@ -173,6 +173,7 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
         entity.setContainsUnregisteredEntities(rs.getBoolean("contains_unregistered_entities"));
         entity.setLastTimeUsedAsMaster(rs.getLong("last_time_used_as_master"));
         entity.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
+        entity.setDiscardAfterDelete(rs.getBoolean("discard_after_delete"));
         entity.setSupportsDiscard(rs.getBoolean("supports_discard"));
         entity.setSupportsDiscardZeroesData(rs.getBoolean("supports_discard_zeroes_data"));
         entity.setFirstMetadataDevice(rs.getString("first_metadata_device"));

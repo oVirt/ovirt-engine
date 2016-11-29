@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -16,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -28,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -53,6 +57,9 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainStaticDao sdsDao;
 
+    @Mock
+    private StorageDomainValidator storageDomainValidator;
+
     @Before
     public void setUp() {
         StorageDomainStatic oldSdStatic = createStorageDomain();
@@ -73,6 +80,7 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
         doReturn(sp).when(cmd).getStoragePool();
 
         when(sdsDao.get(sdId)).thenReturn(oldSdStatic);
+        mockStorageDomainValidator();
     }
 
     private StorageDomainStatic createStorageDomain() {
@@ -166,5 +174,30 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
         doReturn(new StorageDomainStatic()).when(sdsDao).getByName(newName);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
+    }
+
+    @Test
+    public void validateFailsIllegalDiscardAfterDelete() {
+        EngineMessage message =
+                EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_NOT_SUPPORTED_BY_UNDERLYING_STORAGE;
+        when(storageDomainValidator.isDiscardAfterDeleteLegalForExistingStorageDomain())
+                .thenReturn(new ValidationResult(message));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, message);
+    }
+
+    @Test
+    public void validateFailsUnSupportedVersionForDiscardAfterDelete() {
+        EngineMessage message = EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_NOT_SUPPORTED_BY_DC_VERSION;
+        when(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(any(Version.class)))
+                .thenReturn(new ValidationResult(message));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, message);
+    }
+
+    private void mockStorageDomainValidator() {
+        doReturn(storageDomainValidator).when(cmd).getStorageDomainValidator();
+        when(storageDomainValidator.isDiscardAfterDeleteLegalForExistingStorageDomain())
+                .thenReturn(ValidationResult.VALID);
+        when(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(any(Version.class)))
+                .thenReturn(ValidationResult.VALID);
     }
 }

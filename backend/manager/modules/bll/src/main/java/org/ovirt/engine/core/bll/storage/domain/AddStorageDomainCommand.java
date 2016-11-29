@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class AddStorageDomainCommand<T extends StorageDomainManagementParameter> extends
@@ -191,7 +192,9 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         ensureStorageFormatInitialized();
         StorageDomainToPoolRelationValidator storageDomainToPoolRelationValidator = getAttachDomainValidator();
         StorageDomainValidator sdValidator = getStorageDomainValidator();
-        if ( !validate(storageDomainToPoolRelationValidator.isStorageDomainFormatCorrectForDC()) || !validate(sdValidator.isStorageFormatCompatibleWithDomain()) ) {
+        if (!validate(storageDomainToPoolRelationValidator.isStorageDomainFormatCorrectForDC()) ||
+                !validate(sdValidator.isStorageFormatCompatibleWithDomain()) ||
+                !validateDiscardAfterDeleteLegal(sdValidator, getTargetStoragePool().getCompatibilityVersion())) {
             return false;
         }
         return canAddDomain();
@@ -251,4 +254,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     public StorageDomainValidator getStorageDomainValidator() {
         return new StorageDomainValidator(getStorageDomain());
     }
+
+    protected abstract boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator,
+            Version compatibilityVersion);
 }

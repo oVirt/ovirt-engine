@@ -2,9 +2,12 @@ package org.ovirt.engine.core.bll.validator.storage;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Supplier;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -13,11 +16,14 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.di.Injector;
 
 public class StorageDomainValidator {
 
@@ -292,5 +298,47 @@ public class StorageDomainValidator {
             return ValidationResult.VALID;
         }
         return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_DATA_DOMAINS);
+    }
+
+    public ValidationResult isDiscardAfterDeleteLegalForExistingStorageDomain() {
+        return isDiscardAfterDeleteLegal(this::discardAfterDeleteLegalForExistingStorageDomainPredicate);
+    }
+
+    protected Boolean discardAfterDeleteLegalForExistingStorageDomainPredicate() {
+        return Boolean.TRUE.equals(storageDomain.getSupportsDiscard());
+    }
+
+    public ValidationResult isDiscardAfterDeleteLegalForNewBlockStorageDomain(Collection<LUNs> luns) {
+        return isDiscardAfterDeleteLegal(getDiscardAfterDeleteLegalForNewBlockStorageDomainPredicate(luns));
+    }
+
+    protected Supplier<Boolean> getDiscardAfterDeleteLegalForNewBlockStorageDomainPredicate(Collection<LUNs> luns) {
+        return () -> Injector.get(BlockStorageDiscardFunctionalityHelper.class).allLunsSupportDiscard(luns);
+    }
+
+    protected ValidationResult isDiscardAfterDeleteLegal(Supplier<Boolean> supportsDiscardSupplier) {
+        if (!storageDomain.isDiscardAfterDelete()) {
+            return ValidationResult.VALID;
+        }
+
+        if (storageDomain.getStorageType().isBlockDomain()) {
+            if (supportsDiscardSupplier.get()) {
+                return ValidationResult.VALID;
+            }
+            return new ValidationResult(
+                    EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_NOT_SUPPORTED_BY_UNDERLYING_STORAGE,
+                    String.format("$storageDomainName %s", storageDomain.getName()));
+        }
+        return new ValidationResult(
+                EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_SUPPORTED_ONLY_BY_BLOCK_DOMAINS);
+    }
+
+    public ValidationResult isDiscardAfterDeleteSupportedByDcVersion(Version version) {
+        if (storageDomain.isDiscardAfterDelete() && !FeatureSupported.discardAfterDeleteSupported(version)) {
+            return new ValidationResult(
+                    EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_NOT_SUPPORTED_BY_DC_VERSION,
+                    String.format("$dataCenterVersion %s", version.toString()));
+        }
+        return ValidationResult.VALID;
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -43,9 +44,12 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     }
 
     private boolean validateStoragePropertiesUpdate() {
-       if (!checkStorageDomainStatusNotEqual(StorageDomainStatus.Locked) || !validateStorageNameUpdate()) {
+        StorageDomainValidator storageDomainValidator = getStorageDomainValidator();
+        if (!checkStorageDomainStatusNotEqual(StorageDomainStatus.Locked) ||
+               !validateStorageNameUpdate() ||
+               !validateDiscardAfterDeleteLegal(storageDomainValidator)) {
            return false;
-       }
+        }
 
         // Collect changed fields to update in a list.
         List<String> props = ObjectIdentityChecker.getChangedFields(oldDomain, getStorageDomain()
@@ -56,6 +60,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         props.remove("description");
         props.remove("comment");
         props.remove("wipeAfterDelete");
+        props.remove("discardAfterDelete");
         props.remove("warningLowSpaceIndicator");
         props.remove("criticalSpaceActionBlocker");
         if (!props.isEmpty()) {
@@ -64,6 +69,10 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
             return failValidation(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
         }
         return true;
+    }
+
+    protected StorageDomainValidator getStorageDomainValidator() {
+        return new StorageDomainValidator(getStorageDomain());
     }
 
     private boolean validateStorageNameUpdate() {
@@ -78,6 +87,14 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
                 && checkStorageDomainNameLengthValid()
                 && isPoolUp()
                 && validateNotTheSameName();
+    }
+
+    private boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator) {
+        if (!validate(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(
+                getStoragePool().getCompatibilityVersion()))) {
+            return false;
+        }
+        return validate(storageDomainValidator.isDiscardAfterDeleteLegalForExistingStorageDomain());
     }
 
     private boolean isPoolUp() {

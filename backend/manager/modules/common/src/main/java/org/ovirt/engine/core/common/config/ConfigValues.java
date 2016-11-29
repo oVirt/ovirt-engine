@@ -1920,6 +1920,10 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
+    DiscardAfterDeleteSupported,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
     QcowCompatSupported,
 
     @TypeConverterAttribute(Boolean.class)

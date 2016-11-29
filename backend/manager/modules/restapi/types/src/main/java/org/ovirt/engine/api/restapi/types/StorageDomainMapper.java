@@ -43,6 +43,9 @@ public class StorageDomainMapper {
         if (model.isSetWipeAfterDelete()) {
             entity.setWipeAfterDelete(model.isWipeAfterDelete());
         }
+        if (model.isSetDiscardAfterDelete()) {
+            entity.setDiscardAfterDelete(model.isDiscardAfterDelete());
+        }
         if (model.isSetWarningLowSpaceIndicator()) {
             entity.setWarningLowSpaceIndicator(model.getWarningLowSpaceIndicator());
         }
@@ -150,6 +153,7 @@ public class StorageDomainMapper {
             model.setStorageFormat(StorageFormatMapper.map(entity.getStorageFormat(), null));
         }
         model.setWipeAfterDelete(entity.getWipeAfterDelete());
+        model.setDiscardAfterDelete(entity.isDiscardAfterDelete());
         model.setSupportsDiscard(entity.getSupportsDiscard());
         model.setSupportsDiscardZeroesData(entity.getSupportsDiscardZeroesData());
         return model;

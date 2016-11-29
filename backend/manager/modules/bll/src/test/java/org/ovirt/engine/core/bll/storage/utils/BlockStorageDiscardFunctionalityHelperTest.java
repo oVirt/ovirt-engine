@@ -184,6 +184,30 @@ public class BlockStorageDiscardFunctionalityHelperTest {
     }
 
     @Test
+    public void testExistingDiscardAfterDeleteFunctionalityPreservedNoDiscardAfterDeleteFunctionality() {
+        storageDomain.setDiscardAfterDelete(false);
+        assertTrue(discardHelper.isExistingDiscardAfterDeleteFunctionalityPreserved(Arrays.asList(
+                createLunWithDiscardFunctionality(0L, false),
+                createLunWithDiscardFunctionality(0L, true)), storageDomain));
+    }
+
+    @Test
+    public void testExistingDiscardAfterDeleteFunctionalityPreservedAllLunsHaveDiscardAfterDeleteFunctionality() {
+        storageDomain.setDiscardAfterDelete(true);
+        assertTrue(discardHelper.isExistingDiscardAfterDeleteFunctionalityPreserved(Arrays.asList(
+                createLunWithDiscardFunctionality(1024L, false),
+                createLunWithDiscardFunctionality(2048L, true)), storageDomain));
+    }
+
+    @Test
+    public void testExistingDiscardAfterDeleteFunctionalityPreservedDiscardAfterDeleteFunctionalityBreaks() {
+        storageDomain.setDiscardAfterDelete(true);
+        assertFalse(discardHelper.isExistingDiscardAfterDeleteFunctionalityPreserved(Arrays.asList(
+                createLunWithDiscardFunctionality(1024L, false),
+                createLunWithDiscardFunctionality(0L, true)), storageDomain));
+    }
+
+    @Test
     public void testGetLunsThatBreakDiscardFunctionalityPassDiscardBreaks() {
         createVmDiskOnSd(false, false);
         createVmDiskOnSd(false, true); // This disk requires pass discard support.
