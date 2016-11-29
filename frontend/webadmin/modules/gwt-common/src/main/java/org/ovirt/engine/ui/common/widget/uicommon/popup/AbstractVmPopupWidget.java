@@ -102,13 +102,11 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
@@ -920,7 +918,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
-    private static final UIMessages uiMessages = ConstantsManager.getInstance().getMessages();
 
     private final Map<TabName, DialogTab> tabMap = new HashMap<>();
 
