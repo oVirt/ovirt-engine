@@ -1,11 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.restapi.util.ExpectationHelper;
@@ -15,6 +17,7 @@ import org.ovirt.engine.api.restapi.util.QueryHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -72,11 +75,55 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         String search = ParametersHelper.getParameter(httpHeaders, uriInfo, QueryHelper.CONSTRAINT_PARAMETER);
         if (search != null) {
             List<Q> searchList = getBackendCollection(searchType);
-            return (List<Q>) CollectionUtils.intersection(filteredList, searchList);
+
+            // Note that it is key to pass here first the search list and then the filtered list, as we want to make
+            // sure that the order of the search list is preserved, as the user my have specified 'sort by ...' as one
+            // of the search criteria.
+            return safeIntersection(searchList, filteredList);
         }
         else {
             return filteredList;
         }
+    }
+
+    /**
+     * Calculates the intersection of two lists of objects, comparing them by id, and preserving the objects and the
+     * order that was used in the {@code sorted} parameter.
+     *
+     * @param sorted the list of objects whose order should be preserved
+     * @param other the other list of objects
+     * @return the intersection of both lists of objects
+     */
+    private List<Q> safeIntersection(List<Q> sorted, List<Q> other) {
+        // Calculate the sets of ids of all the objects:
+        Set<Object> sortedIds = sorted.stream().map(this::getId).collect(toSet());
+        Set<Object> otherIds = other.stream().map(this::getId).collect(toSet());
+
+        // Remove from the set of sorted ids the ids that aren't part also of the other ids, thus effectively
+        // calculating the intersection of both sets of ids:
+        sortedIds.retainAll(otherIds);
+
+        // Remove from the sorted list all the objects that aren't part of the intersection, and return the result (this
+        // way the result will be always from the sorted list, and the order will be preserved):
+        return sorted.stream()
+            .filter(object -> sortedIds.contains(getId(object)))
+            .collect(toList());
+    }
+
+    /**
+     * Obtains the identifier of a backend object. This id will be used to compare the objects instead of the
+     * {@link Object#equals(Object)} method. Should be overridden by resources that manage objects that don't implement
+     * the {@link IVdcQueryable} interface.
+     *
+     * @param entity the entity
+     * @return the id of the entity, or {@code null} if the entity doesn't have an id
+     */
+    protected Object getId(Q entity) {
+        Object id = null;
+        if (entity != null && entity instanceof IVdcQueryable) {
+            id = ((IVdcQueryable) entity).getQueryableId();
+        }
+        return id;
     }
 
     protected final <T> Response performCreate(VdcActionType task,
