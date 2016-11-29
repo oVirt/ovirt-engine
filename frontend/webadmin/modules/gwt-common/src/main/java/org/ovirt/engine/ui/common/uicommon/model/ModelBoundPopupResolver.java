@@ -15,36 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 public interface ModelBoundPopupResolver<M extends IModel> {
 
     /**
-     * Returns model property names whose values correspond to Window models.
-     */
-    String[] getWindowPropertyNames();
-
-    /**
-     * Returns the given Window model.
-     */
-    Model getWindowModel(M source, String propertyName);
-
-    /**
-     * Sets the given Window model to {@code null}.
-     */
-    void clearWindowModel(M source, String propertyName);
-
-    /**
-     * Returns model property names whose values correspond to ConfirmWindow models.
-     */
-    String[] getConfirmWindowPropertyNames();
-
-    /**
-     * Returns the given ConfirmWindow model.
-     */
-    Model getConfirmWindowModel(M source, String propertyName);
-
-    /**
-     * Sets the given ConfirmWindow model to {@code null}.
-     */
-    void clearConfirmWindowModel(M source, String propertyName);
-
-    /**
      * Resolves main popup by last executed command.
      *
      * @param source

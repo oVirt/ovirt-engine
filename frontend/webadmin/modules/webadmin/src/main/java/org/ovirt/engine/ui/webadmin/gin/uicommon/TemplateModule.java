@@ -1,9 +1,5 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -30,7 +26,6 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListMod
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateVmListModel;
-import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
@@ -91,31 +86,6 @@ public class TemplateModule extends AbstractGinModule {
                             }
                         } else {
                             return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                        }
-                    }
-
-                    @Override
-                    public String[] getWindowPropertyNames() {
-                        List<String> names = new ArrayList<>();
-                        names.addAll(Arrays.asList(super.getWindowPropertyNames()));
-                        names.add(VmBaseListModel.DISK_WINDOW);
-                        return names.toArray(new String[names.size()]);
-                    }
-
-                    @Override
-                    public Model getWindowModel(TemplateListModel source, String propertyName) {
-                        if (VmBaseListModel.DISK_WINDOW.equals(propertyName)) {
-                            return source.getDiskWindow();
-                        }
-                        return super.getWindowModel(source, propertyName);
-                    }
-
-                    @Override
-                    public void clearWindowModel(TemplateListModel source, String propertyName) {
-                        if (VmBaseListModel.DISK_WINDOW.equals(propertyName)) {
-                            source.setDiskWindow(null);
-                        } else {
-                            super.clearWindowModel(source, propertyName);
                         }
                     }
 

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -452,4 +453,21 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
     public Model getDiskWindow() {
         return diskModel;
     }
+
+    @Override
+    public Map<String, Model> getWindowProperties() {
+        Map<String, Model> map = super.getWindowProperties();
+        map.put(DISK_WINDOW, getDiskWindow());
+        return map;
+    }
+
+    @Override
+    public void setWindowProperty(String propName, Model value) {
+        if (DISK_WINDOW.equals(propName)) {
+            setDiskWindow(value);
+        } else {
+            super.setWindowProperty(propName, value);
+        }
+    }
+
 }

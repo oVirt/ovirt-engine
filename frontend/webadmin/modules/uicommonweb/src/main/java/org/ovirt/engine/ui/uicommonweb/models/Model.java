@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,6 +36,10 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.inject.Inject;
 
 public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvidePropertyChangedEvent, HasHandlers, IModel {
+
+    public static final String PROP_WINDOW = "Window"; //$NON-NLS-1$
+    public static final String PROP_CONFIRM_WINDOW = "ConfirmWindow"; //$NON-NLS-1$
+
     /**
      * The GWT event bus.
      */
@@ -93,7 +99,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     public void setWindow(Model value) {
         if (window != value) {
             window = value;
-            onPropertyChanged(new PropertyChangedEventArgs("Window")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs(PROP_WINDOW));
         }
     }
 
@@ -108,7 +114,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     public void setConfirmWindow(Model value) {
         if (confirmWindow != value) {
             confirmWindow = value;
-            onPropertyChanged(new PropertyChangedEventArgs("ConfirmWindow")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs(PROP_CONFIRM_WINDOW));
         }
     }
 
@@ -631,4 +637,33 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     public <T> AsyncQuery<T> asyncQuery(AsyncCallback<T> callback) {
         return new AsyncQuery<>(callback);
     }
+
+    @Override
+    public Map<String, Model> getWindowProperties() {
+        Map<String, Model> map = new HashMap<>();
+        map.put(PROP_WINDOW, getWindow());
+        return map;
+    }
+
+    @Override
+    public void setWindowProperty(String propName, Model value) {
+        if (PROP_WINDOW.equals(propName)) {
+            setWindow(value);
+        }
+    }
+
+    @Override
+    public Map<String, Model> getConfirmWindowProperties() {
+        Map<String, Model> map = new HashMap<>();
+        map.put(PROP_CONFIRM_WINDOW, getConfirmWindow());
+        return map;
+    }
+
+    @Override
+    public void setConfirmWindowProperty(String propName, Model value) {
+        if (PROP_CONFIRM_WINDOW.equals(propName)) {
+            setConfirmWindow(value);
+        }
+    }
+
 }

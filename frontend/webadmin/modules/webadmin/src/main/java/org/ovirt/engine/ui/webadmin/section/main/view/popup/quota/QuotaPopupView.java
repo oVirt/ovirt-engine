@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -436,7 +437,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     private void registerHandlers() {
         model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
             String propName = args.propertyName;
-            if ("Window".equals(propName) && model.getWindow() == null) { //$NON-NLS-1$
+            if (Model.PROP_WINDOW.equals(propName) && model.getWindow() == null) {
                 if (model.getSpecificClusterQuota().getEntity()) {
                     quotaClusterTable.asEditor().edit(model.getAllDataCenterClusters());
                 } else {

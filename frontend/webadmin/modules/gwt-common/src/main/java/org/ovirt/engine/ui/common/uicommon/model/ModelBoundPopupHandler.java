@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,39 +36,47 @@ public class ModelBoundPopupHandler<M extends IModel> {
     private final Set<String> windowPropertyNames = new HashSet<>();
     private final Set<String> confirmWindowPropertyNames = new HashSet<>();
 
-    private Map<String, AbstractModelBoundPopupPresenterWidget<?, ?>> windowPopupInstances = new HashMap<>();
-    private Map<String, AbstractModelBoundPopupPresenterWidget<?, ?>> confirmWindowPopupInstances = new HashMap<>();
+    private final Map<String, AbstractModelBoundPopupPresenterWidget<?, ?>> windowPopupInstances = new HashMap<>();
+    private final Map<String, AbstractModelBoundPopupPresenterWidget<?, ?>> confirmWindowPopupInstances = new HashMap<>();
 
     private Provider<? extends AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?>> defaultConfirmPopupProvider;
+
+    private boolean initialized = false;
 
     public ModelBoundPopupHandler(ModelBoundPopupResolver<M> popupResolver, EventBus eventBus) {
         this.popupResolver = popupResolver;
         this.eventBus = eventBus;
-
-        init();
     }
 
-    void init() {
-        windowPropertyNames.addAll(Arrays.asList(popupResolver.getWindowPropertyNames()));
-        confirmWindowPropertyNames.addAll(Arrays.asList(popupResolver.getConfirmWindowPropertyNames()));
+    /**
+     * Sets up a property change listener for model's "Window"-like and
+     * "ConfirmWindow"-like properties, which are used to trigger dialogs.
+     * <p>
+     * Shouldn't be called more than once - each {@link ModelBoundPopupHandler}
+     * instance should handle a specific model.
+     */
+    public void initDialogModelListener(M model) {
+        assert !initialized : "Trying to re-initialize dialog model listener"; //$NON-NLS-1$
 
+        // Init property names
+        windowPropertyNames.clear();
+        windowPropertyNames.addAll(model.getWindowProperties().keySet());
+
+        confirmWindowPropertyNames.clear();
+        confirmWindowPropertyNames.addAll(model.getConfirmWindowProperties().keySet());
+
+        // Init popup instance maps
+        windowPopupInstances.clear();
         for (String propName : windowPropertyNames) {
             windowPopupInstances.put(propName, null);
         }
 
+        confirmWindowPopupInstances.clear();
         for (String propName : confirmWindowPropertyNames) {
             confirmWindowPopupInstances.put(propName, null);
         }
-    }
 
-    /**
-     * Adds a property change listener to the model that responds when a new window model is set.
-     *
-     * TODO rename addWindowModelChangeListener
-     */
-    public void addDialogModelListener(final M model) {
-        hideAndClearAllPopups();
-
+        // Add property change listener to the model
         model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
             String propName = args.propertyName;
 
@@ -79,6 +86,8 @@ public class ModelBoundPopupHandler<M extends IModel> {
                 handleWindowModelChange(model, propName, confirmWindowPopupInstances.get(propName), true);
             }
         });
+
+        initialized = true;
     }
 
     public void setDefaultConfirmPopupProvider(
@@ -86,14 +95,31 @@ public class ModelBoundPopupHandler<M extends IModel> {
         this.defaultConfirmPopupProvider = defaultConfirmPopupProvider;
     }
 
-    // TODO this should be redesigned -- way too complex. GS
+    /**
+     * Handles the change of given property (as defined by {@code propertyName})
+     * for the given model.
+     * <p>
+     * {@code currentPopup} represents the GWTP popup instance associated with the
+     * property (can be {@code null} to indicate that the associated popup is not
+     * active at the moment).
+     * <p>
+     * {@code isConfirmation} is used to differentiate between "Window"-like and
+     * "ConfirmWindow"-like properties:
+     * <ul>
+     * <li>"Window"-like properties have popups resolved via
+     *      {@link ModelBoundPopupResolver#getModelPopup} method</li>
+     * <li>"ConfirmWindow"-like properties have popups resolved via
+     *      {@link ModelBoundPopupResolver#getConfirmModelPopup} method</li>
+     * </ul>
+     */
     @SuppressWarnings("unchecked")
     void handleWindowModelChange(M sourceModel, String propertyName,
             AbstractModelBoundPopupPresenterWidget<?, ?> currentPopup,
             boolean isConfirmation) {
+        // Model behind the popup
         Model windowModel = isConfirmation
-                ? popupResolver.getConfirmWindowModel(sourceModel, propertyName)
-                : popupResolver.getWindowModel(sourceModel, propertyName);
+                ? sourceModel.getConfirmWindowProperties().get(propertyName)
+                : sourceModel.getWindowProperties().get(propertyName);
 
         // Reveal new popup
         if (windowModel != null && currentPopup == null) {
@@ -122,13 +148,14 @@ public class ModelBoundPopupHandler<M extends IModel> {
                         isConfirmation);
             } else {
                 if (isConfirmation) {
-                    popupResolver.clearConfirmWindowModel(sourceModel, propertyName);
+                    sourceModel.setConfirmWindowProperty(propertyName, null);
                 } else {
-                    popupResolver.clearWindowModel(sourceModel, propertyName);
+                    sourceModel.setWindowProperty(propertyName, null);
                 }
             }
         }
 
+        // Close existing popup
         else if (windowModel == null && currentPopup != null) {
             hideAndClearPopup(propertyName, currentPopup, isConfirmation);
         }
@@ -137,7 +164,7 @@ public class ModelBoundPopupHandler<M extends IModel> {
     /**
      * Reveals the popup (tells GWTP to show it).
      */
-    <T extends Model> void revealPopup(final T model, final AbstractModelBoundPopupPresenterWidget<T, ?> popup) {
+    <T extends Model> void revealPopup(T model, AbstractModelBoundPopupPresenterWidget<T, ?> popup) {
         assert model != null : "Popup model must not be null"; //$NON-NLS-1$
 
         // Initialize popup
@@ -155,6 +182,10 @@ public class ModelBoundPopupHandler<M extends IModel> {
         RevealRootPopupContentEvent.fire(eventBus, popup);
     }
 
+    /**
+     * Tells the popup to start or stop progress indicator, based on model's
+     * {@linkplain Model#getProgress progress} property.
+     */
     <T extends Model> void updatePopupProgress(T model, AbstractModelBoundPopupPresenterWidget<T, ?> popup) {
         if (model.getProgress() != null) {
             popup.startProgress(model.getProgress().getCurrentOperation());
@@ -192,33 +223,6 @@ public class ModelBoundPopupHandler<M extends IModel> {
             confirmWindowPopupInstances.put(propertyName, null);
         } else {
             windowPopupInstances.put(propertyName, null);
-        }
-    }
-
-    /**
-     * Hides confirmation and window popups and clears their references.
-     *
-     * TODO(vs) this method existed so that all application popups can be
-     * shown again after auto-logout and re-login without having to reload
-     * WebAdmin page in browser. With SSO in place (no more GWT UI specific
-     * login screen), this use case is irrelevant and this method should be
-     * removed.
-     */
-    void hideAndClearAllPopups() {
-        for (String propName : windowPropertyNames) {
-            AbstractModelBoundPopupPresenterWidget<?, ?> popup = windowPopupInstances.get(propName);
-
-            if (popup != null) {
-                hideAndClearPopup(propName, popup, false);
-            }
-        }
-
-        for (String propName : confirmWindowPropertyNames) {
-            AbstractModelBoundPopupPresenterWidget<?, ?> confirmPopup = confirmWindowPopupInstances.get(propName);
-
-            if (confirmPopup != null) {
-                hideAndClearPopup(propName, confirmPopup, true);
-            }
         }
     }
 

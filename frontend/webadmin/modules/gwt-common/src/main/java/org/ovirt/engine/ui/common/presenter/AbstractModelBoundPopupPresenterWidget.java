@@ -86,36 +86,6 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
     }
 
     @Override
-    public String[] getWindowPropertyNames() {
-        return new String[] { "Window" }; //$NON-NLS-1$
-    }
-
-    @Override
-    public Model getWindowModel(T source, String propertyName) {
-        return source.getWindow();
-    }
-
-    @Override
-    public void clearWindowModel(T source, String propertyName) {
-        source.setWindow(null);
-    }
-
-    @Override
-    public String[] getConfirmWindowPropertyNames() {
-        return new String[] { "ConfirmWindow" }; //$NON-NLS-1$
-    }
-
-    @Override
-    public Model getConfirmWindowModel(T source, String propertyName) {
-        return source.getConfirmWindow();
-    }
-
-    @Override
-    public void clearConfirmWindowModel(T source, String propertyName) {
-        source.setConfirmWindow(null);
-    }
-
-    @Override
     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(T source,
             UICommand lastExecutedCommand, Model windowModel) {
         // No-op, override as necessary
@@ -217,7 +187,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         }
 
         // Register dialog model property change listener
-        popupHandler.addDialogModelListener(model);
+        popupHandler.initDialogModelListener(model);
 
         // Initialize popup contents from the model
         getView().edit(model);

@@ -1,9 +1,5 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.GuestContainer;
@@ -33,7 +29,6 @@ import org.ovirt.engine.ui.uicommonweb.models.VmErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
-import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
@@ -172,31 +167,6 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return importVmFromExternalProviderProvider.get();
                         } else {
                             return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                        }
-                    }
-
-                    @Override
-                    public String[] getWindowPropertyNames() {
-                        List<String> names = new ArrayList<>();
-                        names.addAll(Arrays.asList(super.getWindowPropertyNames()));
-                        names.add(VmBaseListModel.DISK_WINDOW);
-                        return names.toArray(new String[names.size()]);
-                    }
-
-                    @Override
-                    public Model getWindowModel(VmListModel<Void> source, String propertyName) {
-                        if (VmBaseListModel.DISK_WINDOW.equals(propertyName)) {
-                            return source.getDiskWindow();
-                        }
-                        return super.getWindowModel(source, propertyName);
-                    }
-
-                    @Override
-                    public void clearWindowModel(VmListModel<Void> source, String propertyName) {
-                        if (VmBaseListModel.DISK_WINDOW.equals(propertyName)) {
-                            source.setDiskWindow(null);
-                        } else {
-                            super.clearWindowModel(source, propertyName);
                         }
                     }
 

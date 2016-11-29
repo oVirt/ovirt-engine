@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterGuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuideModel;
@@ -162,7 +163,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> i
                 }
 
                 updateActionsPanels(guideModel);
-            } else if ("Window".equals(propertyName)) { //$NON-NLS-1$
+            } else if (Model.PROP_WINDOW.equals(propertyName)) {
                 if (guideModel.getLastExecutedCommand().getName().equals("Cancel")) { //$NON-NLS-1$
                     redrawActionsPanels();
                 }

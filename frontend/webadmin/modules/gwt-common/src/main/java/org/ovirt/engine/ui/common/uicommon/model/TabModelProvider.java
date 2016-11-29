@@ -74,7 +74,7 @@ public abstract class TabModelProvider<M extends HasEntity> implements ModelProv
     protected void initializeModelHandlers(M model) {
         // Add a property change listener to the model that responds when a new window model is set.
         // TODO should be refactored to read "model.addDialogModelListener(popupHandler)", which is semantically correct
-        popupHandler.addDialogModelListener(model);
+        popupHandler.initDialogModelListener(model);
 
         // Register WidgetModel property change listener
         model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
@@ -98,52 +98,20 @@ public abstract class TabModelProvider<M extends HasEntity> implements ModelProv
     }
 
     @Override
-    public String[] getWindowPropertyNames() {
-        return new String[] { "Window" }; //$NON-NLS-1$
-    }
-
-    @Override
-    public Model getWindowModel(M source, String propertyName) {
-        return source.getWindow();
-    }
-
-    @Override
-    public void clearWindowModel(M source, String propertyName) {
-        source.setWindow(null);
-    }
-
-    @Override
-    public String[] getConfirmWindowPropertyNames() {
-        return new String[] { "ConfirmWindow" }; //$NON-NLS-1$
-    }
-
-    @Override
-    public Model getConfirmWindowModel(M source, String propertyName) {
-        return source.getConfirmWindow();
-    }
-
-    @Override
-    public void clearConfirmWindowModel(M source, String propertyName) {
-        source.setConfirmWindow(null);
-    }
-
-    @Override
     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(M sourceModel,
             UICommand lastExecutedCommand, Model windowModel) {
-
         // No-op by default.
-        // Override if you need to figure out which popup presenter widget is responsible for rendering the popup for windowModel.
-
+        // Override if you need to figure out which popup presenter widget
+        // is responsible for rendering the popup for given source model.
         return null;
     }
 
     @Override
     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(M sourceModel,
             UICommand lastExecutedCommand) {
-
         // No-op by default.
-        // Override if you need to figure out which popup presenter widget is responsible for rendering the popup for windowModel.
-
+        // Override if you need to figure out which popup presenter widget
+        // is responsible for rendering the popup for given source model.
         return null;
     }
 
