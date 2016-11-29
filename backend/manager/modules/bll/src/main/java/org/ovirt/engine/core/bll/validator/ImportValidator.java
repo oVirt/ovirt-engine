@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,16 +42,26 @@ public class ImportValidator {
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    public ValidationResult validateUnregisteredEntity(IVdcQueryable entityFromConfiguration, OvfEntityData ovfEntityData, List<DiskImage> images) {
-        if (ovfEntityData == null && !params.isImportAsNewEntity()) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
-        }
-
-        if (entityFromConfiguration == null) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
-        }
-
-        for (DiskImage image : images) {
+    /**
+     * Validate the storage domains' existence of the VM's disks. If a storage domain will fail to be active or does not
+     * exist in the engine, the engine should fail the validation, unless the allowPartial flag is true. Once the
+     * allowPartial flag is true the operation should not fail and the disk will be removed from the VM's disk list and
+     * also from the imageToDestinationDomainMap, so the operation will pass the execute phase and import the VM
+     * partially without the invalid disks.
+     *
+     * @param images
+     *            - The images list to validate their storage domains. This list might be filtered if the allowPartial
+     *            flag is true
+     * @param allowPartial
+     *            - Flag which determine if the VM can be imported partially.
+     * @param imageToDestinationDomainMap
+     *            - Map from src storage to dst storage which might be filtered if the allowPartial flag is true.
+     * @return - The validation result.
+     */
+    public ValidationResult validateStorageExistForUnregisteredEntity(List<DiskImage> images,
+            boolean allowPartial,
+            Map<Guid, Guid> imageToDestinationDomainMap) {
+        for (DiskImage image : new ArrayList<>(images)) {
             StorageDomain sd = getStorageDomainDao().getForStoragePool(
                     image.getStorageIds().get(0), getStoragePool().getId());
             ValidationResult result = new StorageDomainValidator(sd).isDomainExistAndActive();
@@ -60,8 +71,24 @@ public class ImportValidator {
                         image.getStorageIds().get(0),
                         image.getDiskAlias(),
                         image.getId());
-                return result;
+                if (!allowPartial) {
+                    return result;
+                }
+                imageToDestinationDomainMap.remove(image.getId());
+                images.remove(image);
             }
+        }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult validateUnregisteredEntity(IVdcQueryable entityFromConfiguration,
+            OvfEntityData ovfEntityData) {
+        if (ovfEntityData == null && !params.isImportAsNewEntity()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
+        }
+
+        if (entityFromConfiguration == null) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
         }
 
         if (!getStorageDomain().getStorageDomainType().isDataDomain()) {

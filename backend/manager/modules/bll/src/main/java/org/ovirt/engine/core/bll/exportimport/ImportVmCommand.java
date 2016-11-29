@@ -1113,7 +1113,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected boolean setAndValidateDiskProfiles() {
         if (getParameters().getVm().getDiskMap() != null) {
             Map<DiskImage, Guid> map = new HashMap<>();
-            for (Disk disk : getParameters().getVm().getDiskMap().values()) {
+            for (Disk disk : getDisksForDiskProfileValidation()) {
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage diskImage = (DiskImage) disk;
                     map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
@@ -1122,6 +1122,22 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
+    }
+
+    /**
+     * If the allow partial import flag is true we should filter out the invalid disks which did not pass the
+     * validation from the VM's disk map, since those disks will not be part of the VM once it will be imported.
+     *
+     * @return All the valid disks to use for disk profile.
+     */
+    private Collection<Disk> getDisksForDiskProfileValidation() {
+        Collection<Disk> disks = getParameters().getVm().getDiskMap().values();
+        if (getParameters().getAllowPartialImport()) {
+            disks = disks.stream().filter(disk -> getImages().stream()
+                    .anyMatch(diskFromImagesList -> diskFromImagesList.getId().equals(disk.getId())))
+                    .collect(Collectors.toList());
+        }
+        return disks;
     }
 
     @Override

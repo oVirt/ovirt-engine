@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -138,8 +139,15 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         when(externalVmMacsFinder.findExternalMacAddresses(eq(expectedVm), any(CommandContext.class)))
                 .thenReturn(Collections.emptySet());
         when(validator.validateUnregisteredEntity(
-                any(IVdcQueryable.class), any(OvfEntityData.class), anyListOf(DiskImage.class)))
+                any(IVdcQueryable.class),
+                any(OvfEntityData.class)))
                 .thenReturn(ValidationResult.VALID);
+        when(validator.validateStorageExistForUnregisteredEntity(
+                anyListOf(DiskImage.class),
+                any(Boolean.class),
+                any(Map.class)))
+                .thenReturn(ValidationResult.VALID);
+
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
@@ -151,8 +159,15 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
         doReturn(storageDomain).when(cmd).getStorageDomain();
         when(validator.validateUnregisteredEntity(
-                any(IVdcQueryable.class), any(OvfEntityData.class), anyListOf(DiskImage.class))).
+                any(IVdcQueryable.class),
+                any(OvfEntityData.class))).
+                thenReturn(ValidationResult.VALID);
+        when(validator.validateStorageExistForUnregisteredEntity(
+                anyListOf(DiskImage.class),
+                any(Boolean.class),
+                any(Map.class))).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
+
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
@@ -164,7 +179,13 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         storageDomain.setStatus(StorageDomainStatus.Inactive);
 
         when(validator.validateUnregisteredEntity(
-                any(IVdcQueryable.class), any(OvfEntityData.class), anyListOf(DiskImage.class))).
+                any(IVdcQueryable.class),
+                any(OvfEntityData.class))).
+                thenReturn(ValidationResult.VALID);
+        when(validator.validateStorageExistForUnregisteredEntity(
+                anyListOf(DiskImage.class),
+                any(Boolean.class),
+                any(Map.class))).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
@@ -186,7 +207,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         ovfEntityDataList.add(ovfEntity);
         when(unregisteredOVFDataDao.getByEntityIdAndStorageDomain(vmId, storageDomainId)).thenReturn(ovfEntityDataList);
         when(validator.validateUnregisteredEntity(
-                any(IVdcQueryable.class), any(OvfEntityData.class), anyListOf(DiskImage.class))).
+                any(IVdcQueryable.class),
+                any(OvfEntityData.class))).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
