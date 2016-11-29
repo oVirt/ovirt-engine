@@ -2,18 +2,26 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
@@ -177,6 +185,45 @@ public class JsonObjectSerializationEntitiesTest {
                 new JsonObjectDeserializer().deserialize(serializedEntity, entity.getClass());
         assertNotNull(deserializedEntity);
         assertEquals(entity, deserializedEntity);
+    }
+
+    @Test
+    public void serializeAndDeserializeExtMap() throws Exception {
+        ExtMap data = new ExtMap();
+        data.put(Authn.AuthRecord.PRINCIPAL, "user1@BRQ-OPENLDAP.RHEV.LAB.ENG.BRQ.REDHAT.COM");
+        String json = serialize(data);
+        assertTrue(json.length() > 0);
+        ExtMap extMap = deserialize(json, ExtMap.class);
+        assertNotNull(extMap);
+        assertEquals(data, extMap);
+    }
+
+    @Test
+    public void serializeAndDeserializeExtMapList() throws Exception {
+        List<ExtMap> users = new ArrayList<>();
+        users.add(new ExtMap().mput(Authn.AuthRecord.PRINCIPAL, "user1@BRQ-OPENLDAP.RHEV.LAB.ENG.BRQ.REDHAT.COM"));
+        users.add(new ExtMap().mput(Authn.AuthRecord.PRINCIPAL, "user2@BRQ-OPENLDAP.RHEV.LAB.ENG.BRQ.REDHAT.COM"));
+
+        String json = serialize(users);
+        assertTrue(json.length() > 0);
+
+        List<ExtMap> deserializedUsers = deserialize(json, ArrayList.class);
+        assertNotNull(deserializedUsers);
+        assertEquals(users, deserializedUsers);
+    }
+
+    private String serialize(Object obj) throws IOException {
+        ObjectMapper mapper = new ObjectMapper()
+                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
+        mapper.getSerializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+        return mapper.writeValueAsString(obj);
+    }
+
+    private <T> T deserialize(String json, Class<T> type) throws IOException {
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
+        mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+        return mapper.readValue(json, type);
     }
 
     /**

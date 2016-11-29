@@ -26,22 +26,28 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
-import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
+import org.ovirt.engine.core.utils.serialization.json.JsonExtMapMixIn;
 import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SsoOAuthServiceUtils {
-    private static final Logger log = LoggerFactory.getLogger(SsoOAuthServiceUtils.class);
-
     private static final String authzSearchScope = "ovirt-ext=token-info:authz-search";
     private static final String publicAuthzSearchScope = "ovirt-ext=token-info:public-authz-search";
+    private static final ObjectMapper mapper;
+
+    static {
+        mapper = new ObjectMapper()
+                .configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
+        mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+        mapper.getSerializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+    }
 
     public static Map<String, Object> authenticate(HttpServletRequest req, String scope) {
         HttpURLConnection connection = null;
@@ -86,7 +92,7 @@ public class SsoOAuthServiceUtils {
                     .addParameter("password", password)
                     .addParameter("scope", scope);
             if (authRecord != null) {
-                urlBuilder.addParameter("ovirt_auth_record", new JsonObjectSerializer().serialize(authRecord));
+                urlBuilder.addParameter("ovirt_auth_record", serialize(authRecord));
             }
             postData(connection, urlBuilder.buildURL().getQuery());
             return getData(connection);
@@ -97,6 +103,14 @@ public class SsoOAuthServiceUtils {
                 connection.disconnect();
             }
         }
+    }
+
+    private static String serialize(Object obj) throws IOException {
+        return mapper.writeValueAsString(obj);
+    }
+
+    private static <T> T deserialize(String json, Class<T> type) throws IOException {
+        return mapper.readValue(json, type);
     }
 
     public static Map<String, Object> revoke(String token) {
@@ -313,7 +327,7 @@ public class SsoOAuthServiceUtils {
                 urlBuilder.addParameter("token", token);
             }
             if (params != null) {
-                urlBuilder.addParameter("params", encode(new JsonObjectSerializer().serialize(params)));
+                urlBuilder.addParameter("params", encode(serialize(params)));
             }
             postData(connection, urlBuilder.buildURL().getQuery());
             return getData(connection);
@@ -376,7 +390,7 @@ public class SsoOAuthServiceUtils {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(SsoOAuthServiceUtils.class.getClassLoader());
             try {
-                return new JsonObjectDeserializer().deserialize(
+                return deserialize(
                         new String(os.toByteArray(), StandardCharsets.UTF_8.name()),
                         HashMap.class);
             } finally {

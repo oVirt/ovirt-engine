@@ -11,7 +11,6 @@ import java.util.Map;
 import org.apache.commons.lang.SerializationException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
-import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -49,7 +48,6 @@ public class JsonObjectSerializer implements Serializer {
         formattedMapper.getSerializationConfig().addMixInAnnotations(VmPayload.class, JsonVmPayloadMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(RunVmParams.class, JsonRunVmParamsMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(EngineFault.class, JsonEngineFaultMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(Collection.class, JsonCollectionMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(Map.class, JsonMapMixIn.class);
 
