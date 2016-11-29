@@ -72,11 +72,17 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
                 upgradeManager.update(getVds());
                 if (vdsType == VDSType.oVirtNode) {
                     VdsActionParameters params = new VdsActionParameters(getVds().getId());
-                    params.setPrevVdsStatus(getVds().getStatus());
-                    setVdsStatus(VDSStatus.Reboot);
-                    runInternalAction(VdcActionType.SshHostReboot,
+                    params.setPrevVdsStatus(getParameters().getInitialStatus());
+                    VdcReturnValueBase returnValue = runInternalAction(VdcActionType.SshHostReboot,
                             params,
                             ExecutionHandler.createInternalJobContext());
+                    if (!returnValue.getSucceeded()) {
+                        setVdsStatus(VDSStatus.InstallFailed);
+                        log.error("Engine failed to restart via ssh ovirt-node host '{}' ('{}') after upgrade",
+                                getVds().getName(),
+                                getVds().getId());
+                        return;
+                    }
                 } else {
                     // letting the host a chance to recover from restarting the VDSM service after the upgrade
                     if (!new HostConnectivityChecker().check(getVds())) {

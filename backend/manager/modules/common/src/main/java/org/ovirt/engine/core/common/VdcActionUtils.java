@@ -28,10 +28,9 @@ public final class VdcActionUtils {
         Map<Enum<?>, Set<VdcActionType>> vdsMatrix = new HashMap<>();
         vdsMatrix.put(
                 VDSStatus.Maintenance,
-                EnumSet.of(VdcActionType.MaintenanceVds, VdcActionType.ClearNonResponsiveVdsVms,
-                        VdcActionType.ApproveVds,
-                        VdcActionType.HostUpgradeCheck,
-                        VdcActionType.UpgradeHost));
+                EnumSet.of(VdcActionType.MaintenanceVds,
+                        VdcActionType.ClearNonResponsiveVdsVms,
+                        VdcActionType.ApproveVds));
         vdsMatrix.put(
                 VDSStatus.Up,
                 EnumSet.of(VdcActionType.ActivateVds, VdcActionType.RemoveVds,

@@ -25,14 +25,18 @@ public class SshHostRebootCommand <T extends VdsActionParameters> extends VdsCom
     protected void executeCommand() {
         boolean result = executeSshReboot(getVds().getClusterCompatibilityVersion().toString());
         if (result) {
-            // preserve maintenance status
-            if (getParameters().getPrevVdsStatus() != VDSStatus.Maintenance) {
-                setVdsStatus(VDSStatus.Initializing);
-            } else {
-                setVdsStatus(VDSStatus.Maintenance);
-            }
+            setVdsStatus(VDSStatus.Reboot);
+
+            // preserve maintenance status after reboot or set non-responsive for letting the monitor control the host
+            runSleepOnReboot(getStatusAfterReboot());
         }
         setSucceeded(result);
+    }
+
+    private VDSStatus getStatusAfterReboot() {
+        return getParameters().getPrevVdsStatus() == VDSStatus.Maintenance
+                ? VDSStatus.Maintenance
+                : VDSStatus.NonResponsive;
     }
 
     /**
