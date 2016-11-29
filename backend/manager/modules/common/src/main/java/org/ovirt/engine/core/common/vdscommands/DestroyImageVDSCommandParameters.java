@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DestroyImageVDSCommandParameters
-        extends AllStorageAndImageIdVDSCommandParametersBase implements PostZero {
+        extends AllStorageAndImageIdVDSCommandParametersBase implements PostDeleteAction {
     public DestroyImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
             List<Guid> imageList, boolean postZero, boolean force) {
         super(storagePoolId, storageDomainId, imageGroupId, Guid.Empty);

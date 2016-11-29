@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
+import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -128,7 +128,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             if (getParameters().getUseCopyCollapse()) {
                 vdsReturnValue = runVdsCommand(
                         VDSCommandType.CopyImage,
-                        PostZeroHandler.fixParametersWithPostZero(
+                        PostDeleteActionHandler.fixParameters(
                                 new CopyImageVDSCommandParameters(getStorageDomain().getStoragePoolId(),
                                         sourceDomainId,
                                         getParameters().getContainerId(),
@@ -146,7 +146,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             } else {
                 vdsReturnValue = runVdsCommand(
                         VDSCommandType.MoveImageGroup,
-                        PostZeroHandler.fixParametersWithPostZero(
+                        PostDeleteActionHandler.fixParameters(
                                 new MoveImageGroupVDSCommandParameters(
                                         getDiskImage() != null ? getDiskImage().getStoragePoolId()
                                                 : getStorageDomain().getStoragePoolId(),

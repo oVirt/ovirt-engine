@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.vdscommands.PostZero;
+import org.ovirt.engine.core.common.vdscommands.PostDeleteAction;
 import org.ovirt.engine.core.common.vdscommands.StorageDomainIdParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class PostZeroHandler {
+public class PostDeleteActionHandler {
 
-    private PostZeroHandler(){}
+    private PostDeleteActionHandler(){}
 
     /**
      * Since the file system is responsible for handling block allocation, there is no need
@@ -17,15 +17,14 @@ public class PostZeroHandler {
      * @param <T> The parameters type.
      * @return The fixed parameters.
      */
-    public static <T extends StorageDomainIdParametersBase & PostZero>
-                    T fixParametersWithPostZero(T parameters) {
+    public static <T extends StorageDomainIdParametersBase & PostDeleteAction> T fixParameters(T parameters) {
         StorageDomainStatic storageDomainStatic =
                 DbFacade.getInstance().getStorageDomainStaticDao().get(parameters.getStorageDomainId());
-        return fixParametersWithPostZero(parameters, storageDomainStatic.getStorageType().isFileDomain());
+        return fixParameters(parameters, storageDomainStatic.getStorageType().isFileDomain());
     }
 
-    protected static <T extends StorageDomainIdParametersBase & PostZero>
-                    T fixParametersWithPostZero(T parameters, boolean isFileDomain) {
+    protected static <T extends StorageDomainIdParametersBase & PostDeleteAction>
+                    T fixParameters(T parameters, boolean isFileDomain) {
         if (isFileDomain) {
             parameters.setPostZero(false);
         }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
-import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
+import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -104,7 +104,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
             Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RestoreAllSnapshots);
 
             vdsReturnValue = runVdsCommand(VDSCommandType.DestroyImage,
-                    PostZeroHandler.fixParametersWithPostZero(
+                    PostDeleteActionHandler.fixParameters(
                             new DestroyImageVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
                                     _imagesToDelete, getDiskImage().isWipeAfterDelete(), true)));
 

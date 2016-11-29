@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.CreateSnapshotFromTemplateCommand;
-import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
+import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters;
@@ -78,7 +78,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
             VDSReturnValue vdsReturnValue;
             try {
                 vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
-                        PostZeroHandler.fixParametersWithPostZero(
+                        PostDeleteActionHandler.fixParameters(
                                 new CopyImageVDSCommandParameters(storagePoolID, getParameters().getStorageDomainId(),
                                         getVmTemplateId(), getDiskImage().getId(), getImage().getImageId(),
                                         newDiskImage.getId(), getDestinationImageId(),

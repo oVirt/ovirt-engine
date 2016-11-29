@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MergeSnapshotsVDSCommandParameters
-        extends AllStorageAndImageIdVDSCommandParametersBase implements PostZero {
+        extends AllStorageAndImageIdVDSCommandParametersBase implements PostDeleteAction {
     private Guid _imageId2;
 
     public MergeSnapshotsVDSCommandParameters(Guid storagePoolId, Guid storageDomainId,

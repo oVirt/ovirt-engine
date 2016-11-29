@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MoveImageGroupVDSCommandParameters
-        extends TargetDomainImageGroupVDSCommandParameters implements PostZero {
+        extends TargetDomainImageGroupVDSCommandParameters implements PostDeleteAction {
     private Guid privateVmId;
 
     public Guid getVmId() {

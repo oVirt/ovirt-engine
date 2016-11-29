@@ -7,7 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
+import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
@@ -53,7 +53,7 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
     }
 
     private VDSParametersBase createVDSParameters() {
-        return PostZeroHandler.fixParametersWithPostZero(
+        return PostDeleteActionHandler.fixParameters(
                 new DestroyImageVDSCommandParameters(
                         getParameters().getStoragePoolId(),
                         getParameters().getStorageDomainId(),

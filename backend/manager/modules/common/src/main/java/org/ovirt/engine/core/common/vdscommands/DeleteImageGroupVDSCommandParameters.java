@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DeleteImageGroupVDSCommandParameters
-        extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters implements PostZero {
+        extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters implements PostDeleteAction {
     private boolean postZero;
     private boolean forceDelete;
 

@@ -7,7 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
+import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -55,7 +55,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
                 storageDomainId, getVmId(), getDiskImage().getId(), getDiskImage().getImageId(),
                 getDestinationDiskImage().getImageId(), getDiskImage().isWipeAfterDelete());
         return runVdsCommand(VDSCommandType.MergeSnapshots,
-                PostZeroHandler.fixParametersWithPostZero(params));
+                PostDeleteActionHandler.fixParameters(params));
     }
 
     protected Guid createTask(Guid taskId, VDSReturnValue vdsReturnValue, Guid storageDomainId) {
