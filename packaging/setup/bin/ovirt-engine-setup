@@ -35,6 +35,8 @@ Usage: $0
         Use this jboss.
     --reconfigure-dwh-scale
         If DWH is configured, allow changing its scale.
+    --accept-defaults
+        Automatically use default answers in questions that have them.
 
 __EOF__
 	exit 1
@@ -78,6 +80,9 @@ while [ -n "$1" ]; do
 		;;
 		--reconfigure-dwh-scale)
 			environment="${environment} OVESETUP_DWH_CONFIG/scale=none:None"
+		;;
+		--accept-defaults)
+			environment="${environment} DIALOG/autoAcceptDefault=bool:True"
 		;;
 		--help)
 			usage
