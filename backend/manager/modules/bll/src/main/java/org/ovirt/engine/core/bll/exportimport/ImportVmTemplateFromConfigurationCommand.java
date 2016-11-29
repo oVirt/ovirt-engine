@@ -2,11 +2,14 @@ package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
@@ -35,6 +38,7 @@ import org.slf4j.LoggerFactory;
 public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplateParameters> extends ImportVmTemplateCommand {
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
+    private Map<Guid, String> failedDisksToImportForAuditLog = new HashMap<>();
     private OvfEntityData ovfEntityData;
     VmTemplate vmTemplateFromConfiguration;
     private ArrayList<DiskImage> imagesList;
@@ -106,9 +110,9 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                         image.getImageId(),
                         storageDomainId);
                 getImages().remove(image);
+                failedDisksToImportForAuditLog.putIfAbsent(image.getId(), image.getDiskAlias());
             }
         }
-
         for (DiskImage image : getImages()) {
             StorageDomain sd = storageDomainDao.getForStoragePool(
                     image.getStorageIds().get(0), getStoragePool().getId());
@@ -173,6 +177,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     @Override
     public void executeCommand() {
+        addAuditLogForPartialVMs();
         super.executeCommand();
         if (getParameters().isImagesExistOnTargetStorageDomain()) {
             if (!getImages().isEmpty()) {
@@ -183,6 +188,13 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         }
         setActionReturnValue(getVmTemplate().getId());
         setSucceeded(true);
+    }
+
+    private void addAuditLogForPartialVMs() {
+        if (getParameters().isAllowPartialImport() && !failedDisksToImportForAuditLog.isEmpty()) {
+            addCustomValue("DiskAliases", StringUtils.join(failedDisksToImportForAuditLog.values(), ", "));
+            auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_PARTIAL_TEMPLATE_DISKS_NOT_EXISTS);
+        }
     }
 
     private void findAndSaveDiskCopies() {
