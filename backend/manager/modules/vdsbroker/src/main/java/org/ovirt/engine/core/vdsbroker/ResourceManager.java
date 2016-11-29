@@ -192,12 +192,6 @@ public class ResourceManager implements BackendService {
         return eventListener.get();
     }
 
-    public void reestablishConnection(Guid vdsId) {
-        VDS vds = hostDao.get(vdsId);
-        removeVds(vds.getId());
-        addVds(vds, false);
-    }
-
     public void addVds(VDS vds, boolean isInternal) {
         VdsManager vdsManager = vdsManagerFactory.create(vds, this);
         if (isInternal) {
