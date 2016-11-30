@@ -8,7 +8,7 @@ import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 @Logged(executionLevel = LogLevel.TRACE)
 public class HSMGetTaskStatusVDSCommand<P extends HSMTaskGuidBaseVDSCommandParameters>
         extends HSMGetAllTasksStatusesVDSCommand<P> {
-    private TaskStatusReturnForXmlRpc _result;
+    private TaskStatusReturn _result;
 
     public HSMGetTaskStatusVDSCommand(P parameters) {
         super(parameters);
@@ -37,12 +37,12 @@ public class HSMGetTaskStatusVDSCommand<P extends HSMTaskGuidBaseVDSCommandParam
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return _result.getStatus();
     }
 
     @Override
-    protected void updateReturnStatus(StatusForXmlRpc newReturnStatus) {
-        _result.setXmlRpcStatus(newReturnStatus);
+    protected void updateReturnStatus(Status newReturnStatus) {
+        _result.setStatus(newReturnStatus);
     }
 }

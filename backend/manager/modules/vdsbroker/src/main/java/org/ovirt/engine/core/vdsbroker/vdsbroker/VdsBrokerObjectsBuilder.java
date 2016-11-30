@@ -8,7 +8,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -110,7 +109,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class encapsulate the knowledge of how to create objects from the VDS RPC protocol response.
- * This class has methods that receive XmlRpcStruct and construct the following Classes: VmDynamic VdsDynamic VdsStatic.
+ * This class has methods that receive struct and construct the following Classes: VmDynamic VdsDynamic VdsStatic.
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class VdsBrokerObjectsBuilder {
@@ -125,13 +124,13 @@ public class VdsBrokerObjectsBuilder {
     private static final Pattern IPV6_ADDRESS_CAPTURE_PREFIX_PATTERN = Pattern.compile("^.*?/(\\d+)?$");
     private static final Pattern IPV6_ADDRESS_CAPTURE_PATTERN = Pattern.compile("^([^/]+)(:?/\\d{1,3})?$");
 
-    public static VM buildVmsDataFromExternalProvider(Map<String, Object> xmlRpcStruct) {
-        VmStatic vmStatic = buildVmStaticDataFromExternalProvider(xmlRpcStruct);
+    public static VM buildVmsDataFromExternalProvider(Map<String, Object> struct) {
+        VmStatic vmStatic = buildVmStaticDataFromExternalProvider(struct);
         if (vmStatic == null) {
             return null;
         }
 
-        VmDynamic vmDynamic = buildVMDynamicDataFromList(xmlRpcStruct);
+        VmDynamic vmDynamic = buildVMDynamicDataFromList(struct);
 
         VM vm = new VM(vmStatic, vmDynamic, new VmStatistics());
         for (DiskImage image : vm.getImages()) {
@@ -139,9 +138,9 @@ public class VdsBrokerObjectsBuilder {
         }
 
         try {
-            vm.setClusterArch(parseArchitecture(xmlRpcStruct));
+            vm.setClusterArch(parseArchitecture(struct));
         } catch (IllegalArgumentException ex) {
-            log.warn("Illegal architecture type: %s, replacing with x86_64", xmlRpcStruct.get(VdsProperties.vm_arch));
+            log.warn("Illegal architecture type: %s, replacing with x86_64", struct.get(VdsProperties.vm_arch));
             vm.setClusterArch(ArchitectureType.x86_64);
         } catch (NullPointerException ex) {
             log.warn("null architecture type, replacing with x86_64, %s", vm);
@@ -234,24 +233,24 @@ public class VdsBrokerObjectsBuilder {
         return nics;
     }
 
-    private static VmStatic buildVmStaticDataFromExternalProvider(Map<String, Object> xmlRpcStruct) {
-        if (!xmlRpcStruct.containsKey(VdsProperties.vm_guid) || !xmlRpcStruct.containsKey(VdsProperties.vm_name)
-                || !xmlRpcStruct.containsKey(VdsProperties.mem_size_mb)
-                || !xmlRpcStruct.containsKey(VdsProperties.num_of_cpus)) {
+    private static VmStatic buildVmStaticDataFromExternalProvider(Map<String, Object> struct) {
+        if (!struct.containsKey(VdsProperties.vm_guid) || !struct.containsKey(VdsProperties.vm_name)
+                || !struct.containsKey(VdsProperties.mem_size_mb)
+                || !struct.containsKey(VdsProperties.num_of_cpus)) {
             return null;
         }
 
         VmStatic vmStatic = new VmStatic();
-        vmStatic.setId(Guid.createGuidFromString((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
-        vmStatic.setName((String) xmlRpcStruct.get(VdsProperties.vm_name));
-        vmStatic.setMemSizeMb(parseIntVdsProperty(xmlRpcStruct.get(VdsProperties.mem_size_mb)));
-        vmStatic.setNumOfSockets(parseIntVdsProperty(xmlRpcStruct.get(VdsProperties.num_of_cpus)));
-        vmStatic.setCustomCpuName((String) xmlRpcStruct.get(VdsProperties.cpu_model));
-        vmStatic.setCustomEmulatedMachine((String) xmlRpcStruct.get(VdsProperties.emulatedMachine));
-        addGraphicsDeviceFromExternalProvider(vmStatic, xmlRpcStruct);
+        vmStatic.setId(Guid.createGuidFromString((String) struct.get(VdsProperties.vm_guid)));
+        vmStatic.setName((String) struct.get(VdsProperties.vm_name));
+        vmStatic.setMemSizeMb(parseIntVdsProperty(struct.get(VdsProperties.mem_size_mb)));
+        vmStatic.setNumOfSockets(parseIntVdsProperty(struct.get(VdsProperties.num_of_cpus)));
+        vmStatic.setCustomCpuName((String) struct.get(VdsProperties.cpu_model));
+        vmStatic.setCustomEmulatedMachine((String) struct.get(VdsProperties.emulatedMachine));
+        addGraphicsDeviceFromExternalProvider(vmStatic, struct);
 
-        if (xmlRpcStruct.containsKey(VdsProperties.vm_disks)) {
-            for (Object disk : (Object[]) xmlRpcStruct.get(VdsProperties.vm_disks)) {
+        if (struct.containsKey(VdsProperties.vm_disks)) {
+            for (Object disk : (Object[]) struct.get(VdsProperties.vm_disks)) {
                 Map<String, Object> diskMap = (Map<String, Object>) disk;
                 if (VdsProperties.Disk.equals(diskMap.get(VdsProperties.type))) {
                     DiskImage image = buildDiskImageFromExternalProvider(diskMap);
@@ -260,9 +259,9 @@ public class VdsBrokerObjectsBuilder {
             }
         }
 
-        if (xmlRpcStruct.containsKey(VdsProperties.NETWORKS)) {
+        if (struct.containsKey(VdsProperties.NETWORKS)) {
             int idx = 0;
-            for (Object networkMap : (Object[]) xmlRpcStruct.get(VdsProperties.NETWORKS)) {
+            for (Object networkMap : (Object[]) struct.get(VdsProperties.NETWORKS)) {
                 VmNetworkInterface nic = buildNetworkInterfaceFromExternalProvider((Map<String, Object>) networkMap);
                 nic.setName(String.format("nic%d", ++idx));
                 nic.setVmName(vmStatic.getName());
@@ -281,9 +280,9 @@ public class VdsBrokerObjectsBuilder {
      *  ovirt graphics: cirrus, spice, vnc
      *  try to add the displaytype and graphics if ovirt support the channels
      */
-    private static void addGraphicsDeviceFromExternalProvider(VmStatic vmStatic, Map<String, Object> xmlRpcStruct) {
-        Object graphicsName = xmlRpcStruct.get(VdsProperties.GRAPHICS_DEVICE);
-        Object videoName =  xmlRpcStruct.get(VdsProperties.VIDEO_DEVICE);
+    private static void addGraphicsDeviceFromExternalProvider(VmStatic vmStatic, Map<String, Object> struct) {
+        Object graphicsName = struct.get(VdsProperties.GRAPHICS_DEVICE);
+        Object videoName =  struct.get(VdsProperties.VIDEO_DEVICE);
         if (graphicsName == null || videoName == null) {
             return;
         }
@@ -335,58 +334,58 @@ public class VdsBrokerObjectsBuilder {
         return nic;
     }
 
-    public static VmDynamic buildVMDynamicDataFromList(Map<String, Object> xmlRpcStruct) {
+    public static VmDynamic buildVMDynamicDataFromList(Map<String, Object> struct) {
         VmDynamic vmdynamic = new VmDynamic();
-        if (xmlRpcStruct.containsKey(VdsProperties.vm_guid)) {
-            vmdynamic.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
+        if (struct.containsKey(VdsProperties.vm_guid)) {
+            vmdynamic.setId(new Guid((String) struct.get(VdsProperties.vm_guid)));
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.status)) {
-            vmdynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
+        if (struct.containsKey(VdsProperties.status)) {
+            vmdynamic.setStatus(convertToVmStatus((String) struct.get(VdsProperties.status)));
         }
         return vmdynamic;
     }
 
-    public static Double getVdsmCallTimestamp(Map<String, Object> xmlRpcStruct) {
-        if (xmlRpcStruct.containsKey(VdsProperties.statusTime)) {
-            return assignDoubleValue(xmlRpcStruct, VdsProperties.statusTime);
+    public static Double getVdsmCallTimestamp(Map<String, Object> struct) {
+        if (struct.containsKey(VdsProperties.statusTime)) {
+            return assignDoubleValue(struct, VdsProperties.statusTime);
         }
         return -1d;
     }
 
-    public static String getVmDevicesHash(Map<String, Object> xmlRpcStruct) {
-        if (xmlRpcStruct.containsKey(VdsProperties.hash)) {
-            return (String) xmlRpcStruct.get(VdsProperties.hash);
+    public static String getVmDevicesHash(Map<String, Object> struct) {
+        if (struct.containsKey(VdsProperties.hash)) {
+            return (String) struct.get(VdsProperties.hash);
         }
         return null;
     }
 
-    public static VmDynamic buildVMDynamicData(Map<String, Object> xmlRpcStruct, VDS host) {
+    public static VmDynamic buildVMDynamicData(Map<String, Object> struct, VDS host) {
         VmDynamic vmdynamic = new VmDynamic();
-        updateVMDynamicData(vmdynamic, xmlRpcStruct, host);
+        updateVMDynamicData(vmdynamic, struct, host);
         return vmdynamic;
     }
 
-    public static StoragePool buildStoragePool(Map<String, Object> xmlRpcStruct) {
+    public static StoragePool buildStoragePool(Map<String, Object> struct) {
         StoragePool sPool = new StoragePool();
-        if (xmlRpcStruct.containsKey("type")) {
-            sPool.setIsLocal(StorageType.valueOf(xmlRpcStruct.get("type").toString()).isLocal());
+        if (struct.containsKey("type")) {
+            sPool.setIsLocal(StorageType.valueOf(struct.get("type").toString()).isLocal());
         }
-        sPool.setName(assignStringValue(xmlRpcStruct, "name"));
-        Integer masterVersion = assignIntValue(xmlRpcStruct, "master_ver");
+        sPool.setName(assignStringValue(struct, "name"));
+        Integer masterVersion = assignIntValue(struct, "master_ver");
         if (masterVersion != null) {
             sPool.setMasterDomainVersion(masterVersion);
         }
         return sPool;
     }
 
-    public static VmStatistics buildVMStatisticsData(Map<String, Object> xmlRpcStruct) {
+    public static VmStatistics buildVMStatisticsData(Map<String, Object> struct) {
         VmStatistics vmStatistics = new VmStatistics();
-        updateVMStatisticsData(vmStatistics, xmlRpcStruct);
+        updateVMStatisticsData(vmStatistics, struct);
         return vmStatistics;
     }
 
-    public static Map<String, LUNs> buildVmLunDisksData(Map<String, Object> xmlRpcStruct) {
-        Map<String, Object> disks = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.vm_disks);
+    public static Map<String, LUNs> buildVmLunDisksData(Map<String, Object> struct) {
+        Map<String, Object> disks = (Map<String, Object>) struct.get(VdsProperties.vm_disks);
         Map<String, LUNs> lunsMap = new HashMap<>();
 
         if (disks != null) {
@@ -413,34 +412,34 @@ public class VdsBrokerObjectsBuilder {
         return lunsMap;
     }
 
-    public static void updateVMDynamicData(VmDynamic vm, Map<String, Object> xmlRpcStruct, VDS host) {
-        if (xmlRpcStruct.containsKey(VdsProperties.vm_guid)) {
-            vm.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
+    public static void updateVMDynamicData(VmDynamic vm, Map<String, Object> struct, VDS host) {
+        if (struct.containsKey(VdsProperties.vm_guid)) {
+            vm.setId(new Guid((String) struct.get(VdsProperties.vm_guid)));
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.session)) {
-            String session = (String) xmlRpcStruct.get(VdsProperties.session);
+        if (struct.containsKey(VdsProperties.session)) {
+            String session = (String) struct.get(VdsProperties.session);
             try {
                 vm.setSession(SessionState.valueOf(session));
             } catch (Exception e) {
                 log.error("Illegal vm session '{}'.", session);
             }
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.acpiEnable)) {
-            vm.setAcpiEnable(Boolean.parseBoolean((String) xmlRpcStruct.get(VdsProperties.acpiEnable)));
+        if (struct.containsKey(VdsProperties.acpiEnable)) {
+            vm.setAcpiEnable(Boolean.parseBoolean((String) struct.get(VdsProperties.acpiEnable)));
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.status)) {
-            vm.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
+        if (struct.containsKey(VdsProperties.status)) {
+            vm.setStatus(convertToVmStatus((String) struct.get(VdsProperties.status)));
         }
 
-        boolean hasGraphicsInfo = updateGraphicsInfo(vm, xmlRpcStruct);
+        boolean hasGraphicsInfo = updateGraphicsInfo(vm, struct);
         if (!hasGraphicsInfo) {
-            updateGraphicsInfoFromConf(vm, xmlRpcStruct);
+            updateGraphicsInfoFromConf(vm, struct);
         }
 
         adjustDisplayIp(vm.getGraphicsInfos(), host);
 
-        if (xmlRpcStruct.containsKey(VdsProperties.utc_diff)) {
-            String utc_diff = xmlRpcStruct.get(VdsProperties.utc_diff).toString();
+        if (struct.containsKey(VdsProperties.utc_diff)) {
+            String utc_diff = struct.get(VdsProperties.utc_diff).toString();
             if (utc_diff.startsWith("+")) {
                 utc_diff = utc_diff.substring(1);
             }
@@ -452,22 +451,22 @@ public class VdsBrokerObjectsBuilder {
         }
 
         // ------------- vm internal agent data
-        if (xmlRpcStruct.containsKey(VdsProperties.vm_host)) {
-            vm.setVmHost(assignStringValue(xmlRpcStruct, VdsProperties.vm_host));
+        if (struct.containsKey(VdsProperties.vm_host)) {
+            vm.setVmHost(assignStringValue(struct, VdsProperties.vm_host));
         }
 
-        if (xmlRpcStruct.containsKey(VdsProperties.guest_cur_user_name)) {
-            vm.setGuestCurrentUserName(assignStringValue(xmlRpcStruct, VdsProperties.guest_cur_user_name));
+        if (struct.containsKey(VdsProperties.guest_cur_user_name)) {
+            vm.setGuestCurrentUserName(assignStringValue(struct, VdsProperties.guest_cur_user_name));
         }
 
-        initAppsList(xmlRpcStruct, vm);
-        initGuestContainers(xmlRpcStruct, vm);
+        initAppsList(struct, vm);
+        initGuestContainers(struct, vm);
 
-        if (xmlRpcStruct.containsKey(VdsProperties.guest_os)) {
-            vm.setGuestOs(assignStringValue(xmlRpcStruct, VdsProperties.guest_os));
+        if (struct.containsKey(VdsProperties.guest_os)) {
+            vm.setGuestOs(assignStringValue(struct, VdsProperties.guest_os));
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.VM_FQDN)) {
-            vm.setFqdn(assignStringValue(xmlRpcStruct, VdsProperties.VM_FQDN));
+        if (struct.containsKey(VdsProperties.VM_FQDN)) {
+            vm.setFqdn(assignStringValue(struct, VdsProperties.VM_FQDN));
             String fqdn = vm.getFqdn().trim();
             if ("localhost".equalsIgnoreCase(fqdn) || "localhost.localdomain".equalsIgnoreCase(fqdn)) {
                 vm.setFqdn(null);
@@ -477,8 +476,8 @@ public class VdsBrokerObjectsBuilder {
             }
         }
 
-        if (xmlRpcStruct.containsKey(VdsProperties.VM_IP)) {
-            vm.setIp(assignStringValue(xmlRpcStruct, VdsProperties.VM_IP));
+        if (struct.containsKey(VdsProperties.VM_IP)) {
+            vm.setIp(assignStringValue(struct, VdsProperties.VM_IP));
         }
         if (vm.getIp() != null) {
             if (vm.getIp().startsWith("127.0.")) {
@@ -488,32 +487,32 @@ public class VdsBrokerObjectsBuilder {
             }
         }
 
-        if (xmlRpcStruct.containsKey(VdsProperties.exit_code)) {
-            String exitCodeStr = xmlRpcStruct.get(VdsProperties.exit_code).toString();
+        if (struct.containsKey(VdsProperties.exit_code)) {
+            String exitCodeStr = struct.get(VdsProperties.exit_code).toString();
             vm.setExitStatus(VmExitStatus.forValue(Integer.parseInt(exitCodeStr)));
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.exit_message)) {
-            String exitMsg = (String) xmlRpcStruct.get(VdsProperties.exit_message);
+        if (struct.containsKey(VdsProperties.exit_message)) {
+            String exitMsg = (String) struct.get(VdsProperties.exit_message);
             vm.setExitMessage(exitMsg);
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.exit_reason)) {
-            String exitReasonStr = xmlRpcStruct.get(VdsProperties.exit_reason).toString();
+        if (struct.containsKey(VdsProperties.exit_reason)) {
+            String exitReasonStr = struct.get(VdsProperties.exit_reason).toString();
             vm.setExitReason(VmExitReason.forValue(Integer.parseInt(exitReasonStr)));
         }
 
         // if monitorResponse returns negative it means its erroneous
-        if (xmlRpcStruct.containsKey(VdsProperties.monitorResponse)) {
-            int response = Integer.parseInt(xmlRpcStruct.get(VdsProperties.monitorResponse).toString());
+        if (struct.containsKey(VdsProperties.monitorResponse)) {
+            int response = Integer.parseInt(struct.get(VdsProperties.monitorResponse).toString());
             if (response < 0) {
                 vm.setStatus(VMStatus.NotResponding);
             }
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.clientIp)) {
-            vm.setClientIp(xmlRpcStruct.get(VdsProperties.clientIp).toString());
+        if (struct.containsKey(VdsProperties.clientIp)) {
+            vm.setClientIp(struct.get(VdsProperties.clientIp).toString());
         }
 
-        if (xmlRpcStruct.containsKey(VdsProperties.pauseCode)) {
-            String pauseCodeStr = (String) xmlRpcStruct.get(VdsProperties.pauseCode);
+        if (struct.containsKey(VdsProperties.pauseCode)) {
+            String pauseCodeStr = (String) struct.get(VdsProperties.pauseCode);
             try {
                 vm.setPauseStatus(VmPauseStatus.valueOf(pauseCodeStr));
 
@@ -522,8 +521,8 @@ public class VdsBrokerObjectsBuilder {
             }
         }
 
-        if (xmlRpcStruct.containsKey(VdsProperties.watchdogEvent)) {
-            Map<String, Object> watchdogStruct = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.watchdogEvent);
+        if (struct.containsKey(VdsProperties.watchdogEvent)) {
+            Map<String, Object> watchdogStruct = (Map<String, Object>) struct.get(VdsProperties.watchdogEvent);
             double time = Double.parseDouble(watchdogStruct.get(VdsProperties.time).toString());
             // vdsm may not send the action http://gerrit.ovirt.org/14134
             String action =
@@ -533,27 +532,27 @@ public class VdsBrokerObjectsBuilder {
             vm.setLastWatchdogAction(action);
         }
 
-        if (xmlRpcStruct.containsKey(VdsProperties.CDRom)) {
-            Path fileName = Paths.get((String) xmlRpcStruct.get(VdsProperties.CDRom)).getFileName();
+        if (struct.containsKey(VdsProperties.CDRom)) {
+            Path fileName = Paths.get((String) struct.get(VdsProperties.CDRom)).getFileName();
             if (fileName != null) {
                 String isoName = fileName.toString();
                 vm.setCurrentCd(isoName);
             }
         }
 
-        if (xmlRpcStruct.containsKey(VdsProperties.GUEST_CPU_COUNT)) {
-            vm.setGuestCpuCount(assignIntValue(xmlRpcStruct, VdsProperties.GUEST_CPU_COUNT));
+        if (struct.containsKey(VdsProperties.GUEST_CPU_COUNT)) {
+            vm.setGuestCpuCount(assignIntValue(struct, VdsProperties.GUEST_CPU_COUNT));
         }
 
         // Guest OS Info
-        if (xmlRpcStruct.containsKey(VdsProperties.GUEST_OS_INFO)) {
-            updateGuestOsInfo(vm, xmlRpcStruct);
+        if (struct.containsKey(VdsProperties.GUEST_OS_INFO)) {
+            updateGuestOsInfo(vm, struct);
         }
 
         // Guest Timezone
-        if (xmlRpcStruct.containsKey(VdsProperties.GUEST_TIMEZONE)) {
+        if (struct.containsKey(VdsProperties.GUEST_TIMEZONE)) {
             Map<String, Object> guestTimeZoneStruct =
-                    (Map<String, Object>) xmlRpcStruct.get(VdsProperties.GUEST_TIMEZONE);
+                    (Map<String, Object>) struct.get(VdsProperties.GUEST_TIMEZONE);
             vm.setGuestOsTimezoneName(assignStringValue(guestTimeZoneStruct, VdsProperties.GUEST_TIMEZONE_ZONE));
             vm.setGuestOsTimezoneOffset(assignIntValue(guestTimeZoneStruct, VdsProperties.GUEST_TIMEZONE_OFFSET));
         }
@@ -584,8 +583,8 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static void updateGuestOsInfo(VmDynamic vm, Map<String, Object> xmlRpcStruct) {
-        Map<String, Object> guestOsInfoStruct = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.GUEST_OS_INFO);
+    private static void updateGuestOsInfo(VmDynamic vm, Map<String, Object> struct) {
+        Map<String, Object> guestOsInfoStruct = (Map<String, Object>) struct.get(VdsProperties.GUEST_OS_INFO);
         if(guestOsInfoStruct.containsKey(VdsProperties.GUEST_OS_INFO_ARCH)) {
             String arch = assignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_ARCH);
             try {
@@ -615,11 +614,11 @@ public class VdsBrokerObjectsBuilder {
      * Updates graphics runtime information according displayInfo VDSM structure if it exists.
      *
      * @param vm - VmDynamic to update
-     * @param xmlRpcStruct - data from VDSM
+     * @param struct - data from VDSM
      * @return true if displayInfo exists, false otherwise
      */
-    private static boolean updateGraphicsInfo(VmDynamic vm, Map<String, Object> xmlRpcStruct) {
-        Object displayInfo = xmlRpcStruct.get(VdsProperties.displayInfo);
+    private static boolean updateGraphicsInfo(VmDynamic vm, Map<String, Object> struct) {
+        Object displayInfo = struct.get(VdsProperties.displayInfo);
 
         if (displayInfo == null) {
             return false;
@@ -645,41 +644,41 @@ public class VdsBrokerObjectsBuilder {
      * Updates graphics runtime information according to vm.conf vdsm structure. It's used with legacy VDSMs that have
      * no notion about graphics device.
      * @param vm - VmDynamic to update
-     * @param xmlRpcStruct - data from VDSM
+     * @param struct - data from VDSM
      */
-    private static void updateGraphicsInfoFromConf(VmDynamic vm, Map<String, Object> xmlRpcStruct) {
-        GraphicsType vmGraphicsType = parseGraphicsType(xmlRpcStruct);
+    private static void updateGraphicsInfoFromConf(VmDynamic vm, Map<String, Object> struct) {
+        GraphicsType vmGraphicsType = parseGraphicsType(struct);
         if (vmGraphicsType == null) {
             log.debug("graphics data missing in XML.");
             return;
         }
 
         GraphicsInfo graphicsInfo = new GraphicsInfo();
-        if (xmlRpcStruct.containsKey(VdsProperties.display_port)) {
+        if (struct.containsKey(VdsProperties.display_port)) {
             try {
-                graphicsInfo.setPort(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_port).toString()));
+                graphicsInfo.setPort(Integer.parseInt(struct.get(VdsProperties.display_port).toString()));
             } catch (NumberFormatException e) {
-                log.error("vm display_port value illegal : {0}", xmlRpcStruct.get(VdsProperties.display_port));
+                log.error("vm display_port value illegal : {0}", struct.get(VdsProperties.display_port));
             }
-        } else if (xmlRpcStruct.containsKey(VdsProperties.display)) {
+        } else if (struct.containsKey(VdsProperties.display)) {
             try {
                 graphicsInfo
-                        .setPort(VNC_START_PORT + Integer.parseInt(xmlRpcStruct.get(VdsProperties.display).toString()));
+                        .setPort(VNC_START_PORT + Integer.parseInt(struct.get(VdsProperties.display).toString()));
             } catch (NumberFormatException e) {
-                log.error("vm display value illegal : {0}", xmlRpcStruct.get(VdsProperties.display));
+                log.error("vm display value illegal : {0}", struct.get(VdsProperties.display));
             }
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.display_secure_port)) {
+        if (struct.containsKey(VdsProperties.display_secure_port)) {
             try {
                 graphicsInfo
-                        .setTlsPort(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_secure_port).toString()));
+                        .setTlsPort(Integer.parseInt(struct.get(VdsProperties.display_secure_port).toString()));
             } catch (NumberFormatException e) {
                 log.error("vm display_secure_port value illegal : {0}",
-                        xmlRpcStruct.get(VdsProperties.display_secure_port));
+                        struct.get(VdsProperties.display_secure_port));
             }
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.displayIp)) {
-            graphicsInfo.setIp((String) xmlRpcStruct.get(VdsProperties.displayIp));
+        if (struct.containsKey(VdsProperties.displayIp)) {
+            graphicsInfo.setIp((String) struct.get(VdsProperties.displayIp));
         }
 
         vm.getGraphicsInfos().put(vmGraphicsType, graphicsInfo);
@@ -691,11 +690,11 @@ public class VdsBrokerObjectsBuilder {
      *  - graphics type derived from xml on success
      *  - null on error
      */
-    private static GraphicsType parseGraphicsType(Map<String, Object> xmlRpcStruct) {
+    private static GraphicsType parseGraphicsType(Map<String, Object> struct) {
         GraphicsType result = null;
 
         try {
-            String displayTypeStr = xmlRpcStruct.get(VdsProperties.displayType).toString();
+            String displayTypeStr = struct.get(VdsProperties.displayType).toString();
             switch (displayTypeStr) {
                 case VdsProperties.VNC:
                     result = GraphicsType.VNC;
@@ -730,17 +729,17 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    protected static ArchitectureType parseArchitecture(Map<String, Object> xmlRpcStruct) {
-        return ArchitectureType.valueOf((String) xmlRpcStruct.get(VdsProperties.vm_arch));
+    protected static ArchitectureType parseArchitecture(Map<String, Object> struct) {
+        return ArchitectureType.valueOf((String) struct.get(VdsProperties.vm_arch));
     }
 
-    public static List<VmNetworkInterface> buildInterfaceStatisticsData(Map<String, Object> xmlRpcStruct) {
+    public static List<VmNetworkInterface> buildInterfaceStatisticsData(Map<String, Object> struct) {
         // ------------- vm network statistics -----------------------
-        if (!xmlRpcStruct.containsKey(VdsProperties.VM_NETWORK)) {
+        if (!struct.containsKey(VdsProperties.VM_NETWORK)) {
             return null;
         }
 
-        Map networkStruct = (Map) xmlRpcStruct.get(VdsProperties.VM_NETWORK);
+        Map networkStruct = (Map) struct.get(VdsProperties.VM_NETWORK);
         List<VmNetworkInterface> interfaceStatistics = new ArrayList<>();
         for (Object tempNic : networkStruct.values()) {
             Map nic = (Map) tempNic;
@@ -758,26 +757,26 @@ public class VdsBrokerObjectsBuilder {
         return interfaceStatistics;
     }
 
-    public static void updateVMStatisticsData(VmStatistics vm, Map<String, Object> xmlRpcStruct) {
-        if (xmlRpcStruct.containsKey(VdsProperties.vm_guid)) {
-            vm.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
+    public static void updateVMStatisticsData(VmStatistics vm, Map<String, Object> struct) {
+        if (struct.containsKey(VdsProperties.vm_guid)) {
+            vm.setId(new Guid((String) struct.get(VdsProperties.vm_guid)));
         }
 
-        vm.setElapsedTime(assignDoubleValue(xmlRpcStruct, VdsProperties.elapsed_time));
+        vm.setElapsedTime(assignDoubleValue(struct, VdsProperties.elapsed_time));
 
-        if (xmlRpcStruct.containsKey(VdsProperties.VM_DISKS_USAGE)) {
-            initDisksUsage(xmlRpcStruct, vm);
+        if (struct.containsKey(VdsProperties.VM_DISKS_USAGE)) {
+            initDisksUsage(struct, vm);
         }
 
         // ------------- vm cpu statistics -----------------------
-        vm.setCpuSys(assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_sys));
-        vm.setCpuUser(assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_user));
+        vm.setCpuSys(assignDoubleValue(struct, VdsProperties.cpu_sys));
+        vm.setCpuUser(assignDoubleValue(struct, VdsProperties.cpu_user));
 
         // ------------- vm memory statistics -----------------------
-        vm.setUsageMemPercent(assignIntValue(xmlRpcStruct, VdsProperties.vm_usage_mem_percent));
+        vm.setUsageMemPercent(assignIntValue(struct, VdsProperties.vm_usage_mem_percent));
 
-        if (xmlRpcStruct.containsKey(VdsProperties.vm_guest_mem_stats)) {
-            Map<String, Object> sub = (Map<String, Object>)xmlRpcStruct.get(VdsProperties.vm_guest_mem_stats);
+        if (struct.containsKey(VdsProperties.vm_guest_mem_stats)) {
+            Map<String, Object> sub = (Map<String, Object>)struct.get(VdsProperties.vm_guest_mem_stats);
             if (sub.containsKey(VdsProperties.vm_guest_mem_buffered)) {
                 vm.setGuestMemoryBuffered(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_buffered).toString()));
             }
@@ -790,13 +789,13 @@ public class VdsBrokerObjectsBuilder {
         }
 
         // ------------- vm migration statistics -----------------------
-        Integer migrationProgress = assignIntValue(xmlRpcStruct, VdsProperties.vm_migration_progress_percent);
+        Integer migrationProgress = assignIntValue(struct, VdsProperties.vm_migration_progress_percent);
         vm.setMigrationProgressPercent(migrationProgress != null ? migrationProgress : 0);
     }
 
-    public static VmBalloonInfo buildVmBalloonInfo(Map<String, Object> xmlRpcStruct) {
+    public static VmBalloonInfo buildVmBalloonInfo(Map<String, Object> struct) {
         VmBalloonInfo vmBalloonInfo = new VmBalloonInfo();
-        Map<String, Object> balloonInfo = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.vm_balloonInfo);
+        Map<String, Object> balloonInfo = (Map<String, Object>) struct.get(VdsProperties.vm_balloonInfo);
         if (balloonInfo != null && !balloonInfo.isEmpty()) {
             vmBalloonInfo.setCurrentMemory(assignLongValue(balloonInfo, VdsProperties.vm_balloon_cur));
             vmBalloonInfo.setBalloonMaxMemory(assignLongValue(balloonInfo, VdsProperties.vm_balloon_max));
@@ -808,19 +807,19 @@ public class VdsBrokerObjectsBuilder {
         return vmBalloonInfo;
     }
 
-    public static List<VmJob> buildVmJobsData(Map<String, Object> xmlRpcStruct) {
-        if (!xmlRpcStruct.containsKey(VdsProperties.vmJobs)) {
+    public static List<VmJob> buildVmJobsData(Map<String, Object> struct) {
+        if (!struct.containsKey(VdsProperties.vmJobs)) {
             return null;
         }
-        Guid vmId = new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid));
-        return ((Map<String, Object>) xmlRpcStruct.get(VdsProperties.vmJobs)).values().stream()
+        Guid vmId = new Guid((String) struct.get(VdsProperties.vm_guid));
+        return ((Map<String, Object>) struct.get(VdsProperties.vmJobs)).values().stream()
                 .map(jobMap -> buildVmJobData(vmId, (Map<String, Object>) jobMap))
                 .collect(Collectors.toList());
     }
 
-    private static VmJob buildVmJobData(Guid vmId, Map<String, Object> xmlRpcStruct) {
+    private static VmJob buildVmJobData(Guid vmId, Map<String, Object> struct) {
         VmJob ret;
-        VmJobType jobType = VmJobType.getByName(assignStringValue(xmlRpcStruct, VdsProperties.vmJobType));
+        VmJobType jobType = VmJobType.getByName(assignStringValue(struct, VdsProperties.vmJobType));
         if (jobType == null) {
             jobType = VmJobType.UNKNOWN;
         }
@@ -828,11 +827,11 @@ public class VdsBrokerObjectsBuilder {
         switch (jobType) {
         case BLOCK:
             VmBlockJob blockJob = new VmBlockJob();
-            blockJob.setBlockJobType(VmBlockJobType.getByName(assignStringValue(xmlRpcStruct, VdsProperties.vmBlockJobType)));
-            blockJob.setCursorCur(assignLongValue(xmlRpcStruct, VdsProperties.vmJobCursorCur));
-            blockJob.setCursorEnd(assignLongValue(xmlRpcStruct, VdsProperties.vmJobCursorEnd));
-            blockJob.setBandwidth(assignLongValue(xmlRpcStruct, VdsProperties.vmJobBandwidth));
-            blockJob.setImageGroupId(new Guid(assignStringValue(xmlRpcStruct, VdsProperties.vmJobImageUUID)));
+            blockJob.setBlockJobType(VmBlockJobType.getByName(assignStringValue(struct, VdsProperties.vmBlockJobType)));
+            blockJob.setCursorCur(assignLongValue(struct, VdsProperties.vmJobCursorCur));
+            blockJob.setCursorEnd(assignLongValue(struct, VdsProperties.vmJobCursorEnd));
+            blockJob.setBandwidth(assignLongValue(struct, VdsProperties.vmJobBandwidth));
+            blockJob.setImageGroupId(new Guid(assignStringValue(struct, VdsProperties.vmJobImageUUID)));
             ret = blockJob;
             break;
         default:
@@ -841,53 +840,53 @@ public class VdsBrokerObjectsBuilder {
         }
 
         ret.setVmId(vmId);
-        ret.setId(new Guid(assignStringValue(xmlRpcStruct, VdsProperties.vmJobId)));
+        ret.setId(new Guid(assignStringValue(struct, VdsProperties.vmJobId)));
         ret.setJobState(VmJobState.NORMAL);
         ret.setJobType(jobType);
         return ret;
     }
 
-    public static void updateVDSDynamicData(VDS vds, Map<String, Object> xmlRpcStruct) {
-        vds.setSupportedClusterLevels(assignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_cluster_levels));
+    public static void updateVDSDynamicData(VDS vds, Map<String, Object> struct) {
+        vds.setSupportedClusterLevels(assignStringValueFromArray(struct, VdsProperties.supported_cluster_levels));
 
-        updateNetworkData(vds, xmlRpcStruct);
-        updateNumaNodesData(vds, xmlRpcStruct);
+        updateNetworkData(vds, struct);
+        updateNumaNodesData(vds, struct);
 
-        vds.setCpuThreads(assignIntValue(xmlRpcStruct, VdsProperties.cpuThreads));
-        vds.setCpuCores(assignIntValue(xmlRpcStruct, VdsProperties.cpu_cores));
-        vds.setCpuSockets(assignIntValue(xmlRpcStruct, VdsProperties.cpu_sockets));
-        vds.setCpuModel(assignStringValue(xmlRpcStruct, VdsProperties.cpu_model));
-        vds.setOnlineCpus(assignStringValue(xmlRpcStruct, VdsProperties.online_cpus));
-        vds.setCpuSpeedMh(assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_speed_mh));
-        vds.setPhysicalMemMb(assignIntValue(xmlRpcStruct, VdsProperties.physical_mem_mb));
-        vds.setKernelArgs(assignStringValue(xmlRpcStruct, VdsProperties.kernel_args));
+        vds.setCpuThreads(assignIntValue(struct, VdsProperties.cpuThreads));
+        vds.setCpuCores(assignIntValue(struct, VdsProperties.cpu_cores));
+        vds.setCpuSockets(assignIntValue(struct, VdsProperties.cpu_sockets));
+        vds.setCpuModel(assignStringValue(struct, VdsProperties.cpu_model));
+        vds.setOnlineCpus(assignStringValue(struct, VdsProperties.online_cpus));
+        vds.setCpuSpeedMh(assignDoubleValue(struct, VdsProperties.cpu_speed_mh));
+        vds.setPhysicalMemMb(assignIntValue(struct, VdsProperties.physical_mem_mb));
+        vds.setKernelArgs(assignStringValue(struct, VdsProperties.kernel_args));
 
-        vds.setKvmEnabled(assignBoolValue(xmlRpcStruct, VdsProperties.kvm_enabled));
+        vds.setKvmEnabled(assignBoolValue(struct, VdsProperties.kvm_enabled));
 
-        vds.setReservedMem(assignIntValue(xmlRpcStruct, VdsProperties.reservedMem));
-        Integer guestOverhead = assignIntValue(xmlRpcStruct, VdsProperties.guestOverhead);
+        vds.setReservedMem(assignIntValue(struct, VdsProperties.reservedMem));
+        Integer guestOverhead = assignIntValue(struct, VdsProperties.guestOverhead);
         vds.setGuestOverhead(guestOverhead != null ? guestOverhead : 0);
 
-        vds.setCpuFlags(assignStringValue(xmlRpcStruct, VdsProperties.cpu_flags));
+        vds.setCpuFlags(assignStringValue(struct, VdsProperties.cpu_flags));
 
-        updatePackagesVersions(vds, xmlRpcStruct);
+        updatePackagesVersions(vds, struct);
 
-        vds.setSupportedEngines(assignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_engines));
-        vds.setIScsiInitiatorName(assignStringValue(xmlRpcStruct, VdsProperties.iSCSIInitiatorName));
+        vds.setSupportedEngines(assignStringValueFromArray(struct, VdsProperties.supported_engines));
+        vds.setIScsiInitiatorName(assignStringValue(struct, VdsProperties.iSCSIInitiatorName));
 
-        vds.setSupportedEmulatedMachines(assignStringValueFromArray(xmlRpcStruct, VdsProperties.emulatedMachines));
+        vds.setSupportedEmulatedMachines(assignStringValueFromArray(struct, VdsProperties.emulatedMachines));
 
-        setRngSupportedSourcesToVds(vds, xmlRpcStruct);
+        setRngSupportedSourcesToVds(vds, struct);
 
         String hooksStr = ""; // default value if hooks is not in the xml rpc struct
-        if (xmlRpcStruct.containsKey(VdsProperties.hooks)) {
-            hooksStr = xmlRpcStruct.get(VdsProperties.hooks).toString();
+        if (struct.containsKey(VdsProperties.hooks)) {
+            hooksStr = struct.get(VdsProperties.hooks).toString();
         }
         vds.setHooksStr(hooksStr);
 
         // parse out the HBAs available in this host
         Map<String, List<Map<String, String>>> hbas = new HashMap<>();
-        for (Map.Entry<String, Object[]> el: ((Map<String, Object[]>)xmlRpcStruct.get(VdsProperties.HBAInventory)).entrySet()) {
+        for (Map.Entry<String, Object[]> el: ((Map<String, Object[]>)struct.get(VdsProperties.HBAInventory)).entrySet()) {
             List<Map<String, String>> devicesList = new ArrayList<>();
 
             for (Object device: el.getValue()) {
@@ -897,23 +896,23 @@ public class VdsBrokerObjectsBuilder {
             hbas.put(el.getKey(), devicesList);
         }
         vds.setHBAs(hbas);
-        vds.setBootTime(assignLongValue(xmlRpcStruct, VdsProperties.bootTime));
-        vds.setKdumpStatus(KdumpStatus.valueOfNumber(assignIntValue(xmlRpcStruct, VdsProperties.KDUMP_STATUS)));
-        vds.setHostDevicePassthroughEnabled(assignBoolValue(xmlRpcStruct, VdsProperties.HOST_DEVICE_PASSTHROUGH));
+        vds.setBootTime(assignLongValue(struct, VdsProperties.bootTime));
+        vds.setKdumpStatus(KdumpStatus.valueOfNumber(assignIntValue(struct, VdsProperties.KDUMP_STATUS)));
+        vds.setHostDevicePassthroughEnabled(assignBoolValue(struct, VdsProperties.HOST_DEVICE_PASSTHROUGH));
 
-        Map<String, Object> selinux = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.selinux);
+        Map<String, Object> selinux = (Map<String, Object>) struct.get(VdsProperties.selinux);
         if (selinux != null) {
             vds.setSELinuxEnforceMode(assignIntValue(selinux, VdsProperties.selinux_mode));
         } else {
             vds.setSELinuxEnforceMode(null);
         }
 
-        updateAdditionalFeatures(vds, xmlRpcStruct);
+        updateAdditionalFeatures(vds, struct);
     }
 
-    private static void updateAdditionalFeatures(VDS vds, Map<String, Object> xmlRpcStruct) {
+    private static void updateAdditionalFeatures(VDS vds, Map<String, Object> struct) {
         String[] addtionalFeaturesSupportedByHost =
-                        assignStringArrayValue(xmlRpcStruct, VdsProperties.ADDITIONAL_FEATURES);
+                        assignStringArrayValue(struct, VdsProperties.ADDITIONAL_FEATURES);
         if (addtionalFeaturesSupportedByHost != null) {
             for (String feature : addtionalFeaturesSupportedByHost) {
                 vds.getAdditionalFeatures().add(feature);
@@ -921,19 +920,19 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static void setRngSupportedSourcesToVds(VDS vds, Map<String, Object> xmlRpcStruct) {
+    private static void setRngSupportedSourcesToVds(VDS vds, Map<String, Object> struct) {
         vds.getSupportedRngSources().clear();
-        String rngSourcesFromStruct = assignStringValueFromArray(xmlRpcStruct, VdsProperties.rngSources);
+        String rngSourcesFromStruct = assignStringValueFromArray(struct, VdsProperties.rngSources);
         if (rngSourcesFromStruct != null) {
             vds.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rngSourcesFromStruct.toUpperCase()));
         }
     }
 
-    public static void checkTimeDrift(VDS vds, Map<String, Object> xmlRpcStruct) {
+    public static void checkTimeDrift(VDS vds, Map<String, Object> struct) {
         Boolean isHostTimeDriftEnabled = Config.getValue(ConfigValues.EnableHostTimeDrift);
         if (isHostTimeDriftEnabled) {
             Integer maxTimeDriftAllowed = Config.getValue(ConfigValues.HostTimeDriftInSec);
-            Date hostDate = assignDatetimeValue(xmlRpcStruct, VdsProperties.hostDatetime);
+            Date hostDate = assignDatetimeValue(struct, VdsProperties.hostDatetime);
             if (hostDate != null) {
                 Long timeDrift =
                         TimeUnit.MILLISECONDS.toSeconds(Math.abs(hostDate.getTime() - System.currentTimeMillis()));
@@ -957,22 +956,22 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static void updatePackagesVersions(VDS vds, Map<String, Object> xmlRpcStruct) {
+    private static void updatePackagesVersions(VDS vds, Map<String, Object> struct) {
 
-        vds.setVersionName(assignStringValue(xmlRpcStruct, VdsProperties.version_name));
-        vds.setSoftwareVersion(assignStringValue(xmlRpcStruct, VdsProperties.software_version));
-        vds.setBuildName(assignStringValue(xmlRpcStruct, VdsProperties.build_name));
-        if (xmlRpcStruct.containsKey(VdsProperties.host_os)) {
-            Map<String, Object> hostOsMap = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.host_os);
+        vds.setVersionName(assignStringValue(struct, VdsProperties.version_name));
+        vds.setSoftwareVersion(assignStringValue(struct, VdsProperties.software_version));
+        vds.setBuildName(assignStringValue(struct, VdsProperties.build_name));
+        if (struct.containsKey(VdsProperties.host_os)) {
+            Map<String, Object> hostOsMap = (Map<String, Object>) struct.get(VdsProperties.host_os);
             vds.setHostOs(getPackageVersionFormated(hostOsMap, true));
             if (hostOsMap.containsKey(VdsProperties.pretty_name)) {
                 vds.setPrettyName(assignStringValue(hostOsMap, VdsProperties.pretty_name));
             }
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.packages)) {
-            // packages is an array of xmlRpcStruct (that each is a name, ver,
+        if (struct.containsKey(VdsProperties.packages)) {
+            // packages is an array of struct (that each is a name, ver,
             // release.. of a package)
-            for (Object hostPackageMap : (Object[]) xmlRpcStruct.get(VdsProperties.packages)) {
+            for (Object hostPackageMap : (Object[]) struct.get(VdsProperties.packages)) {
                 Map<String, Object> hostPackage = (Map<String, Object>) hostPackageMap;
                 String packageName = assignStringValue(hostPackage, VdsProperties.package_name);
                 if (VdsProperties.kvmPackageName.equals(packageName)) {
@@ -983,8 +982,8 @@ public class VdsBrokerObjectsBuilder {
                     vds.setKernelVersion(getPackageVersionFormated(hostPackage, false));
                 }
             }
-        } else if (xmlRpcStruct.containsKey(VdsProperties.packages2)) {
-            Map<String, Object> packages = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.packages2);
+        } else if (struct.containsKey(VdsProperties.packages2)) {
+            Map<String, Object> packages = (Map<String, Object>) struct.get(VdsProperties.packages2);
 
             if (packages.containsKey(VdsProperties.vdsmPackageName)) {
                 Map<String, Object> vdsm = (Map<String, Object>) packages.get(VdsProperties.vdsmPackageName);
@@ -1109,12 +1108,12 @@ public class VdsBrokerObjectsBuilder {
         return sb.toString();
     }
 
-    public static void updateVDSStatisticsData(VDS vds, Map<String, Object> xmlRpcStruct) {
+    public static void updateVDSStatisticsData(VDS vds, Map<String, Object> struct) {
         // ------------- vds memory usage ---------------------------
-        vds.setUsageMemPercent(assignIntValue(xmlRpcStruct, VdsProperties.mem_usage));
+        vds.setUsageMemPercent(assignIntValue(struct, VdsProperties.mem_usage));
 
         // ------------- vds network statistics ---------------------
-        Map<String, Object> interfaces = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORK);
+        Map<String, Object> interfaces = (Map<String, Object>) struct.get(VdsProperties.NETWORK);
         if (interfaces != null) {
             int networkUsage = 0;
             Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(vds.getInterfaces());
@@ -1144,55 +1143,55 @@ public class VdsBrokerObjectsBuilder {
         }
 
         // ----------- vds cpu statistics info ---------------------
-        vds.setCpuSys(assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_sys));
-        vds.setCpuUser(assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_user));
+        vds.setCpuSys(assignDoubleValue(struct, VdsProperties.cpu_sys));
+        vds.setCpuUser(assignDoubleValue(struct, VdsProperties.cpu_user));
         if (vds.getCpuSys() != null && vds.getCpuUser() != null) {
             vds.setUsageCpuPercent((int) (vds.getCpuSys() + vds.getCpuUser()));
         }
         // CPU load reported by VDSM is in uptime-style format, i.e. normalized
         // to unity, so that say an 8% load is reported as 0.08
 
-        Double d = assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_load);
+        Double d = assignDoubleValue(struct, VdsProperties.cpu_load);
         d = (d != null) ? d : 0;
         vds.setCpuLoad(d.doubleValue() * 100.0);
-        vds.setCpuIdle(assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_idle));
-        vds.setMemAvailable(assignLongValue(xmlRpcStruct, VdsProperties.mem_available));
-        vds.setMemFree(assignLongValue(xmlRpcStruct, VdsProperties.memFree));
-        vds.setMemShared(assignLongValue(xmlRpcStruct, VdsProperties.mem_shared));
+        vds.setCpuIdle(assignDoubleValue(struct, VdsProperties.cpu_idle));
+        vds.setMemAvailable(assignLongValue(struct, VdsProperties.mem_available));
+        vds.setMemFree(assignLongValue(struct, VdsProperties.memFree));
+        vds.setMemShared(assignLongValue(struct, VdsProperties.mem_shared));
 
-        vds.setSwapFree(assignLongValue(xmlRpcStruct, VdsProperties.swap_free));
-        vds.setSwapTotal(assignLongValue(xmlRpcStruct, VdsProperties.swap_total));
-        vds.setKsmCpuPercent(assignIntValue(xmlRpcStruct, VdsProperties.ksm_cpu_percent));
-        vds.setKsmPages(assignLongValue(xmlRpcStruct, VdsProperties.ksm_pages));
-        vds.setKsmState(assignBoolValue(xmlRpcStruct, VdsProperties.ksm_state));
+        vds.setSwapFree(assignLongValue(struct, VdsProperties.swap_free));
+        vds.setSwapTotal(assignLongValue(struct, VdsProperties.swap_total));
+        vds.setKsmCpuPercent(assignIntValue(struct, VdsProperties.ksm_cpu_percent));
+        vds.setKsmPages(assignLongValue(struct, VdsProperties.ksm_pages));
+        vds.setKsmState(assignBoolValue(struct, VdsProperties.ksm_state));
 
         // dynamic data got from GetVdsStats
-        if (xmlRpcStruct.containsKey(VdsProperties.transparent_huge_pages_state)) {
-            vds.setTransparentHugePagesState(EnumUtils.valueOf(VdsTransparentHugePagesState.class, xmlRpcStruct
+        if (struct.containsKey(VdsProperties.transparent_huge_pages_state)) {
+            vds.setTransparentHugePagesState(EnumUtils.valueOf(VdsTransparentHugePagesState.class, struct
                     .get(VdsProperties.transparent_huge_pages_state).toString(), true));
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.anonymous_transparent_huge_pages)) {
-            vds.setAnonymousHugePages(assignIntValue(xmlRpcStruct, VdsProperties.anonymous_transparent_huge_pages));
+        if (struct.containsKey(VdsProperties.anonymous_transparent_huge_pages)) {
+            vds.setAnonymousHugePages(assignIntValue(struct, VdsProperties.anonymous_transparent_huge_pages));
         }
-        vds.setNetConfigDirty(assignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
+        vds.setNetConfigDirty(assignBoolValue(struct, VdsProperties.netConfigDirty));
 
-        vds.setImagesLastCheck(assignDoubleValue(xmlRpcStruct, VdsProperties.images_last_check));
-        vds.setImagesLastDelay(assignDoubleValue(xmlRpcStruct, VdsProperties.images_last_delay));
+        vds.setImagesLastCheck(assignDoubleValue(struct, VdsProperties.images_last_check));
+        vds.setImagesLastDelay(assignDoubleValue(struct, VdsProperties.images_last_delay));
 
-        Integer vm_count = assignIntValue(xmlRpcStruct, VdsProperties.vm_count);
+        Integer vm_count = assignIntValue(struct, VdsProperties.vm_count);
         vds.setVmCount(vm_count == null ? 0 : vm_count);
-        vds.setVmActive(assignIntValue(xmlRpcStruct, VdsProperties.vm_active));
-        vds.setVmMigrating(assignIntValue(xmlRpcStruct, VdsProperties.vm_migrating));
+        vds.setVmActive(assignIntValue(struct, VdsProperties.vm_active));
+        vds.setVmMigrating(assignIntValue(struct, VdsProperties.vm_migrating));
 
         Integer inOutMigrations;
-        inOutMigrations = assignIntValue(xmlRpcStruct, VdsProperties.INCOMING_VM_MIGRATIONS);
+        inOutMigrations = assignIntValue(struct, VdsProperties.INCOMING_VM_MIGRATIONS);
         if (inOutMigrations != null) {
             vds.setIncomingMigrations(inOutMigrations);
         } else {
             // TODO remove in 4.x when all hosts will send in/out migrations separately
             vds.setIncomingMigrations(-1);
         }
-        inOutMigrations = assignIntValue(xmlRpcStruct, VdsProperties.OUTGOING_VM_MIGRATIONS);
+        inOutMigrations = assignIntValue(struct, VdsProperties.OUTGOING_VM_MIGRATIONS);
         if (inOutMigrations != null) {
             vds.setOutgoingMigrations(inOutMigrations);
         } else {
@@ -1200,8 +1199,8 @@ public class VdsBrokerObjectsBuilder {
             vds.setOutgoingMigrations(-1);
         }
 
-        updateVDSDomainData(vds, xmlRpcStruct);
-        updateLocalDisksUsage(vds, xmlRpcStruct);
+        updateVDSDomainData(vds, struct);
+        updateLocalDisksUsage(vds, struct);
 
         // hosted engine
         Integer haScore = null;
@@ -1209,8 +1208,8 @@ public class VdsBrokerObjectsBuilder {
         Boolean haIsActive = null;
         Boolean haGlobalMaint = null;
         Boolean haLocalMaint = null;
-        if (xmlRpcStruct.containsKey(VdsProperties.ha_stats)) {
-            Map<String, Object> haStats = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.ha_stats);
+        if (struct.containsKey(VdsProperties.ha_stats)) {
+            Map<String, Object> haStats = (Map<String, Object>) struct.get(VdsProperties.ha_stats);
             if (haStats != null) {
                 haScore = assignIntValue(haStats, VdsProperties.ha_stats_score);
                 haIsConfigured = assignBoolValue(haStats, VdsProperties.ha_stats_is_configured);
@@ -1219,7 +1218,7 @@ public class VdsBrokerObjectsBuilder {
                 haLocalMaint = assignBoolValue(haStats, VdsProperties.ha_stats_local_maintenance);
             }
         } else {
-            haScore = assignIntValue(xmlRpcStruct, VdsProperties.ha_score);
+            haScore = assignIntValue(struct, VdsProperties.ha_score);
             // prior to 3.4, haScore was returned if ha was installed; assume active if > 0
             if (haScore != null) {
                 haIsConfigured = true;
@@ -1232,10 +1231,10 @@ public class VdsBrokerObjectsBuilder {
         vds.setHighlyAvailableGlobalMaintenance(haGlobalMaint != null ? haGlobalMaint : false);
         vds.setHighlyAvailableLocalMaintenance(haLocalMaint != null ? haLocalMaint : false);
 
-        vds.setBootTime(assignLongValue(xmlRpcStruct, VdsProperties.bootTime));
+        vds.setBootTime(assignLongValue(struct, VdsProperties.bootTime));
 
-        updateNumaStatisticsData(vds, xmlRpcStruct);
-        updateV2VJobs(vds, xmlRpcStruct);
+        updateNumaStatisticsData(vds, struct);
+        updateV2VJobs(vds, struct);
     }
 
     private static void extractInterfaceStatistics(Map<String, Object> dict, NetworkInterface<?> iface) {
@@ -1262,15 +1261,15 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    public static void updateNumaStatisticsData(VDS vds, Map<String, Object> xmlRpcStruct) {
+    public static void updateNumaStatisticsData(VDS vds, Map<String, Object> struct) {
         List<VdsNumaNode> vdsNumaNodes = new ArrayList<>();
         if (vds.getNumaNodeList() != null && !vds.getNumaNodeList().isEmpty()) {
             vdsNumaNodes.addAll(vds.getNumaNodeList());
         }
         List<CpuStatistics> cpuStatsData = new ArrayList<>();
-        if (xmlRpcStruct.containsKey(VdsProperties.CPU_STATS)) {
+        if (struct.containsKey(VdsProperties.CPU_STATS)) {
             Map<String, Map<String, Object>> cpuStats = (Map<String, Map<String, Object>>)
-                    xmlRpcStruct.get(VdsProperties.CPU_STATS);
+                    struct.get(VdsProperties.CPU_STATS);
             Map<Integer, List<CpuStatistics>> numaNodeCpuStats = new HashMap<>();
             for (Map.Entry<String, Map<String, Object>> item : cpuStats.entrySet()) {
                 CpuStatistics data = buildVdsCpuStatistics(item);
@@ -1303,9 +1302,9 @@ public class VdsBrokerObjectsBuilder {
                 }
             }
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.NUMA_NODE_FREE_MEM_STAT)) {
+        if (struct.containsKey(VdsProperties.NUMA_NODE_FREE_MEM_STAT)) {
             Map<String, Map<String, Object>> memStats = (Map<String, Map<String, Object>>)
-                    xmlRpcStruct.get(VdsProperties.NUMA_NODE_FREE_MEM_STAT);
+                    struct.get(VdsProperties.NUMA_NODE_FREE_MEM_STAT);
             for (Map.Entry<String, Map<String, Object>> item : memStats.entrySet()) {
                 VdsNumaNode node = NumaUtils.getVdsNumaNodeByIndex(vdsNumaNodes, Integer.parseInt(item.getKey()));
                 if (node != null && node.getNumaNodeStatistics() != null) {
@@ -1359,12 +1358,12 @@ public class VdsBrokerObjectsBuilder {
      *
      * @param vds
      *            The VDS object to update.
-     * @param xmlRpcStruct
-     *            The XML/RPC to extract the usage from.
+     * @param struct
+     *            The struct to extract the usage from.
      */
-    protected static void updateLocalDisksUsage(VDS vds, Map<String, Object> xmlRpcStruct) {
-        if (xmlRpcStruct.containsKey(VdsProperties.DISK_STATS)) {
-            Map<String, Object> diskStatsStruct = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.DISK_STATS);
+    protected static void updateLocalDisksUsage(VDS vds, Map<String, Object> struct) {
+        if (struct.containsKey(VdsProperties.DISK_STATS)) {
+            Map<String, Object> diskStatsStruct = (Map<String, Object>) struct.get(VdsProperties.DISK_STATS);
             Map<String, Long> diskStats = new HashMap<>();
 
             // collect(Collectors.toMap(...)) will not work here as it uses merge() internally and
@@ -1377,10 +1376,10 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static void updateVDSDomainData(VDS vds, Map<String, Object> xmlRpcStruct) {
-        if (xmlRpcStruct.containsKey(VdsProperties.domains)) {
+    private static void updateVDSDomainData(VDS vds, Map<String, Object> struct) {
+        if (struct.containsKey(VdsProperties.domains)) {
             Map<String, Object> domains = (Map<String, Object>)
-                    xmlRpcStruct.get(VdsProperties.domains);
+                    struct.get(VdsProperties.domains);
             ArrayList<VDSDomainsData> domainsData = new ArrayList<>();
             for (Map.Entry<String, ?> value : domains.entrySet()) {
                 try {
@@ -1520,24 +1519,6 @@ public class VdsBrokerObjectsBuilder {
             return StringUtils.join(arr, ',');
         }
         return null;
-    }
-
-    private static Date assignDateTImeFromEpoch(Map<String, Object> input, String name) {
-        Date retval = null;
-        try {
-            if (input.containsKey(name)) {
-                Double secsSinceEpoch = (Double) input.get(name);
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(secsSinceEpoch.longValue());
-                retval = calendar.getTime();
-            }
-        } catch (RuntimeException ex) {
-            log.warn("VdsBroker::assignDateTImeFromEpoch - failed to convert field '{}' to dateTime: {}",
-                    name, ex.getMessage());
-            log.debug("Exception", ex);
-            retval = null;
-        }
-        return retval;
     }
 
     private static Date assignDatetimeValue(Map<String, Object> input, String name) {
@@ -1696,28 +1677,28 @@ public class VdsBrokerObjectsBuilder {
      *
      * @param vds
      *            The host to update
-     * @param xmlRpcStruct
+     * @param struct
      *            A nested map contains network interfaces data
      */
-    public static void updateNetworkData(VDS vds, Map<String, Object> xmlRpcStruct) {
+    public static void updateNetworkData(VDS vds, Map<String, Object> struct) {
         List<VdsNetworkInterface> oldInterfaces =
                 DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(vds.getId());
         vds.getInterfaces().clear();
 
-        addHostNetworkInterfaces(vds, xmlRpcStruct);
+        addHostNetworkInterfaces(vds, struct);
 
-        addHostVlanDevices(vds, xmlRpcStruct);
+        addHostVlanDevices(vds, struct);
 
-        addHostBondDevices(vds, xmlRpcStruct);
+        addHostBondDevices(vds, struct);
 
-        addHostNetworksAndUpdateInterfaces(vds, xmlRpcStruct);
+        addHostNetworksAndUpdateInterfaces(vds, struct);
 
         // set bonding options
         setBondingOptions(vds, oldInterfaces);
 
         // This information was added in 3.1, so don't use it if it's not there.
-        if (xmlRpcStruct.containsKey(VdsProperties.netConfigDirty)) {
-            vds.setNetConfigDirty(assignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
+        if (struct.containsKey(VdsProperties.netConfigDirty)) {
+            vds.setNetConfigDirty(assignBoolValue(struct, VdsProperties.netConfigDirty));
         }
     }
 
@@ -1735,17 +1716,17 @@ public class VdsBrokerObjectsBuilder {
         return activeIface;
     }
 
-    private static void addHostNetworksAndUpdateInterfaces(VDS host, Map<String, Object> xmlRpcStruct) {
+    private static void addHostNetworksAndUpdateInterfaces(VDS host, Map<String, Object> struct) {
 
         Map<String, Map<String, Object>> bridges =
-                (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_BRIDGES);
+                (Map<String, Map<String, Object>>) struct.get(VdsProperties.NETWORK_BRIDGES);
 
         final String hostActiveNicName = findActiveNicName(host, bridges);
         host.setActiveNic(hostActiveNicName);
 
         // Networks collection (name point to list of nics or bonds)
         Map<String, Map<String, Object>> networks =
-                (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORKS);
+                (Map<String, Map<String, Object>>) struct.get(VdsProperties.NETWORKS);
         Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(host.getInterfaces());
         if (networks != null) {
             host.getNetworkNames().clear();
@@ -1897,9 +1878,9 @@ public class VdsBrokerObjectsBuilder {
         return new ArrayList<>();
     }
 
-    private static void addHostBondDevices(VDS vds, Map<String, Object> xmlRpcStruct) {
+    private static void addHostBondDevices(VDS vds, Map<String, Object> struct) {
         Map<String, Map<String, Object>> bonds =
-                (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_BONDINGS);
+                (Map<String, Map<String, Object>>) struct.get(VdsProperties.NETWORK_BONDINGS);
         if (bonds != null) {
             for (Entry<String, Map<String, Object>> entry : bonds.entrySet()) {
                 Bond bond = new Bond();
@@ -1969,12 +1950,12 @@ public class VdsBrokerObjectsBuilder {
      *
      * @param vds
      *            The host to update
-     * @param xmlRpcStruct
+     * @param struct
      *            a map contains pairs of vlan device name and vlan data
      */
-    private static void addHostVlanDevices(VDS vds, Map<String, Object> xmlRpcStruct) {
+    private static void addHostVlanDevices(VDS vds, Map<String, Object> struct) {
         // vlans
-        Map<String, Map<String, Object>> vlans = (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_VLANS);
+        Map<String, Map<String, Object>> vlans = (Map<String, Map<String, Object>>) struct.get(VdsProperties.NETWORK_VLANS);
         if (vlans != null) {
             for (Entry<String, Map<String, Object>> entry : vlans.entrySet()) {
                 VdsNetworkInterface vlan = new Vlan();
@@ -2002,12 +1983,12 @@ public class VdsBrokerObjectsBuilder {
      *
      * @param vds
      *            The host to update its interfaces
-     * @param xmlRpcStruct
+     * @param struct
      *            A nested map contains network interfaces data
      */
-    private static void addHostNetworkInterfaces(VDS vds, Map<String, Object> xmlRpcStruct) {
+    private static void addHostNetworkInterfaces(VDS vds, Map<String, Object> struct) {
         Map<String, Map<String, Object>> nics =
-                (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_NICS);
+                (Map<String, Map<String, Object>>) struct.get(VdsProperties.NETWORK_NICS);
         if (nics != null) {
             for (Entry<String, Map<String, Object>> entry : nics.entrySet()) {
                 VdsNetworkInterface nic = new Nic();
@@ -2233,17 +2214,17 @@ public class VdsBrokerObjectsBuilder {
      * @param vmId
      *            the Vm's ID which contains the interfaces
      *
-     * @param xmlRpcStruct
-     *            the xml structure that describes the VM as reported by VDSM
+     * @param struct
+     *            the structure that describes the VM as reported by VDSM
      * @return a list of {@link VmGuestAgentInterface} or null if no guest vNics were reported
      */
-    public static List<VmGuestAgentInterface> buildVmGuestAgentInterfacesData(Guid vmId, Map<String, Object> xmlRpcStruct) {
-        if (!xmlRpcStruct.containsKey(VdsProperties.VM_NETWORK_INTERFACES)) {
+    public static List<VmGuestAgentInterface> buildVmGuestAgentInterfacesData(Guid vmId, Map<String, Object> struct) {
+        if (!struct.containsKey(VdsProperties.VM_NETWORK_INTERFACES)) {
             return null;
         }
 
         List<VmGuestAgentInterface> interfaces = new ArrayList<>();
-        for (Object ifaceStruct : (Object[]) xmlRpcStruct.get(VdsProperties.VM_NETWORK_INTERFACES)) {
+        for (Object ifaceStruct : (Object[]) struct.get(VdsProperties.VM_NETWORK_INTERFACES)) {
             VmGuestAgentInterface nic = new VmGuestAgentInterface();
             Map ifaceMap = (Map) ifaceStruct;
             nic.setInterfaceName(assignStringValue(ifaceMap, VdsProperties.VM_INTERFACE_NAME));
@@ -2264,16 +2245,16 @@ public class VdsBrokerObjectsBuilder {
     /**
      * Build through the received NUMA nodes information
      */
-    private static void updateNumaNodesData(VDS vds, Map<String, Object> xmlRpcStruct) {
-        if (xmlRpcStruct.containsKey(VdsProperties.AUTO_NUMA)) {
+    private static void updateNumaNodesData(VDS vds, Map<String, Object> struct) {
+        if (struct.containsKey(VdsProperties.AUTO_NUMA)) {
             vds.getDynamicData().setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(
-                    assignIntValue(xmlRpcStruct, VdsProperties.AUTO_NUMA)));
+                    assignIntValue(struct, VdsProperties.AUTO_NUMA)));
         }
-        if (xmlRpcStruct.containsKey(VdsProperties.NUMA_NODES)) {
+        if (struct.containsKey(VdsProperties.NUMA_NODES)) {
             Map<String, Map<String, Object>> numaNodeMap =
-                    (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NUMA_NODES);
+                    (Map<String, Map<String, Object>>) struct.get(VdsProperties.NUMA_NODES);
             Map<String, Object> numaNodeDistanceMap =
-                    (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NUMA_NODE_DISTANCE);
+                    (Map<String, Object>) struct.get(VdsProperties.NUMA_NODE_DISTANCE);
 
             List<VdsNumaNode> newNumaNodeList = new ArrayList<>(numaNodeMap.size());
 
@@ -2330,9 +2311,9 @@ public class VdsBrokerObjectsBuilder {
 
     }
 
-    private static <T> List<T> extractList(Map<String, Object> xmlRpcStruct, String propertyName, boolean returnNullOnEmpty) {
-        if (xmlRpcStruct.containsKey(propertyName)){
-            Object[] items = (Object[]) xmlRpcStruct.get(propertyName);
+    private static <T> List<T> extractList(Map<String, Object> struct, String propertyName, boolean returnNullOnEmpty) {
+        if (struct.containsKey(propertyName)){
+            Object[] items = (Object[]) struct.get(propertyName);
             if (items.length > 0) {
                 return Arrays.stream(items).map(item -> (T) item).collect(Collectors.toList());
             }
@@ -2421,24 +2402,24 @@ public class VdsBrokerObjectsBuilder {
         return devices;
     }
 
-    private static void updateV2VJobs(VDS vds, Map<String, Object> xmlRpcStruct) {
-        if (!xmlRpcStruct.containsKey(VdsProperties.v2vJobs)) {
+    private static void updateV2VJobs(VDS vds, Map<String, Object> struct) {
+        if (!struct.containsKey(VdsProperties.v2vJobs)) {
             return;
         }
 
-        List<V2VJobInfo> v2vJobs = ((Map<String, Object>) xmlRpcStruct.get(VdsProperties.v2vJobs)).entrySet()
+        List<V2VJobInfo> v2vJobs = ((Map<String, Object>) struct.get(VdsProperties.v2vJobs)).entrySet()
                 .stream()
                 .map(job -> buildV2VJobData(job.getKey(), (Map<String, Object>) job.getValue())).collect(Collectors.toList());
 
         vds.getStatisticsData().setV2VJobs(v2vJobs);
     }
 
-    private static V2VJobInfo buildV2VJobData(String jobId, Map<String, Object> xmlRpcStruct) {
+    private static V2VJobInfo buildV2VJobData(String jobId, Map<String, Object> struct) {
         V2VJobInfo job = new V2VJobInfo();
         job.setId(Guid.createGuidFromString(jobId));
-        job.setStatus(getV2VJobStatusValue(xmlRpcStruct));
-        job.setDescription(assignStringValue(xmlRpcStruct, VdsProperties.v2vDescription));
-        job.setProgress(assignIntValue(xmlRpcStruct, VdsProperties.v2vProgress));
+        job.setStatus(getV2VJobStatusValue(struct));
+        job.setDescription(assignStringValue(struct, VdsProperties.v2vDescription));
+        job.setProgress(assignIntValue(struct, VdsProperties.v2vProgress));
         return job;
     }
 
@@ -2452,8 +2433,8 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    public static Double removeNotifyTimeFromVmStatusEvent(Map<String, Object> xmlRpcStruct) {
-        Object notifyTime = xmlRpcStruct.remove(VdsProperties.notify_time);
+    public static Double removeNotifyTimeFromVmStatusEvent(Map<String, Object> struct) {
+        Object notifyTime = struct.remove(VdsProperties.notify_time);
         if (Long.class.isInstance(notifyTime)) {
             return ((Long) notifyTime).doubleValue();
         }

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import org.ovirt.engine.core.common.vdscommands.GetDiskAlignmentVDSCommandParameters;
 
 public class GetDiskAlignmentVDSCommand<P extends GetDiskAlignmentVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private AlignmentScanReturnForXmlRpc diskAlignment;
+    private AlignmentScanReturn diskAlignment;
 
     public GetDiskAlignmentVDSCommand(P parameters) {
         super(parameters);
@@ -24,7 +24,7 @@ public class GetDiskAlignmentVDSCommand<P extends GetDiskAlignmentVDSCommandPara
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return diskAlignment.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return diskAlignment.getStatus();
     }
 }

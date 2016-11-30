@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.vdscommands.GetDevicesVisibilityVDSCommandPa
 
 public class GetDevicesVisibilityVDSCommand<P extends GetDevicesVisibilityVDSCommandParameters> extends VdsBrokerCommand<P> {
 
-    private DevicesVisibilityMapReturnForXmlRpc result;
+    private DevicesVisibilityMapReturn result;
 
     public GetDevicesVisibilityVDSCommand(P parameters) {
         super(parameters);
@@ -22,7 +22,7 @@ public class GetDevicesVisibilityVDSCommand<P extends GetDevicesVisibilityVDSCom
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 }

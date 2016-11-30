@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
-import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 
 public class VerifyUntrustedVolumeVDSCommand<P extends ImageActionsVDSCommandParameters> extends ImageActionsVDSCommandBase<P> {
     public VerifyUntrustedVolumeVDSCommand(P parameters) {
@@ -9,7 +9,7 @@ public class VerifyUntrustedVolumeVDSCommand<P extends ImageActionsVDSCommandPar
         }
 
     @Override
-    protected StatusReturnForXmlRpc executeImageActionVdsBrokerCommand(String spId,
+    protected StatusReturn executeImageActionVdsBrokerCommand(String spId,
             String sdId,
             String imgGroupId,
             String imgId) {

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.vdscommands.GetOvaInfoParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetOvaInfoVDSCommand<T extends GetOvaInfoParameters> extends VdsBrokerCommand<T> {
-    private OneVmReturnForXmlRpc vmReturn;
+    private OneVmReturn vmReturn;
 
     public GetOvaInfoVDSCommand(T parameters) {
         super(parameters);
@@ -26,7 +26,7 @@ public class GetOvaInfoVDSCommand<T extends GetOvaInfoParameters> extends VdsBro
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return vmReturn.status;
     }
 

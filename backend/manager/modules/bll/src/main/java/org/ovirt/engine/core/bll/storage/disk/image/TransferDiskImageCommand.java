@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 
 @NonTransactiveCommandAttribute
 public class TransferDiskImageCommand<T extends TransferDiskImageParameters> extends TransferImageCommand<T> implements QuotaStorageDependent {
@@ -56,7 +56,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     protected String prepareImage(Guid vdsId) {
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.PrepareImage,
                     getPrepareParameters(vdsId));
-        return FILE_URL_SCHEME + ((PrepareImageReturnForXmlRpc) vdsRetVal.getReturnValue()).getImagePath();
+        return FILE_URL_SCHEME + ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
     }
 
     @Override

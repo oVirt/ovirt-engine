@@ -32,22 +32,22 @@ public class ObjectDescriptor {
         }
     }
 
-    public static void toStringBuilder(Map[] xmlRpc, StringBuilder builder) {
-        if (xmlRpc == null) {
+    public static void toStringBuilder(Map[] map, StringBuilder builder) {
+        if (map == null) {
             return;
         }
 
-        for (Map entry : xmlRpc) {
+        for (Map entry : map) {
             toStringBuilder(entry, builder);
         }
     }
 
-    private static void toStringBuilder(Iterable xmlRpc, StringBuilder builder) {
-        if (xmlRpc == null) {
+    private static void toStringBuilder(Iterable iterable, StringBuilder builder) {
+        if (iterable == null) {
             return;
         }
 
-        for (Object value : xmlRpc) {
+        for (Object value : iterable) {
             if (value instanceof Iterable) {
                 toStringBuilder((Iterable) value, builder);
             } else {

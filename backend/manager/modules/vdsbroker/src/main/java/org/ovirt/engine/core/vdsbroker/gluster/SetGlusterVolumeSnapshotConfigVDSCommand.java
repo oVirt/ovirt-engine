@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotSetConfigVDSParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class SetGlusterVolumeSnapshotConfigVDSCommand<P extends GlusterVolumeSnapshotSetConfigVDSParameters>
         extends AbstractGlusterBrokerCommand<P> {
@@ -14,7 +14,7 @@ public class SetGlusterVolumeSnapshotConfigVDSCommand<P extends GlusterVolumeSna
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return status.status;
     }
 

@@ -8,11 +8,11 @@ import org.ovirt.engine.core.common.vdscommands.GetVmsInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 @Logged(returnLevel = LogLevel.TRACE)
 public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> extends IrsBrokerCommand<P> {
-    private GetVmsInfoReturnForXmlRpc _vmsInfo;
+    private GetVmsInfoReturn _vmsInfo;
 
     public GetVmsInfoVDSCommand(P parameters) {
         super(parameters);
@@ -33,9 +33,9 @@ public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> exte
         _vmsInfo = getIrsProxy().getVmsInfo(storagePoolId, storageDomainId, ids.toArray(new String[] {}));
         proceedProxyReturnValue();
 
-        Map<String, Object> xmlRpcStruct = _vmsInfo.vmlist;
+        Map<String, Object> struct = _vmsInfo.vmlist;
         ArrayList<String> retVal = new ArrayList<>();
-        for (Entry<String, Object> entry : xmlRpcStruct.entrySet()) {
+        for (Entry<String, Object> entry : struct.entrySet()) {
             retVal.add(entry.getValue().toString());
         }
         setReturnValue(retVal);
@@ -43,8 +43,8 @@ public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> exte
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return _vmsInfo.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return _vmsInfo.getStatus();
     }
 
     @Override

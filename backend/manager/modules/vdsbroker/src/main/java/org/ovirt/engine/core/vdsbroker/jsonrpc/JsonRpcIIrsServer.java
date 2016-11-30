@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.GetVmsInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.GetVmsInfoReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IIrsServer;
-import org.ovirt.engine.core.vdsbroker.irsbroker.ImagesListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IrsStatsAndStatusXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.StorageStatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.VolumeListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.ImagesListReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.IrsStatsAndStatus;
+import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StorageStatusReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VolumeListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturn;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.RequestBuilder;
@@ -35,7 +35,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
     }
 
     @Override
-    public OneUuidReturnForXmlRpc createVolume(String sdUUID,
+    public OneUuidReturn createVolume(String sdUUID,
             String spUUID,
             String imgGUID,
             String size,
@@ -63,12 +63,12 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
 
     @Override
-    public OneUuidReturnForXmlRpc copyImage(String sdUUID,
+    public OneUuidReturn copyImage(String sdUUID,
             String spUUID,
             String vmGUID,
             String srcImgGUID,
@@ -100,12 +100,12 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public OneUuidReturnForXmlRpc downloadImage(Map methodInfo,
+    public OneUuidReturn downloadImage(Map methodInfo,
             String spUUID,
             String sdUUID,
             String dstImgGUID,
@@ -119,12 +119,12 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public OneUuidReturnForXmlRpc uploadImage(Map methodInfo,
+    public OneUuidReturn uploadImage(Map methodInfo,
             String spUUID,
             String sdUUID,
             String srcImgGUID,
@@ -138,11 +138,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @Override
-    public OneUuidReturnForXmlRpc mergeSnapshots(String sdUUID,
+    public OneUuidReturn mergeSnapshots(String sdUUID,
             String spUUID,
             String vmGUID,
             String imgGUID,
@@ -160,11 +160,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @Override
-    public VolumeListReturnForXmlRpc reconcileVolumeChain(String spUUID, String sdUUID, String imgGUID,
+    public VolumeListReturn reconcileVolumeChain(String spUUID, String sdUUID, String imgGUID,
             String leafVolUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Image.reconcileVolumeChain").withParameter("storagepoolID", spUUID)
@@ -175,11 +175,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("volumes")
                         .withResponseType(Object[].class);
-        return new VolumeListReturnForXmlRpc(response);
+        return new VolumeListReturn(response);
     }
 
     @Override
-    public OneUuidReturnForXmlRpc deleteVolume(String sdUUID,
+    public OneUuidReturn deleteVolume(String sdUUID,
             String spUUID,
             String imgGUID,
             String[] volUUID,
@@ -195,19 +195,19 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @Override
-    public IrsStatsAndStatusXmlRpc getIrsStats() {
+    public IrsStatsAndStatus getIrsStats() {
         JsonRpcRequest request = new RequestBuilder("Host.getStorageRepoStats").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("stats");
-        return new IrsStatsAndStatusXmlRpc(response);
+        return new IrsStatsAndStatus(response);
     }
 
     @Override
-    public FileStatsReturnForXmlRpc getFileStats(String sdUUID, String pattern, boolean caseSensitive) {
+    public FileStatsReturn getFileStats(String sdUUID, String pattern, boolean caseSensitive) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.getFileStats").withParameter("storagedomainID", sdUUID)
                         .withParameter("pattern", pattern)
@@ -215,11 +215,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("fileStats");
-        return new FileStatsReturnForXmlRpc(response);
+        return new FileStatsReturn(response);
     }
 
     @Override
-    public StorageStatusReturnForXmlRpc activateStorageDomain(String sdUUID, String spUUID) {
+    public StorageStatusReturn activateStorageDomain(String sdUUID, String spUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.activate").withParameter("storagedomainID", sdUUID)
                         .withParameter("storagepoolID", spUUID)
@@ -227,11 +227,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("storageStatus")
                         .withResponseType(String.class);
-        return new StorageStatusReturnForXmlRpc(response);
+        return new StorageStatusReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc deactivateStorageDomain(String sdUUID,
+    public StatusOnlyReturn deactivateStorageDomain(String sdUUID,
             String spUUID,
             String msdUUID,
             int masterVersion) {
@@ -243,11 +243,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc detachStorageDomain(String sdUUID, String spUUID, String msdUUID, int masterVersion) {
+    public StatusOnlyReturn detachStorageDomain(String sdUUID, String spUUID, String msdUUID, int masterVersion) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.detach").withParameter("storagedomainID", sdUUID)
                         .withParameter("storagepoolID", spUUID)
@@ -256,11 +256,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc forcedDetachStorageDomain(String sdUUID, String spUUID) {
+    public StatusOnlyReturn forcedDetachStorageDomain(String sdUUID, String spUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.detach").withParameter("storagedomainID", sdUUID)
                         .withParameter("storagepoolID", spUUID)
@@ -268,33 +268,33 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc attachStorageDomain(String sdUUID, String spUUID) {
+    public StatusOnlyReturn attachStorageDomain(String sdUUID, String spUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.attach").withParameter("storagedomainID", sdUUID)
                         .withParameter("storagepoolID", spUUID)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setStorageDomainDescription(String sdUUID, String description) {
+    public StatusOnlyReturn setStorageDomainDescription(String sdUUID, String description) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.setDescription").withParameter("storagedomainID", sdUUID)
                         .withParameter("description", description)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist, boolean force) {
+    public StatusOnlyReturn extendStorageDomain(String sdUUID, String spUUID, String[] devlist, boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.extend").withParameter("storagedomainID", sdUUID)
                         .withParameter("storagepoolID", spUUID)
@@ -305,11 +305,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public ResizeStorageDomainPVMapReturnForXmlRpc resizeStorageDomainPV(String sdUUID, String spUUID, String device) {
+    public ResizeStorageDomainPVMapReturn resizeStorageDomainPV(String sdUUID, String spUUID, String device) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.resizePV").withParameter("storagedomainID", sdUUID)
                         .withParameter("storagepoolID", spUUID)
@@ -317,21 +317,21 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("size");
-        return new ResizeStorageDomainPVMapReturnForXmlRpc(response);
+        return new ResizeStorageDomainPVMapReturn(response);
     }
 
     @Override
-    public StoragePoolInfoReturnForXmlRpc getStoragePoolInfo(String spUUID) {
+    public StoragePoolInfo getStoragePoolInfo(String spUUID) {
         // duplicated in IVdsServer#getStoragePoolInfo
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.getInfo").withParameter("storagepoolID", spUUID).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new StoragePoolInfoReturnForXmlRpc(response);
+        return new StoragePoolInfo(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc destroyStoragePool(String spUUID, int hostSpmId, String SCSIKey) {
+    public StatusOnlyReturn destroyStoragePool(String spUUID, int hostSpmId, String SCSIKey) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.destroy").withParameter("storagepoolID", spUUID)
                         .withParameter("hostID", hostSpmId)
@@ -339,11 +339,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public OneUuidReturnForXmlRpc deleteImage(String sdUUID,
+    public OneUuidReturn deleteImage(String sdUUID,
             String spUUID,
             String imgGUID,
             String postZero,
@@ -357,11 +357,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @Override
-    public OneUuidReturnForXmlRpc moveImage(String spUUID,
+    public OneUuidReturn moveImage(String spUUID,
             String srcDomUUID,
             String dstDomUUID,
             String imgGUID,
@@ -380,11 +380,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @Override
-    public OneUuidReturnForXmlRpc cloneImageStructure(String spUUID,
+    public OneUuidReturn cloneImageStructure(String spUUID,
             String srcDomUUID,
             String imgGUID,
             String dstDomUUID) {
@@ -396,11 +396,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @Override
-    public OneUuidReturnForXmlRpc syncImageData(String spUUID,
+    public OneUuidReturn syncImageData(String spUUID,
             String srcDomUUID,
             String imgGUID,
             String dstDomUUID,
@@ -414,23 +414,23 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturnForXmlRpc updateVM(String spUUID, Map[] vms) {
+    public StatusOnlyReturn updateVM(String spUUID, Map[] vms) {
         return updateVMInImportExport(spUUID, vms, null);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc removeVM(String spUUID, String vmGUID) {
+    public StatusOnlyReturn removeVM(String spUUID, String vmGUID) {
         return removeVM(spUUID, vmGUID, null);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturnForXmlRpc updateVMInImportExport(String spUUID, Map[] vms, String StorageDomainId) {
+    public StatusOnlyReturn updateVMInImportExport(String spUUID, Map[] vms, String StorageDomainId) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.updateVMs").withParameter("storagepoolID", spUUID)
                         .withParameter("vmList", new ArrayList<>(Arrays.asList(vms)))
@@ -438,22 +438,22 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc removeVM(String spUUID, String vmGUID, String storageDomainId) {
+    public StatusOnlyReturn removeVM(String spUUID, String vmGUID, String storageDomainId) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.removeVM").withParameter("storagepoolID", spUUID)
                         .withParameter("vmUUID", vmGUID).withOptionalParameter("storagedomainID", storageDomainId)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public GetVmsInfoReturnForXmlRpc getVmsInfo(String storagePoolId, String storageDomainId, String[] VMIDList) {
+    public GetVmsInfoReturn getVmsInfo(String storagePoolId, String storageDomainId, String[] VMIDList) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.getBackedUpVmsInfo").withParameter("storagepoolID", storagePoolId)
                         .withParameter("storagedomainID", storageDomainId)
@@ -461,32 +461,32 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmlist");
-        return new GetVmsInfoReturnForXmlRpc(response);
+        return new GetVmsInfoReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc upgradeStoragePool(String storagePoolId, String targetVersion) {
+    public StatusOnlyReturn upgradeStoragePool(String storagePoolId, String targetVersion) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.upgrade").withParameter("storagepoolID", storagePoolId)
                         .withParameter("targetDomVersion", targetVersion)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public ImagesListReturnForXmlRpc getImagesList(String sdUUID) {
+    public ImagesListReturn getImagesList(String sdUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.getImages").withParameter("storagedomainID", sdUUID).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("imageslist")
                         .withResponseType(Object[].class);
-        return new ImagesListReturnForXmlRpc(response);
+        return new ImagesListReturn(response);
     }
 
     @Override
-    public UUIDListReturnForXmlRpc getVolumesList(String sdUUID, String spUUID, String imgUUID) {
+    public UUIDListReturn getVolumesList(String sdUUID, String spUUID, String imgUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.getVolumes").withParameter("storagedomainID", sdUUID)
                         .withParameter("storagepoolID", spUUID)
@@ -495,11 +495,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuidlist")
                         .withResponseType(Object[].class);
-        return new UUIDListReturnForXmlRpc(response);
+        return new UUIDListReturn(response);
     }
 
     @Override
-    public OneUuidReturnForXmlRpc extendVolumeSize(String spUUID,
+    public OneUuidReturn extendVolumeSize(String spUUID,
             String sdUUID,
             String imageUUID,
             String volumeUUID,
@@ -513,11 +513,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setVolumeDescription(String sdUUID, String spUUID, String imgGUID,
+    public StatusOnlyReturn setVolumeDescription(String sdUUID, String spUUID, String imgGUID,
             String volUUID, String description) {
         JsonRpcRequest request =
                 new RequestBuilder("Volume.setDescription").withParameter("volumeID", volUUID)
@@ -527,11 +527,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .withParameter("description", description)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusReturnForXmlRpc setVolumeLegality(String spID, String sdID, String imageID, String volumeID, String legality) {
+    public StatusReturn setVolumeLegality(String spID, String sdID, String imageID, String volumeID, String legality) {
         JsonRpcRequest request =
                 new RequestBuilder("Volume.setLegality")
                         .withParameter("storagepoolID", spID)
@@ -542,6 +542,6 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusReturnForXmlRpc(response);
+        return new StatusReturn(response);
     }
 }

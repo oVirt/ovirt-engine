@@ -25,7 +25,7 @@ public class SnapshotVDSCommand<P extends SnapshotVDSCommandParameters> extends 
         proceedProxyReturnValue();
     }
 
-    private StatusOnlyReturnForXmlRpc executeSnapshotVerb() {
+    private StatusOnlyReturn executeSnapshotVerb() {
         String vmId = getParameters().getVmId().toString();
         String memoryVolume = getParameters().isMemoryVolumeExists() ? getParameters().getMemoryVolume() : "";
         if (getParameters().isVmFrozen()) {

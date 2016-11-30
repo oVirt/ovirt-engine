@@ -3,7 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 
 public class GetConvertedOvfVDSCommand<P extends VdsAndVmIDVDSParametersBase> extends VdsBrokerCommand<P> {
-    private OvfReturnForXmlRpc ovfReturn;
+    private OvfReturn ovfReturn;
 
     public GetConvertedOvfVDSCommand(P parameters) {
         super(parameters);
@@ -17,8 +17,8 @@ public class GetConvertedOvfVDSCommand<P extends VdsAndVmIDVDSParametersBase> ex
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return ovfReturn.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return ovfReturn.getStatus();
     }
 
     @Override

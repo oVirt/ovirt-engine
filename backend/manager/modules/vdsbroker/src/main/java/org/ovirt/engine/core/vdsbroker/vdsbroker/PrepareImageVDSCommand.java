@@ -8,7 +8,7 @@ public class PrepareImageVDSCommand<P extends PrepareImageVDSCommandParameters> 
     }
 
     @Override
-    protected PrepareImageReturnForXmlRpc executeImageActionVdsBrokerCommand(String spId,
+    protected PrepareImageReturn executeImageActionVdsBrokerCommand(String spId,
             String sdId,
             String imgGroupId,
             String imgId) {

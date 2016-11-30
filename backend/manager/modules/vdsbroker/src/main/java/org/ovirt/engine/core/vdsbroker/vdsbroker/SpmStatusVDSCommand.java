@@ -11,7 +11,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IRSNonOperationalException;
 
 @Logged(executionLevel = LogLevel.DEBUG)
 public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private SpmStatusReturnForXmlRpc _result;
+    private SpmStatusReturn _result;
 
     public SpmStatusVDSCommand(P parameters) {
         super(parameters);
@@ -67,8 +67,8 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return _result.getStatus();
     }
 
     @Override

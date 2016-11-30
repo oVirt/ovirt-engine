@@ -1,19 +1,19 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class GetGlusterVolumeHealInfoVDSCommand<P extends GlusterVolumeVDSParameters> extends AbstractGlusterBrokerCommand<P> {
 
-    private GlusterVolumesHealInfoReturnForXmlRpc result;
+    private GlusterVolumesHealInfoReturn result;
 
     public GetGlusterVolumeHealInfoVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override

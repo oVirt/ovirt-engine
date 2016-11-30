@@ -1,19 +1,19 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class GetGlusterHookContentVDSCommand<P extends GlusterHookVDSParameters> extends AbstractGlusterBrokerCommand<P> {
 
-    private GlusterHookContentInfoReturnForXmlRpc returnValue;
+    private GlusterHookContentInfoReturn returnValue;
 
     public GetGlusterHookContentVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-                 return returnValue.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+                 return returnValue.getStatus();
     }
 
     @Override

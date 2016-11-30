@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.vdscommands.GetImageTransferSessionStatsVDSC
 
 
 public class GetImageTransferSessionStatsVDSCommand<P extends GetImageTransferSessionStatsVDSCommandParameters> extends VdsBrokerCommand<P> {
-    OneMapReturnForXmlRpc retval;
+    OneMapReturn retval;
 
     public GetImageTransferSessionStatsVDSCommand(P parameters) {
         super(parameters);
@@ -20,8 +20,8 @@ public class GetImageTransferSessionStatsVDSCommand<P extends GetImageTransferSe
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return retval.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return retval.getStatus();
     }
 
     @Override

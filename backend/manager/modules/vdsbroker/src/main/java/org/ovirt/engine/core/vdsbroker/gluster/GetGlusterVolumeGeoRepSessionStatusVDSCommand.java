@@ -1,18 +1,18 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class GetGlusterVolumeGeoRepSessionStatusVDSCommand<P extends GlusterVolumeGeoRepSessionVDSParameters> extends AbstractGlusterBrokerCommand<P> {
-    GlusterVolumeGeoRepStatusDetailForXmlRpc result;
+    GlusterVolumeGeoRepStatusDetail result;
 
     public GetGlusterVolumeGeoRepSessionStatusVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override

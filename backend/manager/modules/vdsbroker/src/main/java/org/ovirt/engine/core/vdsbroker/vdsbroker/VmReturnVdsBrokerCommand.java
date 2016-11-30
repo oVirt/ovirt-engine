@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class VmReturnVdsBrokerCommand<P extends VdsAndVmIDVDSParametersBase> extends VdsBrokerCommand<P> {
-    protected OneVmReturnForXmlRpc vmReturn;
+    protected OneVmReturn vmReturn;
     protected Guid vmId = Guid.Empty;
 
     public VmReturnVdsBrokerCommand(P parameters) {
@@ -18,7 +18,7 @@ public abstract class VmReturnVdsBrokerCommand<P extends VdsAndVmIDVDSParameters
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return vmReturn.status;
     }
 

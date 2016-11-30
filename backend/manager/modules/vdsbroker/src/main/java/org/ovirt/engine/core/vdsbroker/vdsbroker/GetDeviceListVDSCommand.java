@@ -39,7 +39,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     @Inject
     private StoragePoolDao storagePoolDao;
 
-    private LUNListReturnForXmlRpc _result;
+    private LUNListReturn _result;
 
     public GetDeviceListVDSCommand(P parameters) {
         super(parameters);
@@ -60,12 +60,12 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     public static ArrayList<LUNs> parseLUNList(Map<String, Object>[] lunList, Version compatibilityVersion) {
         ArrayList<LUNs> result = new ArrayList<>(lunList.length);
         for (Map<String, Object> xlun : lunList) {
-            result.add(parseLunFromXmlRpc(xlun, compatibilityVersion));
+            result.add(parseLun(xlun, compatibilityVersion));
         }
         return result;
     }
 
-    protected static LUNs parseLunFromXmlRpc(Map<String, Object> xlun, Version compatibilityVersion) {
+    protected static LUNs parseLun(Map<String, Object> xlun, Version compatibilityVersion) {
         LUNs lun = new LUNs();
         if (xlun.containsKey("GUID")) {
             lun.setLUNId(xlun.get("GUID").toString());
@@ -208,8 +208,8 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return _result.getStatus();
     }
 
     @Override

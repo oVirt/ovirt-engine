@@ -21,7 +21,7 @@ import org.ovirt.engine.core.vdsbroker.storage.StorageConnectionHelper;
 
 public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionManagementVDSParameters>
         extends VdsBrokerCommand<P> {
-    protected ServerConnectionStatusReturnForXmlRpc _result;
+    protected ServerConnectionStatusReturn _result;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -95,8 +95,8 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return _result.getStatus();
     }
 
     @Override

@@ -4,19 +4,19 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class ManageGlusterServiceVDSCommand<P extends GlusterHookVDSParameters> extends AbstractGlusterBrokerCommand<GlusterServiceVDSParameters> {
 
-    protected GlusterServicesReturnForXmlRpc returnValue;
+    protected GlusterServicesReturn returnValue;
 
     public ManageGlusterServiceVDSCommand(GlusterServiceVDSParameters params) {
         super(params);
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return returnValue.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return returnValue.getStatus();
     }
 
     @Override

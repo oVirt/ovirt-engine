@@ -4,18 +4,18 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBricksVDSParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class StopRemoveGlusterVolumeBricksVDSCommand<P extends GlusterVolumeRemoveBricksVDSParameters> extends AbstractGlusterBrokerCommand<P> {
-    private GlusterVolumeTaskReturnForXmlRpc result;
+    private GlusterVolumeTaskReturn result;
 
     public StopRemoveGlusterVolumeBricksVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override

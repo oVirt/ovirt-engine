@@ -4,11 +4,11 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.ExtendImageSizeVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class ExtendImageSizeVDSCommand<P extends ExtendImageSizeVDSCommandParameters> extends IrsBrokerCommand<P> {
 
-    private OneUuidReturnForXmlRpc result;
+    private OneUuidReturn result;
 
     public ExtendImageSizeVDSCommand(P parameters) {
         super(parameters);
@@ -30,7 +30,7 @@ public class ExtendImageSizeVDSCommand<P extends ExtendImageSizeVDSCommandParame
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 }

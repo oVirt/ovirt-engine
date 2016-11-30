@@ -464,7 +464,7 @@ public final class VdsProperties {
     public static final String ksmEnabled = "ksmEnabled";
     public static final String ksmMergeAcrossNodes = "ksmMergeAcrossNodes";
 
-    // properties for ServerConnectionListReturnForXmlRpc
+    // properties for ServerConnectionListReturn
     public static final String target = "target";
 
     // V2V Jobs

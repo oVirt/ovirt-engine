@@ -4,19 +4,19 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class GetGlusterVolumeGeoRepConfigListVDSCommand<P extends GlusterVolumeGeoRepSessionVDSParameters> extends AbstractGlusterBrokerCommand<P> {
 
-    private GlusterVolumeGeoRepConfigListXmlRpc result;
+    private GlusterVolumeGeoRepConfigList result;
 
     public GetGlusterVolumeGeoRepConfigListVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override

@@ -18,14 +18,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
 
 public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> {
-    protected VMInfoListReturnForXmlRpc vmListReturn;
+    protected VMInfoListReturn vmListReturn;
 
     protected VmStatsVdsBrokerCommand(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return vmListReturn.status;
     }
 
@@ -34,20 +34,20 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
         return vmListReturn;
     }
 
-    protected VdsmVm createVdsmVm(Map<String, Object> xmlRpcStruct) {
+    protected VdsmVm createVdsmVm(Map<String, Object> struct) {
         VmDynamic vmDynamic = new VmDynamic();
-        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xmlRpcStruct, getVds());
+        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, struct, getVds());
         Guid vmId = vmDynamic.getId();
-        return new VdsmVm(getVdsmCallTimestamp(xmlRpcStruct))
+        return new VdsmVm(getVdsmCallTimestamp(struct))
                 .setVmDynamic(vmDynamic)
-                .setDevicesHash(getVmDevicesHash(xmlRpcStruct))
-                .setVmStatistics(buildVMStatisticsData(xmlRpcStruct))
-                .setVmJobs(buildVmJobsData(xmlRpcStruct))
-                .setInterfaceStatistics(buildInterfaceStatisticsData(xmlRpcStruct))
-                .setVmBalloonInfo(buildVmBalloonInfo(xmlRpcStruct))
-                .setVmGuestAgentInterfaces(buildVmGuestAgentInterfacesData(vmId, xmlRpcStruct))
-                .setLunsMap(buildVmLunDisksData(xmlRpcStruct))
-                .setDiskStatistics(buildVmDiskStatistics(xmlRpcStruct));
+                .setDevicesHash(getVmDevicesHash(struct))
+                .setVmStatistics(buildVMStatisticsData(struct))
+                .setVmJobs(buildVmJobsData(struct))
+                .setInterfaceStatistics(buildInterfaceStatisticsData(struct))
+                .setVmBalloonInfo(buildVmBalloonInfo(struct))
+                .setVmGuestAgentInterfaces(buildVmGuestAgentInterfacesData(vmId, struct))
+                .setLunsMap(buildVmLunDisksData(struct))
+                .setDiskStatistics(buildVmDiskStatistics(struct));
     }
 
     @Override

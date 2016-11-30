@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.SetVolumeLegalityVDSCommandParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class SetVolumeLegalityVDSCommand <P extends SetVolumeLegalityVDSCommandParameters> extends IrsBrokerCommand<P> {
-    private StatusReturnForXmlRpc result;
+    private StatusReturn result;
     public SetVolumeLegalityVDSCommand(P parameters) {
         super(parameters);
     }
@@ -26,7 +26,7 @@ public class SetVolumeLegalityVDSCommand <P extends SetVolumeLegalityVDSCommandP
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 }

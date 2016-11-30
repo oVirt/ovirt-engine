@@ -31,42 +31,42 @@ public class GetDeviceListVDSCommandTest {
             mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, false));
 
     @Test
-    public void parseLunFromXmlRpcReturnsIscsiByDefault() throws Exception {
-        testParseLunFromXmlRpcForDevtypeField(StorageType.ISCSI, "");
+    public void parseLunReturnsIscsiByDefault() throws Exception {
+        testParseLunForDevtypeField(StorageType.ISCSI, "");
     }
 
     @Test
-    public void parseLunFromXmlRpcReturnsFcpForFcp() throws Exception {
-        testParseLunFromXmlRpcForDevtypeField(StorageType.FCP, GetDeviceListVDSCommand.DEVTYPE_VALUE_FCP);
+    public void parseLunReturnsFcpForFcp() throws Exception {
+        testParseLunForDevtypeField(StorageType.FCP, GetDeviceListVDSCommand.DEVTYPE_VALUE_FCP);
     }
 
     /**
-     * Test that parseLunFromXmlRpc parses the {@link GetDeviceListVDSCommand#DEVTYPE_FIELD} correctly.
+     * Test that parseLun parses the {@link GetDeviceListVDSCommand#DEVTYPE_FIELD} correctly.
      *
      * @param expectedStorageType
      *            The storage type expected to return.
      * @param mockDevtype
      *            The value that the XML RPC will hold.
      */
-    private static void testParseLunFromXmlRpcForDevtypeField(StorageType expectedStorageType, String mockDevtype) {
+    private static void testParseLunForDevtypeField(StorageType expectedStorageType, String mockDevtype) {
         Map<String, Object> xlun = new HashMap<>();
         xlun.put(GetDeviceListVDSCommand.DEVTYPE_FIELD, mockDevtype);
 
-        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun, Version.v4_1);
+        LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, Version.v4_1);
 
         assertEquals(expectedStorageType, lun.getLunType());
     }
 
     @Test
-    public void parseLunFromXmlRpcReturnsUnknownForNoField() throws Exception {
+    public void parseLunReturnsUnknownForNoField() throws Exception {
         Map<String, Object> xlun = new HashMap<>();
-        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun, Version.v4_1);
+        LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, Version.v4_1);
 
         assertEquals(StorageType.UNKNOWN, lun.getLunType());
     }
 
     @Test
-    public void parseLunPathStatusFromXmlRpc() throws Exception {
+    public void parseLunPathStatus() throws Exception {
         int numActivePaths = 1 + RandomUtils.instance().nextInt(3);
         int numNonActivePaths = 2 + RandomUtils.instance().nextInt(3);
         int numPaths = numActivePaths + numNonActivePaths;
@@ -87,8 +87,8 @@ public class GetDeviceListVDSCommandTest {
         Map<String, Object> xlun = new HashMap<>();
         xlun.put(GetDeviceListVDSCommand.PATHSTATUS, paths.toArray(new Map[paths.size()]));
 
-        // Parse the XmlRpc
-        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun, Version.v4_1);
+        // Parse lun
+        LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, Version.v4_1);
 
         // Go over the directory
         assertEquals("wrong number of paths", numPaths, lun.getPathCount());
@@ -122,7 +122,7 @@ public class GetDeviceListVDSCommandTest {
         xlun.put("discard_max_bytes", 1024L);
         xlun.put("discard_zeroes_data", 1);
 
-        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun, poolCompatibilityVersion);
+        LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, poolCompatibilityVersion);
 
         assertEquals(lun.getDiscardMaxSize(), expectedDiscardMaxSize);
         assertEquals(lun.getDiscardZeroesData(), expectedDiscardZeroesData);

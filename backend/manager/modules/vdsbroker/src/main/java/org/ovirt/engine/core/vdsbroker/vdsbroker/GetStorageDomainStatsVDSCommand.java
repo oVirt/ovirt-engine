@@ -20,7 +20,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
 
     private static final Logger log = LoggerFactory.getLogger(GetStorageDomainStatsVDSCommand.class);
 
-    private OneStorageDomainStatsReturnForXmlRpc result;
+    private OneStorageDomainStatsReturn result;
 
     public GetStorageDomainStatsVDSCommand(P parameters) {
         super(parameters);
@@ -30,35 +30,35 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
     protected void executeVdsBrokerCommand() {
         result = getBroker().getStorageDomainStats(getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
-        StorageDomain domain = buildStorageDynamicFromXmlRpcStruct(result.storageStats);
+        StorageDomain domain = buildStorageDynamicStruct(result.storageStats);
         domain.setId(getParameters().getStorageDomainId());
         setReturnValue(domain);
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @SuppressWarnings("unchecked")
-    public static StorageDomain buildStorageDynamicFromXmlRpcStruct(Map<String, Object> xmlRpcStruct) {
+    public static StorageDomain buildStorageDynamicStruct(Map<String, Object> struct) {
         try {
             StorageDomain domain = new StorageDomain();
-            if (xmlRpcStruct.containsKey("status")) {
-                if ("Attached".equals(xmlRpcStruct.get("status").toString())) {
+            if (struct.containsKey("status")) {
+                if ("Attached".equals(struct.get("status").toString())) {
                     domain.setStatus(StorageDomainStatus.Inactive);
                 } else {
-                    domain.setStatus(EnumUtils.valueOf(StorageDomainStatus.class, xmlRpcStruct.get("status")
+                    domain.setStatus(EnumUtils.valueOf(StorageDomainStatus.class, struct.get("status")
                             .toString(), true));
                 }
             }
-            Long size = IrsBrokerCommand.assignLongValue(xmlRpcStruct, "diskfree");
+            Long size = IrsBrokerCommand.assignLongValue(struct, "diskfree");
             domain.setAvailableDiskSize((size == null) ? null : (int) (size / SizeConverter.BYTES_IN_GB));
-            size = IrsBrokerCommand.assignLongValue(xmlRpcStruct, "disktotal");
+            size = IrsBrokerCommand.assignLongValue(struct, "disktotal");
             domain.setUsedDiskSize((size == null || domain.getAvailableDiskSize() == null) ? null :
                     (int) (size / SizeConverter.BYTES_IN_GB) - domain.getAvailableDiskSize());
-            if (xmlRpcStruct.containsKey("alerts")) {
-                Object[] rawAlerts = (Object[]) xmlRpcStruct.get("alerts");
+            if (struct.containsKey("alerts")) {
+                Object[] rawAlerts = (Object[]) struct.get("alerts");
                 Set<EngineError> alerts = new HashSet<>(rawAlerts.length);
 
                 for (Object rawAlert : rawAlerts) {
@@ -79,8 +79,8 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
             return domain;
         } catch (RuntimeException ex) {
             log.error(
-                    "vdsBroker::buildStorageDynamicFromXmlRpcStruct::Failed building Storage dynamic, xmlRpcStruct = {}",
-                    xmlRpcStruct);
+                    "vdsBroker::buildStorageDynamicFromStruct::Failed building Storage dynamic, struct = {}",
+                    struct);
             VDSErrorException outEx = new VDSErrorException(ex);
             log.error("Exception", outEx);
             throw outEx;

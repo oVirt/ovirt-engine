@@ -11,7 +11,7 @@ public class VmReplicateDiskStartVDSCommand<P extends VmReplicateDiskParameters>
     @Override
     protected void executeVdsBrokerCommand() {
         status = getBroker().diskReplicateStart(
-                getParameters().getVmId().toString(), getSrcDiskXmlRpc(), getDstDiskXmlRpc());
+                getParameters().getVmId().toString(), getSrcDisk(), getDstDisk());
         proceedProxyReturnValue();
     }
 }

@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class GetGlusterHostUUIDVDSCommand<P extends VdsIdVDSCommandParametersBase> extends AbstractGlusterBrokerCommand<P> {
 
-    private OneUuidReturnForXmlRpc glusterHostUUID;
+    private OneUuidReturn glusterHostUUID;
 
     public GetGlusterHostUUIDVDSCommand(P parameters) {
         super(parameters);
@@ -23,8 +23,8 @@ public class GetGlusterHostUUIDVDSCommand<P extends VdsIdVDSCommandParametersBas
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return glusterHostUUID.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return glusterHostUUID.getStatus();
     }
 
 }

@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class GlusterServersListVDSCommand<P extends VdsIdVDSCommandParametersBase> extends AbstractGlusterBrokerCommand<P> {
 
-    private GlusterServersListReturnForXmlRpc glusterServers;
+    private GlusterServersListReturn glusterServers;
 
     public GlusterServersListVDSCommand(P parameters) {
         super(parameters);
@@ -24,8 +24,8 @@ public class GlusterServersListVDSCommand<P extends VdsIdVDSCommandParametersBas
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return glusterServers.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return glusterServers.getStatus();
     }
 
 }

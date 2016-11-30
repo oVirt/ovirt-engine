@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class GetStorageDeviceListVDSCommand<P extends VdsIdVDSCommandParametersBase> extends AbstractGlusterBrokerCommand<P> {
 
-    private StorageDeviceListReturnForXmlRpc result;
+    private StorageDeviceListReturn result;
 
     public GetStorageDeviceListVDSCommand(P parameters) {
         super(parameters);
@@ -20,8 +20,8 @@ public class GetStorageDeviceListVDSCommand<P extends VdsIdVDSCommandParametersB
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override

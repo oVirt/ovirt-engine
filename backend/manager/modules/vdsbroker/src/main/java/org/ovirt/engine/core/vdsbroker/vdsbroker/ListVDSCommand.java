@@ -16,7 +16,7 @@ import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
 
 @Logged(executionLevel = LogLevel.TRACE)
 public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> extends VdsBrokerCommand<P> {
-    private VMListReturnForXmlRpc vmListReturn;
+    private VMListReturn vmListReturn;
 
     public ListVDSCommand(P parameters) {
         super(parameters, parameters.getVds());
@@ -39,7 +39,7 @@ public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> exten
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return vmListReturn.status;
     }
 

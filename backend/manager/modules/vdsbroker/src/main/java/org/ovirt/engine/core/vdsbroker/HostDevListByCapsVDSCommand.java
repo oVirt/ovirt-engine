@@ -5,15 +5,15 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.utils.log.Logged;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.HostDevListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.HostDevListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 
 @Logged(executionLevel = Logged.LogLevel.DEBUG)
 public class HostDevListByCapsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> extends VdsBrokerCommand<P> {
 
-    private HostDevListReturnForXmlRpc hostDevListReturnForXmlRpc;
+    private HostDevListReturn hostDevListReturn;
 
     public HostDevListByCapsVDSCommand(P parameters) {
         super(parameters);
@@ -21,9 +21,9 @@ public class HostDevListByCapsVDSCommand<P extends VdsIdAndVdsVDSCommandParamete
 
     @Override
     protected void executeVdsBrokerCommand() {
-        hostDevListReturnForXmlRpc = getBroker().hostDevListByCaps();
+        hostDevListReturn = getBroker().hostDevListByCaps();
         proceedProxyReturnValue();
-        List<HostDevice> devices = VdsBrokerObjectsBuilder.buildHostDevices(hostDevListReturnForXmlRpc.devices);
+        List<HostDevice> devices = VdsBrokerObjectsBuilder.buildHostDevices(hostDevListReturn.devices);
         attachHostIdToDevices(devices);
         setReturnValue(devices);
     }
@@ -35,13 +35,13 @@ public class HostDevListByCapsVDSCommand<P extends VdsIdAndVdsVDSCommandParamete
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return hostDevListReturnForXmlRpc.status;
+    protected Status getReturnStatus() {
+        return hostDevListReturn.status;
     }
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return hostDevListReturnForXmlRpc;
+        return hostDevListReturn;
     }
 
     @Override

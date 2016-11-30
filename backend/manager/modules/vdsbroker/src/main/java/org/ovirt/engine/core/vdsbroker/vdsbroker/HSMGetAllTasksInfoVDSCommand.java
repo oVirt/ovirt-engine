@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> {
-    private TaskInfoListReturnForXmlRpc _result;
+    private TaskInfoListReturn _result;
     private static final String VERB_KEY = "verb";
 
     public HSMGetAllTasksInfoVDSCommand(P parameters) {
@@ -70,8 +70,8 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return _result.getStatus();
     }
 
     @Override

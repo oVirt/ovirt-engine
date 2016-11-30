@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProperties;
-import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
 
 public class IsoPrefixVDSCommand<T extends VdsAndPoolIDVDSParametersBase> extends VdsBrokerCommand<T> {
 
@@ -36,7 +36,7 @@ public class IsoPrefixVDSCommand<T extends VdsAndPoolIDVDSParametersBase> extend
                 return cachedIsoPrefix;
             }
 
-            StoragePoolInfoReturnForXmlRpc retVal;
+            StoragePoolInfo retVal;
             try {
                 retVal = getBroker().getStoragePoolInfo(storagePoolId.toString());
             } catch (Exception ex) {
@@ -55,7 +55,7 @@ public class IsoPrefixVDSCommand<T extends VdsAndPoolIDVDSParametersBase> extend
         }
     }
 
-    private String getIsoPrefixFromStoragePoolInfoReturnValue(StoragePoolInfoReturnForXmlRpc retVal) {
+    private String getIsoPrefixFromStoragePoolInfoReturnValue(StoragePoolInfo retVal) {
         return retVal.storagePoolInfo.containsKey(IrsProperties.isoPrefix) ?
                 retVal.storagePoolInfo.get(IrsProperties.isoPrefix).toString()
                 : StringUtils.EMPTY;

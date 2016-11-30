@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.ResizeStorageDomainPVVDSCommandParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class ResizeStorageDomainPVVDSCommand<P extends ResizeStorageDomainPVVDSCommandParameters>
         extends IrsBrokerCommand<P> {
 
-    private ResizeStorageDomainPVMapReturnForXmlRpc result;
+    private ResizeStorageDomainPVMapReturn result;
 
     public ResizeStorageDomainPVVDSCommand(P parameters) {
         super(parameters);
@@ -30,8 +30,8 @@ public class ResizeStorageDomainPVVDSCommand<P extends ResizeStorageDomainPVVDSC
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
 }

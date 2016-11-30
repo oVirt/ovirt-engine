@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class GetImagesListVDSCommand<P extends GetImagesListVDSCommandParameters>
         extends IrsBrokerCommand<P> {
-    private ImagesListReturnForXmlRpc result;
+    private ImagesListReturn result;
 
     public GetImagesListVDSCommand(P parameters) {
         super(parameters);
@@ -26,8 +26,8 @@ public class GetImagesListVDSCommand<P extends GetImagesListVDSCommandParameters
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override

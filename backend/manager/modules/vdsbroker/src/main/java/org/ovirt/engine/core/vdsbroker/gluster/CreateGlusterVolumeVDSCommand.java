@@ -6,22 +6,22 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 /**
  * VDS command to create a gluster volume
  */
 public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParameters> extends AbstractGlusterBrokerCommand<P> {
-    private OneUuidReturnForXmlRpc uuidReturn;
+    private OneUuidReturn uuidReturn;
 
     public CreateGlusterVolumeVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return uuidReturn.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return uuidReturn.getStatus();
     }
 
     @Override

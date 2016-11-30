@@ -9,7 +9,7 @@ import org.ovirt.engine.core.vdsbroker.storage.StorageConnectionHelper;
 
 public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSCommandParameters>
         extends VdsBrokerCommand<P> {
-    protected IQNListReturnForXmlRpc _result;
+    protected IQNListReturn _result;
 
     public DiscoverSendTargetsVDSCommand(P parameters) {
         super(parameters);
@@ -25,8 +25,8 @@ public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSComma
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return _result.getStatus();
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.GetVmsFromExternalProviderParameters;
 
 public class GetVmsNamesFromExternalProviderVDSCommand<T extends GetVmsFromExternalProviderParameters> extends VdsBrokerCommand<T> {
-    private VMNamesListReturnForXmlRpc vmListReturn;
+    private VMNamesListReturn vmListReturn;
 
     public GetVmsNamesFromExternalProviderVDSCommand(T parameters) {
         super(parameters);
@@ -31,7 +31,7 @@ public class GetVmsNamesFromExternalProviderVDSCommand<T extends GetVmsFromExter
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return vmListReturn.getStatus();
     }
 

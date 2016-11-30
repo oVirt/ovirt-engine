@@ -11,7 +11,7 @@ public abstract class VmReplicateDiskVDSCommand<P extends VmReplicateDiskParamet
         super(parameters);
     }
 
-    protected Map<String, Object> getDstDiskXmlRpc() {
+    protected Map<String, Object> getDstDisk() {
         Map<String, Object> dstDisk = new HashMap<>();
         dstDisk.put(VdsProperties.Device, "disk");
         dstDisk.put(VdsProperties.PoolId, getParameters().getStoragePoolId().toString());
@@ -21,7 +21,7 @@ public abstract class VmReplicateDiskVDSCommand<P extends VmReplicateDiskParamet
         return dstDisk;
     }
 
-    protected Map<String, Object> getSrcDiskXmlRpc() {
+    protected Map<String, Object> getSrcDisk() {
         Map<String, Object> srcDisk = new HashMap<>();
         srcDisk.put(VdsProperties.Device, "disk");
         srcDisk.put(VdsProperties.PoolId, getParameters().getStoragePoolId().toString());

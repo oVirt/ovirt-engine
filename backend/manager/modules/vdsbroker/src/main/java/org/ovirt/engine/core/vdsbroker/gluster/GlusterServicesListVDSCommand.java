@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServicesListVDSParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 /**
  * VDS command to fetch list of services with their status
@@ -10,7 +10,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
  *            The parameters class to be used with this command
  */
 public class GlusterServicesListVDSCommand<P extends GlusterServicesListVDSParameters> extends AbstractGlusterBrokerCommand<P> {
-    private GlusterServicesReturnForXmlRpc glusterServices;
+    private GlusterServicesReturn glusterServices;
 
     public GlusterServicesListVDSCommand(P parameters) {
         super(parameters);
@@ -28,7 +28,7 @@ public class GlusterServicesListVDSCommand<P extends GlusterServicesListVDSParam
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return glusterServices.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return glusterServices.getStatus();
     }
 }

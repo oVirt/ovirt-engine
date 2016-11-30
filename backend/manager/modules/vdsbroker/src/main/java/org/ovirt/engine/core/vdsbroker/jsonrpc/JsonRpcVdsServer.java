@@ -15,62 +15,62 @@ import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.HttpUtils;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterHostsPubKeyReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterTasksListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepConfigListXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetailForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotConfigReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotCreateReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesHealInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.AlignmentScanReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.DevicesVisibilityMapReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.FenceStatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.HostDevListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.HostJobsReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.IQNListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHostsPubKeyReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterTasksListReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepConfigList;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatus;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetail;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotConfigReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotCreateReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesHealInfoReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.AlignmentScanReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.DevicesVisibilityMapReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.FenceStatusReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.HostDevListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.HostJobsReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.IQNListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageSizeReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.LUNListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateStatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.OneMapReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainStatsReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVGReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVmReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.OvfReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.QemuImageInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.ServerConnectionStatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.SpmStatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskInfoListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskStatusListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskStatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VMInfoListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VMNamesListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageSizeReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.LUNListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateStatusReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.OneMapReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainInfoReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainStatsReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVGReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVmReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.OvfReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.QemuImageInfoReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.ServerConnectionStatusReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.SpmStatusReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskInfoListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskStatusListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.TaskStatusReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VMInfoListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VMNamesListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VolumeInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VolumeInfoReturn;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
@@ -127,18 +127,18 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public OneVmReturnForXmlRpc create(Map createInfo) {
+    public OneVmReturn create(Map createInfo) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.create").withParameter("vmID", getVmId(createInfo))
                         .withParameter("vmParams", createInfo)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList");
-        return new OneVmReturnForXmlRpc(response);
+        return new OneVmReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc allocateVolume(String spUUID, String sdUUID, String imgGUID, String volUUID, String size) {
+    public StatusOnlyReturn allocateVolume(String spUUID, String sdUUID, String imgGUID, String volUUID, String size) {
         JsonRpcRequest request =
                 new RequestBuilder("Volume.allocate").withParameter("volumeID", volUUID)
                         .withParameter("storagepoolID", spUUID)
@@ -148,11 +148,12 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc copyData(String jobId, Map src, Map dst) {
+    @SuppressWarnings("rawtypes")
+    public StatusOnlyReturn copyData(String jobId, Map src, Map dst) {
         JsonRpcRequest request =
                 new RequestBuilder("SDM.copy_data")
                         .withParameter("source", src)
@@ -160,40 +161,40 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("job_id", jobId)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc createVolumeContainer(String jobId, Map<String, Object> createVolumeInfo) {
+    public StatusOnlyReturn createVolumeContainer(String jobId, Map<String, Object> createVolumeInfo) {
         JsonRpcRequest request =
                 new RequestBuilder("SDM.create_volume")
                         .withParameter("job_id", jobId)
                         .withParameter("vol_info", createVolumeInfo)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc destroy(String vmId) {
+    public StatusOnlyReturn destroy(String vmId) {
         JsonRpcRequest request = new RequestBuilder("VM.destroy").withParameter("vmID", vmId).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc shutdown(String vmId, String timeout, String message) {
+    public StatusOnlyReturn shutdown(String vmId, String timeout, String message) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.shutdown").withParameter("vmID", vmId)
                         .withOptionalParameter("delay", timeout)
                         .withOptionalParameter("message", message)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc shutdown(String vmId, String timeout, String message, boolean reboot) {
+    public StatusOnlyReturn shutdown(String vmId, String timeout, String message, boolean reboot) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.shutdown").withParameter("vmID", vmId)
                         .withOptionalParameter("delay", timeout)
@@ -201,90 +202,90 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("reboot", reboot)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public OneVmReturnForXmlRpc pause(String vmId) {
+    public OneVmReturn pause(String vmId) {
         JsonRpcRequest request = new RequestBuilder("VM.pause").withParameter("vmID", vmId).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList");
-        return new OneVmReturnForXmlRpc(response);
+        return new OneVmReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc hibernate(String vmId, String hiberVolHandle) {
+    public StatusOnlyReturn hibernate(String vmId, String hiberVolHandle) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.hibernate").withParameter("vmID", vmId)
                         .withParameter("hibernationVolHandle", hiberVolHandle)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public OneVmReturnForXmlRpc resume(String vmId) {
+    public OneVmReturn resume(String vmId) {
         JsonRpcRequest request = new RequestBuilder("VM.cont").withParameter("vmID", vmId).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList");
-        return new OneVmReturnForXmlRpc(response);
+        return new OneVmReturn(response);
     }
 
     @Override
-    public VMListReturnForXmlRpc list() {
+    public VMListReturn list() {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getVMList").withOptionalParameterAsList("vmList",
                         new ArrayList<>(Arrays.asList(new String[]{}))).withParameter("onlyUUID", false).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList")
                         .withResponseType(Object[].class);
-        return new VMListReturnForXmlRpc(response);
+        return new VMListReturn(response);
     }
 
     @Override
-    public VMListReturnForXmlRpc fullList(List<String> vmIds) {
+    public VMListReturn fullList(List<String> vmIds) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getVMFullList").withOptionalParameterAsList("vmList", vmIds).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList")
                         .withResponseType(Object[].class);
-        return new VMListReturnForXmlRpc(response);
+        return new VMListReturn(response);
     }
 
     @Override
-    public VDSInfoReturnForXmlRpc getCapabilities() {
+    public VDSInfoReturn getCapabilities() {
         JsonRpcRequest request = new RequestBuilder("Host.getCapabilities").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("info");
-        return new VDSInfoReturnForXmlRpc(response);
+        return new VDSInfoReturn(response);
     }
 
     @Override
-    public VDSInfoReturnForXmlRpc getHardwareInfo() {
+    public VDSInfoReturn getHardwareInfo() {
         JsonRpcRequest request = new RequestBuilder("Host.getHardwareInfo").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("info");
-        return new VDSInfoReturnForXmlRpc(response);
+        return new VDSInfoReturn(response);
     }
 
     @Override
-    public VDSInfoReturnForXmlRpc getVdsStats() {
+    public VDSInfoReturn getVdsStats() {
         JsonRpcRequest request = new RequestBuilder("Host.getStats").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("info");
-        return new VDSInfoReturnForXmlRpc(response);
+        return new VDSInfoReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setMOMPolicyParameters(Map<String, Object> values) {
+    public StatusOnlyReturn setMOMPolicyParameters(Map<String, Object> values) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.setMOMPolicyParameters").withParameter("key_value_store", values).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc desktopLogin(String vmId, String domain, String user, String password) {
+    public StatusOnlyReturn desktopLogin(String vmId, String domain, String user, String password) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.desktopLogin").withParameter("vmID", vmId)
                         .withParameter("domain", domain)
@@ -292,101 +293,101 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("password", password)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc desktopLogoff(String vmId, String force) {
+    public StatusOnlyReturn desktopLogoff(String vmId, String force) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.desktopLogoff").withParameter("vmID", vmId)
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public VMInfoListReturnForXmlRpc getVmStats(String vmId) {
+    public VMInfoListReturn getVmStats(String vmId) {
         JsonRpcRequest request = new RequestBuilder("VM.getStats").withParameter("vmID", vmId).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("statsList");
-        return new VMInfoListReturnForXmlRpc(response);
+        return new VMInfoListReturn(response);
     }
 
     @Override
-    public VMInfoListReturnForXmlRpc getAllVmStats() {
+    public VMInfoListReturn getAllVmStats() {
         JsonRpcRequest request = new RequestBuilder("Host.getAllVmStats").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("statsList")
                         .withResponseType(Object[].class);
-        return new VMInfoListReturnForXmlRpc(response);
+        return new VMInfoListReturn(response);
     }
 
     @Override
-    public HostDevListReturnForXmlRpc hostDevListByCaps() {
+    public HostDevListReturn hostDevListByCaps() {
         JsonRpcRequest request = new RequestBuilder("Host.hostdevListByCaps").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("deviceList");
-        return new HostDevListReturnForXmlRpc(response);
+        return new HostDevListReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc migrate(Map<String, Object> migrationInfo) {
+    public StatusOnlyReturn migrate(Map<String, Object> migrationInfo) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.migrate").withParameter("vmID", getVmId(migrationInfo))
                         .withParameter("params", migrationInfo)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public MigrateStatusReturnForXmlRpc migrateStatus(String vmId) {
+    public MigrateStatusReturn migrateStatus(String vmId) {
         JsonRpcRequest request = new RequestBuilder("VM.getMigrationStatus").withParameter("vmID", vmId).build();
         Map<String, Object> response = new FutureMap(this.client, request).withResponseKey("response")
                 .withResponseType(Long.class);
-        return new MigrateStatusReturnForXmlRpc(response);
+        return new MigrateStatusReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc migrateCancel(String vmId) {
+    public StatusOnlyReturn migrateCancel(String vmId) {
         JsonRpcRequest request = new RequestBuilder("VM.migrateCancel").withParameter("vmID", vmId).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public OneVmReturnForXmlRpc changeDisk(String vmId, String imageLocation) {
+    public OneVmReturn changeDisk(String vmId, String imageLocation) {
         JsonRpcRequest request = new RequestBuilder("VM.changeCD").withParameter("vmID", vmId)
                 .withParameter("driveSpec", imageLocation)
                 .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList");
-        return new OneVmReturnForXmlRpc(response);
+        return new OneVmReturn(response);
     }
 
     @Override
-    public OneVmReturnForXmlRpc changeDisk(String vmId, Map<String, Object> driveSpec) {
+    public OneVmReturn changeDisk(String vmId, Map<String, Object> driveSpec) {
         JsonRpcRequest request = new RequestBuilder("VM.changeCD").withParameter("vmID", vmId)
                 .withParameter("driveSpec", driveSpec)
                 .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList");
-        return new OneVmReturnForXmlRpc(response);
+        return new OneVmReturn(response);
     }
 
     @Override
-    public OneVmReturnForXmlRpc changeFloppy(String vmId, String imageLocation) {
+    public OneVmReturn changeFloppy(String vmId, String imageLocation) {
         // TODO DriveSpec should be used instead of imageLocation
         JsonRpcRequest request = new RequestBuilder("VM.changeFloppy").withParameter("vmID", vmId)
                 .withParameter("driveSpec", imageLocation).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList");
-        return new OneVmReturnForXmlRpc(response);
+        return new OneVmReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc addNetwork(String bridge,
+    public StatusOnlyReturn addNetwork(String bridge,
             String vlan,
             String bond,
             String[] nics,
@@ -399,11 +400,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withOptionalParameterAsMap("options", options)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc delNetwork(String bridge, String vlan, String bond, String[] nics) {
+    public StatusOnlyReturn delNetwork(String bridge, String vlan, String bond, String[] nics) {
         // No options params (do we need it during this operation)
         JsonRpcRequest request = new RequestBuilder("Host.delNetwork").withParameter("bridge", bridge)
                 .withOptionalParameter("vlan", vlan)
@@ -411,11 +412,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withOptionalParameterAsList("nics", new ArrayList<>(Arrays.asList(nics)))
                 .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc editNetwork(String oldBridge,
+    public StatusOnlyReturn editNetwork(String oldBridge,
             String newBridge,
             String vlan,
             String bond,
@@ -430,7 +431,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withOptionalParameterAsMap("options", options)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     static class FutureCallable implements Callable<Map<String, Object>> {
@@ -494,14 +495,14 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setSafeNetworkConfig() {
+    public StatusOnlyReturn setSafeNetworkConfig() {
         JsonRpcRequest request = new RequestBuilder("Host.setSafeNetworkConfig").build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public FenceStatusReturnForXmlRpc fenceNode(String ip,
+    public FenceStatusReturn fenceNode(String ip,
             String port,
             String type,
             String user,
@@ -524,11 +525,11 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
 
-        return new FenceStatusReturnForXmlRpc(response);
+        return new FenceStatusReturn(response);
     }
 
     @Override
-    public ServerConnectionStatusReturnForXmlRpc connectStorageServer(int serverType,
+    public ServerConnectionStatusReturn connectStorageServer(int serverType,
             String spUUID,
             Map<String, String>[] args) {
         JsonRpcRequest request =
@@ -539,11 +540,11 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("statuslist")
                         .withResponseType(Object[].class);
-        return new ServerConnectionStatusReturnForXmlRpc(response);
+        return new ServerConnectionStatusReturn(response);
     }
 
     @Override
-    public ServerConnectionStatusReturnForXmlRpc disconnectStorageServer(int serverType,
+    public ServerConnectionStatusReturn disconnectStorageServer(int serverType,
             String spUUID,
             Map<String, String>[] args) {
         JsonRpcRequest request =
@@ -554,11 +555,11 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("statuslist")
                         .withResponseType(Object[].class);
-        return new ServerConnectionStatusReturnForXmlRpc(response);
+        return new ServerConnectionStatusReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc createStorageDomain(int domainType,
+    public StatusOnlyReturn createStorageDomain(int domainType,
             String sdUUID,
             String domainName,
             String arg,
@@ -573,21 +574,21 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withOptionalParameter("version", storageFormatType)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc formatStorageDomain(String sdUUID) {
+    public StatusOnlyReturn formatStorageDomain(String sdUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.format").withParameter("storagedomainID", sdUUID)
                         .withParameter("autoDetach", false)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc connectStoragePool(String spUUID,
+    public StatusOnlyReturn connectStoragePool(String spUUID,
             int hostSpmId,
             String SCSIKey,
             String masterdomainId,
@@ -602,22 +603,22 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withOptionalParameterAsMap("domainDict", storageDomains)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc disconnectStoragePool(String spUUID, int hostSpmId, String SCSIKey) {
+    public StatusOnlyReturn disconnectStoragePool(String spUUID, int hostSpmId, String SCSIKey) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.disconnect").withParameter("storagepoolID", spUUID)
                         .withParameter("hostID", hostSpmId)
                         .withParameter("scsiKey", SCSIKey)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc createStoragePool(int poolType,
+    public StatusOnlyReturn createStoragePool(int poolType,
             String spUUID,
             String poolName,
             String msdUUID,
@@ -642,11 +643,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("leaseRetries", leaseRetries)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc reconstructMaster(String spUUID,
+    public StatusOnlyReturn reconstructMaster(String spUUID,
             String poolName,
             String masterDom,
             Map<String, String> domDict,
@@ -671,29 +672,29 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("leaseRetries", leaseRetries)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public OneStorageDomainStatsReturnForXmlRpc getStorageDomainStats(String sdUUID) {
+    public OneStorageDomainStatsReturn getStorageDomainStats(String sdUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.getStats").withParameter("storagedomainID", sdUUID).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("stats");
-        return new OneStorageDomainStatsReturnForXmlRpc(response);
+        return new OneStorageDomainStatsReturn(response);
     }
 
     @Override
-    public OneStorageDomainInfoReturnForXmlRpc getStorageDomainInfo(String sdUUID) {
+    public OneStorageDomainInfoReturn getStorageDomainInfo(String sdUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.getInfo").withParameter("storagedomainID", sdUUID).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("info");
-        return new OneStorageDomainInfoReturnForXmlRpc(response);
+        return new OneStorageDomainInfoReturn(response);
     }
 
     @Override
-    public StorageDomainListReturnForXmlRpc getStorageDomainsList(String spUUID,
+    public StorageDomainListReturn getStorageDomainsList(String spUUID,
             int domainType,
             String poolType,
             String path) {
@@ -706,11 +707,11 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("domlist")
                         .withResponseType(Object[].class);
-        return new StorageDomainListReturnForXmlRpc(response);
+        return new StorageDomainListReturn(response);
     }
 
     @Override
-    public OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList, boolean force) {
+    public OneUuidReturn createVG(String sdUUID, String[] deviceList, boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("LVMVolumeGroup.create").withParameter("name", sdUUID)
                         .withParameter("devlist", new ArrayList<>(Arrays.asList(deviceList)))
@@ -718,20 +719,20 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @Override
-    public OneVGReturnForXmlRpc getVGInfo(String vgUUID) {
+    public OneVGReturn getVGInfo(String vgUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("LVMVolumeGroup.getInfo").withParameter("lvmvolumegroupID", vgUUID).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("info");
-        return new OneVGReturnForXmlRpc(response);
+        return new OneVGReturn(response);
     }
 
     @Override
-    public LUNListReturnForXmlRpc getDeviceList(int storageType, String[] devicesList, boolean checkStatus) {
+    public LUNListReturn getDeviceList(int storageType, String[] devicesList, boolean checkStatus) {
         ArrayList<String> devicesListArray =
                 devicesList != null ? new ArrayList<>(Arrays.asList(devicesList)) : null;
         JsonRpcRequest request =
@@ -743,21 +744,21 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseType(Object[].class)
                         .withResponseKey("devList");
-        return new LUNListReturnForXmlRpc(response);
+        return new LUNListReturn(response);
     }
 
     @Override
-    public DevicesVisibilityMapReturnForXmlRpc getDevicesVisibility(String[] devicesList) {
+    public DevicesVisibilityMapReturn getDevicesVisibility(String[] devicesList) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getDevicesVisibility").withParameter("guidList",
                         new ArrayList<>(Arrays.asList(devicesList))).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("visible");
-        return new DevicesVisibilityMapReturnForXmlRpc(response);
+        return new DevicesVisibilityMapReturn(response);
     }
 
     @Override
-    public IQNListReturnForXmlRpc discoverSendTargets(Map<String, String> args) {
+    public IQNListReturn discoverSendTargets(Map<String, String> args) {
         JsonRpcRequest request =
                 new RequestBuilder("ISCSIConnection.discoverSendTargets").withParameter("host", args.get("connection"))
                         .withParameter("port", args.get("port"))
@@ -765,11 +766,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withOptionalParameter("password", args.get("password"))
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request).withResponseKey("fullTargets");
-        return new IQNListReturnForXmlRpc(response);
+        return new IQNListReturn(response);
     }
 
     @Override
-    public OneUuidReturnForXmlRpc spmStart(String spUUID,
+    public OneUuidReturn spmStart(String spUUID,
             int prevID,
             String prevLVER,
             int recoveryMode,
@@ -788,133 +789,133 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid")
                         .withResponseType(String.class);
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc spmStop(String spUUID) {
+    public StatusOnlyReturn spmStop(String spUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.spmStop").withParameter("storagepoolID", spUUID).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public SpmStatusReturnForXmlRpc spmStatus(String spUUID) {
+    public SpmStatusReturn spmStatus(String spUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.getSpmStatus").withParameter("storagepoolID", spUUID).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("spm_st");
-        return new SpmStatusReturnForXmlRpc(response);
+        return new SpmStatusReturn(response);
     }
 
     @Override
-    public HostJobsReturnForXmlRpc getHostJobs(String jobType, List<String> jobIds) {
+    public HostJobsReturn getHostJobs(String jobType, List<String> jobIds) {
         JsonRpcRequest request = new RequestBuilder("Host.getJobs").withOptionalParameter("job_type", jobType).
                 withOptionalParameterAsList("job_ids", jobIds).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("jobs");
-        return new HostJobsReturnForXmlRpc(response);
+        return new HostJobsReturn(response);
     }
 
     @Override
-    public TaskStatusReturnForXmlRpc getTaskStatus(String taskUUID) {
+    public TaskStatusReturn getTaskStatus(String taskUUID) {
         JsonRpcRequest request = new RequestBuilder("Task.getStatus").withParameter("taskID", taskUUID).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("taskStatus");
-        return new TaskStatusReturnForXmlRpc(response);
+        return new TaskStatusReturn(response);
     }
 
     @Override
-    public TaskStatusListReturnForXmlRpc getAllTasksStatuses() {
+    public TaskStatusListReturn getAllTasksStatuses() {
         JsonRpcRequest request = new RequestBuilder("Host.getAllTasksStatuses").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("allTasksStatus");
-        return new TaskStatusListReturnForXmlRpc(response);
+        return new TaskStatusListReturn(response);
     }
 
     @Override
-    public TaskInfoListReturnForXmlRpc getAllTasksInfo() {
+    public TaskInfoListReturn getAllTasksInfo() {
         JsonRpcRequest request = new RequestBuilder("Host.getAllTasksInfo").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("allTasksInfo");
-        return new TaskInfoListReturnForXmlRpc(response);
+        return new TaskInfoListReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc stopTask(String taskUUID) {
+    public StatusOnlyReturn stopTask(String taskUUID) {
         JsonRpcRequest request = new RequestBuilder("Task.stop").withParameter("taskID", taskUUID).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc clearTask(String taskUUID) {
+    public StatusOnlyReturn clearTask(String taskUUID) {
         JsonRpcRequest request = new RequestBuilder("Task.clear").withParameter("taskID", taskUUID).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc revertTask(String taskUUID) {
+    public StatusOnlyReturn revertTask(String taskUUID) {
         JsonRpcRequest request = new RequestBuilder("Task.revert").withParameter("taskID", taskUUID).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturnForXmlRpc hotplugDisk(Map info) {
+    public StatusOnlyReturn hotplugDisk(Map info) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.hotplugDisk").withParameter("vmID", getVmId(info))
                         .withParameter("params", info)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturnForXmlRpc hotunplugDisk(Map info) {
+    public StatusOnlyReturn hotunplugDisk(Map info) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.hotunplugDisk").withParameter("vmID", getVmId(info))
                         .withParameter("params", info)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturnForXmlRpc hotPlugNic(Map info) {
+    public StatusOnlyReturn hotPlugNic(Map info) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.hotplugNic").withParameter("vmID", getVmId(info))
                         .withParameter("params", info)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturnForXmlRpc hotUnplugNic(Map info) {
+    public StatusOnlyReturn hotUnplugNic(Map info) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.hotunplugNic").withParameter("vmID", getVmId(info))
                         .withParameter("params", info)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturnForXmlRpc vmUpdateDevice(String vmId, Map device) {
+    public StatusOnlyReturn vmUpdateDevice(String vmId, Map device) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.updateDevice").withParameter("vmID", vmId)
                         .withParameter("params", device)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
@@ -940,17 +941,17 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks) {
+    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks) {
         return snapshot(vmId, disks, null, false);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks, String memory) {
+    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory) {
         return snapshot(vmId, disks, memory, false);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen) {
+    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.snapshot").withParameter("vmID", vmId)
                         .withParameter("snapDrives", new ArrayList<>(Arrays.asList(disks)))
@@ -958,22 +959,22 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("frozen", frozen)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public AlignmentScanReturnForXmlRpc getDiskAlignment(String vmId, Map<String, String> driveSpecs) {
+    public AlignmentScanReturn getDiskAlignment(String vmId, Map<String, String> driveSpecs) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.getDiskAlignment").withParameter("vmID", vmId)
                         .withParameter("disk", driveSpecs)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("alignment");
-        return new AlignmentScanReturnForXmlRpc(response);
+        return new AlignmentScanReturn(response);
     }
 
     @Override
-    public ImageSizeReturnForXmlRpc diskSizeExtend(String vmId, Map<String, String> diskParams, String newSize) {
+    public ImageSizeReturn diskSizeExtend(String vmId, Map<String, String> diskParams, String newSize) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.diskSizeExtend").withParameter("vmID", vmId)
                         .withParameter("driveSpecs", diskParams)
@@ -981,11 +982,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("size");
-        return new ImageSizeReturnForXmlRpc(response);
+        return new ImageSizeReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc merge(String vmId, Map<String, String> drive,
+    public StatusOnlyReturn merge(String vmId, Map<String, String> drive,
             String baseVolUUID, String topVolUUID, String bandwidth, String jobUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.merge").withParameter("vmID", vmId)
@@ -996,11 +997,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("jobUUID", jobUUID)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
+    public OneUuidReturn glusterVolumeCreate(String volumeName,
             String[] brickList,
             int replicaCount,
             int stripeCount,
@@ -1018,69 +1019,69 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeSet(String volumeName, String key, String value) {
+    public StatusOnlyReturn glusterVolumeSet(String volumeName, String key, String value) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.set").withParameter("volumeName", volumeName)
                         .withParameter("option", key)
                         .withParameter("value", value)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeStart(String volumeName, Boolean force) {
+    public StatusOnlyReturn glusterVolumeStart(String volumeName, Boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.start").withParameter("volumeName", volumeName)
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeStop(String volumeName, Boolean force) {
+    public StatusOnlyReturn glusterVolumeStop(String volumeName, Boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.stop").withParameter("volumeName", volumeName)
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeDelete(String volumeName) {
+    public StatusOnlyReturn glusterVolumeDelete(String volumeName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.delete").withParameter("volumeName", volumeName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeReset(String volumeName, String volumeOption, Boolean force) {
+    public StatusOnlyReturn glusterVolumeReset(String volumeName, String volumeOption, Boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.reset").withParameter("volumeName", volumeName)
                         .withParameter("option", volumeOption)
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public GlusterVolumeOptionsInfoReturnForXmlRpc glusterVolumeSetOptionsList() {
+    public GlusterVolumeOptionsInfoReturn glusterVolumeSetOptionsList() {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.setOptionsList").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeOptionsInfoReturnForXmlRpc(response);
+        return new GlusterVolumeOptionsInfoReturn(response);
     }
 
     @Override
-    public GlusterTaskInfoReturnForXmlRpc glusterVolumeRemoveBricksStart(String volumeName,
+    public GlusterTaskInfoReturn glusterVolumeRemoveBricksStart(String volumeName,
             String[] brickList,
             int replicaCount,
             Boolean forceRemove) {
@@ -1094,11 +1095,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterTaskInfoReturnForXmlRpc(response);
+        return new GlusterTaskInfoReturn(response);
     }
 
     @Override
-    public GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBricksStop(String volumeName,
+    public GlusterVolumeTaskReturn glusterVolumeRemoveBricksStop(String volumeName,
             String[] brickList,
             int replicaCount) {
         JsonRpcRequest request =
@@ -1107,11 +1108,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("replicaCount", replicaCount)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new GlusterVolumeTaskReturnForXmlRpc(response);
+        return new GlusterVolumeTaskReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeRemoveBricksCommit(String volumeName,
+    public StatusOnlyReturn glusterVolumeRemoveBricksCommit(String volumeName,
             String[] brickList,
             int replicaCount) {
         JsonRpcRequest request =
@@ -1120,11 +1121,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("replicaCount", replicaCount)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeBrickAdd(String volumeName,
+    public StatusOnlyReturn glusterVolumeBrickAdd(String volumeName,
             String[] bricks,
             int replicaCount,
             int stripeCount,
@@ -1137,11 +1138,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public GlusterTaskInfoReturnForXmlRpc glusterVolumeRebalanceStart(String volumeName,
+    public GlusterTaskInfoReturn glusterVolumeRebalanceStart(String volumeName,
             Boolean fixLayoutOnly,
             Boolean force) {
         JsonRpcRequest request =
@@ -1151,46 +1152,46 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterTaskInfoReturnForXmlRpc(response);
+        return new GlusterTaskInfoReturn(response);
     }
 
     @Override
-    public BooleanReturnForXmlRpc glusterVolumeEmptyCheck(String volumeName) {
+    public BooleanReturn glusterVolumeEmptyCheck(String volumeName) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.volumeEmptyCheck").withParameter("volumeName", volumeName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new BooleanReturnForXmlRpc(response, "volumeEmptyCheck");
+        return new BooleanReturn(response, "volumeEmptyCheck");
     }
 
     @Override
-    public GlusterHostsPubKeyReturnForXmlRpc glusterGeoRepKeysGet() {
+    public GlusterHostsPubKeyReturn glusterGeoRepKeysGet() {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepKeysGet").build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new GlusterHostsPubKeyReturnForXmlRpc(response);
+        return new GlusterHostsPubKeyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterGeoRepKeysUpdate(List<String> geoRepPubKeys, String userName) {
+    public StatusOnlyReturn glusterGeoRepKeysUpdate(List<String> geoRepPubKeys, String userName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.geoRepKeysUpdate")
                         .withParameter("geoRepPubKeys", geoRepPubKeys)
                         .withOptionalParameter("userName", userName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName, String userName, String remoteGroupName, Boolean partial) {
+    public StatusOnlyReturn glusterGeoRepMountBrokerSetup(String remoteVolumeName, String userName, String remoteGroupName, Boolean partial) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.geoRepMountBrokerSetup").withParameter("remoteVolumeName", remoteVolumeName)
                         .withParameter("partial", partial)
                         .withOptionalParameter("remoteUserName", userName)
                         .withOptionalParameter("remoteGroupName", remoteGroupName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionCreate(String volumeName, String remoteHost, String remotVolumeName, String userName, Boolean force) {
+    public StatusOnlyReturn glusterVolumeGeoRepSessionCreate(String volumeName, String remoteHost, String remotVolumeName, String userName, Boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.geoRepSessionCreate").withParameter("volumeName", volumeName)
                 .withParameter("remoteHost", remoteHost)
@@ -1198,11 +1199,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withParameter("force", force)
                 .withOptionalParameter("remoteUserName", userName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionResume(String volumeName,
+    public StatusOnlyReturn glusterVolumeGeoRepSessionResume(String volumeName,
             String slaveHostName,
             String slaveVolumeName,
             String userName,
@@ -1213,20 +1214,20 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withOptionalParameter("remoteUserName", userName)
                         .withParameter("force", force).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public GlusterVolumeTaskReturnForXmlRpc glusterVolumeRebalanceStop(String volumeName) {
+    public GlusterVolumeTaskReturn glusterVolumeRebalanceStop(String volumeName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.rebalanceStop").withParameter("volumeName", volumeName).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeTaskReturnForXmlRpc(response);
+        return new GlusterVolumeTaskReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeReplaceBrickCommitForce(String volumeName,
+    public StatusOnlyReturn glusterVolumeReplaceBrickCommitForce(String volumeName,
             String existingBrickDir,
             String newBrickDir) {
         JsonRpcRequest request =
@@ -1235,28 +1236,28 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("newBrick", newBrickDir)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterHostRemove(String hostName, Boolean force) {
+    public StatusOnlyReturn glusterHostRemove(String hostName, Boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterHost.remove").withParameter("hostName", hostName)
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterHostAdd(String hostName) {
+    public StatusOnlyReturn glusterHostAdd(String hostName) {
         JsonRpcRequest request = new RequestBuilder("GlusterHost.add").withParameter("hostName", hostName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionDelete(String volumeName,
+    public StatusOnlyReturn glusterVolumeGeoRepSessionDelete(String volumeName,
             String remoteHost,
             String remoteVolumeName,
             String userName) {
@@ -1268,11 +1269,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .build();
 
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStop(String volumeName,
+    public StatusOnlyReturn glusterVolumeGeoRepSessionStop(String volumeName,
             String remoteHost,
             String remoteVolumeName,
             String userName,
@@ -1286,59 +1287,59 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .build();
 
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public GlusterServersListReturnForXmlRpc glusterServersList() {
+    public GlusterServersListReturn glusterServersList() {
         JsonRpcRequest request = new RequestBuilder("GlusterHost.list").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterServersListReturnForXmlRpc(response);
+        return new GlusterServersListReturn(response);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturnForXmlRpc diskReplicateStart(String vmUUID, Map srcDisk, Map dstDisk) {
+    public StatusOnlyReturn diskReplicateStart(String vmUUID, Map srcDisk, Map dstDisk) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.diskReplicateStart").withParameter("vmID", vmUUID)
                         .withParameter("srcDisk", srcDisk)
                         .withParameter("dstDisk", dstDisk)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturnForXmlRpc diskReplicateFinish(String vmUUID, Map srcDisk, Map dstDisk) {
+    public StatusOnlyReturn diskReplicateFinish(String vmUUID, Map srcDisk, Map dstDisk) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.diskReplicateFinish").withParameter("vmID", vmUUID)
                         .withParameter("srcDisk", srcDisk)
                         .withParameter("dstDisk", dstDisk)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeProfileStart(String volumeName) {
+    public StatusOnlyReturn glusterVolumeProfileStart(String volumeName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.profileStart").withParameter("volumeName", volumeName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeProfileStop(String volumeName) {
+    public StatusOnlyReturn glusterVolumeProfileStop(String volumeName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.profileStop").withParameter("volumeName", volumeName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionPause(String masterVolumeName,
+    public StatusOnlyReturn glusterVolumeGeoRepSessionPause(String masterVolumeName,
             String slaveHost,
             String slaveVolumeName,
             String userName,
@@ -1349,11 +1350,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withOptionalParameter("remoteUserName", userName)
                         .withParameter("force", force).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStart(String volumeName,
+    public StatusOnlyReturn glusterVolumeGeoRepSessionStart(String volumeName,
             String remoteHost,
             String remoteVolumeName,
             String userName,
@@ -1364,11 +1365,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withOptionalParameter("remoteUserName", userName)
                         .withParameter("force", force).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigSet(String volumeName,
+    public StatusOnlyReturn glusterVolumeGeoRepConfigSet(String volumeName,
             String slaveHost,
             String slaveVolumeName,
             String configKey,
@@ -1382,11 +1383,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withParameter("optionValue", configValue)
                 .withOptionalParameter("remoteUserName", userName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigReset(String volumeName,
+    public StatusOnlyReturn glusterVolumeGeoRepConfigReset(String volumeName,
             String slaveHost,
             String slaveVolumeName,
             String configKey,
@@ -1400,11 +1401,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .build();
 
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public GlusterVolumeGeoRepConfigListXmlRpc glusterVolumeGeoRepConfigList(String volumeName,
+    public GlusterVolumeGeoRepConfigList glusterVolumeGeoRepConfigList(String volumeName,
             String slaveHost,
             String slaveVolumeName,
             String userName) {
@@ -1415,11 +1416,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withOptionalParameter("remoteUserName", userName)
                 .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new GlusterVolumeGeoRepConfigListXmlRpc(response);
+        return new GlusterVolumeGeoRepConfigList(response);
     }
 
     @Override
-    public GlusterVolumeStatusReturnForXmlRpc glusterVolumeStatus(Guid clusterId,
+    public GlusterVolumeStatusReturn glusterVolumeStatus(Guid clusterId,
             String volumeName,
             String brickName,
             String volumeStatusOption) {
@@ -1430,95 +1431,95 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeStatusReturnForXmlRpc(clusterId, response);
+        return new GlusterVolumeStatusReturn(clusterId, response);
     }
 
     @Override
-    public GlusterVolumesListReturnForXmlRpc glusterVolumesList(Guid clusterId) {
+    public GlusterVolumesListReturn glusterVolumesList(Guid clusterId) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.list").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumesListReturnForXmlRpc(clusterId, response);
+        return new GlusterVolumesListReturn(clusterId, response);
     }
 
     @Override
-    public GlusterVolumesListReturnForXmlRpc glusterVolumeInfo(Guid clusterId, String volumeName) {
+    public GlusterVolumesListReturn glusterVolumeInfo(Guid clusterId, String volumeName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.list").withParameter("volumeName", volumeName).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumesListReturnForXmlRpc(clusterId, response);
+        return new GlusterVolumesListReturn(clusterId, response);
     }
 
     @Override
-    public GlusterVolumesHealInfoReturnForXmlRpc glusterVolumeHealInfo(String volumeName) {
+    public GlusterVolumesHealInfoReturn glusterVolumeHealInfo(String volumeName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.healInfo").withParameter("volumeName", volumeName).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumesHealInfoReturnForXmlRpc(response);
+        return new GlusterVolumesHealInfoReturn(response);
     }
 
     @Override
-    public GlusterVolumeProfileInfoReturnForXmlRpc glusterVolumeProfileInfo(Guid clusterId, String volumeName, boolean nfs) {
+    public GlusterVolumeProfileInfoReturn glusterVolumeProfileInfo(Guid clusterId, String volumeName, boolean nfs) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.profileInfo").withParameter("volumeName", volumeName)
                 .withParameter("nfs", nfs).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeProfileInfoReturnForXmlRpc(clusterId, response);
+        return new GlusterVolumeProfileInfoReturn(clusterId, response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterHookEnable(String glusterCommand, String stage, String hookName) {
+    public StatusOnlyReturn glusterHookEnable(String glusterCommand, String stage, String hookName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterHook.enable").withParameter("glusterCmd", glusterCommand)
                         .withParameter("hookLevel", stage)
                         .withParameter("hookName", hookName)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterHookDisable(String glusterCommand, String stage, String hookName) {
+    public StatusOnlyReturn glusterHookDisable(String glusterCommand, String stage, String hookName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterHook.disable").withParameter("glusterCmd", glusterCommand)
                         .withParameter("hookLevel", stage)
                         .withParameter("hookName", hookName)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public GlusterHooksListReturnForXmlRpc glusterHooksList() {
+    public GlusterHooksListReturn glusterHooksList() {
         JsonRpcRequest request = new RequestBuilder("GlusterHook.list").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterHooksListReturnForXmlRpc(response);
+        return new GlusterHooksListReturn(response);
     }
 
     @Override
-    public OneUuidReturnForXmlRpc glusterHostUUIDGet() {
+    public OneUuidReturn glusterHostUUIDGet() {
         JsonRpcRequest request = new RequestBuilder("GlusterHost.uuid").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new OneUuidReturnForXmlRpc(response);
+        return new OneUuidReturn(response);
     }
 
     @Override
-    public GlusterServicesReturnForXmlRpc glusterServicesList(Guid serverId, String[] serviceNames) {
+    public GlusterServicesReturn glusterServicesList(Guid serverId, String[] serviceNames) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterService.get").withParameter("serviceNames",
                         new ArrayList<>(Arrays.asList(serviceNames))).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterServicesReturnForXmlRpc(serverId, response);
+        return new GlusterServicesReturn(serverId, response);
     }
 
     @Override
-    public GlusterHookContentInfoReturnForXmlRpc glusterHookRead(String glusterCommand, String stage, String hookName) {
+    public GlusterHookContentInfoReturn glusterHookRead(String glusterCommand, String stage, String hookName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterHook.read").withParameter("glusterCmd", glusterCommand)
                         .withParameter("hookLevel", stage)
@@ -1526,11 +1527,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterHookContentInfoReturnForXmlRpc(response);
+        return new GlusterHookContentInfoReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterHookUpdate(String glusterCommand,
+    public StatusOnlyReturn glusterHookUpdate(String glusterCommand,
             String stage,
             String hookName,
             String content,
@@ -1543,11 +1544,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("hookMd5Sum", checksum)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterHookAdd(String glusterCommand,
+    public StatusOnlyReturn glusterHookAdd(String glusterCommand,
             String stage,
             String hookName,
             String content,
@@ -1562,22 +1563,22 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("enable", enabled)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterHookRemove(String glusterCommand, String stage, String hookName) {
+    public StatusOnlyReturn glusterHookRemove(String glusterCommand, String stage, String hookName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterHook.remove").withParameter("glusterCmd", glusterCommand)
                         .withParameter("hookLevel", stage)
                         .withParameter("hookName", hookName)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public GlusterServicesReturnForXmlRpc glusterServicesAction(Guid serverId, String[] serviceList, String actionType) {
+    public GlusterServicesReturn glusterServicesAction(Guid serverId, String[] serviceList, String actionType) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterService.action").withParameter("serviceNames",
                         new ArrayList<>(Arrays.asList(serviceList)))
@@ -1585,53 +1586,53 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterServicesReturnForXmlRpc(serverId, response);
+        return new GlusterServicesReturn(serverId, response);
     }
 
     @Override
-    public StoragePoolInfoReturnForXmlRpc getStoragePoolInfo(String spUUID) {
+    public StoragePoolInfo getStoragePoolInfo(String spUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.getInfo").withParameter("storagepoolID", spUUID).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new StoragePoolInfoReturnForXmlRpc(response);
+        return new StoragePoolInfo(response);
     }
 
     @Override
-    public GlusterTasksListReturnForXmlRpc glusterTasksList() {
+    public GlusterTasksListReturn glusterTasksList() {
         JsonRpcRequest request = new RequestBuilder("GlusterTask.list").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterTasksListReturnForXmlRpc(response);
+        return new GlusterTasksListReturn(response);
     }
 
     @Override
-    public GlusterVolumeTaskReturnForXmlRpc glusterVolumeRebalanceStatus(String volumeName) {
+    public GlusterVolumeTaskReturn glusterVolumeRebalanceStatus(String volumeName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.rebalanceStatus").withParameter("volumeName", volumeName).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeTaskReturnForXmlRpc(response);
+        return new GlusterVolumeTaskReturn(response);
     }
 
     @Override
-    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepSessionList() {
+    public GlusterVolumeGeoRepStatus glusterVolumeGeoRepSessionList() {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionList").build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeGeoRepStatusForXmlRpc(response);
+        return new GlusterVolumeGeoRepStatus(response);
     }
 
     @Override
-    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepSessionList(String volumeName) {
+    public GlusterVolumeGeoRepStatus glusterVolumeGeoRepSessionList(String volumeName) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionList")
                 .withParameter("volumeName", volumeName)
                     .build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeGeoRepStatusForXmlRpc(response);
+        return new GlusterVolumeGeoRepStatus(response);
     }
 
     @Override
-    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepSessionList(String volumeName,
+    public GlusterVolumeGeoRepStatus glusterVolumeGeoRepSessionList(String volumeName,
             String slaveHost,
             String slaveVolumeName,
             String userName) {
@@ -1641,11 +1642,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("remoteVolumeName", slaveVolumeName)
                         .withOptionalParameter("remoteUserName", userName).build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeGeoRepStatusForXmlRpc(response);
+        return new GlusterVolumeGeoRepStatus(response);
     }
 
     @Override
-    public GlusterVolumeGeoRepStatusDetailForXmlRpc glusterVolumeGeoRepSessionStatus(String volumeName,
+    public GlusterVolumeGeoRepStatusDetail glusterVolumeGeoRepSessionStatus(String volumeName,
             String slaveHost,
             String slaveVolumeName,
             String userName) {
@@ -1655,33 +1656,34 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("remoteVolumeName", slaveVolumeName)
                         .withOptionalParameter("remoteUserName", userName).build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeGeoRepStatusDetailForXmlRpc(response);
+        return new GlusterVolumeGeoRepStatusDetail(response);
     }
 
     @Override
-    public GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList) {
+    public GlusterVolumeTaskReturn glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.removeBrickStatus").withParameter("volumeName", volumeName)
                         .withParameter("brickList", new ArrayList<>(Arrays.asList(bricksList)))
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeTaskReturnForXmlRpc(response);
+        return new GlusterVolumeTaskReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setNumberOfCpus(String vmId, String numberOfCpus) {
+    public StatusOnlyReturn setNumberOfCpus(String vmId, String numberOfCpus) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.setNumberOfCpus").withParameter("vmID", vmId)
                         .withParameter("numberOfCpus", numberOfCpus)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc hotplugMemory(Map info) {
+    @SuppressWarnings("rawtypes")
+    public StatusOnlyReturn hotplugMemory(Map info) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.hotplugMemory")
                         .withParameter("vmID", getVmId(info))
@@ -1689,34 +1691,34 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturnForXmlRpc updateVmPolicy(Map params) {
+    public StatusOnlyReturn updateVmPolicy(Map params) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.updateVmPolicy").withParameter("vmID", (String) params.get("vmId"))
                         .withParameter("params", params)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setHaMaintenanceMode(String mode, boolean enabled) {
+    public StatusOnlyReturn setHaMaintenanceMode(String mode, boolean enabled) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.setHaMaintenanceMode").withParameter("mode", mode)
                         .withParameter("enabled", enabled)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc add_image_ticket(String ticketId, String[] ops, long timeout,
+    public StatusOnlyReturn add_image_ticket(String ticketId, String[] ops, long timeout,
             long size, String url) {
         HashMap<String, Object> ticketDict = new HashMap<>();
         ticketDict.put("uuid", ticketId);
@@ -1731,23 +1733,23 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc remove_image_ticket(String ticketId) {
+    public StatusOnlyReturn remove_image_ticket(String ticketId) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.remove_image_ticket")
                         .withParameter("uuid", ticketId)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
 
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc extend_image_ticket(String ticketId, long timeout) {
+    public StatusOnlyReturn extend_image_ticket(String ticketId, long timeout) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.extend_image_ticket")
                         .withParameter("uuid", ticketId)
@@ -1755,22 +1757,22 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public OneMapReturnForXmlRpc get_image_transfer_session_stats(String ticketId) {
+    public OneMapReturn get_image_transfer_session_stats(String ticketId) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.get_image_transfer_session_stats")
                         .withParameter("ticketUUID", ticketId)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("statsMap");
-        return new OneMapReturnForXmlRpc(response);
+        return new OneMapReturn(response);
     }
 
     @Override
-    public PrepareImageReturnForXmlRpc prepareImage(String spID, String sdID, String imageID,
+    public PrepareImageReturn prepareImage(String spID, String sdID, String imageID,
             String volumeID, boolean allowIllegal) {
         JsonRpcRequest request =
                 new RequestBuilder("Image.prepare")
@@ -1782,11 +1784,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new PrepareImageReturnForXmlRpc(response);
+        return new PrepareImageReturn(response);
     }
 
     @Override
-    public StatusReturnForXmlRpc teardownImage(String spID, String sdID, String imageID, String volumeID) {
+    public StatusReturn teardownImage(String spID, String sdID, String imageID, String volumeID) {
         JsonRpcRequest request =
                 new RequestBuilder("Image.teardown")
                         .withParameter("storagepoolID", spID)
@@ -1796,11 +1798,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusReturnForXmlRpc(response);
+        return new StatusReturn(response);
     }
 
     @Override
-    public StatusReturnForXmlRpc verifyUntrustedVolume(String spID, String sdID, String imageID, String volumeID) {
+    public StatusReturn verifyUntrustedVolume(String spID, String sdID, String imageID, String volumeID) {
         JsonRpcRequest request =
                 new RequestBuilder("Volume.verify_untrusted")
                         .withParameter("storagepoolID", spID)
@@ -1810,11 +1812,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusReturnForXmlRpc(response);
+        return new StatusReturn(response);
     }
 
     @Override
-    public VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password, List<String> vmsNames) {
+    public VMListReturn getExternalVmList(String uri, String username, String password, List<String> vmsNames) {
         RequestBuilder requestBuilder = new RequestBuilder("Host.getExternalVMs")
                 .withParameter("uri", uri)
                 .withParameter("username", username)
@@ -1825,11 +1827,11 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList")
                         .withResponseType(Object[].class);
-        return new VMListReturnForXmlRpc(response);
+        return new VMListReturn(response);
     }
 
     @Override
-    public VMNamesListReturnForXmlRpc getExternalVmNamesList(String uri, String username, String password) {
+    public VMNamesListReturn getExternalVmNamesList(String uri, String username, String password) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getExternalVMNames")
                         .withParameter("uri", uri)
@@ -1839,77 +1841,77 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmNames")
                         .withResponseType(Object[].class);
-        return new VMNamesListReturnForXmlRpc(response);
+        return new VMNamesListReturn(response);
     }
 
     @Override
-    public GlusterVolumeSnapshotInfoReturnForXmlRpc glusterVolumeSnapshotList(Guid clusterId, String volumeName) {
+    public GlusterVolumeSnapshotInfoReturn glusterVolumeSnapshotList(Guid clusterId, String volumeName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.snapshotList").withOptionalParameter("volumeName", volumeName)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeSnapshotInfoReturnForXmlRpc(clusterId, response);
+        return new GlusterVolumeSnapshotInfoReturn(clusterId, response);
     }
 
     @Override
-    public GlusterVolumeSnapshotConfigReturnForXmlRpc glusterSnapshotConfigList(Guid clusterId) {
+    public GlusterVolumeSnapshotConfigReturn glusterSnapshotConfigList(Guid clusterId) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterSnapshot.configList").build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeSnapshotConfigReturnForXmlRpc(clusterId, response);
+        return new GlusterVolumeSnapshotConfigReturn(clusterId, response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterSnapshotDelete(String snapshotName) {
+    public StatusOnlyReturn glusterSnapshotDelete(String snapshotName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterSnapshot.delete").withOptionalParameter("snapName", snapshotName)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeSnapshotDeleteAll(String volumeName) {
+    public StatusOnlyReturn glusterVolumeSnapshotDeleteAll(String volumeName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.snapshotDeleteAll").withParameter("volumeName", volumeName)
                     .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterSnapshotActivate(String snapshotName, boolean force) {
+    public StatusOnlyReturn glusterSnapshotActivate(String snapshotName, boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterSnapshot.activate").withParameter("snapName", snapshotName)
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterSnapshotDeactivate(String snapshotName) {
+    public StatusOnlyReturn glusterSnapshotDeactivate(String snapshotName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterSnapshot.deactivate").withParameter("snapName", snapshotName)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterSnapshotRestore(String snapshotName) {
+    public StatusOnlyReturn glusterSnapshotRestore(String snapshotName) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterSnapshot.restore").withParameter("snapName", snapshotName)
                     .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public GlusterVolumeSnapshotCreateReturnForXmlRpc glusterVolumeSnapshotCreate(String volumeName,
+    public GlusterVolumeSnapshotCreateReturn glusterVolumeSnapshotCreate(String volumeName,
             String snapshotName,
             String description,
             boolean force) {
@@ -1921,11 +1923,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GlusterVolumeSnapshotCreateReturnForXmlRpc(response);
+        return new GlusterVolumeSnapshotCreateReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeSnapshotConfigSet(String volumeName, String configName, String configValue) {
+    public StatusOnlyReturn glusterVolumeSnapshotConfigSet(String volumeName, String configName, String configValue) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.snapshotConfigSet").withParameter("volumeName", volumeName)
                         .withParameter("optionName", configName)
@@ -1933,29 +1935,29 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
 
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterSnapshotConfigSet(String configName, String configValue) {
+    public StatusOnlyReturn glusterSnapshotConfigSet(String configName, String configValue) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterSnapshot.configSet").withParameter("optionName", configName)
                         .withParameter("optionValue", configValue)
                         .build();
 
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StorageDeviceListReturnForXmlRpc glusterStorageDeviceList() {
+    public StorageDeviceListReturn glusterStorageDeviceList() {
         JsonRpcRequest request = new RequestBuilder("GlusterHost.storageDevicesList").build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new StorageDeviceListReturnForXmlRpc(response);
+        return new StorageDeviceListReturn(response);
     }
 
     @Override
-    public OneStorageDeviceReturnForXmlRpc glusterCreateBrick(String lvName,
+    public OneStorageDeviceReturn glusterCreateBrick(String lvName,
             String mountPoint,
             Map<String, Object> raidParams, String fsType,
             String[] storageDevices) {
@@ -1966,21 +1968,21 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withOptionalParameterAsMap("raidParams", raidParams).build();
 
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new OneStorageDeviceReturnForXmlRpc(response);
+        return new OneStorageDeviceReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc hostdevChangeNumvfs(String deviceName, int numOfVfs) {
+    public StatusOnlyReturn hostdevChangeNumvfs(String deviceName, int numOfVfs) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.hostdevChangeNumvfs").withParameter("deviceName", deviceName)
                         .withParameter("numvfs", numOfVfs)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc convertVmFromExternalSystem(String uri,
+    public StatusOnlyReturn convertVmFromExternalSystem(String uri,
             String username,
             String password,
             Map<String, Object> vm,
@@ -1994,11 +1996,11 @@ public class JsonRpcVdsServer implements IVdsServer {
         .withParameter("jobid", jobUUID)
         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc convertVmFromOva(String ovaPath, Map<String, Object> vm, String jobUUID) {
+    public StatusOnlyReturn convertVmFromOva(String ovaPath, Map<String, Object> vm, String jobUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.convertExternalVmFromOva")
         .withParameter("ova_path", ovaPath)
@@ -2006,11 +2008,11 @@ public class JsonRpcVdsServer implements IVdsServer {
         .withParameter("jobid", jobUUID)
         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public OvfReturnForXmlRpc getConvertedVm(String jobUUID) {
+    public OvfReturn getConvertedVm(String jobUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getConvertedVm")
         .withParameter("jobid", jobUUID)
@@ -2019,85 +2021,85 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new FutureMap(this.client, request)
         .withResponseKey("ovf")
         .withResponseType(String.class);
-        return new OvfReturnForXmlRpc(response);
+        return new OvfReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc deleteV2VJob(String jobUUID) {
+    public StatusOnlyReturn deleteV2VJob(String jobUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.deleteV2VJob")
         .withParameter("jobid", jobUUID)
         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc abortV2VJob(String jobUUID) {
+    public StatusOnlyReturn abortV2VJob(String jobUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.abortV2VJob")
         .withParameter("jobid", jobUUID)
         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterSnapshotScheduleOverride(boolean force) {
+    public StatusOnlyReturn glusterSnapshotScheduleOverride(boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.snapshotScheduleOverride").withParameter("force", force).build();
 
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterSnapshotScheduleReset() {
+    public StatusOnlyReturn glusterSnapshotScheduleReset() {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.snapshotScheduleReset").build();
 
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
-    public StatusOnlyReturnForXmlRpc registerSecrets(Map<String, String>[] libvirtSecrets, boolean clearUnusedSecrets) {
+    public StatusOnlyReturn registerSecrets(Map<String, String>[] libvirtSecrets, boolean clearUnusedSecrets) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.registerSecrets").withParameter("secrets", libvirtSecrets)
                         .withParameter("clear", clearUnusedSecrets)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc unregisterSecrets(String[] libvirtSecretsUuids) {
+    public StatusOnlyReturn unregisterSecrets(String[] libvirtSecretsUuids) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.unregisterSecrets").withParameter("uuids", libvirtSecretsUuids)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc freeze(String vmId) {
+    public StatusOnlyReturn freeze(String vmId) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.freeze").withParameter("vmID", vmId)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc thaw(String vmId) {
+    public StatusOnlyReturn thaw(String vmId) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.thaw").withParameter("vmID", vmId)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc isolateVolume(String sdUUID, String srcImageID, String dstImageID, String volumeID) {
+    public StatusOnlyReturn isolateVolume(String sdUUID, String srcImageID, String dstImageID, String volumeID) {
         JsonRpcRequest request =
                 new RequestBuilder("SDM.isolateVolume")
                         .withParameter("storagedomainID", sdUUID)
@@ -2106,11 +2108,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("volumeID", volumeID).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc wipeVolume(String sdUUID, String imgUUID, String volUUID) {
+    public StatusOnlyReturn wipeVolume(String sdUUID, String imgUUID, String volUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("SDM.wipeVolume")
                  .withParameter("storagedomainID", sdUUID)
@@ -2119,11 +2121,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public OneVmReturnForXmlRpc getExternalVmFromOva(String ovaPath) {
+    public OneVmReturn getExternalVmFromOva(String ovaPath) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getExternalVmFromOva")
                         .withParameter("ova_path", ovaPath)
@@ -2131,11 +2133,11 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList")
                 .withResponseType(Object[].class);
-        return new OneVmReturnForXmlRpc(response);
+        return new OneVmReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc refreshVolume(String sdUUID, String spUUID, String imgUUID, String volUUID) {
+    public StatusOnlyReturn refreshVolume(String sdUUID, String spUUID, String imgUUID, String volUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Volume.refresh")
                         .withParameter("storagepoolID", spUUID)
@@ -2144,11 +2146,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("volumeID", volUUID)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public VolumeInfoReturnForXmlRpc getVolumeInfo(String sdUUID, String spUUID, String imgUUID, String volUUID) {
+    public VolumeInfoReturn getVolumeInfo(String sdUUID, String spUUID, String imgUUID, String volUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Volume.getInfo")
                         .withParameter("storagepoolID", spUUID)
@@ -2157,11 +2159,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("volumeID", volUUID)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new VolumeInfoReturnForXmlRpc(response);
+        return new VolumeInfoReturn(response);
     }
 
     @Override
-    public QemuImageInfoReturnForXmlRpc getQemuImageInfo(String sdUUID, String spUUID, String imgUUID, String volUUID) {
+    public QemuImageInfoReturn getQemuImageInfo(String sdUUID, String spUUID, String imgUUID, String volUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Volume.getQemuImageInfo")
                         .withParameter("storagepoolID", spUUID)
@@ -2170,26 +2172,26 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("volumeID", volUUID)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new QemuImageInfoReturnForXmlRpc(response);
+        return new QemuImageInfoReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterStopProcesses() {
+    public StatusOnlyReturn glusterStopProcesses() {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterHost.processesStop").build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc sparsifyVolume(String jobId, Map<String, Object> volumeAddress) {
+    public StatusOnlyReturn sparsifyVolume(String jobId, Map<String, Object> volumeAddress) {
         JsonRpcRequest request =
                 new RequestBuilder("SDM.sparsify_volume")
                         .withParameter("job_id", jobId)
                         .withParameter("vol_info", volumeAddress)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
+        return new StatusOnlyReturn(response);
     }
 
 }

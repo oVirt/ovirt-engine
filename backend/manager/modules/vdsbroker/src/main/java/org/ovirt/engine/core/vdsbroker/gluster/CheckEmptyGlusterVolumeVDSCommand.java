@@ -1,20 +1,20 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class CheckEmptyGlusterVolumeVDSCommand<P extends GlusterVolumeVDSParameters> extends AbstractGlusterBrokerCommand<P> {
 
-    private BooleanReturnForXmlRpc returnValue;
+    private BooleanReturn returnValue;
 
     public CheckEmptyGlusterVolumeVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return returnValue.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return returnValue.getStatus();
     }
 
     @Override

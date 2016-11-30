@@ -124,8 +124,8 @@ public class FenceVdsVDSCommandTest {
                         any(String.class),
                         any(String.class),
                         any(Map.class)))
-                .thenReturn(new FenceStatusReturnForXmlRpc(first))
-                .thenReturn(second == null ? null : new FenceStatusReturnForXmlRpc(second));
+                .thenReturn(new FenceStatusReturn(first))
+                .thenReturn(second == null ? null : new FenceStatusReturn(second));
     }
 
     private FenceVdsVDSCommandParameters setupCommandParams(FenceActionType fenceAction) {

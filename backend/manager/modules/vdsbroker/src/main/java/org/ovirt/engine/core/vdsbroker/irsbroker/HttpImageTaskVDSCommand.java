@@ -24,7 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.HttpUtils;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 
@@ -99,7 +99,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
         Map<String, Object> resultMap = null;
         try {
             resultMap = new ObjectMapper().readValue(response, HashMap.class);
-            status = new StatusOnlyReturnForXmlRpc(resultMap);
+            status = new StatusOnlyReturn(resultMap);
         } catch (Exception e) {
             throwVdsErrorException("failed to parse response " + response, EngineError.GeneralException);
         }

@@ -65,7 +65,7 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
     @Override
     public VDSReturnValue get(long timeout, TimeUnit unit) throws TimeoutException {
         try {
-            status = new StatusOnlyReturnForXmlRpc(httpTask.get(timeout, unit));
+            status = new StatusOnlyReturn(httpTask.get(timeout, unit));
             checkTimeout();
             proceedProxyReturnValue();
         } catch (TimeoutException e) {

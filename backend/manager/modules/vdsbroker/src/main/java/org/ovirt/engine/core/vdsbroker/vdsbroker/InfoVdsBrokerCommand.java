@@ -8,10 +8,10 @@ public abstract class InfoVdsBrokerCommand<P extends VdsIdVDSCommandParametersBa
         super(parameters, vds);
     }
 
-    protected VDSInfoReturnForXmlRpc infoReturn;
+    protected VDSInfoReturn infoReturn;
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return infoReturn.status;
     }
 

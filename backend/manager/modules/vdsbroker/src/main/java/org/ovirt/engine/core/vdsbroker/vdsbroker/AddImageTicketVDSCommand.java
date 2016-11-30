@@ -3,7 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import org.ovirt.engine.core.common.vdscommands.AddImageTicketVDSCommandParameters;
 
 public class AddImageTicketVDSCommand<P extends AddImageTicketVDSCommandParameters> extends VdsBrokerCommand<P> {
-    StatusOnlyReturnForXmlRpc retval;
+    StatusOnlyReturn retval;
 
     public AddImageTicketVDSCommand(P parameters) {
         super(parameters);
@@ -24,7 +24,7 @@ public class AddImageTicketVDSCommand<P extends AddImageTicketVDSCommandParamete
 
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return retval.status;
     }
 

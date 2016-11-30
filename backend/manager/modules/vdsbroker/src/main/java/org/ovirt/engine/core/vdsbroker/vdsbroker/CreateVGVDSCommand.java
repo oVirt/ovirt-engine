@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.vdscommands.CreateVGVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 
 public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private OneUuidReturnForXmlRpc result;
+    private OneUuidReturn result;
 
     public CreateVGVDSCommand(P parameters) {
         super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
@@ -28,8 +28,8 @@ public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends 
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.vdscommands.GetHostJobsVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetHostJobsVDSCommand<P extends GetHostJobsVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private HostJobsReturnForXmlRpc jobResult;
+    private HostJobsReturn jobResult;
 
     public GetHostJobsVDSCommand(P parameters) {
         super(parameters);
@@ -55,8 +55,8 @@ public class GetHostJobsVDSCommand<P extends GetHostJobsVDSCommandParameters> ex
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return jobResult.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return jobResult.getStatus();
     }
 
     @Override

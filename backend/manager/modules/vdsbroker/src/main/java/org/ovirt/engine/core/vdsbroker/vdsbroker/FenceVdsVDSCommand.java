@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
-import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -52,16 +51,16 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         // ignore starting already started host or stopping already stopped host.
         if (getParameters().getAction() == FenceActionType.STATUS
                 || !isAlreadyInRequestedStatus()) {
-            FenceStatusReturnForXmlRpc result = fenceNode(getParameters().getAction());
+            FenceStatusReturn result = fenceNode(getParameters().getAction());
 
             FenceOperationResult actionResult = new FenceOperationResult(
                     getParameters().getAction(),
-                    result.getXmlRpcStatus().code,
-                    result.getXmlRpcStatus().message,
+                    result.getStatus().code,
+                    result.getStatus().message,
                     result.power,
                     result.operationStatus);
             setReturnValue(actionResult);
-            getVDSReturnValue().setSucceeded(actionResult.getStatus() != Status.ERROR);
+            getVDSReturnValue().setSucceeded(actionResult.getStatus() != FenceOperationResult.Status.ERROR);
 
             if (getParameters().getAction() == FenceActionType.STATUS
                     && actionResult.getPowerStatus() == PowerStatus.UNKNOWN
@@ -74,7 +73,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
             alertActionSkippedAlreadyInStatus();
             getVDSReturnValue().setSucceeded(true);
             setReturnValue(
-                    new FenceOperationResult(Status.SKIPPED_ALREADY_IN_STATUS, PowerStatus.UNKNOWN));
+                    new FenceOperationResult(FenceOperationResult.Status.SKIPPED_ALREADY_IN_STATUS, PowerStatus.UNKNOWN));
         }
     }
 
@@ -107,15 +106,15 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
      * and a Start command is issued command should do nothing.
      */
     private boolean isAlreadyInRequestedStatus() {
-        FenceStatusReturnForXmlRpc result = fenceNode(FenceActionType.STATUS);
+        FenceStatusReturn result = fenceNode(FenceActionType.STATUS);
         FenceOperationResult actionResult = new FenceOperationResult(
                 FenceActionType.STATUS,
-                result.getXmlRpcStatus().code,
-                result.getXmlRpcStatus().message,
+                result.getStatus().code,
+                result.getStatus().message,
                 result.power,
                 result.operationStatus);
 
-        return actionResult.getStatus() == Status.SUCCESS
+        return actionResult.getStatus() == FenceOperationResult.Status.SUCCESS
                 && actionResult.getPowerStatus() == getRequestedPowerStatus(getParameters().getAction());
     }
 
@@ -126,7 +125,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         return fenceAction == FenceActionType.START ? PowerStatus.ON : PowerStatus.OFF;
     }
 
-    protected FenceStatusReturnForXmlRpc fenceNode(FenceActionType fenceAction) {
+    protected FenceStatusReturn fenceNode(FenceActionType fenceAction) {
         FenceAgent agent = getParameters().getFenceAgent();
         return getBroker().fenceNode(
                 agent.getIp(),
@@ -143,8 +142,8 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        StatusForXmlRpc status = new StatusForXmlRpc();
+    protected Status getReturnStatus() {
+        Status status = new Status();
         FenceOperationResult result = (FenceOperationResult) getReturnValue();
         if (result == null) {
             // unexpected error happened
@@ -152,7 +151,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
             status.message = "";
         } else {
             // status result from action result
-            status.code = result.getStatus() == Status.ERROR ? 1 : 0;
+            status.code = result.getStatus() == FenceOperationResult.Status.ERROR ? 1 : 0;
             status.message = result.getMessage();
         }
         return status;

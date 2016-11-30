@@ -14,13 +14,13 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetStorageDomainStatsVDSCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 
 @Logged(executionLevel = LogLevel.DEBUG)
 public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommandParameters>
         extends IrsBrokerCommand<P> {
-    private StoragePoolInfoReturnForXmlRpc result;
+    private StoragePoolInfo result;
 
     public GetStoragePoolInfoVDSCommand(P parameters) {
         super(parameters);
@@ -43,11 +43,11 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
     }
 
     @SuppressWarnings("unchecked")
-    private ArrayList<StorageDomain> parseStorageDomainList(Map<String, Object> xmlRpcStruct, Guid masterId) {
-        ArrayList<StorageDomain> domainsList = new ArrayList<>(xmlRpcStruct.size());
-        for (Entry<String, Object> entry : xmlRpcStruct.entrySet()) {
+    private ArrayList<StorageDomain> parseStorageDomainList(Map<String, Object> struct, Guid masterId) {
+        ArrayList<StorageDomain> domainsList = new ArrayList<>(struct.size());
+        for (Entry<String, Object> entry : struct.entrySet()) {
             Map<String, Object> domainAsStruct = (Map<String, Object>) entry.getValue();
-            StorageDomain sd = GetStorageDomainStatsVDSCommand.buildStorageDynamicFromXmlRpcStruct(domainAsStruct);
+            StorageDomain sd = GetStorageDomainStatsVDSCommand.buildStorageDynamicStruct(domainAsStruct);
             sd.setStoragePoolId(getParameters().getStoragePoolId());
             sd.setId(new Guid(entry.getKey()));
             if (!masterId.equals(Guid.Empty) && masterId.equals(sd.getId())) {
@@ -63,7 +63,7 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 }

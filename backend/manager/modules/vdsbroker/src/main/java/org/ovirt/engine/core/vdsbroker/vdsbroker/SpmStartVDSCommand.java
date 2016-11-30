@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
-import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 
 public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends VdsBrokerCommand<P> {
     public SpmStartVDSCommand(P parameters) {
@@ -20,7 +20,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
         vdsId = parameters.getVdsId();
     }
 
-    private OneUuidReturnForXmlRpc result;
+    private OneUuidReturn result;
     private Guid vdsId;
 
     @Override
@@ -73,8 +73,8 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override

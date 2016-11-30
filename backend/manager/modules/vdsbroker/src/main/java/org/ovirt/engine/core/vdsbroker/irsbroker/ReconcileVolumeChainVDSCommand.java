@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.vdscommands.ReconcileVolumeChainVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class ReconcileVolumeChainVDSCommand<P extends ReconcileVolumeChainVDSCommandParameters> extends IrsBrokerCommand<P> {
-    protected VolumeListReturnForXmlRpc volumeListReturn;
+    protected VolumeListReturn volumeListReturn;
 
     public ReconcileVolumeChainVDSCommand(P parameters) {
         super(parameters);
@@ -34,7 +34,7 @@ public class ReconcileVolumeChainVDSCommand<P extends ReconcileVolumeChainVDSCom
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return volumeListReturn.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return volumeListReturn.getStatus();
     }
 }

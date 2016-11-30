@@ -6,13 +6,13 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateBrickVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 /**
  * VDS command to create a gluster brick
  */
 public class CreateBrickVDSCommand<P extends CreateBrickVDSParameters> extends AbstractGlusterBrokerCommand<P> {
-    private OneStorageDeviceReturnForXmlRpc storageDeviceReturn;
+    private OneStorageDeviceReturn storageDeviceReturn;
 
     public CreateBrickVDSCommand(P parameters) {
         super(parameters);
@@ -43,8 +43,8 @@ public class CreateBrickVDSCommand<P extends CreateBrickVDSParameters> extends A
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return storageDeviceReturn.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return storageDeviceReturn.getStatus();
     }
 
 }

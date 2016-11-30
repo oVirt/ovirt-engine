@@ -17,7 +17,7 @@ import org.ovirt.engine.core.di.Injector;
 
 public class GetVmsFullInfoFromExternalProviderVDSCommand<T extends GetVmsFromExternalProviderParameters>
         extends VdsBrokerCommand<T> {
-    private VMListReturnForXmlRpc vmListReturn;
+    private VMListReturn vmListReturn;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -50,7 +50,7 @@ public class GetVmsFullInfoFromExternalProviderVDSCommand<T extends GetVmsFromEx
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return vmListReturn.status;
     }
 

@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.vdscommands.ExtendVmDiskSizeVDSCommandParame
 
 public class ExtendVmDiskSizeVDSCommand <P extends ExtendVmDiskSizeVDSCommandParameters> extends VdsBrokerCommand<P> {
 
-    private ImageSizeReturnForXmlRpc result;
+    private ImageSizeReturn result;
 
     public ExtendVmDiskSizeVDSCommand(P parameters) {
         super(parameters);
@@ -26,7 +26,7 @@ public class ExtendVmDiskSizeVDSCommand <P extends ExtendVmDiskSizeVDSCommandPar
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 }

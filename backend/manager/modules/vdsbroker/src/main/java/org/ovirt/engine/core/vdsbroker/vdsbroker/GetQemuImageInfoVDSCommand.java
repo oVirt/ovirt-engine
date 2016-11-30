@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
 
 public class GetQemuImageInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private QemuImageInfoReturnForXmlRpc result;
+    private QemuImageInfoReturn result;
 
     public GetQemuImageInfoVDSCommand(P parameters) {
         super(parameters);
@@ -29,8 +29,8 @@ public class GetQemuImageInfoVDSCommand<P extends GetVolumeInfoVDSCommandParamet
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override
@@ -38,28 +38,28 @@ public class GetQemuImageInfoVDSCommand<P extends GetVolumeInfoVDSCommandParamet
         return result;
     }
 
-    public QemuImageInfo buildImageEntity(Map<String, Object> xmlRpcStruct) {
+    public QemuImageInfo buildImageEntity(Map<String, Object> struct) {
         QemuImageInfo qemuImageInfo = new QemuImageInfo();
         try {
             qemuImageInfo.setImageId(getParameters().getImageId());
             qemuImageInfo.setImageGroupId(getParameters().getImageGroupId());
             qemuImageInfo.setStorageDomainId(getParameters().getStorageDomainId());
             qemuImageInfo.setStoragePoolId(getParameters().getStoragePoolId());
-            if (xmlRpcStruct.containsKey("compat")) {
-                qemuImageInfo.setQcowCompat(QcowCompat.forCompatValue(xmlRpcStruct.get("compat").toString()));
+            if (struct.containsKey("compat")) {
+                qemuImageInfo.setQcowCompat(QcowCompat.forCompatValue(struct.get("compat").toString()));
             }
-            if (xmlRpcStruct.containsKey("format")) {
-                qemuImageInfo.setQemuVolumeFormat(EnumUtils.valueOf(QemuVolumeFormat.class, xmlRpcStruct.get("format")
+            if (struct.containsKey("format")) {
+                qemuImageInfo.setQemuVolumeFormat(EnumUtils.valueOf(QemuVolumeFormat.class, struct.get("format")
                         .toString(), true));
             }
-            if (xmlRpcStruct.containsKey("backingfile")) {
-                qemuImageInfo.setBackingFile(xmlRpcStruct.get("backingfile").toString());
+            if (struct.containsKey("backingfile")) {
+                qemuImageInfo.setBackingFile(struct.get("backingfile").toString());
             }
-            if (xmlRpcStruct.containsKey("virtualsize")) {
-                qemuImageInfo.setSize(Long.parseLong(xmlRpcStruct.get("virtualsize").toString()));
+            if (struct.containsKey("virtualsize")) {
+                qemuImageInfo.setSize(Long.parseLong(struct.get("virtualsize").toString()));
             }
-            if (xmlRpcStruct.containsKey("clustersize")) {
-                qemuImageInfo.setClusterSize(Long.parseLong(xmlRpcStruct.get("clustersize").toString()));
+            if (struct.containsKey("clustersize")) {
+                qemuImageInfo.setClusterSize(Long.parseLong(struct.get("clustersize").toString()));
             }
         } catch (RuntimeException ex) {
             log.error("Failed building Qemu image: {}", ex.getMessage());

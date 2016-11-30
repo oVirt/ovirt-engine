@@ -5,7 +5,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 
 public class FullListVDSCommand<P extends FullListVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private VMListReturnForXmlRpc fullVmListReturn;
+    private VMListReturn fullVmListReturn;
 
     public FullListVDSCommand(P parameters) {
         super(parameters);
@@ -20,7 +20,7 @@ public class FullListVDSCommand<P extends FullListVDSCommandParameters> extends 
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return fullVmListReturn.status;
     }
 

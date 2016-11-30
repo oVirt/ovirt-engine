@@ -17,15 +17,15 @@ import java.util.concurrent.Future;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.StorageStatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.IQNListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.ServerConnectionStatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StorageStatusReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.IQNListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.ServerConnectionStatusReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturn;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcResponse;
@@ -79,8 +79,8 @@ public class MarshallingTestCase {
         Map<String, Object> map = new FutureMap(client, request);
 
         // Then
-        VDSInfoReturnForXmlRpc vdsInfo = new VDSInfoReturnForXmlRpc(map);
-        StatusForXmlRpc status = vdsInfo.status;
+        VDSInfoReturn vdsInfo = new VDSInfoReturn(map);
+        Status status = vdsInfo.status;
         assertEquals("Done", status.message);
         assertEquals(0, status.code);
 
@@ -111,8 +111,8 @@ public class MarshallingTestCase {
                 new FutureMap(client, request).withResponseKey("vmList").withResponseType(Object[].class);
 
         // Then
-        VMListReturnForXmlRpc vmList = new VMListReturnForXmlRpc(map);
-        StatusForXmlRpc status = vmList.status;
+        VMListReturn vmList = new VMListReturn(map);
+        Status status = vmList.status;
         assertEquals("Done", status.message);
         assertEquals(0, status.code);
         assertEquals(0, vmList.vmList.length);
@@ -140,8 +140,8 @@ public class MarshallingTestCase {
                         .withSubtypeKey("vmId");
 
         // Then
-        VMListReturnForXmlRpc vmList = new VMListReturnForXmlRpc(map);
-        StatusForXmlRpc status = vmList.status;
+        VMListReturn vmList = new VMListReturn(map);
+        Status status = vmList.status;
         assertEquals("Done", status.message);
         assertEquals(0, status.code);
         assertEquals(1, vmList.vmList.length);
@@ -191,9 +191,9 @@ public class MarshallingTestCase {
                 new FutureMap(client, request).withResponseKey("statuslist").withResponseType(Object[].class);
 
         // Then
-        ServerConnectionStatusReturnForXmlRpc status = new ServerConnectionStatusReturnForXmlRpc(map);
-        assertEquals("Done", status.getXmlRpcStatus().message);
-        assertEquals(0, status.getXmlRpcStatus().code);
+        ServerConnectionStatusReturn status = new ServerConnectionStatusReturn(map);
+        assertEquals("Done", status.getStatus().message);
+        assertEquals(0, status.getStatus().code);
         assertEquals(1, status.statusList.length);
         Map<String, Object> result = status.statusList[0];
         assertEquals(0, result.get("status"));
@@ -218,9 +218,9 @@ public class MarshallingTestCase {
                 new FutureMap(client, request).withResponseKey("iso_list").withResponseType(Object[].class);
 
         // Then
-        FileStatsReturnForXmlRpc isoList = new FileStatsReturnForXmlRpc(map);
-        assertEquals("Done", isoList.getXmlRpcStatus().message);
-        assertEquals(0, isoList.getXmlRpcStatus().code);
+        FileStatsReturn isoList = new FileStatsReturn(map);
+        assertEquals("Done", isoList.getStatus().message);
+        assertEquals(0, isoList.getStatus().code);
         assertEquals(0, isoList.getFileStats().size());
     }
 
@@ -243,9 +243,9 @@ public class MarshallingTestCase {
                 new FutureMap(client, request).withResponseKey("isolist").withResponseType(Object[].class);
 
         // Then
-        FileStatsReturnForXmlRpc isoList = new FileStatsReturnForXmlRpc(map);
-        assertEquals("Done", isoList.getXmlRpcStatus().message);
-        assertEquals(0, isoList.getXmlRpcStatus().code);
+        FileStatsReturn isoList = new FileStatsReturn(map);
+        assertEquals("Done", isoList.getStatus().message);
+        assertEquals(0, isoList.getStatus().code);
         assertEquals(1, isoList.getFileStats().size());
         assertEquals("Fedora-Live-Desktop-x86_64-19-1.iso", isoList.getFileStats().keySet().iterator().next());
     }
@@ -269,7 +269,7 @@ public class MarshallingTestCase {
                 .withResponseType(Object[].class);
 
         // Then
-        VMListReturnForXmlRpc vmList = new VMListReturnForXmlRpc(map);
+        VMListReturn vmList = new VMListReturn(map);
         assertEquals("Done", vmList.status.message);
         assertEquals(0, vmList.status.code);
         assertEquals(1, vmList.vmList.length);
@@ -296,7 +296,7 @@ public class MarshallingTestCase {
                 .withResponseType(Object[].class);
 
         // Then
-        VMListReturnForXmlRpc vmList = new VMListReturnForXmlRpc(map);
+        VMListReturn vmList = new VMListReturn(map);
         assertEquals("Done", vmList.status.message);
         assertEquals(0, vmList.status.code);
         assertEquals(1, vmList.vmList.length);
@@ -327,9 +327,9 @@ public class MarshallingTestCase {
         Map<String, Object> map = new FutureMap(client, request).withIgnoreResponseKey();
 
         // Then
-        StoragePoolInfoReturnForXmlRpc storagePoolInfo = new StoragePoolInfoReturnForXmlRpc(map);
-        assertEquals("Done", storagePoolInfo.getXmlRpcStatus().message);
-        assertEquals(0, storagePoolInfo.getXmlRpcStatus().code);
+        StoragePoolInfo storagePoolInfo = new StoragePoolInfo(map);
+        assertEquals("Done", storagePoolInfo.getStatus().message);
+        assertEquals(0, storagePoolInfo.getStatus().code);
         Set<String> keys = storagePoolInfo.domainsList.keySet();
         assertEquals(3, keys.size());
         assertTrue(keys.contains("05a0ad59-1259-4353-b40b-34eb80d8590a"));
@@ -358,9 +358,9 @@ public class MarshallingTestCase {
                 .withResponseType(String.class);
 
         // Then
-        StorageStatusReturnForXmlRpc storageStatus = new StorageStatusReturnForXmlRpc(map);
-        assertEquals("Done", storageStatus.getXmlRpcStatus().message);
-        assertEquals(0, storageStatus.getXmlRpcStatus().code);
+        StorageStatusReturn storageStatus = new StorageStatusReturn(map);
+        assertEquals("Done", storageStatus.getStatus().message);
+        assertEquals(0, storageStatus.getStatus().code);
         assertEquals("true", storageStatus.storageStatus);
     }
 
@@ -382,9 +382,9 @@ public class MarshallingTestCase {
         Map<String, Object> map = new FutureMap(client, request).withIgnoreResponseKey();
 
         // Then
-        OneUuidReturnForXmlRpc oneuuid = new OneUuidReturnForXmlRpc(map);
-        assertEquals("Done", oneuuid.getXmlRpcStatus().message);
-        assertEquals(0, oneuuid.getXmlRpcStatus().code);
+        OneUuidReturn oneuuid = new OneUuidReturn(map);
+        assertEquals("Done", oneuuid.getStatus().message);
+        assertEquals(0, oneuuid.getStatus().code);
         assertEquals("4f84eef5-8f8b-4732-babd-0a860cf0d1b9", UUID.fromString(oneuuid.uuid).toString());
     }
 
@@ -420,9 +420,9 @@ public class MarshallingTestCase {
 
         // When
         Map<String, Object> map = new FutureMap(client, request).withResponseKey("fullTargets");
-        IQNListReturnForXmlRpc list = new IQNListReturnForXmlRpc(map);
-        assertEquals("Done", list.getXmlRpcStatus().message);
-        assertEquals(0, list.getXmlRpcStatus().code);
+        IQNListReturn list = new IQNListReturn(map);
+        assertEquals("Done", list.getStatus().message);
+        assertEquals(0, list.getStatus().code);
         assertEquals(37, parseFullTargets(list.getIqnList()).size());
     }
 

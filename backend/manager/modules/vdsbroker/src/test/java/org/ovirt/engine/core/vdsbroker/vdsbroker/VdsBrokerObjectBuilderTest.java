@@ -29,14 +29,14 @@ public class VdsBrokerObjectBuilderTest {
     @Test
     public void testDisksUsages() {
         Object[] disksUsages = initDisksUsageData();
-        Map<String, Object> map = setDisksUsageInXmlRpc(disksUsages);
+        Map<String, Object> map = setDisksUsage(disksUsages);
         validateDisksUsagesList(getVmStatistics(), disksUsages, map);
     }
 
     @Test
     public void testEmptyDisksUsages() {
         Object[] disksUsages = new Object[0];
-        Map<String, Object> xml = setDisksUsageInXmlRpc(disksUsages);
+        Map<String, Object> xml = setDisksUsage(disksUsages);
         validateDisksUsagesList(getVmStatistics(), disksUsages, xml);
     }
 
@@ -44,7 +44,7 @@ public class VdsBrokerObjectBuilderTest {
     public void testDisksUsagesWithEmptyEntry() {
         Object[] disksUsages = initDisksUsageData();
         disksUsages[1] = new HashMap<>();
-        Map<String, Object> xml = setDisksUsageInXmlRpc(disksUsages);
+        Map<String, Object> xml = setDisksUsage(disksUsages);
         validateDisksUsagesList(getVmStatistics(), disksUsages, xml);
     }
 
@@ -52,14 +52,14 @@ public class VdsBrokerObjectBuilderTest {
     public void testDisksUsagesWithNullEntry() {
         Object[] disksUsages = initDisksUsageData();
         disksUsages[1] = null;
-        Map<String, Object> xml = setDisksUsageInXmlRpc(disksUsages);
+        Map<String, Object> xml = setDisksUsage(disksUsages);
         validateDisksUsagesList(getVmStatistics(), disksUsages, xml);
     }
 
     @Test
     public void testNullDisksUsages() {
         VmStatistics vmStatistics = getVmStatistics();
-        Map<String, Object> xml = setDisksUsageInXmlRpc(null);
+        Map<String, Object> xml = setDisksUsage(null);
         VdsBrokerObjectsBuilder.updateVMStatisticsData(vmStatistics, xml);
         assertNull(vmStatistics.getDisksUsage());
     }
@@ -162,7 +162,7 @@ public class VdsBrokerObjectBuilderTest {
 
         disksStats.put("a", disk);
         disksStats.put("b", disk);
-        Map<String, Object> xml = setDisksStatsInXmlRpc(disksStats);
+        Map<String, Object> xml = setDisksStats(disksStats);
 
         validateDisksStatsList(getVds(), xml, false);
     }
@@ -170,7 +170,7 @@ public class VdsBrokerObjectBuilderTest {
     @Test
     public void testEmptyDiskStats() {
         Map<String, Object> disksStats = new HashMap<>();
-        Map<String, Object> xml = setDisksStatsInXmlRpc(disksStats);
+        Map<String, Object> xml = setDisksStats(disksStats);
 
         validateDisksStatsList(getVds(), xml, false);
     }
@@ -190,7 +190,7 @@ public class VdsBrokerObjectBuilderTest {
 
         disksStats.put("a", disk);
         disksStats.put("b", disk);
-        Map<String, Object> xml = setDisksStatsInXmlRpc(disksStats);
+        Map<String, Object> xml = setDisksStats(disksStats);
 
         validateDisksStatsList(getVds(), xml, true);
     }
@@ -254,7 +254,7 @@ public class VdsBrokerObjectBuilderTest {
     private static Map<String, Object> setMockForTesting(Map<String, Object> diskData) {
         Map<String, Map<String, Object>> disksData = new HashMap<>();
         disksData.put("vda", diskData);
-        return setDisksInXmlRpc(disksData);
+        return setDisks(disksData);
     }
 
     private static VDS getVds() {
@@ -267,19 +267,19 @@ public class VdsBrokerObjectBuilderTest {
         return vmStatistics;
     }
 
-    private static Map<String, Object> setDisksInXmlRpc(Map<String, Map<String, Object>> disksData) {
+    private static Map<String, Object> setDisks(Map<String, Map<String, Object>> disksData) {
         Map<String, Object> map = new HashMap<>();
         map.put(VdsProperties.vm_disks, disksData);
         return map;
     }
 
-    private static Map<String, Object>  setDisksUsageInXmlRpc(Object[] disksUsageData) {
+    private static Map<String, Object>  setDisksUsage(Object[] disksUsageData) {
         Map<String, Object> map = new HashMap<>();
         map.put(VdsProperties.VM_DISKS_USAGE, disksUsageData);
         return map;
     }
 
-    private static Map<String, Object> setDisksStatsInXmlRpc(Object disksStatsData) {
+    private static Map<String, Object> setDisksStats(Object disksStatsData) {
         Map<String, Object> map = new HashMap<>();
         map.put(VdsProperties.DISK_STATS, disksStatsData);
         return map;

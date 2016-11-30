@@ -2,11 +2,11 @@ package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBricksVDSParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class StartRemoveGlusterVolumeBricksVDSCommand<P extends GlusterVolumeRemoveBricksVDSParameters> extends AbstractGlusterBrokerCommand<P> {
 
-    private GlusterTaskInfoReturnForXmlRpc glusterTaskReturn;
+    private GlusterTaskInfoReturn glusterTaskReturn;
     private GlusterAsyncTask task;
 
     public StartRemoveGlusterVolumeBricksVDSCommand(P parameters) {
@@ -14,8 +14,8 @@ public class StartRemoveGlusterVolumeBricksVDSCommand<P extends GlusterVolumeRem
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return glusterTaskReturn.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return glusterTaskReturn.getStatus();
     }
 
     @Override

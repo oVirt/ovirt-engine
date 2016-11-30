@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class HSMGetStorageDomainsListVDSCommand<P extends HSMGetStorageDomainsListVDSCommandParameters>
         extends VdsBrokerCommand<P> {
-    private StorageDomainListReturnForXmlRpc result;
+    private StorageDomainListReturn result;
 
     public HSMGetStorageDomainsListVDSCommand(P parameters) {
         super(parameters);
@@ -31,8 +31,8 @@ public class HSMGetStorageDomainsListVDSCommand<P extends HSMGetStorageDomainsLi
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override

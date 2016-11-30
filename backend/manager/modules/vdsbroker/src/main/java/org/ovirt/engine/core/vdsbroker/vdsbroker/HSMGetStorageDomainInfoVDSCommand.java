@@ -21,42 +21,42 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
         super(parameters);
     }
 
-    private OneStorageDomainInfoReturnForXmlRpc result;
+    private OneStorageDomainInfoReturn result;
 
     @Override
     protected void executeVdsBrokerCommand() {
         result = getBroker().getStorageDomainInfo(getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
-        Pair<StorageDomainStatic, Guid> pairSdStatic = buildStorageStaticFromXmlRpcStruct(result.storageInfo);
+        Pair<StorageDomainStatic, Guid> pairSdStatic = buildStorageStaticFromStruct(result.storageInfo);
         pairSdStatic.getFirst().setId(getParameters().getStorageDomainId());
         setReturnValue(pairSdStatic);
     }
 
-    private static Pair<StorageDomainStatic, Guid> buildStorageStaticFromXmlRpcStruct(Map<String, Object> xmlRpcStruct) {
+    private static Pair<StorageDomainStatic, Guid> buildStorageStaticFromStruct(Map<String, Object> struct) {
         Pair<StorageDomainStatic, Guid> returnValue = new Pair<>();
         StorageDomainStatic sdStatic = new StorageDomainStatic();
-        if (xmlRpcStruct.containsKey("name")) {
-            sdStatic.setStorageName(xmlRpcStruct.get("name").toString());
+        if (struct.containsKey("name")) {
+            sdStatic.setStorageName(struct.get("name").toString());
         }
-        if (xmlRpcStruct.containsKey("type")) {
-            sdStatic.setStorageType(EnumUtils.valueOf(StorageType.class, xmlRpcStruct.get("type").toString(),
+        if (struct.containsKey("type")) {
+            sdStatic.setStorageType(EnumUtils.valueOf(StorageType.class, struct.get("type").toString(),
                     true));
         }
-        if (xmlRpcStruct.containsKey("class")) {
-            String domainType = xmlRpcStruct.get("class").toString();
+        if (struct.containsKey("class")) {
+            String domainType = struct.get("class").toString();
             if ("backup".equalsIgnoreCase(domainType)) {
                 sdStatic.setStorageDomainType(StorageDomainType.ImportExport);
             } else {
                 sdStatic.setStorageDomainType(EnumUtils.valueOf(StorageDomainType.class, domainType, true));
             }
         }
-        if (xmlRpcStruct.containsKey("version")) {
+        if (struct.containsKey("version")) {
             sdStatic.setStorageFormat(
-                    StorageFormatType.forValue(xmlRpcStruct.get("version").toString()));
+                    StorageFormatType.forValue(struct.get("version").toString()));
         }
         if (sdStatic.getStorageType() != StorageType.UNKNOWN) {
-            if (sdStatic.getStorageType().isFileDomain() && xmlRpcStruct.containsKey("remotePath")) {
-                String path = xmlRpcStruct.get("remotePath").toString();
+            if (sdStatic.getStorageType().isFileDomain() && struct.containsKey("remotePath")) {
+                String path = struct.get("remotePath").toString();
                 List<StorageServerConnections> connections = DbFacade.getInstance()
                         .getStorageServerConnectionDao().getAllForStorage(path);
                 if (connections.isEmpty()) {
@@ -67,18 +67,18 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
                     sdStatic.setStorage(connections.get(0).getId());
                     sdStatic.setConnection(connections.get(0));
                 }
-            } else if (sdStatic.getStorageType() != StorageType.NFS && xmlRpcStruct.containsKey("vguuid")) {
-                sdStatic.setStorage(xmlRpcStruct.get("vguuid").toString());
+            } else if (sdStatic.getStorageType() != StorageType.NFS && struct.containsKey("vguuid")) {
+                sdStatic.setStorage(struct.get("vguuid").toString());
             }
         }
-        if (xmlRpcStruct.containsKey("state")) {
-            sdStatic.setSanState(EnumUtils.valueOf(SANState.class, xmlRpcStruct.get("state")
+        if (struct.containsKey("state")) {
+            sdStatic.setSanState(EnumUtils.valueOf(SANState.class, struct.get("state")
                     .toString()
                     .toUpperCase(),
                     false));
         }
         returnValue.setFirst(sdStatic);
-        Object[] poolUUIDs = (Object[])xmlRpcStruct.get("pool");
+        Object[] poolUUIDs = (Object[])struct.get("pool");
         if (poolUUIDs.length != 0) {
             returnValue.setSecond(Guid.createGuidFromString(poolUUIDs[0].toString()));
         }
@@ -87,8 +87,8 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override

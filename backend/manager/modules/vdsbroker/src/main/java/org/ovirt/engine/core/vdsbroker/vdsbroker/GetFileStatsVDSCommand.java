@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.GetFileStatsParameters;
-import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 public class GetFileStatsVDSCommand<P extends GetFileStatsParameters> extends IrsBrokerCommand<P> {
 
-    private FileStatsReturnForXmlRpc fileStats;
+    private FileStatsReturn fileStats;
 
     public GetFileStatsVDSCommand(P parameters) {
         super(parameters);
@@ -27,7 +27,7 @@ public class GetFileStatsVDSCommand<P extends GetFileStatsParameters> extends Ir
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return fileStats.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return fileStats.getStatus();
     }
 }

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.vdscommands.SparsifyImageVDSCommandParameter
 
 public class SparsifyImageVDSCommand<P extends SparsifyImageVDSCommandParameters> extends VdsBrokerCommand<P> {
 
-    private StatusOnlyReturnForXmlRpc result;
+    private StatusOnlyReturn result;
 
     public SparsifyImageVDSCommand(P parameters) {
         super(parameters);
@@ -25,7 +25,7 @@ public class SparsifyImageVDSCommand<P extends SparsifyImageVDSCommandParameters
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return result.status;
     }
 

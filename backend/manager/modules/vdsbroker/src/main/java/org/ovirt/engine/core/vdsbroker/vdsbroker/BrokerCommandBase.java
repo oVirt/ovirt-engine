@@ -19,9 +19,9 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         super(parameters);
     }
 
-    protected StatusOnlyReturnForXmlRpc status;
+    protected StatusOnlyReturn status;
 
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return status.status;
     }
 
@@ -224,11 +224,11 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
 
     protected abstract VDSExceptionBase createDefaultConcreteException(String errorMessage);
 
-    protected EngineError getReturnValueFromStatus(StatusForXmlRpc xmlRpcStatus) {
+    protected EngineError getReturnValueFromStatus(Status status) {
         try {
-            EngineError bllErrors = EngineError.forValue(xmlRpcStatus.code);
+            EngineError bllErrors = EngineError.forValue(status.code);
             if (bllErrors == null) {
-                log.warn("Unexpected return value: {}", xmlRpcStatus);
+                log.warn("Unexpected return value: {}", status);
                 bllErrors = EngineError.unexpected;
             }
             return bllErrors;

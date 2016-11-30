@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.ActivateStorageDomainVDSCommandParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class ActivateStorageDomainVDSCommand<P extends ActivateStorageDomainVDSCommandParameters>
         extends IrsBrokerCommand<P> {
-    private StorageStatusReturnForXmlRpc result;
+    private StorageStatusReturn result;
 
     public ActivateStorageDomainVDSCommand(P parameters) {
         super(parameters);
@@ -20,8 +20,8 @@ public class ActivateStorageDomainVDSCommand<P extends ActivateStorageDomainVDSC
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return result.getStatus();
     }
 
     @Override

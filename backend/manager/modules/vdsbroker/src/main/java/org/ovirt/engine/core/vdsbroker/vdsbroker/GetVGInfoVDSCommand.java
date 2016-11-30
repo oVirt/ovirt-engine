@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
 public class GetVGInfoVDSCommand<P extends GetVGInfoVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private OneVGReturnForXmlRpc _result;
+    private OneVGReturn _result;
 
     @Inject
     private StoragePoolDao storagePoolDao;
@@ -39,8 +39,8 @@ public class GetVGInfoVDSCommand<P extends GetVGInfoVDSCommandParameters> extend
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return _result.getStatus();
     }
 
     @Override

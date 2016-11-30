@@ -93,19 +93,19 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 return new Pair<>(dbVm, vdsmVm);
             }
 
-            private VdsmVm createVdsmVm(Guid vmId, Map<String, Object> xmlRpcStruct, Double notifyTime) {
+            private VdsmVm createVdsmVm(Guid vmId, Map<String, Object> struct, Double notifyTime) {
                 VmDynamic fakeVm = new VmDynamic();
                 fakeVm.setId(vmId);
-                return createVdsmVm(fakeVm, xmlRpcStruct, notifyTime);
+                return createVdsmVm(fakeVm, struct, notifyTime);
             }
 
-            private VdsmVm createVdsmVm(VmDynamic dbVmDynamic, Map<String, Object> xmlRpcStruct, Double notifyTime) {
+            private VdsmVm createVdsmVm(VmDynamic dbVmDynamic, Map<String, Object> struct, Double notifyTime) {
                 // send a clone of vm dynamic to be overridden with new data
                 VmDynamic clonedVmDynamic = new VmDynamic(dbVmDynamic);
-                VdsBrokerObjectsBuilder.updateVMDynamicData(clonedVmDynamic, xmlRpcStruct, vdsManager.getCopyVds());
+                VdsBrokerObjectsBuilder.updateVMDynamicData(clonedVmDynamic, struct, vdsManager.getCopyVds());
                 return new VdsmVm(notifyTime)
                         .setVmDynamic(clonedVmDynamic)
-                        .setDevicesHash(VdsBrokerObjectsBuilder.getVmDevicesHash(xmlRpcStruct));
+                        .setDevicesHash(VdsBrokerObjectsBuilder.getVmDevicesHash(struct));
             }
 
             @Override

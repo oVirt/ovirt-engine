@@ -6,10 +6,10 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class GetVolumesListVDSCommand<P extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters> extends IrsBrokerCommand<P> {
-    private UUIDListReturnForXmlRpc _result;
+    private UUIDListReturn _result;
 
     public GetVolumesListVDSCommand(P parameters) {
         super(parameters);
@@ -30,8 +30,8 @@ public class GetVolumesListVDSCommand<P extends StoragePoolDomainAndGroupIdBaseV
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
-        return _result.getXmlRpcStatus();
+    protected Status getReturnStatus() {
+        return _result.getStatus();
     }
 
     @Override

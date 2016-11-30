@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.vdscommands.gluster.UpdateGlusterGeoRepKeysVDSParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class UpdateGlusterGeoRepKeysVDSCommand<P extends UpdateGlusterGeoRepKeysVDSParameters> extends AbstractGlusterBrokerCommand<P> {
 
@@ -10,7 +10,7 @@ public class UpdateGlusterGeoRepKeysVDSCommand<P extends UpdateGlusterGeoRepKeys
     }
 
     @Override
-    protected StatusForXmlRpc getReturnStatus() {
+    protected Status getReturnStatus() {
         return status.status;
     }
 
