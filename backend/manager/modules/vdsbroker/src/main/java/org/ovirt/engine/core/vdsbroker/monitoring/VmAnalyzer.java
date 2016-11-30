@@ -215,10 +215,16 @@ public class VmAnalyzer {
 
             break;
 
-        case Paused:
         case MigratingFrom:
             // do nothing
             break;
+
+        case Paused:
+            if (vdsmVm.getVmDynamic().getPauseStatus() == VmPauseStatus.POSTCOPY) {
+                // do nothing
+                break;
+            }
+            // otherwise continue with default processing
 
         default:
             if (isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning()) {
@@ -557,12 +563,14 @@ public class VmAnalyzer {
         }
 
         if (vdsmVmDynamic.getStatus() == VMStatus.Paused) {
-            switch(dbVm.getStatus()) {
-            case Paused:
-                break;
-
-            case MigratingFrom:
+            if (vdsmVmDynamic.getPauseStatus() == VmPauseStatus.POSTCOPY) {
                 handOverVm();
+                // no need to do anything else besides the hand-over
+                return;
+            }
+
+            switch (dbVm.getStatus()) {
+            case Paused:
                 break;
 
             default:

@@ -9,7 +9,8 @@ public enum VmPauseStatus {
     EIO(2, true),
     ENOSPC(3, true),
     EPERM(4, true),
-    NOERR(5, false);
+    NOERR(5, false),
+    POSTCOPY(6, false);
 
     private static final Map<Integer, VmPauseStatus> mappings = new HashMap<>();
     private final boolean isError;
