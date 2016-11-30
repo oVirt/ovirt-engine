@@ -530,7 +530,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             auditLogDirector.log(logable, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
         } else {
             log.warn("There are no OVF_STORE disks on storage domain id {}", storageDomainId);
-            auditLogDirector.log(this, AuditLogType.OVF_STORE_DOES_NOT_EXISTS);
         }
         return new ArrayList<>();
     }
