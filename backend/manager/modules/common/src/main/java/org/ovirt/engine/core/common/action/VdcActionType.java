@@ -43,7 +43,6 @@ public enum VdcActionType {
     HotSetNumberOfCpus(184, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.CLUSTER, true),
     VmSlaPolicy(185, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
     HotSetAmountOfMemory(186, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.CLUSTER, true),
-    ChangeFloppy(35, QuotaDependency.NONE),
     ImportVm(36, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     RemoveVmFromImportExport(37, ActionGroup.DELETE_VM, QuotaDependency.NONE),
     RemoveVmTemplateFromImportExport(38, ActionGroup.DELETE_TEMPLATE, QuotaDependency.NONE),

@@ -111,8 +111,6 @@ public interface IVdsServer {
 
     OneVmReturn changeDisk(String vmId, Map<String, Object> driveSpec);
 
-    OneVmReturn changeFloppy(String vmId, String imageLocation);
-
     StatusOnlyReturn addNetwork(String bridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
 

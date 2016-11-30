@@ -377,16 +377,6 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public OneVmReturn changeFloppy(String vmId, String imageLocation) {
-        // TODO DriveSpec should be used instead of imageLocation
-        JsonRpcRequest request = new RequestBuilder("VM.changeFloppy").withParameter("vmID", vmId)
-                .withParameter("driveSpec", imageLocation).build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("vmList");
-        return new OneVmReturn(response);
-    }
-
-    @Override
     public StatusOnlyReturn addNetwork(String bridge,
             String vlan,
             String bond,
