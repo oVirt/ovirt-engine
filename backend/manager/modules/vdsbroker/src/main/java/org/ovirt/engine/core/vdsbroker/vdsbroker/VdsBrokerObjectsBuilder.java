@@ -1778,7 +1778,10 @@ public class VdsBrokerObjectsBuilder {
                     Map<String, Object> bridgeProperties = (bridges == null) ? null : bridges.get(interfaceName);
 
                     boolean bridgedNetwork = isBridgedNetwork(networkProperties);
-                    SwitchType switchType = getSwitchType(host.getClusterCompatibilityVersion(), networkProperties);
+                    SwitchType switchType = getSwitchType(
+                        host.getSupportedClusterVersionsSet().stream().sorted().reduce((first, second) -> second).get(),
+                        networkProperties
+                    );
                     HostNetworkQos qos = new HostNetworkQosMapper(networkProperties).deserialize();
 
                     /**
