@@ -53,6 +53,7 @@ public final class VdsProperties {
     public static final String vm_active = "vmActive";
     public static final String vm_count = "vmCount";
     public static final String vm_migrating = "vmMigrating";
+    public static final String vm_migration_progress = "progress";
     public static final String INCOMING_VM_MIGRATIONS = "incomingVmMigrations";
     public static final String OUTGOING_VM_MIGRATIONS = "outgoingVmMigrations";
     public static final String images_last_check = "imagesLastCheck";

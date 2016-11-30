@@ -11,6 +11,8 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
@@ -28,6 +30,7 @@ public class VmManager {
     private int memSizeMb;
     private int minAllocatedMem;
     private int numOfCpus;
+    private Version clusterCompatibilityVersion;
 
     private final ReentrantLock lock;
     private Long vmDataChangedTime;
@@ -50,6 +53,8 @@ public class VmManager {
     private VmNetworkStatisticsDao vmNetworkStatisticsDao;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    private ClusterDao clusterDao;
 
     VmManager(Guid vmId) {
         this.vmId = vmId;
@@ -74,6 +79,7 @@ public class VmManager {
         memSizeMb = vmStatic.getMemSizeMb();
         minAllocatedMem = vmStatic.getMinAllocatedMem();
         numOfCpus = vmStatic.getNumOfCpus();
+        clusterCompatibilityVersion = clusterDao.get(vmStatic.getClusterId()).getCompatibilityVersion();
     }
 
     public void lock() {
@@ -207,4 +213,11 @@ public class VmManager {
         return numOfCpus;
     }
 
+    public void setClusterCompatibilityVersion(Version version) {
+        this.clusterCompatibilityVersion = version;
+    }
+
+    public Version getClusterCompatibilityVersion() {
+        return clusterCompatibilityVersion;
+    }
 }

@@ -63,6 +63,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 
 public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationParameters> extends
         ClusterOperationCommandBase<T> implements RenamedEntityInfoProvider{
@@ -85,6 +87,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Inject
     private InitGlusterCommandHelper glusterCommandHelper;
+
+    @Inject
+    private ResourceManager resourceManager;
 
     private List<VDS> allForCluster;
     private Cluster oldCluster;
@@ -230,7 +235,18 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             return;
         }
 
+        if (!Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
+            vmStaticDao.getAllByCluster(getCluster().getId()).stream().forEach(this::updateClusterVersionInManager);
+        }
+
         setSucceeded(true);
+    }
+
+    private void updateClusterVersionInManager(VmStatic vm) {
+        VmManager vmManager = resourceManager.getVmManager(vm.getId(), false);
+        if (vmManager != null) {
+            vmManager.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
+        }
     }
 
     private boolean updateVms() {

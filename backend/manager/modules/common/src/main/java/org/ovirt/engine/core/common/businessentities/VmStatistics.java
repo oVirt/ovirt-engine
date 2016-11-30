@@ -290,7 +290,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
      * @param vmStatistics - the reported statistics from VDSM
      * @param vm - the static part of the VM for which the statistics belong
      */
-    public void updateRuntimeData(VmStatistics vmStatistics, int numOfCpus) {
+    public void updateRuntimeData(VmStatistics vmStatistics, int numOfCpus, boolean updateMigrationProgress) {
         Integer usageHistoryLimit = Config.getValue(ConfigValues.UsageHistoryLimit);
 
         setElapsedTime(vmStatistics.getElapsedTime());
@@ -317,6 +317,8 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         setGuestMemoryFree(vmStatistics.getGuestMemoryFree());
 
         // -------- migration --------------
-        setMigrationProgressPercent(vmStatistics.getMigrationProgressPercent());
+        if (updateMigrationProgress) {
+            setMigrationProgressPercent(vmStatistics.getMigrationProgressPercent());
+        }
     }
 }

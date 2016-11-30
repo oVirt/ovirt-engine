@@ -95,6 +95,7 @@ import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
+import org.ovirt.engine.core.vdsbroker.monitoring.VmMigrationProgressMonitoring;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmsMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -308,6 +309,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         serviceLoader.load(VmPoolMonitor.class);
         serviceLoader.load(HaAutoStartVmsRunner.class);
         serviceLoader.load(QuotaManager.class);
+        serviceLoader.load(VmMigrationProgressMonitoring.class);
 
         //initializes attestation
         initAttestation();

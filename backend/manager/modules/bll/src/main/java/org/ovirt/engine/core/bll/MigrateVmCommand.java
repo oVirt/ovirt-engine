@@ -61,12 +61,15 @@ import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
 
     @Inject
     ConvergenceConfigProvider convergenceConfigProvider;
+    @Inject
+    private ResourceManager resourceManager;
 
     /** The VDS that the VM is going to migrate to */
     private VDS destinationVds;
@@ -169,6 +172,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected void executeVmCommand() {
+        resourceManager.getVmManager(getVmId()).getStatistics().setMigrationProgressPercent(0);
         setSucceeded(initVdss() && perform());
     }
 
