@@ -278,7 +278,6 @@ public abstract class InstanceTypeManager {
 
         model.setSelectedMigrationDowntime(vmBase.getMigrationDowntime());
         model.selectMigrationPolicy(vmBase.getMigrationPolicyId());
-
         priorityUtil.initPriority(vmBase.getPriority(), new PriorityUtil.PriorityUpdatingCallbacks() {
             @Override
             public void beforeUpdates() {
@@ -481,6 +480,9 @@ public abstract class InstanceTypeManager {
             @Override
             public void onSuccess(VdcQueryReturnValue returnValue) {
                 deactivate();
+
+                List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
+                model.getIsHeadlessModeEnabled().setEntity(vmBase.getDefaultDisplayType() == DisplayType.none);
                 // select display protocol
                 DisplayType displayProtocol = displayTypes.iterator().next(); // first by default
                 if (displayTypes.contains(vmBase.getDefaultDisplayType())) {
@@ -489,7 +491,6 @@ public abstract class InstanceTypeManager {
                 maybeSetSelectedItem(model.getDisplayType(), displayProtocol);
 
                 Set<GraphicsType> graphicsTypes = new HashSet<>();
-                List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
                 for (GraphicsDevice graphicsDevice : graphicsDevices) {
                     graphicsTypes.add(graphicsDevice.getGraphicsType());
                 }

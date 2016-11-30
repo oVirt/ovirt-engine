@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+  xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
   xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
   xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
   xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
@@ -59,6 +60,11 @@
         padding-left: 10px;
         padding-right: 10px;
         position: relative;
+    }
+
+    .infoIcon {
+        float: left;
+        padding-left: 2px;
     }
 
     </ui:style>
@@ -219,6 +225,12 @@
         </g:DisclosurePanel>
         <g:DisclosurePanel ui:field="displayProtocolPanel" label="{constants.consoleVmPopup}" addStyleNames="{style.panelStyle}">
             <b:Container ui:field="displayProtocolContainer" addStyleNames="{style.container}">
+                <b:Row>
+                    <b:Column size="LG_12">
+                        <ge:EntityModelRadioButtonEditor ui:field="runOnceHeadlessModeEditor" label="{constants.headlessModeVmPopup}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.floatLeft}"/>
+                        <d:InfoIcon ui:field="runOnceHeadlessModeEnabledInfoIcon" addStyleNames="{style.infoIcon}"/>
+                    </b:Column>
+                </b:Row>
                 <b:Row>
                     <b:Column size="LG_12">
                         <ge:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" label="{constants.runOncePopupDisplayConsoleVncLabel}" removeFormGroup="true" usePatternFly="true" />

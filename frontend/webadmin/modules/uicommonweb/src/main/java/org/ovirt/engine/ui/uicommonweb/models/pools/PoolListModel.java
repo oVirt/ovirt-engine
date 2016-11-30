@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -469,7 +470,9 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
 
         param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         param.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
-
+        if(model.getIsHeadlessModeEnabled().getEntity()) {
+            param.getVmStaticData().setDefaultDisplayType(DisplayType.none);
+       }
         BuilderExecutor.build(model, param, new UnitToGraphicsDeviceParamsBuilder());
 
         if (model.getQuota().getSelectedItem() != null) {

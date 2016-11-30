@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -1154,6 +1155,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
         model.getIsHighlyAvailable().setEntity(vm.getStaticData().isAutoStartup());
+        if (vm.getDefaultDisplayType() == DisplayType.none) {
+            model.getIsHeadlessModeEnabled().setEntity(true);
+        }
     }
 
     private void onNewTemplate() {
@@ -1728,10 +1732,15 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 public void onSuccess(VdcQueryReturnValue returnValue) {
                     List<String> changedFields = returnValue.getReturnValue();
                     final boolean cpuHotPluggable = VmCommonUtils.isCpusToBeHotplugged(selectedItem, getcurrentVm());
+                    final boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
                     final boolean isMemoryHotUnplugSupported =
                             AsyncDataProvider.getInstance().isMemoryHotUnplugSupported(getcurrentVm());
                     final boolean memoryHotPluggable =
                             VmCommonUtils.isMemoryToBeHotplugged(selectedItem, getcurrentVm(), isMemoryHotUnplugSupported);
+                    if (isHeadlessModeChanged) {
+                        changedFields.add(constants.headlessMode());
+                    }
+
                     // provide warnings if isVmUnpinned()
                     if (!changedFields.isEmpty() || isVmUnpinned() || memoryHotPluggable || cpuHotPluggable) {
                         VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
@@ -1772,6 +1781,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         else {
             updateExistingVm(false);
         }
+    }
+
+    private boolean isHeadlessModeChanged(VM source, VmManagementParametersBase updateVmParameters) {
+        return source.getDefaultDisplayType() != updateVmParameters.getVmStaticData().getDefaultDisplayType()
+                && (source.getDefaultDisplayType() == DisplayType.none
+                || updateVmParameters.getVmStaticData().getDefaultDisplayType() == DisplayType.none);
     }
 
     private void updateExistingVm(final boolean applyCpuChangesLater) {
@@ -1834,6 +1849,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         updateVmParams.setApplyChangesLater(applyCpuChangesLater);
         updateVmParams.setUpdateNuma(model.isNumaChanged());
+        if (model.getIsHeadlessModeEnabled().getEntity()) {
+            updateVmParams.getVmStaticData().setDefaultDisplayType(DisplayType.none);
+        }
         BuilderExecutor.build(
                 new Pair<>((UnitVmModel) getWindow(), getSelectedItem()),
                 updateVmParams,

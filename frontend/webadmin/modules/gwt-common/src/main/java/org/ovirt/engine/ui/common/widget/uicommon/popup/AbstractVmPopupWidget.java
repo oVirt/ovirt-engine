@@ -455,6 +455,16 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     protected DialogTab consoleTab;
 
     @UiField(provided = true)
+    @Path(value = "isHeadlessModeEnabled.entity")
+    @WithElementId("isHeadlessModeEnabled")
+    public EntityModelCheckBoxEditor isHeadlessModeEnabledEditor;
+
+    @WithElementId
+    @Ignore
+    @UiField(provided = true)
+    public InfoIcon isHeadlessModeEnabledInfoIcon;
+
+    @UiField(provided = true)
     @Path(value = "displayType.selectedItem")
     @WithElementId("displayType")
     public ListModelListBoxEditor<DisplayType> displayTypeEditor;
@@ -512,6 +522,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "allowConsoleReconnect.entity")
     @WithElementId("allowConsoleReconnect")
     public EntityModelCheckBoxEditor allowConsoleReconnectEditor;
+
+    @UiField
+    @Ignore
+    public Label serialConsoleOptionsVmPopupLabel;
 
     @UiField(provided = true)
     @Path(value = "isConsoleDeviceEnabled.entity")
@@ -967,6 +981,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isRunAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isHeadlessModeEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isConsoleDeviceEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
         isRngEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -989,8 +1004,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo = new InfoIcon(multiLineItalicSafeHtml(constants.cpuPinningLabelExplanation()));
-
         cpuPinningInfo.setTooltipMaxWidth(TooltipWidth.W420);
+        isHeadlessModeEnabledInfoIcon =
+                new InfoIcon(SafeHtmlUtils.fromTrustedString(constants.headlessModeExplanation()));
         isVirtioScsiEnabledInfoIcon =
                 new InfoIcon(templates.italicText(constants.isVirtioScsiEnabledInfo()));
         final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getInstance().
@@ -1927,6 +1943,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         // ==Console Tab==
         nextTabIndex = consoleTab.setTabIndexes(nextTabIndex);
+        isHeadlessModeEnabledEditor.setTabIndex(nextTabIndex++);
         displayTypeEditor.setTabIndex(nextTabIndex++);
         graphicsTypeEditor.setTabIndex(nextTabIndex++);
         vncKeyboardLayoutEditor.setTabIndex(nextTabIndex++);
@@ -2031,6 +2048,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     protected List<Widget> consoleTabWidgets() {
         return Arrays.asList(
+                isHeadlessModeEnabledEditor,
+                isHeadlessModeEnabledInfoIcon,
                 displayTypeEditor,
                 graphicsTypeEditor,
                 usbSupportEditor,
@@ -2041,7 +2060,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 vncKeyboardLayoutEditor,
                 ssoMethodLabel,
                 ssoMethodNone,
-                ssoMethodGuestAgent
+                ssoMethodGuestAgent,
+                serialConsoleOptionsVmPopupLabel
         );
     }
 

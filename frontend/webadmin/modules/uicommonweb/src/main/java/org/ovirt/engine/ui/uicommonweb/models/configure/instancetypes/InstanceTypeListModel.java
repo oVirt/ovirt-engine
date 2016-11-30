@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -232,6 +233,9 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         addInstanceTypeParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         addInstanceTypeParameters.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
         addInstanceTypeParameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+        if(model.getIsHeadlessModeEnabled().getEntity()) {
+            addInstanceTypeParameters.getVm().setDefaultDisplayType(DisplayType.none);
+        }
 
         setVmWatchdogToParams(model, addInstanceTypeParameters);
         setRngDeviceToParams(model, addInstanceTypeParameters);
@@ -265,6 +269,9 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         updateInstanceTypeParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         updateInstanceTypeParameters.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
         updateInstanceTypeParameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+        if(model.getIsHeadlessModeEnabled().getEntity()) {
+            updateInstanceTypeParameters.getVmTemplateData().setDefaultDisplayType(DisplayType.none);
+        }
 
         setVmWatchdogToParams(model, updateInstanceTypeParameters);
         setRngDeviceToParams(model, updateInstanceTypeParameters);

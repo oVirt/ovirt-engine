@@ -16,7 +16,10 @@ public class UnitToGraphicsDeviceParamsBuilder extends BaseSyncBuilder<UnitVmMod
 
         for (GraphicsType graphicsType : GraphicsType.values()) {
             destination.getGraphicsDevices().put(graphicsType, null); // reset
-            if (source.getGraphicsType().getSelectedItem().getBackingGraphicsTypes().contains(graphicsType)) {
+
+            // if not headless VM then set the selected graphic devices
+            if (!source.getIsHeadlessModeEnabled().getEntity() &&
+                    source.getGraphicsType().getSelectedItem().getBackingGraphicsTypes().contains(graphicsType)) {
                 GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
                 destination.getGraphicsDevices().put(d.getGraphicsType(), d);
             }

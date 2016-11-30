@@ -166,6 +166,8 @@ public interface Enums extends LocalizedEnums {
 
     String DisplayType___vga();
 
+    String DisplayType___none();
+
     String GraphicsType___SPICE();
 
     String GraphicsType___VNC();

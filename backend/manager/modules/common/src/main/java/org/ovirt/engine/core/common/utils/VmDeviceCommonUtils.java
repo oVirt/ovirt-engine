@@ -415,6 +415,9 @@ public class VmDeviceCommonUtils {
     }
 
     public static void addVideoDevice(VmBase vmBase) {
+        if (vmBase.getDefaultDisplayType().getDefaultVmDeviceType() == null) {
+            return;
+        }
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
         vmDevice.setType(VmDeviceGeneralType.VIDEO);

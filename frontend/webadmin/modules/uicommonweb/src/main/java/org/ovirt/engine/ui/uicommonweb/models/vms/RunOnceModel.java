@@ -326,6 +326,16 @@ public abstract class RunOnceModel extends Model {
         privateRunAsStateless = value;
     }
 
+    private EntityModel<Boolean> privateRunOnceHeadlessModeIsSelected;
+
+    public EntityModel<Boolean> getRunOnceHeadlessModeIsSelected() {
+        return privateRunOnceHeadlessModeIsSelected;
+    }
+
+    public void setRunOnceHeadlessModeIsSelected(EntityModel<Boolean> value) {
+        privateRunOnceHeadlessModeIsSelected = value;
+    }
+
     private EntityModel<Boolean> privateDisplayConsole_Vnc_IsSelected;
 
     public EntityModel<Boolean> getDisplayConsole_Vnc_IsSelected() {
@@ -582,6 +592,8 @@ public abstract class RunOnceModel extends Model {
         setRunAsStateless(new EntityModel<>(false));
 
         // Display Protocol tab
+        setRunOnceHeadlessModeIsSelected(new EntityModel<Boolean>());
+        getRunOnceHeadlessModeIsSelected().getEntityChangedEvent().addListener(this);
         setDisplayConsole_Spice_IsSelected(new EntityModel<Boolean>());
         getDisplayConsole_Spice_IsSelected().getEntityChangedEvent().addListener(this);
         setDisplayConsole_Vnc_IsSelected(new EntityModel<Boolean>());
@@ -658,7 +670,6 @@ public abstract class RunOnceModel extends Model {
         updateSystemTabLists();
         updateIsoList();
         updateUnknownTypeImagesList();
-        updateDisplayProtocols();
         updateFloppyImages();
         updateInitialRunFields();
 
@@ -667,6 +678,13 @@ public abstract class RunOnceModel extends Model {
         setIsBootFromHardDiskAllowedForVm();
 
         // Display protocols.
+        if (vm.getDefaultDisplayType() != DisplayType.none) {
+            updateDisplayProtocols();
+        } else {
+            getRunOnceHeadlessModeIsSelected().setEntity(true);
+        }
+
+
         EntityModel<DisplayType> vncProtocol = new EntityModel<>(DisplayType.vga)
            .setTitle(ConstantsManager.getInstance().getConstants().vncTitle());
 
@@ -756,9 +774,19 @@ public abstract class RunOnceModel extends Model {
             params.setVmInit(getVmInitModel().buildCloudInitParameters(this));
         }
 
-        params.getRunOnceGraphics().add(Boolean.TRUE.equals(getDisplayConsole_Vnc_IsSelected().getEntity())
-                ? GraphicsType.VNC
-                : GraphicsType.SPICE);
+        if (getRunOnceHeadlessModeIsSelected().getEntity()) {
+            params.getRunOnceGraphics().clear();
+            params.setRunOnceDisplayType(DisplayType.none);
+        } else {
+            params.getRunOnceGraphics().add(Boolean.TRUE.equals(getDisplayConsole_Vnc_IsSelected().getEntity())
+                    ? GraphicsType.VNC
+                    : GraphicsType.SPICE);
+
+            if (vm.getDefaultDisplayType() == DisplayType.none) {
+                params.setRunOnceDisplayType(params.getRunOnceGraphics().contains(GraphicsType.SPICE) ? DisplayType.qxl
+                        : DisplayType.cirrus);
+            }
+        }
 
         params.setVncKeyboardLayout(getVncKeyboardLayout().getSelectedItem());
 
@@ -1063,16 +1091,26 @@ public abstract class RunOnceModel extends Model {
                 useAlternateCredentials_EntityChanged();
             }
             else if (sender == getDisplayConsole_Vnc_IsSelected() && ((EntityModel<Boolean>) sender).getEntity()) {
+                getRunOnceHeadlessModeIsSelected().setEntity(false);
                 getDisplayConsole_Spice_IsSelected().setEntity(false);
                 getVncKeyboardLayout().setIsChangeable(true);
                 getSpiceFileTransferEnabled().setIsChangeable(false);
                 getSpiceCopyPasteEnabled().setIsChangeable(false);
             }
             else if (sender == getDisplayConsole_Spice_IsSelected() && ((EntityModel<Boolean>) sender).getEntity()) {
+                getRunOnceHeadlessModeIsSelected().setEntity(false);
                 getDisplayConsole_Vnc_IsSelected().setEntity(false);
                 getVncKeyboardLayout().setIsChangeable(false);
                 getSpiceFileTransferEnabled().setIsChangeable(true);
                 getSpiceCopyPasteEnabled().setIsChangeable(true);
+            }
+            else if (sender == getRunOnceHeadlessModeIsSelected() && ((EntityModel<Boolean>) sender).getEntity()) {
+                getDisplayConsole_Vnc_IsSelected().setEntity(false);
+                getDisplayConsole_Spice_IsSelected().setEntity(false);
+
+                getVncKeyboardLayout().setIsChangeable(false);
+                getSpiceFileTransferEnabled().setIsChangeable(false);
+                getSpiceCopyPasteEnabled().setIsChangeable(false);
             }
             else if (sender == getIsAutoAssign()) {
                 isAutoAssign_EntityChanged(sender, args);

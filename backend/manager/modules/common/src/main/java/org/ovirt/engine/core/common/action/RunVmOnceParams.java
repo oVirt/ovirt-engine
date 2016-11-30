@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -21,6 +22,7 @@ public class RunVmOnceParams extends RunVmParams {
     private VmInit vmInit;
     private Guid destinationVdsId;
     private Set<GraphicsType> runOnceGraphics;
+    private DisplayType runOnceDisplayType;
 
     private String customEmulatedMachine;
     private String customCpuName;
@@ -132,6 +134,14 @@ public class RunVmOnceParams extends RunVmParams {
 
     public void setRunOnceGraphics(Set<GraphicsType> runOnceGraphics) {
         this.runOnceGraphics = runOnceGraphics;
+    }
+
+    public DisplayType getRunOnceDisplayType() {
+        return runOnceDisplayType;
+    }
+
+    public void setRunOnceDisplayType(DisplayType runOnceDisplayType) {
+        this.runOnceDisplayType = runOnceDisplayType;
     }
 
     public String getCustomEmulatedMachine() {

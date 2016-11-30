@@ -63,6 +63,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
@@ -71,6 +72,7 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -199,6 +201,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         // override values here for validate to run with correct values, has to come before init-disks
         updateVmObject();
+
+        if (getParameters().getVmStaticData().getDefaultDisplayType() == DisplayType.none && !parameters.isConsoleEnabled()) {
+            parameters.getVmStaticData().setUsbPolicy(UsbPolicy.DISABLED);
+        }
 
         initTemplateDisks();
         initStoragePoolId();
@@ -408,7 +414,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean checkSingleQxlDisplay() {
-        if (!getParameters().getVmStaticData().getSingleQxlPci()) {
+        if (!getParameters().getVmStaticData().getSingleQxlPci() || getParameters().getVmStaticData().getDefaultDisplayType() == DisplayType.none) {
             return true;
         }
         return vmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
@@ -1596,6 +1602,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         vmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData());
+
         // Choose a proper default display type according to the cluster architecture
         vmHandler.autoSelectDefaultDisplayType(vmDevicesSourceId,
             getParameters().getVmStaticData(),
@@ -1621,7 +1628,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             iface.setVnicProfileId(null);
         }
     }
+
     protected boolean checkNumberOfMonitors() {
+        if (getParameters().getVmStaticData().getDefaultDisplayType() == DisplayType.none) {
+            return true;
+        }
         Collection<GraphicsType> graphicsTypes = vmHandler.getResultingVmGraphics(
                 getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()),
                 getParameters().getGraphicsDevices());

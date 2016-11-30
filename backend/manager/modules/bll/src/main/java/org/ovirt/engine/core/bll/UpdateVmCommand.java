@@ -48,12 +48,14 @@ import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -143,6 +145,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // we always need to verify new or existing numa nodes with the updated VM configuration
         if (!getParameters().isUpdateNuma()) {
             getParameters().getVm().setvNumaNodeList(vmNumaNodeDao.getAllVmNumaNodeByVmId(getParameters().getVmId()));
+        }
+
+        if (getParameters().getVmStaticData().getDefaultDisplayType() == DisplayType.none && !getParameters().isConsoleEnabled()) {
+            getParameters().getVmStaticData().setUsbPolicy(UsbPolicy.DISABLED);
         }
     }
 
@@ -713,7 +719,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (vmFromParams.getSingleQxlPci() &&
+        if (getParameters().getVmStaticData().getDefaultDisplayType() != DisplayType.none &&
+                vmFromParams.getSingleQxlPci() &&
                 !vmHandler.isSingleQxlDeviceLegal(vmFromParams.getDefaultDisplayType(),
                         vmFromParams.getOs(),
                         getReturnValue().getValidationMessages())) {
@@ -737,7 +744,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // Check if number of monitors passed is legal
-        if (!vmHandler.isNumOfMonitorsLegal(
+        if (getParameters().getVmStaticData().getDefaultDisplayType() != DisplayType.none &&
+                !vmHandler.isNumOfMonitorsLegal(
                 vmHandler.getResultingVmGraphics(
                         getVmDeviceUtils().getGraphicsTypesOfEntity(getVmId()),
                         getParameters().getGraphicsDevices()),

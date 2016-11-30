@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -226,6 +227,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         if (returnValue && getParameters().getVmTemplateData().getSingleQxlPci() &&
+                getParameters().getVmTemplateData().getDefaultDisplayType() != DisplayType.none &&
                 !vmHandler.isSingleQxlDeviceLegal(getParameters().getVmTemplateData().getDefaultDisplayType(),
                         getParameters().getVmTemplateData().getOsId(),
                         getReturnValue().getValidationMessages())) {
@@ -430,6 +432,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         getVmDeviceUtils().updateVirtioScsiController(getVmTemplate(), getParameters().isVirtioScsiEnabled());
         if (getParameters().isBalloonEnabled() != null) {
             getVmDeviceUtils().updateMemoryBalloon(getVmTemplateId(), getParameters().isBalloonEnabled());
+        }
+        if (getParameters().getVmTemplateData().getDefaultDisplayType() == DisplayType.none) {
+            getVmDeviceUtils().removeVideoDevices(getVmTemplateId());
         }
     }
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.builders.template;
 
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.ui.uicommonweb.builders.BaseSyncBuilder;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BalloonEnabled;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -22,6 +23,9 @@ public class UnitToAddVmTemplateParametersBuilder<T extends AddVmTemplateParamet
         }
 
         destination.setVirtioScsiEnabled(source.getIsVirtioScsiEnabled().getEntity());
+        if(source.getIsHeadlessModeEnabled().getEntity()) {
+            destination.getMasterVm().setDefaultDisplayType(DisplayType.none);
+        }
     }
 
 }

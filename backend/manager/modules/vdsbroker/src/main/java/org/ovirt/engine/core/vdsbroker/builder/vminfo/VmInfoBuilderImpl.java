@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -129,27 +130,26 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     @Override
     public void buildVmVideoCards() {
-        List<VmDevice> vmVideoDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.VIDEO);
-        for (VmDevice vmVideoDevice : vmVideoDevices) {
-            // skip unmanaged devices (handled separately)
-            if (!vmVideoDevice.getIsManaged()) {
-                continue;
-            }
+        boolean videoCardOverridden = vm.isRunOnce() && vm.getDefaultDisplayType() != null;
 
-            Map<String, Object> struct = new HashMap<>();
-            struct.put(VdsProperties.Type, vmVideoDevice.getType().getValue());
-            struct.put(VdsProperties.Device, vmVideoDevice.getDevice());
-            vmInfoBuildUtils.addAddress(vmVideoDevice, struct);
-            struct.put(VdsProperties.SpecParams, vmVideoDevice.getSpecParams());
-            struct.put(VdsProperties.DeviceId, String.valueOf(vmVideoDevice.getId().getDeviceId()));
-            addToManagedDevices(vmVideoDevice);
-            devices.add(struct);
+        if (videoCardOverridden) {
+            if (vm.getDefaultDisplayType() == DisplayType.none) {
+                return;
+            }
+            buildVmVideoDeviceOverridden();
+        } else {
+            buildVmVideoDevicesFromDb();
         }
     }
 
     @Override
     public void buildVmGraphicsDevices() {
         boolean graphicsOverridden = vm.isRunOnce() && vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty();
+        boolean isHeadlessMode = vm.getDefaultDisplayType() == DisplayType.none;
+
+        if (isHeadlessMode) {
+            return;
+        }
 
         Map<GraphicsType, GraphicsInfo> infos = vm.getGraphicsInfos();
 
@@ -917,6 +917,34 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
             createInfo.put(VdsProperties.display, legacyGraphicsType);
         }
+    }
+
+    private void buildVmVideoDevicesFromDb() {
+        List<VmDevice> vmVideoDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.VIDEO);
+        for (VmDevice vmVideoDevice : vmVideoDevices) {
+            // skip unmanaged devices (handled separately)
+            if (!vmVideoDevice.getIsManaged()) {
+                continue;
+            }
+
+            Map<String, Object> struct = new HashMap<>();
+            struct.put(VdsProperties.Type, vmVideoDevice.getType().getValue());
+            struct.put(VdsProperties.Device, vmVideoDevice.getDevice());
+            vmInfoBuildUtils.addAddress(vmVideoDevice, struct);
+            struct.put(VdsProperties.SpecParams, vmVideoDevice.getSpecParams());
+            struct.put(VdsProperties.DeviceId, String.valueOf(vmVideoDevice.getId().getDeviceId()));
+            addToManagedDevices(vmVideoDevice);
+            devices.add(struct);
+        }
+    }
+
+    private void buildVmVideoDeviceOverridden() {
+        Map<String, Object> struct = new HashMap<>();
+        struct.put(VdsProperties.Type, VmDeviceGeneralType.VIDEO.getValue());
+        struct.put(VdsProperties.Device, vm.getDefaultDisplayType().getDefaultVmDeviceType().getName());
+        struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
+
+        devices.add(struct);
     }
 
     /**

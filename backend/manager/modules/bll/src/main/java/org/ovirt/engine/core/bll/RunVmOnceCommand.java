@@ -150,24 +150,26 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         if (getParameters().getVmInit() != null) {
             createVmParams.getVm().setVmInit(getParameters().getVmInit());
         }
-
         return createVmParams;
     }
 
     /**
-     * This methods sets graphics infos of a VM to correspond to graphics set in Run Once.
+     * This method sets graphics & video devices info of a VM to correspond to graphics set & display type in Run Once.
      */
     @Override
-    protected void updateGraphicsInfos() {
-        if (getParameters().getRunOnceGraphics().isEmpty()) {
+    protected void updateGraphicsAndDisplayInfos() {
+        // graphics devices
+        if (getParameters().getRunOnceGraphics().isEmpty() && getParameters().getRunOnceDisplayType() == null) {
             // configure from DB
-            super.updateGraphicsInfos();
+            super.updateGraphicsAndDisplayInfos();
         } else {
             // configure from params
             for (GraphicsType graphicsType : getParameters().getRunOnceGraphics()) {
                 getVm().getGraphicsInfos().put(graphicsType, new GraphicsInfo());
             }
         }
+        // video devices
+        getVm().setDefaultDisplayType(getParameters().getRunOnceDisplayType());
     }
 
     @Override

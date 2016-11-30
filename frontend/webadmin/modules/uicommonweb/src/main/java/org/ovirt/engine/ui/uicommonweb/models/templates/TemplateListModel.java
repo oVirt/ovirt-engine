@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -465,6 +466,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(cancelCommand);
+        if (template.getDefaultDisplayType() == DisplayType.none) {
+            model.getIsHeadlessModeEnabled().setEntity(true);
+        }
+
     }
 
     protected String getEditTemplateAdvancedModelKey() {
@@ -685,6 +690,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         setVmRngDeviceToParams(model, parameters);
         parameters.setBalloonEnabled(balloonEnabled(model));
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+
+        if (model.getIsHeadlessModeEnabled().getEntity()) {
+            parameters.getVmTemplateData().setDefaultDisplayType(DisplayType.none);
+        }
 
         Frontend.getInstance().runAction(VdcActionType.UpdateVmTemplate, parameters,
                 new IFrontendActionAsyncCallback() {

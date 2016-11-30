@@ -75,6 +75,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String runOncePopupDisplayConsoleSpiceLabel();
 
+    String runOnceHeadlessModeExplanation();
+
     String runOncePopupRunAsStatelessLabel();
 
     String runOncePopupRunAndPauseLabel();
@@ -1622,5 +1624,12 @@ public interface CommonApplicationConstants extends Constants {
     String automaticNetworkProviderInstallWarning();
 
     String manualNetworkProviderInstallRecomendation();
-}
 
+    String graphicalConsoleOptionsVmPopup();
+
+    String serialConsoleOptionsVmPopup();
+
+    String headlessModeVmPopup();
+
+    String headlessModeExplanation();
+}

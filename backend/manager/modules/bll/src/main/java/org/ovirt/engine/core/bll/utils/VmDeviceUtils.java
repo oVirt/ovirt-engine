@@ -543,14 +543,16 @@ public class VmDeviceUtils {
      * Add given number of video devices to the VM.
      */
     public void addVideoDevices(VmBase vmBase, int numberOfVideoDevices) {
-        for (int i = 0; i < numberOfVideoDevices; i++) {
-            addManagedDevice(
-                    new VmDeviceId(Guid.newGuid(), vmBase.getId()),
-                    VmDeviceGeneralType.VIDEO,
-                    vmBase.getDefaultDisplayType().getDefaultVmDeviceType(),
-                    getVideoDeviceSpecParams(vmBase),
-                    true,
-                    false);
+        if (vmBase.getDefaultDisplayType() != DisplayType.none) {
+            for (int i = 0; i < numberOfVideoDevices; i++) {
+                addManagedDevice(
+                        new VmDeviceId(Guid.newGuid(), vmBase.getId()),
+                        VmDeviceGeneralType.VIDEO,
+                        vmBase.getDefaultDisplayType().getDefaultVmDeviceType(),
+                        getVideoDeviceSpecParams(vmBase),
+                        true,
+                        false);
+            }
         }
     }
 
@@ -1770,6 +1772,14 @@ public class VmDeviceUtils {
                     vmManagedDeviceMap.remove(device.getDeviceId());
                 }
             }
+        }
+
+        // @TODO - this was added to handle the headless VM since the VIDEO devices were added anyway with the DB value instead of the
+        // new configuration value. Should be handled correctly while the task of removing the static.displaytype and handling the VIDEO device
+        // as all other devices
+        VmDevice device = VmDeviceCommonUtils.findVmDeviceByGeneralType(vmManagedDeviceMap, VmDeviceGeneralType.VIDEO);
+        if (device != null) {
+            vmManagedDeviceMap.remove(device.getDeviceId());
         }
 
         return vmManagedDeviceMap;

@@ -47,7 +47,9 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
         List<Pair<GraphicsType, DisplayType>> allGraphicsAndDisplays = new ArrayList<>();
         for (GraphicsType graphicsType : GraphicsType.values()) {
             for (DisplayType displayType : DisplayType.values()) {
-                allGraphicsAndDisplays.add(new Pair<>(graphicsType, displayType));
+                if (displayType != DisplayType.none) {
+                    allGraphicsAndDisplays.add(new Pair<>(graphicsType, displayType));
+                }
             }
         }
 
@@ -56,6 +58,12 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
 
         if (getModel().getDisplayType().getItems().contains(selected)) {
             getModel().getDisplayType().setSelectedItem(selected);
+        }
+
+        if (selected == DisplayType.none) {
+            getModel().getDisplayType().setSelectedItem(DisplayType.qxl);
+            getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.SPICE);
+            getModel().getIsHeadlessModeEnabled().setEntity(true);
         }
     }
 

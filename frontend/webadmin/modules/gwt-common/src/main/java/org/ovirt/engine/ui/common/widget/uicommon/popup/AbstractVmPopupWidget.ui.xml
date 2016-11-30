@@ -282,6 +282,17 @@
             <t:content>
               <b:Container addStyleNames="{style.container}">
                 <b:Row>
+                  <b:Column size="LG_12">
+                    <g:Label addStyleNames="{style.sectionLabel}" text="{constants.graphicalConsoleOptionsVmPopup}" />
+                  </b:Column>
+                </b:Row>
+                <b:Row>
+                  <b:Column size="LG_12">
+                    <ge:EntityModelCheckBoxEditor ui:field="isHeadlessModeEnabledEditor" label="{constants.headlessModeVmPopup}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.floatLeft}" />
+                    <d:InfoIcon ui:field="isHeadlessModeEnabledInfoIcon" addStyleNames="{style.infoIcon}" />
+                  </b:Column>
+                </b:Row>
+                <b:Row>
                   <e:ListModelListBoxEditor ui:field="displayTypeEditor" label="{constants.videoType}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                 </b:Row>
                 <b:Row>
@@ -343,7 +354,6 @@
                 <b:Row>
                   <b:Column size="LG_12">
                     <ge:EntityModelCheckBoxEditor ui:field="isSoundcardEnabledEditor" label="{constants.soundcardEnabled}" usePatternFly="true" removeFormGroup="true" />
-                    <ge:EntityModelCheckBoxEditor ui:field="isConsoleDeviceEnabledEditor" label="{constants.consoleDeviceEnabled}" usePatternFly="true" removeFormGroup="true"/>
                   </b:Column>
                 </b:Row>
                 <b:Row>
@@ -359,6 +369,16 @@
                   <b:Column size="LG_12">
                     <ge:EntityModelCheckBoxEditor ui:field="spiceFileTransferEnabledEditor" label="{constants.spiceFileTransferEnabled}" usePatternFly="true" removeFormGroup="true" />
                     <ge:EntityModelCheckBoxEditor ui:field="spiceCopyPasteEnabledEditor" label="{constants.spiceCopyPasteEnabled}" usePatternFly="true" removeFormGroup="true" />
+                  </b:Column>
+                </b:Row>
+                <b:Row>
+                  <b:Column size="LG_12">
+                    <g:Label ui:field="serialConsoleOptionsVmPopupLabel" addStyleNames="{style.sectionLabel}" text="{constants.serialConsoleOptionsVmPopup}" />
+                  </b:Column>
+                </b:Row>
+                <b:Row>
+                  <b:Column size="LG_12">
+                    <ge:EntityModelCheckBoxEditor ui:field="isConsoleDeviceEnabledEditor" label="{constants.consoleDeviceEnabled}" usePatternFly="true" removeFormGroup="true"/>
                   </b:Column>
                 </b:Row>
               </b:Container>

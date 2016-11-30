@@ -581,6 +581,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         addVmTemplateParameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
         addVmTemplateParameters.setUpdateRngDevice(true);
         addVmTemplateParameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
+        if (vm.getDefaultDisplayType() == DisplayType.none) {
+            addVmTemplateParameters.getMasterVm().setDefaultDisplayType(DisplayType.none);
+        }
         BuilderExecutor.build(model, addVmTemplateParameters, new UnitToGraphicsDeviceParamsBuilder());
         if (model.getIsSubTemplate().getEntity()) {
             addVmTemplateParameters.setBaseTemplateId(model.getBaseTemplate().getSelectedItem().getId());
@@ -981,6 +984,10 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                         List<String> changedFields = returnValue.getReturnValue();
                         if (!changedFields.isEmpty()) {
                             VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
+                            boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
+                            if (isHeadlessModeChanged) {
+                                changedFields.add(constants.headlessMode());
+                            }
                             confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
                             confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
                             confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
@@ -1010,6 +1017,12 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
     }
 
+    private boolean isHeadlessModeChanged(VM source, VmManagementParametersBase updateVmParameters) {
+        return source.getDefaultDisplayType() != updateVmParameters.getVmStaticData().getDefaultDisplayType()
+                && (source.getDefaultDisplayType() == DisplayType.none
+                || updateVmParameters.getVmStaticData().getDefaultDisplayType() == DisplayType.none);
+    }
+
     private void saveNewVm(final UnitVmModel model) {
         setstorageDomain(model.getStorageDomain().getSelectedItem());
 
@@ -1024,6 +1037,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         parameters.setVmLargeIcon(model.getIcon().getEntity().getIcon());
         setRngDeviceToParams(model, parameters);
+        if (model.getIsHeadlessModeEnabled().getEntity()) {
+            parameters.getVmStaticData().setDefaultDisplayType(DisplayType.none);
+        }
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
 
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
@@ -1090,6 +1106,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setRngDeviceToParams(model, params);
         params.setApplyChangesLater(applyCpuChangesLater);
+        if (model.getIsHeadlessModeEnabled().getEntity()) {
+            params.getVmStaticData().setDefaultDisplayType(DisplayType.none);
+        }
         BuilderExecutor.build(model, params, new UnitToGraphicsDeviceParamsBuilder());
 
         return params;

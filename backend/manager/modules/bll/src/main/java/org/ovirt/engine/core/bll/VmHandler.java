@@ -1117,7 +1117,8 @@ public class VmHandler implements BackendService {
                 CompatibilityVersionUtils.getEffective(parametersStaticData, cluster));
 
         if (parametersStaticData.getDefaultDisplayType() != null
-                && isDisplayTypeSupported(parametersStaticData.getDefaultDisplayType(), graphicsAndDisplays)) {
+                && (parametersStaticData.getDefaultDisplayType() == DisplayType.none
+                || isDisplayTypeSupported(parametersStaticData.getDefaultDisplayType(), graphicsAndDisplays))) {
             return;
         }
 

@@ -2030,5 +2030,7 @@ public interface UIConstants extends Constants {
     String kvmBlockDomainWraning();
 
     String arbiterVolumeShouldBeReplica3();
+
+    String headlessMode();
 }
 

@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ComboBox;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
@@ -41,6 +42,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -221,6 +223,16 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     StringEntityModelPasswordBoxEditor sysPrepPasswordVerificationEditor;
 
     @UiField(provided = true)
+    @Path(value = "runOnceHeadlessModeIsSelected.entity")
+    @WithElementId("runOnceHeadlessMode")
+    EntityModelRadioButtonEditor runOnceHeadlessModeEditor;
+
+    @WithElementId
+    @Ignore
+    @UiField(provided = true)
+    public InfoIcon runOnceHeadlessModeEnabledInfoIcon;
+
+    @UiField(provided = true)
     @Path(value = "displayConsole_Vnc_IsSelected.entity")
     @WithElementId("displayConsoleVnc")
     EntityModelRadioButtonEditor displayConsoleVncEditor;
@@ -388,8 +400,12 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     }
 
     void initRadioButtonEditors() {
+        runOnceHeadlessModeEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         displayConsoleVncEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         displayConsoleSpiceEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+
+        runOnceHeadlessModeEnabledInfoIcon =
+                new InfoIcon(SafeHtmlUtils.fromTrustedString(constants.runOnceHeadlessModeExplanation()));
 
         // host tab
         specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$

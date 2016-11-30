@@ -678,7 +678,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // need to be changed due to configuration option change
         getVmDeviceUtils().updateVmDevicesOnRun(getVm().getStaticData());
 
-        updateGraphicsInfos();
+        updateGraphicsAndDisplayInfos();
 
         getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
         getVm().setAcpiEnable(getParameters().getAcpiEnable());
@@ -752,8 +752,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     /**
      * This methods sets graphics infos of a VM to correspond to graphics devices set in DB
+     * No Display Type update is needed here.
      */
-    protected void updateGraphicsInfos() {
+    protected void updateGraphicsAndDisplayInfos() {
         for (VmDevice vmDevice : vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.GRAPHICS)) {
             getVm().getGraphicsInfos().put(GraphicsType.fromString(vmDevice.getDevice()), new GraphicsInfo());
         }

@@ -290,6 +290,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getTimeZone().setIsChangeable(false);
 
             // ==Console Tab==
+            getIsHeadlessModeEnabled().setIsChangeable(false);
             getDisplayType().setIsChangeable(false);
             getGraphicsType().setIsChangeable(false);
             getUsbPolicy().setIsChangeable(false);
@@ -709,6 +710,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void setIsSmartcardEnabled(NotChangableForVmInPoolEntityModel<Boolean> value) {
         privateisSmartcardEnabled = value;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Boolean> privateIsHeadlessModeEnabled;
+
+    public EntityModel<Boolean> getIsHeadlessModeEnabled() {
+        return privateIsHeadlessModeEnabled;
+    }
+
+    private void setIsHeadlessModeEnabled(NotChangableForVmInPoolEntityModel<Boolean> value) {
+        privateIsHeadlessModeEnabled = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Boolean> isConsoleDeviceEnabled;
@@ -1502,6 +1513,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setConsoleDisconnectAction(new NotChangableForVmInPoolListModel<ConsoleDisconnectAction>());
         setIsStateless(new NotChangableForVmInPoolEntityModel<Boolean>());
         setIsRunAndPause(new NotChangableForVmInPoolEntityModel<Boolean>());
+        setIsHeadlessModeEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setIsSmartcardEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setIsDeleteProtected(new NotChangableForVmInPoolEntityModel<Boolean>());
         setSsoMethodNone(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -1857,6 +1869,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMaxMemorySize().setEntity(256 * DEFAULT_MAX_MEMORY_RATIO);
         getIsStateless().setEntity(false);
         getIsRunAndPause().setEntity(false);
+        getIsHeadlessModeEnabled().setEntity(false);
         getIsSmartcardEnabled().setEntity(false);
         isConsoleDeviceEnabled.setEntity(false);
         getIsHighlyAvailable().setEntity(false);
@@ -1972,6 +1985,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.setSavedCurrentCustomCompatibilityVersion(getCustomCompatibilityVersion().getSelectedItem());
 
                 compatibilityVersionChanged(sender, args);
+                headlessModeChanged();
             }
         } else if (ev.matchesDefinition(ListModel.selectedItemsChangedEventDefinition)) {
             if (sender == getDefaultHost()) {
@@ -1979,6 +1993,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateHaAvailability();
                 behavior.updateMigrationAvailability();
                 behavior.updateNumaEnabled();
+                headlessModeChanged();
             }
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getVmInitEnabled()) {
@@ -2029,6 +2044,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 }
             } else if (sender == getName()) {
                 autoSetHostname();
+            }
+            else if (sender == getIsHeadlessModeEnabled()) {
+                headlessModeChanged();
             }
         }
     }
@@ -2152,6 +2170,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void initGraphicsAndDisplayListeners() {
+        getIsHeadlessModeEnabled().getEntityChangedEvent().addListener(this);
         getDisplayType().getSelectedItemChangedEvent().addListener(this);
         getGraphicsType().getSelectedItemChangedEvent().addListener(this);
     }
@@ -2174,7 +2193,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         // get supported display types
         Set<DisplayType> displayTypes = new LinkedHashSet<>();
         for (Pair<GraphicsType, DisplayType> graphicsTypeDisplayTypePair : graphicsAndDisplays) {
-            displayTypes.add(graphicsTypeDisplayTypePair.getSecond());
+            if(graphicsTypeDisplayTypePair.getSecond() != DisplayType.none) {
+                displayTypes.add(graphicsTypeDisplayTypePair.getSecond());
+            }
         }
 
         // set items and set selected one
@@ -2493,6 +2514,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void upgradeGraphicsRelatedModels() {
         DisplayType display = getDisplayType().getSelectedItem();
         GraphicsTypes graphics = getGraphicsType().getSelectedItem();
+
         if (display == null || graphics == null) {
             return;
         }
@@ -2507,6 +2529,32 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getIsSmartcardEnabled().setIsChangeable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
         getVncKeyboardLayout().setIsAvailable(graphics.getBackingGraphicsTypes().contains(GraphicsType.VNC));
         updateNumOfMonitors();
+    }
+
+    private void headlessModeChanged() {
+        boolean isHeadlessEnabled = Boolean.TRUE.equals(getIsHeadlessModeEnabled().getEntity());
+        getDisplayType().setIsChangeable(!isHeadlessEnabled);
+        getGraphicsType().setIsChangeable(!isHeadlessEnabled);
+        getVncKeyboardLayout().setIsChangeable(!isHeadlessEnabled);
+        getConsoleDisconnectAction().setIsChangeable(!isHeadlessEnabled);
+        getSsoMethodNone().setIsChangeable(!isHeadlessEnabled);
+        getSsoMethodGuestAgent().setIsChangeable(!isHeadlessEnabled);
+        getAllowConsoleReconnect().setIsChangeable(!isHeadlessEnabled);
+        getSpiceProxyEnabled().setIsChangeable(!isHeadlessEnabled);
+        getSpiceProxy().setIsChangeable(!isHeadlessEnabled && getSpiceProxyEnabled().getEntity());
+        getIsSoundcardEnabled().setIsChangeable(!isHeadlessEnabled);
+
+        if (isHeadlessEnabled) {
+            getUsbPolicy().setIsChangeable(!isHeadlessEnabled);
+            getNumOfMonitors().setIsChangeable(!isHeadlessEnabled);
+            getIsSingleQxlEnabled().setIsChangeable(!isHeadlessEnabled);
+            getIsSmartcardEnabled().setIsChangeable(!isHeadlessEnabled);
+            getSpiceFileTransferEnabled().setIsChangeable(!isHeadlessEnabled);
+            getSpiceCopyPasteEnabled().setIsChangeable(!isHeadlessEnabled);
+        } else {
+            upgradeGraphicsRelatedModels();
+            updateSoundCard();
+        }
     }
 
     private void memSize_EntityChanged(Object sender, EventArgs args) {

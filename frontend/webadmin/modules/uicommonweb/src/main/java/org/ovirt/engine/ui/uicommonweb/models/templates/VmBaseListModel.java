@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -360,6 +361,9 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         parameters.setVmLargeIcon(IconUtils.filterPredefinedIcons(model.getIcon().getEntity().getIcon()));
         setVmWatchdogToParams(model, parameters);
         setRngDeviceToParams(model, parameters);
+        if (model.getIsHeadlessModeEnabled().getEntity()) {
+            parameters.getVmStaticData().setDefaultDisplayType(DisplayType.none);
+        }
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
             parameters.setVmId(new Guid(model.getVmId().getEntity()));
