@@ -3,10 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
-import org.ovirt.engine.ui.common.system.EngineRpmVersionData;
 import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
 import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
-import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
@@ -31,10 +29,6 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         HasClickHandlers getConfigureLink();
 
         HasClickHandlers getAboutLink();
-
-        HasClickHandlers getFeedbackLink();
-
-        void setFeedbackText(String feedbackText, String feedbackTitle);
     }
 
     @ContentSlot
@@ -47,8 +41,6 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     private final ScrollableTabBarPresenterWidget tabBar;
     private final Provider<AboutPopupPresenterWidget> aboutPopupProvider;
     private final Provider<ConfigurePopupPresenterWidget> configurePopupProvider;
-    private String feedbackUrl;
-    private final String feedbackLinkLabel;
     private final ApplicationDynamicMessages dynamicMessages;
 
     @Inject
@@ -64,7 +56,6 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         this.tabBar = tabBar;
         this.aboutPopupProvider = aboutPopupProvider;
         this.configurePopupProvider = configurePopupProvider;
-        this.feedbackLinkLabel = dynamicMessages.feedbackLinkLabel();
         this.dynamicMessages = dynamicMessages;
     }
 
@@ -108,22 +99,6 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
         setInSlot(TYPE_SetSearchPanel, searchPanel);
         setInSlot(TYPE_SetTabBar, tabBar);
-        configureFeedbackUrl();
-    }
-
-    private void configureFeedbackUrl() {
-        String version = EngineRpmVersionData.getVersion();
-        feedbackUrl = dynamicMessages.feedbackUrl(version);
-
-        if (feedbackUrl != null && feedbackUrl.length() > 0) {
-            getView().setFeedbackText(feedbackLinkLabel, dynamicMessages.feedbackLinkTooltip());
-            registerHandler(getView().getFeedbackLink().addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    WebUtils.openUrlInNewWindow(feedbackLinkLabel, feedbackUrl);
-                }
-            }));
-        }
     }
 
 }

@@ -68,9 +68,6 @@
                     <li>
                         <g:Anchor ui:field="aboutLink" addStyleNames="{style.topLinks}" />
                     </li>
-                    <li>
-                        <g:Anchor ui:field="feedbackLink" addStyleNames="{style.topLinks}" />
-                    </li>
                 </ul>
 
                 <g:HTMLPanel>

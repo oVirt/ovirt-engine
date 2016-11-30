@@ -33,9 +33,6 @@ public class BaseDynamicMessages implements DynamicMessages {
         APPLICATION_TITLE("application_title"), //$NON-NLS-1$
         VERSION_ABOUT("version_about"), //$NON-NLS-1$
         COPY_RIGHT_NOTICE("copy_right_notice"), //$NON-NLS-1$
-        FEEDBACK_URL("feedback_url"), //$NON-NLS-1$
-        FEEDBACK_LINK_LABEL("feedback_link_label"), //$NON-NLS-1$
-        FEEDBACK_LINK_TOOLTIP("feedback_link_tooltip"), //$NON-NLS-1$
         GUIDE_URL("guide_url"), //$NON-NLS-1$
         EXTENDED_GUIDE_URL("extended_guide_url"), //$NON-NLS-1$
         GUIDE_LINK_LABEL("guide_link_label"), //$NON-NLS-1$
@@ -211,21 +208,6 @@ public class BaseDynamicMessages implements DynamicMessages {
     @Override
     public final String copyRightNotice() {
         return getString(DynamicMessageKey.COPY_RIGHT_NOTICE);
-    }
-
-    @Override
-    public final String feedbackUrl(final String version) {
-        return formatString(DynamicMessageKey.FEEDBACK_URL, version);
-    }
-
-    @Override
-    public final String feedbackLinkLabel() {
-        return getString(DynamicMessageKey.FEEDBACK_LINK_LABEL);
-    }
-
-    @Override
-    public final String feedbackLinkTooltip() {
-        return getString(DynamicMessageKey.FEEDBACK_LINK_TOOLTIP);
     }
 
     @Override

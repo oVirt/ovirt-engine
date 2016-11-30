@@ -33,10 +33,6 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     Anchor configureLink;
 
     @UiField
-    @WithElementId
-    Anchor feedbackLink;
-
-    @UiField
     SimplePanel searchPanelContainer;
 
     @UiField
@@ -71,18 +67,4 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     public HasClickHandlers getConfigureLink() {
         return configureLink;
     }
-
-    @Override
-    public HasClickHandlers getFeedbackLink() {
-        return feedbackLink;
-    }
-
-    @Override
-    public void setFeedbackText(String feedbackText, String feedbackTitle) {
-        feedbackLink.setText(feedbackText);
-        if (feedbackTitle != null) {
-            feedbackLink.setTitle(feedbackTitle);
-        }
-    }
-
 }

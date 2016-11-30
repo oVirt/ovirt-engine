@@ -29,30 +29,6 @@ public interface DynamicMessages {
     String copyRightNotice();
 
     /**
-     * Get the feedback URL using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The feedback URL.
-     */
-    String feedbackUrl(String version);
-
-    /**
-     * Get the feedback link label using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The feedback link label.
-     */
-    String feedbackLinkLabel();
-
-    /**
-     * Get the feedback link tooltip using the {@code Dictionary} in the host page. With a fall back to the standard GWT
-     * Constant.
-     *
-     * @return The feedback link tooltip.
-     */
-    String feedbackLinkTooltip();
-
-    /**
      * Get the guide URL using the {@code Dictionary} in the host page. Uses current locale (e.g. "en_US")
      * for placeholder {0}, if it exists. With a fall back to the standard GWT Constant.
      *
