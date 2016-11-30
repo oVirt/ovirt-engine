@@ -484,4 +484,6 @@ public interface IVdsServer {
     StatusOnlyReturn glusterStopProcesses();
 
     StatusOnlyReturn sparsifyVolume(String jobId, Map<String, Object> volumeAddress);
+
+    StatusOnlyReturn amendVolume(String jobId, Map<String, Object> volInfo, Map<String, Object> volAttr);
 }
