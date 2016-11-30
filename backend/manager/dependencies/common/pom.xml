@@ -77,6 +77,18 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.xmlrpc</groupId>
+      <artifactId>xmlrpc-client</artifactId>
+      <version>${xmlrpc-client.version}</version>
+    </dependency>
+
+   <dependency>
+      <groupId>org.apache.xmlrpc</groupId>
+      <artifactId>xmlrpc-common</artifactId>
+      <version>${xmlrpc-client.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.ovirt.otopi</groupId>
       <artifactId>otopi</artifactId>
       <version>${otopi.version}</version>
@@ -311,6 +323,18 @@
                 <groupId>org.apache.ws.commons.util</groupId>
                 <artifactId>ws-commons-util</artifactId>
                 <moduleName>org.apache.ws.commons</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlrpc</groupId>
+                <artifactId>xmlrpc-client</artifactId>
+                <moduleName>org.apache.xmlrpc</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlrpc</groupId>
+                <artifactId>xmlrpc-common</artifactId>
+                <moduleName>org.apache.xmlrpc</moduleName>
               </module>
 
               <module>
