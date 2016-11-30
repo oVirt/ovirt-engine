@@ -77,6 +77,7 @@ import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkAttachment;
 import org.ovirt.engine.api.model.NetworkFilter;
+import org.ovirt.engine.api.model.NetworkFilterParameter;
 import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NumaNode;
@@ -201,6 +202,8 @@ import org.ovirt.engine.api.resource.NetworkLabelResource;
 import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
+import org.ovirt.engine.api.resource.NicNetworkFilterParameterResource;
+import org.ovirt.engine.api.resource.NicNetworkFilterParametersResource;
 import org.ovirt.engine.api.resource.OperatingSystemResource;
 import org.ovirt.engine.api.resource.OperatingSystemsResource;
 import org.ovirt.engine.api.resource.PermissionResource;
@@ -516,6 +519,9 @@ public class LinkHelper {
         map.add(TemplateNicResource.class, TemplateNicsResource.class, Template.class);
         map.add(VmNicResource.class, VmNicsResource.class, Vm.class);
         TYPES.put(Nic.class, map);
+
+        map.add(NicNetworkFilterParameterResource.class, NicNetworkFilterParametersResource.class, Nic.class);
+        TYPES.put(NetworkFilterParameter.class, map);
 
         map = new LocationByParentMap(VmNumaNodeResource.class, VmNumaNodesResource.class, Vm.class);
         TYPES.put(VirtualNumaNode.class, map);

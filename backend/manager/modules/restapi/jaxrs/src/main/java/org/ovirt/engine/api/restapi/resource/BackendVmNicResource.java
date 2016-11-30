@@ -122,8 +122,7 @@ public class BackendVmNicResource
 
     @Override
     public NicNetworkFilterParametersResource getNetworkFilterParametersResource() {
-        // TODO: Implement this.
-        return null;
+        return inject(new BackendVmNicFilterParametersResource(vmId, guid));
     }
 
     @Override
