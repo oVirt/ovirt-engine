@@ -123,14 +123,14 @@ public class InClusterUpgradeValidator {
 
     private static void putMajorVersion(Map<String, Set<Integer>> majorVersions, OS hostOs) {
         if (!majorVersions.containsKey(hostOs.getOsFamily())) {
-            majorVersions.put(hostOs.getOsFamily(), new HashSet<Integer>());
+            majorVersions.put(hostOs.getOsFamily(), new HashSet<>());
         }
         majorVersions.get(hostOs.getOsFamily()).add(hostOs.getVersion().getMajor());
     }
 
     private static void putHost(Map<String, Set<VDS>> osToHostIdMap, VDS host, OS hostOs) {
         if (!osToHostIdMap.containsKey(hostOs.getOsFamily())) {
-            osToHostIdMap.put(hostOs.getOsFamily(), new HashSet<VDS>());
+            osToHostIdMap.put(hostOs.getOsFamily(), new HashSet<>());
         }
         osToHostIdMap.get(hostOs.getOsFamily()).add(host);
     }
