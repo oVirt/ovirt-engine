@@ -316,7 +316,6 @@ public enum VdcActionType {
     RemoveStorageServerConnectionExtension(1020, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     AddStorageServerConnectionExtension(1021, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     RefreshVolume(1022, QuotaDependency.NONE),
-    TransferImage(1023, false, QuotaDependency.NONE),
     TransferDiskImage(1024, false, QuotaDependency.STORAGE),
     TransferImageStatus(1025, false, QuotaDependency.NONE),
     ScanStorageForUnregisteredDisks(1026, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
