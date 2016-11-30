@@ -17,8 +17,8 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain, Disk, StorageListModel, StorageDiskListModel>
@@ -73,13 +73,13 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
         getTable().ensureColumnPresent(
                 DisksViewColumns.bootableDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.bootableDiskColumn.getDefaultImage(),
-                        SafeHtmlUtils.fromSafeConstant(constants.bootableDisk())),
+                        constants.bootableDisk()),
                 true, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.shareableDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.shareableDiskColumn.getDefaultImage(),
-                        SafeHtmlUtils.fromSafeConstant(constants.shareable())),
+                        constants.shareable()),
                 true, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(sizeColumn, constants.provisionedSizeDisk(), true, "100px"); //$NON-NLS-1$

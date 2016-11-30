@@ -62,7 +62,7 @@ public class MenuCell<T> extends AbstractCell<T> {
     public void onBrowserEvent(Context context,
             Element parent,
             T value,
-            SafeHtml tooltipValue,
+            String tooltipValue,
             NativeEvent event,
             ValueUpdater<T> valueUpdater) {
         super.onBrowserEvent(context, parent, value, tooltipValue, event, valueUpdater);

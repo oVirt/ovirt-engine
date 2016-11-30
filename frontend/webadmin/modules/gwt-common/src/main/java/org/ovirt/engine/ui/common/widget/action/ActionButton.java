@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.action;
 
-import org.gwtbootstrap3.client.ui.constants.Placement;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HasEnabled;
@@ -15,13 +14,7 @@ public interface ActionButton extends IsWidget, HasClickHandlers, HasEnabled {
     /**
      * Sets the tooltip of this button.
      */
-    void setTooltip(SafeHtml setTooltipText);
-
-    /**
-     * Sets the tooltip of this button, setting the placement. Avoid using this --
-     * all tooltips should use the default placement where possible.
-     */
-    void setTooltip(SafeHtml setTooltipText, Placement placement);
+    void setTooltip(String tooltip);
 
     /**
      * Sets the HTML content presented when this button is enabled.

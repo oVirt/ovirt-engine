@@ -27,12 +27,12 @@ public class HostAdditionalStatusColumn extends EntityAdditionalStatusColumn<VDS
     }
 
     @Override
-    public SafeHtml getEntityTooltip(VDS object) {
+    public String getEntityTooltip(VDS object) {
         Map<SafeHtml, String> imagesToText = getSafeHtmlStringMap(object);
         if (!imagesToText.isEmpty()) {
             return MultiImageColumnHelper.getTooltip(imagesToText);
         }
-        return null;
+        return "";
     }
 
     private Map<SafeHtml, String> getSafeHtmlStringMap(VDS object) {

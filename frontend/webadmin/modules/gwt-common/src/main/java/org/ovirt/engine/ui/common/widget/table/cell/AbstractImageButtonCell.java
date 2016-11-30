@@ -58,7 +58,7 @@ public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
     }
 
     @Override
-    public void onBrowserEvent(Context context, Element parent, T value, SafeHtml tooltip, NativeEvent event, ValueUpdater<T> valueUpdater) {
+    public void onBrowserEvent(Context context, Element parent, T value, String tooltip, NativeEvent event, ValueUpdater<T> valueUpdater) {
         super.onBrowserEvent(context, parent, value, tooltip, event, valueUpdater);
 
         EventTarget eventTarget = event.getEventTarget();

@@ -8,8 +8,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeStatusCell;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class VolumeStatusColumn extends AbstractColumn<GlusterVolumeEntity, GlusterVolumeEntity> {
 
@@ -29,7 +27,7 @@ public class VolumeStatusColumn extends AbstractColumn<GlusterVolumeEntity, Glus
     }
 
     @Override
-    public SafeHtml getTooltip(GlusterVolumeEntity volume) {
+    public String getTooltip(GlusterVolumeEntity volume) {
 
         if (volume == null) {
             return null;
@@ -54,7 +52,7 @@ public class VolumeStatusColumn extends AbstractColumn<GlusterVolumeEntity, Glus
             tooltip = constants.down();
         }
 
-        return SafeHtmlUtils.fromSafeConstant(tooltip);
+        return tooltip;
 
     }
 }

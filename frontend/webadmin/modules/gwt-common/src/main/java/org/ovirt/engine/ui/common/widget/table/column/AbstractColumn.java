@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import java.util.Comparator;
 
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
+
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.cellview.client.Column;
 
 /**
@@ -100,7 +100,7 @@ public abstract class AbstractColumn<T, C> extends Column<T, C> implements Colum
 
 
     /**
-     * Default implementation of tooltip -- return null for no tooltip.
+     * Default implementation of tooltip -- return "" for no tooltip.
      *
      * Override this to set a tooltip for the column.
      *
@@ -109,8 +109,8 @@ public abstract class AbstractColumn<T, C> extends Column<T, C> implements Colum
      * @see org.ovirt.engine.ui.common.widget.table.column.TooltipColumn#getTooltip(java.lang.Object)
      */
     @Override
-    public SafeHtml getTooltip(T object) {
-        return null;
+    public String getTooltip(T object) {
+        return "";
     }
 
 }

@@ -8,14 +8,14 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
-import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
+import org.ovirt.engine.ui.common.widget.tooltip.ElementTooltipUtils;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
@@ -30,7 +30,6 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
@@ -300,20 +299,19 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         addItemToPanel(panel, item, width);
     }
 
-    protected void addTextBoxToPanel(HorizontalPanel panel, WidgetTooltip item, String text, String width) {
-        Widget w = item.getWidget();
+    protected void addTextBoxToPanel(HorizontalPanel panel, Widget w, String text, String width) {
         if (w instanceof Label) {
-            Label label = (Label) item.getWidget();
+            Label label = (Label) w;
             label.setText(text);
-            addItemToPanel(panel, item, width);
+            addItemToPanel(panel, w, width);
         }
         else if (w instanceof StringValueLabel) {
-            StringValueLabel label = (StringValueLabel) item.getWidget();
+            StringValueLabel label = (StringValueLabel) w;
             label.setValue(text);
-            addItemToPanel(panel, item, width);
+            addItemToPanel(panel, w, width);
         }
         else {
-            throw new ClassCastException("tooltipped label contains unknown Widget: " + w.getClass()); //$NON-NLS-1$
+            throw new ClassCastException("addTextBoxToPanel called with unknown Widget: " + w.getClass()); //$NON-NLS-1$
         }
     }
 
@@ -339,7 +337,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         element.getStyle().setColor("#999999"); //$NON-NLS-1$
 
         if (getNodeDisabledTooltip() != null) {
-            TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(getNodeDisabledTooltip()), element);
+            ElementTooltipUtils.setTooltipOnElement(getNodeDisabledTooltip(), element);
         }
     }
 

@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.editor.EditorStateUpdateEvent;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
-import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -91,17 +90,9 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     SimplePanel contentWidgetContainer;
 
     @UiField
-    WidgetTooltip labelTooltip;
-
-    @UiField
-    WidgetTooltip contentWidgetContainerTooltip;
-
-    @UiField
     Style style;
 
     protected String labelConfiguredTooltip = null;
-
-    protected String contentWidgetContainerConfiguredTooltip = null;
 
     // width in PX -- only used in legacy mode
     public static final int CONTENT_WIDTH_LEGACY = 230;
@@ -312,22 +303,17 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         if (editorStateValid) {
             super.markAsValid();
         }
-        labelTooltip.setText(labelConfiguredTooltip);
-        labelTooltip.reconfigure();
+        label.setTitle(labelConfiguredTooltip);
         setLabelTooltipStyle(labelConfiguredTooltip);
-        contentWidgetContainerTooltip.setText(contentWidgetContainerConfiguredTooltip);
-        contentWidgetContainerTooltip.reconfigure();
     }
 
     @Override
     public void markAsInvalid(List<String> validationHints) {
         super.markAsInvalid(validationHints);
         String tooltipText = getValidationTooltipText(validationHints);
-        labelTooltip.setText(tooltipText);
-        labelTooltip.reconfigure();
+        label.setTitle(tooltipText);
         addLabelStyleName(OvirtCss.HAS_TOOLTIP);
-        contentWidgetContainerTooltip.setText(tooltipText);
-        contentWidgetContainerTooltip.reconfigure();
+        contentWidgetContainer.setTitle(tooltipText);
     }
 
     public void setWidgetTooltip(String text) {
@@ -336,15 +322,12 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     public void setContentWidgetContainerTooltip(String tooltipText) {
-        contentWidgetContainerConfiguredTooltip = tooltipText;
-        contentWidgetContainerTooltip.setText(tooltipText);
-        contentWidgetContainerTooltip.reconfigure();
+        contentWidgetContainer.setTitle(tooltipText);
     }
 
     public void setLabelTooltip(String tooltipText) {
         labelConfiguredTooltip = tooltipText;
-        labelTooltip.setText(tooltipText);
-        labelTooltip.reconfigure();
+        label.setTitle(tooltipText);
         setLabelTooltipStyle(tooltipText);
     }
 

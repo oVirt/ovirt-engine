@@ -6,8 +6,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivityStatusCell;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class VolumeActivityStatusColumn<T extends GlusterTaskSupport> extends AbstractColumn<T, GlusterTaskSupport> {
 
@@ -23,12 +21,12 @@ public class VolumeActivityStatusColumn<T extends GlusterTaskSupport> extends Ab
     }
 
     @Override
-    public SafeHtml getTooltip(T value) {
+    public String getTooltip(T value) {
 
         // Nothing to render if no task is provided, or if task status is empty:
         if (value == null || value.getAsyncTask() == null || value.getAsyncTask().getType() == null
                 ||value.getAsyncTask().getStatus() == null) {
-            return null;
+            return "";
         }
 
 
@@ -78,7 +76,7 @@ public class VolumeActivityStatusColumn<T extends GlusterTaskSupport> extends Ab
             }
         }
 
-        return SafeHtmlUtils.fromSafeConstant(tooltip);
+        return tooltip;
     }
 
 }

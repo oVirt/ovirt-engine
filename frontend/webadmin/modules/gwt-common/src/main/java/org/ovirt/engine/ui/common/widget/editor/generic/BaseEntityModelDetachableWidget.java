@@ -4,10 +4,9 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasDetachable;
-import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
+
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.UIObject;
@@ -16,9 +15,6 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
 
     private final static CommonApplicationResources resources = AssetProvider.getResources();
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-
-    @UiField
-    WidgetTooltip tooltip;
 
     Image attachedSeparatedImage;
 
@@ -36,8 +32,6 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
     protected void initialize(UIObject decoratedWidget, Image attachedSeparatedImage, BaseStyle style) {
         this.decoratedWidget = decoratedWidget;
         this.attachedSeparatedImage = attachedSeparatedImage;
-        this.tooltip.setWidget(attachedSeparatedImage);
-        this.tooltip.reconfigure();
         this.style = style;
 
         setAttached(true);
@@ -70,8 +64,6 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
     @Override
     public void setAttached(boolean attached) {
         attachedSeparatedImage.setResource(attached ? resources.joinedIcon() : resources.separatedIcon());
-
-        tooltip.setText(attached ? constants.attachedToInstanceType() : constants.detachedFromInstanceType());
-        tooltip.reconfigure();
+        attachedSeparatedImage.setTitle(attached ? constants.attachedToInstanceType() : constants.detachedFromInstanceType());
     }
 }

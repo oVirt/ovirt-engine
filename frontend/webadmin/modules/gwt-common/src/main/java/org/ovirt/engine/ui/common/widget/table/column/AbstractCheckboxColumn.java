@@ -121,14 +121,14 @@ public abstract class AbstractCheckboxColumn<T> extends AbstractColumn<T, Boolea
     }
 
     @Override
-    public SafeHtml getTooltip(T object) {
+    public String getTooltip(T object) {
         if (!canEdit(object)) {
             String disabledMessage = getDisabledMessage(object);
             if (disabledMessage != null && !disabledMessage.isEmpty()) {
-                return SafeHtmlUtils.fromString(disabledMessage);
+                return disabledMessage;
             }
         }
-        return null;
+        return "";
     }
 
 }

@@ -20,7 +20,7 @@ public class ImageResourceHeader extends SafeHtmlHeader {
     private ImageResource headerImage;
     private boolean inline = false;
 
-    public ImageResourceHeader(ImageResource image, SafeHtml tooltipText) {
+    public ImageResourceHeader(ImageResource image, String tooltipText) {
         super(SafeHtmlUtils.fromSafeConstant(""), tooltipText); //$NON-NLS-1$
         if (image != null) {
             this.headerImage = image;
@@ -28,7 +28,7 @@ public class ImageResourceHeader extends SafeHtmlHeader {
         }
     }
 
-    public ImageResourceHeader(ImageResource image, SafeHtml tooltipText, boolean inline) {
+    public ImageResourceHeader(ImageResource image, String tooltipText, boolean inline) {
         this(image, tooltipText);
         setInline(inline);
     }

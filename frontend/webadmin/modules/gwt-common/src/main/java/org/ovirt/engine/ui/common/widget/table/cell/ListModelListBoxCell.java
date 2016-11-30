@@ -9,12 +9,12 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+
 import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.Renderer;
@@ -92,7 +92,7 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
     public void onBrowserEvent(Context context,
             Element parent,
             final ListModel model,
-            SafeHtml tooltipContent,
+            String tooltipContent,
             NativeEvent event,
             ValueUpdater<ListModel> valueUpdater) {
 

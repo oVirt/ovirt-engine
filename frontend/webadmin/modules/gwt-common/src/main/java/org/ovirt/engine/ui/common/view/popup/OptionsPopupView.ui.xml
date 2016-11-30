@@ -6,7 +6,6 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
-    <ui:with field='templates' type='org.ovirt.engine.ui.common.CommonApplicationTemplates'/>
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
     <ui:style>
@@ -44,7 +43,7 @@
                 <b:Row addStyleNames="{style.verticalSpacing}">
                     <b:Column size="LG_12">
                         <g:Label ui:field="publicKeyLabel" text="{constants.consolePublicKeyLabel}" addStyleNames="{style.inlineBlock}" />
-                        <d:InfoIcon text="{templates.consolePublicKeyMessage}" addStyleNames="{style.inlineBlock} {style.infoIcon}"/>
+                        <d:InfoIcon text="{constants.consolePublicKeyMessage}" addStyleNames="{style.inlineBlock} {style.infoIcon}"/>
                     </b:Column>
                 </b:Row>
                 <b:Row addStyleNames="{style.verticalSpacing}">

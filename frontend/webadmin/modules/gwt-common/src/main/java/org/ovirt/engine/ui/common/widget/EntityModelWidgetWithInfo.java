@@ -39,7 +39,7 @@ public class EntityModelWidgetWithInfo extends Composite implements HasValidatio
     }
 
     public void setExplanation(SafeHtml text) {
-        infoIcon.setText(text);
+        infoIcon.setTitle(text.asString());
     }
 
     @Override

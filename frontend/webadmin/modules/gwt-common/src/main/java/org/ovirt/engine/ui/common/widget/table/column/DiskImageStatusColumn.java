@@ -4,9 +4,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
+
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class DiskImageStatusColumn extends AbstractImageResourceColumn<DiskImage> {
 
@@ -28,9 +27,9 @@ public class DiskImageStatusColumn extends AbstractImageResourceColumn<DiskImage
     }
 
     @Override
-    public SafeHtml getTooltip(DiskImage diskImage) {
+    public String getTooltip(DiskImage diskImage) {
         String status = EnumTranslator.getInstance().translate(diskImage.getImageStatus());
-        return SafeHtmlUtils.fromString(status);
+        return status;
     }
 
 }

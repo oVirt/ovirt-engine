@@ -7,9 +7,8 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColum
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class StorageDomainSharedStatusColumn extends AbstractImageResourceColumn<StorageDomain> {
 
@@ -43,8 +42,8 @@ public class StorageDomainSharedStatusColumn extends AbstractImageResourceColumn
     }
 
     @Override
-    public SafeHtml getTooltip(StorageDomain sp) {
+    public String getTooltip(StorageDomain sp) {
         String tooltipContent = EnumTranslator.getInstance().translate(sp.getStorageDomainSharedStatus());
-        return SafeHtmlUtils.fromString(tooltipContent);
+        return tooltipContent;
     }
 }

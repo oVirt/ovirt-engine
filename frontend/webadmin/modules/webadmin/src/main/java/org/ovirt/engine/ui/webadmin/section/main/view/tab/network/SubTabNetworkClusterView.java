@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkClusterStatusColumn;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -161,7 +162,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                     }
 
                     @Override
-                    public SafeHtml getTooltip(PairQueryable<VDSGroup, NetworkCluster> object) {
+                    public String getTooltip(PairQueryable<VDSGroup, NetworkCluster> object) {
                         Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
                         if (object.getSecond() != null) {
                             if (object.getSecond().isManagement()) {

@@ -53,7 +53,7 @@ public class NicActivateStatusColumn<T> extends AbstractSafeHtmlColumn<T> {
     }
 
     @Override
-    public SafeHtml getTooltip(T object) {
+    public String getTooltip(T object) {
         VmNetworkInterface vnic = null;
         if (object instanceof VmNetworkInterface) {
             vnic = (VmNetworkInterface) object;
@@ -61,7 +61,7 @@ public class NicActivateStatusColumn<T> extends AbstractSafeHtmlColumn<T> {
             vnic = ((PairQueryable<VmNetworkInterface, VM>) object).getFirst();
         }
 
-        StringBuilder tooltip = new StringBuilder(""); //$NON-NLS-1$
+        StringBuilder tooltip = new StringBuilder();
         boolean vnicExist = vnic != null;
         if (vnicExist && vnic.isPlugged()) {
             tooltip =
@@ -71,7 +71,7 @@ public class NicActivateStatusColumn<T> extends AbstractSafeHtmlColumn<T> {
                     tooltip.append(templates.cardStatus(constants.unpluggedNetworkInterface()).asString());
         }
 
-        tooltip = tooltip.append("<BR>"); //$NON-NLS-1$
+        tooltip = tooltip.append("\n"); //$NON-NLS-1$
         if (vnicExist && vnic.isLinked()) {
             tooltip =
                     tooltip.append(templates.linkState(constants.linkedNetworkInterface())
@@ -82,7 +82,7 @@ public class NicActivateStatusColumn<T> extends AbstractSafeHtmlColumn<T> {
                             .asString());
         }
 
-        return SafeHtmlUtils.fromTrustedString(tooltip.toString());
+        return tooltip.toString();
     }
 
 }

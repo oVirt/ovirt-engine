@@ -785,12 +785,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             }
         });
 
-        schedulerOptimizationInfoIcon.setText(SafeHtmlUtils.fromTrustedString(
-                templates.italicText(object.getSchedulerOptimizationInfoMessage()).asString()
-                        .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
-        allowOverbookingInfoIcon.setText(SafeHtmlUtils.fromTrustedString(
-                templates.italicText(object.getAllowOverbookingInfoMessage()).asString()
-                        .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
+        schedulerOptimizationInfoIcon.setTitle(object.getSchedulerOptimizationInfoMessage());
+        allowOverbookingInfoIcon.setTitle(object.getAllowOverbookingInfoMessage());
         allowOverbookingPanel.setVisible(allowOverbookingEditor.isVisible());
 
         object.getVersion().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {

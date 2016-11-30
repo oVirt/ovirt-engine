@@ -127,13 +127,13 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
     }
 
     @Override
-    public SafeHtml getTooltip() {
-        return null;
+    public String getTooltip() {
+        return "";
     }
 
     @Override
-    public SafeHtml getMenuItemTooltip() {
-        return null;
+    public String getMenuItemTooltip() {
+        return "";
     }
 
 }

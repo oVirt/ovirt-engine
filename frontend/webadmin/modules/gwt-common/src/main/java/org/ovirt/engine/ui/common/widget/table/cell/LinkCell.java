@@ -50,7 +50,7 @@ public class LinkCell extends TextCell {
     public void onBrowserEvent(Context context,
             Element parent,
             String value,
-            SafeHtml tooltipContent,
+            String tooltipContent,
             NativeEvent event,
             ValueUpdater<String> valueUpdater) {
 

@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.widget.table.header;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-
 public interface TooltipHeader {
 
     /**
@@ -16,5 +14,5 @@ public interface TooltipHeader {
      * @param object
      * @return tooltip content
      */
-    public SafeHtml getTooltip();
+    public String getTooltip();
 }

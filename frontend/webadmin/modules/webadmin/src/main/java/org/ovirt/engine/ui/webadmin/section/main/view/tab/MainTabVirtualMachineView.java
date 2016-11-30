@@ -49,7 +49,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
@@ -306,8 +305,8 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.runVm());
+            public String getTooltip() {
+                return constants.runVm();
             }
         });
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
@@ -318,8 +317,8 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.suspendVm());
+            public String getTooltip() {
+                return constants.suspendVm();
             }
         });
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(),
@@ -330,8 +329,8 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.shutDownVm());
+            public String getTooltip() {
+                return constants.shutDownVm();
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.powerOffVm(), CommandLocation.OnlyFromContext) {
@@ -341,8 +340,8 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
+            public String getTooltip() {
+                return constants.powerOffVm();
             }
         });
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.rebootVm(),
@@ -353,8 +352,8 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.rebootVm());
+            public String getTooltip() {
+                return constants.rebootVm();
             }
         });
 
@@ -375,8 +374,8 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.consoleVm());
+            public String getTooltip() {
+                return constants.consoleVm();
             }
         }, new DropdownActionButton<>(consoleOptionsSubActions, new DropdownActionButton.SelectedItemsProvider<VM>() {
             @Override

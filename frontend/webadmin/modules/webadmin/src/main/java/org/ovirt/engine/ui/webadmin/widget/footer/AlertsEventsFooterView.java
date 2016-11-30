@@ -610,8 +610,8 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         }
 
         @Override
-        public SafeHtml getTooltip(AuditLog object) {
-            return SafeHtmlUtils.fromSafeConstant(constants.dismissEvent());
+        public String getTooltip(AuditLog object) {
+            return constants.dismissEvent();
         }
     }
 

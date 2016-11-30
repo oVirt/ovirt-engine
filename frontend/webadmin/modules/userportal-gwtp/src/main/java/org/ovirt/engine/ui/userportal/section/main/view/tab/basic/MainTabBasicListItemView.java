@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemActionBut
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
 import org.ovirt.engine.ui.userportal.widget.basic.VmPausedImage;
 import org.ovirt.engine.ui.userportal.widget.basic.VmUpMaskImage;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,7 +31,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -150,7 +150,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public HasClickHandlers addRunButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                null, resources.playIcon(), resources.playDisabledIcon(),
+                "", resources.playIcon(), resources.playDisabledIcon(),
                 style.runButtonAdditionalStyle());
         this.runButton = button;
         addButtonToPanel(button);
@@ -160,14 +160,14 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public void updateRunButton(UICommand command, boolean isPool) {
         String tooltip = isPool ? constants.takeVm() : constants.runVm();
-        runButton.setTooltip(SafeHtmlUtils.fromSafeConstant(tooltip));
+        runButton.setTooltip(tooltip);
         updateButton(runButton, command);
     }
 
     @Override
     public HasClickHandlers addShutdownButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                SafeHtmlUtils.fromSafeConstant(constants.shutdownVm()), resources.stopIcon(), resources.stopDisabledIcon(),
+                constants.shutdownVm(), resources.stopIcon(), resources.stopDisabledIcon(),
                 style.shutdownButtonAdditionalStyle());
         this.shutdownButton = button;
         addButtonToPanel(button);
@@ -182,7 +182,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public HasClickHandlers addSuspendButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                SafeHtmlUtils.fromSafeConstant(constants.suspendVm()), resources.suspendIcon(), resources.suspendDisabledIcon(),
+                constants.suspendVm(), resources.suspendIcon(), resources.suspendDisabledIcon(),
                 style.suspendButtonAdditionalStyle());
         this.suspendButton = button;
         addButtonToPanel(button);
@@ -197,7 +197,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public HasClickHandlers addRebootButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                SafeHtmlUtils.fromSafeConstant(constants.rebootVm()),
+                constants.rebootVm(),
                 resources.rebootIcon(),
                 resources.rebootDisabledIcon(),
                 style.rebootButtonAdditionalStyle());

@@ -17,8 +17,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListModel> {
 
@@ -78,10 +76,10 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                SafeHtml tooltip = null;
+            public String getTooltip() {
+                String tooltip = "";
                 if (getModel().isHotPlugAvailable() && !getModel().getIsDiskHotPlugSupported()) {
-                    tooltip = SafeHtmlUtils.fromString(constants.diskHotPlugNotSupported());
+                    tooltip = constants.diskHotPlugNotSupported();
                 }
                 return tooltip;
             }
@@ -96,10 +94,10 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                SafeHtml tooltip = null;
+            public String getTooltip() {
+                String tooltip = null;
                 if (getModel().isHotPlugAvailable() && !getModel().getIsDiskHotPlugSupported()) {
-                    tooltip = SafeHtmlUtils.fromString(constants.diskHotPlugNotSupported());
+                    tooltip = constants.diskHotPlugNotSupported();
                 }
                 return tooltip;
             }

@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.AbstractSelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.common.widget.tooltip.ElementTooltipUtils;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
@@ -348,7 +348,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
             boolean valid = StringUtils.isEmpty(error);
 
             if (!valid) {
-                TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(error), element);
+                ElementTooltipUtils.setTooltipOnElement(error, element);
                 element.addClassName(style.invalidRow());
             } else {
                 element.removeClassName(style.invalidRow());

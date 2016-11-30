@@ -112,7 +112,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                     }
 
                     @Override
-                    public SafeHtml getTooltip(NetworkView networkView) {
+                    public String getTooltip(NetworkView networkView) {
                         Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
                         if (networkView.isVmNetwork()) {
                             imagesToText.put(vmImage, constants.vmItemInfo());

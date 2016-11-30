@@ -146,11 +146,10 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                 }
 
                 @Override
-                public SafeHtml getTooltip(PairQueryable<VdsNetworkInterface, VDS> object) {
+                public String getTooltip(PairQueryable<VdsNetworkInterface, VDS> object) {
                     return object.getFirst() != null
-                            && getDetailModel().isInterfaceAttachedByLabel(object.getFirst()) ? SafeHtmlUtils.fromTrustedString(getDetailModel().getEntity()
-                            .getLabel())
-                            : null;
+                            && getDetailModel().isInterfaceAttachedByLabel(object.getFirst()) ?
+                                    getDetailModel().getEntity().getLabel() : "";
                 }
             };
 

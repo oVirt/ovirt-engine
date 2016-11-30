@@ -15,13 +15,12 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ManagePolicyUnitPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.NullableButtonCell;
+
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
@@ -79,15 +78,15 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
             }
 
             @Override
-            public SafeHtml getTooltip(PolicyUnit object) {
-                String tooltipContent = null;
+            public String getTooltip(PolicyUnit object) {
+                String tooltipContent = "";
                 if (object.isInternal()) {
                     tooltipContent = constants.internalPolicyUnit();
                 }
                 else {
                     tooltipContent = constants.externalPolicyUnit();
                 }
-                return SafeHtmlUtils.fromSafeConstant(tooltipContent);
+                return tooltipContent;
             }
         }, constants.empty(), "20px"); //$NON-NLS-1$
         policyUnitTable.addColumn(new AbstractTextColumn<PolicyUnit>() {

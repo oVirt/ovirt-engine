@@ -19,13 +19,13 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkStatusColumn;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -45,7 +45,6 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
     private final SafeHtml emptyImage;
     private final SafeHtml managementImage;
 
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
     private final static ApplicationResources resources = AssetProvider.getResources();
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -131,7 +130,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                     }
 
                     @Override
-                    public SafeHtml getTooltip(Network network) {
+                    public String getTooltip(Network network) {
                         Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
                         final NetworkCluster networkCluster = network.getCluster();
                         if (networkCluster != null) {

@@ -35,7 +35,7 @@ public abstract class EntityAdditionalStatusColumn<S> extends AbstractSafeHtmlCo
 
     protected abstract SafeHtml getEntityValue(S s);
 
-    protected abstract SafeHtml getEntityTooltip(S object);
+    protected abstract String getEntityTooltip(S object);
 
     protected abstract S getEntityObject(S object);
 
@@ -48,7 +48,7 @@ public abstract class EntityAdditionalStatusColumn<S> extends AbstractSafeHtmlCo
     }
 
     @Override
-    public SafeHtml getTooltip(S object) {
+    public String getTooltip(S object) {
         if (getEntityObject(object) == null) {
             return null;
         }

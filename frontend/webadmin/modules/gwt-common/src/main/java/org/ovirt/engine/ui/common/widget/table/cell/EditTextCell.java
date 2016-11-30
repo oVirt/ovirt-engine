@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.view.client.CellPreviewEvent;
 
@@ -39,7 +39,7 @@ public class EditTextCell extends TextCell implements EventHandlingCell {
     public void onBrowserEvent(Context context,
             Element parent,
             String value,
-            SafeHtml tooltipContent,
+            String tooltipContent,
             NativeEvent event,
             ValueUpdater<String> valueUpdater) {
 

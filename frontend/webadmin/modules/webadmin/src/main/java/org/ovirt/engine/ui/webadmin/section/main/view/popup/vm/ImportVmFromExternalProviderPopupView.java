@@ -64,8 +64,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
@@ -552,16 +550,16 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
             }
 
             @Override
-            public SafeHtml getTooltip(DiskImage object) {
+            public String getTooltip(DiskImage object) {
                 if (object.isBoot()) {
-                    return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+                    return constants.bootableDisk();
                 }
                 return null;
             }
         };
         diskTable.addColumn(bootableDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.bootableDiskColumn.getDefaultImage(),
-                        SafeHtmlUtils.fromSafeConstant(constants.bootableDisk())),
+                        constants.bootableDisk()),
                         "30px"); //$NON-NLS-1$
 
         AbstractDiskSizeColumn<DiskImage> sizeColumn = new AbstractDiskSizeColumn<DiskImage>() {

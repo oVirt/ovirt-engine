@@ -35,13 +35,12 @@ import org.ovirt.engine.ui.userportal.widget.table.UserPortalSimpleActionTable;
 import org.ovirt.engine.ui.userportal.widget.table.cell.VmButtonsImageButtonCell;
 import org.ovirt.engine.ui.userportal.widget.table.column.AbstractUserportalMaskedDataurlImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
+
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Column;
@@ -178,8 +177,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                     }
                 }) {
             @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(constants.openConsoleLabel());
+            public String getTooltip(UserPortalItemModel value) {
+                return constants.openConsoleLabel();
             }
         };
         openConsoleCell.setElementIdPrefix(elementIdPrefix);
@@ -202,8 +201,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                     }
                 }) {
             @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(constants.editConsoleLabel());
+            public String getTooltip(UserPortalItemModel value) {
+                return constants.editConsoleLabel();
             }
         };
         consoleEditCell.setElementIdPrefix(elementIdPrefix);
@@ -310,8 +309,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         AbstractImageButtonCell<UserPortalItemModel> runCell = new VmButtonsImageButtonCell(
                 resources.playIcon(), resources.playDisabledIcon()) {
             @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(value.isPool() ? constants.takeVmLabel() : constants.runVmLabel());
+            public String getTooltip(UserPortalItemModel value) {
+                return value.isPool() ? constants.takeVmLabel() : constants.runVmLabel();
             }
 
             @Override
@@ -325,8 +324,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         AbstractImageButtonCell<UserPortalItemModel> shutdownCell = new VmButtonsImageButtonCell(
                 resources.stopIcon(), resources.stopDisabledIcon()) {
             @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(value.isPool() ? constants.returnVmLabel() : constants.shutDownVm());
+            public String getTooltip(UserPortalItemModel value) {
+                return value.isPool() ? constants.returnVmLabel() : constants.shutDownVm();
             }
 
             @Override
@@ -340,8 +339,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         AbstractImageButtonCell<UserPortalItemModel> suspendCell = new VmButtonsImageButtonCell(
                 resources.suspendIcon(), resources.suspendDisabledIcon()) {
             @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(constants.suspendVmLabel());
+            public String getTooltip(UserPortalItemModel value) {
+                return constants.suspendVmLabel();
             }
 
             @Override
@@ -355,8 +354,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         AbstractImageButtonCell<UserPortalItemModel> stopCell = new VmButtonsImageButtonCell(
                 resources.powerIcon(), resources.powerDisabledIcon()) {
             @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
+            public String getTooltip(UserPortalItemModel value) {
+                return constants.powerOffVm();
             }
 
             @Override
@@ -371,8 +370,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 resources.rebootIcon(), resources.rebootDisabledIcon()) {
 
             @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(constants.rebootVm());
+            public String getTooltip(UserPortalItemModel value) {
+                return constants.rebootVm();
             }
 
             @Override

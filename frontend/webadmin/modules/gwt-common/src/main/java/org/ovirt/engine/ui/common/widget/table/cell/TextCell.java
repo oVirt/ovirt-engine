@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.utils.ElementUtils;
 import org.ovirt.engine.ui.common.widget.table.HasStyleClass;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -32,7 +33,7 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
         SafeHtml textContainerWithDetection(String style, String id, SafeHtml text);
 
         @Template("<div class=\"{0}\" id=\"{1}\">{2}</div>")
-        SafeHtml textContainer(String style, String id, SafeHtml text);
+        SafeHtml textContainer(String style, String id, String text);
     }
 
     private String styleClass = ""; //$NON-NLS-1$
@@ -80,7 +81,7 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
             SafeHtml safeHtmlValue = SafeHtmlUtils.fromString(value);
             if (maxTextLength >= 0) {
                 // using manual truncation
-                SafeHtml renderedValue = getRenderedValue(safeHtmlValue);
+                String renderedValue = getRenderedValue(safeHtmlValue.asString());
                 sb.append(template.textContainer(getStyleClass(),
                         ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context),
                         renderedValue));
@@ -95,38 +96,38 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
                 // no truncation at all
                 sb.append(template.textContainer(getStyleClass(),
                         ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context),
-                        SafeHtmlUtils.fromString(value)));
+                        value));
             }
         }
     }
 
-    public SafeHtml renderTooltip(Context context, Element parent, String value) {
+    public String renderTooltip(Context context, Element parent, String value) {
         if (value != null) {
-            SafeHtml safeHtmlValue = SafeHtmlUtils.fromString(value);
             if (maxTextLength >= 0) {
-                SafeHtml renderedValue = getRenderedValue(safeHtmlValue);
+                String renderedValue = getRenderedValue(value);
                 // only render a tooltip if the text actually got truncated
-                if (!safeHtmlValue.equals(renderedValue)) {
-                    return safeHtmlValue;
+                if (!value.equals(renderedValue)) {
+                    return value;
                 }
             }
             // render a value if there was overflow detected
             else if (contentOverflows(parent.getFirstChildElement())) {
-                return safeHtmlValue;
+                return value;
             }
         }
-        return null;
+        return "";
     }
 
-    public void onBrowserEvent(Context context, Element parent, String value, SafeHtml tooltipContent,
+    public void onBrowserEvent(Context context, Element parent, String value, String tooltipContent,
             NativeEvent event, ValueUpdater<String> valueUpdater) {
 
         // if a tooltip was provided, use it.
         // else, see if we need to render a tooltip for purposes of showing the full string that
         // was truncated.
 
-        if (tooltipContent == null || tooltipContent.asString().isEmpty()) {
-            tooltipContent = renderTooltip(context, parent, value);
+        if (tooltipContent == null || tooltipContent.isEmpty()) {
+            String renderedTooltip = renderTooltip(context, parent, value);
+            tooltipContent = renderedTooltip;
         }
 
         super.onBrowserEvent(context, parent, value, tooltipContent, event, valueUpdater);
@@ -135,8 +136,8 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
     /**
      * Returns the (possibly truncated) value rendered by this cell.
      */
-    private SafeHtml getRenderedValue(SafeHtml value) {
-        String result = value.asString();
+    private String getRenderedValue(String value) {
+        String result = value;
 
         // Check if the text needs to be shortened
         if (maxTextLength > 0 && result.length() > maxTextLength) {
@@ -144,7 +145,7 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
             result = result + ELLIPSE;
         }
 
-        return SafeHtmlUtils.fromTrustedString(result);
+        return result;
     }
 
     /**

@@ -4,8 +4,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class DiskContainersColumn extends AbstractTextColumn<Disk> implements ColumnWithElementId {
 
@@ -34,11 +32,11 @@ public class DiskContainersColumn extends AbstractTextColumn<Disk> implements Co
     }
 
     @Override
-    public SafeHtml getTooltip(Disk object) {
+    public String getTooltip(Disk object) {
         if (object.getNumberOfVms() < 2) {
             return null;
         }
-        return SafeHtmlUtils.fromString(StringUtils.join(object.getVmNames(), ", ")); //$NON-NLS-1$
+        return StringUtils.join(object.getVmNames(), ", "); //$NON-NLS-1$
     }
 
 }

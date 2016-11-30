@@ -18,7 +18,7 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
 
     private SafeHtml headerText;
     private SafeHtml renderedHeaderText;
-    private SafeHtml tooltipText;
+    private String tooltipText;
 
     public static final SafeHtmlHeader BLANK_HEADER = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("")); //$NON-NLS-1$
 
@@ -34,11 +34,11 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
         this(headerText, null, safeHtmlCell);
     }
 
-    public SafeHtmlHeader(SafeHtml headerText, SafeHtml tooltipText) {
+    public SafeHtmlHeader(SafeHtml headerText, String tooltipText) {
         this(headerText, tooltipText, createSafeHtmlCell());
     }
 
-    public SafeHtmlHeader(SafeHtml headerText, SafeHtml tooltipText, SafeHtmlCell safeHtmlCell) {
+    public SafeHtmlHeader(SafeHtml headerText, String tooltipText, SafeHtmlCell safeHtmlCell) {
         super(safeHtmlCell);
         setValue(headerText);
         setTooltip(tooltipText);
@@ -64,7 +64,7 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
     }
 
     @Override
-    public SafeHtml getTooltip() {
+    public String getTooltip() {
         return tooltipText;
     }
 
@@ -82,7 +82,7 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
         setHeaderTooltipStyle(this.tooltipText);
     }
 
-    protected void setTooltip(SafeHtml tooltipText) {
+    protected void setTooltip(String tooltipText) {
         this.tooltipText = tooltipText;
         setHeaderTooltipStyle(tooltipText);
     }
@@ -90,8 +90,8 @@ public class SafeHtmlHeader extends AbstractHeader<SafeHtml> implements ColumnWi
     /**
      * Toggle the header tooltip style (to give a visual clue that this header can be hovered over).
      */
-    protected void setHeaderTooltipStyle(SafeHtml tooltipText) {
-        if (tooltipText == null || tooltipText.asString().isEmpty()) {
+    protected void setHeaderTooltipStyle(String tooltipText) {
+        if (tooltipText == null || tooltipText.isEmpty()) {
             renderedHeaderText = this.headerText;
         }
         else {

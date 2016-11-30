@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.common.widget.tooltip.ElementTooltipUtils;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.Cell.Context;
@@ -29,7 +29,7 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
             @Override
             public Set<String> getConsumedEvents() {  // override this to add MOUSEMOVE for mouse cursor changes
                 Set<String> set = new HashSet<String>();
-                TooltipMixin.addTooltipsEvents(set);
+                ElementTooltipUtils.addTooltipsEvents(set);
                 set.add(BrowserEvents.CHANGE);
                 set.add(BrowserEvents.KEYDOWN);
                 set.add(BrowserEvents.MOUSEMOVE);
@@ -54,7 +54,7 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
         }
 
         if (getLabel() != null) {
-            if (SafeHtmlUtils.EMPTY_SAFE_HTML.equals(getTooltip())) {
+            if ("".equals(getTooltip())) {
                 ((CheckboxCell) getCell()).setLabel(SafeHtmlUtils.fromString(getLabel()));
             } else {
                 ((CheckboxCell) getCell()).setLabel(templates.hasTooltip(SafeHtmlUtils.fromString(getLabel())));
@@ -93,8 +93,8 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
     abstract public boolean isEnabled();
 
     @Override
-    public SafeHtml getTooltip() {
-        return SafeHtmlUtils.EMPTY_SAFE_HTML;
+    public String getTooltip() {
+        return "";
     };
 
 }

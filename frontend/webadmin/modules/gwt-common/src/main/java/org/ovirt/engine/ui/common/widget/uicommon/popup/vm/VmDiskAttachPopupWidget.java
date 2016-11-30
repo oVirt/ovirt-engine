@@ -40,7 +40,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -210,7 +209,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         imageDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "95px"); //$NON-NLS-1$
 
         imageDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn,
-                new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
+                new ImageResourceHeader(resources.readOnlyDiskIcon(), constants.readOnly()),
                 "30px"); //$NON-NLS-1$
 
         imageDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
@@ -221,14 +220,14 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
             }
 
             @Override
-            public SafeHtml getTooltip(EntityModel object) {
+            public String getTooltip(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
                 if (disk.isBoot()) {
-                    return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+                    return constants.bootableDisk();
                 }
-                return null;
+                return "";
             }
-        }, new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootable())),
+        }, new ImageResourceHeader(resources.bootableDiskIcon(), constants.bootable()),
         "30px"); //$NON-NLS-1$
 
         imageDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
@@ -239,14 +238,14 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
             }
 
             @Override
-            public SafeHtml getTooltip(EntityModel object) {
+            public String getTooltip(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
                 if (disk.isShareable()) {
-                    return SafeHtmlUtils.fromSafeConstant(constants.shareable());
+                    return constants.shareable();
                 }
-                return null;
+                return "";
             }
-        }, new ImageResourceHeader(resources.shareableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.shareable())),
+        }, new ImageResourceHeader(resources.shareableDiskIcon(), constants.shareable()),
                 "30px"); //$NON-NLS-1$
 
         imageDiskTable.setWidth("100%", true); //$NON-NLS-1$
@@ -347,7 +346,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         lunDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "90px"); //$NON-NLS-1$
 
         lunDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn,
-                new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
+                new ImageResourceHeader(resources.readOnlyDiskIcon(), constants.readOnly()),
                 "30px"); //$NON-NLS-1$
 
         lunDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
@@ -358,14 +357,14 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
             }
 
             @Override
-            public SafeHtml getTooltip(EntityModel object) {
+            public String getTooltip(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
                 if (disk.isBoot()) {
-                    return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+                    return constants.bootableDisk();
                 }
-                return null;
+                return "";
             }
-        }, new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootable())),
+        }, new ImageResourceHeader(resources.bootableDiskIcon(), constants.bootable()),
                 "30px"); //$NON-NLS-1$
 
         lunDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
@@ -376,14 +375,14 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
             }
 
             @Override
-            public SafeHtml getTooltip(EntityModel object) {
+            public String getTooltip(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
                 if (disk.isShareable()) {
-                    return SafeHtmlUtils.fromSafeConstant(constants.shareable());
+                    return constants.shareable();
                 }
                 return null;
             }
-        }, new ImageResourceHeader(resources.shareableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.shareable())),
+        }, new ImageResourceHeader(resources.shareableDiskIcon(), constants.shareable()),
                 "30px"); //$NON-NLS-1$
 
         lunDiskTable.setWidth("100%", true); //$NON-NLS-1$
@@ -439,7 +438,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         cinderDiskTable.addColumn(cinderVolumeTypeColumn, constants.cinderVolumeTypeDisk(), "90px"); //$NON-NLS-1$
 
         cinderDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn,
-                new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
+                new ImageResourceHeader(resources.readOnlyDiskIcon(), constants.readOnly()),
                 "30px"); //$NON-NLS-1$
 
         cinderDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
@@ -450,14 +449,14 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                                    }
 
                                    @Override
-                                   public SafeHtml getTooltip(EntityModel object) {
+                                   public String getTooltip(EntityModel object) {
                                        Disk disk = (((DiskModel) (object.getEntity())).getDisk());
                                        if (disk.isBoot()) {
-                                           return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+                                           return constants.bootableDisk();
                                        }
                                        return null;
                                    }
-                               }, new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootable())),
+                               }, new ImageResourceHeader(resources.bootableDiskIcon(), constants.bootable()),
                 "30px"); //$NON-NLS-1$
 
         cinderDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
@@ -468,14 +467,14 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                                    }
 
                                    @Override
-                                   public SafeHtml getTooltip(EntityModel object) {
+                                   public String getTooltip(EntityModel object) {
                                        Disk disk = (((DiskModel) (object.getEntity())).getDisk());
                                        if (disk.isShareable()) {
-                                           return SafeHtmlUtils.fromSafeConstant(constants.shareable());
+                                           return constants.shareable();
                                        }
                                        return null;
                                    }
-                               }, new ImageResourceHeader(resources.shareableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.shareable())),
+                               }, new ImageResourceHeader(resources.shareableDiskIcon(), constants.shareable()),
                 "30px"); //$NON-NLS-1$
 
         cinderDiskTable.setWidth("100%", true); //$NON-NLS-1$

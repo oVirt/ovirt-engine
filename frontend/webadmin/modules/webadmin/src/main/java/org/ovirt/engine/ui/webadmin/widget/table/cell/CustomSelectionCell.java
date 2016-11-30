@@ -73,7 +73,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
 
     @Override
     public void onBrowserEvent(Context context, Element parent, String value,
-            SafeHtml tooltipContent, NativeEvent event, ValueUpdater<String> valueUpdater) {
+            String tooltipContent, NativeEvent event, ValueUpdater<String> valueUpdater) {
         super.onBrowserEvent(context, parent, value, tooltipContent, event, valueUpdater);
         String type = event.getType();
         if (BrowserEvents.CHANGE.equals(type)) {

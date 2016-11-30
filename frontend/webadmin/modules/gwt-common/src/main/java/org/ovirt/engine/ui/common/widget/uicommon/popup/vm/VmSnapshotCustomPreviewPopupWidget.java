@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -166,7 +167,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
         });
 
         previewTable.addColumn(vmConfColumn,
-                new ImageResourceHeader(resources.vmConfIcon(), SafeHtmlUtils.fromTrustedString(constants.vmConfiguration())),
+                new ImageResourceHeader(resources.vmConfIcon(), constants.vmConfiguration()),
                 "30px"); //$NON-NLS-1$
 
         AbstractCheckboxColumn<SnapshotModel> memoryColumn = new AbstractCheckboxColumn<SnapshotModel>(
@@ -251,20 +252,19 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 }
 
                 @Override
-                public SafeHtml getTooltip(SnapshotModel model) {
+                public String getTooltip(SnapshotModel model) {
                     if (disk != null && disk.getId() != null) {
                         DiskImage image = model.getImageByDiskId(disk.getId());
                         if (image != null && image.getImageStatus() == ImageStatus.ILLEGAL) {
-                            return SafeHtmlUtils.fromSafeConstant(constants.illegalStatus());
+                            return constants.illegalStatus();
                         }
                     }
-                    return null;
+                    return "";
                 }
             },
 
             new SafeHtmlHeader(templates.iconWithText(imageResourceToSafeHtml(resources.diskIcon()), disk.getDiskAlias()),
-                    SafeHtmlUtils.fromString(disk.getId().toString())),
-                    "120px"); //$NON-NLS-1$
+                    disk.getId().toString()), "120px"); //$NON-NLS-1$
 
             // Edit preview table
             previewTable.asEditor().edit(previewSnapshotModel.getSnapshots());

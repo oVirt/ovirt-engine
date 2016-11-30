@@ -61,7 +61,7 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
 
     @Override
     public void onBrowserEvent(Context context, Element parent,
-            final UserPortalItemModel model, SafeHtml tooltip, NativeEvent event,
+            final UserPortalItemModel model, String tooltip, NativeEvent event,
             ValueUpdater<UserPortalItemModel> valueUpdater) {
         super.onBrowserEvent(context, parent, model, tooltip, event, valueUpdater);
 

@@ -96,7 +96,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 new DisplayNetworkIndicatorCheckboxColumn(multiCluster,
                         new DisplayNetworkIndicatorFieldUpdater()),
                 new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(constants.displayNetwork()),
-                        SafeHtmlUtils.fromSafeConstant(constants.changeDisplayNetworkWarning())),
+                        constants.changeDisplayNetworkWarning()),
                 "100px"); //$NON-NLS-1$
 
         networks.addColumn(
@@ -169,7 +169,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
 
         @Override
-        public SafeHtml getTooltip(ClusterNetworkModel clusterNetworkModel) {
+        public String getTooltip(ClusterNetworkModel clusterNetworkModel) {
             return MultiImageColumnHelper.getTooltip(clusterNetworkModel.isVmNetwork() ?
                     Collections.singletonMap(vmImage, constants.vmItemInfo())
                     : Collections.<SafeHtml, String>emptyMap());

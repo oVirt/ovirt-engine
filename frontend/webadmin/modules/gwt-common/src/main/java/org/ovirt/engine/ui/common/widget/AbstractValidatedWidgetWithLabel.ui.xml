@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip"
 xmlns:b="urn:import:org.gwtbootstrap3.client.ui" >
 
     <ui:style type="org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel.Style">
@@ -31,12 +30,8 @@ xmlns:b="urn:import:org.gwtbootstrap3.client.ui" >
     </ui:style>
 
     <g:HTMLPanel ui:field="wrapperPanel">
-        <t:WidgetTooltip ui:field="labelTooltip">
-            <b:FormLabel ui:field="label"/>
-        </t:WidgetTooltip>
-        <t:WidgetTooltip ui:field="contentWidgetContainerTooltip">
-            <g:SimplePanel ui:field="contentWidgetContainer" />
-        </t:WidgetTooltip>
+        <b:FormLabel ui:field="label"/>
+        <g:SimplePanel ui:field="contentWidgetContainer" />
         <div style="clear: both;" />
     </g:HTMLPanel>
 

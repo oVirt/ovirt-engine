@@ -52,7 +52,7 @@ public abstract class AbstractToggleButtonCell<T> extends AbstractCell<T> {
     public void onBrowserEvent(Context context,
                                Element parent,
                                T model,
-                               SafeHtml tooltipContent,
+                               String tooltipContent,
                                NativeEvent event,
                                ValueUpdater<T> valueUpdater) {
 

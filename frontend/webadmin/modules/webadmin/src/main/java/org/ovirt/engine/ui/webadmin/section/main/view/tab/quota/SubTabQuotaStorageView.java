@@ -18,9 +18,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, QuotaStorage, QuotaListModel, QuotaStorageListModel>
         implements SubTabQuotaStoragePresenter.ViewDef {
@@ -78,8 +77,8 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
             }
 
             @Override
-            public SafeHtml getTooltip(QuotaStorage object) {
-                return SafeHtmlUtils.fromSafeConstant(constants.quotaCalculationsMessage());
+            public String getTooltip(QuotaStorage object) {
+                return constants.quotaCalculationsMessage();
             }
 
         };

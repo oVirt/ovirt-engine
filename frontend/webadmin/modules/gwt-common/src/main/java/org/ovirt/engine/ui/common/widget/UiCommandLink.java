@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.gwtbootstrap3.client.ui.Anchor;
-import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -17,9 +16,6 @@ public class UiCommandLink extends AbstractUiCommandButton implements Focusable 
 
     @UiField
     Anchor anchor;
-
-    @UiField
-    WidgetTooltip tooltip;
 
     public UiCommandLink() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -58,8 +54,7 @@ public class UiCommandLink extends AbstractUiCommandButton implements Focusable 
     @Override
     protected void updateButton() {
         super.updateButton();
-        tooltip.setText(buildTooltipText());
-        tooltip.reconfigure();
+        anchor.setTitle(buildTooltipText());
     }
 
     /**

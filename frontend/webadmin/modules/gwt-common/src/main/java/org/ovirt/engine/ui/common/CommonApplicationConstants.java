@@ -2301,4 +2301,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Please have your administrator check the UI logs")
     String checkUiLogs();
+
+    @DefaultStringValue("Specify public key for SSH authentication. Used to access guest serial console.")
+    String consolePublicKeyMessage();
 }

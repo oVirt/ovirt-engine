@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-
 public interface TooltipColumn<T> {
 
     /**
@@ -17,5 +15,5 @@ public interface TooltipColumn<T> {
      * @param object
      * @return tooltip content
      */
-    public SafeHtml getTooltip(T object);
+    public String getTooltip(T object);
 }

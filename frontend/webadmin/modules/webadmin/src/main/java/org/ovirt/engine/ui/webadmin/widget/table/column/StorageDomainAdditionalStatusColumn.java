@@ -27,7 +27,7 @@ public class StorageDomainAdditionalStatusColumn extends EntityAdditionalStatusC
     }
 
     @Override
-    public SafeHtml getEntityTooltip(StorageDomain object) {
+    public String getEntityTooltip(StorageDomain object) {
         Map<SafeHtml, String> imagesToText = getSafeHtmlStringMap(object);
         if (!imagesToText.isEmpty()) {
             return MultiImageColumnHelper.getTooltip(imagesToText);

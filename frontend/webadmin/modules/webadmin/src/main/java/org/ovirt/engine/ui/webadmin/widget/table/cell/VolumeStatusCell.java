@@ -52,7 +52,7 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
     public void onBrowserEvent(Context context,
             Element parent,
             GlusterVolumeEntity volume,
-            SafeHtml tooltipContent,
+            String tooltipContent,
             NativeEvent event, ValueUpdater<GlusterVolumeEntity> valueUpdater) {
         VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
         if (BrowserEvents.CLICK.equals(event.getType()) && onClickCommand != null && (status == VolumeStatus.ALL_BRICKS_DOWN || status == VolumeStatus.SOME_BRICKS_DOWN)) {

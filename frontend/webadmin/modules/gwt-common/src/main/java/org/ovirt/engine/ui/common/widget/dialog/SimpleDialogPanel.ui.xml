@@ -122,13 +122,11 @@ xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
                 </g:SimplePanel>
                 <g:FlowPanel addStyleNames="{style.obrand_dialogHeaderTitleContainer}">
                     <g:FlowPanel ui:field="headerTitlePanel">
-                        <t:WidgetTooltip ui:field="helpIconButtonTooltip">
-                            <g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton}" visible="false">
-                                <g:upFace image='{resources.dialogIconHelp}' />
-                                <g:downFace image='{resources.dialogIconHelpDown}' />
-                                <g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
-                            </g:PushButton>
-                        </t:WidgetTooltip>
+                        <g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton}" visible="false">
+                            <g:upFace image='{resources.dialogIconHelp}' />
+                            <g:downFace image='{resources.dialogIconHelpDown}' />
+                            <g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
+                        </g:PushButton>
                     </g:FlowPanel>
                 </g:FlowPanel>
             </g:FlowPanel>

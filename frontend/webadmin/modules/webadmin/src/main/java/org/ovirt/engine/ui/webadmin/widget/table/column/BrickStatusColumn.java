@@ -8,8 +8,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.BrickStatusCell;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class BrickStatusColumn extends AbstractColumn<GlusterBrickEntity, GlusterBrickEntity> {
 
@@ -34,9 +32,9 @@ public class BrickStatusColumn extends AbstractColumn<GlusterBrickEntity, Gluste
     }
 
     @Override
-    public SafeHtml getTooltip(GlusterBrickEntity brick) {
+    public String getTooltip(GlusterBrickEntity brick) {
         GlusterStatus status = brick.getStatus();
-        String tooltip = null;
+        String tooltip = "";
 
         switch (status) {
         case DOWN:
@@ -52,7 +50,7 @@ public class BrickStatusColumn extends AbstractColumn<GlusterBrickEntity, Gluste
             tooltip = constants.down();
         }
 
-        return SafeHtmlUtils.fromSafeConstant(tooltip);
+        return tooltip;
 
     }
 }

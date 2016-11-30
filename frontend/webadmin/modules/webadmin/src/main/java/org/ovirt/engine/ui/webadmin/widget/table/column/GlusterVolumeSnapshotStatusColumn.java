@@ -8,8 +8,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.GlusterVolumeSnapshotStatusCell;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class GlusterVolumeSnapshotStatusColumn extends AbstractColumn<GlusterVolumeSnapshotEntity, GlusterVolumeSnapshotEntity> {
 
@@ -34,10 +32,10 @@ public class GlusterVolumeSnapshotStatusColumn extends AbstractColumn<GlusterVol
     }
 
     @Override
-    public SafeHtml getTooltip(GlusterVolumeSnapshotEntity snapshot) {
+    public String getTooltip(GlusterVolumeSnapshotEntity snapshot) {
         // Nothing to render if no snapshot is provided:
         if (snapshot == null) {
-            return null;
+            return "";
         }
 
         // Find the image corresponding to the status of the brick:
@@ -58,6 +56,6 @@ public class GlusterVolumeSnapshotStatusColumn extends AbstractColumn<GlusterVol
             tooltip = constants.down();
         }
 
-        return SafeHtmlUtils.fromSafeConstant(tooltip);
+        return tooltip;
     }
 }

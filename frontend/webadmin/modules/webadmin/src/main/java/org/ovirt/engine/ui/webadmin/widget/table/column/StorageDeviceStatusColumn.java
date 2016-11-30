@@ -6,9 +6,8 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class StorageDeviceStatusColumn extends AbstractImageResourceColumn<StorageDevice> {
 
@@ -29,10 +28,10 @@ public class StorageDeviceStatusColumn extends AbstractImageResourceColumn<Stora
     }
 
     @Override
-    public SafeHtml getTooltip(StorageDevice device) {
+    public String getTooltip(StorageDevice device) {
         if (device.getCanCreateBrick()) {
             return null;
         }
-        return SafeHtmlUtils.fromSafeConstant(constants.deviceIsAlreadyUsed());
+        return constants.deviceIsAlreadyUsed();
     }
 }

@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.common.widget.tooltip.ElementTooltipUtils;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 
@@ -32,7 +32,7 @@ public abstract class AbstractCell<C> extends com.google.gwt.cell.client.Abstrac
     @Override
     public Set<String> getConsumedEvents() {
         Set<String> set = new HashSet<String>();
-        TooltipMixin.addTooltipsEvents(set);
+        ElementTooltipUtils.addTooltipsEvents(set);
         return set;
     }
 
@@ -56,13 +56,17 @@ public abstract class AbstractCell<C> extends com.google.gwt.cell.client.Abstrac
      * @see org.ovirt.engine.ui.common.widget.table.cell.Cell#onBrowserEvent(com.google.gwt.cell.client.Cell.Context, com.google.gwt.dom.client.Element, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtml, com.google.gwt.dom.client.NativeEvent, com.google.gwt.cell.client.ValueUpdater)
      */
     public void onBrowserEvent(Context context, Element parent, C value,
-            SafeHtml tooltipContent, NativeEvent event, ValueUpdater<C> valueUpdater) {
+            String tooltipContent, NativeEvent event, ValueUpdater<C> valueUpdater) {
 
+        String tooltip = "";
         // if the Column did not provide a tooltip, give the Cell a chance to render one using the cell value C
         if (tooltipContent == null) {
             tooltipContent = getTooltip(value);
         }
-        TooltipMixin.handleTooltipEvent(parent, tooltipContent, event);
+        if (tooltipContent != null) {
+            tooltip = tooltipContent;
+        }
+        ElementTooltipUtils.setTooltipOnElement(tooltip, parent);
 
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
     }
@@ -72,7 +76,7 @@ public abstract class AbstractCell<C> extends com.google.gwt.cell.client.Abstrac
      * did not provide a tooltip. This is usually only used when there is a Composite Column that
      * contains multiple Cells, but each Cell needs its own tooltip.
      */
-    public SafeHtml getTooltip(C value) {
+    public String getTooltip(C value) {
         return null;
     }
 

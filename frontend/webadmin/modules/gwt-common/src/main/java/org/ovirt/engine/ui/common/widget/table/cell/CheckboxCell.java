@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.common.widget.tooltip.ElementTooltipUtils;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.ValueUpdater;
@@ -14,7 +14,6 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.DOM;
 
 /**
@@ -38,7 +37,7 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
     private String elementIdPrefix = DOM.createUniqueId(); // default
     private String columnId;
     private SafeHtml label;
-    private SafeHtml tooltip = SafeHtmlUtils.EMPTY_SAFE_HTML;
+    private String tooltip;
     private String additionalStyles;
 
     public CheckboxCell(boolean dependsOnSelection, boolean handlesSelection) {
@@ -92,7 +91,7 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
     @Override
     public Set<String> getConsumedEvents() {
         Set<String> set = new HashSet<String>();
-        TooltipMixin.addTooltipsEvents(set);
+        ElementTooltipUtils.addTooltipsEvents(set);
         set.addAll(super.getConsumedEvents());
         return set;
     }
@@ -140,26 +139,29 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
     /**
      * Handle events for this cell.
      *
-     * @see org.ovirt.engine.ui.common.widget.table.cell.Cell#onBrowserEvent(com.google.gwt.cell.client.Cell.Context, com.google.gwt.dom.client.Element, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtml, com.google.gwt.dom.client.NativeEvent, com.google.gwt.cell.client.ValueUpdater)
      */
     @Override
     public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent,
-            Boolean value, SafeHtml tooltipContent, NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
+            Boolean value, String tooltipContent, NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
 
         // if the Column did not provide a tooltip, give the Cell a chance to render one using the cell value C
+        String tooltip;
         if (tooltipContent == null) {
-            tooltipContent = getTooltip(value);
+            tooltip = getTooltip(value);
         }
-        TooltipMixin.handleTooltipEvent(parent, tooltipContent, event);
+        else {
+            tooltip = tooltipContent;
+        }
+        ElementTooltipUtils.setTooltipOnElement(tooltip, parent);
 
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
     }
 
-    public SafeHtml getTooltip(Boolean value) {
+    public String getTooltip(Boolean value) {
         return tooltip;
     }
 
-    public void setTooltip(SafeHtml tooltip) {
+    public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
     }
 }

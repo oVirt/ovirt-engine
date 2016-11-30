@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.action;
 import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+
 import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.logical.shared.InitializeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -11,7 +12,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ImageResource.ImageOptions;
-import com.google.gwt.safehtml.shared.SafeHtml;
 
 public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonDefinition<T> {
 
@@ -120,7 +120,7 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
     }
 
     @Override
-    public SafeHtml getMenuItemTooltip() {
+    public String getMenuItemTooltip() {
         return null;
     }
 

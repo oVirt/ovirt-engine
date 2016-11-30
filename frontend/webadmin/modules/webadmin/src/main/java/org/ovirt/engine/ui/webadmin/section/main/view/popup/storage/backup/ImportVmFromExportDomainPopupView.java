@@ -51,6 +51,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
+
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
@@ -61,8 +62,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
@@ -251,7 +250,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             }
 
             @Override
-            public SafeHtml getTooltip(Object object) {
+            public String getTooltip(Object object) {
                 ImportVmData importVmData = ((ImportVmData) object);
                 String problem = null;
                 if (importVmData.getError() != null) {
@@ -261,7 +260,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                             ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason()
                             : importVmData.getWarning();
                 }
-                return problem != null ? SafeHtmlUtils.fromSafeConstant(problem) : null;
+                return problem != null ? problem : "";
             }
         };
         table.addColumn(isProblematicImportVmColumn, constants.empty(), "20px"); //$NON-NLS-1$
@@ -301,10 +300,10 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             }
 
             @Override
-            public SafeHtml getTooltip(Object object) {
-                SafeHtml superTooltip = super.getTooltip(object);
+            public String getTooltip(Object object) {
+                String superTooltip = super.getTooltip(object);
                 if (superTooltip == null) {
-                    return SafeHtmlUtils.fromSafeConstant(constants.importAllocationModifiedCollapse());
+                    return constants.importAllocationModifiedCollapse();
                 }
                 return superTooltip;
             }
@@ -476,16 +475,16 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             }
 
             @Override
-            public SafeHtml getTooltip(DiskImage object) {
+            public String getTooltip(DiskImage object) {
                 if (object.isBoot()) {
-                    return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+                    return constants.bootableDisk();
                 }
                 return null;
             }
         };
         diskTable.addColumn(bootableDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.bootableDiskColumn.getDefaultImage(),
-                        SafeHtmlUtils.fromSafeConstant(constants.bootableDisk())),
+                        constants.bootableDisk()),
                         "30px"); //$NON-NLS-1$
 
         AbstractDiskSizeColumn<DiskImage> sizeColumn = new AbstractDiskSizeColumn<DiskImage>() {
@@ -541,8 +540,8 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             }
 
             @Override
-            public SafeHtml getTooltip(DiskImage object) {
-                return SafeHtmlUtils.fromSafeConstant(constants.importAllocationModifiedCollapse());
+            public String getTooltip(DiskImage object) {
+                return constants.importAllocationModifiedCollapse();
             }
         };
 

@@ -88,42 +88,42 @@ public class VmDeviceGeneralTypeColumn<T> extends AbstractSafeHtmlColumn<T> {
     }
 
     @Override
-    public SafeHtml getTooltip(T object) {
+    public String getTooltip(T object) {
         VmDevice device = getDeviceFromObject(object);
         if (device != null) {
             switch (device.getType()) {
             case DISK:
-                return SafeHtmlUtils.fromTrustedString(constants.diskDeviceGeneralType());
+                return constants.diskDeviceGeneralType();
             case INTERFACE:
-                return SafeHtmlUtils.fromTrustedString(constants.interfaceDeviceGeneralType());
+                return constants.interfaceDeviceGeneralType();
             case VIDEO:
-                return SafeHtmlUtils.fromTrustedString(constants.videoDeviceGeneralType());
+                return constants.videoDeviceGeneralType();
             case GRAPHICS:
-                return SafeHtmlUtils.fromTrustedString(constants.graphicsDeviceGeneralType());
+                return constants.graphicsDeviceGeneralType();
             case SOUND:
-                return SafeHtmlUtils.fromTrustedString(constants.soundDeviceGeneralType());
+                return constants.soundDeviceGeneralType();
             case CONTROLLER:
-                return SafeHtmlUtils.fromTrustedString(constants.controllerDeviceGeneralType());
+                return constants.controllerDeviceGeneralType();
             case BALLOON:
-                return SafeHtmlUtils.fromTrustedString(constants.balloonDeviceGeneralType());
+                return constants.balloonDeviceGeneralType();
             case CHANNEL:
-                return SafeHtmlUtils.fromTrustedString(constants.channelDeviceGeneralType());
+                return constants.channelDeviceGeneralType();
             case REDIR:
-                return SafeHtmlUtils.fromTrustedString(constants.redirDeviceGeneralType());
+                return constants.redirDeviceGeneralType();
             case CONSOLE:
-                return SafeHtmlUtils.fromTrustedString(constants.consoleDeviceGeneralType());
+                return constants.consoleDeviceGeneralType();
             case RNG:
-                return SafeHtmlUtils.fromTrustedString(constants.rngDeviceGeneralType());
+                return constants.rngDeviceGeneralType();
             case SMARTCARD:
-                return SafeHtmlUtils.fromTrustedString(constants.smartcardDeviceGeneralType());
+                return constants.smartcardDeviceGeneralType();
             case WATCHDOG:
-                return SafeHtmlUtils.fromTrustedString(constants.watchdogDeviceGeneralType());
+                return constants.watchdogDeviceGeneralType();
             case HOSTDEV:
-                return SafeHtmlUtils.fromTrustedString(constants.hostdevDeviceGeneralType());
+                return constants.hostdevDeviceGeneralType();
             case MEMORY:
-                return SafeHtmlUtils.fromTrustedString(constants.memoryDeviceGeneralType());
+                return constants.memoryDeviceGeneralType();
             case UNKNOWN:
-                return SafeHtmlUtils.fromTrustedString(constants.unknownDeviceGeneralType());
+                return constants.unknownDeviceGeneralType();
             }
         }
         return null;

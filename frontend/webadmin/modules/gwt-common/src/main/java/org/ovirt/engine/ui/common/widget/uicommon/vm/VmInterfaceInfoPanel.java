@@ -183,8 +183,8 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
                     }
 
                     @Override
-                    public SafeHtml getTooltip(VmGuestAgentInterface object) {
-                        return SafeHtmlUtils.fromTrustedString(StringUtils.join(object.getIpv4Addresses(), ", ")); //$NON-NLS-1$
+                    public String getTooltip(VmGuestAgentInterface object) {
+                        return StringUtils.join(object.getIpv4Addresses(), ", "); //$NON-NLS-1$
                     }
 
                 };
@@ -209,8 +209,8 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
                     }
 
                     @Override
-                    public SafeHtml getTooltip(VmGuestAgentInterface object) {
-                        return SafeHtmlUtils.fromTrustedString(StringUtils.join(object.getIpv6Addresses(), ", ")); //$NON-NLS-1$
+                    public String getTooltip(VmGuestAgentInterface object) {
+                        return StringUtils.join(object.getIpv6Addresses(), ", "); //$NON-NLS-1$
                     }
                 };
 

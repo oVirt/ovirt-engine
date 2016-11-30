@@ -11,8 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq.IdentifiableComparator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.HostStatusCell;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class HostStatusColumn<S> extends AbstractColumn<S, VDS> {
 
@@ -50,16 +48,16 @@ public class HostStatusColumn<S> extends AbstractColumn<S, VDS> {
     }
 
     @Override
-    public SafeHtml getTooltip(S object) {
+    public String getTooltip(S object) {
         VDS vds = getValue(object);
         if (vds != null) {
             VDSStatus status = vds.getStatus();
             String tooltip = getTooltipText(status);
             if (tooltip != null) {
-                return SafeHtmlUtils.fromSafeConstant(tooltip);
+                return tooltip;
             }
         }
-        return null;
+        return "";
     }
 
     private String getTooltipText(VDSStatus status) {

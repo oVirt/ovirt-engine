@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
 import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
@@ -15,7 +14,7 @@ import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
-import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
+import org.ovirt.engine.ui.common.widget.tooltip.ElementTooltipUtils;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -597,9 +596,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
                 && buttonDef.isVisible(getSelectedItems()) && !buttonDef.isCascaded());
         button.setEnabled(buttonDef.isEnabled(getSelectedItems()));
         if (buttonDef.getTooltip() != null) {
-            // this Panel is special. show the tooltips below the buttons because they're too
-            // hard to read with the default TOP placement.
-            button.setTooltip(buttonDef.getTooltip(), Placement.BOTTOM);
+            button.setTooltip(buttonDef.getTooltip());
         }
         originallyVisible.put(button.asWidget(), buttonDef.isAccessible(getSelectedItems())
                 && buttonDef.isVisible(getSelectedItems()));
@@ -615,7 +612,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         item.setEnabled(buttonDef.isEnabled(getSelectedItems()));
 
         if (buttonDef.getMenuItemTooltip() != null) {
-            TooltipMixin.addTooltipToElement(buttonDef.getMenuItemTooltip(), item.getElement());
+            ElementTooltipUtils.setTooltipOnElement(buttonDef.getMenuItemTooltip(), item.getElement());
         }
     }
 

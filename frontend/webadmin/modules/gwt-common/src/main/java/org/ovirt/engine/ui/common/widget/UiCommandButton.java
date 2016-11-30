@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
-import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -19,9 +18,6 @@ public class UiCommandButton extends AbstractUiCommandButton implements Focusabl
 
     @UiField
     SimpleDialogButton button;
-
-    @UiField
-    WidgetTooltip tooltip;
 
     public UiCommandButton() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -93,8 +89,7 @@ public class UiCommandButton extends AbstractUiCommandButton implements Focusabl
     @Override
     protected void updateButton() {
         super.updateButton();
-        tooltip.setText(buildTooltipText());
-        tooltip.reconfigure();
+        button.setTitle(buildTooltipText());
     }
 
     /**

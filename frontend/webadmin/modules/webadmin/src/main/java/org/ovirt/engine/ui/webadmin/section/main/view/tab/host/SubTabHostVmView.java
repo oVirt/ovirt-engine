@@ -24,9 +24,8 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListModel<Void>, HostVmListModel>
         implements SubTabHostVmPresenter.ViewDef {
@@ -154,8 +153,8 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.suspendVm());
+            public String getTooltip() {
+                return constants.suspendVm();
             }
         });
 
@@ -167,8 +166,8 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.shutDownVm());
+            public String getTooltip() {
+                return constants.shutDownVm();
             }
         });
 
@@ -179,8 +178,8 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
+            public String getTooltip() {
+                return constants.powerOffVm();
             }
         });
 
@@ -192,8 +191,8 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             }
 
             @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.consoleVm());
+            public String getTooltip() {
+                return constants.consoleVm();
             }
 
         });

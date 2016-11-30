@@ -30,8 +30,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -204,7 +202,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             }
 
             @Override
-            public SafeHtml getTooltip() {
+            public String getTooltip() {
                 String tooltip = null;
                 if (!getModel().getIsCloneVmSupported() && getModel().getEntity() != null) {
                     CommandVersionsInfo commandVersionsInfo =
@@ -215,7 +213,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 } else {
                     tooltip = this.getText();
                 }
-                return SafeHtmlUtils.fromString(tooltip);
+                return tooltip;
             }
         });
         getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.makeTemplateFromSnapshot()) {

@@ -127,7 +127,7 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
     public void setForceHelp(String forceHelpText) {
         boolean isForceHelpNonEmpty = forceHelpText != null;
         if (isForceHelpNonEmpty) {
-            geoRepForceHelpIcon.setText(templates.italicText(forceHelpText));
+            geoRepForceHelpIcon.setTitle(forceHelpText);
         }
         geoRepForceHelpIcon.setVisible(isForceHelpNonEmpty);
     }

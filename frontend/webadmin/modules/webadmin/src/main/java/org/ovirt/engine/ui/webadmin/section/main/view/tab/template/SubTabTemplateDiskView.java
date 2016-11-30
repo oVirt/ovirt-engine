@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTe
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
 import org.ovirt.engine.ui.webadmin.widget.template.DisksTree;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, VmTemplate, DiskModel, TemplateListModel, TemplateDiskListModel> implements SubTabTemplateDiskPresenter.ViewDef {
@@ -54,7 +53,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
     protected void initHeader() {
         table.addColumn(new EmptyColumn(), constants.aliasDisk(), ""); //$NON-NLS-1$
         ImageResourceHeader readOnlyColumnHeader = new ImageResourceHeader(
-                resources.readOnlyDiskIcon(), SafeHtmlUtils.fromSafeConstant(constants.readOnly()));
+                resources.readOnlyDiskIcon(), constants.readOnly());
         table.addColumn(new EmptyColumn(), readOnlyColumnHeader, "60px"); //$NON-NLS-1$);
         table.addColumn(new EmptyColumn(), constants.provisionedSizeDisk(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.sizeDisk(), "120px"); //$NON-NLS-1$

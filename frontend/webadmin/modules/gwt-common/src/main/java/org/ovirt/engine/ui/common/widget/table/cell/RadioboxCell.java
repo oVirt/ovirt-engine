@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -77,7 +78,7 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> impleme
 
     @Override
     public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent,
-            Boolean value, SafeHtml tooltipContent, NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
+            Boolean value, String tooltipContent, NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
 
         String type = event.getType();
 

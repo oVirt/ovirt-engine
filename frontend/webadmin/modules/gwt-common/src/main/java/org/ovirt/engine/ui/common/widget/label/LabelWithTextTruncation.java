@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.widget.label;
 
 import org.ovirt.engine.ui.common.utils.ElementUtils;
-import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
+
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TextOverflow;
 import com.google.gwt.dom.client.Style.WhiteSpace;
@@ -18,14 +18,12 @@ import com.google.gwt.user.client.ui.Label;
  */
 public class LabelWithTextTruncation extends Composite implements IsEditor<LeafValueEditor<String>>, HasEnabled {
 
-    WidgetTooltip tooltip;
     private Label label;
     private boolean enabled = true;
 
     public LabelWithTextTruncation() {
         label = new Label();
-        tooltip = new WidgetTooltip(label);
-        initWidget(tooltip.asWidget());
+        initWidget(label);
         getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
         getElement().getStyle().setOverflow(Overflow.HIDDEN);
         getElement().getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
@@ -51,11 +49,10 @@ public class LabelWithTextTruncation extends Composite implements IsEditor<LeafV
         }
 
         if (ElementUtils.detectOverflowUsingScrollWidth(label.getElement())) {
-            tooltip.setText(getText());
+            label.setTitle(getText());
         } else {
-            tooltip.setText(null);
+            label.setTitle("");
         }
-        tooltip.reconfigure();
     }
 
     @Override

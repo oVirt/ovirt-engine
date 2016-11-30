@@ -20,10 +20,9 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskListModel, DiskVmListModel>
         implements SubTabDiskVmPresenter.ViewDef {
@@ -58,11 +57,11 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
             }
 
             @Override
-            public SafeHtml getTooltip(VM object) {
+            public String getTooltip(VM object) {
                 if (getDetailModel().isDiskPluggedToVm(object)) {
-                    return SafeHtmlUtils.fromSafeConstant(constants.active());
+                    return constants.active();
                 }
-                return SafeHtmlUtils.fromSafeConstant(constants.inactive());
+                return constants.inactive();
             }
         };
         getTable().addColumn(pluggedColumn, constants.empty(), "30px"); //$NON-NLS-1$

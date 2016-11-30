@@ -15,10 +15,10 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModelBase;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.RadioButton;
 
 public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends AbstractModelBoundTableWidget<Disk, T> {
@@ -101,19 +101,19 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
         getTable().ensureColumnPresent(
                 DisksViewColumns.bootableDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.bootableDiskColumn.getDefaultImage(),
-                        SafeHtmlUtils.fromSafeConstant(constants.bootableDisk())),
+                        constants.bootableDisk()),
                         all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.shareableDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.shareableDiskColumn.getDefaultImage(),
-                        SafeHtmlUtils.fromSafeConstant(constants.shareable())),
+                        constants.shareable()),
                         all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.readOnlyDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.readOnlyDiskColumn.getDefaultImage(),
-                        SafeHtmlUtils.fromSafeConstant(constants.readOnly())),
+                        constants.readOnly()),
                         all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(

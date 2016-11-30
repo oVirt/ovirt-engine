@@ -7,8 +7,6 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class StorageDomainsColumn extends AbstractTextColumn<Disk> implements ColumnWithElementId {
 
@@ -42,8 +40,8 @@ public class StorageDomainsColumn extends AbstractTextColumn<Disk> implements Co
     }
 
     @Override
-    public SafeHtml getTooltip(Disk object) {
+    public String getTooltip(Disk object) {
         DiskImage diskImage = (DiskImage) object;
-        return SafeHtmlUtils.fromString(StringUtils.join(diskImage.getStoragesNames(), ", "));  //$NON-NLS-1$
+        return StringUtils.join(diskImage.getStoragesNames(), ", ");  //$NON-NLS-1$
     }
 }

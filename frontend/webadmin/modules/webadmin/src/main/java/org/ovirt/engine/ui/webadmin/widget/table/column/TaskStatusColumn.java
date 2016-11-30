@@ -8,9 +8,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * Image column that corresponds to XAML {@code HistorySeverityTemplate}.
@@ -47,18 +46,18 @@ public class TaskStatusColumn extends AbstractImageResourceColumn<EntityModel> {
     }
 
     @Override
-    public SafeHtml getTooltip(EntityModel jobOrStep) {
+    public String getTooltip(EntityModel jobOrStep) {
         JobExecutionStatus jobExecutionStatus = null;
         if (jobOrStep.getEntity() instanceof Job) {
             jobExecutionStatus = ((Job) jobOrStep.getEntity()).getStatus();
         } else if (jobOrStep.getEntity() instanceof Step) {
             jobExecutionStatus = ((Step) jobOrStep.getEntity()).getStatus();
         } else {
-            return null;
+            return "";
         }
 
         String tooltipContent = EnumTranslator.getInstance().translate(jobExecutionStatus);
-        return SafeHtmlUtils.fromString(tooltipContent);
+        return tooltipContent;
     }
 
 }

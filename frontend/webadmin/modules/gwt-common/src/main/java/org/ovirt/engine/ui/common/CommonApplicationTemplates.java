@@ -119,7 +119,4 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<p><hr size=\"2\" width=\"100%\"></p>")
     SafeHtml horizontalLine();
-
-    @Template("Specify public key for SSH authentication. Used to access guest serial console.")
-    SafeHtml consolePublicKeyMessage();
 }

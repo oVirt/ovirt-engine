@@ -26,11 +26,10 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNet
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.RadioButton;
 
 public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel>
@@ -146,10 +145,10 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
                 }
 
                 @Override
-                public SafeHtml getTooltip(
+                public String getTooltip(
                         PairQueryable<VmNetworkInterface, VM> object) {
                     String tooltipContent = object.getSecond().getVmFQDN();
-                    return SafeHtmlUtils.fromString(tooltipContent);
+                    return tooltipContent;
                 }
             };
 

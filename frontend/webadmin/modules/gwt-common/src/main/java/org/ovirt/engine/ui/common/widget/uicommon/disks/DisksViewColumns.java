@@ -34,8 +34,6 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class DisksViewColumns {
 
@@ -96,9 +94,9 @@ public class DisksViewColumns {
         }
 
         @Override
-        public SafeHtml getTooltip(Disk object) {
+        public String getTooltip(Disk object) {
             if (object.isBoot()) {
-                return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+                return constants.bootableDisk();
             }
             return null;
         }
@@ -116,9 +114,9 @@ public class DisksViewColumns {
         }
 
         @Override
-        public SafeHtml getTooltip(Disk object) {
+        public String getTooltip(Disk object) {
             if (object.isShareable()) {
-                return SafeHtmlUtils.fromSafeConstant(constants.shareable());
+                return constants.shareable();
             }
             return null;
         }
@@ -136,9 +134,9 @@ public class DisksViewColumns {
         }
 
         @Override
-        public SafeHtml getTooltip(Disk object) {
+        public String getTooltip(Disk object) {
             if (object.getReadOnly()) {
-                return SafeHtmlUtils.fromSafeConstant(constants.readOnly());
+                return constants.readOnly();
             }
             return null;
         }
@@ -155,13 +153,13 @@ public class DisksViewColumns {
         }
 
         @Override
-        public SafeHtml getTooltip(Disk object) {
+        public String getTooltip(Disk object) {
             if (object.getVmEntityType() == null) {
-                return SafeHtmlUtils.fromSafeConstant(constants.unattachedDisk());
+                return constants.unattachedDisk();
             }
             else {
                 String status = EnumTranslator.getInstance().translate(object.getVmEntityType());
-                return SafeHtmlUtils.fromString(status);
+                return status;
             }
         }
     };
@@ -177,11 +175,11 @@ public class DisksViewColumns {
         }
 
         @Override
-        public SafeHtml getTooltip(Disk object) {
+        public String getTooltip(Disk object) {
             if (object.getLastAlignmentScan() != null) {
                 String lastScanDate = DateTimeFormat
                         .getFormat("yyyy-MM-dd, HH:mm").format(object.getLastAlignmentScan()); //$NON-NLS-1$
-                return SafeHtmlUtils.fromString(messages.lastDiskAlignment(lastScanDate));
+                return messages.lastDiskAlignment(lastScanDate);
             }
             return null;
         }
@@ -242,7 +240,7 @@ public class DisksViewColumns {
             }
 
             @Override
-            public SafeHtml getTooltip(Disk object) {
+            public String getTooltip(Disk object) {
                 if (object.getDiskStorageType() != DiskStorageType.IMAGE &&
                         object.getDiskStorageType() != DiskStorageType.CINDER) {
                     return null;
@@ -260,10 +258,9 @@ public class DisksViewColumns {
                     return null;
                 }
 
-                return SafeHtmlUtils.fromString(
-                        StringFormat.format("%s: %s",  //$NON-NLS-1$
+                return StringFormat.format("%s: %s",  //$NON-NLS-1$
                                 AssetProvider.getConstants().originalAllocationDisk(),
-                                EnumTranslator.getInstance().translate(originalVolumeType)));
+                                EnumTranslator.getInstance().translate(originalVolumeType));
             }
         };
 

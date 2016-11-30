@@ -2,13 +2,12 @@ package org.ovirt.engine.ui.common.widget.refresh;
 
 import java.util.Set;
 
-import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.renderer.MillisecondRenderer;
-import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
@@ -186,9 +185,6 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
 
     private final BaseRefreshPanelCss style;
 
-    private WidgetTooltip tooltip;
-
-
     /**
      * Create a Panel managed by the specified {@link RefreshManager}<BR>
      * used only by the Refresh Manager
@@ -271,8 +267,6 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         panel.add(separator);
         panel.add(refreshMenuButton);
         setWidget(panel);
-        tooltip = new WidgetTooltip(this);
-        tooltip.setPlacement(Placement.BOTTOM);
         setTooltipText(refreshManager.getRefreshStatus());
     }
 
@@ -296,8 +290,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
     }
 
     public void setTooltipText(String status) {
-        tooltip.setText(status);
-        tooltip.reconfigure();
+        this.setTitle(status);
     }
 
     private void createRefreshButton() {

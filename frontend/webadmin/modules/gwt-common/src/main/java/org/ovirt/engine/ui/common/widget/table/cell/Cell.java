@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
 import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 /**
@@ -20,7 +20,7 @@ public interface Cell<C> extends com.google.gwt.cell.client.Cell<C>, CellWithEle
      * Column is that here we ask the column to provide us a tooltip value in addition to the cell's
      * C value.
      */
-    public void onBrowserEvent(Context context, final Element parent, C value, final SafeHtml tooltipContent,
+    public void onBrowserEvent(Context context, final Element parent, C value, final String tooltipContent,
             final NativeEvent event, ValueUpdater<C> valueUpdater);
 
     /**

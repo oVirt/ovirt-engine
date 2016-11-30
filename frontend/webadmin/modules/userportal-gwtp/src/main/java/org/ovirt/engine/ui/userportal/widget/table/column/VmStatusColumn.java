@@ -8,9 +8,8 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
+
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * Column for showing VM status in UserPortal. Supports tooltips.
@@ -38,16 +37,16 @@ public class VmStatusColumn extends AbstractDecoratedImageColumn<UserPortalItemM
     }
 
     @Override
-    public SafeHtml getTooltip(UserPortalItemModel item) {
+    public String getTooltip(UserPortalItemModel item) {
         VM vm = item.getVM();
         if (vm != null) {
             String tooltip = getTooltipText(vm.getStatus());
             if (tooltip != null) {
-                return SafeHtmlUtils.fromSafeConstant(tooltip);
+                return tooltip;
             }
         }
 
-        return null;
+        return "";
     }
 
     private String getTooltipText(VMStatus status) {

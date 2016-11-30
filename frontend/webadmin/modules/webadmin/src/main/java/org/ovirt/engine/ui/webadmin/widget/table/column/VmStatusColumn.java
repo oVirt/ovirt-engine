@@ -20,9 +20,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VmStatusCell;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-
 /**
  * Image column that corresponds to XAML {@code VmStatusTemplate}.
  */
@@ -60,9 +57,9 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
     }
 
     @Override
-    public SafeHtml getTooltip(T object) {
+    public String getTooltip(T object) {
 
-        String tooltip = null;
+        String tooltip = "";
         EnumTranslator translator = EnumTranslator.getInstance();
 
         VM vm = getValue(object);
@@ -77,27 +74,23 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
         if (needsAlert(vm)) {
 
             if (isUpdateNeeded(vm)) {
-                tooltip += "<br/><br/>" + constants.newtools(); //$NON-NLS-1$
+                tooltip += "\n" + constants.newtools(); //$NON-NLS-1$
             }
 
             if (hasPauseError(vm)) {
-                tooltip += "<br/><br/>" + translator.translate(vm.getVmPauseStatus()); //$NON-NLS-1$
+                tooltip += "\n" + translator.translate(vm.getVmPauseStatus()); //$NON-NLS-1$
             }
 
             if (hasDifferentTimezone(vm)) {
-                tooltip += "<br/><br/>" + constants.guestTimezoneDiffers(); //$NON-NLS-1$
+                tooltip += "\n" + constants.guestTimezoneDiffers(); //$NON-NLS-1$
             }
 
             if (hasDifferentOSType(vm)) {
-                tooltip += "<br/><br/>" + constants.guestOSDiffers(); //$NON-NLS-1$
+                tooltip += "\n" + constants.guestOSDiffers(); //$NON-NLS-1$
             }
         }
 
-        if (tooltip != null) {
-            return SafeHtmlUtils.fromSafeConstant(tooltip);
-        }
-
-        return null;
+        return tooltip;
     }
 
     public static boolean needsAlert(VM vm) {

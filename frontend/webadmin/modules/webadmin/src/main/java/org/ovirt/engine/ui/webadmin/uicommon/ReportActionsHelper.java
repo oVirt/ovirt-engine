@@ -13,8 +13,6 @@ import org.ovirt.engine.ui.uicompat.ReportParser.Resource;
 import org.ovirt.engine.ui.uicompat.ReportParser.URI;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class ReportActionsHelper {
 
@@ -73,8 +71,8 @@ public class ReportActionsHelper {
                 }
 
                 @Override
-                public SafeHtml getTooltip() {
-                    return SafeHtmlUtils.fromString(uri.getDescription());
+                public String getTooltip() {
+                    return uri.getDescription();
                 }
 
             });

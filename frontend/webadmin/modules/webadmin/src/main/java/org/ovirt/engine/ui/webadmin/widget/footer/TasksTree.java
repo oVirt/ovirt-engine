@@ -6,13 +6,13 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
-import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
+
 import com.google.gwt.dom.client.Style.TextOverflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.VerticalAlign;
@@ -48,12 +48,11 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
         addTextBoxToPanel(panel, new StringValueLabel(), task.getEndTime() == null ? "" : constants.untilEndTime(), "80px"); //$NON-NLS-1$ //$NON-NLS-2$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getEndTime(), "150px"); //$NON-NLS-1$
 
-        WidgetTooltip corrIdTextBoxLabelTooltip = new WidgetTooltip(new StringValueLabel());
-        corrIdTextBoxLabelTooltip.setText(constants.correltaionIdEvent());
-        corrIdTextBoxLabelTooltip.reconfigure();
+        StringValueLabel corrIdTextBoxLabel = new StringValueLabel();
+        corrIdTextBoxLabel.setTitle(constants.correltaionIdEvent());
 
         addTextBoxToPanel(panel,
-                corrIdTextBoxLabelTooltip,
+                corrIdTextBoxLabel,
                 task.getCorrelationId() != null && task.getCorrelationId().startsWith(TaskListModel.WEBADMIN) ? task.getCorrelationId()
                         .split("_")[2] : task.getCorrelationId(), "100px"); //$NON-NLS-1$ //$NON-NLS-2$
 

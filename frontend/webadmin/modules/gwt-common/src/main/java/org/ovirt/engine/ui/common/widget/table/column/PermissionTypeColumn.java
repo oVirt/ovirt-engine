@@ -7,9 +7,8 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * Image column that corresponds to XAML {@code PermissionTypeDataTemplate}.
@@ -46,11 +45,11 @@ public class PermissionTypeColumn extends AbstractImageResourceColumn<Permission
     }
 
     @Override
-    public SafeHtml getTooltip(Permission user) {
+    public String getTooltip(Permission user) {
         if (user.getRoleType() == RoleType.ADMIN) {
-            return SafeHtmlUtils.fromSafeConstant(constants.admin());
+            return constants.admin();
         }
-        return SafeHtmlUtils.fromSafeConstant(constants.user());
+        return constants.user();
     }
 
 }
