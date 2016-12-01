@@ -135,7 +135,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         priorityUtil = new PriorityUtil(getModel());
         virtioScsiUtil = new VirtioScsiUtil(getModel());
         getModel().getVmId().setIsAvailable(false);
-        getModel().getMigrationPolicies().setItems(AsyncDataProvider.getInstance().getMigrationPolicies());
+        getModel().getMigrationPolicies()
+                .setItems(AsyncDataProvider.getInstance().getMigrationPolicies(Version.getLast()));
     }
 
     public void dataCenterWithClusterSelectedItemChanged() {

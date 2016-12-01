@@ -1372,16 +1372,42 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
     }
 
-    public void initMigrationPolicies(boolean isEdit) {
-        List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies();
+    private Version getEffectiveVersion() {
+        if (getVersion().getSelectedItem() != null) {
+            return getVersion().getSelectedItem();
+        } else {
+            if (getDataCenter().getSelectedItem() != null) {
+                return getDataCenter().getSelectedItem().getCompatibilityVersion();
+            } else {
+                return Version.getLast();
+            }
+        }
+    }
+
+    public void refreshMigrationPolicies() {
+        Version version = getEffectiveVersion();
+
+        Guid selectedPolicyId = null;
+        if (getMigrationPolicies() != null && getMigrationPolicies().getSelectedItem() != null) {
+            selectedPolicyId = getMigrationPolicies().getSelectedItem().getId();
+        }
+
+        List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies(version);
         getMigrationPolicies().setItems(policies);
 
-        MigrationPolicy migrationPolicy = isEdit ?
-                findMigrationPolicyById(getEntity().getMigrationPolicyId(), policies) :
-                findFirstNonEmptyMigrationPolicy(policies);
+        MigrationPolicy migrationPolicy;
+        if (selectedPolicyId == null) {
+            migrationPolicy = getIsEdit() ?
+                    findMigrationPolicyById(getEntity().getMigrationPolicyId(), policies) :
+                    findFirstNonEmptyMigrationPolicy(policies);
+        } else {
+            migrationPolicy = findMigrationPolicyById(selectedPolicyId, policies);
+        }
 
         getMigrationPolicies().setSelectedItem(migrationPolicy != null ? migrationPolicy :
                 findMigrationPolicyById(NoMigrationPolicy.ID, policies));
+
+        getMigrationPolicies().updateChangeability(ConfigurationValues.MigrationPoliciesSupported, version);
     }
 
     private MigrationPolicy findFirstNonEmptyMigrationPolicy(List<MigrationPolicy> policies) {
@@ -1721,13 +1747,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     private void version_SelectedItemChanged(EventArgs e) {
-        Version version;
-        if (getVersion().getSelectedItem() != null) {
-            version = getVersion().getSelectedItem();
-        }
-        else {
-            version = getDataCenter().getSelectedItem().getCompatibilityVersion();
-        }
+        Version version = getEffectiveVersion();
 
         AsyncDataProvider.getInstance().getCPUList(new AsyncQuery<>(new AsyncCallback<List<ServerCpu>>() {
             @Override
@@ -1773,7 +1793,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         updateMigrateOnError();
 
-        getMigrationPolicies().updateChangeability(ConfigurationValues.MigrationPoliciesSupported, version);
+        refreshMigrationPolicies();
 
         refreshAdditionalClusterFeaturesList();
 

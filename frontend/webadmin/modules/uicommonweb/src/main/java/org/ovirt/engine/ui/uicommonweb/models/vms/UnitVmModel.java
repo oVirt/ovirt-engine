@@ -2240,6 +2240,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void dataCenterWithClusterSelectedItemChanged(Object sender, EventArgs args) {
         behavior.dataCenterWithClusterSelectedItemChanged();
+        refreshMigrationPolicies();
         updateMigrationRelatedFields();
 
         DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
@@ -3347,6 +3348,27 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         return null;
+    }
+
+    private void refreshMigrationPolicies() {
+        Version version = getCompatibilityVersion();
+
+        Guid selectedPolicyId = null;
+        if (getMigrationPolicies() != null && getMigrationPolicies().getSelectedItem() != null) {
+            selectedPolicyId = getMigrationPolicies().getSelectedItem().getId();
+        }
+
+        List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies(version);
+        getMigrationPolicies().setItems(policies);
+
+        if (selectedPolicyId != null) {
+            for (MigrationPolicy policy : policies) {
+                if (Objects.equals(policy.getId(), selectedPolicyId)) {
+                    getMigrationPolicies().setSelectedItem(policy);
+                    break;
+                }
+            }
+        }
     }
 
     private void updateMigrationRelatedFields() {

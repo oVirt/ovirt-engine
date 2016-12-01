@@ -15,16 +15,19 @@ import org.ovirt.engine.core.common.migration.ConvergenceItemWithStallingLimit;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.JsonHelper;
 
 public class ConvergenceConfigProviderTest {
+
+    private static final Version VERSION = Version.getLast();
 
     private ConvergenceConfigProvider provider = new ConvergenceConfigProvider();
 
     @Test
     public void jsonInvalidJson() throws IOException {
-        provider.initMigrationPolicies("this is not a valid json");
-        MigrationPolicy policy = provider.getMigrationPolicy(Guid.newGuid());
+        provider.initMigrationPolicies("this is not a valid json", VERSION);
+        MigrationPolicy policy = provider.getMigrationPolicy(Guid.newGuid(), VERSION);
         assertTrue(policy instanceof NoMigrationPolicy);
     }
 
@@ -44,11 +47,12 @@ public class ConvergenceConfigProviderTest {
 
         String json = JsonHelper.objectToJson(policies, false);
 
-        provider.initMigrationPolicies(json);
+        provider.initMigrationPolicies(json, VERSION);
 
         // just basic sanity check
-        assertEquals(policy.getName(), provider.getMigrationPolicy(id).getName());
-        assertEquals(policy.getDescription(), provider.getMigrationPolicy(id).getDescription());
+        assertEquals(policy.getName(), provider.getMigrationPolicy(id, VERSION).getName());
+        assertEquals(policy.getDescription(), provider.getMigrationPolicy(id, VERSION).getDescription());
+        assertTrue(provider.getMigrationPolicy(id, new Version()) instanceof NoMigrationPolicy);
     }
 }
 

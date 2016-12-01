@@ -339,7 +339,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                 cModel.getCommands().add(tempVar2);
             }
         }));
-        clusterModel.initMigrationPolicies(false);
+        clusterModel.refreshMigrationPolicies();
     }
 
     public void edit() {
@@ -430,7 +430,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             }
         }));
 
-        clusterModel.initMigrationPolicies(true);
+        clusterModel.refreshMigrationPolicies();
 
         if (getSystemTreeSelectedItem() != null && (getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster ||
                 getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster_Gluster)) {

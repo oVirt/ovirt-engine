@@ -242,7 +242,7 @@ public class AsyncDataProvider {
     private Map<Guid, Guid> largeToSmallOsDefaultIconIdMap;
 
     // all defined migration policies
-    private List<MigrationPolicy> migrationPolicies;
+    private Map<Version, List<MigrationPolicy>> migrationPoliciesByVersion;
 
     // cached list of os ids
     private List<Integer> osIds;
@@ -346,34 +346,38 @@ public class AsyncDataProvider {
     }
 
     private void initMigrationPolicies() {
-        AsyncQuery<List<MigrationPolicy>> aQuery = new AsyncQuery<>(new AsyncCallback<List<MigrationPolicy>>() {
+        AsyncQuery<Map<Version, List<MigrationPolicy>>> aQuery =
+                new AsyncQuery<>(new AsyncCallback<Map<Version, List<MigrationPolicy>>>() {
 
             @Override
-            public void onSuccess(List<MigrationPolicy> returnValue) {
-                migrationPolicies = returnValue;
+            public void onSuccess(Map<Version, List<MigrationPolicy>> returnValue) {
+                migrationPoliciesByVersion = returnValue;
             }
         });
 
-        aQuery.converterCallback = new Converter<List<MigrationPolicy>>() {
+        aQuery.converterCallback = new Converter<Map<Version, List<MigrationPolicy>>>() {
             @Override
-            public List<MigrationPolicy> convert(Object returnValue) {
+            public Map<Version, List<MigrationPolicy>> convert(Object returnValue) {
                 if (returnValue == null) {
-                    return new ArrayList<>();
+                    return new HashMap<>();
                 }
 
-                List<MigrationPolicy> policies = (List<MigrationPolicy>) returnValue;
-                Collections.sort(policies, new Comparator<MigrationPolicy>() {
-                    @Override
-                    public int compare(MigrationPolicy m1, MigrationPolicy m2) {
-                        // the empty one is always the first
-                        if (NoMigrationPolicy.ID.equals(m1.getId())) {
-                            return -1;
-                        }
-                        return m1.getName().compareTo(m2.getName());
-                    }
-                });
+                Map<Version, List<MigrationPolicy>> policiesByVersion = (Map<Version, List<MigrationPolicy>>) returnValue;
 
-                return policies;
+                for (List<MigrationPolicy> policies : policiesByVersion.values()) {
+                    Collections.sort(policies, new Comparator<MigrationPolicy>() {
+                        @Override
+                        public int compare(MigrationPolicy m1, MigrationPolicy m2) {
+                            // the empty one is always the first
+                            if (NoMigrationPolicy.ID.equals(m1.getId())) {
+                                return -1;
+                            }
+                            return m1.getName().compareTo(m2.getName());
+                        }
+                    });
+                }
+
+                return policiesByVersion;
             }
         };
 
@@ -820,8 +824,10 @@ public class AsyncDataProvider {
         getDataCenterList(aQuery, true);
     }
 
-    public List<MigrationPolicy> getMigrationPolicies() {
-        return migrationPolicies;
+    public List<MigrationPolicy> getMigrationPolicies(Version compatibilityVersion) {
+        List<MigrationPolicy> migrationPolicies = migrationPoliciesByVersion.get(compatibilityVersion);
+        return migrationPolicies != null ? migrationPolicies
+                : Collections.singletonList((MigrationPolicy) new NoMigrationPolicy());
     }
 
     public void getDataCenterList(AsyncQuery<List<StoragePool>> aQuery, boolean doRefresh) {

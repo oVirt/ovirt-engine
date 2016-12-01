@@ -212,7 +212,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Boolean enableGuestEvents = null;
 
         if (FeatureSupported.migrationPoliciesSupported(getVm().getCompatibilityVersion())) {
-            MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(getCluster().getMigrationPolicyId());
+            MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(
+                    getCluster().getMigrationPolicyId(), getCluster().getCompatibilityVersion());
             MigrationPolicy effectiveMigrationPolicy = findEffectiveConvergenceConfig(clusterMigrationPolicy);
             convergenceSchedule = ConvergenceSchedule.from(effectiveMigrationPolicy.getConfig()).asMap();
 
@@ -322,7 +323,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return clusterMigrationPolicy;
         }
 
-        return convergenceConfigProvider.getMigrationPolicy(overriddenPolicyId);
+        return convergenceConfigProvider.getMigrationPolicy(overriddenPolicyId, getCluster().getCompatibilityVersion());
     }
 
     @Override
