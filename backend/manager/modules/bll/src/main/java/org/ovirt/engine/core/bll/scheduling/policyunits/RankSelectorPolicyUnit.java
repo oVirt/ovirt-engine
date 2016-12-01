@@ -129,6 +129,7 @@ public class RankSelectorPolicyUnit extends PolicyUnitImpl {
                     debug.append(";");
                     debug.append(factorTable.getOrDefault(unit.getKey(), 1));
                     hosts.forEach(h -> debug.append(String.format(";%d;%d", scoreDebugMap.get(h), weights.get(h))));
+                    debug.append("\n");
                 }
             }
 
