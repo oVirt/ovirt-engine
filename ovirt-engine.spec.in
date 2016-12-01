@@ -243,6 +243,7 @@ Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
 Requires:	ovirt-imageio-proxy
+Requires:	ovirt-web-ui
 
 %if 0%{?rhel}
 Requires:	yum-plugin-versionlock
