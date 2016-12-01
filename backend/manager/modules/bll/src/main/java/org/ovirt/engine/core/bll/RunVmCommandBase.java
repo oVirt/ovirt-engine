@@ -5,6 +5,7 @@ import static org.ovirt.engine.core.common.config.ConfigValues.VdsRefreshRate;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -16,6 +17,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepository;
+import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
+import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -60,6 +63,13 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected boolean _isRerun;
     private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
     private final List<Guid> runVdsList = new ArrayList<>();
+
+    @Inject
+    protected VfScheduler vfScheduler;
+
+    @Inject
+    private NetworkDeviceHelper networkDeviceHelper;
+
     @Inject
     protected SchedulingManager schedulingManager;
 
@@ -87,6 +97,19 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      */
     protected List<Guid> getRunVdssList() {
         return runVdsList;
+    }
+
+    protected void cleanupPassthroughVnics(Guid hostId) {
+        Map<Guid, String> vnicToVfMap = getVnicToVfMap(hostId);
+        if (vnicToVfMap != null) {
+            networkDeviceHelper.setVmIdOnVfs(hostId, null, new HashSet<>(vnicToVfMap.values()));
+        }
+
+        vfScheduler.cleanVmData(getVmId());
+    }
+
+    protected Map<Guid, String> getVnicToVfMap(Guid hostId) {
+        return hostId == null ? null : vfScheduler.getVnicToVfMap(getVmId(), hostId);
     }
 
     @Override

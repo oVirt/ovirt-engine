@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,8 +19,6 @@ import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
-import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
-import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
@@ -100,12 +97,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private Guid cachedActiveIsoDomainId;
     private boolean needsHostDevices = false;
-
-    @Inject
-    private NetworkDeviceHelper networkDeviceHelper;
-
-    @Inject
-    private VfScheduler vfScheduler;
 
     public static final String ISO_PREFIX = "iso://";
     public static final String STATELESS_SNAPSHOT_DESCRIPTION = "stateless snapshot";
@@ -285,6 +276,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
+    private void cleanupPassthroughVnics() {
+        cleanupPassthroughVnics(getVdsId());
+    }
+
     /**
      * Checks if all required Host Devices are available.
      * Should be called with held host-device lock.
@@ -317,20 +312,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // Only single dedicated host allowed for host devices, verified on validates
             hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
         }
-    }
-
-    private void cleanupPassthroughVnics() {
-        Map<Guid, String> vnicToVfMap = getVnicToVfMap();
-        if (vnicToVfMap != null) {
-            networkDeviceHelper.setVmIdOnVfs(getVdsId(), null, new HashSet<>(vnicToVfMap.values()));
-        }
-
-        vfScheduler.cleanVmData(getVmId());
-    }
-
-    private Map<Guid, String> getVnicToVfMap() {
-        Guid hostId = getVdsId();
-        return hostId == null ? null : vfScheduler.getVnicToVfMap(getVmId(), hostId);
     }
 
     @Override
@@ -609,7 +590,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected void initParametersForPassthroughVnics() {
-        getVm().setPassthroughVnicToVfMap(getVnicToVfMap());
+        getVm().setPassthroughVnicToVfMap(getVnicToVfMap(getVdsId()));
         vfScheduler.cleanVmData(getVmId());
     }
 
