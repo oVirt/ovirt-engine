@@ -38,7 +38,7 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingOvercommitMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
-import org.ovirt.engine.core.bll.scheduling.policyunits.BasicWeightSelectorPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.RankSelectorPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
@@ -117,7 +117,7 @@ public class SchedulingManager implements BackendService {
 
     private final Map<Guid, Boolean> clusterId2isHaReservationSafe = new HashMap<>();
 
-    private final Guid defaultSelectorGuid = InternalPolicyUnits.getGuid(BasicWeightSelectorPolicyUnit.class);
+    private final Guid defaultSelectorGuid = InternalPolicyUnits.getGuid(RankSelectorPolicyUnit.class);
 
     private PendingResourceManager getPendingResourceManager() {
         return pendingResourceManager;
