@@ -379,6 +379,10 @@ public class VdsManager {
                 auditLog.addCustomValue("Message", "no updates found.");
             }
             auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FINISHED);
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+            auditLog.addCustomValue("Message", "Another refresh process is already running");
+            auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FAILED);
         } catch (Exception e) {
             log.error("Failed to check if updates are available for host '{}' with error message '{}'",
                     vds.getName(),

@@ -31,10 +31,9 @@ public class AvailableUpdatesFinder {
     public HostUpgradeManagerResult checkForUpdates(VDS host) {
         if (upgradeCheckInProgressMap.getOrDefault(host.getId(), false)) {
             String error = String.format(
-                    "Failed to refresh host '%s' packages availability, another refresh process already running.",
+                    "Failed to refresh host '%s' packages availability, another refresh process is already running.",
                     host.getName());
-            log.error(error);
-            throw new RuntimeException(error);
+            throw new IllegalStateException(error);
         }
         try {
             upgradeCheckInProgressMap.put(host.getId(), true);
