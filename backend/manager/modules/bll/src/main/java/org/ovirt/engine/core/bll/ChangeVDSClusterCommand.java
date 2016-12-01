@@ -160,16 +160,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                 && sourceManagementNetwork.getName().equals(targetManagementNetwork.getName());
     }
 
-    private boolean hostHasLabeledNics() {
-        for (VdsNetworkInterface nic : getHostNics()) {
-            if (NetworkUtils.isLabeled(nic)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private List<VdsNetworkInterface> getHostNics() {
         if (hostNics == null) {
             hostNics = interfaceDao.getAllInterfacesForVds(getVdsId());
