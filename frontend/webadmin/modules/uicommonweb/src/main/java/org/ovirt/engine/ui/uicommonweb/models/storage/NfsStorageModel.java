@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LinuxMountPointValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NoSpacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NonUtfValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -185,7 +186,8 @@ public class NfsStorageModel extends FileStorageModel {
         getPath().validateEntity(new IValidation[] {
             new NotEmptyValidation(),
             new LinuxMountPointValidation(),
-            new NonUtfValidation()
+            new NonUtfValidation(),
+            new NoSpacesValidation()
         });
 
         getRetransmissions().validateEntity(new IValidation[] {
