@@ -260,7 +260,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(this.networkAttachmentDao,
                 getVdsId(),
                 interfaceDao.getAllInterfacesForVds(getVdsId()),
-                Collections.<NetworkAttachment> emptyList(),
+                Collections.emptyList(),
                 getTargetClusterNetworks());
         persister.persistNetworkAttachments();
 
