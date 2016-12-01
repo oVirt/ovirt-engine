@@ -1054,8 +1054,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String cpuTypeCluster();
 
-    String switchTypeCluster();
-
     String newCluster();
 
     String editCluster();
