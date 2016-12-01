@@ -26,14 +26,18 @@ public class DirectoryEntry implements IVdcQueryable {
      */
     private List<DirectoryGroup> groups;
 
+    public DirectoryEntry() {
+        this.status = DirectoryEntryStatus.UNAVAILABLE;
+        this.groups = new ArrayList<>(1);
+    }
+
     public DirectoryEntry(String directoryName, String namespace, String id, String name, String displayName) {
+        this();
         this.directoryName = directoryName;
         this.namespace = namespace;
         this.id = id;
         this.name = name;
         this.displayName = displayName;
-        this.status = DirectoryEntryStatus.UNAVAILABLE;
-        this.groups = new ArrayList<>(1);
     }
 
     public String getNamespace() {
