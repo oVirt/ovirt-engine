@@ -1,28 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ImportNetworksPopupView.Style">
-		.providersStyle {
-			width: 420px;
-		}
+    <ui:style>
+        .container {
+            width: 100%;
+            margin-top: 15px;
+        }
 
-		.section {
-			margin-bottom: 5px;
-		}
-	</ui:style>
+        .scrollPanel {
+            height: 100%;
+        }
+    </ui:style>
 
-	<d:SimpleDialogPanel ui:field="mainPanel" width="600px" height="625px">
-		<d:content>
-			<g:VerticalPanel>
-				<g:FlowPanel addStyleNames="{style.section}">
-					<e:ListModelListBoxEditor ui:field="providersEditor" />
-				</g:FlowPanel>
-				<w:HorizontalSplitTable ui:field="splitTable" />
-			</g:VerticalPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <d:SimpleDialogPanel ui:field="mainPanel" width="600px" height="625px">
+        <d:content>
+            <g:ScrollPanel addStyleNames="{style.scrollPanel}">
+                <b:Container addStyleNames="{style.container}">
+                    <b:Row>
+                        <e:ListModelListBoxEditor ui:field="providersEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="SM_12">
+                            <w:HorizontalSplitTable ui:field="splitTable" />
+                        </b:Column>
+                    </b:Row>
+                </b:Container>
+            </g:ScrollPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

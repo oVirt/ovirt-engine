@@ -30,7 +30,6 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -49,13 +48,6 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImp
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportNetworksPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-
-    interface Style extends CssResource {
-        String providersStyle();
-    }
-
-    @UiField
-    Style style;
 
     @UiField(provided = true)
     @Path(value = "providers.selectedItem")
@@ -92,7 +84,6 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImp
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTables();
         providersEditor.setLabel(constants.networkProvider());
-        providersEditor.addWrapperStyleName(style.providersStyle());
         driver.initialize(this);
     }
 
