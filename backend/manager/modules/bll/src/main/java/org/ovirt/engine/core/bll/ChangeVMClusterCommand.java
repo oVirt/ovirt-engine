@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -96,11 +97,8 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         // change vm cluster should remove the vm from all associated affinity groups
         List<AffinityGroup> allAffinityGroupsByVmId = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
         if (!allAffinityGroupsByVmId.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (AffinityGroup affinityGroup : allAffinityGroupsByVmId) {
-                sb.append(affinityGroup.getName() + " ");
-            }
-            log.info("Due to cluster change, removing VM from associated affinity group(s): {}", sb);
+            String groups = allAffinityGroupsByVmId.stream().map(AffinityGroup::getName).collect(Collectors.joining(" "));
+            log.info("Due to cluster change, removing VM from associated affinity group(s): {}", groups);
             affinityGroupDao.removeVmFromAffinityGroups(vm.getId());
         }
         setSucceeded(true);
