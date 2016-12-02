@@ -16,8 +16,11 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -32,6 +35,8 @@ public class LocalConfig {
 
     // The names of the properties:
     private static final String SUPPORTED_VERSIONS = "ENGINE_API_SUPPORTED_VERSIONS";
+    private static final String DEPRECATED_VERSIONS = "ENGINE_API_DEPRECATED_VERSIONS";
+    private static final String DEPRECATED_MESSAGES_FREQUENCY = "ENGINE_API_DEPRECATED_MESSAGES_FREQUENCY";
     private static final String DEFAULT_VERSION = "ENGINE_API_DEFAULT_VERSION";
 
     // Reference to the engine local configuration, as that is what is used to actually read the configuration:
@@ -57,7 +62,21 @@ public class LocalConfig {
      * Returns the set of supported versions of the API.
      */
     public Set<String> getSupportedVersions() {
-        String value = config.getProperty(SUPPORTED_VERSIONS);
+        return getVersions(SUPPORTED_VERSIONS);
+    }
+
+    /**
+     * Returns the set of deprecated versions of the API.
+     */
+    public Set<DeprecatedVersionInfo> getDeprecatedVersions() {
+        return getVersions(DEPRECATED_VERSIONS).stream()
+            .map(DeprecatedVersionInfo::parse)
+            .filter(Objects::nonNull)
+            .collect(toSet());
+    }
+
+    private Set<String> getVersions(String key) {
+        String value = config.getProperty(key);
         if (value == null || value.isEmpty()) {
             return Collections.emptySet();
         }

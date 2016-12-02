@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016 Red Hat, Inc.
+Copyright (c) 2016-2017 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,10 +16,16 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.invocation;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
+
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.ejb.EJB;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -30,7 +36,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ovirt.engine.api.restapi.DeprecatedVersionInfo;
 import org.ovirt.engine.api.restapi.LocalConfig;
+import org.ovirt.engine.core.common.action.AddDeprecatedApiEventParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,15 +57,34 @@ public class VersionFilter implements Filter {
     // Names of headers:
     private static final String VERSION_HEADER = "Version";
 
+    // The reference to the backend bean:
+    @SuppressWarnings("unused")
+    @EJB(lookup = "java:global/engine/bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
+    private BackendLocal backend;
+
     // Supported and default versions:
     private Set<String> supportedVersions;
     private String defaultVersion;
 
+    // Deprecated versions:
+    private Set<String> deprecatedVersionsSet;
+    private Map<String, DeprecatedVersionInfo> deprecatedVersionsMap;
+
     @Override
     public void init(FilterConfig config) throws ServletException {
         LocalConfig localConfig = LocalConfig.getInstance();
+
+        // Get the supported and default versions:
         supportedVersions = localConfig.getSupportedVersions();
         defaultVersion = localConfig.getDefaultVersion();
+
+        // Get the information about deprecated versions and store them in a set and a map for easy/fast access:
+        Set<DeprecatedVersionInfo> deprecatedVersionInfos = localConfig.getDeprecatedVersions();
+        deprecatedVersionsSet = deprecatedVersionInfos.stream()
+            .map(DeprecatedVersionInfo::getVersion)
+            .collect(toSet());
+        deprecatedVersionsMap = deprecatedVersionInfos.stream()
+            .collect(toMap(DeprecatedVersionInfo::getVersion, identity()));
     }
 
     @Override
@@ -72,6 +101,9 @@ public class VersionFilter implements Filter {
             throws IOException, ServletException {
         // Get a reference to the object that stores the information of the current request:
         Current current = CurrentManager.get();
+
+        // Get the remote address, as we need it for several things:
+        String remoteAddress = request.getRemoteAddr();
 
         // First try to extract the version from the request path:
         String version = null;
@@ -102,10 +134,18 @@ public class VersionFilter implements Filter {
         if (!supportedVersions.contains(version)) {
             log.error(
                 "Client \"{}\" is requesting unsupported version \"{}\", will send a 400 error code.",
-                request.getRemoteAddr(), version
+                remoteAddress, version
             );
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
+        }
+
+        // Check if the version is deprecated, if it is then send a message to the audit log:
+        if (deprecatedVersionsSet.contains(version)) {
+            DeprecatedVersionInfo versionInfo = deprecatedVersionsMap.get(version);
+            AddDeprecatedApiEventParameters parameters = new AddDeprecatedApiEventParameters(version, remoteAddress,
+                versionInfo.getDeprecating(), versionInfo.getRemoving());
+            backend.runAction(VdcActionType.AddDeprecatedApiEvent, parameters);
         }
 
         // Copy the version, the source and the path to the object that stores information to the current request:
@@ -131,7 +171,7 @@ public class VersionFilter implements Filter {
             if (dispatcher == null) {
                 log.error(
                     "Can't find dispatcher for path \"{}\", as requested by client \"{}\", will send a 404 error code.",
-                    path, request.getRemoteAddr()
+                    path, remoteAddress
                 );
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }

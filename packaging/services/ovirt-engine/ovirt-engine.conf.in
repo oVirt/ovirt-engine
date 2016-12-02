@@ -380,6 +380,25 @@ ENGINE_API_SUPPORTED_VERSIONS="3, 4"
 ENGINE_API_DEFAULT_VERSION="4"
 
 #
+# Comma separated list of versions of the API that are deprecated. Each
+# deprecated version is specified by three values, separated by colons.
+# The first value is the version of the API that is deprecated. The
+# second value is the version of the engine where that version of the
+# API was deprecated. The third value is the version of the engine where
+# that version of the API will be removed. For example, the following
+# text:
+#
+#   3:4.0:4.2
+#
+# Means that version 3 of the API was deprecated in version 4.0 of the
+# engine and will be removed in version 4.2 of the engine.
+#
+# When the engine detects a request that is using a deprecated version
+# of the API it will send a message to the audit log explaining it.
+#
+ENGINE_API_DEPRECATED_VERSIONS="3:4.0:4.2"
+
+#
 # Specify custom krb5.conf file (if empty the default is /etc/krb5.conf)
 #
 AAA_KRB5_CONF_FILE=

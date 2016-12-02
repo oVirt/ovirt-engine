@@ -543,7 +543,10 @@ public enum VdcActionType {
     BalanceVm(6200, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
 
     // CoCo
-    RunAsyncAction(7000, QuotaDependency.NONE);
+    RunAsyncAction(7000, QuotaDependency.NONE),
+
+    // API:
+    AddDeprecatedApiEvent(8000, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;
