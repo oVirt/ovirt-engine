@@ -74,9 +74,14 @@ public class SsoPostLoginFilter implements Filter {
                 try {
                     String ssoToken = (String) runQuery(VdcQueryType.GetEngineSessionIdToken, engineSessionId, ctx);
 
-                    log.debug("Adding userInfo to session");
-                    DbUser loggedInUser = (DbUser) runQuery(VdcQueryType.GetUserBySessionId, engineSessionId, ctx);
-                    req.getSession(true).setAttribute(ATTR_USER_INFO, getUserInfoObject(loggedInUser, ssoToken));
+                    Object loggedInUser = runQuery(VdcQueryType.GetUserBySessionId, engineSessionId, ctx);
+                    if (loggedInUser != null) {
+                        log.debug("Adding userInfo to session");
+                        req.getSession(true).setAttribute(ATTR_USER_INFO,
+                                getUserInfoObject((DbUser) loggedInUser, ssoToken));
+                    } else {
+                        log.info("Failed to find logged user by sessionId");
+                    }
 
                     chain.doFilter(request, response);
                 } finally {
