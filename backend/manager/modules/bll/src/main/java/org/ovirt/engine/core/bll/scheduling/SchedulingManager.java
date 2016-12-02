@@ -324,7 +324,7 @@ public class SchedulingManager implements BackendService {
                             correlationId);
 
             if (vdsList.isEmpty()) {
-                return null;
+                return Optional.empty();
             }
 
             Optional<Guid> bestHost = selectBestHost(cluster, vm, destHostIdList, vdsList, policy, parameters);
