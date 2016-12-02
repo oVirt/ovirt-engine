@@ -70,8 +70,8 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
             proceedProxyReturnValue();
         } catch (TimeoutException e) {
             httpTask.cancel(true);
-            VDSNetworkException ex = new VDSNetworkException("Timeout during xml-rpc call");
-            ex.setVdsError(new VDSError(EngineError.VDS_NETWORK_ERROR, "Timeout during xml-rpc call"));
+            VDSNetworkException ex = new VDSNetworkException("Timeout during rpc call");
+            ex.setVdsError(new VDSError(EngineError.VDS_NETWORK_ERROR, "Timeout during rpc call"));
             setVdsRuntimeError(ex);
             log.error("Timeout waiting for VDSM response: {}", e.getMessage());
             log.trace("Exception", e);
