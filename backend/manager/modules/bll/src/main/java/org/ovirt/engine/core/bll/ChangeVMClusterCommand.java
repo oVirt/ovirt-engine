@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
 public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends VmCommand<T> {
@@ -83,7 +82,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         }
 
         if (vm.getDedicatedVmForVdsList().size() > 0) {
-            vm.setDedicatedVmForVdsList(Collections.<Guid>emptyList());
+            vm.setDedicatedVmForVdsList(Collections.emptyList());
             dedicatedHostWasCleared = true;
         }
 
