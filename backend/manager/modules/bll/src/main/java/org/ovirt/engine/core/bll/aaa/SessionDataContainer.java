@@ -216,7 +216,13 @@ public class SessionDataContainer {
             Date hardLimit = (Date) sessionMap.get(HARD_LIMIT_PARAMETER_NAME);
             Date softLimit = (Date) sessionMap.get(SOFT_LIMIT_PARAMETER_NAME);
             String token = (String) sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME);
-            boolean sessionValid = StringUtils.isEmpty(token) ? false : sessionStatuses.getOrDefault(token, false);
+            // if the session was created after the tokens statuses were retrieved from the server, the token will not
+            // have a session status in the sessionStatuses map. The session for the token will be checked and cleaned
+            // in the next iteration.
+            if (!sessionStatuses.containsKey(token)) {
+                continue;
+            }
+            boolean sessionValid = StringUtils.isEmpty(token) ? false : sessionStatuses.get(token);
             if (((hardLimit != null && hardLimit.before(now)) || (softLimit != null && softLimit.before(now))) ||
                     !(boolean) sessionMap.get(SESSION_VALID_PARAMETER_NAME) ||
                     !sessionValid) {
