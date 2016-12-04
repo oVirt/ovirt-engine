@@ -911,7 +911,7 @@ public class VmHandler implements BackendService {
                 cpuId)) {
             String unsupportedCpus = osRepository.getUnsupportedCpus(osId, version).toString();
             validationMessages.add(EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS.name());
-            validationMessages.add("$unsupportedCpus " + StringUtils.strip(unsupportedCpus.toString(), "[]"));
+            validationMessages.add("$unsupportedCpus " + StringUtils.strip(unsupportedCpus, "[]"));
             return false;
         }
         return true;
