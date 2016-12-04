@@ -247,6 +247,7 @@ class Const(object):
             '-restapi',
             '-tools',
             '-tools-backup',
+            '-hosts-ansible-inventory',
             '-userportal',
             '-webadmin-portal',
             '-dashboard',
