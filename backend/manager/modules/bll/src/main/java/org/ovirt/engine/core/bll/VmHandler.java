@@ -763,7 +763,7 @@ public class VmHandler implements BackendService {
         return validationResult;
     }
 
-    public void updateCurrentCd(Guid vdsId, VM vm, String currentCd) {
+    public void updateCurrentCd(VM vm, String currentCd) {
         VmDynamic vmDynamic = vm.getDynamicData();
         vmDynamic.setCurrentCd(currentCd);
         vdsBrokerFrontend.runVdsCommand(VDSCommandType.UpdateVmDynamicData,

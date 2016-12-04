@@ -99,7 +99,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
         setActionReturnValue(runVdsCommand(VDSCommandType.ChangeDisk,
                 new ChangeDiskVDSCommandParameters(getVdsId(), getVm().getId(), iface, index, cdImagePath))
                         .getReturnValue());
-        vmHandler.updateCurrentCd(getVdsId(), getVm(), getParameters().getCdImagePath());
+        vmHandler.updateCurrentCd(getVm(), getParameters().getCdImagePath());
         setSucceeded(true);
     }
 

@@ -572,7 +572,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected void updateCurrentCd(String cdPath) {
         cdPath = StringUtils.isEmpty(cdPath) ? null : cdPath;
-        vmHandler.updateCurrentCd(getVdsId(), getVm(), cdPath);
+        vmHandler.updateCurrentCd(getVm(), cdPath);
     }
 
 
