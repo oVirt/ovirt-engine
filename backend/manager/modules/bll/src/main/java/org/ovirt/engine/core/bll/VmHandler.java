@@ -773,9 +773,9 @@ public class VmHandler implements BackendService {
     public void updateDefaultTimeZone(VmBase vmBase) {
         if (vmBase.getTimeZone() == null) {
             if (osRepository.isWindows(vmBase.getOsId())) {
-                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone));
+                vmBase.setTimeZone(Config.getValue(ConfigValues.DefaultWindowsTimeZone));
             } else {
-                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultGeneralTimeZone));
+                vmBase.setTimeZone(Config.getValue(ConfigValues.DefaultGeneralTimeZone));
             }
         }
     }
