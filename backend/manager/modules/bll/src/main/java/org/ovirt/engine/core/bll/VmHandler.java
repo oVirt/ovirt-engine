@@ -526,7 +526,7 @@ public class VmHandler implements BackendService {
     public void updateVmGuestAgentVersion(final VM vm) {
         if (vm.getAppList() != null) {
             final String[] parts = vm.getAppList().split("[,]", -1);
-            if (parts != null && parts.length != 0) {
+            if (parts.length != 0) {
                 final List<String> possibleAgentAppNames = Config.getValue(ConfigValues.AgentAppName);
                 final Map<String, String> spiceDriversInGuest = Config.getValue(ConfigValues.SpiceDriverNameInGuest);
                 final String spiceDriverInGuest =
