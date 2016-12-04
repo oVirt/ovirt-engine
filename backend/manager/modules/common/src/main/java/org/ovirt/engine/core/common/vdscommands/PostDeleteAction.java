@@ -10,4 +10,7 @@ public interface PostDeleteAction {
 
     void setPostZero(boolean postZero);
 
+    boolean isDiscard();
+
+    void setDiscard(boolean discard);
 }

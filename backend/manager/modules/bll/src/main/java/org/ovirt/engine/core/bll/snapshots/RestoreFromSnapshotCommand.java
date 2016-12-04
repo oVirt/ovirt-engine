@@ -111,7 +111,8 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
             vdsReturnValue = runVdsCommand(VDSCommandType.DestroyImage,
                     postDeleteActionHandler.fixParameters(
                             new DestroyImageVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
-                                    _imagesToDelete, getDiskImage().isWipeAfterDelete(), true)));
+                                    _imagesToDelete, getDiskImage().isWipeAfterDelete(),
+                                    storageDomainDao.get(storageDomainId).isDiscardAfterDelete(), true)));
 
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalVdsmTaskIdList().add(

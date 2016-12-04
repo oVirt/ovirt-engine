@@ -77,7 +77,10 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                                 getParameters().getVmId(), imageGroupId, snapshotId, destinationImageGroupID,
                                 getDestinationImageId(), getJsonDiskDescription(newImage),
                                 getParameters().getDestinationStorageDomainId(), CopyVolumeType.SharedVol,
-                                targetFormat, newImage.getVolumeType(), getDiskImage().isWipeAfterDelete(), false)));
+                                targetFormat, newImage.getVolumeType(), getDiskImage().isWipeAfterDelete(),
+                                storageDomainDao.get(getParameters().getDestinationStorageDomainId())
+                                        .isDiscardAfterDelete(),
+                                false)));
 
         getReturnValue().getInternalVdsmTaskIdList().add(
                 createTask(taskId,

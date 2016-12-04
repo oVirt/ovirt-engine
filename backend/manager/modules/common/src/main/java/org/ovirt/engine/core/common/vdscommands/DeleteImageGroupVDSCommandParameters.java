@@ -7,11 +7,13 @@ public class DeleteImageGroupVDSCommandParameters
         extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters implements PostDeleteAction {
     private boolean postZero;
     private boolean forceDelete;
+    private boolean discard;
 
     public DeleteImageGroupVDSCommandParameters(Guid storagePoolId,
-            Guid storageDomainId, Guid imageGroupId, boolean postZero, boolean force) {
+            Guid storageDomainId, Guid imageGroupId, boolean postZero, boolean discard, boolean force) {
         super(storagePoolId, storageDomainId, imageGroupId);
         setPostZero(postZero);
+        setDiscard(discard);
         setForceDelete(force);
     }
 
@@ -35,10 +37,19 @@ public class DeleteImageGroupVDSCommandParameters
         forceDelete = value;
     }
 
+    public boolean isDiscard() {
+        return discard;
+    }
+
+    public void setDiscard(boolean discard) {
+        this.discard = discard;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("postZeros", getPostZero())
+                .append("discard", isDiscard())
                 .append("forceDelete", getForceDelete());
     }
 }

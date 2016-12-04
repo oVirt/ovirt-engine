@@ -11,13 +11,14 @@ public class CopyImageVDSCommandParameters
     public CopyImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid vmId, Guid imageGroupId,
             Guid srcImageId, Guid dstImageGroupId, Guid dstVolUUID, String description, Guid dstStorageDomainId,
             CopyVolumeType copyVolumeType, VolumeFormat volumeFormat, VolumeType preallocate, boolean postZero,
-            boolean force) {
+            boolean discard, boolean force) {
         super(storagePoolId, storageDomainId, imageGroupId, srcImageId);
         this.setdstImageGroupId(dstImageGroupId);
         setVmId(vmId);
         setDstImageId(dstVolUUID);
         setImageDescription(description);
         setPostZero(postZero);
+        setDiscard(discard);
         setForce(force);
         setDstStorageDomainId(dstStorageDomainId);
         setCopyVolumeType(copyVolumeType);
@@ -117,6 +118,16 @@ public class CopyImageVDSCommandParameters
         privatePostZero = postZero;
     }
 
+    private boolean discard;
+
+    public boolean isDiscard() {
+        return discard;
+    }
+
+    public void setDiscard(boolean discard) {
+        this.discard = discard;
+    }
+
     private boolean privateForce;
 
     public boolean getForce() {
@@ -148,6 +159,7 @@ public class CopyImageVDSCommandParameters
                 .append("volumeFormat", getVolumeFormat())
                 .append("preallocate", getPreallocate())
                 .append("postZero", getPostZero())
+                .append("discard", isDiscard())
                 .append("force", getForce());
     }
 }

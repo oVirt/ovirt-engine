@@ -66,7 +66,6 @@ public class JsonRpcIIrsServer implements IIrsServer {
         return new OneUuidReturn(response);
     }
 
-
     @Override
     public OneUuidReturn copyImage(String sdUUID,
             String spUUID,
@@ -83,6 +82,27 @@ public class JsonRpcIIrsServer implements IIrsServer {
             String postZero,
             String force) {
         // vmGUID is not needed and can be removed from the interface
+        return copyImage(sdUUID, spUUID, vmGUID, srcImgGUID, srcVolUUID, dstImgGUID, dstVolUUID, descr, dstSdUUID,
+                volType, volFormat, preallocate, postZero, null, force);
+    }
+
+    @Override
+    public OneUuidReturn copyImage(String sdUUID,
+            String spUUID,
+            String vmGUID,
+            String srcImgGUID,
+            String srcVolUUID,
+            String dstImgGUID,
+            String dstVolUUID,
+            String descr,
+            String dstSdUUID,
+            int volType,
+            int volFormat,
+            int preallocate,
+            String postZero,
+            Boolean discard,
+            String force) {
+        // vmGUID is not needed and can be removed from the interface
         JsonRpcRequest request =
                 new RequestBuilder("Volume.copy").withParameter("volumeID", srcVolUUID)
                         .withParameter("storagepoolID", spUUID)
@@ -96,6 +116,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .withParameter("volFormat", volFormat)
                         .withParameter("preallocate", preallocate)
                         .withParameter("postZero", postZero)
+                        .withOptionalParameter("discard", discard)
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response =
@@ -150,6 +171,19 @@ public class JsonRpcIIrsServer implements IIrsServer {
             String successorUUID,
             String postZero) {
         // vmGUID not used and can be removed from the interface
+        return mergeSnapshots(sdUUID, spUUID, vmGUID, imgGUID, ancestorUUID, successorUUID, postZero, null);
+    }
+
+    @Override
+    public OneUuidReturn mergeSnapshots(String sdUUID,
+            String spUUID,
+            String vmGUID,
+            String imgGUID,
+            String ancestorUUID,
+            String successorUUID,
+            String postZero,
+            Boolean discard) {
+        // vmGUID not used and can be removed from the interface
         JsonRpcRequest request =
                 new RequestBuilder("Image.mergeSnapshots").withParameter("imageID", imgGUID)
                         .withParameter("storagepoolID", spUUID)
@@ -157,6 +191,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .withParameter("ancestor", ancestorUUID)
                         .withParameter("successor", successorUUID)
                         .withParameter("postZero", postZero)
+                        .withOptionalParameter("discard", discard)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
@@ -185,12 +220,24 @@ public class JsonRpcIIrsServer implements IIrsServer {
             String[] volUUID,
             String postZero,
             String force) {
+        return deleteVolume(sdUUID, spUUID, imgGUID, volUUID, postZero, null, force);
+    }
+
+    @Override
+    public OneUuidReturn deleteVolume(String sdUUID,
+            String spUUID,
+            String imgGUID,
+            String[] volUUID,
+            String postZero,
+            Boolean discard,
+            String force) {
         JsonRpcRequest request =
                 new RequestBuilder("Image.deleteVolumes").withParameter("imageID", imgGUID)
                         .withParameter("storagepoolID", spUUID)
                         .withParameter("storagedomainID", sdUUID)
                         .withParameter("volumeList", new ArrayList<>(Arrays.asList(volUUID)))
                         .withOptionalParameter("postZero", postZero)
+                        .withOptionalParameter("discard", discard)
                         .withOptionalParameter("force", force)
                         .build();
         Map<String, Object> response =
@@ -348,11 +395,22 @@ public class JsonRpcIIrsServer implements IIrsServer {
             String imgGUID,
             String postZero,
             String force) {
+        return deleteImage(sdUUID, spUUID, imgGUID, postZero, null, force);
+    }
+
+    @Override
+    public OneUuidReturn deleteImage(String sdUUID,
+            String spUUID,
+            String imgGUID,
+            String postZero,
+            Boolean discard,
+            String force) {
         JsonRpcRequest request =
                 new RequestBuilder("Image.delete").withParameter("imageID", imgGUID)
                         .withParameter("storagepoolID", spUUID)
                         .withParameter("storagedomainID", sdUUID)
                         .withParameter("postZero", postZero)
+                        .withOptionalParameter("discard", discard)
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response =
@@ -369,6 +427,19 @@ public class JsonRpcIIrsServer implements IIrsServer {
             int op,
             String postZero,
             String force) {
+        return moveImage(spUUID, srcDomUUID, dstDomUUID, imgGUID, vmGUID, op, postZero, null, force);
+    }
+
+    @Override
+    public OneUuidReturn moveImage(String spUUID,
+            String srcDomUUID,
+            String dstDomUUID,
+            String imgGUID,
+            String vmGUID,
+            int op,
+            String postZero,
+            Boolean discard,
+            String force) {
         JsonRpcRequest request =
                 new RequestBuilder("Image.move").withParameter("imageID", imgGUID)
                         .withParameter("storagepoolID", spUUID)
@@ -376,6 +447,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .withParameter("dstSdUUID", dstDomUUID)
                         .withParameter("operation", op)
                         .withParameter("postZero", postZero)
+                        .withOptionalParameter("discard", discard)
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response =

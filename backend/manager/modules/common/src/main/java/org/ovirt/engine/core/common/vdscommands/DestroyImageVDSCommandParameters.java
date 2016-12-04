@@ -8,9 +8,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class DestroyImageVDSCommandParameters
         extends AllStorageAndImageIdVDSCommandParametersBase implements PostDeleteAction {
     public DestroyImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
-            List<Guid> imageList, boolean postZero, boolean force) {
+            List<Guid> imageList, boolean postZero, boolean discard, boolean force) {
         super(storagePoolId, storageDomainId, imageGroupId, Guid.Empty);
         setPostZero(postZero);
+        setDiscard(discard);
         setImageList(imageList);
         setForce(force);
     }
@@ -35,6 +36,18 @@ public class DestroyImageVDSCommandParameters
     @Override
     public void setPostZero(boolean postZero) {
         privatePostZero = postZero;
+    }
+
+    private boolean discard;
+
+    @Override
+    public boolean isDiscard() {
+        return discard;
+    }
+
+    @Override
+    public void setDiscard(boolean discard) {
+        this.discard = discard;
     }
 
     private boolean privateForce;

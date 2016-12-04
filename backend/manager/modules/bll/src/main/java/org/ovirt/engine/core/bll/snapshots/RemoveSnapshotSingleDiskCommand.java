@@ -58,7 +58,8 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
     protected VDSReturnValue mergeSnapshots(Guid storagePoolId, Guid storageDomainId) {
         MergeSnapshotsVDSCommandParameters params = new MergeSnapshotsVDSCommandParameters(storagePoolId,
                 storageDomainId, getVmId(), getDiskImage().getId(), getDiskImage().getImageId(),
-                getDestinationDiskImage().getImageId(), getDiskImage().isWipeAfterDelete());
+                getDestinationDiskImage().getImageId(), getDiskImage().isWipeAfterDelete(),
+                storageDomainDao.get(storageDomainId).isDiscardAfterDelete());
         return runVdsCommand(VDSCommandType.MergeSnapshots,
                 postDeleteActionHandler.fixParameters(params));
     }

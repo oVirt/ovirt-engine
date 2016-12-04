@@ -299,6 +299,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 postDeleteActionHandler.fixParameters(
                         new DeleteImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId(),
                                 getStorageDomainId(), getDiskImage().getId(),
-                                getDiskImage().isWipeAfterDelete(), getParameters().getForceDelete())));
+                                getDiskImage().isWipeAfterDelete(), getStorageDomain().isDiscardAfterDelete(),
+                                getParameters().getForceDelete())));
     }
 }

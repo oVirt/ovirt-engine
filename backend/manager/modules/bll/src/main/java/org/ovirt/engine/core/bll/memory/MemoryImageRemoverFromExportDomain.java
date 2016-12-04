@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.di.Injector;
 
 public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
@@ -16,6 +17,7 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
     protected Boolean cachedPostZero;
     private VM vm;
     private PostDeleteActionHandler postDeleteActionHandler;
+    private StorageDomainDao storageDomainDao;
 
     public MemoryImageRemoverFromExportDomain(VM vm, CommandBase<?> enclosingCommand,
             Guid storagePoolId, Guid storageDomainId) {
@@ -24,6 +26,7 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
         this.storagePoolId = storagePoolId;
         this.storageDomainId = storageDomainId;
         postDeleteActionHandler = Injector.get(PostDeleteActionHandler.class);
+        storageDomainDao = Injector.get(StorageDomainDao.class);
     }
 
     public void remove() {
@@ -39,16 +42,18 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
 
     @Override
     protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryImageParams(List<Guid> guids) {
+        boolean discardAfterDelete = storageDomainDao.get(guids.get(0)).isDiscardAfterDelete();
         return postDeleteActionHandler.fixParameters(
                 new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(2),
-                        isPostZero(), false));
+                        isPostZero(), discardAfterDelete, false));
     }
 
     @Override
     protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryConfParams(List<Guid> guids) {
+        boolean discardAfterDelete = storageDomainDao.get(guids.get(0)).isDiscardAfterDelete();
         return postDeleteActionHandler.fixParameters(
                 new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(4),
-                        isPostZero(), false));
+                        isPostZero(), discardAfterDelete, false));
     }
 
     /**

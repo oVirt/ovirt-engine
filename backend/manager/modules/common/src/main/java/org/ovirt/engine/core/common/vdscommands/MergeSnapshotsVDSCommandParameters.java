@@ -8,11 +8,12 @@ public class MergeSnapshotsVDSCommandParameters
     private Guid _imageId2;
 
     public MergeSnapshotsVDSCommandParameters(Guid storagePoolId, Guid storageDomainId,
-            Guid vmId, Guid imageGroupId, Guid imageId, Guid imageId2, boolean postZero) {
+            Guid vmId, Guid imageGroupId, Guid imageId, Guid imageId2, boolean postZero, boolean discard) {
         super(storagePoolId, storageDomainId, imageGroupId, imageId);
         _imageId2 = imageId2;
         setVmId(vmId);
         setPostZero(postZero);
+        setDiscard(discard);
     }
 
     public Guid getImageId2() {
@@ -41,6 +42,16 @@ public class MergeSnapshotsVDSCommandParameters
         privatePostZero = postZero;
     }
 
+    private boolean discard;
+
+    public boolean isDiscard() {
+        return discard;
+    }
+
+    public void setDiscard(boolean discard) {
+        this.discard = discard;
+    }
+
     public MergeSnapshotsVDSCommandParameters() {
         _imageId2 = Guid.Empty;
         privateVmId = Guid.Empty;
@@ -51,6 +62,7 @@ public class MergeSnapshotsVDSCommandParameters
         return super.appendAttributes(tsb)
                 .append("imageId2", getImageId2())
                 .append("vmId", getVmId())
-                .append("postZero", getPostZero());
+                .append("postZero", getPostZero())
+                .append("discard", isDiscard());
     }
 }

@@ -90,7 +90,9 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                                         newDiskImage.getId(), getDestinationImageId(),
                                         "", getDestinationStorageDomainId(), CopyVolumeType.LeafVol,
                                         newDiskImage.getVolumeFormat(), newDiskImage.getVolumeType(),
-                                        getDiskImage().isWipeAfterDelete(), false)));
+                                        getDiskImage().isWipeAfterDelete(),
+                                        storageDomainDao.get(getDestinationStorageDomainId()).isDiscardAfterDelete(),
+                                        false)));
 
             } catch (EngineException e) {
                 log.error("Failed creating snapshot from image id '{}'", getImage().getImageId());

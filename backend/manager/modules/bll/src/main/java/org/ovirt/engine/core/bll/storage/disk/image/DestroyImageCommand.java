@@ -66,6 +66,7 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
                         getParameters().getImageGroupId(),
                         getParameters().getImageList(),
                         getParameters().isPostZero(),
+                        storageDomainDao.get(getParameters().getStorageDomainId()).isDiscardAfterDelete(),
                         getParameters().isForce()));
     }
 

@@ -18,6 +18,10 @@ public interface IIrsServer {
             String dstImgGUID, String dstVolUUID, String descr, String dstSdUUID, int volType, int volFormat,
             int preallocate, String postZero, String force);
 
+    OneUuidReturn copyImage(String sdUUID, String spUUID, String vmGUID, String srcImgGUID, String srcVolUUID,
+            String dstImgGUID, String dstVolUUID, String descr, String dstSdUUID, int volType, int volFormat,
+            int preallocate, String postZero, Boolean discard, String force);
+
     OneUuidReturn downloadImage(Map methodInfo, String spUUID, String sdUUID, String dstImgGUID, String dstVolUUID);
 
     OneUuidReturn uploadImage(Map methodInfo, String spUUID, String sdUUID, String srcImgGUID, String srcVolUUID);
@@ -25,11 +29,17 @@ public interface IIrsServer {
     OneUuidReturn mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
             String ancestorUUID, String successorUUID, String postZero);
 
+    OneUuidReturn mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
+            String ancestorUUID, String successorUUID, String postZero, Boolean discard);
+
     VolumeListReturn reconcileVolumeChain(String spUUID, String sdUUID, String imgGUID,
             String leafVolUUID);
 
     OneUuidReturn deleteVolume(String sdUUID, String spUUID, String imgGUID, String[] volUUID,
             String postZero, String force);
+
+    OneUuidReturn deleteVolume(String sdUUID, String spUUID, String imgGUID, String[] volUUID,
+            String postZero, Boolean discard, String force);
 
     StatusOnlyReturn setVolumeDescription(String sdUUID, String spUUID, String imgGUID, String volUUID, String description);
 
@@ -59,8 +69,14 @@ public interface IIrsServer {
 
     OneUuidReturn deleteImage(String sdUUID, String spUUID, String imgGUID, String postZero, String force);
 
+    OneUuidReturn deleteImage(String sdUUID, String spUUID, String imgGUID, String postZero, Boolean discard,
+            String force);
+
     OneUuidReturn moveImage(String spUUID, String srcDomUUID, String dstDomUUID, String imgGUID,
             String vmGUID, int op, String postZero, String force);
+
+    OneUuidReturn moveImage(String spUUID, String srcDomUUID, String dstDomUUID, String imgGUID,
+            String vmGUID, int op, String postZero, Boolean discard, String force);
 
     OneUuidReturn cloneImageStructure(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID);
 

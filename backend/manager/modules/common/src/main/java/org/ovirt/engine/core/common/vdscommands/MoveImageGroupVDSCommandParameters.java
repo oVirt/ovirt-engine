@@ -27,11 +27,12 @@ public class MoveImageGroupVDSCommandParameters
     }
 
     public MoveImageGroupVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
-            Guid dstStorageDomainId, Guid vmId, ImageOperation op, boolean postZero, boolean force) {
+            Guid dstStorageDomainId, Guid vmId, ImageOperation op, boolean postZero, boolean discard, boolean force) {
         super(storagePoolId, storageDomainId, imageGroupId, dstStorageDomainId);
         setVmId(vmId);
         setOp(op);
         setPostZero(postZero);
+        setDiscard(discard);
         setForce(force);
     }
 
@@ -45,6 +46,18 @@ public class MoveImageGroupVDSCommandParameters
     @Override
     public void setPostZero(boolean postZero) {
         privatePostZero = postZero;
+    }
+
+    private boolean discard;
+
+    @Override
+    public boolean isDiscard() {
+        return discard;
+    }
+
+    @Override
+    public void setDiscard(boolean discard) {
+        this.discard = discard;
     }
 
     private boolean privateForce;
@@ -68,6 +81,7 @@ public class MoveImageGroupVDSCommandParameters
                 .append("vmId", getVmId())
                 .append("op", getOp())
                 .append("postZero", getPostZero())
+                .append("discard", isDiscard())
                 .append("force", getForce());
     }
 }
