@@ -456,19 +456,12 @@ public class VmHandler implements BackendService {
         vmInitDao.remove(vm.getId());
     }
 
-    // if secure is true we don't return the stored password, only
-    // indicate that the password is set via the PasswordAlreadyStored property
-    public List<VmInit> getVmInitByIds(List<Guid> ids, boolean secure) {
+    public List<VmInit> getVmInitWithoutPasswordByIds(List<Guid> ids) {
         List<VmInit> all = vmInitDao.getVmInitByIds(ids);
 
         for (VmInit vmInit: all) {
-            if (secure) {
                 vmInit.setPasswordAlreadyStored(!StringUtils.isEmpty(vmInit.getRootPassword()));
                 vmInit.setRootPassword(null);
-            } else {
-                vmInit.setPasswordAlreadyStored(false);
-            }
-
         }
         return all;
     }

@@ -19,7 +19,7 @@ public class GetVmsInitQuery<P extends IdsQueryParameters> extends QueriesComman
     @Override
     protected void executeQueryCommand() {
         if (getParameters().getIds() != null) {
-            getQueryReturnValue().setReturnValue(vmHandler.getVmInitByIds(getParameters().getIds(), true));
+            getQueryReturnValue().setReturnValue(vmHandler.getVmInitWithoutPasswordByIds(getParameters().getIds()));
         }
     }
 }
