@@ -49,6 +49,7 @@ public class ValidationUtils {
             "^([A-Za-z0-9+/]{4})*(()|[A-Za-z0-9+/][AQgw]==|[A-Za-z0-9+/]{2}[AEIMQUYcgkosw048]=)$";
     public static final String KEY_EQUALS_VALUE_SPACE_SEPARATED = "^[^\\s=]+=[^\\s=]+(\\s+[^\\s=]+=[^\\s=]+)*$";
     public static final String EMPTY_STRING = "^$";
+    public static final String NO_WHITESPACE = "[^\\s]+";
 
     /**
      * the mask will be replaced with zero-padded number in the generated names of the VMs in the pool, see

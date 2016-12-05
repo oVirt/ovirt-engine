@@ -28,6 +28,7 @@ public class NfsMountPointConstraint implements ConstraintValidator<ValidNFSMoun
 
     private static final Pattern LINUX_MOUNT_POINT_PATTERN = Pattern.compile(LINUX_MOUNT_POINT);
     private static final Pattern ASCII_PATTERN = Pattern.compile(ASCII);
+    private static final Pattern NO_SPACE_PATTERN = Pattern.compile(ValidationUtils.NO_WHITESPACE);
 
     @Override
     public void initialize(ValidNFSMountPoint constraintAnnotation) {
@@ -35,7 +36,9 @@ public class NfsMountPointConstraint implements ConstraintValidator<ValidNFSMoun
 
     @Override
     public boolean isValid(String name, ConstraintValidatorContext context) {
-        return LINUX_MOUNT_POINT_PATTERN.matcher(name).matches() && ASCII_PATTERN.matcher(name).matches();
+        return LINUX_MOUNT_POINT_PATTERN.matcher(name).matches()
+                && ASCII_PATTERN.matcher(name).matches()
+                && NO_SPACE_PATTERN.matcher(name).matches();
     }
 
 }

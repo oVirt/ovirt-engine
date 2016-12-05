@@ -26,5 +26,8 @@ public class NFSMountPointConstraintTest {
         assertFalse(new NfsMountPointConstraint().isValid(".:/tmp/kakukk", null));
         assertFalse(new NfsMountPointConstraint().isValid(".example.com:/tmp/kakukk", null));
         assertFalse(new NfsMountPointConstraint().isValid("-example.com:/tmp/kakukk", null));
+        assertFalse(new NfsMountPointConstraint().isValid("192.168.1.1:/h ome", null));
+        assertFalse(new NfsMountPointConstraint().isValid("192.168.1.1:/home ", null));
+        assertFalse(new NfsMountPointConstraint().isValid(" 192.168.1.1:/home", null));
     }
 }
