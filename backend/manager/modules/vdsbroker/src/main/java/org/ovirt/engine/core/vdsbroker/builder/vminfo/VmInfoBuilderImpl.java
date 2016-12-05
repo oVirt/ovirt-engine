@@ -49,7 +49,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
-import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -726,7 +725,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         createInfo.put(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
 
         if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
-            createInfo.put(VdsProperties.maxMemSize, VmCommonUtils.maxMemorySizeWithHotplugInMb(vm));
+            createInfo.put(VdsProperties.maxMemSize, vm.getMaxMemorySizeMb());
             createInfo.put(VdsProperties.maxMemSlots, Config.getValue(ConfigValues.MaxMemorySlots));
         }
 

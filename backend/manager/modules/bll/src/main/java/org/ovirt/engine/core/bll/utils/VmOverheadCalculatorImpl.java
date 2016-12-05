@@ -5,7 +5,6 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.utils.VmCommonUtils;
 
 @Singleton
 public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
@@ -85,7 +84,7 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
         if (onPpc) {
             int maxRam = vmRam;
             if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
-                maxRam = VmCommonUtils.maxMemorySizeWithHotplugInMb(vm);
+                maxRam = vm.getMaxMemorySizeMb();
             }
             int powerOf2 = Integer.highestOneBit(maxRam);
             pageTable = (maxRam > powerOf2 ? powerOf2 * 2 : powerOf2) / 64;
