@@ -1,26 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
-import org.ovirt.engine.core.utils.StringMapUtils;
-import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
-public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends VdsBrokerCommand<P> {
-
-    @Inject
-    private VmInfoBuildUtils vmInfoBuildUtils;
-
-    protected Map<String, Object> struct = new HashMap<>();
+public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends HotPlugOrUnplugNicVDSCommand<P> {
 
     public HotPlugNicVDSCommand(P parameters) {
         super(parameters);
@@ -28,47 +10,8 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
 
     @Override
     protected void executeVdsBrokerCommand() {
-        init();
-        status = getBroker().hotPlugNic(struct);
+        status = getBroker().hotPlugNic(createParametersStruct());
         proceedProxyReturnValue();
-    }
-
-    protected void init() {
-        struct.put(VdsProperties.vm_guid, getParameters().getVm().getId().toString());
-        struct.put(VdsProperties.VM_NETWORK_INTERFACE, initNicStructure());
-    }
-
-    private Map<String, Object> initNicStructure() {
-        Map<String, Object> map = new HashMap<>();
-        VmNic nic = getParameters().getNic();
-        VmDevice vmDevice = getParameters().getVmDevice();
-        VM vm = getParameters().getVm();
-
-        if (!nic.isPassthrough()) {
-            map.put(VdsProperties.Type, vmDevice.getType().getValue());
-            map.put(VdsProperties.Device, VmDeviceType.BRIDGE.getName());
-            map.put(VdsProperties.MAC_ADDR, nic.getMacAddress());
-            map.put(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
-
-            addAddress(map, vmDevice.getAddress());
-            map.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
-            map.put(VdsProperties.NIC_TYPE,
-                    vmInfoBuildUtils.evaluateInterfaceType(VmInterfaceType.forValue(nic.getType()),
-                            vm.getHasAgent()));
-            map.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
-
-            vmInfoBuildUtils.addProfileDataToNic(map, vm, vmDevice, nic);
-            vmInfoBuildUtils.addNetworkFiltersToNic(map, nic);
-        } else {
-            vmInfoBuildUtils.addNetworkVirtualFunctionProperties(map, nic, vmDevice, vmDevice.getHostDevice(), vm);
-        }
-        return map;
-    }
-
-    private void addAddress(Map<String, Object> map, String address) {
-        if (StringUtils.isNotBlank(address)) {
-            map.put(VdsProperties.Address, StringMapUtils.string2Map(getParameters().getVmDevice().getAddress()));
-        }
     }
 
 }
