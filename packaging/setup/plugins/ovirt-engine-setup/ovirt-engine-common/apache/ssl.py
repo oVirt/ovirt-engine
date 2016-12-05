@@ -75,6 +75,9 @@ class Plugin(plugin.PluginBase):
             'SSLCACertificateFile': (
                 oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
             ),
+            'SSLProtocol': (
+                oengcommcons.Const.HTTPD_SSL_PROTOCOLS
+            ),
         }
 
     @plugin.event(

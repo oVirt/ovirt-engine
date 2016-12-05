@@ -191,6 +191,12 @@ class Stages(object):
 
 @util.export
 @util.codegen
+class Const(object):
+    HTTPD_SSL_PROTOCOLS = 'all -SSLv3 -TLSv1'
+
+
+@util.export
+@util.codegen
 @osetupattrsclass
 class DBEnvKeysConst(object):
     HOST = 'host'
