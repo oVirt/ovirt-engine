@@ -716,6 +716,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getDescription(),
                         getParameters().getMasterVm().getComment(),
                         getParameters().getMasterVm().getMemSizeMb(),
+                        getParameters().getMasterVm().getMaxMemorySizeMb(),
                         getVmTemplateName(),
                         getParameters().getMasterVm().getNumOfSockets(),
                         getParameters().getMasterVm().getCpuPerSocket(),

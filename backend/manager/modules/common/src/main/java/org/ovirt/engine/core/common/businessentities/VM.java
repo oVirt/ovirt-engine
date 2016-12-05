@@ -151,6 +151,14 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         return this.vmStatic.getMemSizeMb();
     }
 
+    public int getMaxMemorySizeMb() {
+        return vmStatic.getMaxMemorySizeMb();
+    }
+
+    public void setMaxMemorySizeMb(int maxMemorySizeMb) {
+        vmStatic.setMaxMemorySizeMb(maxMemorySizeMb);
+    }
+
     public void setVmMemSizeMb(int value) {
         this.vmStatic.setMemSizeMb(value);
     }

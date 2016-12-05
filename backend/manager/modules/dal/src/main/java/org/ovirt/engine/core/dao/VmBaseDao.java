@@ -37,6 +37,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("free_text_comment", entity.getComment())
                 .addValue("creation_date", entity.getCreationDate())
                 .addValue("mem_size_mb", entity.getMemSizeMb())
+                .addValue("max_memory_size_mb", entity.getMaxMemorySizeMb())
                 .addValue("num_of_io_threads", entity.getNumOfIoThreads())
                 .addValue("vnc_keyboard_layout", entity.getVncKeyboardLayout())
                 .addValue("tunnel_migration", entity.getTunnelMigration())
@@ -103,6 +104,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
 
         protected final void map(final ResultSet rs, final T entity) throws SQLException {
             entity.setMemSizeMb(rs.getInt("mem_size_mb"));
+            entity.setMaxMemorySizeMb(rs.getInt("max_memory_size_mb"));
             entity.setNumOfIoThreads(rs.getInt("num_of_io_threads"));
             entity.setOsId(rs.getInt("os"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));

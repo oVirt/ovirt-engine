@@ -60,6 +60,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     private static final int NUM_DISKS_STORAGE_DOMAIN_1 = 3;
     private static final int NUM_DISKS_STORAGE_DOMAIN_2 = 3;
     protected static final String CPU_ID = "0";
+    protected static final int MAX_MEMORY_SIZE = 4096;
 
     @Mock
     CpuFlagsManagerHandler cpuFlagsManagerHandler;
@@ -215,6 +216,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         stat.setVmtGuid(Guid.newGuid());
         stat.setName("testVm");
         stat.setPriority(1);
+        stat.setMaxMemorySizeMb(MAX_MEMORY_SIZE);
         vm.setStaticData(stat);
         vm.setDynamicData(dynamic);
         vm.setSingleQxlPci(false);

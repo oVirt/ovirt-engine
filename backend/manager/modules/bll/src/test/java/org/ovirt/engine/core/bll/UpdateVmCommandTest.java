@@ -103,6 +103,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private static final String CPU_ID = "0";
     private static final Version version = Version.v3_6;
     private static final Guid clusterId = Guid.newGuid();
+    protected static final int MAX_MEMORY_SIZE = 4096;
 
     @Mock
     private VmDao vmDao;
@@ -145,6 +146,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         VmStatic vmStatic = new VmStatic();
         vmStatic.setClusterId(clusterId);
         vmStatic.setName("my_vm");
+        vmStatic.setMaxMemorySizeMb(MAX_MEMORY_SIZE);
 
         VmManagementParametersBase params = new VmManagementParametersBase();
         params.setCommandType(VdcActionType.UpdateVm);

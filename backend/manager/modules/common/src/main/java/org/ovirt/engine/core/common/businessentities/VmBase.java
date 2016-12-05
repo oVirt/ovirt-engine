@@ -91,6 +91,19 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableVmTemplateField
     private int memSizeMb;
 
+    /**
+     * Memory size up to which memory hotplug can be performed.
+     * <p>Bounds {@link #memSizeMb} <= maxMemorySizeMb <=
+     * {@link org.ovirt.engine.core.common.utils.VmCommonUtils#maxMemorySizeWithHotplugInMb(VM)}</p>
+     */
+    @CopyOnNewVersion
+    @EditableVmField(
+            onHostedEngine = true,
+            onStatuses = { VMStatus.Down })
+    @EditableVmTemplateField
+    @Min(1)
+    private int maxMemorySizeMb;
+
     @CopyOnNewVersion
     @EditableVmField(
             onHostedEngine = true,
@@ -471,6 +484,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 vmBase.getDescription(),
                 vmBase.getComment(),
                 vmBase.getMemSizeMb(),
+                vmBase.getMaxMemorySizeMb(),
                 vmBase.getNumOfSockets(),
                 vmBase.getCpuPerSocket(),
                 vmBase.getThreadsPerCpu(),
@@ -537,6 +551,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
             String description,
             String comment,
             int memSizeMb,
+            int maxMemorySizeMb,
             int numOfSockets,
             int cpusPerSocket,
             int threadsPerCpu,
@@ -601,6 +616,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this.description = description;
         this.comment = comment;
         this.memSizeMb = memSizeMb;
+        this.maxMemorySizeMb = maxMemorySizeMb;
         this.numOfSockets = numOfSockets;
         this.cpuPerSocket = cpusPerSocket;
         this.threadsPerCpu = threadsPerCpu;
@@ -791,16 +807,24 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         return memSizeMb;
     }
 
+    public void setMemSizeMb(int value) {
+        this.memSizeMb = value;
+    }
+
+    public int getMaxMemorySizeMb() {
+        return maxMemorySizeMb;
+    }
+
+    public void setMaxMemorySizeMb(int maxMemorySizeMb) {
+        this.maxMemorySizeMb = maxMemorySizeMb;
+    }
+
     public int getNumOfIoThreads() {
         return numOfIoThreads;
     }
 
     public void setNumOfIoThreads(int numOfIoThreads) {
         this.numOfIoThreads = numOfIoThreads;
-    }
-
-    public void setMemSizeMb(int value) {
-        this.memSizeMb = value;
     }
 
     public int getNumOfSockets() {
@@ -1020,6 +1044,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 kernelUrl,
                 osId,
                 memSizeMb,
+                maxMemorySizeMb,
                 niceLevel,
                 cpuShares,
                 numOfSockets,
@@ -1084,6 +1109,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 && Objects.equals(kernelUrl, other.kernelUrl)
                 && osId == other.osId
                 && memSizeMb == other.memSizeMb
+                && maxMemorySizeMb == other.maxMemorySizeMb
                 && niceLevel == other.niceLevel
                 && numOfSockets == other.numOfSockets
                 && threadsPerCpu == other.threadsPerCpu

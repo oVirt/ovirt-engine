@@ -68,6 +68,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     protected VmTemplate vmTemplate = mockVmTemplate();
     protected StoragePool storagePool = mockStoragePool();
     protected List<StorageDomain> storageDomainsList;
+    protected static final int MAX_MEMORY_SIZE = 4096;
 
     @Mock
     protected ClusterDao clusterDao;
@@ -309,6 +310,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         vmStatic.setOsId(OsRepository.DEFAULT_X86_OS);
         vmStatic.setNumOfMonitors(1);
         vmStatic.setMemSizeMb(300);
+        vmStatic.setMaxMemorySizeMb(MAX_MEMORY_SIZE);
         vmStatic.setStateless(false);
         vmStatic.setVmtGuid(vmTemplateId);
         return vmStatic;
