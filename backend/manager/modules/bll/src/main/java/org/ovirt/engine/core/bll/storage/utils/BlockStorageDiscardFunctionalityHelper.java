@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -37,7 +39,17 @@ public class BlockStorageDiscardFunctionalityHelper {
     @Inject
     private AuditLogDirector auditLogDirector;
 
-    public boolean isExistingDiscardFunctionalityPreserved(Collection<LUNs> lunsToAdd, StorageDomain storageDomain) {
+    public ValidationResult isExistingDiscardFunctionalityPreserved(Collection<LUNs> lunsToAdd,
+            StorageDomain storageDomain) {
+        if (!isExistingPassDiscardFunctionalityPreserved(lunsToAdd, storageDomain)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_LUN_BREAKS_STORAGE_DOMAIN_PASS_DISCARD_SUPPORT,
+                    String.format("$storageDomainName %1$s", storageDomain.getName()));
+        }
+        return ValidationResult.VALID;
+    }
+
+    protected boolean isExistingPassDiscardFunctionalityPreserved(Collection<LUNs> lunsToAdd,
+            StorageDomain storageDomain) {
         boolean sdSupportsDiscard = Boolean.TRUE.equals(storageDomain.getSupportsDiscard());
         if (!sdSupportsDiscard) {
             // The storage domain already doesn't support discard so there's no

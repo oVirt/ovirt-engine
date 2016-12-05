@@ -132,52 +132,52 @@ public class BlockStorageDiscardFunctionalityHelperTest {
     }
 
     @Test
-    public void testExistingDiscardFunctionalityIsPreservedSdHasNoDiscardFunctionality() {
-        setSdDiscardFunctionality(false, true);
-        assertTrue(discardHelper.isExistingDiscardFunctionalityPreserved(new LinkedList<>(), storageDomain));
+    public void testExistingPassDiscardFunctionalityIsPreservedSdHasNoDiscardFunctionality() {
+        setSdDiscardSupport(false, true);
+        assertTrue(discardHelper.isExistingPassDiscardFunctionalityPreserved(new LinkedList<>(), storageDomain));
     }
 
     @Test
-    public void testExistingDiscardFunctionalityIsPreservedSdHasNoDisks() {
-        setSdFullDiscardFunctionality();
-        assertTrue(discardHelper.isExistingDiscardFunctionalityPreserved(new LinkedList<>(), storageDomain));
+    public void testExistingPassDiscardFunctionalityIsPreservedSdHasNoDisks() {
+        setSdFullDiscardSupport();
+        assertTrue(discardHelper.isExistingPassDiscardFunctionalityPreserved(new LinkedList<>(), storageDomain));
     }
 
     @Test
-    public void testExistingDiscardFunctionalityIsPreservedAllLunsHaveDiscardFunctionality() {
-        setSdFullDiscardFunctionality();
+    public void testExistingPassDiscardFunctionalityIsPreservedAllLunsHaveDiscardFunctionality() {
+        setSdFullDiscardSupport();
         storageDomainDisks.add(new DiskImage());
-        assertTrue(discardHelper.isExistingDiscardFunctionalityPreserved(Arrays.asList(
+        assertTrue(discardHelper.isExistingPassDiscardFunctionalityPreserved(Arrays.asList(
                 createLunWithDiscardFunctionality(1024L, true),
                 createLunWithDiscardFunctionality(2048L, true)), storageDomain));
     }
 
     @Test
-    public void testExistingDiscardFunctionalityIsPreservedNoDiskRequiresDiscardFunctionality() {
-        setSdFullDiscardFunctionality();
+    public void testExistingPassDiscardFunctionalityIsPreservedNoDiskRequiresPassDiscardFunctionality() {
+        setSdFullDiscardSupport();
         createVmDiskOnSd(false, false);
         createVmDiskOnSd(true, false);
-        assertTrue(discardHelper.isExistingDiscardFunctionalityPreserved(Arrays.asList(
+        assertTrue(discardHelper.isExistingPassDiscardFunctionalityPreserved(Arrays.asList(
                 createLunWithDiscardFunctionality(0L, true),
                 createLunWithDiscardFunctionality(2048L, false)), storageDomain));
     }
 
     @Test
-    public void testExistingDiscardFunctionalityIsNotPreservedSdDiscardSupportBreaks() {
-        setSdDiscardFunctionality(true, false);
+    public void testExistingPassDiscardFunctionalityIsNotPreservedSdDiscardSupportBreaks() {
+        setSdDiscardSupport(true, false);
         createVmDiskOnSd(false, false);
         createVmDiskOnSd(false, true); // This disk requires discard support from the storage domain.
-        assertFalse(discardHelper.isExistingDiscardFunctionalityPreserved(Arrays.asList(
+        assertFalse(discardHelper.isExistingPassDiscardFunctionalityPreserved(Arrays.asList(
                 createLunWithDiscardFunctionality(0L, true), // This lun breaks the storage domain's discard support.
                 createLunWithDiscardFunctionality(2048L, false)), storageDomain));
     }
 
     @Test
-    public void testExistingDiscardFunctionalityIsNotPreservedSdDiscardZeroesTheDataSupportBreaks() {
-        setSdDiscardFunctionality(true, true);
+    public void testExistingPassDiscardFunctionalityIsNotPreservedSdDiscardZeroesTheDataSupportBreaks() {
+        setSdDiscardSupport(true, true);
         createVmDiskOnSd(false, false);
         createVmDiskOnSd(true, true); // This disk requires the storage domain's support for discard zeroes the data.
-        assertFalse(discardHelper.isExistingDiscardFunctionalityPreserved(Arrays.asList(
+        assertFalse(discardHelper.isExistingPassDiscardFunctionalityPreserved(Arrays.asList(
                 // This lun breaks the storage domain's support for discard zeroes the data.
                 createLunWithDiscardFunctionality(1024L, false),
                 createLunWithDiscardFunctionality(2048L, true)), storageDomain));
@@ -230,7 +230,7 @@ public class BlockStorageDiscardFunctionalityHelperTest {
         storageDomain.setId(Guid.newGuid());
     }
 
-    private void setSdDiscardFunctionality(boolean sdSupportsDiscard, boolean sdDiscardZeroesData) {
+    private void setSdDiscardSupport(boolean sdSupportsDiscard, boolean sdDiscardZeroesData) {
         storageDomain.setSupportsDiscard(sdSupportsDiscard);
         storageDomain.setSupportsDiscardZeroesData(sdDiscardZeroesData);
     }
@@ -242,8 +242,8 @@ public class BlockStorageDiscardFunctionalityHelperTest {
         return lun;
     }
 
-    private void setSdFullDiscardFunctionality() {
-        setSdDiscardFunctionality(true, true);
+    private void setSdFullDiscardSupport() {
+        setSdDiscardSupport(true, true);
     }
 
     private DiskVmElement createVmDisk(Guid diskId, boolean passDiscard) {

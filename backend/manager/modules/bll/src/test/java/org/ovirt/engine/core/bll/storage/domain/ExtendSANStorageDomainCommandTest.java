@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.storage.connection.ConnectAllHostsToLunCommand.ConnectAllHostsToLunCommandReturnValue;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
@@ -55,10 +56,11 @@ public class ExtendSANStorageDomainCommandTest {
     @Test
     public void validateFailsDiscardFunctionalityBreaks() {
         passAllValidations();
-        doReturn(false).when(discardHelper).isExistingDiscardFunctionalityPreserved(
-                anyListOf(LUNs.class), any(StorageDomain.class));
-        runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_LUN_BREAKS_STORAGE_DOMAIN_DISCARD_SUPPORT);
+        EngineMessage lunsBreakStorageDomainDiscardSupportMessage =
+                EngineMessage.ACTION_TYPE_FAILED_LUN_BREAKS_STORAGE_DOMAIN_PASS_DISCARD_SUPPORT;
+        doReturn(new ValidationResult(lunsBreakStorageDomainDiscardSupportMessage)).when(discardHelper)
+                .isExistingDiscardFunctionalityPreserved(anyListOf(LUNs.class), any(StorageDomain.class));
+        runAndAssertValidateFailure(command, lunsBreakStorageDomainDiscardSupportMessage);
     }
 
     private StorageDomain createStorageDomain() {
@@ -78,7 +80,7 @@ public class ExtendSANStorageDomainCommandTest {
         connectResult.setSucceeded(true);
         doReturn(connectResult).when(command).connectAllHostsToLun();
 
-        doReturn(true).when(discardHelper).isExistingDiscardFunctionalityPreserved(
+        doReturn(ValidationResult.VALID).when(discardHelper).isExistingDiscardFunctionalityPreserved(
                 anyListOf(LUNs.class), any(StorageDomain.class));
     }
 }

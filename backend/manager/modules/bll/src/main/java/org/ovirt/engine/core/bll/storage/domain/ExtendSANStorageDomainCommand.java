@@ -125,10 +125,9 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             getParameters().setLunsList(connectResult.getActionReturnValue());
         }
 
-        if (!discardHelper.isExistingDiscardFunctionalityPreserved(connectResult.getActionReturnValue(),
-                getStorageDomain())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_LUN_BREAKS_STORAGE_DOMAIN_DISCARD_SUPPORT,
-                    String.format("$storageDomainName %1$s", getStorageDomainName()));
+        if (!validate(discardHelper.isExistingDiscardFunctionalityPreserved(connectResult.getActionReturnValue(),
+                getStorageDomain()))) {
+            return false;
         }
         return true;
     }
