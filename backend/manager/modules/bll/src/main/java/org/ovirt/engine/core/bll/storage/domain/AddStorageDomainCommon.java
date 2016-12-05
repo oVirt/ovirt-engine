@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> extends AddStorageDomainCommand<T> {
 
@@ -56,8 +55,7 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
 
     @Override
     protected String getStorageArgs() {
-        return DbFacade.getInstance()
-                .getStorageServerConnectionDao()
+        return storageServerConnectionDao
                 .get(getStorageDomain().getStorage())
                 .getConnection();
     }
