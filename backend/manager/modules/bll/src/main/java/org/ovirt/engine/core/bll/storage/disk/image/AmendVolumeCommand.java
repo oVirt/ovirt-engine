@@ -1,0 +1,105 @@
+package org.ovirt.engine.core.bll.storage.disk.image;
+
+import java.util.Collections;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
+import org.ovirt.engine.core.bll.storage.StorageJobCommand;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
+import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.AmendVolumeCommandParameters;
+import org.ovirt.engine.core.common.businessentities.HostJobInfo;
+import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.job.StepSubjectEntity;
+import org.ovirt.engine.core.common.vdscommands.AmendVolumeVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.CommandStatus;
+import org.ovirt.engine.core.compat.Guid;
+
+@NonTransactiveCommandAttribute(forceCompensation = true)
+public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
+        StorageJobCommand<T> implements EntityPollingCommand {
+
+    @Inject
+    private VdsmImagePoller poller;
+    private DiskImage diskImage;
+
+    public AmendVolumeCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
+    public AmendVolumeCommand(Guid commandId) {
+        super(commandId);
+    }
+
+    private DiskImage getDiskImage() {
+        if (diskImage == null) {
+            VdsmImageLocationInfo info = (VdsmImageLocationInfo) getParameters().getVolInfo();
+            diskImage = diskImageDao.get(info.getImageId());
+        }
+        return diskImage;
+    }
+
+    @Override
+    protected void executeCommand() {
+        VdsmImageLocationInfo info = (VdsmImageLocationInfo) getParameters().getVolInfo();
+        DiskImage image = ImagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
+                info.getStorageDomainId(), info.getImageGroupId(), info.getImageId());
+        info.setGeneration(image.getImage().getGeneration());
+        persistCommandIfNeeded();
+
+        VDSReturnValue vdsReturnValue = VdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.AmendVolume,
+                new AmendVolumeVDSCommandParameters(getParameters().getStorageJobId(),
+                        info.getStorageDomainId(),
+                        info.getImageGroupId(),
+                        info.getImageId(),
+                        getParameters().getQcowCompat()),
+                getDiskImage().getStoragePoolId(), this);
+        if (!vdsReturnValue.getSucceeded()) {
+            setCommandStatus(CommandStatus.FAILED);
+        }
+        setSucceeded(vdsReturnValue.getSucceeded());
+    }
+
+    @Override
+    protected StepEnum getCommandStep() {
+        return StepEnum.AMEND_VOLUME;
+    }
+
+    @Override
+    public boolean shouldUpdateStepProgress() {
+        return true;
+    }
+
+    @Override
+    public List<StepSubjectEntity> getCommandStepSubjectEntities() {
+        if (getParameters().getJobWeight() != null && getParameters().getVolInfo() instanceof VdsmImageLocationInfo) {
+            return Collections.singletonList(new StepSubjectEntity(VdcObjectType.Disk,
+                    ((VdsmImageLocationInfo) getParameters().getVolInfo()).getImageGroupId(),
+                    getParameters().getJobWeight()));
+        }
+
+        return super.getCommandStepSubjectEntities();
+    }
+
+    private boolean isVdsmImage() {
+        return getParameters().getVolInfo() instanceof VdsmImageLocationInfo;
+    }
+
+    @Override
+    public HostJobInfo.HostJobStatus poll() {
+        if (isVdsmImage()) {
+            VdsmImageLocationInfo info = (VdsmImageLocationInfo) getParameters().getVolInfo();
+            return poller.pollImage(getParameters().getStoragePoolId(), info.getStorageDomainId(),
+                    info.getImageGroupId(), info.getImageId(), info.getGeneration(), getCommandId(), getActionType());
+        }
+        return null;
+    }
+}

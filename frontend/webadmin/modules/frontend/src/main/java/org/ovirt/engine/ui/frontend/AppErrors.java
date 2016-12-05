@@ -643,6 +643,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__ACTION__SPARSIFY();
 
+    String VAR__ACTION__AMEND();
+
     String VAR__ACTION__SHUTDOWN();
 
     String VAR__ACTION__EXPORT();

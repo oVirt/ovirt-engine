@@ -168,6 +168,7 @@ public enum VdcActionType {
     RemoveDisk(230, QuotaDependency.STORAGE),
     MoveImageGroup(231, QuotaDependency.STORAGE),
     GetDiskAlignment(232, QuotaDependency.NONE),
+    AmendVolume(233, ActionGroup.EDIT_DISK_PROPERTIES, QuotaDependency.NONE),
     RemoveMemoryVolumes(234, QuotaDependency.NONE),
     RemoveDiskSnapshots(235, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.NONE),
     RemoveSnapshotSingleDiskLive(236, QuotaDependency.STORAGE),
@@ -178,6 +179,7 @@ public enum VdcActionType {
     DestroyImageCheck(242, QuotaDependency.NONE),
     CreateVolume(243, QuotaDependency.STORAGE),
     SparsifyImage(244, ActionGroup.SPARSIFY_DISK, QuotaDependency.NONE),
+    AmendImageGroupVolumes(245,  ActionGroup.EDIT_DISK_PROPERTIES, QuotaDependency.NONE),
 
     // VmPoolCommands
     AddVmPool(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
