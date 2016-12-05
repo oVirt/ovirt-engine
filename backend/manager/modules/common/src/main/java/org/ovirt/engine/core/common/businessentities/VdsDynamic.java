@@ -192,6 +192,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private String prettyName;
 
+    private boolean hostedEngineConfigured;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -779,6 +781,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.prettyName = prettyName;
     }
 
+    public boolean isHostedEngineConfigured() {
+        return hostedEngineConfigured;
+    }
+
+    public void setHostedEngineConfigured(boolean heConfigured) {
+        this.hostedEngineConfigured = heConfigured;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -843,7 +853,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 updateAvailable,
                 hostDevicePassthroughEnabled,
                 kernelArgs,
-                prettyName
+                prettyName,
+                hostedEngineConfigured
         );
     }
 
@@ -919,6 +930,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(additionalFeatures, other.additionalFeatures)
                 && Objects.equals(kernelArgs, other.kernelArgs)
                 && Objects.equals(hostDevicePassthroughEnabled, other.hostDevicePassthroughEnabled)
-                && Objects.equals(prettyName, other.prettyName);
+                && Objects.equals(prettyName, other.prettyName)
+                && Objects.equals(hostedEngineConfigured, other.hostedEngineConfigured);
     }
 }

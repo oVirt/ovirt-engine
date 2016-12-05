@@ -32,6 +32,7 @@ public final class VdsProperties {
     public static final String numOfIoThreads = "numOfIoThreads";
     public static final String pinToIoThread = "pinToIoThread";
     public static final String ioThreadId = "ioThreadId";
+    public static final String hosted_engine_configured = "hostedEngineDeployed";
 
     // vds runtime (i.e. VdsDynamic req getVdsStats)
     public static final String netConfigDirty = "netConfigDirty";

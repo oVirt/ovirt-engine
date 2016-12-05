@@ -413,6 +413,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setFencingEnabled(rs.getBoolean("fencing_enabled"));
         entity.setGlusterPeerStatus(PeerStatus.fromValue(rs.getString("gluster_peer_status")));
         entity.setPrettyName(rs.getString("pretty_name"));
+        entity.setHostedEngineConfigured(rs.getBoolean("hosted_engine_configured"));
         return entity;
     };
 

@@ -1510,6 +1510,32 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         hostedEngineHost = value;
     }
 
+    public boolean isHostedEngineConfigured() {
+        return vdsDynamic.isHostedEngineConfigured();
+    }
+
+    public void setHostedEngineConfigured(boolean heConfigured) {
+        vdsDynamic.setHostedEngineConfigured(heConfigured);
+    }
+
+    /**
+     * Return true if hosted engine has been deployed on this host and false otherwise. Hosted
+     * engine is considered deployed if a non-empty hosted engine configuration file is present.
+     * The host's HA score and HA active status are used as a fallback check in case the check
+     * for the configuration file fails.
+     *
+     * @return true if hosted engine has been deployed on this host and false otherwise
+     */
+    public boolean isHostedEngineDeployed() {
+        // TODO Add running status of ovirt-ha-agent and ovirt-ha-broker once available from VDSM
+        if (isHostedEngineConfigured()
+                || (getHighlyAvailableScore() > 0 && getHighlyAvailableIsActive())) {
+            return true;
+        }
+
+        return false;
+    }
+
     public boolean isFencingEnabled() {
         return fencingEnabled;
     }

@@ -908,6 +908,8 @@ public class VdsBrokerObjectsBuilder {
             vds.setSELinuxEnforceMode(null);
         }
 
+        vds.setHostedEngineConfigured(assignBoolValue(struct, VdsProperties.hosted_engine_configured));
+
         updateAdditionalFeatures(vds, struct);
     }
 

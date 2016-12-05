@@ -102,6 +102,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
         entity.setKernelArgs(rs.getString("kernel_args"));
         entity.setPrettyName(rs.getString("pretty_name"));
+        entity.setHostedEngineConfigured(rs.getBoolean("hosted_engine_configured"));
         return entity;
     };
 
@@ -261,7 +262,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("is_update_available", vds.isUpdateAvailable())
                 .addValue("kernel_args", vds.getKernelArgs())
                 .addValue("is_hostdev_enabled", vds.isHostDevicePassthroughEnabled())
-                .addValue("pretty_name", vds.getPrettyName());
+                .addValue("pretty_name", vds.getPrettyName())
+                .addValue("hosted_engine_configured", vds.isHostedEngineConfigured());
     }
 
     @Override
