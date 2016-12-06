@@ -686,7 +686,8 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_large_icon_id UUID,
     v_console_disconnect_action VARCHAR(64),
     v_custom_compatibility_version VARCHAR(40),
-    v_migration_policy_id UUID)
+    v_migration_policy_id UUID,
+    v_lease_sd_id UUID)
   RETURNS VOID
    AS $procedure$
 DECLARE
@@ -766,7 +767,8 @@ INSERT INTO vm_static(description,
                       large_icon_id,
                       console_disconnect_action,
                       custom_compatibility_version,
-                      migration_policy_id)
+                      migration_policy_id,
+                      lease_sd_id)
     VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -838,7 +840,8 @@ INSERT INTO vm_static(description,
            v_large_icon_id,
            v_console_disconnect_action,
            v_custom_compatibility_version,
-           v_migration_policy_id);
+           v_migration_policy_id,
+           v_lease_sd_id);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE
@@ -1023,7 +1026,8 @@ v_large_icon_id UUID,
 v_provider_id UUID,
 v_console_disconnect_action VARCHAR(64),
 v_custom_compatibility_version VARCHAR(40),
-v_migration_policy_id UUID)
+v_migration_policy_id UUID,
+v_lease_sd_id UUID)
 
 RETURNS VOID
 
@@ -1102,7 +1106,8 @@ BEGIN
      provider_id = v_provider_id,
      console_disconnect_action = v_console_disconnect_action,
      custom_compatibility_version=v_custom_compatibility_version,
-     migration_policy_id = v_migration_policy_id
+     migration_policy_id = v_migration_policy_id,
+     lease_sd_id = v_lease_sd_id
      WHERE vm_guid = v_vm_guid
          AND entity_type = 'VM';
 

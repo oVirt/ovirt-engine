@@ -93,7 +93,8 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue(LARGE_ICON_ID_COLUMN, entity.getLargeIconId())
                 .addValue("console_disconnect_action", entity.getConsoleDisconnectAction().toString())
                 .addValue("custom_compatibility_version", entity.getCustomCompatibilityVersion())
-                .addValue("migration_policy_id", entity.getMigrationPolicyId());
+                .addValue("migration_policy_id", entity.getMigrationPolicyId())
+                .addValue("lease_sd_id", entity.getLeaseStorageDomainId());
     }
 
     /**
@@ -166,6 +167,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setLargeIconId(getGuid(rs, LARGE_ICON_ID_COLUMN));
             entity.setConsoleDisconnectAction(ConsoleDisconnectAction.fromDbString(rs.getString("console_disconnect_action")));
             entity.setCustomCompatibilityVersion(new VersionRowMapper("custom_compatibility_version").mapRow(rs, 0));
+            entity.setLeaseStorageDomainId(getGuid(rs, "lease_sd_id"));
             entity.setMigrationPolicyId(getGuid(rs, "migration_policy_id"));
         }
     }
