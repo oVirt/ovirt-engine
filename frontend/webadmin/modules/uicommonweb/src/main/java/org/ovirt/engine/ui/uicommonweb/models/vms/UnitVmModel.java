@@ -1583,42 +1583,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setTimeZone(new NotChangableForVmInPoolListModel<TimeZoneModel>());
         getTimeZone().getSelectedItemChangedEvent().addListener(this);
 
-        setDefaultHost(new NotChangableForVmInPoolListModel<VDS>() {
-            @Override
-            public void setSelectedItem(VDS value) {
-                if (value == null) {
-                    setSelectedItems(new ArrayList<VDS>());
-                } else {
-                    setSelectedItems(new ArrayList<>(Arrays.asList(value)));
-                }
-            }
-
-            @Override
-            public void setSelectedItems(List<VDS> value) {
-                // Default implementation only checks for instance equality
-                if (value != null && !value.equals(getSelectedItems())) {
-                    super.setSelectedItems(new ArrayList<VDS>(value));
-                } else if (value != null && value.equals(getSelectedItems())) {
-                    // do nothing, nothing changed
-                } else {
-                    super.setSelectedItems(value);
-                }
-                if (value == null || value.isEmpty() || value.size() > 1) {
-                    super.setSelectedItem(null);
-                } else {
-                    super.setSelectedItem(value.get(0));
-                }
-            }
-
-            @Override
-            public VDS getSelectedItem() {
-                if (selectedItems == null || selectedItems.isEmpty() || selectedItems.size() > 1) {
-                   return null;
-                } else {
-                    return selectedItems.get(0);
-                }
-            }
-        });
+        setDefaultHost(new NotChangableForVmInPoolListModel<VDS>());
         getDefaultHost().getSelectedItemsChangedEvent().addListener(this);
 
         setOSType(new NotChangableForVmInPoolListModel<Integer>() {

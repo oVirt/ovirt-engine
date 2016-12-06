@@ -30,7 +30,7 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
      */
     protected final List<T> selectedList = new ArrayList<>();
 
-    private boolean changing = false;
+    protected List<T> lastValues;
 
     /**
      * Constructor
@@ -42,15 +42,33 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
     }
 
     @Override
-    public void setValue(List<T> values, boolean fireEvents) {
-        if (changing) {
+    protected void setValue(List<T> values, boolean fireEvents, boolean fromClick) {
+        // Prevent potential event loops, as well as optimize away multiple set values to the same value.
+        if (values != null && lastValues != null && lastValues.equals(values)) {
             return;
         }
-        for (T value: values) {
+        if (fromClick) {
+            // Click event can only be one value;
+            T value = values.get(0);
             if (selectedList.contains(value)) {
+                // Can only remove 1 at a time, so if we get more than 1 we shouldn't remove them.
                 selectedList.remove(value);
             } else {
-                selectedList.add(value);
+                // Shouldn't get a null value, but in case we do, ignore it.
+                if (value != null) {
+                    selectedList.add(value);
+                }
+            }
+        } else {
+            // Received a list of selections from some code, we should clear the selected items, and replace them
+            // with the ones received.
+            selectedList.clear();
+            if (values != null) {
+                for (T value: values) {
+                    if (value != null) {
+                        selectedList.add(value);
+                    }
+                }
             }
         }
         listPanel.setSelected(selectedList);
@@ -58,7 +76,7 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
     }
 
     private void updateCurrentValue(final List<T> value, boolean fireEvents) {
-        changing = true;
+        lastValues = value;
         List<String> renderedValues = new ArrayList<>();
         for (T val: value) {
             renderedValues.add(getRenderer().render(Arrays.asList(val)));
@@ -84,11 +102,13 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
                 @Override
                 public void execute() {
                     ValueChangeEvent.fire(ListModelMultipleSelectListBox.this, selectedItems());
-                    changing = false;
+                    // Clear the value so we don't have any leaks
+                    lastValues = null;
                 }
             });
         } else {
-            changing = false;
+            // Clear the value so we don't have any leaks
+            lastValues = null;
         }
     }
 

@@ -209,6 +209,10 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
 
     @Override
     public void setValue(T value, boolean fireEvents) {
+        setValue(value, fireEvents, false);
+    }
+
+    protected void setValue(T value, boolean fireEvents, boolean fromClick) {
         if (changing) {
             return;
         } else if (value == null) {
@@ -231,7 +235,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
     }
 
     private void updateCurrentValue(final T value, boolean fireEvents) {
-        changing = !ignoreChanging();
+        setChanging(!ignoreChanging());
         String renderedValue = renderer.render(value);
         if (StringUtils.isEmpty(renderedValue)) {
             renderedValue = NBSP;
@@ -255,11 +259,11 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
                 @Override
                 public void execute() {
                     ValueChangeEvent.fire(ListModelListBox.this, currentValue);
-                    changing = false;
+                    setChanging(false);
                 }
             });
         } else {
-            changing = false;
+            setChanging(false);
         }
     }
 
@@ -274,6 +278,14 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
 
     public T getValue() {
         return currentValue;
+    }
+
+    public void setChanging(boolean value) {
+        changing = value;
+    }
+
+    public boolean getChaging() {
+        return changing;
     }
 
     @Override
@@ -376,7 +388,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
                 public void onClick(ClickEvent event) {
                     @SuppressWarnings("unchecked")
                     ListItem item = (ListModelListBox<T>.ListItem) event.getSource();
-                    ListModelListBox.this.setValue(item.getValue(), true);
+                    ListModelListBox.this.setValue(item.getValue(), true, true);
                     if (ListModelListBox.this.isMultiSelect) {
                         event.stopPropagation();
                     }
