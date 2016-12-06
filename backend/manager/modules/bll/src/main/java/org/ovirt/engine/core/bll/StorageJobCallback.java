@@ -59,7 +59,7 @@ public class StorageJobCallback implements CommandCallback {
             if (jobInfo != null) {
                 handlePolledJobStatus((StorageJobCommand) getCommand(cmdId), jobInfo);
                 jobStatus = jobInfo.getStatus();
-                updateStepProgress(commandEntity.getStepId(), jobInfo.getProgress());
+                updateStepProgress(commandEntity.getCommandContext().getStepId(), jobInfo.getProgress());
             }
             jobsReportedByHost = true;
         } else {
@@ -91,7 +91,7 @@ public class StorageJobCallback implements CommandCallback {
 
 
         if (command.shouldUpdateStepProgress() && jobStatus == HostJobStatus.done) {
-            updateStepProgress(commandEntity.getStepId(), MAX_PROGRESS);
+            updateStepProgress(commandEntity.getCommandContext().getStepId(), MAX_PROGRESS);
         }
 
         CommandExecutionStatus status = CommandCoordinatorUtil.getCommandExecutionStatus(cmdId);

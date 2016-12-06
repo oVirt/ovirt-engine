@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.utils.ExecutionMethod;
 
 /**
  * Determines the behavior of the Step/Job execution.
@@ -29,14 +30,6 @@ public class ExecutionContext implements Serializable{
      * A default list of steps
      */
     static final List<StepEnum> DEFAULT_STEPS_LIST = Arrays.asList(StepEnum.VALIDATING, StepEnum.EXECUTING);
-
-    /**
-     * Determines how the current command execution should be performed
-     */
-    public static enum ExecutionMethod {
-        AsStep,
-        AsJob;
-    }
 
     /**
      * The Job which the internal command participate in. If set, emphasis the control of the Job is passed to the

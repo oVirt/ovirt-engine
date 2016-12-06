@@ -5,12 +5,12 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.common.action.AddStepParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.utils.ExecutionMethod;
 
 public abstract class AddStepCommand<T extends AddStepParameters> extends CommandBase<T> {
 

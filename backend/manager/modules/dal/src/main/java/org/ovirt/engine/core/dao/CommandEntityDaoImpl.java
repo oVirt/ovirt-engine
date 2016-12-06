@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
+import org.ovirt.engine.core.common.utils.PersistedCommandContext;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
@@ -45,8 +46,8 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
         result.setEngineSessionSeqId(resultSet.getLong("engine_session_seq_id"));
         result.setUserId(Guid.createGuidFromString(resultSet.getString("user_id")));
         result.setId(Guid.createGuidFromString(resultSet.getString("command_id")));
-        result.setJobId(Guid.createGuidFromString(resultSet.getString("job_id")));
-        result.setStepId(Guid.createGuidFromString(resultSet.getString("step_id")));
+        result.setCommandContext(SerializationFactory.getDeserializer().deserialize(
+                resultSet.getString("command_context"), PersistedCommandContext.class));
         result.setCreatedAt(DbFacadeUtils.fromDate(resultSet.getTimestamp("created_at")));
         result.setCommandType(VdcActionType.forValue(resultSet.getInt("command_type")));
         result.setParentCommandId(Guid.createGuidFromString(resultSet.getString("parent_command_id")));
@@ -91,8 +92,7 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
                 .addValue("command_type", entity.getCommandType().getValue())
                 .addValue("parent_command_id", entity.getParentCommandId())
                 .addValue("root_command_id", Guid.isNullOrEmpty(entity.getRootCommandId()) ? Guid.Empty : entity.getRootCommandId())
-                .addValue("job_id", Guid.isNullOrEmpty(entity.getJobId()) ? Guid.Empty : entity.getJobId())
-                .addValue("step_id", Guid.isNullOrEmpty(entity.getStepId()) ? Guid.Empty : entity.getStepId())
+                .addValue("command_context", SerializationFactory.getSerializer().serialize(entity.getCommandContext()))
                 .addValue("command_parameters", serializeParameters(entity.getCommandParameters()))
                 .addValue("command_params_class", entity.getCommandParameters() == null ? null : entity.getCommandParameters().getClass().getName())
                 .addValue("created_at", entity.getCreatedAt())
