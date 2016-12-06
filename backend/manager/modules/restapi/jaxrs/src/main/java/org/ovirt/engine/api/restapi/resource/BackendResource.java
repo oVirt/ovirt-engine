@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +11,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Job;
-import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.ExpectationHelper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
@@ -286,18 +284,6 @@ public class BackendResource extends BaseBackendResource {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T getConfigurationValue(ConfigurationValues config, final Version version) {
-        VdcQueryReturnValue result = runQuery(
-            VdcQueryType.GetConfigurationValue,
-            new GetConfigurationValueParameters(config, asString(version))
-        );
-        if (result.getSucceeded()) {
-            return (T) result.getReturnValue();
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
     protected <T> T getConfigurationValueDefault(ConfigurationValues config) {
         VdcQueryReturnValue result = runQuery(
             VdcQueryType.GetConfigurationValue,
@@ -307,12 +293,6 @@ public class BackendResource extends BaseBackendResource {
             return (T) result.getReturnValue();
         }
         return null;
-    }
-
-    private static final String VERSION_FORMAT = "{0}.{1}";
-
-    static String asString(Version version) {
-        return version == null ? null : MessageFormat.format(VERSION_FORMAT, version.getMajor(), version.getMinor());
     }
 
     /**
