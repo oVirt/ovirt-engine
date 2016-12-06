@@ -184,7 +184,11 @@ public class VmAnalyzer {
     }
 
     private boolean isVmRunningInDatabaseOnMonitoredHost() {
-        return vdsManager.getVdsId().equals(dbVm.getRunOnVds());
+        if (vdsManager.getVdsId().equals(dbVm.getRunOnVds())) {
+            return true;
+        }
+        logVmDetectedOnUnexpectedHost();
+        return false;
     }
 
     private void processUnmanagedVm() {
@@ -686,8 +690,18 @@ public class VmAnalyzer {
         }
     }
 
+    private void logVmDetectedOnUnexpectedHost() {
+        log.info("VM '{}'({}) was unexpectedly detected as '{}' on VDS '{}'({}) (expected on '{}')",
+                dbVm.getId(),
+                getVmManager().getName(),
+                vdsmVm.getVmDynamic().getStatus().name(),
+                vdsManager.getVdsId(),
+                vdsManager.getVdsName(),
+                dbVm.getRunOnVds());
+    }
+
     private void logExternalVmDiscovery() {
-        log.info("VM '{}' was discovered with status '{}' on VDS '{}'({})",
+        log.info("VM '{}' was discovered as '{}' on VDS '{}'({})",
                 vdsmVm.getVmDynamic().getId(),
                 vdsmVm.getVmDynamic().getStatus().name(),
                 vdsManager.getVdsId(),
@@ -695,7 +709,7 @@ public class VmAnalyzer {
     }
 
     private void logUnmanagedHostedEngineDiscovery() {
-        log.info("VM '{}' that is set as hosted-engine was discovered with status '{}' on VDS '{}'({})",
+        log.info("VM '{}' that is set as hosted-engine was discovered as '{}' on VDS '{}'({})",
                 vdsmVm.getVmDynamic().getId(),
                 vdsmVm.getVmDynamic().getStatus().name(),
                 vdsManager.getVdsId(),
