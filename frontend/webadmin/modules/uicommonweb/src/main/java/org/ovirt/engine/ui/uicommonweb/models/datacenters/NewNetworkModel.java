@@ -111,8 +111,8 @@ public class NewNetworkModel extends NetworkModel {
         Iterable<NetworkClusterModel> networkClusters = getNetworkClusterList().getItems();
         if (networkClusters != null) {
             for (NetworkClusterModel networkCluster : networkClusters) {
-                networkCluster.setIsChangeable(!externalNetwork);
-                networkCluster.setAttached(!externalNetwork);
+                networkCluster.setIsChangeable(true);
+                networkCluster.setAttached(true);
                 networkCluster.setRequired(!externalNetwork);
             }
         }
