@@ -51,7 +51,7 @@ public class GetAuthzGroupsByUserIdQuery<P extends IdQueryParameters> extends Qu
             ExtMap principalRecord = principalRecords.iterator().next();
             DirectoryUtils.flatGroups(principalRecord);
             for (ExtMap group : principalRecord.<Collection<ExtMap>>get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
-                groups.add(new AuthzGroup(dbUser.getDomain(), group.<String>get(GroupRecord.NAMESPACE), group.<String>get(GroupRecord.NAME)));
+                groups.add(new AuthzGroup(dbUser.getDomain(), group.get(GroupRecord.NAMESPACE), group.get(GroupRecord.NAME)));
             }
         }
 
