@@ -9,6 +9,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.utils.PersistedCommandContext;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -20,8 +21,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private Guid commandId;
     private Guid parentCommandId;
     private Guid rootCommandId;
-    private Guid jobId;
-    private Guid stepId;
+    private PersistedCommandContext commandContext;
     private VdcActionType commandType;
     private VdcActionParametersBase commandParameters;
     private VdcReturnValueBase returnValue;
@@ -37,6 +37,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
         commandStatus = CommandStatus.UNKNOWN;
         createdAt = new Date();
         data = new HashMap<>();
+        commandContext = new PersistedCommandContext();
     }
 
     @Override
@@ -155,8 +156,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
                                                    Guid commandId,
                                                    Guid parentCommandId,
                                                    Guid rootCommandId,
-                                                   Guid jobId,
-                                                   Guid stepId,
+                                                   PersistedCommandContext commandContext,
                                                    VdcActionType actionType,
                                                    VdcActionParametersBase params,
                                                    CommandStatus status,
@@ -169,8 +169,9 @@ public class CommandEntity implements BusinessEntity<Guid> {
         entity.setId(commandId);
         entity.setParentCommandId(parentCommandId);
         entity.setRootCommandId(rootCommandId);
-        entity.setJobId(jobId);
-        entity.setStepId(stepId);
+        if (commandContext != null) {
+            entity.setCommandContext(commandContext);
+        }
         entity.setCommandType(actionType);
         entity.setCommandParameters(params);
         entity.setCommandStatus(status);
@@ -186,22 +187,6 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     public void setReturnValue(VdcReturnValueBase returnValue) {
         this.returnValue = returnValue;
-    }
-
-    public Guid getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(Guid jobId) {
-        this.jobId = jobId;
-    }
-
-    public Guid getStepId() {
-        return stepId;
-    }
-
-    public void setStepId(Guid stepId) {
-        this.stepId = stepId;
     }
 
     public boolean isExecuted() {
@@ -234,5 +219,13 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     public void setWaitingForEvent(boolean waitingForEvent) {
         this.waitingForEvent = waitingForEvent;
+    }
+
+    public PersistedCommandContext getCommandContext() {
+        return commandContext;
+    }
+
+    public void setCommandContext(PersistedCommandContext commandContext) {
+        this.commandContext = commandContext;
     }
 }

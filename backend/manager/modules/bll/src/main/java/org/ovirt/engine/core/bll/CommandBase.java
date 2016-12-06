@@ -77,7 +77,9 @@ import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ExecutionMethod;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.PersistedCommandContext;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -2340,14 +2342,32 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 getCommandId(),
                 getParameters().getParentParameters() == null ? Guid.Empty : getParameters().getParentParameters().getCommandId(),
                 rootCommandId,
-                getExecutionContext() == null || getExecutionContext().getJob() == null ? Guid.Empty : getExecutionContext().getJob().getId(),
-                getExecutionContext() == null || getExecutionContext().getStep() == null ? Guid.Empty : getExecutionContext().getStep().getId(),
+                buildPersistedCommandContext(),
                 getActionType(),
                 getParameters(),
                 commandStatus,
                 enableCallback,
                 getReturnValue(),
                 getCommandData());
+    }
+
+    private PersistedCommandContext buildPersistedCommandContext() {
+        PersistedCommandContext persistedCommandContext = new PersistedCommandContext();
+        persistedCommandContext.setJobId(getExecutionContext() == null || getExecutionContext().getJob() == null
+                ? null : getExecutionContext().getJob().getId());
+        persistedCommandContext.setStepId(getExecutionContext() == null || getExecutionContext().getStep() == null
+                ? null : getExecutionContext().getStep().getId());
+        persistedCommandContext.setExecutionMethod(getExecutionContext() == null
+                ? ExecutionMethod.AsStep
+                : getExecutionContext().getExecutionMethod());
+        if (getExecutionContext() != null) {
+            persistedCommandContext.setCompleted(getExecutionContext().isCompleted());
+            persistedCommandContext.setJobRequired(getExecutionContext().isJobRequired());
+            persistedCommandContext.setMonitored(getExecutionContext().isMonitored());
+            persistedCommandContext.setShouldEndJob(getExecutionContext().shouldEndJob());
+            persistedCommandContext.setTasksMonitored(getExecutionContext().isTasksMonitored());
+        }
+        return persistedCommandContext;
     }
 
     protected void removeCommand() {
