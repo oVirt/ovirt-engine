@@ -1,8 +1,14 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.Collection;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
@@ -36,5 +42,12 @@ public class BlockStorageDomainHelper {
         } catch (Exception e) {
             log.info("Failed to get the domain info, ignoring");
         }
+    }
+
+    public List<String> findMetadataDevices(StorageDomain storageDomain, Collection<String> devices) {
+        return devices.stream()
+                .filter(x -> x.equals(storageDomain.getVgMetadataDevice())
+                        || x.equals(storageDomain.getFirstMetadataDevice()))
+                .collect(toList());
     }
 }
