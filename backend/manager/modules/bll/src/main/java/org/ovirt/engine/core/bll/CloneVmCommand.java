@@ -68,6 +68,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
             // the VM id has to be the new VM id - same as the getVm is always the new VM
             setVmId(getParameters().getNewVmGuid());
         }
+        getParameters().setUseCinderCommandCallback(!getAdjustedDiskImagesFromConfiguration().isEmpty());
     }
 
     @Override
