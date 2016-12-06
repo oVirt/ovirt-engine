@@ -1,12 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -34,6 +36,7 @@ import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
+import org.ovirt.engine.core.common.action.ReduceSANStorageDomainDevicesCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -110,6 +113,16 @@ public class BackendStorageDomainResource
         params.setStorageDomainId(guid);
         return performAction(VdcActionType.ProcessOvfUpdateForStorageDomain, params);
     }
+
+    @Override
+    public Response reduceLuns(Action action) {
+        List<LogicalUnit> reducedLuns = action.getLogicalUnits().getLogicalUnits();
+        List<String> lunIds = reducedLuns.stream().map(LogicalUnit::getId).collect(toList());
+        ReduceSANStorageDomainDevicesCommandParameters parameters =
+                new ReduceSANStorageDomainDevicesCommandParameters(guid, lunIds);
+        return performAction(VdcActionType.ReduceSANStorageDomainDevices, parameters);
+    }
+
 
     @Override
     public Response remove() {

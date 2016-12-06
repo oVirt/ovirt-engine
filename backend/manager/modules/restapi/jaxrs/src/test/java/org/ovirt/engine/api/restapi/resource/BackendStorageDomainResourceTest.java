@@ -9,6 +9,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourc
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.WebApplicationException;
@@ -23,6 +24,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
+import org.ovirt.engine.core.common.action.ReduceSANStorageDomainDevicesCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -381,6 +383,30 @@ public class BackendStorageDomainResourceTest
         luns.getLogicalUnits().add(lun);
         action.setLogicalUnits(luns);
         verifyActionResponse(resource.refreshLuns(action));
+    }
+
+    @Test
+    public void reduceLuns() throws Exception {
+        List<String> paramsLuns = new LinkedList<>();
+        paramsLuns.add(GUIDS[2].toString());
+        paramsLuns.add(GUIDS[3].toString());
+        setUriInfo(setUpActionExpectations(VdcActionType.ReduceSANStorageDomainDevices,
+                ReduceSANStorageDomainDevicesCommandParameters.class,
+                new String[]{"DevicesToReduce", "StorageDomainId"},
+                new Object[]{paramsLuns, GUIDS[0]},
+                true,
+                true));
+        Action action = new Action();
+        LogicalUnits luns= new LogicalUnits();
+
+        paramsLuns.forEach(s -> {
+            LogicalUnit lun = new LogicalUnit();
+            lun.setId(s);
+            luns.getLogicalUnits().add(lun);
+        });
+
+        action.setLogicalUnits(luns);
+        verifyActionResponse(resource.reduceLuns(action));
     }
 
     private void verifyActionResponse(Response response) throws Exception {
