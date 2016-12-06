@@ -3188,6 +3188,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostedEngineVmTooltip();
 
+    String hostedEngineStorageTooltip();
+
     String arbiterVolume();
 }
 

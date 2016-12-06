@@ -47,6 +47,11 @@ public class StorageDomainAdditionalStatusColumn extends EntityAdditionalStatusC
                         constants.ExternalStatus() + externalStatus.name());
             }
         }
+
+        if (storageDomain.isHostedEngineStorage()) {
+            imagesToText.put(getImageSafeHtml(resources.mgmtNetwork()), constants.hostedEngineStorageTooltip());
+        }
+
         return imagesToText;
     }
 

@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainSharedStatusColumn;
 import com.google.gwt.core.client.GWT;
 
@@ -48,6 +49,10 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         StorageDomainSharedStatusColumn sharedStatusColumn = new StorageDomainSharedStatusColumn();
         sharedStatusColumn.setContextMenuTitle(constants.sharedStatusStorage());
         getTable().addColumn(sharedStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
+
+        StorageDomainAdditionalStatusColumn additionalStatusColumn = new StorageDomainAdditionalStatusColumn();
+        additionalStatusColumn.setContextMenuTitle(constants.additionalStatusStorage());
+        getTable().addColumn(additionalStatusColumn, constants.empty(), "60px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
             @Override

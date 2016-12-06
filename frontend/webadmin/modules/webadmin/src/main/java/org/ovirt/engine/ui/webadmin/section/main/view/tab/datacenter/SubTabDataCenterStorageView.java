@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
 import com.google.gwt.core.client.GWT;
 
@@ -50,6 +51,10 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         StorageDomainStatusColumn statusIconColumn = new StorageDomainStatusColumn();
         statusIconColumn.setContextMenuTitle(constants.statusIconStorage());
         getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
+
+        StorageDomainAdditionalStatusColumn additionalStatusColumn = new StorageDomainAdditionalStatusColumn();
+        additionalStatusColumn.setContextMenuTitle(constants.additionalStatusStorage());
+        getTable().addColumn(additionalStatusColumn, constants.empty(), "60px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
