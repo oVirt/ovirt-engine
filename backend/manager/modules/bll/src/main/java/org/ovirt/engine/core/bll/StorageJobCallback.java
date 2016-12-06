@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
+import org.ovirt.engine.core.bll.storage.StorageJobCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
@@ -56,6 +57,7 @@ public class StorageJobCallback implements CommandCallback {
             }
 
             if (jobInfo != null) {
+                handlePolledJobStatus((StorageJobCommand) getCommand(cmdId), jobInfo);
                 jobStatus = jobInfo.getStatus();
                 updateStepProgress(commandEntity.getStepId(), jobInfo.getProgress());
             }
@@ -131,6 +133,27 @@ public class StorageJobCallback implements CommandCallback {
         }
 
         return null;
+    }
+
+
+    private void handlePolledJobStatus(StorageJobCommand<?> cmd, HostJobInfo jobInfo) {
+        if (jobInfo.getStatus() != HostJobStatus.failed) {
+            return;
+        }
+
+        // If a job failed on VDSM side, we may want to perform operations according to the job error or to consider the
+        // job as successful on some cases.
+        // each StorageJobCommand can override a method that'll handle the error and may return a different job status
+        // if needed.
+        if (jobInfo.getError() != null) {
+            jobInfo.setStatus(cmd.handleJobError(jobInfo.getError().getCode()));
+            if (jobInfo.getStatus() == HostJobStatus.done) {
+                // if the error inspection led us to decide to the job actual status is done, we can set the progress
+                // to null so the progress will be considered as 100 for the command step (if present), it's better than
+                // setting to 100 as we don't know if progress is actually reported for the operation.
+                jobInfo.setProgress(null);
+            }
+        }
     }
 
     private HostJobStatus handleUndeterminedJobStatus(CommandBase<?> cmd, boolean jobsReportedByHost) {
