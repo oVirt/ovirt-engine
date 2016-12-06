@@ -152,7 +152,6 @@ public class VmAnalyzer {
 
         proceedWatchdogEvents();
         proceedVmReportedOnTheSameHost();
-        prepareGuestAgentNetworkDevicesForUpdate();
     }
 
     private boolean isVmStoppedBeingReported() {
@@ -579,6 +578,7 @@ public class VmAnalyzer {
 
         updateVmDynamicData();
         updateStatistics();
+        prepareGuestAgentNetworkDevicesForUpdate();
 
         if (!vdsManager.isInitialized()) {
             resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
