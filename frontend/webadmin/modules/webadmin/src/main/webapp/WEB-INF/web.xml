@@ -106,6 +106,7 @@
     <servlet>
         <servlet-name>dashboardData</servlet-name>
         <servlet-class>org.ovirt.engine.ui.frontend.server.dashboard.DashboardDataServlet</servlet-class>
+        <load-on-startup>100</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>dashboardData</servlet-name>

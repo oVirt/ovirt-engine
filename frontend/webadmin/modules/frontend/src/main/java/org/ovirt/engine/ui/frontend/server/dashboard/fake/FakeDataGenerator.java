@@ -5,10 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.ui.frontend.server.dashboard.GlobalUtilization;
 import org.ovirt.engine.ui.frontend.server.dashboard.GlobalUtilizationCpuSummary;
 import org.ovirt.engine.ui.frontend.server.dashboard.GlobalUtilizationResourceSummary;
@@ -25,27 +21,6 @@ import org.ovirt.engine.ui.frontend.server.dashboard.UtilizedEntity.Trend;
 import org.ovirt.engine.ui.frontend.server.dashboard.maps.VmStatusMap;
 
 public class FakeDataGenerator {
-    private static final String PREFER = "Prefer"; //$NON-NLS-1$
-    private static final String FAKE_DATA = "fake_data"; //$NON-NLS-1$
-    private static final String ERROR = "error"; //$NON-NLS-1$
-
-    public static boolean headerWantsFakeData(HttpServletRequest request) throws ServletException {
-        String preferHeader = request.getHeader(PREFER);
-        boolean result = false;
-        if (!StringUtils.isEmpty(preferHeader)) {
-            String[] preferValues = preferHeader.split(","); //$NON-NLS-1$
-            for (String value: preferValues) {
-                if (FAKE_DATA.equals(value.trim())) {
-                    result = true;
-                    break;
-                } else if (ERROR.equals(value.trim())) {
-                    throw new ServletException();
-                }
-            }
-        }
-        return result;
-    }
-
     public static Inventory fakeInventory(Random random) {
         Inventory result = new Inventory();
 

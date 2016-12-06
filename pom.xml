@@ -194,6 +194,13 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
+        <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
+        <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
+        <version>1.0.0.Final</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-core</artifactId>
         <version>${spring.version}</version>
