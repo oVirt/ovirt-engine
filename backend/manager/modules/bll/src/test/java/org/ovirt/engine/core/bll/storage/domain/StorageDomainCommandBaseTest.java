@@ -18,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -51,9 +50,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
 
     @Mock
     private VmDao vmDao;
-
-    @Mock
-    private HostedEngineHelper hostedEngineHelper;
 
     @Spy
     @InjectMocks

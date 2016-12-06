@@ -7,7 +7,6 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -28,9 +27,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends StorageDomainsAndStoragePoolIdQueryParameters> extends QueriesCommandBase<P> {
 
     private Guid vdsId;
-
-    @Inject
-    private HostedEngineHelper hostedEngineHelper;
 
     @Inject
     private VdsDao vdsDao;

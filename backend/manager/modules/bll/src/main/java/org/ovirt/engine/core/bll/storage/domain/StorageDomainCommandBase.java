@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
-import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
@@ -52,9 +51,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class StorageDomainCommandBase<T extends StorageDomainParametersBase> extends
         StorageHandlingCommandBase<T> {
-
-    @Inject
-    private HostedEngineHelper hostedEngineHelper;
 
     @Inject
     protected EventQueue eventQueue;
