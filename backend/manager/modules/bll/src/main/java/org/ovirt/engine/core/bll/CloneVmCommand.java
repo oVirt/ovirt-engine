@@ -110,13 +110,13 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
     @Override
     protected Collection<DiskImage> getAdjustedDiskImagesFromConfiguration() {
-        VdcQueryReturnValue vdcReturnValue = runInternalQuery(
-                VdcQueryType.GetAllDisksByVmId,
-                new IdQueryParameters(oldVmId));
-
-        List<Disk> loadedImages = vdcReturnValue.getReturnValue() != null ? (List<Disk>) vdcReturnValue.getReturnValue() : new ArrayList<>();
-
         if (diskImagesFromConfiguration == null) {
+            VdcQueryReturnValue vdcReturnValue = runInternalQuery(
+                    VdcQueryType.GetAllDisksByVmId,
+                    new IdQueryParameters(oldVmId));
+
+            List<Disk> loadedImages = vdcReturnValue.getReturnValue() != null ? (List<Disk>) vdcReturnValue.getReturnValue() : new ArrayList<>();
+
             diskImagesFromConfiguration = DisksFilter.filterImageDisks(loadedImages, ONLY_SNAPABLE, ONLY_ACTIVE);
             diskImagesFromConfiguration.addAll(DisksFilter.filterCinderDisks(loadedImages, ONLY_PLUGGED));
         }
