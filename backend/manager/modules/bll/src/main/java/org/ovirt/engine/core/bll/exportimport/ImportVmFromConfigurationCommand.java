@@ -72,12 +72,12 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
             if (!validateExternalVnicProfileMapping()) {
                 return false;
             }
-            if (!validateMacs(vmFromConfiguration)) {
-                return false;
-            }
 
             ImportValidator importValidator = getImportValidator();
             if (!validate(importValidator.validateUnregisteredEntity(vmFromConfiguration, ovfEntityData))) {
+                return false;
+            }
+            if (!validateMacs(vmFromConfiguration)) {
                 return false;
             }
             if (!validate(importValidator.validateStorageExistForUnregisteredEntity(getImages(),
