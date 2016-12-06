@@ -102,7 +102,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                       Guid largeIconId,
                       int numOfIoThreads,
                       ConsoleDisconnectAction consoleDisconnectAction,
-                      Version customCompatibilityVersion, Guid migrationPolicyId) {
+                      Version customCompatibilityVersion, Guid migrationPolicyId,
+                      Guid leaseStorageDomainId) {
         super(name,
                 vmtGuid,
                 clusterId,
@@ -166,7 +167,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 numOfIoThreads,
                 consoleDisconnectAction,
                 customCompatibilityVersion,
-                migrationPolicyId);
+                migrationPolicyId,
+                leaseStorageDomainId);
 
         diskTemplateMap = new HashMap<>();
         diskImageMap = new HashMap<>();

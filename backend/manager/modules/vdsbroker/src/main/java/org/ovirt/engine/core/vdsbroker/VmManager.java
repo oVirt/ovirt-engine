@@ -31,6 +31,7 @@ public class VmManager {
     private int minAllocatedMem;
     private int numOfCpus;
     private Version clusterCompatibilityVersion;
+    private Guid leaseStorageDomainId;
 
     private final ReentrantLock lock;
     private Long vmDataChangedTime;
@@ -80,6 +81,7 @@ public class VmManager {
         minAllocatedMem = vmStatic.getMinAllocatedMem();
         numOfCpus = vmStatic.getNumOfCpus();
         clusterCompatibilityVersion = clusterDao.get(vmStatic.getClusterId()).getCompatibilityVersion();
+        leaseStorageDomainId = vmStatic.getLeaseStorageDomainId();
     }
 
     public void lock() {
@@ -220,4 +222,9 @@ public class VmManager {
     public Version getClusterCompatibilityVersion() {
         return clusterCompatibilityVersion;
     }
+
+    public Guid getLeaseStorageDomainId() {
+        return leaseStorageDomainId;
+    }
+
 }

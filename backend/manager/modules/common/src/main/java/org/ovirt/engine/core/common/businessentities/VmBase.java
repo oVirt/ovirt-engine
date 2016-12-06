@@ -344,6 +344,11 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableVmTemplateField
     private Version customCompatibilityVersion;
 
+    @CopyOnNewVersion
+    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmTemplateField
+    private Guid leaseStorageDomainId;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<>();
@@ -539,7 +544,8 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 vmBase.getNumOfIoThreads(),
                 vmBase.getConsoleDisconnectAction(),
                 vmBase.getCustomCompatibilityVersion(),
-                vmBase.getMigrationPolicyId());
+                vmBase.getMigrationPolicyId(),
+                vmBase.getLeaseStorageDomainId());
     }
 
     public VmBase(
@@ -606,7 +612,8 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
             int numOfIoThreads,
             ConsoleDisconnectAction consoleDisconnectAction,
             Version customCompatibilityVersion,
-            Guid migrationPolicyId) {
+            Guid migrationPolicyId,
+            Guid leaseStorageDomainId) {
         this();
         this.name = name;
         this.id = id;
@@ -672,6 +679,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this.consoleDisconnectAction = consoleDisconnectAction;
         this.customCompatibilityVersion = customCompatibilityVersion;
         this.migrationPolicyId = migrationPolicyId;
+        this.leaseStorageDomainId = leaseStorageDomainId;
     }
 
     @Override
@@ -1459,6 +1467,14 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     public void setMigrationPolicyId(Guid migrationPolicyId) {
         this.migrationPolicyId = migrationPolicyId;
+    }
+
+    public Guid getLeaseStorageDomainId() {
+        return leaseStorageDomainId;
+    }
+
+    public void setLeaseStorageDomainId(Guid leaseStorageDomainId) {
+        this.leaseStorageDomainId = leaseStorageDomainId;
     }
 
     @Override

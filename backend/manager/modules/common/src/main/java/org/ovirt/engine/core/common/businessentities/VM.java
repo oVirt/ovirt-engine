@@ -1970,4 +1970,12 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public List<GuestContainer> getGuestContainers() {
         return vmDynamic.getGuestContainers();
     }
+
+    public Guid getLeaseStorageDomainId() {
+        return vmStatic.getLeaseStorageDomainId();
+    }
+
+    public void setLeaseStorageDomainId(Guid leaseStorageDomainId) {
+        vmStatic.setLeaseStorageDomainId(leaseStorageDomainId);
+    }
 }
