@@ -1,32 +1,34 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
  * Image column that corresponds to XAML {@code VmTypeTemplate}.
  */
-public class VmTypeColumn extends AbstractImageResourceColumn<VM> {
+public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
 
     private static final ApplicationResources resources = AssetProvider.getResources();
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
-    public ImageResource getValue(VM vm) {
-            if (vm.getVmPoolId() == null) {
-                VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), vm.isNextRunConfigurationExists());
-                return config.getImageResource();
-            } else {
-                return getPoolVmImageResource(vm.getVmType(), vm.isNextRunConfigurationExists());
-            }
+    public SafeHtml getValue(VM vm) {
+        return getRenderedValue(vm);
     }
 
     private static ImageResource getPoolVmImageResource(VmType vmType, boolean nextRunConfigurationExists) {
@@ -41,15 +43,32 @@ public class VmTypeColumn extends AbstractImageResourceColumn<VM> {
 
     @Override
     public SafeHtml getTooltip(VM vm) {
-        String tooltipContent;
+        Map<SafeHtml, String> imagesToText = getImagesToTooltipTextMap(vm);
+
+        return imagesToText.isEmpty() ? null : MultiImageColumnHelper.getTooltip(imagesToText);
+    }
+
+    private static SafeHtml getImageSafeHtml(ImageResource imageResource) {
+        return SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.
+                create(imageResource).getHTML());
+    }
+
+    private Map<SafeHtml, String> getImagesToTooltipTextMap(VM vm) {
+        Map<SafeHtml, String> res = new LinkedHashMap<>();
+
         if (vm.getVmPoolId() == null) {
             VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), vm.isNextRunConfigurationExists());
-            tooltipContent = config.getTooltip();
+            res.put(getImageSafeHtml(config.getImageResource()), config.getTooltip());
         } else {
-            tooltipContent = getPoolVmTooltip(vm.getVmType());
+            ImageResource img = getPoolVmImageResource(vm.getVmType(), vm.isNextRunConfigurationExists());
+            res.put(getImageSafeHtml(img), getPoolVmTooltip(vm.getVmType()));
         }
 
-        return SafeHtmlUtils.fromString(tooltipContent);
+        if (vm.isHostedEngine()) {
+            res.put(getImageSafeHtml(resources.mgmtNetwork()), constants.isHostedEngineVmTooltip());
+        }
+
+        return res;
     }
 
     private String getPoolVmTooltip(VmType vmType) {
@@ -62,6 +81,24 @@ public class VmTypeColumn extends AbstractImageResourceColumn<VM> {
                 return constants.pooledDesktop();
         }
 
+    }
+
+    public static SafeHtml getRenderedValue(VM vm) {
+        List<SafeHtml> images = new ArrayList<>();
+
+        if (vm.getVmPoolId() == null) {
+            VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), vm.isNextRunConfigurationExists());
+            images.add(getImageSafeHtml(config.getImageResource()));
+        } else {
+            ImageResource img = getPoolVmImageResource(vm.getVmType(), vm.isNextRunConfigurationExists());
+            images.add(getImageSafeHtml(img));
+        }
+
+        if (vm.isHostedEngine()) {
+            images.add(getImageSafeHtml(resources.mgmtNetwork()));
+        }
+
+        return images.isEmpty() ? null : MultiImageColumnHelper.getValue(images);
     }
 
 }

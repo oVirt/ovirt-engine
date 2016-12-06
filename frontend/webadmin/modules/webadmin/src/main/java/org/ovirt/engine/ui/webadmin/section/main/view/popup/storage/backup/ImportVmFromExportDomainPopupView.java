@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
@@ -339,10 +340,10 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         table.addColumn(originColumn, constants.originVm(), "100px"); //$NON-NLS-1$
 
         table.addColumn(
-                new AbstractImageResourceColumn<Object>() {
+                new AbstractSafeHtmlColumn<Object>() {
                     @Override
-                    public com.google.gwt.resources.client.ImageResource getValue(Object object) {
-                        return new VmTypeColumn().getValue(((ImportVmData) object).getVm());
+                    public SafeHtml getValue(Object object) {
+                        return VmTypeColumn.getRenderedValue(((ImportVmData) object).getVm());
                     }
                 }, constants.empty(), "30px"); //$NON-NLS-1$
 

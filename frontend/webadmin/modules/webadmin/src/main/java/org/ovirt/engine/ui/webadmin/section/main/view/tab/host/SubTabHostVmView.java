@@ -71,7 +71,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
 
         VmTypeColumn typeColumn = new VmTypeColumn();
         typeColumn.setContextMenuTitle(constants.typeVm());
-        getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(typeColumn, constants.empty(), "60px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> clusterColumn = new AbstractTextColumn<VM>() {
             @Override

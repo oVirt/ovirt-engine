@@ -3194,6 +3194,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String haActiveZeroHaScoreTooltip();
 
+    String isHostedEngineVmTooltip();
+
     String arbiterVolume();
 }
 

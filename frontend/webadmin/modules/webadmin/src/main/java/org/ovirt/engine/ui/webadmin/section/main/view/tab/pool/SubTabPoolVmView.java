@@ -64,7 +64,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
 
         VmTypeColumn typeColumn = new VmTypeColumn();
         typeColumn.setContextMenuTitle(constants.typeVm());
-        getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(typeColumn, constants.empty(), "60px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> hostColumn = new AbstractTextColumn<VM>() {
             @Override

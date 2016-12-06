@@ -80,7 +80,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         VmTypeColumn typeColumn = new VmTypeColumn();
         typeColumn.setContextMenuTitle(constants.typeVm());
         typeColumn.makeSortable(VmConditionFieldAutoCompleter.TYPE);
-        getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(typeColumn, constants.empty(), "60px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
             @Override
