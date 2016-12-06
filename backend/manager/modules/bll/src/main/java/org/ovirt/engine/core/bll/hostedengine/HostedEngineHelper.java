@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.bll.hostedengine;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -171,5 +174,30 @@ public class HostedEngineHelper {
         SetHaMaintenanceModeVDSCommandParameters param
                 = new SetHaMaintenanceModeVDSCommandParameters(vds, HaMaintenanceMode.LOCAL, localMaintenance);
         return vdsBroker.runVdsCommand(VDSCommandType.SetHaMaintenanceMode, param).getSucceeded();
+    }
+
+
+    /**
+     * Checks, if there are hosts in the cluster
+     * capable to run HE VM.
+     *
+     * @param clusterVdses candidates to select from.
+     * @param vdses Guids of VDSes to be excluded from the candidates list.
+     * @return True if there are any hosts for HE VM, False otherwise
+     */
+    public static boolean haveHostsAvailableforHE(Collection<VDS> clusterVdses,  final Iterable<Guid> vdses) {
+        // It is really hard to query Iterable
+        // especially when you have old commons-collections
+        // So let's convert it to the set.
+        Set<Guid> vdsIds = new HashSet<>();
+        vdses.forEach(vdsIds::add);
+        return  clusterVdses.stream()
+                .filter(v -> !vdsIds.contains(v.getId())) // Remove other hosts in batch
+                .filter(VDS::getHighlyAvailableIsConfigured) // Remove non HE hosts
+                .filter(VDS::getHighlyAvailableIsActive) // Remove non-active HE hosts
+                .filter(v -> !v.getHighlyAvailableLocalMaintenance()) // Remove HE hosts under maintenance
+                .filter(v -> v.getHighlyAvailableScore() > 0) // Remove HE hosts not suitable for the engine VM
+                .findAny()
+                .isPresent();
     }
 }

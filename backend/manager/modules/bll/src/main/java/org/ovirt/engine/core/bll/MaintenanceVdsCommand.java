@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -219,6 +220,14 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
         for (VM vm : vms) {
             if (vm.isHostedEngine()) {
+                // Check if there are available Hosted Engine hosts for that VM
+                if (!HostedEngineHelper.haveHostsAvailableforHE(
+                        DbFacade.getInstance().getVdsDao()
+                                .getAllForClusterWithStatus(vds.getClusterId(), VDSStatus.Up),
+                        Collections.singletonList(vds.getId()))) {
+                    reasons.add(EngineMessage.VDS_CANNOT_MAINTENANCE_NO_ALTERNATE_HOST_FOR_HOSTED_ENGINE.toString());
+                    return false;
+                }
                 // The Hosted Engine vm is migrated by the HA agent
                 continue;
             }

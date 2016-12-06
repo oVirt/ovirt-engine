@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -220,6 +221,20 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
                         List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<>();
                         for (VM vm : vms) {
+                            // The Hosted Engine VM is migrated by the HA agent;
+                            // And they need safe place for migration
+                            if (vm.isHostedEngine()) {
+                                List<VDS> clusterVdses =
+                                        DbFacade.getInstance().getVdsDao()
+                                                .getAllForClusterWithStatus(vds.getClusterId(), VDSStatus.Up);
+                                if (!HostedEngineHelper.haveHostsAvailableforHE(
+                                        clusterVdses,
+                                        getParameters().getVdsIdList())) {
+                                    failValidation(
+                                            EngineMessage.VDS_CANNOT_MAINTENANCE_NO_ALTERNATE_HOST_FOR_HOSTED_ENGINE);
+                                    return false;
+                                }
+                            }
                             // The Hosted Engine VM is migrated by the HA agent;
                             // other non-migratable VMs are reported
                             if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE && !vm.isHostedEngine()) {
