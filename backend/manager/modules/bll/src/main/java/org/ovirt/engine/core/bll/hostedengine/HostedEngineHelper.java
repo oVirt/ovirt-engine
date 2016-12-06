@@ -118,19 +118,6 @@ public class HostedEngineHelper {
         return storageDomainStatic;
     }
 
-    /**
-     * This method will return true if the hosted engine vm is already imported and it's disk is on the storage domain.
-     * There might be a case where the hosted engine storage domain is imported and the vm is not yet imported. In that
-     * case the method will return false even though the storage domain is a hosted storage domain.
-     */
-    public boolean isHostedEngineStorageDomain(final StorageDomain storageDomain) {
-        List<VM> vms = vmDao.getAllForStorageDomain(storageDomain.getId());
-        if(vms == null){
-            return false;
-        }
-        return vms.stream().filter(VM::isHostedEngine).findAny().isPresent();
-    }
-
     private void initHostedEngineStorageDomain(){
         if(hostedEngineVm == null){
             return;

@@ -327,7 +327,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         StorageDomain storageDomain = getStorageDomain();
 
         for (StorageDomain dbStorageDomain : storageDomains) {
-            if (hostedEngineHelper.isHostedEngineStorageDomain(dbStorageDomain)) {
+            if (dbStorageDomain.isHostedEngineStorage()) {
                 continue;
             }
             if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId()

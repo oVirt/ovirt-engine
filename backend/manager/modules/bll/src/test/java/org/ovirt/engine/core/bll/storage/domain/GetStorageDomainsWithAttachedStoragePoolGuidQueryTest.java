@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
@@ -40,6 +42,9 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     @Mock
     private VdsDao vdsDaoMock;
+
+    @Mock
+    private StorageDomainDao storageDomainDaoMock;
 
     private StorageDomain storageDomain;
 
@@ -57,10 +62,10 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         listVds.add(vds);
         mockVdsDao(VDSStatus.Up, listVds);
 
+        when(storageDomainDaoMock.getHostedEngineStorageDomainIds()).thenReturn(Collections.emptyList());
+
         doReturn(Boolean.TRUE).when(getQuery()).connectStorageDomain(eq(storageDomain));
         doReturn(Boolean.TRUE).when(getQuery()).disconnectStorageDomain(eq(storageDomain));
-
-        doReturn(Boolean.FALSE).when(getQuery()).containsRunningHostedEngine(any(StorageDomain.class));
     }
 
     @Test

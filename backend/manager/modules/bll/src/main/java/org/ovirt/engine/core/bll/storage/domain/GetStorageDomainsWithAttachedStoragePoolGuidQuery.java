@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
@@ -36,6 +37,9 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
 
     @Inject
     private StoragePoolDao storagePoolDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public GetStorageDomainsWithAttachedStoragePoolGuidQuery(P parameters) {
         super(parameters);
@@ -86,10 +90,14 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
             }
         }
 
+        // Some domains may have Hosted Engine VM running while importing them.
+        // We want to avoid disconnecting before the import in that case, otherwise they'll crash
+        List<Guid> heStorageDomainIds = storageDomainDao.getHostedEngineStorageDomainIds();
+
         List<StorageDomainStatic> storageDomainsWithAttachedStoragePoolId =
                 getAttachedStorageDomains(connectedStorageDomainsToVds);
         for (StorageDomain storageDomain : connectedStorageDomainsToVds) {
-            if (containsRunningHostedEngine(storageDomain)) {
+            if (heStorageDomainIds.contains(storageDomain.getId())) {
                 log.info(
                         "Skipping disconnect Storage Domain {} from VDS '{}' because Hosted Engine VM is running on it.",
                         storageDomain.getName(),
@@ -102,14 +110,6 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
             }
         }
         return storageDomainsWithAttachedStoragePoolId;
-    }
-
-    /**
-     * Some domains may have Hosted Engine VM running while importing them.
-     * We want to avoid disconnecting before the import in that case, otherwise they'll crash
-     */
-    public boolean containsRunningHostedEngine(StorageDomain storageDomain) {
-        return hostedEngineHelper.isHostedEngineStorageDomain(storageDomain);
     }
 
     public Guid getVdsId() {

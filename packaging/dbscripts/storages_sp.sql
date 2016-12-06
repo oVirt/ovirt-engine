@@ -1314,4 +1314,12 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetHostedEngineStorageDomainIds()
+RETURNS SETOF UUID STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
 
+    SELECT id
+    FROM hosted_engine_storage_domains_ids_view;
+END;$PROCEDURE$
+LANGUAGE plpgsql;

@@ -211,4 +211,14 @@ public interface StorageDomainDao extends Dao, SearchDao<StorageDomain>, AutoRec
      * @return the number of images in the specified storage domain, 0 for a domain that does not exist
      */
     long getNumberOfImagesInStorageDomain(Guid storageDomainId);
+
+    /**
+     * Retrieves the ids of storage domains which contain disks of the hosted engine vm.
+     *
+     * There might be a case where the hosted engine storage domain is imported and the vm is not yet imported.
+     * In that case the list will not contain the storage domain id even though it is a hosted storage domain.
+     *
+     * @return list of id of the domains
+     */
+    List<Guid> getHostedEngineStorageDomainIds();
 }

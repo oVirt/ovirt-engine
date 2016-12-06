@@ -179,6 +179,7 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
         entity.setVgMetadataDevice(rs.getString("vg_metadata_device"));
         entity.setWarningLowSpaceIndicator(rs.getInt("warning_low_space_indicator"));
         entity.setCriticalSpaceActionBlocker(rs.getInt("critical_space_action_blocker"));
+        entity.setHostedEngineStorage(rs.getBoolean("is_hosted_engine_storage"));
         return entity;
     };
 
@@ -221,6 +222,13 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
         return getCallsHandler().executeRead("GetNumberOfImagesInStorageDomain",
                 SingleColumnRowMapper.newInstance(Long.class),
                 getCustomMapSqlParameterSource().addValue("storage_domain_id", storageDomainId));
+    }
+
+    @Override
+    public List<Guid> getHostedEngineStorageDomainIds() {
+        return getCallsHandler().executeReadList("GetHostedEngineStorageDomainIds",
+                createGuidMapper(),
+                getCustomMapSqlParameterSource());
     }
 
     /**

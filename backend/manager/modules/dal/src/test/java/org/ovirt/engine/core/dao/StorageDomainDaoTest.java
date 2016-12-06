@@ -10,13 +10,25 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -516,5 +528,69 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     public void testNotContainsUnregisteredEntities() {
         StorageDomain storageDomain = dao.get(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
         assertFalse(storageDomain.isContainsUnregisteredEntities());
+    }
+
+    @Test
+    public void testIsHostedEngineStorage() {
+        // create hosted engine vm
+        VmStatic vm = new VmStatic();
+        vm.setId(Guid.newGuid());
+        vm.setOrigin(OriginType.HOSTED_ENGINE);
+        dbFacade.getVmStaticDao().save(vm);
+
+        // create disk for HE
+        DiskImage disk = new DiskImage();
+        disk.setId(Guid.newGuid());
+        disk.setImageId(Guid.newGuid());
+        disk.setActive(true);
+        disk.setVolumeType(VolumeType.Preallocated);
+        disk.setVolumeFormat(VolumeFormat.RAW);
+
+        dbFacade.getImageDao().save(disk.getImage());
+        dbFacade.getBaseDiskDao().save(disk);
+
+        ImageStorageDomainMap map = new ImageStorageDomainMap(
+                disk.getImageId(), existingDomain.getId(), null, null);
+
+        dbFacade.getImageStorageDomainMapDao().save(map);
+
+        // attach disk
+        VmDevice device = new VmDevice(
+                new VmDeviceId(disk.getId(), vm.getId()),
+                VmDeviceGeneralType.DISK,
+                VmDeviceType.DISK.getName(),
+                "",
+                0,
+                null,
+                true,
+                false,
+                false,
+                "",
+                null,
+                null,
+                null);
+
+        dbFacade.getVmDeviceDao().save(device);
+
+        DiskVmElement diskVmElement = new DiskVmElement(device.getId());
+        diskVmElement.setDiskInterface(DiskInterface.IDE);
+        dbFacade.getDiskVmElementDao().save(diskVmElement);
+
+        // run test
+        StorageDomain domain = dao.get(existingDomain.getId());
+        assertTrue(domain.isHostedEngineStorage());
+
+        // change origin
+        vm.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
+        dbFacade.getVmStaticDao().update(vm);
+
+        // run test again
+        domain = dao.get(existingDomain.getId());
+        assertTrue(domain.isHostedEngineStorage());
+    }
+
+    @Test
+    public void testIsNotHostedEngineStorage() {
+        assertFalse(existingDomain.isHostedEngineStorage());
     }
 }

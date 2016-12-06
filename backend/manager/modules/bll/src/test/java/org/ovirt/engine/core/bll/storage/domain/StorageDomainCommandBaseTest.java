@@ -161,29 +161,26 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
 
     @Test
     public void shouldElectActiveDataDomain() {
-        final StorageDomain domain = prepareStorageDomainForElection(StorageDomainStatus.Active, "not he domain name");
-        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
+        final StorageDomain domain = prepareStorageDomainForElection(StorageDomainStatus.Active,
+                "not he domain name", false);
         assertEquals(domain, cmd.electNewMaster());
     }
 
     @Test
     public void shouldNotElectActiveHostedEngineDomain() {
-        prepareStorageDomainForElection(StorageDomainStatus.Active, HE_STORAGE_DOMAIN_NAME);
-        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(true);
+        prepareStorageDomainForElection(StorageDomainStatus.Active, HE_STORAGE_DOMAIN_NAME, true);
         assertNull(cmd.electNewMaster());
     }
 
     @Test
     public void shouldNotElectUnknownHostedEngineDomain() {
-        prepareStorageDomainForElection(StorageDomainStatus.Unknown, HE_STORAGE_DOMAIN_NAME);
-        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(true);
+        prepareStorageDomainForElection(StorageDomainStatus.Unknown, HE_STORAGE_DOMAIN_NAME, true);
         assertNull(cmd.electNewMaster());
     }
 
     @Test
     public void shouldNotElectInactiveHostedEngineDomain() {
-        prepareStorageDomainForElection(StorageDomainStatus.Inactive, HE_STORAGE_DOMAIN_NAME);
-        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(true);
+        prepareStorageDomainForElection(StorageDomainStatus.Inactive, HE_STORAGE_DOMAIN_NAME, true);
         assertNull(cmd.electNewMaster(false, true, false));
     }
 
@@ -191,14 +188,12 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     public void shouldElectActiveSharedDataDomain() {
         final StorageDomain domain =
                 prepareSharedStorageDomainForElection(StorageDomainStatus.Active, "shared domain name");
-        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
         assertEquals(domain, cmd.electNewMaster());
     }
 
     @Test
     public void shouldElectActiveLocalDataDomain() {
         StorageDomain domain = prepareLocalStorageDomainForElection(StorageDomainStatus.Active, "local domain name");
-        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
         assertEquals(domain, cmd.electNewMaster());
     }
 
@@ -211,7 +206,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
                 createDataStorageDomain(StorageDomainStatus.Active, "shared domain name", SHARED_SD_ID);
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(localDomain, sharedDomain));
         cmd.setStoragePool(new StoragePool());
-        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
         assertEquals(sharedDomain, cmd.electNewMaster());
     }
 
@@ -224,7 +218,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
                 createDataStorageDomain(StorageDomainStatus.Active, "shared domain name", SHARED_SD_ID);
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(sharedDomain, localDomain));
         cmd.setStoragePool(new StoragePool());
-        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
         assertEquals(sharedDomain, cmd.electNewMaster());
     }
 
@@ -239,7 +232,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         sharedDomain.setLastTimeUsedAsMaster(System.currentTimeMillis());
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(sharedDomain, localDomain));
         cmd.setStoragePool(new StoragePool());
-        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
         assertEquals(localDomain, cmd.electNewMaster());
     }
 
@@ -254,7 +246,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         sharedDomain.setLastTimeUsedAsMaster(System.currentTimeMillis() - 1000);
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(sharedDomain, localDomain));
         cmd.setStoragePool(new StoragePool());
-        when(hostedEngineHelper.isHostedEngineStorageDomain(any(StorageDomain.class))).thenReturn(false);
         assertEquals(sharedDomain, cmd.electNewMaster());
     }
 
@@ -273,8 +264,11 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         return sharedDomain;
     }
 
-    private StorageDomain prepareStorageDomainForElection(StorageDomainStatus status, String name) {
+    private StorageDomain prepareStorageDomainForElection(StorageDomainStatus status,
+            String name,
+            boolean isHostedEngine) {
         final StorageDomain domain = createDataStorageDomain(status, name, HE_SD_ID);
+        domain.setHostedEngineStorage(isHostedEngine);
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(domain));
         cmd.setStoragePool(new StoragePool());
         return domain;
@@ -286,6 +280,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         storageDomain.setStatus(status);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
         storageDomain.setId(sdId);
+        storageDomain.setHostedEngineStorage(false);
         return storageDomain;
     }
 

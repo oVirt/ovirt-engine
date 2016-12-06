@@ -689,6 +689,21 @@ FROM luns
 WHERE volume_group_id <> ''
 GROUP BY volume_group_id;
 
+
+CREATE OR REPLACE VIEW hosted_engine_storage_domains_ids_view AS
+
+SELECT image_storage_domain_map.storage_domain_id AS id
+FROM vm_static
+    JOIN vm_device
+        ON vm_device.vm_id = vm_static.vm_guid
+    JOIN images
+        ON images.image_group_id = vm_device.device_id
+    JOIN image_storage_domain_map
+        ON image_storage_domain_map.image_id = images.image_guid
+WHERE vm_static.origin IN (5,6)
+    AND images.active;
+
+
 CREATE OR REPLACE VIEW storage_domains AS
 
 SELECT storage_domain_static.id AS id,
@@ -717,7 +732,13 @@ SELECT storage_domain_static.id AS id,
     storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
     storage_domain_dynamic.external_status AS external_status,
     vg_discard_support_view.supports_discard AS supports_discard,
-    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data
+    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data,
+    EXISTS (
+        SELECT 1
+        FROM hosted_engine_storage_domains_ids_view
+        WHERE hosted_engine_storage_domains_ids_view.id = storage_domain_static.id
+    ) AS is_hosted_engine_storage
+
 FROM storage_domain_static
 INNER JOIN storage_domain_dynamic
     ON storage_domain_static.id = storage_domain_dynamic.id
@@ -763,7 +784,13 @@ SELECT DISTINCT storage_domain_static.id AS id,
     storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
     storage_domain_dynamic.external_status AS external_status,
     vg_discard_support_view.supports_discard AS supports_discard,
-    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data
+    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data,
+    EXISTS (
+        SELECT 1
+        FROM hosted_engine_storage_domains_ids_view
+        WHERE hosted_engine_storage_domains_ids_view.id = storage_domain_static.id
+    ) AS is_hosted_engine_storage
+
 FROM storage_domain_static
 INNER JOIN storage_domain_dynamic
     ON storage_domain_static.id = storage_domain_dynamic.id
@@ -812,7 +839,13 @@ SELECT storage_domain_static.id AS id,
     storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
     storage_domain_dynamic.external_status AS external_status,
     vg_discard_support_view.supports_discard AS supports_discard,
-    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data
+    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data,
+    EXISTS (
+        SELECT 1
+        FROM hosted_engine_storage_domains_ids_view
+        WHERE hosted_engine_storage_domains_ids_view.id = storage_domain_static.id
+    ) AS is_hosted_engine_storage
+
 FROM storage_domain_static
 INNER JOIN storage_domain_dynamic
     ON storage_domain_static.id = storage_domain_dynamic.id

@@ -22,6 +22,7 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
         dynamicData = new StorageDomainDynamic();
         setStoragePoolIsoMapData(new StoragePoolIsoMap());
         storageDomainSharedStatus = StorageDomainSharedStatus.Unattached;
+        hostedEngineStorage = false;
     }
 
     private Set<EngineError> alerts;
@@ -384,6 +385,16 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
         this.supportsDiscardZeroesData = supportsDiscardZeroesData;
     }
 
+    private boolean hostedEngineStorage;
+
+    public boolean isHostedEngineStorage() {
+        return hostedEngineStorage;
+    }
+
+    public void setHostedEngineStorage(boolean hostedEngineStorage) {
+        this.hostedEngineStorage = hostedEngineStorage;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -396,7 +407,8 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
                 storagePoolIsoMapData,
                 totalDiskSize,
                 supportsDiscard,
-                supportsDiscardZeroesData
+                supportsDiscardZeroesData,
+                hostedEngineStorage
         );
     }
 
@@ -415,7 +427,8 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
                 && storageDomainOverCommitPercent == other.storageDomainOverCommitPercent
                 && Objects.equals(totalDiskSize, other.totalDiskSize)
                 && Objects.equals(supportsDiscard, other.supportsDiscard)
-                && Objects.equals(supportsDiscardZeroesData, other.supportsDiscardZeroesData);
+                && Objects.equals(supportsDiscardZeroesData, other.supportsDiscardZeroesData)
+                && hostedEngineStorage == other.hostedEngineStorage;
     }
 
     @Override
