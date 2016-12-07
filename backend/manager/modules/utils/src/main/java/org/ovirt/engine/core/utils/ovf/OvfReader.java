@@ -796,6 +796,13 @@ public abstract class OvfReader implements IOvfBuilder {
         vmBase.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(
                 vmBase.getPredefinedProperties(), vmBase.getUserDefinedProperties()));
 
+        node = selectSingleNode(content, OvfProperties.VM_LEASE);
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setLeaseStorageDomainId(new Guid(node.innerText));
+            }
+        }
+
         readGeneralData(content);
 
         readVmInit(content);

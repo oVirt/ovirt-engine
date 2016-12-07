@@ -444,6 +444,12 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeStartElement(OvfProperties.MAX_MEMORY_SIZE_MB);
         _writer.writeRaw(String.valueOf(vmBase.getMaxMemorySizeMb()));
         _writer.writeEndElement();
+
+        if (vmBase.getLeaseStorageDomainId() != null) {
+            _writer.writeStartElement(OvfProperties.VM_LEASE);
+            _writer.writeRaw(vmBase.getLeaseStorageDomainId().toString());
+            _writer.writeEndElement();
+        }
     }
 
     protected void writeCustomEmulatedMachine() {

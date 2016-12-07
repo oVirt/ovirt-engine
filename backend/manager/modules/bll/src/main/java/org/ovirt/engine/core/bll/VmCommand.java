@@ -461,4 +461,18 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 ).getSucceeded();
     }
 
+    protected boolean addVmLease(Guid leaseStorageDomainId, Guid vmId) {
+        if (leaseStorageDomainId == null) {
+            return true;
+        }
+
+        return runVdsCommand(
+                VDSCommandType.AddVmLease,
+                new VmLeaseVDSParameters(
+                        getStoragePoolId(),
+                        leaseStorageDomainId,
+                        vmId)
+                ).getSucceeded();
+    }
+
 }

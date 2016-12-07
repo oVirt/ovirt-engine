@@ -175,13 +175,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             updateVmTemplateVersion();
             return; // template version was changed, no more work is required
         }
+
+        newVmStatic = getParameters().getVmStaticData();
         if (isRunningConfigurationNeeded()) {
             createNextRunSnapshot();
+        } else if (!updateVmLease()) {
+            return;
         }
 
         vmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
         vmStaticDao.incrementDbGeneration(getVm().getId());
-        newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
         newVmStatic.setQuotaId(getQuotaId());
 
@@ -248,6 +251,20 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         checkTrustedService();
         liveUpdateCpuProfile();
         setSucceeded(true);
+    }
+
+    private boolean updateVmLease() {
+        if (Objects.equals(oldVm.getLeaseStorageDomainId(), newVmStatic.getLeaseStorageDomainId())) {
+            return true;
+        }
+
+        if (!addVmLease(newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId())) {
+            return false;
+        }
+
+        // best effort to remove the lease from the previous storage domain
+        removeVmLease(oldVm.getLeaseStorageDomainId(), oldVm.getId());
+        return true;
     }
 
     private void liveUpdateCpuProfile(){
