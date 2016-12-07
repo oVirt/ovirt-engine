@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.LeaseState;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -91,8 +90,8 @@ public class GetVolumeInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters
             }
 
             if (struct.containsKey("lease")) {
-                newImage.getImage().setLeaseState(EnumUtils.valueOf(LeaseState.class, struct.get("lease")
-                        .toString(), true));
+                Map<String, Object> leaseStatus = (Map<String, Object>) struct.get("lease");
+                newImage.getImage().setLeaseStatus(VdsBrokerObjectsBuilder.buildLeaseStatus(leaseStatus));
             }
 
             if (struct.containsKey("generation")) {

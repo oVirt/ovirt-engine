@@ -2,11 +2,10 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.Date;
 import java.util.Objects;
-
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
-import org.ovirt.engine.core.common.businessentities.LeaseState;
+import org.ovirt.engine.core.common.businessentities.LeaseStatus;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -45,7 +44,7 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     private QcowCompat qcowCompat = QcowCompat.Undefined;
 
-    private LeaseState leaseState;
+    private LeaseStatus leaseStatus;
 
     private Integer generation;
 
@@ -179,12 +178,12 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
     }
 
 
-    public LeaseState getLeaseState() {
-        return leaseState;
+    public LeaseStatus getLeaseStatus() {
+        return leaseStatus;
     }
 
-    public void setLeaseState(LeaseState leaseState) {
-        this.leaseState = leaseState;
+    public void setLeaseStatus(LeaseStatus leaseStatus) {
+        this.leaseStatus = leaseStatus;
     }
 
     public Integer getGeneration() {

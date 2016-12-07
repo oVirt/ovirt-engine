@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestContainer;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
+import org.ovirt.engine.core.common.businessentities.LeaseStatus;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -2442,5 +2443,9 @@ public class VdsBrokerObjectsBuilder {
             return ((Long) notifyTime).doubleValue();
         }
         return null;
+    }
+
+    public static LeaseStatus buildLeaseStatus(Map<String, Object> struct) {
+        return new LeaseStatus(extractList(struct, "owners", true));
     }
 }

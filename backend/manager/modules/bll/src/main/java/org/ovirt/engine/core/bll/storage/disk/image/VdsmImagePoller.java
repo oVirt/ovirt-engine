@@ -5,7 +5,6 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
-import org.ovirt.engine.core.common.businessentities.LeaseState;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -31,7 +30,7 @@ public final class VdsmImagePoller {
                                 storageDomainId,
                                 imageGroupId,
                                 imageId), storagePoolId, null).getReturnValue()).getImage();
-        if (imageInfo.getLeaseState() != LeaseState.FREE) {
+        if (imageInfo.getLeaseStatus() != null && !imageInfo.getLeaseStatus().isFree()) {
             log.info("Command {} id: '{}': the volume lease is not FREE - the job is running",
                     actionType, cmdId);
             return HostJobStatus.running;

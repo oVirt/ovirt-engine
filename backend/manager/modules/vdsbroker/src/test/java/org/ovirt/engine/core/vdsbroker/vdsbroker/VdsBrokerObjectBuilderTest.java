@@ -1,16 +1,20 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.LeaseStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -313,4 +317,26 @@ public class VdsBrokerObjectBuilderTest {
         diskUsage.put("used", used);
         return diskUsage;
     }
- }
+
+    @Test
+    public void leaseFree() {
+        assertTrue(getLeaseStatus(new Object[0]).isFree());
+    }
+
+    @Test
+    public void leaseNotFreeMultipleOwners() {
+        Object[] owners = { 1, 2, 3 }; // Currently not expected to happen
+        assertFalse(getLeaseStatus(owners).isFree());
+    }
+
+    @Test
+    public void leaseNotFreeSingleOwner() {
+        Object[] owners = { 1 };
+        assertFalse(getLeaseStatus(owners).isFree());
+    }
+
+    private LeaseStatus getLeaseStatus(Object[] owners) {
+        return VdsBrokerObjectsBuilder.buildLeaseStatus(Collections.singletonMap("owners", owners));
+    }
+
+}
