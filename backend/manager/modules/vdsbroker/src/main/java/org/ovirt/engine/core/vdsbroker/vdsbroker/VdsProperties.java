@@ -221,6 +221,9 @@ public final class VdsProperties {
     public static final String vm_guid = "vmId";
     public static final String smartcardEnabled = "smartcardEnable";
     public static final String vm_arch = "arch";
+    public static final String VmLease = "lease";
+    public static final String VmLeaseId = "lease_id";
+    public static final String VmLeaseSdId = "sd_id";
     // vm configuration (i.e. VmDynamic)
     public static final String guest_cur_user_name = "username";
     public static final String VM_IP = "guestIPs";

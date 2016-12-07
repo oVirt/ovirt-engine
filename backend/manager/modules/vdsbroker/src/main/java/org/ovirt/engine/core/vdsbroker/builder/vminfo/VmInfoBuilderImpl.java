@@ -796,6 +796,22 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         if (osRepository.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion())) {
             createInfo.put(VdsProperties.hypervEnable, "true");
         }
+
+        if (vm.getLeaseStorageDomainId() != null) {
+            buildVmLease();
+        }
+    }
+
+    public void buildVmLease() {
+        Map<String, Object> device = new HashMap<>();
+        device.put(VdsProperties.Type, VdsProperties.VmLease);
+        device.put(VdsProperties.Device, VdsProperties.VmLease);
+        device.put(VdsProperties.DeviceId, Guid.newGuid());
+        Map<String, Object> specParams = new HashMap<>();
+        specParams.put(VdsProperties.VmLeaseSdId, vm.getLeaseStorageDomainId());
+        specParams.put(VdsProperties.VmLeaseId, vm.getId());
+        device.put(VdsProperties.SpecParams, specParams);
+        devices.add(device);
     }
 
     @Override
