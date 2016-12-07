@@ -287,6 +287,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         }
         updateCustomPropertySheet();
         getModel().getCustomPropertySheet().deserialize(vm.getCustomProperties());
+        updateLeaseStorageDomains(vm.getLeaseStorageDomainId());
     }
 
     @Override

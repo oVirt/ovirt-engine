@@ -1029,6 +1029,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         privateIsHighlyAvailable = value;
     }
 
+    private NotChangableForVmInPoolListModel<StorageDomain> lease;
+
+    public ListModel<StorageDomain> getLease() {
+        return lease;
+    }
+
+    private void setLease(NotChangableForVmInPoolListModel<StorageDomain> value) {
+        lease = value;
+    }
+
     private NotChangableForVmInPoolListModel<EntityModel<BootSequence>> privateFirstBootDevice;
 
     public ListModel<EntityModel<BootSequence>> getFirstBootDevice() {
@@ -1570,6 +1580,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         });
         getCdAttached().setEntity(false);
 
+        setLease(new NotChangableForVmInPoolListModel<StorageDomain>());
         setIsHighlyAvailable(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsHighlyAvailable().getEntityChangedEvent().addListener(this);
         setIsTemplatePublic(new NotChangableForVmInPoolEntityModel<Boolean>());

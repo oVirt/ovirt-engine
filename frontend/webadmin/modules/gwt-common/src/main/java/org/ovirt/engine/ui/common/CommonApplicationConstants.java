@@ -1623,6 +1623,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String manualNetworkProviderInstallRecomendation();
 
+    String leaseStorageDomain();
+
+    String emptyLeaseStorageDomain();
+
     String graphicalConsoleOptionsVmPopup();
 
     String serialConsoleOptionsVmPopup();

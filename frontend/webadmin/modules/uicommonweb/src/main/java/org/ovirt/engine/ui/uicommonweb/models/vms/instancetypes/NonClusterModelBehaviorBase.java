@@ -26,6 +26,7 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
 
         getModel().getIsVirtioScsiEnabled().setIsAvailable(true);
         getModel().getIsVirtioScsiEnabled().setEntity(false);
+        getModel().getLease().setIsAvailable(false);
 
         getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(true);
 
