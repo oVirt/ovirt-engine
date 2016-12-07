@@ -106,4 +106,8 @@ public interface IIrsServer {
     OneUuidReturn prepareMerge(String spUUID, Map<String, String> subchainInfo);
 
     OneUuidReturn finalizeMerge(String spUUID, Map<String, String> subchainInfo);
+
+    StatusOnlyReturn addVmLease(String leaseUUID, String sdUUID);
+
+    StatusOnlyReturn removeVmLease(String leaseUUID, String sdUUID);
 }

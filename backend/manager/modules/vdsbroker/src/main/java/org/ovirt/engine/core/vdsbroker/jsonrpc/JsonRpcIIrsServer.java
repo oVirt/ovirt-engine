@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.jsonrpc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturn;
@@ -640,4 +641,33 @@ public class JsonRpcIIrsServer implements IIrsServer {
                 new FutureMap(this.client, request).withResponseKey("uuid");
         return new OneUuidReturn(response);
     }
+
+    @Override
+    public StatusOnlyReturn addVmLease(String leaseUUID, String sdUUID) {
+        HashMap<String, Object> leaseDict = new HashMap<>();
+        leaseDict.put("lease_id", leaseUUID);
+        leaseDict.put("sd_id", sdUUID);
+
+        JsonRpcRequest request =
+                new RequestBuilder("Lease.create")
+                          .withParameter("lease", leaseDict)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
+    public StatusOnlyReturn removeVmLease(String leaseUUID, String sdUUID) {
+        HashMap<String, Object> leaseDict = new HashMap<>();
+        leaseDict.put("lease_id", leaseUUID);
+        leaseDict.put("sd_id", sdUUID);
+
+        JsonRpcRequest request =
+                new RequestBuilder("Lease.delete")
+                        .withParameter("lease", leaseDict)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
 }
