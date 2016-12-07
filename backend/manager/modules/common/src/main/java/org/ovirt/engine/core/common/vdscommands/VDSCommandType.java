@@ -228,6 +228,8 @@ public enum VDSCommandType {
     UnregisterLibvirtSecrets("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     Freeze("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     Thaw("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    AddVmLease("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    RemoveVmLease("org.ovirt.engine.core.vdsbroker.vdsbroker"),
 
     // Cold merge related commands
     PrepareMerge("org.ovirt.engine.core.vdsbroker.irsbroker"),
