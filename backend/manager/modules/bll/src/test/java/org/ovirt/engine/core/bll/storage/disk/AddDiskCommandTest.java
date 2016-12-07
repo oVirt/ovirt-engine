@@ -264,7 +264,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateMaxBlockDiskSizeCheckFails() {
         Guid storageId = Guid.newGuid();
-        command.getParameters().setDiskInfo(createDiskImage(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize) * 2));
+        command.getParameters().setDiskInfo(createDiskImage(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize) * 2L));
         command.getParameters().setStorageDomainId(storageId);
 
         mockStorageDomain(storageId, StorageType.ISCSI);
@@ -550,7 +550,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private static DiskImage createPreallocDiskImage() {
         DiskImage image = new DiskImage();
         image.setVolumeType(VolumeType.Preallocated);
-        image.setSizeInGigabytes(5);
+        image.setSizeInGigabytes(5L);
         return image;
     }
 
@@ -891,7 +891,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidateFailOnAddFloatingDiskWithPlugSet() {
-        DiskImage disk = createDiskImage(1);
+        DiskImage disk = createDiskImage(1L);
 
         command.getParameters().setDiskInfo(disk);
         command.getParameters().setVmId(Guid.Empty);
@@ -902,7 +902,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidateSuccessOnAddFloatingDiskWithPlugUnset() {
-        DiskImage disk = createDiskImage(1);
+        DiskImage disk = createDiskImage(1L);
 
         command.getParameters().setDiskInfo(disk);
         command.getParameters().setVmId(Guid.Empty);
@@ -950,7 +950,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Quota quota = new Quota();
         quota.setId(Guid.newGuid());
 
-        DiskImage img = createDiskImage(10);
+        DiskImage img = createDiskImage(10L);
         img.setQuotaId(quota.getId());
 
         command.getParameters().setDiskInfo(img);
@@ -974,7 +974,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testNonExistingQuota() {
-        DiskImage img = createDiskImage(10);
+        DiskImage img = createDiskImage(10L);
         img.setQuotaId(Guid.newGuid());
 
         AddDiskParameters params = createParameters();
