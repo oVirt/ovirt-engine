@@ -13,6 +13,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Widget;
 
 public class TooltippedIcon extends FocusPanel {
 
@@ -24,10 +25,8 @@ public class TooltippedIcon extends FocusPanel {
         super();
 
         image = new Image(mouseOutImage);
-
-        tooltip = new WidgetTooltip(image);
+        tooltip = createTooltip(image);
         setText(text);
-        setWidget(tooltip);
 
         addMouseOutHandler(new MouseOutHandler() {
             @Override
@@ -42,6 +41,22 @@ public class TooltippedIcon extends FocusPanel {
                 image.setUrl(mouseInImage.getSafeUri());
             }
         });
+    }
+
+    public TooltippedIcon(SafeHtml text, Widget icon) {
+        super();
+        tooltip = createTooltip(icon);
+        setText(text);
+    }
+
+    protected Widget getTooltipWidget() {
+        return tooltip.getWidget();
+    }
+
+    private WidgetTooltip createTooltip(Widget widget) {
+        WidgetTooltip tooltip = new WidgetTooltip(widget);
+        setWidget(tooltip);
+        return tooltip;
     }
 
     public void setText(SafeHtml text) {

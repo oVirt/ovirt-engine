@@ -1,0 +1,9 @@
+.infoIconColor {
+    color: #0088CE;
+    text-decoration: none;
+}
+
+.infoIconColor:hover {
+    color: #00659C;
+    text-decoration: underline;
+}
