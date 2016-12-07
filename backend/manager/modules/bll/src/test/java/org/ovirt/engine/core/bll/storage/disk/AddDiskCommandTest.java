@@ -13,7 +13,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +57,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -79,14 +79,11 @@ import org.slf4j.LoggerFactory;
 
 public class AddDiskCommandTest extends BaseCommandTest {
     private static final Logger log = LoggerFactory.getLogger(AddDiskCommandTest.class);
-    private static int MAX_BLOCK_SIZE = 8192;
     private static int MAX_PCI_SLOTS = 26;
     private static Guid vmId = Guid.newGuid();
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE)
-            );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     private DiskVmElementDao diskVmElementDao;
@@ -251,7 +248,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     public void validateMaxBlockDiskSizeCheckSucceeds() {
         Guid storageId = Guid.newGuid();
         command.getParameters().setStorageDomainId(storageId);
-        command.getParameters().setDiskInfo(createDiskImage(MAX_BLOCK_SIZE));
+        command.getParameters().setDiskInfo(createDiskImage(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize)));
 
         mockStorageDomain(storageId, StorageType.ISCSI);
         mockStoragePoolIsoMap();
@@ -267,7 +264,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateMaxBlockDiskSizeCheckFails() {
         Guid storageId = Guid.newGuid();
-        command.getParameters().setDiskInfo(createDiskImage(MAX_BLOCK_SIZE * 2));
+        command.getParameters().setDiskInfo(createDiskImage(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize) * 2));
         command.getParameters().setStorageDomainId(storageId);
 
         mockStorageDomain(storageId, StorageType.ISCSI);
