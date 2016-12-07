@@ -97,6 +97,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             vmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
         }
         freeLock();
+        removeVmLease(getVm().getLeaseStorageDomainId(), getVm().getId());
         setSucceeded(removeVm());
     }
 

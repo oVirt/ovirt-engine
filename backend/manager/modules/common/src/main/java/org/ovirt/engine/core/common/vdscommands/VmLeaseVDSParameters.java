@@ -8,8 +8,10 @@ public class VmLeaseVDSParameters extends IrsBaseVDSCommandParameters {
     private Guid storageDomainId;
     private Guid leaseId;
 
-    public VmLeaseVDSParameters(Guid storagePoolId) {
+    public VmLeaseVDSParameters(Guid storagePoolId, Guid storageDomainId, Guid leaseId) {
         super(storagePoolId);
+        this.storageDomainId = storageDomainId;
+        this.leaseId = leaseId;
     }
 
     public VmLeaseVDSParameters() {
