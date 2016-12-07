@@ -875,6 +875,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return;
         }
 
+        if (!addVmLease(getParameters().getVm().getLeaseStorageDomainId(), getVmId())) {
+            return;
+        }
+
         TransactionSupport.executeInNewTransaction(() -> {
             addVmStatic();
             addVmDynamic();

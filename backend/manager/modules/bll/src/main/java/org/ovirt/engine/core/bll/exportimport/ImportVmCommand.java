@@ -243,6 +243,14 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return true;
     }
 
+    @Override
+    protected void executeVmCommand() {
+        if (!addVmLease(getVm().getLeaseStorageDomainId(), getVm().getId())) {
+            getVm().setLeaseStorageDomainId(null);
+        }
+        super.executeVmCommand();
+    }
+
     private boolean isCopyCollapseDisabledWithSnapshotsOrWithTemplate() {
         // If there are no snapshots we may not care if copyCollapse = false
         // There's always at least one snapshot (Active).
