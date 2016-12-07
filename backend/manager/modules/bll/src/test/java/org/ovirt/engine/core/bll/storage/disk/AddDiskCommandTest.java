@@ -247,8 +247,10 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateMaxBlockDiskSizeCheckSucceeds() {
         Guid storageId = Guid.newGuid();
+        DiskImage disk = new DiskImage();
+        disk.setSizeInGigabytes(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize));
         command.getParameters().setStorageDomainId(storageId);
-        command.getParameters().setDiskInfo(createDiskImage(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize)));
+        command.getParameters().setDiskInfo(disk);
 
         mockStorageDomain(storageId, StorageType.ISCSI);
         mockStoragePoolIsoMap();
@@ -264,8 +266,10 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateMaxBlockDiskSizeCheckFails() {
         Guid storageId = Guid.newGuid();
-        command.getParameters().setDiskInfo(createDiskImage(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize) * 2L));
+        DiskImage disk = new DiskImage();
+        disk.setSizeInGigabytes(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize) * 2L);
         command.getParameters().setStorageDomainId(storageId);
+        command.getParameters().setDiskInfo(disk);
 
         mockStorageDomain(storageId, StorageType.ISCSI);
         mockStoragePoolIsoMap();
@@ -282,7 +286,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
      */
     @Test
     public void validateShareableDiskVolumeFormatSucceeds() {
-        DiskImage image = createShareableDiskImage();
+        DiskImage image = new DiskImage();
+        image.setShareable(true);
         image.setVolumeFormat(VolumeFormat.RAW);
         Guid storageId = Guid.newGuid();
         command.getParameters().setDiskInfo(image);
@@ -301,7 +306,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
      */
     @Test
     public void validateShareableDiskVolumeFormatFails() {
-        DiskImage image = createShareableDiskImage();
+        DiskImage image = new DiskImage();
+        image.setShareable(true);
         image.setVolumeFormat(VolumeFormat.COW);
         Guid storageId = Guid.newGuid();
         command.getParameters().setDiskInfo(image);
@@ -319,7 +325,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateShareableDiskOnGlusterFails() {
-        DiskImage image = createShareableDiskImage();
+        DiskImage image = new DiskImage();
+        image.setShareable(true);
         image.setVolumeFormat(VolumeFormat.RAW);
         Guid storageId = Guid.newGuid();
         command.getParameters().setDiskInfo(image);
@@ -348,11 +355,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     private void initializeCommand(Guid storageId, VolumeType volumeType) {
         AddDiskParameters parameters = command.getParameters();
-        if (volumeType == VolumeType.Preallocated) {
-            parameters.setDiskInfo(createPreallocDiskImage());
-        } else if (volumeType == VolumeType.Sparse) {
-            parameters.setDiskInfo(createSparseDiskImage());
-        }
+        DiskImage disk = new DiskImage();
+        disk.setVolumeType(volumeType);
+        parameters.setDiskInfo(disk);
         command.getParameters().setStorageDomainId(storageId);
     }
 
@@ -531,31 +536,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         DiskVmElement dve = new DiskVmElement(null, vmId);
         dve.setDiskInterface(DiskInterface.IDE);
         return new AddDiskParameters(dve, image);
-    }
-
-    private static DiskImage createSparseDiskImage() {
-        DiskImage image = new DiskImage();
-        image.setVolumeType(VolumeType.Sparse);
-        return image;
-    }
-
-    private static DiskImage createPreallocDiskImage() {
-        DiskImage image = new DiskImage();
-        image.setVolumeType(VolumeType.Preallocated);
-        image.setSizeInGigabytes(5L);
-        return image;
-    }
-
-    private static DiskImage createDiskImage(long sizeInGigabytes) {
-        DiskImage image = new DiskImage();
-        image.setSizeInGigabytes(sizeInGigabytes);
-        return image;
-    }
-
-    private static DiskImage createShareableDiskImage() {
-        DiskImage image = new DiskImage();
-        image.setShareable(true);
-        return image;
     }
 
     private static LunDisk createISCSILunDisk() {
@@ -883,7 +863,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidateFailOnAddFloatingDiskWithPlugSet() {
-        DiskImage disk = createDiskImage(1L);
+        DiskImage disk = new DiskImage();
 
         command.getParameters().setDiskInfo(disk);
         command.getParameters().setVmId(Guid.Empty);
@@ -894,7 +874,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidateSuccessOnAddFloatingDiskWithPlugUnset() {
-        DiskImage disk = createDiskImage(1L);
+        DiskImage disk = new DiskImage();
 
         command.getParameters().setDiskInfo(disk);
         command.getParameters().setVmId(Guid.Empty);
@@ -942,7 +922,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Quota quota = new Quota();
         quota.setId(Guid.newGuid());
 
-        DiskImage img = createDiskImage(10L);
+        DiskImage img = new DiskImage();
         img.setQuotaId(quota.getId());
 
         command.getParameters().setDiskInfo(img);
@@ -966,7 +946,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testNonExistingQuota() {
-        DiskImage img = createDiskImage(10L);
+        DiskImage img = new DiskImage();
         img.setQuotaId(Guid.newGuid());
 
         AddDiskParameters params = createParameters();
