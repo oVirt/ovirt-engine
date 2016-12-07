@@ -495,22 +495,14 @@ public class AddDiskCommandTest extends BaseCommandTest {
      *            Id of the domain.
      */
     private StorageDomain mockStorageDomain(Guid storageId) {
-        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN);
+        return mockStorageDomain(storageId, StorageType.UNKNOWN);
     }
 
     private StorageDomain mockStorageDomain(Guid storageId, StorageType storageType) {
-        return mockStorageDomain(storageId, 6, 4, storageType);
-    }
-
-
-    private StorageDomain mockStorageDomain(Guid storageId, int availableSize, int usedSize,
-            StorageType storageType) {
         StoragePool storagePool = mockStoragePool();
         Guid storagePoolId = storagePool.getId();
 
         StorageDomain sd = new StorageDomain();
-        sd.setAvailableDiskSize(availableSize);
-        sd.setUsedDiskSize(usedSize);
         sd.setId(storageId);
         sd.setStoragePoolId(storagePoolId);
         sd.setStatus(StorageDomainStatus.Active);
