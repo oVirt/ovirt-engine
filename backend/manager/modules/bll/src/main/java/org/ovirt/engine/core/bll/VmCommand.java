@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VmLeaseVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.GuidUtils;
 
@@ -445,4 +446,19 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         String fileName = new File(windowsPath).getName();
         return String.format("%1$s/%2$s", isoPrefix, fileName);
     }
+
+    protected boolean removeVmLease(Guid leaseStorageDomainId, Guid vmId) {
+        if (leaseStorageDomainId == null) {
+            return true;
+        }
+
+        return runVdsCommand(
+                VDSCommandType.RemoveVmLease,
+                new VmLeaseVDSParameters(
+                        getVm().getStoragePoolId(),
+                        leaseStorageDomainId,
+                        vmId)
+                ).getSucceeded();
+    }
+
 }
