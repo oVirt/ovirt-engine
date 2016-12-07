@@ -101,7 +101,7 @@ public final class ActionReturnValue implements Serializable {
 
     @SuppressWarnings("unchecked")
     public <T> T getActionReturnValue() {
-        return (T)returnValue;
+        return (T) returnValue;
     }
 
     public void setActionReturnValue(Object value) {

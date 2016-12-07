@@ -4,5 +4,6 @@
 <module>
 	<inherits name='com.google.gwt.core.Core' />
 
+	<source path="extension" />
 	<super-source path="uioverrides" />
 </module>
