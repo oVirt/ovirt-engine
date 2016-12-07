@@ -501,6 +501,9 @@
                   </b:Column>
                 </b:Row>
                 <b:Row>
+                  <e:ListModelListBoxEditor ui:field="leaseEditor" label="{constants.leaseStorageDomain}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                </b:Row>
+                <b:Row>
                   <b:Column size="LG_6">
                     <g:Label text="{constants.priorForRunMigrationQueueVmPopup}" addStyleNames="{style.sectionLabel}"/>
                   </b:Column>

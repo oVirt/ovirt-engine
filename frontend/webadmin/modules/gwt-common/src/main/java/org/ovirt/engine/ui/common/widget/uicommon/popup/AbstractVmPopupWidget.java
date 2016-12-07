@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
@@ -740,6 +741,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public EntityModelCheckBoxEditor isHighlyAvailableEditor;
 
     @UiField(provided = true)
+    @Path("lease.selectedItem")
+    @WithElementId("lease")
+    public ListModelListBoxEditor<StorageDomain> leaseEditor;
+
+    @UiField(provided = true)
     @Ignore
     public EntityModelDetachableWidget isHighlyAvailableEditorWithDetachable;
 
@@ -1033,6 +1039,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initSpiceProxy();
         initTotalVcpus();
         initDetachableFields();
+        leaseEditor = new ListModelListBoxEditor<>(new AbstractRenderer<StorageDomain>() {
+            @Override
+            public String render(StorageDomain domain) {
+                return domain != null ? domain.getName() : constants.emptyLeaseStorageDomain();
+            }
+        });
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 

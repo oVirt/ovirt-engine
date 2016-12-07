@@ -189,6 +189,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 // it was reset by getTemplateWithVersion event
                 getModel().getCustomCompatibilityVersion().setSelectedItem(getSavedCurrentCustomCompatibilityVersion());
                 setCustomCompatibilityVersionChangeInProgress(false);
+                updateLeaseStorageDomains(template.getLeaseStorageDomainId());
             }
         });
     }
@@ -224,7 +225,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         updateCpuSharesAvailability();
         updateVirtioScsiAvailability();
         activateInstanceTypeManager();
-
     }
 
     private boolean profilesExist(List<VnicProfileView> profiles) {

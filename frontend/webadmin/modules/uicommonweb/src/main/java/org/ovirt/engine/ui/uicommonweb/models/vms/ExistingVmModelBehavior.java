@@ -272,6 +272,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         updateVirtioScsiAvailability();
         updateOSValues();
         updateInstanceImages();
+        updateLeaseStorageDomains(vm.getLeaseStorageDomainId());
 
         instanceTypeManager.updateAll();
     }

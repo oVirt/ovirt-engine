@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -135,6 +136,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         priorityUtil = new PriorityUtil(getModel());
         virtioScsiUtil = new VirtioScsiUtil(getModel());
         getModel().getVmId().setIsAvailable(false);
+        getModel().getLease().setIsChangeable(false);
+        getModel().getIsHighlyAvailable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                boolean ha = getModel().getIsHighlyAvailable().getEntity();
+                getModel().getLease().setIsChangeable(ha);
+                if (!ha) {
+                    getModel().getLease().setSelectedItem(null);
+                }
+            }
+        });
         getModel().getMigrationPolicies()
                 .setItems(AsyncDataProvider.getInstance().getMigrationPolicies(Version.getLast()));
     }
@@ -1262,6 +1274,35 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
+    protected void updateLeaseStorageDomains(final Guid selectedStorageDomainId) {
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
+                new AsyncCallback<List<StorageDomain>>() {
+                    @Override
+                    public void onSuccess(List<StorageDomain> returnValue) {
+                        List<StorageDomain> domains = new ArrayList<>();
+                        domains.add(null);
+                        for (StorageDomain domain : returnValue) {
+                            if (domain.getStorageDomainType().isDataDomain()
+                                    && domain.getStatus() == StorageDomainStatus.Active) {
+                                domains.add(domain);
+                            }
+                        }
+                        getModel().getLease().setItems(domains);
+                        if (selectedStorageDomainId != null) {
+                            for (StorageDomain domain : domains) {
+                                if (domain == null) {
+                                    continue;
+                                }
+                                if (selectedStorageDomainId.equals(domain.getId())) {
+                                    getModel().getLease().setSelectedItem(domain);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }), getModel().getSelectedDataCenter().getId());
+    }
+
     /*
      * Updates the emulated machine combobox after a cluster change occurs
      */
@@ -1659,4 +1700,5 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public Version getSavedCurrentCustomCompatibilityVersion() {
         return savedCurrentCustomCompatibilityVersion;
     }
+
 }
