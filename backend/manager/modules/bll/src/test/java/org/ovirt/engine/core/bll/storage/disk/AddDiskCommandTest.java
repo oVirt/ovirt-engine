@@ -373,7 +373,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(new ArrayList<>()).when(diskVmElementDao).getAllForVm(vmId);
         doReturn(true).when(command).validateQuota();
-        doReturn(quotaManager).when(command).getQuotaManager();
 
         doAnswer(invocation -> invocation.getArguments()[0] != null ?
                     invocation.getArguments()[0] : Guid.newGuid())
