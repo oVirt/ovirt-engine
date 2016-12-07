@@ -448,7 +448,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         DiskImage oldDisk = createDiskImage();
         when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
 
-        ((DiskImage) command.getParameters().getDiskInfo()).setSize(oldDisk.getSize() * 2);
+        ((DiskImage) command.getParameters().getDiskInfo()).setSize(oldDisk.getSize() * 2L);
         initializeCommand();
 
         assertTrue(command.validateCanResizeDisk());
@@ -458,7 +458,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     public void testFaultyResize() {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
-        ((DiskImage) command.getParameters().getDiskInfo()).setSize(command.getParameters().getDiskInfo().getSize() / 2);
+        ((DiskImage) command.getParameters().getDiskInfo()).setSize(command.getParameters().getDiskInfo().getSize() / 2L);
         initializeCommand();
 
         assertFalse(command.validateCanResizeDisk());
@@ -473,7 +473,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         sd.setStatus(StorageDomainStatus.Active);
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(sd);
 
-        ((DiskImage) command.getParameters().getDiskInfo()).setSize(command.getParameters().getDiskInfo().getSize() * 2);
+        ((DiskImage) command.getParameters().getDiskInfo()).setSize(command.getParameters().getDiskInfo().getSize() * 2L);
         initializeCommand();
 
         DiskImage oldDisk = createDiskImage();
@@ -594,12 +594,12 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         DiskImage oldDiskImage = createDiskImage();
         oldDiskImage.setQuotaId(quotaId);
-        oldDiskImage.setSize(SizeConverter.convert(3, SizeConverter.SizeUnit.GiB,
+        oldDiskImage.setSize(SizeConverter.convert(3L, SizeConverter.SizeUnit.GiB,
                 SizeConverter.SizeUnit.BYTES).longValue());
 
         DiskImage newDiskImage = createDiskImage();
         newDiskImage.setQuotaId(quotaId);
-        newDiskImage.setSize(SizeConverter.convert(5, SizeConverter.SizeUnit.GiB,
+        newDiskImage.setSize(SizeConverter.convert(5L, SizeConverter.SizeUnit.GiB,
                 SizeConverter.SizeUnit.BYTES).longValue());
 
         command.getParameters().setDiskVmElement(new DiskVmElement(newDiskImage.getId(), vmId));
