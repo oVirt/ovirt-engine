@@ -1089,9 +1089,12 @@ fi
 %dir %{engine_etc}/notifier
 %{_bindir}/engine-config
 %{_bindir}/ovirt-engine-extensions-tool
+%{_bindir}/engine-vacuum
 %{_mandir}/man8/engine-config.*
 %{engine_data}/bin/engine-config.sh
 %{engine_data}/bin/engine-prolog.sh
+%{engine_data}/bin/engine-vacuum.sh
+%{engine_data}/bin/generate-pgpass.sh
 %{engine_data}/bin/ovirt-engine-extensions-tool.sh
 %{engine_data}/bin/ovirt-engine-crypto-tool.sh
 %{engine_data}/bin/ovirt-engine-role.sh
