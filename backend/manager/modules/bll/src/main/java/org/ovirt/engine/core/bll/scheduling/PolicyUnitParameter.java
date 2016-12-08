@@ -50,7 +50,12 @@ public enum PolicyUnitParameter {
      * The minimum amount of hosted engine capable hosts that have to be able to receive
      * the engine VM in terms of free memory.
      */
-    HE_SPARES_COUNT("HeSparesCount", "^([0-9][0-9]*)$");
+    HE_SPARES_COUNT("HeSparesCount", "^([0-9][0-9]*)$"),
+
+    /**
+     * The maximum allowed swap usage in percents of the physical memory
+     */
+    MAX_ALLOWED_SWAP_USAGE("MaximumAllowedSwapUsage", "^1?[0-9]?[0-9]$");
 
     final String dbName;
     final String regex;

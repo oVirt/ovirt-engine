@@ -17,8 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -50,12 +48,6 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         }
         List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(vm.getId());
         for (VDS vds : hosts) {
-            if (!isVMSwapValueLegal(vds)) {
-                log.debug("Host '{}' swap value is illegal", vds.getName());
-                messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__SWAP_VALUE_ILLEGAL.toString());
-                continue;
-            }
-
             // Check physical memory needed to start / receive the VM
             // This is probably not needed for all VMs, but QEMU might attempt full
             // allocation without provoked and fail if there is not enough memory
@@ -141,28 +133,5 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         return false;
     }
 
-    /**
-     * Determines whether [is VM swap value legal] [the specified VDS].
-     * @param host
-     *            The VDS.
-     * @return <c>true</c> if [is VM swap value legal] [the specified VDS]; otherwise, <c>false</c>.
-     */
-    private boolean isVMSwapValueLegal(VDS host) {
-        if (!Config.<Boolean> getValue(ConfigValues.EnableSwapCheck)) {
-            return true;
-        }
 
-        if (host.getSwapTotal() == null || host.getSwapFree() == null || host.getMemAvailable() == null
-                || host.getMemAvailable() <= 0 || host.getPhysicalMemMb() == null || host.getPhysicalMemMb() <= 0) {
-            return true;
-        }
-
-        long swap_total = host.getSwapTotal();
-        long swap_free = host.getSwapFree();
-        long mem_available = host.getMemAvailable();
-        long physical_mem_mb = host.getPhysicalMemMb();
-
-        return ((swap_total - swap_free - mem_available) * 100 / physical_mem_mb) <= Config
-                .<Integer> getValue(ConfigValues.BlockMigrationOnSwapUsagePercentage);
-    }
 }

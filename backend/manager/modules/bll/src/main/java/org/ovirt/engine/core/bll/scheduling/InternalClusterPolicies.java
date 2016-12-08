@@ -33,6 +33,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingBalancePolicy
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingCPUWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingMemoryWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PreferredHostsWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.SwapFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmToHostAffinityFilterPolicyUnit;
@@ -59,6 +60,7 @@ public class InternalClusterPolicies {
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
                 .addFilters(HostDeviceFilterPolicyUnit.class)
                 .addFilters(HostedEngineHAClusterFilterPolicyUnit.class)
+                .addFilters(SwapFilterPolicyUnit.class)
                 .addFilters(MemoryPolicyUnit.class)
                 .addFilters(MigrationPolicyUnit.class)
                 .addFilters(VmAffinityFilterPolicyUnit.class)
@@ -92,6 +94,7 @@ public class InternalClusterPolicies {
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
                 .addFilters(HostDeviceFilterPolicyUnit.class)
                 .addFilters(HostedEngineHAClusterFilterPolicyUnit.class)
+                .addFilters(SwapFilterPolicyUnit.class)
                 .addFilters(MemoryPolicyUnit.class)
                 .addFilters(MigrationPolicyUnit.class)
                 .addFilters(VmAffinityFilterPolicyUnit.class)
@@ -126,6 +129,7 @@ public class InternalClusterPolicies {
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
                 .addFilters(HostDeviceFilterPolicyUnit.class)
                 .addFilters(HostedEngineHAClusterFilterPolicyUnit.class)
+                .addFilters(SwapFilterPolicyUnit.class)
                 .addFilters(MemoryPolicyUnit.class)
                 .addFilters(MigrationPolicyUnit.class)
                 .addFilters(VmAffinityFilterPolicyUnit.class)
@@ -161,6 +165,7 @@ public class InternalClusterPolicies {
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
                 .addFilters(HostDeviceFilterPolicyUnit.class)
                 .addFilters(HostedEngineHAClusterFilterPolicyUnit.class)
+                .addFilters(SwapFilterPolicyUnit.class)
                 .addFilters(MemoryPolicyUnit.class)
                 .addFilters(MigrationPolicyUnit.class)
                 .addFilters(VmAffinityFilterPolicyUnit.class)
@@ -191,6 +196,7 @@ public class InternalClusterPolicies {
                 .addFilters(EmulatedMachineFilterPolicyUnit.class)
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(MigrationPolicyUnit.class)
+                .addFilters(SwapFilterPolicyUnit.class)
                 .addFilters(MemoryPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
