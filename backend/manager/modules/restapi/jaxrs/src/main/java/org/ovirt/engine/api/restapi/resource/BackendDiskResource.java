@@ -19,15 +19,19 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -67,6 +71,30 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
         validateParameters(action, "storageDomain.id|name");
         return doAction(VdcActionType.ExportRepoImage,
                 new ExportRepoImageParameters(guid, getStorageDomainId(action)), action);
+    }
+
+    @Override
+    public Disk update(Disk incoming) {
+        // If the QCOW version is specified, then perform the update:
+        if (incoming.isSetQcowVersion()) {
+            return performUpdate(
+                    incoming,
+                    new QueryIdResolver<>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class),
+                    VdcActionType.AmendImageGroupVolumes,
+                    new UpdateParametersProvider());
+        }
+
+        // If the QCOW version isn't specified, then just retrieve the disk:
+        return get();
+    }
+
+    protected class UpdateParametersProvider implements ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
+        public VdcActionParametersBase getParameters(
+                Disk incoming,
+                org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
+            QcowCompat qcowCompat = DiskMapper.mapQcowVersion(incoming.getQcowVersion());
+            return new AmendImageGroupVolumesCommandParameters(guid, qcowCompat);
+        }
     }
 
     @Override
