@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -10,6 +13,8 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.RegisterVmData;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -17,9 +22,11 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterVmPopupPresenterWidget;
 
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
@@ -35,6 +42,7 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
 
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
     @Inject
     public RegisterVmPopupView(EventBus eventBus, Driver driver) {
@@ -142,30 +150,42 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
         };
         entityTable.addColumn(diskColumn, constants.disksVm(), "50px"); //$NON-NLS-1$
 
-        final AbstractCheckboxColumn<RegisterVmData> reassignMacsColumn = new AbstractCheckboxColumn<RegisterVmData>() {
-            @Override
-            public Boolean getValue(RegisterVmData registerVmData) {
-                return registerVmData.getReassignMacs().getEntity();
-            }
-
-            @Override
-            protected boolean canEdit(RegisterVmData registerVmData) {
-                return true;
-            }
-        };
-        reassignMacsColumn.setFieldUpdater(new FieldUpdater<RegisterVmData, Boolean>() {
-            @Override
-            public void update(int index, RegisterVmData object, Boolean value) {
-                object.getReassignMacs().setEntity(value);
-            }
-        });
-        entityTable.addColumn(reassignMacsColumn, constants.reassignBadMacs());
+        entityTable.addColumn(creatReassignMacsColumn(), new ReassignBadMacsHeader(), "150px"); //$NON-NLS-1$
 
         entityTable.addColumn(getClusterColumn(), constants.clusterVm(), "150px"); //$NON-NLS-1$
 
         if (model.isQuotaEnabled()) {
             entityTable.addColumn(getClusterQuotaColumn(), constants.quotaVm(), "150px"); //$NON-NLS-1$
         }
+    }
+
+    private AbstractCheckboxColumn<RegisterVmData> creatReassignMacsColumn() {
+        final AbstractCheckboxColumn<RegisterVmData> reassignMacsColumn =
+                new AbstractCheckboxColumn<RegisterVmData>() {
+                    @Override
+                    public Boolean getValue(RegisterVmData registerVmData) {
+                        return registerVmData.getReassignMacs().getEntity();
+                    }
+
+                    @Override
+                    protected boolean canEdit(RegisterVmData registerVmData) {
+                        return true;
+                    }
+
+                    @Override
+                    public void render(Context context, RegisterVmData object, SafeHtmlBuilder sb) {
+                        super.render(context, object, sb);
+                        sb.append(templates.textForCheckBox(constants.reassignBadMacs()));
+                    }
+                };
+
+        reassignMacsColumn.setFieldUpdater(new FieldUpdater<RegisterVmData, Boolean>() {
+            @Override
+            public void update(int index, RegisterVmData object, Boolean value) {
+                object.getReassignMacs().setEntity(value);
+            }
+        });
+        return reassignMacsColumn;
     }
 
     @Override
@@ -180,6 +200,42 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
             return new LeftAlignedUiCommandButton(label);
         } else {
             return super.createCommandButton(label, uniqueId);
+        }
+    }
+
+    private Collection<RegisterVmData> getTableItems() {
+        final ListModel<RegisterVmData> tableItems = entityTable.asEditor().flush();
+        return tableItems == null ? new ArrayList<RegisterVmData>() : tableItems.getItems();
+    }
+
+    private class ReassignBadMacsHeader extends AbstractCheckboxHeader {
+
+        @Override
+        protected void selectionChanged(Boolean value) {
+            for (RegisterVmData tableEntry : getTableItems()) {
+                tableEntry.getReassignMacs().setEntity(value);
+            }
+            refreshEntityTable();
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
+
+        @Override
+        public Boolean getValue() {
+            for (RegisterVmData tableEntry : getTableItems()) {
+                if (!tableEntry.getReassignMacs().getEntity()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public String getLabel() {
+            return constants.reassignAllBadMacs();
         }
     }
 }

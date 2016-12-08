@@ -3210,8 +3210,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String externalVnicProfilesMapping();
 
-    String reassignBadMacs();
+    String reassignAllBadMacs();
 
     String targetVnicProfile();
+
+    String reassignBadMacs();
 }
 
