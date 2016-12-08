@@ -16,19 +16,21 @@
 #
 
 
-"""ovirt-host-setup datebase plugin."""
+"""Various database plugins."""
 
 
 from otopi import util
 
 from . import connection
 from . import schema
+from . import vacuum
 
 
 @util.export
 def createPlugins(context):
     connection.Plugin(context=context)
     schema.Plugin(context=context)
+    vacuum.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

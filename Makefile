@@ -450,6 +450,7 @@ install-layout: \
 	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-upgrade-check" "$(DESTDIR)$(BIN_DIR)/engine-upgrade-check"
 	ln -sf "$(DATA_DIR)/bin/engine-config.sh" "$(DESTDIR)$(BIN_DIR)/engine-config"
 	ln -sf "$(DATA_DIR)/bin/engine-backup.sh" "$(DESTDIR)$(BIN_DIR)/engine-backup"
+	ln -sf "$(DATA_DIR)/bin/engine-vacuum.sh" "$(DESTDIR)$(BIN_DIR)/engine-vacuum"
 	ln -sf "$(DATA_DIR)/bin/ovirt-engine-extensions-tool.sh" "$(DESTDIR)$(BIN_DIR)/ovirt-engine-extensions-tool"
 
 	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/certs"

@@ -320,6 +320,11 @@ class FileLocations(object):
         'internal.properties'
     )
 
+    OVIRT_ENGINE_VACUUM_TOOL = os.path.join(
+        OVIRT_ENGINE_BINDIR,
+        'engine-vacuum.sh',
+    )
+
 
 @util.export
 class Defaults(object):
@@ -528,6 +533,12 @@ class EngineDBEnv(object):
     )
     def FIX_DB_VIOLATIONS(self):
         return 'OVESETUP_DB/fixDbViolations'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def ENGINE_VACUUM_FULL(self):
+        return 'OVESETUP_DB/engineVacuumFull'
 
 
 @util.export
