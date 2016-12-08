@@ -34,6 +34,26 @@ from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_setup_lib import dialog
 
 
+_SSL_REQUESTS_LOG_FORMAT = (
+    'CustomLog logs/ovirt-requests-log '
+    ' "%t %h \\"Correlation-Id: %{Correlation-Id}o\\" '
+    '\\"Duration: %Dus\\" \\"%r\\" %b"'
+)
+
+
+def _apply_logging(lines):
+    result = []
+    found = False
+    for line in lines:
+        if not found and line.find('ovirt-requests-log') != -1:
+            found = True
+        if not found and line.find('</VirtualHost>') != -1:
+            found = True
+            result.append(_SSL_REQUESTS_LOG_FORMAT)
+        result.append(line)
+    return result
+
+
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -206,7 +226,7 @@ class Plugin(plugin.PluginBase):
                     oengcommcons.ApacheEnv.HTTPD_CONF_SSL
                 ],
                 content=osetuputil.editConfigContent(
-                    content=self._sslData.splitlines(),
+                    content=_apply_logging(self._sslData.splitlines()),
                     params=self._params,
                     changed_lines=changed_lines,
                     separator_re='\s+',
