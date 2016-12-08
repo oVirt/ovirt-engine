@@ -3190,6 +3190,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostedEngineStorageTooltip();
 
+    String haActiveTooltip();
+
+    String haActiveZeroHaScoreTooltip();
+
     String arbiterVolume();
 }
 

@@ -52,6 +52,13 @@ public class HostAdditionalStatusColumn extends EntityAdditionalStatusColumn<VDS
         }
         if (host.isHostedEngineHost()) {
             imagesToText.put(getImageSafeHtml(resources.mgmtNetwork()), constants.hostedEngineVmTooltip());
+        } else if (host.getHighlyAvailableIsActive()) {
+            if(host.getHighlyAvailableScore() > 0) {
+                imagesToText.put(getImageSafeHtml(resources.haActive()), constants.haActiveTooltip());
+            } else {
+                imagesToText.put(getImageSafeHtml(resources.haActiveZeroHaScore()),
+                        constants.haActiveZeroHaScoreTooltip());
+            }
         }
 
         return imagesToText;

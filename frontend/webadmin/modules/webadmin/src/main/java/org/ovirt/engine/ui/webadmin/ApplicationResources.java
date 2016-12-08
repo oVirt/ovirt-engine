@@ -370,6 +370,12 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/icn_tree_networks.png")
     ImageResource networksTreeImage();
 
+    @Source("images/host_ha_active.png")
+    ImageResource haActive();
+
+    @Source("images/host_ha_active_zero_ha_score.png")
+    ImageResource haActiveZeroHaScore();
+
     // Vm Types
     @Source("images/vmType/desktop.gif")
     ImageResource desktopImage();
