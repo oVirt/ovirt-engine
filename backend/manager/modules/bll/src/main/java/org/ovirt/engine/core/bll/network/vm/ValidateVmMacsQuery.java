@@ -13,8 +13,8 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
+import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.network.vm.mac.VmMacsValidation;
 import org.ovirt.engine.core.bll.network.vm.mac.VmMacsValidationsFactory;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -53,7 +53,7 @@ public class ValidateVmMacsQuery<P extends ValidateVmMacsParameters> extends Que
         for (Entry<Guid, List<VM>> clusterEntry : getParameters().getVmsByCluster().entrySet()) {
             final Guid clusterId = clusterEntry.getKey();
             final List<VM> clusterVms = clusterEntry.getValue();
-            final MacPool macPool = macPoolPerCluster.getMacPoolForCluster(clusterId, null);
+            final ReadMacPool macPool = macPoolPerCluster.getMacPoolForCluster(clusterId);
             final List<VmMacsValidation> vmMacsValidations =
                     vmMacsValidationsFactory.createVmMacsValidationList(clusterId, macPool);
             clusterVms.forEach(vm -> result.put(vm.getId(), validateVm(vm, vmMacsValidations)));

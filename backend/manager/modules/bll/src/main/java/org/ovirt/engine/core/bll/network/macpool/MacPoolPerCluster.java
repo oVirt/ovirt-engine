@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.annotation.PostConstruct;
@@ -84,9 +85,20 @@ public class MacPoolPerCluster {
 
     /**
      * @param clusterId id of cluster.
+     * @return {@link ReadMacPool} instance that is transaction & compensation agnostic.
+     */
+    public ReadMacPool getMacPoolForCluster(Guid clusterId) {
+        return getMacPoolById(getMacPoolId(clusterId));
+    }
+
+    /**
+     * @param clusterId id of cluster.
+     * @param commandContext command context, is used by {@link TransactionalMacPoolDecorator}.
      * @return {@link MacPool} instance to be used within transaction, compensation or scope without either.
+     * @throws NullPointerException if commandContext is null
      */
     public MacPool getMacPoolForCluster(Guid clusterId, CommandContext commandContext) {
+        Objects.requireNonNull(commandContext);
         return getMacPoolById(getMacPoolId(clusterId), commandContext);
     }
 

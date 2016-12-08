@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
@@ -26,7 +26,7 @@ public class VmMacsInUseFinderTest {
     private static final String MAC2 = "mac2";
 
     @Mock
-    private MacPool mockMacPool;
+    private ReadMacPool mockReadMacPool;
 
     @Mock
     private VM mockVm;
@@ -35,15 +35,15 @@ public class VmMacsInUseFinderTest {
 
     @Before
     public void setUp() {
-        underTest = new VmMacsInUseFinder(mockMacPool);
+        underTest = new VmMacsInUseFinder(mockReadMacPool);
         when(mockVm.getInterfaces()).thenReturn(createVnics(MAC1, MAC2));
-        when(mockMacPool.isMacInUse(MAC1)).thenReturn(false);
-        when(mockMacPool.isMacInUse(MAC2)).thenReturn(true);
+        when(mockReadMacPool.isMacInUse(MAC1)).thenReturn(false);
+        when(mockReadMacPool.isMacInUse(MAC2)).thenReturn(true);
     }
 
     @Test
     public void testFindProblematicMacs() {
-        when(mockMacPool.isDuplicateMacAddressesAllowed()).thenReturn(false);
+        when(mockReadMacPool.isDuplicateMacAddressesAllowed()).thenReturn(false);
 
         final Collection<String> actual = underTest.findProblematicMacs(mockVm);
 
@@ -52,7 +52,7 @@ public class VmMacsInUseFinderTest {
 
     @Test
     public void testFindProblematicMacsDuplicateMacAddressesAllowed() {
-        when(mockMacPool.isDuplicateMacAddressesAllowed()).thenReturn(true);
+        when(mockReadMacPool.isDuplicateMacAddressesAllowed()).thenReturn(true);
 
         final Collection<String> actual = underTest.findProblematicMacs(mockVm);
 

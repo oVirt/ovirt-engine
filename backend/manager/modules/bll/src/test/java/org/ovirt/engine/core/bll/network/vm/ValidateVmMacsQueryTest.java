@@ -21,8 +21,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
+import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.network.vm.mac.VmMacsValidation;
 import org.ovirt.engine.core.bll.network.vm.mac.VmMacsValidationsFactory;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -47,7 +47,7 @@ public class ValidateVmMacsQueryTest {
     @Mock
     private VmMacsValidationsFactory vmMacsValidationsFactory;
     @Mock
-    private MacPool mackPool;
+    private ReadMacPool readMacPool;
     @Mock
     private VmMacsValidation vmMacsValidation;
 
@@ -62,8 +62,8 @@ public class ValidateVmMacsQueryTest {
     public void setUp() {
         vmsByCluster.put(CLUSTER_ID, vms);
 
-        when(macPoolPerCluster.getMacPoolForCluster(CLUSTER_ID, null)).thenReturn(mackPool);
-        when(vmMacsValidationsFactory.createVmMacsValidationList(CLUSTER_ID, mackPool))
+        when(macPoolPerCluster.getMacPoolForCluster(CLUSTER_ID)).thenReturn(readMacPool);
+        when(vmMacsValidationsFactory.createVmMacsValidationList(CLUSTER_ID, readMacPool))
                 .thenReturn(Collections.singletonList(vmMacsValidation));
     }
 

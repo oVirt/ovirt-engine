@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -26,13 +26,13 @@ public class VmMacsValidationsFactory {
                 new OutOfRangeVmMacsFinder(externalVmMacsFinder, clusterId));
     }
 
-    private VmMacsValidation createMacsInUseValidation(MacPool macPool) {
+    private VmMacsValidation createMacsInUseValidation(ReadMacPool macPool) {
         return new VmMacsValidation(
                 EngineMessage.NETWORK_MAC_ADDRESS_IN_USE_DETAILED,
                 new VmMacsInUseFinder(macPool));
     }
 
-    public List<VmMacsValidation> createVmMacsValidationList(Guid clusterId, MacPool macPool) {
+    public List<VmMacsValidation> createVmMacsValidationList(Guid clusterId, ReadMacPool macPool) {
         return Arrays.asList(
                 createOutOfRangeValidation(clusterId),
                 createMacsInUseValidation(macPool));

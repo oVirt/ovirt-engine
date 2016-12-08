@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MacRange;
@@ -36,6 +37,8 @@ import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MacPoolPerClusterTest extends DbDependentTestBase {
+    private static final String SESSION_ID = "session id";
+
     @ClassRule
     public static InjectorRule injectorRule = new InjectorRule();
 
@@ -64,11 +67,13 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
     private static final String MAC_FROM = "00:1a:4a:15:c0:00";
     private static final String MAC_TO = "00:1a:4a:15:c0:ff";
     private MacPoolPerCluster macPoolPerCluster;
+    private CommandContext commandContext;
 
     @Before
     public void setUp() throws Exception {
         when(DbFacade.getInstance().getAuditLogDao()).thenReturn(auditLogDao);
 
+        commandContext = CommandContext.createContext(SESSION_ID);
         macPool = createMacPool(MAC_FROM, MAC_TO);
         cluster = createCluster(macPool);
         vmNic = createVmNic();
@@ -89,7 +94,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         macPoolPerCluster.initialize();
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage(MacPoolPerCluster.INEXISTENT_POOL_EXCEPTION_MESSAGE);
-        macPoolPerCluster.getMacPoolForCluster(Guid.newGuid(), null);
+        getMacPool(Guid.newGuid());
     }
 
     @Test
@@ -97,7 +102,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         mockCluster(cluster);
         mockGettingAllMacPools(macPool);
         macPoolPerCluster.initialize();
-        assertThat(macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null), is(notNullValue()));
+        assertThat(getMacPool(cluster.getId()), is(notNullValue()));
     }
 
     @Test
@@ -108,10 +113,10 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
 
         macPoolPerCluster.initialize();
         assertThat("scoped pool for this nic should exist",
-                macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null), is(notNullValue()));
+                getMacPool(cluster.getId()), is(notNullValue()));
 
         assertThat("provided mac should be used in returned pool",
-                macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null).isMacInUse(vmNic.getMacAddress()), is(true));
+                getMacPool(cluster.getId()).isMacInUse(vmNic.getMacAddress()), is(true));
     }
 
     @Test
@@ -121,7 +126,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         mockCluster(cluster);
         macPoolPerCluster.createPool(macPool);
         assertThat("scoped pool for this data center should exist",
-                macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null), is (notNullValue()));
+                getMacPool(cluster.getId()), is (notNullValue()));
     }
 
     @Test
@@ -146,8 +151,8 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         mockGettingAllMacPools(macPool);
         macPoolPerCluster.initialize();
 
-        assertThat(macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null).addMac(MAC_FROM), is(true));
-        assertThat(macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null).addMac(MAC_FROM), is(false));
+        assertThat(getMacPool(cluster.getId()).addMac(MAC_FROM), is(true));
+        assertThat(getMacPool(cluster.getId()).addMac(MAC_FROM), is(false));
 
         final String allocatedMac = allocateMac(cluster);
 
@@ -173,12 +178,17 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         macPool.setRanges(Collections.singletonList(macRange));
         macPoolPerCluster.modifyPool(macPool);
 
-        assertThat(macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null).addMac(MAC_FROM), is(true));
+        assertThat(getMacPool(cluster.getId()).addMac(MAC_FROM), is(true));
         assertThat(allocateMac(cluster), is(macAddress2));
     }
 
     protected String allocateMac(Cluster cluster) {
-        return macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null).allocateNewMac();
+        final Guid clusterId = cluster.getId();
+        return getMacPool(clusterId).allocateNewMac();
+    }
+
+    private org.ovirt.engine.core.bll.network.macpool.MacPool getMacPool(Guid clusterId) {
+        return macPoolPerCluster.getMacPoolForCluster(clusterId, commandContext);
     }
 
     @Test
@@ -196,13 +206,13 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         mockGettingAllMacPools(macPool);
         macPoolPerCluster.initialize();
 
-        assertThat(macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null), is(notNullValue()));
+        assertThat(getMacPool(cluster.getId()), is(notNullValue()));
 
         macPoolPerCluster.removePool(macPool.getId());
 
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage(MacPoolPerCluster.INEXISTENT_POOL_EXCEPTION_MESSAGE);
-        macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null);
+        getMacPool(cluster.getId());
     }
 
     @Test
@@ -210,7 +220,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         macPoolPerCluster.initialize();
 
         try {
-            macPoolPerCluster.getMacPoolForCluster(cluster.getId(), null);
+            getMacPool(cluster.getId());
             fail("pool for given data center should not exist");
         } catch (IllegalStateException e) {
             //ignore this exception.
