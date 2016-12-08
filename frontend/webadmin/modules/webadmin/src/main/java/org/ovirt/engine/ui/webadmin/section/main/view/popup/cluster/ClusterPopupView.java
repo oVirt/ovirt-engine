@@ -680,9 +680,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     }
 
     private void initInfoIcons() {
-        memoryOptimizationInfo = new InfoIcon(templates.italicText(constants.clusterPopupMemoryOptimizationInfo()));
+        memoryOptimizationInfo = new InfoIcon(constants.clusterPopupMemoryOptimizationInfo());
 
-        cpuThreadsInfo = new InfoIcon(templates.italicText(constants.clusterPopupCpuThreadsInfo()));
+        cpuThreadsInfo = new InfoIcon(constants.clusterPopupCpuThreadsInfo());
 
         schedulerOptimizationInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
         allowOverbookingInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
@@ -703,7 +703,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
     @Override
     public void setSpiceProxyOverrideExplanation(String explanation) {
-        spiceProxyEnabledCheckboxWithInfoIcon.setExplanation(templates.italicText(explanation));
+        spiceProxyEnabledCheckboxWithInfoIcon.setExplanation(explanation);
     }
 
     private void applyModeCustomizations() {

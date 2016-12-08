@@ -185,7 +185,7 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     }
 
     private void initInfoIcon() {
-        raidParamsInfoIcon = new InfoIcon(templates.italicText(constants.raidConfigurationWarning()));
+        raidParamsInfoIcon = new InfoIcon(constants.raidConfigurationWarning());
     }
 
     @Override
@@ -208,9 +208,8 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
 
     @Override
     public void setRaidInfoMessages(String raidType, int stripeSize) {
-        deviceSelectionInfo.setText(applicationMessages.getStorageDeviceSelectionInfo(raidType)); //$NON-NLS-1$ //$NON-NLS-2$
-        this.stripeSizeWithInfo.setExplanation(templates.italicText(applicationMessages.stripSizeInfoForGlusterBricks(stripeSize,
-                raidType)));
+        deviceSelectionInfo.setText(applicationMessages.getStorageDeviceSelectionInfo(raidType));
+        this.stripeSizeWithInfo.setExplanation(applicationMessages.stripSizeInfoForGlusterBricks(stripeSize, raidType));
 
     }
 

@@ -174,7 +174,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     }
 
     private void initEditors() {
-        snapshotNameInfoIcon = new InfoIcon(templates.italicText(constants.snapshotNameInfo()));
+        snapshotNameInfoIcon = new InfoIcon(constants.snapshotNameInfo());
         startAtEditor = new EntityModelDateTimeBoxEditor();
         startAtEditor.getContentWidget().setDateTimeFormat(GwtBootstrapDateTimePicker.DEFAULT_DATE_TIME_FORMAT);
         startAtEditor.getContentWidget().showDateAndTime();

@@ -361,7 +361,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         this.customizableStyle = style;
 
-        customScriptInfoIcon = new InfoIcon(templates.italicText(constants.customScriptInfo()));
+        customScriptInfoIcon = new InfoIcon(constants.customScriptInfo());
 
         initEditorsWithIcon();
         initCheckBoxEditors();
@@ -384,7 +384,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         EnableableFormLabel label = new EnableableFormLabel();
         label.setText(constants.cloudInitHostnameLabel());
         windowsHostnameEditorWithInfo = new EntityModelWidgetWithInfo(label, windowsHostnameEditor);
-        windowsHostnameEditorWithInfo.setExplanation(templates.italicText(constants.windowsHostNameInfo()));
+        windowsHostnameEditorWithInfo.setExplanation(constants.windowsHostNameInfo());
     }
 
     private void initAdvancedParameterExpanders() {

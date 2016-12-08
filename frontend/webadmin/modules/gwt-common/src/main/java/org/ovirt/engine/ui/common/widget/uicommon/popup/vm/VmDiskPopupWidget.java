@@ -278,9 +278,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isScsiPassthroughEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSgIoUnfilteredEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        interfaceInfoIcon = new InfoIcon(templates.italicText(constants.diskInterfaceInfo()));
-        cinderVolumeTypeInfoIcon = new InfoIcon(templates.italicText(constants.cinderVolumeTypeInfoIcon()));
-        scsiReservationInfoIcon = new InfoIcon(templates.italicText(constants.scsiReservationInfoIcon()));
+        interfaceInfoIcon = new InfoIcon(constants.diskInterfaceInfo());
+        cinderVolumeTypeInfoIcon = new InfoIcon(constants.cinderVolumeTypeInfoIcon());
+        scsiReservationInfoIcon = new InfoIcon(constants.scsiReservationInfoIcon());
     }
 
     @Override

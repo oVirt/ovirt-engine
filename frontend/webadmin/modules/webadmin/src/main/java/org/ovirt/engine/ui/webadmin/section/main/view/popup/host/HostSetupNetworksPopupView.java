@@ -121,7 +121,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
-        externalNetworksInfo = new InfoIcon(templates.italicText(constants.externalNetworksInfo()));
+        externalNetworksInfo = new InfoIcon(constants.externalNetworksInfo());
         checkConnInfo = new InfoIcon(templates.italicTwoLines(constants.checkConnectivityInfoPart1(), constants.checkConnectivityInfoPart2()));
         commitChangesInfo = new InfoIcon(templates.italicTwoLines(constants.commitChangesInfoPart1(), constants.commitChangesInfoPart2()));
 

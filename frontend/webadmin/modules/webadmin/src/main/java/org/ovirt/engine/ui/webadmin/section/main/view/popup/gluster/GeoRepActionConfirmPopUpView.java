@@ -115,7 +115,7 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
 
     private void initEditors() {
         forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        geoRepForceHelpIcon = new InfoIcon(templates.italicText(constants.notAvailableLabel()));
+        geoRepForceHelpIcon = new InfoIcon(constants.notAvailableLabel());
     }
 
     @Override

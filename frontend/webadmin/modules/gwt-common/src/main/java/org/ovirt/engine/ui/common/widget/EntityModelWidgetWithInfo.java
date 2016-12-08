@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -38,8 +37,8 @@ public class EntityModelWidgetWithInfo extends Composite implements HasValidatio
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
-    public void setExplanation(SafeHtml text) {
-        infoIcon.setTitle(text.asString());
+    public void setExplanation(String text) {
+        infoIcon.setTitle(text);
     }
 
     @Override

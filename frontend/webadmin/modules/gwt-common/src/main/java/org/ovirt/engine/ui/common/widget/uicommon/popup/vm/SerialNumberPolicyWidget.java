@@ -73,7 +73,7 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
         EnableableFormLabel label = new EnableableFormLabel();
         label.setText(constants.overrideSerialNumberPolicy());
         overrideSerialNumberPolicyWithInfo = new EntityModelWidgetWithInfo(label, overrideSerialNumberPolicy);
-        overrideSerialNumberPolicyWithInfo.setExplanation(templates.italicText(messages.serialNumberInfo()));
+        overrideSerialNumberPolicyWithInfo.setExplanation(messages.serialNumberInfo());
 
         serialNumberPolicy = new EnumRadioEditor<>(SerialNumberPolicy.class);
 

@@ -85,7 +85,7 @@ public class RemoveBrickPopupView extends AbstractModelBoundPopupView<RemoveBric
 
     private void initEditors() {
         migrateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        migrateInfoIcon = new InfoIcon(templates.italicText(constants.removeBricksMigrateDataInfo()));
+        migrateInfoIcon = new InfoIcon(constants.removeBricksMigrateDataInfo());
     }
 
     protected void addStyles() {

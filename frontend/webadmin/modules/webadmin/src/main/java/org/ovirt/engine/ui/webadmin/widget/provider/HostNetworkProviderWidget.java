@@ -88,7 +88,7 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
         networkProviderLabel.setText(constants.externalNetworkProviderLabel());
-        networkProvider.setExplanation(templates.italicText(constants.externalProviderExplanation()));
+        networkProvider.setExplanation(constants.externalProviderExplanation());
         networkProviderTypeEditor.setLabel(constants.typeProvider());
         providerPluginTypeEditor.setLabel(constants.pluginType());
 

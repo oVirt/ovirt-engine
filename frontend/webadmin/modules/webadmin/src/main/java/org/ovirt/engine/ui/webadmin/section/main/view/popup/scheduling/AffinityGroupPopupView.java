@@ -91,7 +91,7 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
         posLabel.setText(constants.affinityGroupPolarityLabel());
 
         positiveEditorWithInfo = new EntityModelWidgetWithInfo(posLabel, positiveEditor);
-        positiveEditorWithInfo.setExplanation(templates.italicText(constants.affinityGroupPolarityInfo()));
+        positiveEditorWithInfo.setExplanation(constants.affinityGroupPolarityInfo());
 
         enforcingEditor = new EntityModelCheckBoxOnlyEditor();
 
@@ -99,7 +99,7 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
         enfLabel.setText(constants.affinityGroupEnforceTypeLabel());
 
         enforcingEditorWithInfo = new EntityModelWidgetWithInfo(enfLabel, enforcingEditor);
-        enforcingEditorWithInfo.setExplanation(templates.italicText(constants.affinityGroupEnforcInfo()));
+        enforcingEditorWithInfo.setExplanation(constants.affinityGroupEnforcInfo());
     }
 
     private void localize() {

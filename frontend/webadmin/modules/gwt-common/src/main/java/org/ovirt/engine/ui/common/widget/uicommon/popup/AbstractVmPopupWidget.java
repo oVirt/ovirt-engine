@@ -117,7 +117,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.client.IntegerRenderer;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -996,13 +995,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isIoThreadsEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        cpuPinningInfo = new InfoIcon(multiLineItalicSafeHtml(constants.cpuPinningLabelExplanation()));
+        cpuPinningInfo = new InfoIcon(constants.cpuPinningLabelExplanation());
 
         isVirtioScsiEnabledInfoIcon =
-                new InfoIcon(templates.italicText(constants.isVirtioScsiEnabledInfo()));
+                new InfoIcon(constants.isVirtioScsiEnabledInfo());
         final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMaximumMigrationDowntime);
-        migrationDowntimeInfoIcon = new InfoIcon(templates.italicText(messages.migrationDowntimeInfo(defaultMaximumMigrationDowntime)));
-        migrationSelectInfoIcon = new InfoIcon(templates.italicText(messages.migrationSelectInfo()));
+        migrationDowntimeInfoIcon = new InfoIcon(messages.migrationDowntimeInfo(defaultMaximumMigrationDowntime));
+        migrationSelectInfoIcon = new InfoIcon(messages.migrationSelectInfo());
         priorityEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<EntityModel<Integer>>() {
             @Override
             protected String renderNullSafe(EntityModel<Integer> model) {
@@ -1070,7 +1069,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         EnableableFormLabel rnglabel = new EnableableFormLabel();
         rnglabel.setText(constants.rngDevEnabled());
         isRngEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(rnglabel, isRngEnabledEditor);
-        isRngEnabledCheckboxWithInfoIcon.setExplanation(SafeHtmlUtils.fromTrustedString(constants.rngDevExplanation()));
+        isRngEnabledCheckboxWithInfoIcon.setExplanation(constants.rngDevExplanation());
     }
 
     protected void initialize() {
@@ -1090,7 +1089,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         label.addStyleName("numCPUs_pfly_fix"); //$NON-NLS-1$
         totalvCPUsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         totalvCPUsEditorWithInfoIcon = new EntityModelDetachableWidgetWithInfo(label, totalvCPUsEditor);
-        totalvCPUsEditorWithInfoIcon.setExplanation(templates.italicText(messages.hotPlugUnplugCpuWarning()));
+        totalvCPUsEditorWithInfoIcon.setExplanation(messages.hotPlugUnplugCpuWarning());
     }
 
     private void initThreadsPerCore() {
@@ -1100,17 +1099,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         threadsPerCoreEditor = new ListModelListBoxOnlyEditor<>(IntegerRenderer.instance(),
                 new ModeSwitchingVisibilityRenderer());
         threadsPerCoreEditorWithInfoIcon = new EntityModelDetachableWidgetWithInfo(label, threadsPerCoreEditor);
-        threadsPerCoreEditorWithInfoIcon.setExplanation(multiLineItalicSafeHtml(messages.threadsPerCoreInfo()));
-    }
-
-    private SafeHtml multiLineItalicSafeHtml(String text) {
-        return SafeHtmlUtils.fromTrustedString(templates.italicText(text)
-                .asString()
-                .replaceAll("(\r\n|\n)", "<br />")); //$NON-NLS-1$ //$NON-NLS-2$
+        threadsPerCoreEditorWithInfoIcon.setExplanation(messages.threadsPerCoreInfo());
     }
 
     public void setSpiceProxyOverrideExplanation(String explanation) {
-        spiceProxyEnabledCheckboxWithInfoIcon.setExplanation(templates.italicText(explanation));
+        spiceProxyEnabledCheckboxWithInfoIcon.setExplanation(explanation);
     }
 
     private void initTextBoxEditors() {
@@ -1135,19 +1128,19 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         createNumOfDesktopEditors();
 
         newPoolPrestartedVmsIcon =
-                new InfoIcon(templates.italicText(messages.prestartedHelp()));
+                new InfoIcon(messages.prestartedHelp());
 
         editPoolPrestartedVmsIcon =
-                new InfoIcon(templates.italicText(messages.prestartedHelp()));
+                new InfoIcon(messages.prestartedHelp());
 
         poolNameIcon =
-                new InfoIcon(templates.italicText(messages.poolNameHelp()));
+                new InfoIcon(messages.poolNameHelp());
 
         newPoolMaxAssignedVmsPerUserIcon =
-                new InfoIcon(templates.italicText(messages.maxAssignedVmsPerUserHelp()));
+                new InfoIcon(messages.maxAssignedVmsPerUserHelp());
 
         editPoolMaxAssignedVmsPerUserIcon =
-                new InfoIcon(templates.italicText(messages.maxAssignedVmsPerUserHelp()));
+                new InfoIcon(messages.maxAssignedVmsPerUserHelp());
 
         numaInfoIcon = new InfoIcon(SafeHtmlUtils.fromTrustedString("")); //$NON-NLS-1$
     }
@@ -1392,7 +1385,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         EnableableFormLabel label = new EnableableFormLabel();
         label.setText(constants.timeZoneVm());
         timeZoneEditorWithInfo = new EntityModelWidgetWithInfo(label, timeZoneEditor);
-        timeZoneEditorWithInfo.setExplanation(templates.italicText(constants.timeZoneInfo()));
+        timeZoneEditorWithInfo.setExplanation(constants.timeZoneInfo());
 
         // Console tab
         displayTypeEditor = new ListModelListBoxEditor<>(

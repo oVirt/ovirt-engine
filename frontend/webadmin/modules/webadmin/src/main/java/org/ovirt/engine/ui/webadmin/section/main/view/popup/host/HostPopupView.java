@@ -404,13 +404,13 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     private void initInfoIcon() {
         consoleAddressInfoIcon =
-                new InfoIcon(templates.italicText(constants.enableConsoleAddressOverrideHelpMessage()));
+                new InfoIcon(constants.enableConsoleAddressOverrideHelpMessage());
         providerSearchInfoIcon =
-                new InfoIcon(templates.italicText(constants.providerSearchInfo()));
+                new InfoIcon(constants.providerSearchInfo());
         provisionedHostInfoIcon =
-                new InfoIcon(templates.italicText(constants.provisionedHostInfo()));
+                new InfoIcon(constants.provisionedHostInfo());
         discoveredHostInfoIcon =
-                new InfoIcon(templates.italicText(constants.discoveredHostInfoIcon()));
+                new InfoIcon(constants.discoveredHostInfoIcon());
     }
 
     private void addStyles() {

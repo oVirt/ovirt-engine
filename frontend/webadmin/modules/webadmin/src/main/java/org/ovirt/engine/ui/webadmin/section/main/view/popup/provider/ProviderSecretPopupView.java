@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.Provid
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
@@ -83,7 +82,7 @@ public class ProviderSecretPopupView extends AbstractModelBoundPopupView<Libvirt
         uuidEditor = new StringEntityModelTextBoxOnlyEditor();
         uuidEditorWithInfo = new EntityModelWidgetWithInfo(
                 new EnableableFormLabel(constants.idLibvirtSecret()), uuidEditor);
-        uuidEditorWithInfo.setExplanation(SafeHtmlUtils.fromTrustedString(constants.idLibvirtSecretHint()));
+        uuidEditorWithInfo.setExplanation(constants.idLibvirtSecretHint());
     }
 
     void localize() {

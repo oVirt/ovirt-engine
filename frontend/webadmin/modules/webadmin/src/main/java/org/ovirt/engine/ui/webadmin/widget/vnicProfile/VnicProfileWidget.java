@@ -68,7 +68,7 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
 
     public VnicProfileWidget() {
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        publicInfo = new InfoIcon(templates.italicText(constants.profilePublicUseLabel()));
+        publicInfo = new InfoIcon(constants.profilePublicUseLabel());
         networkQoSEditor = new ListModelListBoxEditor<>(new NameRenderer<NetworkQoS>());
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         publicUseEditor.setLabel(constants.profilePublicUseInstanceTypeLabel());

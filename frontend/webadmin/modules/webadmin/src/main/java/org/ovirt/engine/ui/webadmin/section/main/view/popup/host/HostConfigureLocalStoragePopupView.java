@@ -248,8 +248,8 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
 
         countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        memoryOptimizationInfo = new InfoIcon(templates.italicText(constants.clusterPopupMemoryOptimizationInfo()));
-        cpuThreadsInfo = new InfoIcon(templates.italicText(constants.clusterPopupCpuThreadsInfo()));
+        memoryOptimizationInfo = new InfoIcon(constants.clusterPopupMemoryOptimizationInfo());
+        cpuThreadsInfo = new InfoIcon(constants.clusterPopupCpuThreadsInfo());
 
     }
 
