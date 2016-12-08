@@ -87,7 +87,7 @@ public class NetworkConfigurator {
             final AuditLogableBase event = createEvent();
             event.addCustomValue("InterfaceName", nic.getName());
             auditLogDirector.log(event,
-                    AuditLogType.INVALID_INTERFACE_FOR_MANAGEMENT_NETWORK_CONFIGURATION,
+                    AuditLogType.INVALID_BOND_INTERFACE_FOR_MANAGEMENT_NETWORK_CONFIGURATION,
                     NETWORK_CONFIG_LOG_ERR);
             throw new NetworkConfiguratorException(MANAGEMENT_NETWORK_CONFIG_ERR);
         }
