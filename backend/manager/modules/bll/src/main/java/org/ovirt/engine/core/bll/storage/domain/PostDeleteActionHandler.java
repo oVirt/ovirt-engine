@@ -1,13 +1,18 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.vdscommands.PostDeleteAction;
 import org.ovirt.engine.core.common.vdscommands.StorageDomainIdParametersBase;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 
+@Singleton
 public class PostDeleteActionHandler {
 
-    private PostDeleteActionHandler(){}
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     /**
      * Since the file system is responsible for handling block allocation, there is no need
@@ -17,14 +22,13 @@ public class PostDeleteActionHandler {
      * @param <T> The parameters type.
      * @return The fixed parameters.
      */
-    public static <T extends StorageDomainIdParametersBase & PostDeleteAction> T fixParameters(T parameters) {
-        StorageDomainStatic storageDomainStatic =
-                DbFacade.getInstance().getStorageDomainStaticDao().get(parameters.getStorageDomainId());
+    public <T extends StorageDomainIdParametersBase & PostDeleteAction> T fixParameters(T parameters) {
+        StorageDomainStatic storageDomainStatic = storageDomainStaticDao.get(parameters.getStorageDomainId());
         return fixParameters(parameters, storageDomainStatic.getStorageType().isFileDomain());
     }
 
-    protected static <T extends StorageDomainIdParametersBase & PostDeleteAction>
-                    T fixParameters(T parameters, boolean isFileDomain) {
+    protected <T extends StorageDomainIdParametersBase & PostDeleteAction> T fixParameters(T parameters,
+            boolean isFileDomain) {
         if (isFileDomain) {
             parameters.setPostZero(false);
         }

@@ -5,35 +5,42 @@ import static org.junit.Assert.assertEquals;
 import java.text.MessageFormat;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.vdscommands.PostDeleteAction;
 import org.ovirt.engine.core.common.vdscommands.StorageDomainIdParametersBase;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PostDeleteActionHandlerTest {
+
+    @InjectMocks
+    private PostDeleteActionHandler postDeleteActionHandler;
 
     @Test
     public void parametersWithSecureDeletionAreFixedOnFileDomainWhenPostZeroIsTrue() {
-        ParametersWithPostDeleteAction parameters = PostDeleteActionHandler.fixParameters(
+        ParametersWithPostDeleteAction parameters = postDeleteActionHandler.fixParameters(
                 new ParametersWithPostDeleteAction(true), true);
         assertPostZeroValue(parameters, false);
     }
 
     @Test
     public void parametersWithSecureDeletionAreNotFixedOnBlockDomainWhenPostZeroIsTrue() {
-        ParametersWithPostDeleteAction parameters = PostDeleteActionHandler.fixParameters(
+        ParametersWithPostDeleteAction parameters = postDeleteActionHandler.fixParameters(
                 new ParametersWithPostDeleteAction(true), false);
         assertPostZeroValue(parameters, true);
     }
 
     @Test
     public void parametersWithSecureDeletionAreNotFixedOnFileDomainWhenPostZeroIsFalse() {
-        ParametersWithPostDeleteAction parameters = PostDeleteActionHandler.fixParameters(
+        ParametersWithPostDeleteAction parameters = postDeleteActionHandler.fixParameters(
                 new ParametersWithPostDeleteAction(false), true);
         assertPostZeroValue(parameters, false);
     }
 
     @Test
     public void parametersWithSecureDeletionAreNotFixedOnBlockDomainWhenPostZeroIsFalse() {
-        ParametersWithPostDeleteAction parameters = PostDeleteActionHandler.fixParameters(
+        ParametersWithPostDeleteAction parameters = postDeleteActionHandler.fixParameters(
                 new ParametersWithPostDeleteAction(false), false);
         assertPostZeroValue(parameters, false);
     }

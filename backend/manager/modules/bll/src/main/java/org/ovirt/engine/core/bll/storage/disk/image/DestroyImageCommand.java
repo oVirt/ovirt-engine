@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -24,6 +26,10 @@ import org.slf4j.LoggerFactory;
 @InternalCommandAttribute
 public class DestroyImageCommand<T extends DestroyImageParameters>
         extends CommandBase<T> {
+
+    @Inject
+    private PostDeleteActionHandler postDeleteActionHandler;
+
     private static final Logger log = LoggerFactory.getLogger(DestroyImageCommand.class);
 
     public DestroyImageCommand(T parameters, CommandContext cmdContext) {
@@ -53,7 +59,7 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
     }
 
     private VDSParametersBase createVDSParameters() {
-        return PostDeleteActionHandler.fixParameters(
+        return postDeleteActionHandler.fixParameters(
                 new DestroyImageVDSCommandParameters(
                         getParameters().getStoragePoolId(),
                         getParameters().getStorageDomainId(),

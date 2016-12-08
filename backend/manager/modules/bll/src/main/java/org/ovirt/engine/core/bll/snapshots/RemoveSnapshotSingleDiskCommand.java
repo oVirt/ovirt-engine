@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.snapshots;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -26,6 +28,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
 public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParametersBase> extends RemoveSnapshotSingleDiskCommandBase<T> {
+
+    @Inject
+    private PostDeleteActionHandler postDeleteActionHandler;
 
     public RemoveSnapshotSingleDiskCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -55,7 +60,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
                 storageDomainId, getVmId(), getDiskImage().getId(), getDiskImage().getImageId(),
                 getDestinationDiskImage().getImageId(), getDiskImage().isWipeAfterDelete());
         return runVdsCommand(VDSCommandType.MergeSnapshots,
-                PostDeleteActionHandler.fixParameters(params));
+                postDeleteActionHandler.fixParameters(params));
     }
 
     protected Guid createTask(Guid taskId, VDSReturnValue vdsReturnValue, Guid storageDomainId) {

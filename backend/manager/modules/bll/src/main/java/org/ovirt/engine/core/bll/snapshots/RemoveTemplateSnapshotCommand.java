@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,6 +22,10 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
+
+    @Inject
+    private PostDeleteActionHandler postDeleteActionHandler;
+
     public RemoveTemplateSnapshotCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -29,7 +35,7 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
         Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RemoveVmTemplate);
 
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
-                PostDeleteActionHandler.fixParameters(
+                postDeleteActionHandler.fixParameters(
                         new DeleteImageGroupVDSCommandParameters(getParameters().getStoragePoolId(),
                                 getParameters().getStorageDomainId(), getParameters().getImageGroupID(),
                                 getParameters().getWipeAfterDelete(), false)));

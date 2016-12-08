@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.CreateSnapshotFromTemplateCommand;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
@@ -28,6 +30,10 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParameters> extends
         CreateSnapshotFromTemplateCommand<T> {
+
+    @Inject
+    private PostDeleteActionHandler postDeleteActionHandler;
+
     public CreateCloneOfTemplateCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -78,7 +84,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
             VDSReturnValue vdsReturnValue;
             try {
                 vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
-                        PostDeleteActionHandler.fixParameters(
+                        postDeleteActionHandler.fixParameters(
                                 new CopyImageVDSCommandParameters(storagePoolID, getParameters().getStorageDomainId(),
                                         getVmTemplateId(), getDiskImage().getId(), getImage().getImageId(),
                                         newDiskImage.getId(), getDestinationImageId(),

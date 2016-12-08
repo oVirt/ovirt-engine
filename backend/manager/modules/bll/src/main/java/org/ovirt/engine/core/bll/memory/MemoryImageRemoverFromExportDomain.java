@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 
 public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
 
@@ -14,6 +15,7 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
     private Guid storageDomainId;
     protected Boolean cachedPostZero;
     private VM vm;
+    private PostDeleteActionHandler postDeleteActionHandler;
 
     public MemoryImageRemoverFromExportDomain(VM vm, CommandBase<?> enclosingCommand,
             Guid storagePoolId, Guid storageDomainId) {
@@ -21,6 +23,7 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
         this.vm = vm;
         this.storagePoolId = storagePoolId;
         this.storageDomainId = storageDomainId;
+        postDeleteActionHandler = Injector.get(PostDeleteActionHandler.class);
     }
 
     public void remove() {
@@ -36,14 +39,14 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
 
     @Override
     protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryImageParams(List<Guid> guids) {
-        return PostDeleteActionHandler.fixParameters(
+        return postDeleteActionHandler.fixParameters(
                 new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(2),
                         isPostZero(), false));
     }
 
     @Override
     protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryConfParams(List<Guid> guids) {
-        return PostDeleteActionHandler.fixParameters(
+        return postDeleteActionHandler.fixParameters(
                 new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(4),
                         isPostZero(), false));
     }

@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -36,6 +38,10 @@ import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
 public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> extends BaseImagesCommand<T> {
+
+    @Inject
+    private PostDeleteActionHandler postDeleteActionHandler;
+
     public CopyImageGroupCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -128,7 +134,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             if (getParameters().getUseCopyCollapse()) {
                 vdsReturnValue = runVdsCommand(
                         VDSCommandType.CopyImage,
-                        PostDeleteActionHandler.fixParameters(
+                        postDeleteActionHandler.fixParameters(
                                 new CopyImageVDSCommandParameters(getStorageDomain().getStoragePoolId(),
                                         sourceDomainId,
                                         getParameters().getContainerId(),
@@ -146,7 +152,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             } else {
                 vdsReturnValue = runVdsCommand(
                         VDSCommandType.MoveImageGroup,
-                        PostDeleteActionHandler.fixParameters(
+                        postDeleteActionHandler.fixParameters(
                                 new MoveImageGroupVDSCommandParameters(
                                         getDiskImage() != null ? getDiskImage().getStoragePoolId()
                                                 : getStorageDomain().getStoragePoolId(),

@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -35,6 +37,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseImagesCommand<T> {
+
+    @Inject
+    private PostDeleteActionHandler postDeleteActionHandler;
 
     public RemoveImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -291,7 +296,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     getCompensationContext());
         }
         return runVdsCommand(VDSCommandType.DeleteImageGroup,
-                PostDeleteActionHandler.fixParameters(
+                postDeleteActionHandler.fixParameters(
                         new DeleteImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId(),
                                 getStorageDomainId(), getDiskImage().getId(),
                                 getDiskImage().isWipeAfterDelete(), getParameters().getForceDelete())));
