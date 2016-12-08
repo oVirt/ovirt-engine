@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -73,11 +72,9 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.QuotaDao;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -95,8 +92,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     @Mock
     private VmDao vmDao;
     @Mock
-    private VdsDao vdsDao;
-    @Mock
     private DiskDao diskDao;
     @Mock
     private VmStaticDao vmStaticDao;
@@ -104,8 +99,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     private BaseDiskDao baseDiskDao;
     @Mock
     private ImageDao imageDao;
-    @Mock
-    private SnapshotDao snapshotDao;
     @Mock
     private DiskImageDao diskImageDao;
     @Mock
@@ -468,11 +461,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testFailedRoDiskResize() {
-        StorageDomain sd = new StorageDomain();
-        sd.setAvailableDiskSize(Integer.MAX_VALUE);
-        sd.setStatus(StorageDomainStatus.Active);
-        when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(sd);
-
         ((DiskImage) command.getParameters().getDiskInfo()).setSize(command.getParameters().getDiskInfo().getSize() * 2L);
         initializeCommand();
 
@@ -496,7 +484,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         mockGetVmsListForDisk(vm);
         doNothing().when(command).reloadDisks();
         doNothing().when(command).updateBootOrder();
-        doReturn(quotaManager).when(command).getQuotaManager();
 
         doAnswer(invocation -> invocation.getArguments()[0] != null ?
                     invocation.getArguments()[0] : Guid.newGuid())
@@ -521,7 +508,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 
-        mockVds();
         mockVmsStoragePoolInfo(vm);
         mockToUpdateDiskVm(vm);
 
@@ -638,7 +624,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testNonExistingQuota() {
-        QuotaDao quotaDao = mock(QuotaDao.class);
         when(quotaDao.getById(any(Guid.class))).thenReturn(null);
 
         when(diskDao.get(any(Guid.class))).thenReturn(createDiskImage());
@@ -725,15 +710,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     private void mockGetVmsListForDisk(VM vm) {
         VmDevice device = createVmDevice(diskImageGuid, vm.getId());
         when(vmDao.getVmsWithPlugInfo(diskImageGuid)).thenReturn(Collections.singletonList(new Pair<>(vm, device)));
-    }
-
-    /**
-     * Mock VDS
-     */
-    protected void mockVds() {
-        VDS vds = new VDS();
-        command.setVdsId(Guid.Empty);
-        when(vdsDao.get(Guid.Empty)).thenReturn(vds);
     }
 
     /**
