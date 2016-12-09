@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.gwtbootstrap3.client.ui.Icon;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -10,13 +11,9 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -34,11 +31,6 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     interface ViewIdHandler extends ElementIdHandler<PosixStorageView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
-    @UiField
-    WidgetStyle style;
 
     @UiField
     @Path(value = "path.entity")
@@ -63,31 +55,15 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     Label message;
 
     @UiField
-    Image nfsPosixAlertIcon;
+    Icon nfsPosixAlertIcon;
 
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
     public PosixStorageView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        addStyles();
         driver.initialize(this);
-    }
-
-    void addStyles() {
-        pathEditor.addContentWidgetContainerStyleName(style.pathEditorContent());
-        vfsTypeEditor.addContentWidgetContainerStyleName(style.vfsTypeTextBoxEditor());
-        mountOptionsEditor.addContentWidgetContainerStyleName(style.mountOptionsTextBoxEditor());
-    }
-
-    void localize() {
-        pathEditor.setLabel(constants.storagePopupPosixPathLabel());
-        pathExampleLabel.setText(constants.storagePopupPosixPathExampleLabel());
-        vfsTypeEditor.setLabel(constants.storagePopupVfsTypeLabel());
-        mountOptionsEditor.setLabel(constants.storagePopupMountOptionsLabel());
-        nfsPosixAlertIcon.setTitle(constants.storagePopupPosixNfsWarningLabel());
     }
 
     private IEventListener vfsTypeListener = new IEventListener<EventArgs>() {
@@ -119,15 +95,6 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     @Override
     public void cleanup() {
         driver.cleanup();
-    }
-
-    interface WidgetStyle extends CssResource {
-
-        String pathEditorContent();
-
-        String vfsTypeTextBoxEditor();
-
-        String mountOptionsTextBoxEditor();
     }
 
     @Override

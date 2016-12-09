@@ -18,10 +18,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -33,9 +31,6 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     interface ViewUiBinder extends UiBinder<Widget, IscsiStorageView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-
-    @UiField
-    WidgetStyle style;
 
     @UiField
     @Path(value = "getLUNsFailure")
@@ -66,13 +61,10 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     @Ignore
     IscsiLunToTargetView iscsiLunToTargetView;
 
-    private double treeCollapsedHeight = 206;
-    private double treeExpandedHeight = 305;
-    private double lunsTreeHeight = 342;
-    private double tabContentHeight = 376;
-    private double tabHeight = 188;
-    private double textTop = 80;
-    private double textLeft = -92;
+    private double treeCollapsedHeight = 146;
+    private double treeExpandedHeight = 236;
+    private double lunsTreeHeight = 282;
+    private double tabContentHeight = 316;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -82,7 +74,6 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         this.multiSelection = multiSelection;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
-        addStyles();
         driver.initialize(this);
     }
 
@@ -96,15 +87,6 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         this.treeExpandedHeight = treeExpandedHeight;
         this.lunsTreeHeight = lunsTreeHeight;
         this.tabContentHeight = tabContentHeight;
-        this.tabHeight = tabHeight;
-        this.textTop = textTop;
-        this.textLeft = textLeft;
-    }
-
-    void addStyles() {
-        dialogTabPanel.addBarStyle(style.bar());
-        lunToTargetsTab.setTabLabelStyle(style.dialogTab());
-        targetsToLunTab.setTabLabelStyle(style.dialogTab());
     }
 
     void localize() {
@@ -156,9 +138,6 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         // Update selected tab and list
         dialogTabPanel.switchTab(object.getIsGrouppedByTarget() ? targetsToLunTab : lunToTargetsTab);
         updateListByGropping(object);
-
-        // Set tree style
-        iscsiLunToTargetView.setTreeContainerStyleName(style.expandedlunsListPanel());
     }
 
     void initLists(IscsiStorageModel object) {
@@ -168,20 +147,10 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
         // Update Style
         dialogTabPanel.getElement().getStyle().setHeight(tabContentHeight, Unit.PX);
-        updateStyle(targetsToLunTab);
-        updateStyle(lunToTargetsTab);
 
         // Add view widgets to panel
         lunsListPanel.setWidget(iscsiLunToTargetView);
         targetsToLunsPanel.setWidget(iscsiTargetToLunView);
-    }
-
-    void updateStyle(DialogTab dialogTab) {
-        dialogTab.getElement().getStyle().setHeight(tabHeight, Unit.PX);
-        dialogTab.getTabLabel().getElement().getStyle().setTop(textTop, Unit.PX);
-        dialogTab.getTabLabel().getElement().getStyle().setLeft(textLeft, Unit.PX);
-        dialogTab.getTabLabel().getElement().getStyle().setWidth(tabHeight, Unit.PX);
-        dialogTab.getTabLabel().setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
     }
 
     void updateListByGropping(IscsiStorageModel object) {
@@ -237,14 +206,6 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     @Override
     public void focus() {
-    }
-
-    interface WidgetStyle extends CssResource {
-        String bar();
-
-        String dialogTab();
-
-        String expandedlunsListPanel();
     }
 
 }

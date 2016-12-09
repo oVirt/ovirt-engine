@@ -35,9 +35,9 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModelBase> imp
 
     private SanStorageLunToTargetList sanStorageLunToTargetList;
 
-    private double panelHeight = 378;
+    private double panelHeight = 292;
 
-    private double listHeight = 340;
+    private double listHeight = 278;
 
     public FcpStorageView(boolean multiSelection) {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

@@ -1,71 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.NfsStorageView.WidgetStyle">
-    .content {
-        margin-top: 40px;
-    }
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-    .label {
-        color: #333333;
-        margin: 0 5px;
-        font-family: Verdana, sans-serif;
-    }
+    <ui:style>
+        .errorLabel {
+            color: #CD2127;
+        }
 
-    .pathEditorContent {
-        width: 540px;
-        margin-left: 45px;
-    }
+        .warningLabel {
+            color: red;
+        }
 
-    .pathExampleLabel {
-        margin: 0 0 0 125px;
-        font-size: 8pt;
-        width: 450px;
-    }
+        .container {
+            width: 100%;
+        }
 
-    .errorLabel {
-        color: #CD2127;
-        margin-top: 20px;
-        margin-left: 5px;
-    }
+        .nopadding {
+            padding: 0px;
+        }
 
-    .warningLabel {
-        color: Red;
-        margin-bottom: 10px;
-    }
+    </ui:style>
 
-    .expanderContent {
-        margin-left: 25px;
-        display: none;
-    }
-
-    .storageTextBoxEditor,
-    .versionListEditor,
-    .mountTextBoxEditor {
-        width: 474px;
-        line-height: 30px;
-    }
-
-</ui:style>
-
-    <g:VerticalPanel addStyleNames="{style.content}">
-        <g:VerticalPanel>
-            <ge:StringEntityModelTextBoxEditor ui:field="pathEditor"/>
-            <g:Label ui:field="pathExampleLabel" addStyleNames="{style.pathExampleLabel}, generalDialogComment"/>
-        </g:VerticalPanel>
-        <d:AdvancedParametersExpander ui:field="expander"/>
-        <g:VerticalPanel ui:field="expanderContent">
-            <g:Label ui:field="warningLabel" addStyleNames="{style.warningLabel}"/>
-            <e:ListModelListBoxEditor ui:field="versionListEditor"/>
-            <ge:ShortEntityModelTextBoxEditor ui:field="retransmissionsEditor"/>
-            <ge:ShortEntityModelTextBoxEditor ui:field="timeoutEditor"/>
-            <ge:StringEntityModelTextBoxEditor ui:field="mountOptionsEditor"/>
-        </g:VerticalPanel>
-        <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
-    </g:VerticalPanel>
-
+    <b:Container addStyleNames="{style.container}">
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="pathEditor" label="{constants.storagePopupNfsPathLabel}" removeFormGroup="true" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_9" offset="SM_3">
+                <g:Label ui:field="pathExampleLabel" text="{constants.storagePopupNfsPathExampleLabel}" />
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:FlowPanel>
+                    <d:AdvancedParametersExpander ui:field="expander" titleWhenCollapsed="{constants.storagePopupConnectionLabel}" titleWhenExpanded="{constants.storagePopupConnectionLabel}" />
+                    <g:FlowPanel ui:field="expanderContent">
+                        <b:Row>
+                            <b:Column size="SM_12">
+                                <g:Label ui:field="warningLabel" text="{constants.advancedOptionsLabel}" addStyleNames="{style.warningLabel}"/>
+                            </b:Column>
+                        </b:Row>
+                        <b:Row>
+                            <e:ListModelListBoxEditor ui:field="versionListEditor" label="{constants.storagePopupNfsVersionLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                        </b:Row>
+                        <b:Row>
+                            <ge:ShortEntityModelTextBoxEditor ui:field="retransmissionsEditor" label="{constants.storagePopupNfsRetransmissionsLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                        </b:Row>
+                        <b:Row>
+                            <ge:ShortEntityModelTextBoxEditor ui:field="timeoutEditor" label="{constants.storagePopupNfsTimeoutLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                        </b:Row>
+                        <b:Row>
+                            <ge:StringEntityModelTextBoxEditor ui:field="mountOptionsEditor" label="{constants.storagePopupAdditionalMountOptionsLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                        </b:Row>
+                        <b:Row>
+                            <b:Column size="SM_12">
+                                <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
+                            </b:Column>
+                        </b:Row>
+                    </g:FlowPanel>
+                </g:FlowPanel>
+            </b:Column>
+        </b:Row>
+    </b:Container>
 </ui:UiBinder>

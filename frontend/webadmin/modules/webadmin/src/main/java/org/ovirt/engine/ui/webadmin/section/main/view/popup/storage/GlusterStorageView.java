@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -16,11 +17,8 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -42,11 +40,6 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
-    @UiField
-    WidgetStyle style;
-
     @UiField
     @Path(value = "path.entity")
     @WithElementId("path")
@@ -67,6 +60,12 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     StringEntityModelTextBoxEditor mountOptionsEditor;
 
     @UiField
+    Row glusterVolumesRow;
+
+    @UiField
+    Row pathEditorRow;
+
+    @UiField
     @Path(value = "configurationMessage")
     Label message;
 
@@ -84,9 +83,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     public GlusterStorageView() {
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        addStyles();
         driver.initialize(this);
     }
 
@@ -112,41 +109,23 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
         });
     }
 
-    void addStyles() {
-        pathEditor.addContentWidgetContainerStyleName(style.pathEditorContent());
-        vfsTypeEditor.addContentWidgetContainerStyleName(style.vfsTypeTextBoxEditor());
-        mountOptionsEditor.addContentWidgetContainerStyleName(style.mountOptionsTextBoxEditor());
-        glusterVolumesEditor.addContentWidgetContainerStyleName(style.glusterVolumesEditor());
-        linkGlusterVolumeEditor.addContentWidgetContainerStyleName(style.linkGlusterVolumeEditor());
-    }
-
-    void localize() {
-        pathEditor.setLabel(constants.storagePopupPosixPathLabel());
-        pathExampleLabel.setText(constants.storagePopupGlusterPathExampleLabel());
-        vfsTypeEditor.setLabel(constants.storagePopupVfsTypeLabel());
-        mountOptionsEditor.setLabel(constants.storagePopupMountOptionsLabel());
-        linkGlusterVolumeEditor.setLabel(constants.storagePopupLinkGlusterVolumeLabel());
-        glusterVolumesEditor.setLabel(constants.glusterVolume());
-    }
-
     @Override
     public void edit(GlusterStorageModel object) {
 
         final GlusterStorageModel glusterStorageModel = object;
         driver.edit(object);
         glusterVolumesEditor.asEditor().setValue(object.getGlusterVolumes().getSelectedItem());
-        glusterVolumesEditor.setVisible(false);
         pathExampleLabel.setVisible(object.getPath().getIsAvailable() && object.getPath().getIsChangable());
         glusterStorageModel.getLinkGlusterVolume().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (glusterStorageModel.getLinkGlusterVolume().getEntity()) {
-                    glusterVolumesEditor.setVisible(true);
-                    pathEditor.setVisible(false);
-                } else {
-                    glusterVolumesEditor.setVisible(false);
-                    pathEditor.setVisible(true);
-                }
+                // Editor, needs the example
+                boolean showEditor = !glusterStorageModel.getLinkGlusterVolume().getEntity();
+                pathEditorRow.setVisible(showEditor);
+                pathExampleLabel.setVisible(showEditor);
+
+                // List box, shouldn't have an example since you can only select one.
+                glusterVolumesRow.setVisible(!showEditor);
             }
         });
 
@@ -160,19 +139,6 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     @Override
     public void cleanup() {
         driver.cleanup();
-    }
-
-    interface WidgetStyle extends CssResource {
-
-        String pathEditorContent();
-
-        String vfsTypeTextBoxEditor();
-
-        String mountOptionsTextBoxEditor();
-
-        String glusterVolumesEditor();
-
-        String linkGlusterVolumeEditor();
     }
 
     @Override
