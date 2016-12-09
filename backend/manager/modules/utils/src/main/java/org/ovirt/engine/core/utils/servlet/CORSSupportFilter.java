@@ -14,14 +14,13 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.restapi.security;
+package org.ovirt.engine.core.utils.servlet;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.ejb.EJB;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

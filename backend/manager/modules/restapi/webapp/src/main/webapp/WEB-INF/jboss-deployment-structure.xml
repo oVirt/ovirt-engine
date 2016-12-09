@@ -26,6 +26,7 @@ limitations under the License.
       <module name="org.ovirt.engine.api.restapi-jaxrs" annotations="true" services="import"/>
       <module name="org.ovirt.engine.api.restapi-types" annotations="true" services="import"/>
       <module name="org.ovirt.engine.core.aaa"/>
+      <module name="org.ovirt.engine.core.utils" annotations="true"/>
     </dependencies>
   </deployment>
 

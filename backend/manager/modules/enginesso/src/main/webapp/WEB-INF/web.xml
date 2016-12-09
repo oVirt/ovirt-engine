@@ -46,11 +46,23 @@
     </servlet-mapping>
 
     <!-- Filters -->
+
+    <!-- CORS filter: -->
+    <filter>
+        <filter-name>CORSSupport</filter-name>
+        <filter-class>org.ovirt.engine.core.utils.servlet.CORSSupportFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CORSSupport</filter-name>
+        <url-pattern>/DONOTUSEYET/*</url-pattern>
+    </filter-mapping>
+
     <!-- Locale Filter, determines the user locale -->
     <filter>
         <filter-name>LocaleFilter</filter-name>
         <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
     </filter>
+
     <!-- Branding Filter, passes branding information to jsps -->
     <filter>
         <filter-name>BrandingFilter</filter-name>
