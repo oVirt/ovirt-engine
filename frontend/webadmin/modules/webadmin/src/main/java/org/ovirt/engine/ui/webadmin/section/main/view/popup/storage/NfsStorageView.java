@@ -14,17 +14,14 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -43,9 +40,6 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     }
 
     @UiField
-    WidgetStyle style;
-
-    @UiField
     @Path(value = "path.entity")
     @WithElementId("path")
     StringEntityModelTextBoxEditor pathEditor;
@@ -60,7 +54,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     @UiField
     @Ignore
-    VerticalPanel expanderContent;
+    FlowPanel expanderContent;
 
     @UiField
     @Ignore
@@ -91,30 +85,17 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @Inject
     public NfsStorageView() {
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
         initExpander();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        addStyles();
         driver.initialize(this);
     }
 
     private void initExpander() {
         expander.initWithContent(expanderContent.getElement());
-    }
-
-    void addStyles() {
-        pathEditor.addContentWidgetContainerStyleName(style.pathEditorContent());
-        expanderContent.setStyleName(style.expanderContent());
-        versionListEditor.setStyleName(style.versionListEditor());
-        retransmissionsEditor.setStyleName(style.storageTextBoxEditor());
-        timeoutEditor.setStyleName(style.storageTextBoxEditor());
-        mountOptionsEditor.setStyleName(style.mountTextBoxEditor());
     }
 
     void initListBoxEditors() {
@@ -125,18 +106,6 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
                 return model.getTitle();
             }
         });
-    }
-
-    void localize() {
-        pathEditor.setLabel(constants.storagePopupNfsPathLabel());
-        pathExampleLabel.setText(constants.storagePopupNfsPathExampleLabel());
-        warningLabel.setText(constants.advancedOptionsLabel());
-        versionListEditor.setLabel(constants.storagePopupNfsVersionLabel());
-        retransmissionsEditor.setLabel(constants.storagePopupNfsRetransmissionsLabel());
-        timeoutEditor.setLabel(constants.storagePopupNfsTimeoutLabel());
-        mountOptionsEditor.setLabel(constants.storagePopupAdditionalMountOptionsLabel());
-        expander.setTitleWhenCollapsed(constants.storagePopupConnectionLabel());
-        expander.setTitleWhenExpanded(constants.storagePopupConnectionLabel());
     }
 
     @Override
@@ -182,18 +151,4 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     private void setElementVisibility(UIObject object, boolean value) {
         object.getElement().getStyle().setDisplay(value ? Style.Display.BLOCK : Style.Display.NONE);
     }
-
-    interface WidgetStyle extends CssResource {
-
-        String pathEditorContent();
-
-        String expanderContent();
-
-        String storageTextBoxEditor();
-
-        String versionListEditor();
-
-        String mountTextBoxEditor();
-    }
-
 }

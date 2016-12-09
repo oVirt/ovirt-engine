@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.gwtbootstrap3.client.ui.Icon;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -36,14 +37,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
@@ -59,9 +57,6 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     interface ViewIdHandler extends ElementIdHandler<StoragePopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    @UiField
-    WidgetStyle style;
 
     @UiField
     @Path(value = "name.entity")
@@ -133,20 +128,20 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
     @UiField
     @Ignore
-    VerticalPanel advancedParametersExpanderContent;
+    FlowPanel advancedParametersExpanderContent;
 
-    @UiField
+    @UiField (provided = true)
     @Path(value = "wipeAfterDelete.entity")
     @WithElementId("wipeAfterDelete")
     EntityModelCheckBoxEditor wipeAfterDeleteEditor;
 
-    @UiField
+    @UiField (provided = true)
     @Path(value = "discardAfterDelete.entity")
     @WithElementId("discardAfterDelete")
     EntityModelCheckBoxEditor discardAfterDeleteEditor;
 
     @UiField
-    Image datacenterAlertIcon;
+    Icon datacenterAlertIcon;
 
     @SuppressWarnings("rawtypes")
     @Ignore
@@ -166,7 +161,6 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         ViewIdHandler.idHandler.generateAndSetIds(this);
         asWidget().enableResizeSupport(true);
         localize();
-        addStyles();
         driver.initialize(this);
     }
 
@@ -212,29 +206,11 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         storageTypeListEditor = new ListModelListBoxEditor<>(new EnumRenderer<StorageType>());
 
         activateDomainEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-    }
-
-    void addStyles() {
-        advancedParametersExpanderContent.setStyleName(style.advancedParametersExpanderContent());
-        warningLowSpaceIndicatorEditor.addContentWidgetContainerStyleName(style.warningTextBoxEditor());
-        criticalSpaceActionBlockerEditor.addContentWidgetStyleName(style.blockerTextBoxEditor());
-        formatListEditor.addContentWidgetStyleName(style.formatListEditor());
+        wipeAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        discardAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void localize() {
-        nameEditor.setLabel(constants.storagePopupNameLabel());
-        descriptionEditor.setLabel(constants.storagePopupDescriptionLabel());
-        commentEditor.setLabel(constants.commentLabel());
-        datacenterListEditor.setLabel(constants.storagePopupDataCenterLabel());
-        domainFunctionListEditor.setLabel(constants.storagePopupDomainFunctionLabel());
-        storageTypeListEditor.setLabel(constants.storagePopupStorageTypeLabel());
-        formatListEditor.setLabel(constants.storagePopupFormatTypeLabel());
-        hostListEditor.setLabel(constants.storagePopupHostLabel());
-        activateDomainEditor.setLabel(constants.activateDomainLabel());
-        wipeAfterDeleteEditor.setLabel(constants.wipeAfterDelete());
-        discardAfterDeleteEditor.setLabel(constants.discardAfterDelete());
-        warningLowSpaceIndicatorEditor.setLabel(constants.warningLowSpaceIndicatorUnits());
-        criticalSpaceActionBlockerEditor.setLabel(constants.criticalSpaceActionBlockerUnits());
         criticalSpaceActionBlockerEditor.setLabelTooltip(constants.changeCriticalSpaceActionBlockerWarning());
     }
 
@@ -381,18 +357,4 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     public boolean handleEnterKeyDisabled() {
         return storageView.isSubViewFocused();
     }
-
-    interface WidgetStyle extends CssResource {
-
-        String label();
-
-        String advancedParametersExpanderContent();
-
-        String warningTextBoxEditor();
-
-        String blockerTextBoxEditor();
-
-        String formatListEditor();
-    }
-
 }

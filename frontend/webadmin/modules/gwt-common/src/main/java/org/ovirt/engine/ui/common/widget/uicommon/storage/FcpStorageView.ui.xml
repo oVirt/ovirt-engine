@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style>
-		.contentPanel {
-			padding: 2px;
-			margin: 4px;
-		}
+    <ui:style>
+        .errorMessageLabel {
+            color: red;
+        }
 
-		.errorMessageLabel {			
-			color: red;
-			margin: 2px;
-			height: 16px;
-		}
-	</ui:style>
-	
-	<g:FlowPanel>
-		<g:VerticalPanel addStyleNames="{style.errorMessageLabel}">
-			<g:Label ui:field="errorMessage"/>
-			<g:Label ui:field="warning"/>
-		</g:VerticalPanel>
-		<w:ValidatedPanelWidget ui:field="contentPanel" addStyleNames="{style.contentPanel}" />
-	</g:FlowPanel>
+        .container {
+            width: 100%;
+        }
+    </ui:style>
+
+    <b:Container addStyleNames="{style.container}">
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:Label ui:field="errorMessage" addStyleNames="{style.errorMessageLabel}" />
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:Label ui:field="warning" addStyleNames="{style.errorMessageLabel}" />
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <w:ValidatedPanelWidget ui:field="contentPanel" />
+            </b:Column>
+        </b:Row>
+    </b:Container>
 
 </ui:UiBinder>

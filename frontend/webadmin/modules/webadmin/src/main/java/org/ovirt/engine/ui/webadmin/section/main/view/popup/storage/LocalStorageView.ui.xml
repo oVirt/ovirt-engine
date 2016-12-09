@@ -1,36 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style
-		type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.LocalStorageView.WidgetStyle">
-			.content {
-				margin-top: 40px;
-			}
-			
-			.localPathEditor {
-				width: 650px;
-			}
-			
-			.localPathContentWidget {
-				width: 540px;
-                margin-right: -32px;
-			}
-			
-			.errorMessageLabel {
-				color: #CD2127;
-				margin-top: 20px;
-				margin-left: 5px;
-			}
-		</ui:style>
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<g:FlowPanel addStyleNames="{style.content}">
-		<ge:StringEntityModelTextBoxEditor ui:field="localPathEditor"
-			addStyleNames="{style.localPathEditor}" />
-		<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
-	</g:FlowPanel>
+    <ui:style>
+        .errorMessageLabel {
+            color: #CD2127;
+         }
+
+        .container {
+            width: 100%;
+        }
+
+    </ui:style>
+
+    <b:Container addStyleNames="{style.container}">
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="localPathEditor" label="{constants.storagePopupLocalPathLabel}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
+            </b:Column>
+        </b:Row>
+    </b:Container>
 
 </ui:UiBinder>
