@@ -1,5 +1,6 @@
 [Unit]
 Description=oVirt Engine websockets proxy
+After=network.target
 
 [Service]
 Type=notify
