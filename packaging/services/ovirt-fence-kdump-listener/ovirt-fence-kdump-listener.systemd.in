@@ -1,5 +1,6 @@
 [Unit]
 Description=oVirt Engine fence_kdump listener
+After=network.target postgresql.service
 
 [Service]
 Type=notify
