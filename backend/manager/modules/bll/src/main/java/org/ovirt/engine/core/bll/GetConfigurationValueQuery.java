@@ -23,7 +23,7 @@ public class GetConfigurationValueQuery<P extends GetConfigurationValueParameter
                             GetConfigurationValueQuery.class.getSimpleName(), value, ConfigCommon.defaultConfigurationVersion);
                     version = ConfigCommon.defaultConfigurationVersion;
                 }
-                returnValue = Config.<Object> getValue(value, version);
+                returnValue = Config.getValue(value, version);
             } catch (Exception e) {
                 log.error("Unable to return config parameter {}: {}", getParameters(), e.getMessage());
                 log.debug("Exception", e);
