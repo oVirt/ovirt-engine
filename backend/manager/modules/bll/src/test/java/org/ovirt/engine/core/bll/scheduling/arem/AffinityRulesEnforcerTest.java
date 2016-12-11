@@ -104,6 +104,10 @@ public class AffinityRulesEnforcerTest {
                 .thenReturn(false);
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm4));
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
+        affinityGroups.clear();
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.POSITIVE, true,
+                Arrays.asList(host2, host3), vm1));
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
     }
 
     @Test
@@ -122,8 +126,23 @@ public class AffinityRulesEnforcerTest {
                 vm2, vm3, vm6);
         affinityGroups.add(negativeUnsatisfiedGroup);
         affinityGroups.add(positiveSatisfiedGroup);
-        final VM candidate = enforcer.chooseNextVmToMigrate(cluster);
+        VM candidate = enforcer.chooseNextVmToMigrate(cluster);
         assertThat(candidate).isIn(vm2, vm3);
+
+        positiveSatisfiedGroup =
+                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.POSITIVE, true,
+                        Arrays.asList(host1, host2), vm1, vm2, vm3);
+
+        negativeUnsatisfiedGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .NEGATIVE, true,
+                Arrays.asList(host1, host3), vm5, vm6);
+
+        affinityGroups.clear();
+        affinityGroups.add(negativeUnsatisfiedGroup);
+        affinityGroups.add(positiveSatisfiedGroup);
+
+        candidate = enforcer.chooseNextVmToMigrate(cluster);
+        assertThat(candidate).isIn(vm5, vm6);
     }
 
     @Test
@@ -135,6 +154,16 @@ public class AffinityRulesEnforcerTest {
     public void shouldDoNothingWhenSatisfied() {
         AffinityGroup positiveGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2);
         AffinityGroup negativeGroup = createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, vm1, vm4);
+        affinityGroups.add(positiveGroup);
+        affinityGroups.add(negativeGroup);
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
+
+        positiveGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.POSITIVE, true,
+                Arrays.asList(host1), vm1, vm2, vm3);
+        negativeGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.NEGATIVE, true,
+                Arrays.asList(host1), vm4);
+
+        affinityGroups.clear();
         affinityGroups.add(positiveGroup);
         affinityGroups.add(negativeGroup);
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
@@ -161,6 +190,19 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.add(smallGroup);
         affinityGroups.add(bigGroup);
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm4, vm6);
+
+        bigGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.POSITIVE, true,
+                Arrays.asList(host2, host3), vm1, vm2, vm3);
+        smallGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                .POSITIVE, true, Arrays.asList(host1), vm4);
+        affinityGroups.clear();
+        affinityGroups.add(smallGroup);
+        affinityGroups.add(bigGroup);
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
+        affinityGroups.clear();
+        affinityGroups.add(bigGroup);
+        affinityGroups.add(smallGroup);
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
     }
 
     @Test
@@ -254,13 +296,22 @@ public class AffinityRulesEnforcerTest {
         return ag;
     }
 
+    private AffinityGroup createAffinityGroup(Cluster cluster, EntityAffinityRule vmAffinityRule, EntityAffinityRule
+            vdsRule, boolean isVdsEnforcing, List<VDS> vdsList, VM... vmList) {
+        AffinityGroup ag = createAffinityGroup(cluster, vmAffinityRule, vmList);
+        ag.setVdsIds(vdsList.stream().map(VDS::getId).collect(Collectors.toList()));
+        ag.setVdsAffinityRule(vdsRule);
+        ag.setVdsEnforcing(isVdsEnforcing);
+        return ag;
+    }
+
     private void prepareVmDao(VM... vmList) {
         final List<VM> vms = Arrays.asList(vmList);
         doAnswer(invocation -> {
             final List<VM> selectedVms = new ArrayList<>();
             final Set<Guid> vmIds = new HashSet<>((List<Guid>) invocation.getArguments()[0]);
-            for(VM vm :vms){
-                if(vmIds.contains(vm.getId())){
+            for (VM vm : vms) {
+                if (vmIds.contains(vm.getId())) {
                     selectedVms.add(vm);
                 }
             }
