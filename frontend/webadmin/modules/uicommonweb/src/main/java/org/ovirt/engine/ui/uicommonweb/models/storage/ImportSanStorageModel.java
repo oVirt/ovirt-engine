@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -37,10 +39,10 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase {
     }
 
     protected void addStorageDomains(ArrayList<StorageDomain> storageDomains) {
-        ArrayList<StorageDomain> allStorageDomains = new ArrayList<>();
+        Set<StorageDomain> allStorageDomains = new HashSet<>();
         allStorageDomains.addAll(getStorageDomains().getItems());
         allStorageDomains.addAll(storageDomains);
-        getStorageDomains().setItems(allStorageDomains);
+        getStorageDomains().setItems(new ArrayList<StorageDomain>(allStorageDomains));
     }
 
     protected void postGetUnregisteredStorageDomains(List<StorageDomain> storageDomains, List<StorageServerConnections> connections) {
