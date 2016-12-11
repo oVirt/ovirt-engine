@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
@@ -21,12 +22,9 @@ public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> exten
     }
 
     private static List<String> getVersionsList() {
-        List<String> versions = new ArrayList<>();
-        versions.add(ConfigCommon.defaultConfigurationVersion);
-        for (Version version : Version.ALL) {
-            versions.add(version.toString());
-        }
-        return versions;
+        return Stream.concat(Stream.of(ConfigCommon.defaultConfigurationVersion),
+                Version.ALL.stream().map(Object::toString))
+                .collect(Collectors.toList());
     }
 
     @Override
