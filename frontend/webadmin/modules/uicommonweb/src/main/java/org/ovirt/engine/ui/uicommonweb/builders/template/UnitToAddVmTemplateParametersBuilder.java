@@ -16,6 +16,7 @@ public class UnitToAddVmTemplateParametersBuilder<T extends AddVmTemplateParamet
         destination.setSoundDeviceEnabled(source.getIsSoundcardEnabled().getEntity());
         destination.setBalloonEnabled(BalloonEnabled.balloonEnabled(source));
         destination.setCopyVmPermissions(source.getCopyPermissions().getEntity());
+        destination.setSealTemplate(source.getSealTemplate().getEntity());
         destination.setConsoleEnabled(source.getIsConsoleDeviceEnabled().getEntity());
         if (source.getIsSubTemplate().getEntity()) {
             destination.setBaseTemplateId(source.getBaseTemplate().getSelectedItem().getId());

@@ -5,6 +5,8 @@
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
 
+	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+
 	<ui:style  type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmMakeTemplatePopupWidget.WidgetStyle">
 		.editorLabel {
 			width: 100%;
@@ -44,6 +46,7 @@
 		<g:FlowPanel>
 			<ge:EntityModelCheckBoxEditor ui:field="isTemplatePublicEditor" />
             <ge:EntityModelCheckBoxEditor ui:field="copyVmPermissions" />
+			<ge:EntityModelCheckBoxEditor ui:field="sealTemplateEditor" label="{constants.sealTemplate}" />
 			<g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
 		</g:FlowPanel>
 	</g:FlowPanel>

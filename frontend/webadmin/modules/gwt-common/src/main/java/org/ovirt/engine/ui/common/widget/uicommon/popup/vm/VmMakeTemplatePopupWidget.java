@@ -105,6 +105,11 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     EntityModelCheckBoxEditor copyVmPermissions;
 
     @UiField(provided = true)
+    @Path(value = "sealTemplate.entity")
+    @WithElementId("sealTemplate")
+    EntityModelCheckBoxEditor sealTemplateEditor;
+
+    @UiField(provided = true)
     @Path(value = "cpuProfiles.selectedItem")
     @WithElementId("cpuProfiles")
     public ListModelListBoxEditor<CpuProfile> cpuProfilesEditor;
@@ -139,6 +144,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     void addStyle() {
         isTemplatePublicEditor.setContentWidgetContainerStyleName(style.editorLabel());
         copyVmPermissions.setContentWidgetContainerStyleName(style.editorLabel());
+        sealTemplateEditor.setContentWidgetContainerStyleName(style.editorLabel());
         isSubTemplateEditor.setContentWidgetContainerStyleName(style.editorLabel());
     }
 
@@ -199,6 +205,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     void initCheckBoxEditors() {
         isTemplatePublicEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         copyVmPermissions = new EntityModelCheckBoxEditor(Align.RIGHT);
+        sealTemplateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSubTemplateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
@@ -282,6 +289,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);
         isTemplatePublicEditor.setTabIndex(nextTabIndex++);
         copyVmPermissions.setTabIndex(nextTabIndex++);
+        sealTemplateEditor.setTabIndex(nextTabIndex++);
         return nextTabIndex;
     }
 

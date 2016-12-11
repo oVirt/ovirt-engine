@@ -582,6 +582,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         addVmTemplateParameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         addVmTemplateParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         addVmTemplateParameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
+        addVmTemplateParameters.setSealTemplate(model.getSealTemplate().getEntity());
         addVmTemplateParameters.setUpdateRngDevice(true);
         addVmTemplateParameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
         if (vm.getDefaultDisplayType() == DisplayType.none) {
