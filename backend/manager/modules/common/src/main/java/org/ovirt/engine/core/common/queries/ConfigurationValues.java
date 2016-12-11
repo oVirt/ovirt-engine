@@ -97,7 +97,8 @@ public enum ConfigurationValues {
     AdPartnerMacSupported,
     OvsSupported,
     GetNamesOfVmsFromExternalProviderSupported,
-    PassDiscardSupported(ConfigAuthType.User);
+    PassDiscardSupported(ConfigAuthType.User),
+    DiscardAfterDeleteSupported;
 
     public static enum ConfigAuthType {
         Admin,

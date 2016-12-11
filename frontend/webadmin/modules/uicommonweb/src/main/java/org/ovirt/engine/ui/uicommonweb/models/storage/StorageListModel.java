@@ -1041,6 +1041,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
     private void saveDefaultedStorageProperties(StorageModel model, StorageDomainStatic storageDomainStatic) {
         storageDomainStatic.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
+        storageDomainStatic.setDiscardAfterDelete(model.getDiscardAfterDelete().getEntity());
         storageDomainStatic.setWarningLowSpaceIndicator(model.getWarningLowSpaceIndicator().getEntity());
         storageDomainStatic.setCriticalSpaceActionBlocker(model.getCriticalSpaceActionBlocker().getEntity());
     }

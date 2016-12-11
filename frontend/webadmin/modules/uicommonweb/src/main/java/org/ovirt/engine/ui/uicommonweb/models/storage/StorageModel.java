@@ -235,6 +235,16 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         this.wipeAfterDelete = wipeAfterDelete;
     }
 
+    private EntityModel<Boolean> discardAfterDelete;
+
+    public EntityModel<Boolean> getDiscardAfterDelete() {
+        return discardAfterDelete;
+    }
+
+    public void setDiscardAfterDelete(EntityModel<Boolean> discardAfterDelete) {
+        this.discardAfterDelete = discardAfterDelete;
+    }
+
     public StorageModel(StorageModelBehavior behavior) {
         this.behavior = behavior;
         this.behavior.setModel(this);
@@ -262,6 +272,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         setActivateDomain(new EntityModel<>(true));
         getActivateDomain().setIsAvailable(false);
         setWipeAfterDelete(new EntityModel<>(false));
+        setDiscardAfterDelete(new EntityModel<>(false));
 
         localFSPath = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
     }
@@ -321,6 +332,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
             updateHost();
         }
         updateWipeAfterDelete();
+        updateDiscardAfterDelete();
     }
 
     protected void storageItemsChanged() {
@@ -613,6 +625,30 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         }
         else {
             getWipeAfterDelete().setEntity(getStorage().getWipeAfterDelete());
+        }
+    }
+
+    private void updateDiscardAfterDelete() {
+        if (getDataCenter().getSelectedItem() != null && getAvailableStorageTypeItems().getSelectedItem() != null) {
+            boolean isBlockDomain = getAvailableStorageTypeItems().getSelectedItem().isBlockDomain();
+            if (!isBlockDomain) {
+                getDiscardAfterDelete().setIsAvailable(false);
+                getDiscardAfterDelete().setEntity(false);
+                return;
+            }
+
+            boolean discardAfterDeleteSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                    ConfigurationValues.DiscardAfterDeleteSupported,
+                    getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
+
+            getDiscardAfterDelete().setIsAvailable(discardAfterDeleteSupported);
+            if (getDiscardAfterDelete().getIsAvailable()) {
+                if (isNewStorage()) {
+                    getDiscardAfterDelete().setEntity(false);
+                } else {
+                    getDiscardAfterDelete().setEntity(getStorage().isDiscardAfterDelete());
+                }
+            }
         }
     }
 

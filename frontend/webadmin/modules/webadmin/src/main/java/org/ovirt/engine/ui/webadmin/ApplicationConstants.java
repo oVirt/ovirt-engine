@@ -284,6 +284,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String wipeAfterDelete();
 
+    String discardAfterDelete();
+
     String storagePopupNfsPathLabel();
 
     String storagePopupConnectionLabel();

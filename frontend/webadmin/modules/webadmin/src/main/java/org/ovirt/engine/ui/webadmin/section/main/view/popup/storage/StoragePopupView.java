@@ -141,6 +141,11 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     EntityModelCheckBoxEditor wipeAfterDeleteEditor;
 
     @UiField
+    @Path(value = "discardAfterDelete.entity")
+    @WithElementId("discardAfterDelete")
+    EntityModelCheckBoxEditor discardAfterDeleteEditor;
+
+    @UiField
     Image datacenterAlertIcon;
 
     @SuppressWarnings("rawtypes")
@@ -227,6 +232,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         hostListEditor.setLabel(constants.storagePopupHostLabel());
         activateDomainEditor.setLabel(constants.activateDomainLabel());
         wipeAfterDeleteEditor.setLabel(constants.wipeAfterDelete());
+        discardAfterDeleteEditor.setLabel(constants.discardAfterDelete());
         warningLowSpaceIndicatorEditor.setLabel(constants.warningLowSpaceIndicatorUnits());
         criticalSpaceActionBlockerEditor.setLabel(constants.criticalSpaceActionBlockerUnits());
         criticalSpaceActionBlockerEditor.setLabelTooltip(constants.changeCriticalSpaceActionBlockerWarning());

@@ -40,6 +40,10 @@
             width: 481px;
         }
 
+        .discardAfterDeleteEditor {
+            width: 481px;
+        }
+
         .warningTextBoxEditor {
             width: 23%;
         }
@@ -118,6 +122,7 @@
                     <ge:IntegerEntityModelTextBoxEditor ui:field="criticalSpaceActionBlockerEditor"/>
                     <e:ListModelListBoxEditor ui:field="formatListEditor" />
                     <ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.wipeAfterDeleteEditor}"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="discardAfterDeleteEditor" addStyleNames="{style.discardAfterDeleteEditor}"/>
                 </g:VerticalPanel>
                 <ge:EntityModelCheckBoxEditor ui:field="activateDomainEditor" addStyleNames="{style.activateDomainEditor}" contentWidgetContainerStyleName="{style.activateDomainEditor}"/>
             </g:FlowPanel>
