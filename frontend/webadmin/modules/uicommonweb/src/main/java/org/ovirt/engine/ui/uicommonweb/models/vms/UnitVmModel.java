@@ -880,6 +880,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.copyPermissions = copyPermissions;
     }
 
+    private NotChangableForVmInPoolEntityModel<Boolean> sealTemplate;
+
+    public EntityModel<Boolean> getSealTemplate() {
+        return sealTemplate;
+    }
+
+    private void setSealTemplate(NotChangableForVmInPoolEntityModel<Boolean> sealTemplate) {
+        this.sealTemplate = sealTemplate;
+    }
+
     private EntityModel<Boolean> memoryBalloonDeviceEnabled;
 
     public EntityModel<Boolean> getMemoryBalloonDeviceEnabled() {
@@ -1525,6 +1535,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setSsoMethodGuestAgent(new NotChangableForVmInPoolEntityModel<Boolean>());
         setConsoleDeviceEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setCopyPermissions(new NotChangableForVmInPoolEntityModel<Boolean>());
+        setSealTemplate(new NotChangableForVmInPoolEntityModel<>(false));
 
         //rng
         setIsRngEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
