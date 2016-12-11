@@ -53,7 +53,7 @@ public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> exten
             String version,
             Map<KeyValuePairCompat<ConfigurationValues, String>, Object> configValuesMap) {
         KeyValuePairCompat<ConfigurationValues, String> key = new KeyValuePairCompat<>(configValue, version);
-        Object value = Config.<Object>getValue(ConfigValues.valueOf(configValue.toString()), version);
+        Object value = Config.getValue(ConfigValues.valueOf(configValue.toString()), version);
 
         configValuesMap.put(key, value);
     }
