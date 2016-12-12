@@ -18,14 +18,14 @@ import org.junit.runner.Description;
 
 public class InjectorRule extends TestWatcher {
 
-    private static final Map<String, Object> beansCache = new ConcurrentHashMap<>();
+    private static final Map<Class, Object> beansCache = new ConcurrentHashMap<>();
 
     private static volatile boolean cdiInitialized = false;
 
     public InjectorRule() {
         if (!cdiInitialized) {
-            TestCDIPovider testCDIPovider = new TestCDIPovider();
-            CDI.setCDIProvider(() -> testCDIPovider);
+            TestCDIProvider testCDIProvider = new TestCDIProvider();
+            CDI.setCDIProvider(() -> testCDIProvider);
             cdiInitialized = true;
         }
     }
@@ -33,16 +33,14 @@ public class InjectorRule extends TestWatcher {
     @Override
     protected void finished(Description description) {
         super.finished(description);
+        beansCache.clear();
     }
 
     public <T> void bind(Class<T> pureClsType, T instance) {
-        beansCache.put(pureClsType.getName(), instance);
+        beansCache.put(pureClsType, instance);
     }
 
-    private class TestCDIPovider<T> extends CDI<T> {
-
-        public TestCDIPovider() {
-        }
+    private class TestCDIProvider<T> extends CDI<T> {
 
         @Override
         public BeanManager getBeanManager() {
@@ -71,12 +69,12 @@ public class InjectorRule extends TestWatcher {
 
         @Override
         public void destroy(T t) {
-
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public <U extends T> Instance<U> select(Class<U> aClass, Annotation... annotations) {
-            return new SimpleInstanceIdGenerator<U>((U) beansCache.get(aClass.getName()));
+            return new SimpleInstanceIdGenerator<>((U) beansCache.get(aClass));
         }
 
         @Override
@@ -138,5 +136,4 @@ public class InjectorRule extends TestWatcher {
             return null;
         }
     }
-
 }
