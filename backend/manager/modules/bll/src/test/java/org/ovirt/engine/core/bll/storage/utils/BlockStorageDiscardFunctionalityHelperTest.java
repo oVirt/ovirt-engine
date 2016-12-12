@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BlockStorageDiscardFunctionalityHelperTest {
@@ -42,6 +43,9 @@ public class BlockStorageDiscardFunctionalityHelperTest {
     @Mock
     public DiskVmElementDao diskVmElementDao;
 
+    @Mock
+    private StorageDomainDao storageDomainDao;
+
     @Before
     public void setUp() {
         createStorageDomain();
@@ -52,6 +56,8 @@ public class BlockStorageDiscardFunctionalityHelperTest {
         storageDomainVmDisks = new LinkedList<>();
         when(diskVmElementDao.getAllDiskVmElementsByDisksIds(anyCollectionOf(Guid.class)))
                 .thenReturn(storageDomainVmDisks);
+
+        when(storageDomainDao.get(storageDomain.getId())).thenReturn(storageDomain);
     }
 
     @Test
@@ -208,44 +214,75 @@ public class BlockStorageDiscardFunctionalityHelperTest {
     }
 
     @Test
-    public void testGetLunsThatBreakDiscardFunctionalityPassDiscardBreaks() {
+    public void testGetLunsThatBreakPassDiscardFunctionalityPassDiscardBreaks() {
         createVmDiskOnSd(false, false);
         createVmDiskOnSd(false, true); // This disk requires pass discard support.
         LUNs lunThatBreaksDiscardSupport = createLunWithDiscardFunctionality(0L, false);
-        assertGetLunsThatBreakDiscardFunctionalityContainsExpectedLuns(
+        assertGetLunsThatBreakPassDiscardFunctionalityContainsExpectedLuns(
                 Arrays.asList(createLunWithDiscardFunctionality(1024L, false), lunThatBreaksDiscardSupport),
                 Collections.singletonList(lunThatBreaksDiscardSupport));
     }
 
     @Test
-    public void testGetLunsThatBreakDiscardFunctionalityDiscardZeroesTheDataBreaks() {
+    public void testGetLunsThatBreakPassDiscardFunctionalityDiscardZeroesTheDataBreaks() {
         createVmDiskOnSd(false, false);
         createVmDiskOnSd(true, true); // This disk requires discard zeroes the data support.
         LUNs lunThatBreaksDiscardZeroesTheDataSupport = createLunWithDiscardFunctionality(1024L, false);
-        assertGetLunsThatBreakDiscardFunctionalityContainsExpectedLuns(
+        assertGetLunsThatBreakPassDiscardFunctionalityContainsExpectedLuns(
                 Arrays.asList(createLunWithDiscardFunctionality(1024L, true), lunThatBreaksDiscardZeroesTheDataSupport),
                 Collections.singletonList(lunThatBreaksDiscardZeroesTheDataSupport));
     }
 
     @Test
-    public void testGetLunsThatBreakDiscardFunctionalityFullDiscardFunctionalityBreaks() {
+    public void testGetLunsThatBreakPassDiscardFunctionalityFullDiscardFunctionalityBreaks() {
         createVmDiskOnSd(false, false);
         createVmDiskOnSd(true, true); // This disk requires both pass discard and discard zeroes the data support.
         LUNs lunThatBreaksDiscardSupport = createLunWithDiscardFunctionality(0L, false);
         LUNs lunThatBreaksDiscardZeroesTheDataSupport = createLunWithDiscardFunctionality(1024L, false);
-        assertGetLunsThatBreakDiscardFunctionalityContainsExpectedLuns(
+        assertGetLunsThatBreakPassDiscardFunctionalityContainsExpectedLuns(
                 Arrays.asList(createLunWithDiscardFunctionality(1024L, true), lunThatBreaksDiscardSupport,
                         lunThatBreaksDiscardZeroesTheDataSupport),
                 Arrays.asList(lunThatBreaksDiscardSupport, lunThatBreaksDiscardZeroesTheDataSupport));
     }
 
     @Test
-    public void testGetLunsThatBreakDiscardFunctionalityDiscardFunctionalityDoesntBreak() {
+    public void testGetLunsThatBreakPassDiscardFunctionalityDiscardFunctionalityDoesntBreak() {
         createVmDiskOnSd(false, false); // This disk does not require any discard functionality.
         createVmDiskOnSd(true, true); // This disk requires both pass discard and discard zeroes the data support.
-        assertGetLunsThatBreakDiscardFunctionalityContainsExpectedLuns(
+        assertGetLunsThatBreakPassDiscardFunctionalityContainsExpectedLuns(
                 Arrays.asList(createLunWithDiscardFunctionality(1024L, true),
                         createLunWithDiscardFunctionality(2048L, true)),
+                Collections.emptyList());
+    }
+
+    @Test
+    public void testGetLunsThatBreakDiscardAfterDeleteSupportStorageDomainDiscardAfterDeleteDisabled() {
+        storageDomain.setDiscardAfterDelete(false);
+        assertGetLunsThatBreakDiscardAfterDeleteSupportContainsExpectedLuns(
+                Arrays.asList(
+                        createLunWithDiscardFunctionality(1024L, true),
+                        createLunWithDiscardFunctionality(0L, false)),
+                Collections.emptyList());
+    }
+
+    @Test
+    public void testGetLunsThatBreakDiscardAfterDeleteSupportDiscardAfterDeleteBreaks() {
+        storageDomain.setDiscardAfterDelete(true);
+        LUNs lunThatBreaksDiscardSupport = createLunWithDiscardFunctionality(0L, true);
+                assertGetLunsThatBreakDiscardAfterDeleteSupportContainsExpectedLuns(
+                Arrays.asList(
+                        createLunWithDiscardFunctionality(1024L, true),
+                        lunThatBreaksDiscardSupport),
+                        Collections.singletonList(lunThatBreaksDiscardSupport));
+    }
+
+    @Test
+    public void testGetLunsThatBreakDiscardAfterDeleteSupportDiscardAfterDeleteDoesntBreak() {
+        storageDomain.setDiscardAfterDelete(true);
+        assertGetLunsThatBreakDiscardAfterDeleteSupportContainsExpectedLuns(
+                Arrays.asList(
+                        createLunWithDiscardFunctionality(1024L, true),
+                        createLunWithDiscardFunctionality(2048L, false)),
                 Collections.emptyList());
     }
 
@@ -285,11 +322,19 @@ public class BlockStorageDiscardFunctionalityHelperTest {
         storageDomainVmDisks.add(createVmDisk(diskId, passDiscard));
     }
 
-    private void assertGetLunsThatBreakDiscardFunctionalityContainsExpectedLuns(Collection<LUNs> luns,
-            Collection<LUNs> expectedLunsThatBreakDiscardFunctionality) {
-        Collection<LUNs> lunsThatBreakDiscardFunctionality =
-                discardHelper.getLunsThatBreakDiscardFunctionality(luns, storageDomain.getId());
-        assertTrue(CollectionUtils.isEqualCollection(lunsThatBreakDiscardFunctionality,
-                expectedLunsThatBreakDiscardFunctionality));
+    private void assertGetLunsThatBreakPassDiscardFunctionalityContainsExpectedLuns(Collection<LUNs> luns,
+            Collection<LUNs> expectedLunsThatBreakPassDiscardFunctionality) {
+        Collection<LUNs> lunsThatBreakPassDiscardFunctionality =
+                discardHelper.getLunsThatBreakPassDiscardSupport(luns, storageDomain.getId());
+        assertTrue(CollectionUtils.isEqualCollection(lunsThatBreakPassDiscardFunctionality,
+                expectedLunsThatBreakPassDiscardFunctionality));
+    }
+
+    private void assertGetLunsThatBreakDiscardAfterDeleteSupportContainsExpectedLuns(Collection<LUNs> luns,
+            Collection<LUNs> expectedLunsThatBreakDiscardAfterDeleteSupport) {
+        Collection<LUNs> lunsThatBreakDiscardAfterDeleteSupport =
+                discardHelper.getLunsThatBreakDiscardAfterDeleteSupport(luns, storageDomain.getId());
+        assertTrue(CollectionUtils.isEqualCollection(lunsThatBreakDiscardAfterDeleteSupport,
+                expectedLunsThatBreakDiscardAfterDeleteSupport));
     }
 }

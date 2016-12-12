@@ -25,6 +25,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.di.Injector;
 
 @Singleton
@@ -35,6 +36,9 @@ public class BlockStorageDiscardFunctionalityHelper {
 
     @Inject
     private DiskVmElementDao diskVmElementDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -115,9 +119,14 @@ public class BlockStorageDiscardFunctionalityHelper {
     }
 
     public void logIfLunsBreakStorageDomainDiscardFunctionality(Collection<LUNs> luns, Guid storageDomainId) {
-        Collection<LUNs> lunsThatBreakDiscardSupport = getLunsThatBreakDiscardFunctionality(luns, storageDomainId);
-        if (!lunsThatBreakDiscardSupport.isEmpty()) {
-            logLunsBrokeStorageDomainDiscardSupport(lunsThatBreakDiscardSupport, storageDomainId);
+        Collection<LUNs> lunsThatBreakPassDiscardSupport = getLunsThatBreakPassDiscardSupport(luns, storageDomainId);
+        if (!lunsThatBreakPassDiscardSupport.isEmpty()) {
+            logLunsBrokeStorageDomainPassDiscardSupport(lunsThatBreakPassDiscardSupport, storageDomainId);
+        }
+        Collection<LUNs> lunsThatBreakDiscardAfterDeleteSupport =
+                getLunsThatBreakDiscardAfterDeleteSupport(luns, storageDomainId);
+        if (!lunsThatBreakDiscardAfterDeleteSupport.isEmpty()) {
+            logLunsBrokeStorageDomainDiscardAfterDeleteSupport(lunsThatBreakDiscardAfterDeleteSupport, storageDomainId);
         }
     }
 
@@ -156,7 +165,7 @@ public class BlockStorageDiscardFunctionalityHelper {
                 diskVmElementsMap.get(sdDisk.getId()).isPassDiscard());
     }
 
-    protected Collection<LUNs> getLunsThatBreakDiscardFunctionality(Collection<LUNs> luns, Guid storageDomainId) {
+    protected Collection<LUNs> getLunsThatBreakPassDiscardSupport(Collection<LUNs> luns, Guid storageDomainId) {
         Collection<DiskImage> sdDisks = diskImageDao.getAllForStorageDomain(storageDomainId);
         Collection<Guid> sdDisksIds = sdDisks.stream().map(Disk::getId).collect(Collectors.toList());
         Collection<DiskVmElement> diskVmElements = diskVmElementDao.getAllDiskVmElementsByDisksIds(sdDisksIds);
@@ -175,6 +184,16 @@ public class BlockStorageDiscardFunctionalityHelper {
         return Collections.emptyList();
     }
 
+    protected Collection<LUNs> getLunsThatBreakDiscardAfterDeleteSupport(Collection<LUNs> luns, Guid storageDomainId) {
+        StorageDomain storageDomain = storageDomainDao.get(storageDomainId);
+        if (storageDomain.isDiscardAfterDelete()) {
+            return luns.stream()
+                    .filter(getLunSupportsDiscardPredicate().negate())
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
     private Predicate<LUNs> getLunSupportsDiscardPredicate() {
         return lun -> lun.getDiscardMaxSize() != null &&
                 lun.getDiscardMaxSize() > 0L;
@@ -184,12 +203,21 @@ public class BlockStorageDiscardFunctionalityHelper {
         return lun -> Boolean.TRUE.equals(lun.getDiscardZeroesData());
     }
 
-    private void logLunsBrokeStorageDomainDiscardSupport(Collection<LUNs> lunsThatBreakSdDiscardSupport,
+    private void logLunsBrokeStorageDomainPassDiscardSupport(Collection<LUNs> lunsThatBreakSdPassDiscardSupport,
             Guid storageDomainId) {
         AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
         auditLog.setStorageDomainId(storageDomainId);
         auditLog.addCustomValue("LunsIds",
-                lunsThatBreakSdDiscardSupport.stream().map(LUNs::getLUNId).collect(Collectors.joining(", ")));
-        auditLogDirector.log(auditLog, AuditLogType.LUNS_BROKE_SD_DISCARD_SUPPORT);
+                lunsThatBreakSdPassDiscardSupport.stream().map(LUNs::getLUNId).collect(Collectors.joining(", ")));
+        auditLogDirector.log(auditLog, AuditLogType.LUNS_BROKE_SD_PASS_DISCARD_SUPPORT);
+    }
+
+    private void logLunsBrokeStorageDomainDiscardAfterDeleteSupport(
+            Collection<LUNs> lunsThatBreakSdDiscardAfterDeleteSupport, Guid storageDomainId) {
+        AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
+        auditLog.setStorageDomainId(storageDomainId);
+        auditLog.addCustomValue("LunsIds", lunsThatBreakSdDiscardAfterDeleteSupport.stream()
+                .map(LUNs::getLUNId).collect(Collectors.joining(", ")));
+        auditLogDirector.log(auditLog, AuditLogType.LUNS_BROKE_SD_DISCARD_AFTER_DELETE_SUPPORT);
     }
 }
