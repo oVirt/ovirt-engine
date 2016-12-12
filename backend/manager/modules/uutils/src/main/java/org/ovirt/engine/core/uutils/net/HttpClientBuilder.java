@@ -42,7 +42,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 public class HttpClientBuilder {
     private Boolean verifyHost = true;
     private Boolean verifyChain = true;
-    private String tlsProtocol = "TLSv1";
+    private String tlsProtocol = "TLS";
     private String trustManagerAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
     private String trustStore;
     private String trustStoreType = KeyStore.getDefaultType();

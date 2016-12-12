@@ -297,8 +297,9 @@ ENGINE_SSO_AUTH_URL="https://${ENGINE_FQDN}${ENGINE_SSO_SERVICE_URI}"
 # SSO service URL for direct communications.
 ENGINE_SSO_SERVICE_URL="${ENGINE_SSO_AUTH_URL}"
 
-# SSL protocol to use.
-ENGINE_SSO_SERVICE_SSL_PROTOCOL=TLSv1
+# SSL protocol to use. Setting the protocol to TLS starts a negotiation with the server and picks the highest
+# level of protocol supported by the server.
+ENGINE_SSO_SERVICE_SSL_PROTOCOL=TLS
 
 # Enable host verification.
 ENGINE_SSO_SERVICE_SSL_VERIFY_HOST=true

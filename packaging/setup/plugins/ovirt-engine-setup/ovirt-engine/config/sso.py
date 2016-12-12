@@ -163,7 +163,7 @@ class Plugin(plugin.PluginBase):
                         'https://localhost:%s/ovirt-engine/'
                         'services/sso-callback'
                     ) % engine_port,
-                    notification_callback_host_protocol='TLSv1',
+                    notification_callback_host_protocol='TLS',
                     notification_callback_host_verification=False,
                     notification_callback_chain_validation=True,
                 ),
