@@ -1,6 +1,6 @@
 [Unit]
 Description=oVirt Engine Notifier
-After=network.service postgresql.service
+After=network.target postgresql.service
 
 [Service]
 Type=notify
