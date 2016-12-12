@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -44,8 +45,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
@@ -92,7 +91,7 @@ import com.google.gwt.user.client.Window;
  */
 public class UploadImageModel extends Model implements ICommandTarget {
 
-    private static final Logger log = LoggerFactory.getLogger(UploadImageModel.class);
+    private static final Logger log = Logger.getLogger(UploadImageModel.class.getName());
 
     private static final int POLLING_DELAY_MS = 4000;
     private static final int MAX_FAILED_POLL_ATTEMPTS = 3;
@@ -717,7 +716,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         // Not sure what happened to the backend; we'll try a few times and then
         // stop polling.  If the job is running on the backend, it will then pause.
         if (++failedPollAttempts >= MAX_FAILED_POLL_ATTEMPTS) {
-            log.error("Polling failed, stopping model execution"); //$NON-NLS-1$
+            log.severe("Polling failed, stopping model execution"); //$NON-NLS-1$
             setContinuePolling(false);
             stopJsUpload(UploadState.CLIENT_ERROR);
         }
@@ -763,7 +762,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             statusParameters.getUpdates().setPhase(ImageTransferPhase.FINALIZING_FAILURE);
         }
 
-        log.info("Updating status to {}", statusParameters.getUpdates().getPhase()); //$NON-NLS-1$
+        log.info("Updating status to " + statusParameters.getUpdates().getPhase()); //$NON-NLS-1$
         Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, statusParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -834,7 +833,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
     }
 
     private void logDebug(String txt) {
-        log.debug(txt);
+        log.fine(txt);
     }
 
     private void logInfo(String txt) {
@@ -842,11 +841,11 @@ public class UploadImageModel extends Model implements ICommandTarget {
     }
 
     private void logWarn(String txt) {
-        log.warn(txt);
+        log.warning(txt);
     }
 
     private void logError(String txt) {
-        log.error(txt);
+        log.severe(txt);
     }
 
     private native void startUpload(Element fileUploadElement, String proxyUri,

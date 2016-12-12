@@ -122,6 +122,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
+      <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
       <scope>provided</scope>
@@ -185,10 +190,6 @@
             <addMavenDescriptor>false</addMavenDescriptor>
           </archive>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.bsc.maven</groupId>
@@ -301,6 +302,7 @@
                     <source>../uicommonweb/src/main/java</source>
                     <source>../gwt-extension/src/main/java</source>
                     <source>../frontend/src/main/java</source>
+                    <source>../frontend/target/${generatedSourcesDirectory}</source>
                     <source>../gwt-common/src/main/java</source>
                     <source>../gwt-common/target/${generatedSourcesDirectory}</source>
                   </sources>

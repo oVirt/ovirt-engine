@@ -3,9 +3,10 @@ package org.slf4j;
 import java.util.logging.Level;
 
 /**
- * GWT Override for Log
+ * GWT override for SLF4J Logger.
  */
 public class Logger {
+
     private final java.util.logging.Logger log;
 
     public Logger(java.util.logging.Logger log) {
@@ -111,4 +112,5 @@ public class Logger {
             log.log(level, msg.toString());
         }
     }
+
 }
