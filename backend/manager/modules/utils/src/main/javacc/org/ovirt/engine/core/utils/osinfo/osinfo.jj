@@ -67,6 +67,7 @@ void devices() : {} {
     | ("maxPciDevices" intValue())
     | ("hyperv.enabled" booleanValue())
     | ("floppy.support" booleanValue())
+    | ("usb.controller" usbControllerModelValue())
     )
 }
 
@@ -112,6 +113,10 @@ void cdInterfaceValue() : {} {
 
 void hardwareInterfacesValue() : {} {
     valueSpecifier() (<HARDWARE_INTERFACE_TYPE>)* (<COMMA> (<WS>)* <HARDWARE_INTERFACE_TYPE>)*
+}
+
+void usbControllerModelValue() : {} {
+    valueSpecifier() ("piix3-uhci" | "piix4-uhci" | "ehci" | "ich9-ehci1" | "ich9-uhci1" | "ich9-uhci2" | "ich9-uhci3" | "vt82c686b-uhci" | "pci-ohci" | "nec-xhci" | "qusb1" | "qusb2" | "none")
 }
 
 void valueSpecifier() : {} {

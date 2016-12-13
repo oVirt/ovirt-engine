@@ -10,10 +10,12 @@ import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -46,6 +48,7 @@ public enum OsRepositoryImpl implements OsRepository {
     private Map<Integer, String> idToUnameLookup;
     private Map<String, Integer> backwardCompatibleNamesToIds;
     private static Map<ArchitectureType, Integer> defaultOsMap = new HashMap<>(2);
+    private Map<Integer, UsbControllerModel> osUsbBusType;
 
     static {
         defaultOsMap.put(ArchitectureType.x86_64, DEFAULT_X86_OS);
@@ -479,6 +482,16 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public UsbControllerModel getOsUsbControllerModel(int osId, Version version) {
+        final String osInfoName =
+                getValueByVersion(getUniqueOsNames().get(osId), "devices.usb.controller", version);
+        if (StringUtils.isEmpty(osInfoName)) {
+            return null;
+        }
+        return UsbControllerModel.fromLibvirtName(osInfoName);
+    }
+
+    @Override
     public int getOsIdByUniqueName(String uniqueOsName) {
         for (Map.Entry<Integer, String> entry : getUniqueOsNames().entrySet()) {
             if (entry.getValue().equals(uniqueOsName)) {
@@ -621,7 +634,6 @@ public enum OsRepositoryImpl implements OsRepository {
     public Map<ArchitectureType, Integer> getDefaultOSes() {
         return defaultOsMap;
     }
-
 
     @Override
     public String toString() {
