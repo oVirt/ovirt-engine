@@ -169,7 +169,7 @@ public final class ImagesHandler {
 
     /**
      * Returns an alias for the given disk. If the disk already has an alias, it is returned. If not,
-     * {@link #aliasIfNull} is returned.
+     * {@code aliasIfNull} is returned.
      *
      * @param disk
      *            The disk
