@@ -214,9 +214,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     }
 
     @Override
-    public void executeCommand() {
+    public void executeVmCommand() {
         addAuditLogForPartialVMs();
-        super.executeCommand();
+        super.executeVmCommand();
         if (getSucceeded()) {
             if (isImagesAlreadyOnTarget()) {
                 unregisteredOVFDataDao.removeEntity(ovfEntityData.getEntityId(), null);

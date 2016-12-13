@@ -406,7 +406,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     @Override
-    protected void executeCommand() {
+    protected void executeVmCommand() {
         try {
             addVmToDb();
             processImages();
