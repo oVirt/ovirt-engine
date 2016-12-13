@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
@@ -258,4 +259,11 @@ public interface OsRepository {
      * Checks if target OS architecture supports sound devices.
      */
     boolean isSoundDeviceEnabled(int osId, Version version);
+
+    /**
+     * @param osId operating system id
+     * @param version may be null
+     * @return usb controller for given operating system and cluster version; may be {@code null} if not specified
+     */
+    UsbControllerModel getOsUsbControllerModel(int osId, Version version);
 }
