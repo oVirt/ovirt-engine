@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.scheduling;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -44,12 +45,14 @@ public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Namea
     /**
      * set of policy units ids, specifies which filters need to be executed in filtering
      */
-    private ArrayList<Guid> filters;
+    @NotNull
+    private ArrayList<Guid> filters = new ArrayList<>();
     /**
      * Map of filters positions: [uuid (policy unit id), int (position)] Acceptable position values: first (-1), last
      * (1), no position (0)
      */
-    private Map<Guid, Integer> filterPositionMap;
+    @NotNull
+    private Map<Guid, Integer> filterPositionMap = new HashMap<>();
     /**
      * set of policy units, specifies which weight functions will be executed upon selection each function has a factor
      * attached.
@@ -67,7 +70,8 @@ public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Namea
     /**
      * Map of custom properties for policy
      */
-    private Map<String, String> parameterMap;
+    @NotNull
+    private Map<String, String> parameterMap = new HashMap<>();
 
     @Override
     public Object getQueryableId() {
