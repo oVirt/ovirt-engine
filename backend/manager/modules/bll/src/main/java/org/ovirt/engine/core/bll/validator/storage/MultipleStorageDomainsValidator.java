@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -58,12 +59,7 @@ public class MultipleStorageDomainsValidator {
      * @return {@link ValidationResult#VALID} if all the domains are OK, or a {@link ValidationResult} with the first non-active domain encountered.
      */
     public ValidationResult allDomainsExistAndActive() {
-        return validOrFirstFailure(new ValidatorPredicate() {
-            @Override
-            public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry) {
-                return getStorageDomainValidator(entry).isDomainExistAndActive();
-            }
-        });
+        return validOrFirstFailure(entry -> getStorageDomainValidator(entry).isDomainExistAndActive());
     }
 
     /**
@@ -71,28 +67,20 @@ public class MultipleStorageDomainsValidator {
      * @return {@link ValidationResult#VALID} if all the domains are OK, or a {@link ValidationResult} with the first low space domain encountered.
      */
     public ValidationResult allDomainsWithinThresholds() {
-        return validOrFirstFailure(new ValidatorPredicate() {
-            @Override
-            public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry) {
-                return getStorageDomainValidator(entry).isDomainWithinThresholds();
-            }
-        });
+        return validOrFirstFailure(entry -> getStorageDomainValidator(entry).isDomainWithinThresholds());
     }
 
     /**
      * Validates that all the domains have enough space for the request
      * @return {@link ValidationResult#VALID} if all the domains have enough free space, or a {@link ValidationResult} with the first low-on-space domain encountered.
      */
-    public ValidationResult allDomainsHaveSpaceForNewDisks(Collection<DiskImage> disksList) {
-        final Map<Guid, List<DiskImage>> disksMap = getDomainsDisksMap(disksList);
+    public ValidationResult allDomainsHaveSpaceForNewDisks(Collection<DiskImage> disksImages) {
+        final Map<Guid, List<DiskImage>> disksMap = getDomainsDisksMap(disksImages);
 
-        return validOrFirstFailure(new ValidatorPredicate() {
-            @Override
-            public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry) {
-                Guid sdId = entry.getKey();
-                List<DiskImage> disksList = disksMap.get(sdId);
-                return getStorageDomainValidator(entry).hasSpaceForNewDisks(disksList);
-            }
+        return validOrFirstFailure(entry -> {
+            Guid sdId = entry.getKey();
+            List<DiskImage> disksList = disksMap.get(sdId);
+            return getStorageDomainValidator(entry).hasSpaceForNewDisks(disksList);
         });
     }
 
@@ -103,13 +91,10 @@ public class MultipleStorageDomainsValidator {
     public ValidationResult allDomainsHaveSpaceForClonedDisks(Collection<DiskImage> diskImages) {
         final Map<Guid, List<DiskImage>> disksMap = getDomainsDisksMap(diskImages);
 
-        return validOrFirstFailure(new ValidatorPredicate() {
-            @Override
-            public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry) {
-                Guid sdId = entry.getKey();
-                List<DiskImage> disksList = disksMap.get(sdId);
-                return getStorageDomainValidator(entry).hasSpaceForClonedDisks(disksList);
-            }
+        return validOrFirstFailure(entry -> {
+            Guid sdId = entry.getKey();
+            List<DiskImage> disksList = disksMap.get(sdId);
+            return getStorageDomainValidator(entry).hasSpaceForClonedDisks(disksList);
         });
     }
 
@@ -121,14 +106,11 @@ public class MultipleStorageDomainsValidator {
         final Map<Guid, List<DiskImage>> domainsNewDisksMap = getDomainsDisksMap(newDiskImages);
         final Map<Guid, List<DiskImage>> domainsClonedDisksMap = getDomainsDisksMap(clonedDiskImages);
 
-        return validOrFirstFailure(new ValidatorPredicate() {
-            @Override
-            public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry) {
-                Guid sdId = entry.getKey();
-                List<DiskImage> newDisksForDomain = domainsNewDisksMap.get(sdId);
-                List<DiskImage> clonedDisksForDomain = domainsClonedDisksMap.get(sdId);
-                return getStorageDomainValidator(entry).hasSpaceForAllDisks(newDisksForDomain, clonedDisksForDomain);
-            }
+        return validOrFirstFailure(entry -> {
+            Guid sdId = entry.getKey();
+            List<DiskImage> newDisksForDomain = domainsNewDisksMap.get(sdId);
+            List<DiskImage> clonedDisksForDomain = domainsClonedDisksMap.get(sdId);
+            return getStorageDomainValidator(entry).hasSpaceForAllDisks(newDisksForDomain, clonedDisksForDomain);
         });
     }
 
@@ -139,13 +121,10 @@ public class MultipleStorageDomainsValidator {
     public ValidationResult allDomainsHaveSpaceForDisksWithSnapshots(Collection<DiskImage> diskImages) {
         final Map<Guid, List<DiskImage>> disksMap = getDomainsDisksMap(diskImages);
 
-        return validOrFirstFailure(new ValidatorPredicate() {
-            @Override
-            public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry) {
-                Guid sdId = entry.getKey();
-                List<DiskImage> diskImages = disksMap.get(sdId);
-                return getStorageDomainValidator(entry).hasSpaceForDisksWithSnapshots(diskImages);
-            }
+        return validOrFirstFailure(entry -> {
+            Guid sdId = entry.getKey();
+            List<DiskImage> diskList = disksMap.get(sdId);
+            return getStorageDomainValidator(entry).hasSpaceForDisksWithSnapshots(diskList);
         });
     }
 
@@ -169,18 +148,15 @@ public class MultipleStorageDomainsValidator {
      * @return {@link ValidationResult#VALID} if all the domains are OK, or the
      * first validation error if they aren't.
      */
-    private ValidationResult validOrFirstFailure(ValidatorPredicate predicate) {
+    private ValidationResult validOrFirstFailure
+        (Function<Map.Entry<Guid, StorageDomainValidator>, ValidationResult> predicate) {
+
         for (Map.Entry<Guid, StorageDomainValidator> entry : domainValidators.entrySet()) {
-            ValidationResult currResult = predicate.evaluate(entry);
+            ValidationResult currResult = predicate.apply(entry);
             if (!currResult.isValid()) {
                 return currResult;
             }
         }
         return ValidationResult.VALID;
-    }
-
-    /** A predicate for evaluating storage domains */
-    private static interface ValidatorPredicate {
-        public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry);
     }
 }
