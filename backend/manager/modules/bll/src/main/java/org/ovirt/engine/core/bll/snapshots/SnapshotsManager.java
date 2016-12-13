@@ -431,7 +431,7 @@ public class SnapshotsManager {
 
         if (disks == null) {
             disks = DisksFilter.filterImageDisks(getDiskDao().getAllForVm(vm.getId()), ONLY_SNAPABLE, ONLY_ACTIVE);
-            disks.addAll(ImagesHandler.getCinderLeafImages(getDiskDao().getAllForVm(vm.getId()), false));
+            disks.addAll(ImagesHandler.getCinderLeafImages(getDiskDao().getAllForVm(vm.getId())));
         }
         populateDisksWithVmData(disks, vm.getId());
         for (DiskImage image : disks) {

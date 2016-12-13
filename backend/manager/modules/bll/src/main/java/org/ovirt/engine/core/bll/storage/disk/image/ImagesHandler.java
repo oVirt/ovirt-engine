@@ -677,9 +677,9 @@ public final class ImagesHandler {
         return diskSnapshots.get(diskSnapshots.size() - 1);
     }
 
-    public static List<DiskImage> getCinderLeafImages(List<Disk> disks, boolean onlyPluggedDisks) {
+    public static List<DiskImage> getCinderLeafImages(List<Disk> disks) {
         List<DiskImage> leafCinderDisks = new ArrayList<>();
-        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(disks, d -> !onlyPluggedDisks || d.getPlugged());
+        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(disks);
         for (CinderDisk cinder : cinderDisks) {
             leafCinderDisks.add(getSnapshotLeaf(cinder.getId()));
         }
