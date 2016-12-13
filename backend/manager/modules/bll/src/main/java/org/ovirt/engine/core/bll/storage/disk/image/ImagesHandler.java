@@ -689,7 +689,7 @@ public final class ImagesHandler {
         List<DiskImage> leafCinderDisks = new ArrayList<>();
         List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(disks, d -> !onlyPluggedDisks || d.getPlugged());
         for (CinderDisk cinder : cinderDisks) {
-            leafCinderDisks.add(ImagesHandler.getSnapshotLeaf(cinder.getId()));
+            leafCinderDisks.add(getSnapshotLeaf(cinder.getId()));
         }
         return leafCinderDisks;
     }
@@ -974,7 +974,7 @@ public final class ImagesHandler {
         // need to pass initial size (it can be only preallocated).
         if (isInitialSizeSupportedForFormat(destFormat, dstDomain)) {
             //TODO: inspect if we can rely on the database to get the actual size.
-            DiskImage imageInfoFromStorage = ImagesHandler.getVolumeInfoFromVdsm(storagePoolId,
+            DiskImage imageInfoFromStorage = getVolumeInfoFromVdsm(storagePoolId,
                     srcDomain, imageGroupID, sourceImage.getId());
             // When vdsm creates a COW volume with provided initial size the size is multiplied by 1.1 to prevent a
             // case in which we won't have enough space. If the source is already COW we don't need the additional
@@ -1005,7 +1005,7 @@ public final class ImagesHandler {
 
         if (isInitialSizeSupportedForFormat(destFormat, dstDomain)) {
 
-            double totalSizeForClonedDisk = ImagesHandler.getTotalSizeForClonedDisk(sourceImage,
+            double totalSizeForClonedDisk = getTotalSizeForClonedDisk(sourceImage,
                     DbFacade.getInstance().getStorageDomainDao().get(dstDomain).getStorageStaticData());
 
             return computeCowImageNeededSize(Double.valueOf(totalSizeForClonedDisk).longValue());
@@ -1015,7 +1015,7 @@ public final class ImagesHandler {
 
     private static boolean isInitialSizeSupportedForFormat(VolumeFormat destFormat, Guid dstDomain) {
         return destFormat == VolumeFormat.COW &&
-                ImagesHandler.isImageInitialSizeSupported(
+                isImageInitialSizeSupported(
                         DbFacade.getInstance().getStorageDomainDao().get(dstDomain).getStorageType());
     }
 
