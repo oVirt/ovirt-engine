@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
@@ -112,8 +111,8 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     HostNetworkProviderWidget networkProviderWidget;
 
     @UiField
-    @Path(value = "hostedEngineHostModel.actions.selectedItem")
-    ListModelRadioGroupEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
+    @Path(value = "hostedEngineHostModel.selectedItem")
+    ListModelListBoxEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
 
     @UiField
     @Ignore

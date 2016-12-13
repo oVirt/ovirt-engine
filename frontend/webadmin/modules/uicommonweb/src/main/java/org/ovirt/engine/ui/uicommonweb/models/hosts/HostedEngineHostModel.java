@@ -1,9 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 /**<pre>
@@ -20,21 +21,21 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
  * Future additions to this model may include more customizations to pass to the installation.
  * </pre>
  */
-public class HostedEngineHostModel extends EntityModel {
-
-    private ListModel<HostedEngineDeployConfiguration.Action> actions = new ListModel<>();
+public class HostedEngineHostModel extends ListModel<HostedEngineDeployConfiguration.Action> {
 
     public HostedEngineHostModel() {
-        actions.setItems(
-                Arrays.asList(HostedEngineDeployConfiguration.Action.values()),
-                HostedEngineDeployConfiguration.Action.NONE);
+        setItems(Arrays.asList(HostedEngineDeployConfiguration.Action.values()));
     }
 
-    public ListModel<HostedEngineDeployConfiguration.Action> getActions() {
-        return actions;
-    }
+    public void removeActionFromList(HostedEngineDeployConfiguration.Action action) {
+        List<HostedEngineDeployConfiguration.Action> actions = new ArrayList<>();
 
-    public void setActions(ListModel<HostedEngineDeployConfiguration.Action> actions) {
-        this.actions = actions;
+        for (HostedEngineDeployConfiguration.Action deployAction: HostedEngineDeployConfiguration.Action.values()) {
+            if (!deployAction.equals(action)) {
+                actions.add(deployAction);
+            }
+        }
+
+        setItems(actions);
     }
 }

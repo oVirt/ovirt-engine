@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.VdsOperationActionParameters.Authenti
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -612,6 +613,41 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         return labelList;
     }
 
+    private boolean isHeSystem;
+
+    public void setIsHeSystem(boolean isHeSystem) {
+        this.isHeSystem = isHeSystem;
+    }
+
+    public boolean getIsHeSystem() {
+        return isHeSystem;
+    }
+
+    private boolean isHostedEngineDeployed;
+
+    public void setIsHostedEngineDeployed(boolean isHeDeployed) {
+        isHostedEngineDeployed = isHeDeployed;
+    }
+
+    public boolean getIsHostedEngineDeployed() {
+        return isHostedEngineDeployed;
+    }
+
+    private List<Guid> hostsWithHeDeployed;
+
+    public void setHostsWithHeDeployed(List<Guid> hostsWithHeDeployed) {
+        this.hostsWithHeDeployed = hostsWithHeDeployed;
+    }
+
+    public List<Guid> getHostsWithHeDeployed() {
+        return hostsWithHeDeployed;
+    }
+
+    public boolean isLastHostWithHeDeployed() {
+        return hostsWithHeDeployed.size() == 1
+                && hostsWithHeDeployed.get(0).equals(getHostId());
+    }
+
     public HostModel() {
         setUpdateHostsCommand(new UICommand("", new ICommandTarget() { //$NON-NLS-1$
             @Override
@@ -1067,6 +1103,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             boolean isEditWithPMemphasis,
             SystemTreeItemModel selectedSystemTreeItem) {
         setHostId(vds.getId());
+        setIsHostedEngineDeployed(vds.isHostedEngineDeployed());
         updateExternalHostModels(vds.getHostProviderId());
         getOverrideIpTables().setIsAvailable(showInstallationProperties());
         setSpmPriorityValue(vds.getVdsSpmPriority());
@@ -1445,7 +1482,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         return hostedEngineHostModel;
     }
 
-    public void setHostedEngineHostModel(HostedEngineHostModel hostedEngineHostModel) {
+    public void setHostedEngineHostModel(final HostedEngineHostModel hostedEngineHostModel) {
         this.hostedEngineHostModel = hostedEngineHostModel;
+
+        if (!isHostedEngineDeployed || getIsNew()) {
+            hostedEngineHostModel.removeActionFromList(HostedEngineDeployConfiguration.Action.UNDEPLOY);
+        } else if (isLastHostWithHeDeployed()) {
+            hostedEngineHostModel.setIsChangeable(false);
+            hostedEngineHostModel.setChangeProhibitionReason(constants.cannotUndeployHeFromLastHostWithHeDeployed());
+        } else {
+            hostedEngineHostModel.removeActionFromList(HostedEngineDeployConfiguration.Action.DEPLOY);
+        }
     }
 }

@@ -1683,6 +1683,8 @@ public interface UIConstants extends Constants {
 
     String cannotChangeHostInTreeContext();
 
+    String cannotUndeployHeFromLastHostWithHeDeployed();
+
     String dcCanOnlyBeChangedWhenHostInMaintMode();
 
     String clusterCanOnlyBeChangedWhenHostInMaintMode();

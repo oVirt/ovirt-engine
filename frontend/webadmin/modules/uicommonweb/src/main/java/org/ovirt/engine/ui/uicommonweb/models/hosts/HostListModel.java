@@ -647,6 +647,10 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
 
         final NewHostModel hostModel = new NewHostModel();
+
+        // isHeSystem must be set before setWindow() because the view edit is called before it finishes
+        hostModel.setIsHeSystem(isHeSystem());
+
         setWindow(hostModel);
         hostModel.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
         hostModel.setHelpTag(HelpTag.new_host);
@@ -774,6 +778,9 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
                 hostModel.setHelpTag(HelpTag.edit_host);
                 hostModel.setHashName("edit_host"); //$NON-NLS-1$
+                hostModel.setIsHeSystem(isHeSystem());
+                hostModel.setHostsWithHeDeployed(getHostsWithHeDeployed());
+                hostModel.setHostedEngineHostModel(new HostedEngineHostModel());
 
                 setWindow(hostModel);
 
@@ -944,7 +951,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             }
 
             parameters.setHostedEngineDeployConfiguration(
-                    new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getActions().getSelectedItem()));
+                    new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
 
             Frontend.getInstance().runAction(VdcActionType.AddVds, parameters,
                     new IFrontendActionAsyncCallback() {
@@ -1323,7 +1330,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         param.setAuthMethod(model.getAuthenticationMethod());
         param.setFenceAgents(null);  // Explicitly set null, to be clear we don't want to update fence agents.
         param.setHostedEngineDeployConfiguration(
-                new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getActions().getSelectedItem()));
+                new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
 
         Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();
         if (networkProvider != null) {
@@ -2146,5 +2153,29 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     @Override
     protected String getListName() {
         return "HostListModel"; //$NON-NLS-1$
+    }
+
+    private boolean isHeSystem() {
+        boolean isRunningHeVm = false;
+        for (VDS host : getItems()) {
+            if (host.isHostedEngineHost()) {
+                isRunningHeVm = true;
+                break;
+            }
+        }
+
+        return isRunningHeVm;
+    }
+
+    private List<Guid> getHostsWithHeDeployed() {
+        List<Guid> hostsWithHeDeployed = new ArrayList<>();
+
+        for (VDS host : getItems()) {
+            if (host.isHostedEngineDeployed()) {
+                hostsWithHeDeployed.add(host.getId());
+            }
+        }
+
+        return hostsWithHeDeployed;
     }
 }

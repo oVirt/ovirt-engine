@@ -32,7 +32,6 @@ import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelMultipleSelectListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
@@ -272,8 +271,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     DialogTab hostedEngineTab;
 
     @UiField(provided=true)
-    @Path(value = "hostedEngineHostModel.actions.selectedItem")
-    ListModelRadioGroupEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
+    @Path(value = "hostedEngineHostModel.selectedItem")
+    ListModelListBoxEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
 
     @UiField
     @Path(value = "pkSection.entity")
@@ -535,8 +534,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         kernelCmdlineKvmNested = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlineUnsafeInterrupts = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlinePciRealloc = new EntityModelCheckBoxEditor(Align.RIGHT);
-
-        hostedEngineDeployActionsEditor = new ListModelRadioGroupEditor<>(new EnumRenderer<HostedEngineDeployConfiguration.Action>());
+        hostedEngineDeployActionsEditor = new ListModelListBoxEditor<>(new EnumRenderer<HostedEngineDeployConfiguration.Action>());
     }
 
     private ListModelTypeAheadListBoxEditor<ExternalEntityBase> getListModelTypeAheadListBoxEditor() {
@@ -767,10 +765,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         this.fenceAgentsEditor.edit(object.getFenceAgentListModel());
         this.proxySourceEditor.edit(object.getPmProxyPreferencesList());
         addTextAndLinkAlert(fetchPanel, constants.fetchingHostFingerprint(), object.getSSHFingerPrint());
-        // don't show the hosted engine deployment tab on edit. It's only meant for installation.
-        hostedEngineTab.setVisible(object.getIsNew());
         providerSearchFilterLabel.setText(constants.hostPopupProviderSearchFilter());
         nameEditor.setFocus(true);
+        hostedEngineTab.setVisible(object.getIsHeSystem());
     }
 
     private void showDiscoveredHostsWidgets(boolean enabled) {

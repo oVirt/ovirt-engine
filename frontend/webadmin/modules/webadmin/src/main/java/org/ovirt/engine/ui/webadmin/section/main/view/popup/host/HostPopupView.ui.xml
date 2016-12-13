@@ -473,7 +473,7 @@
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <e:ListModelRadioGroupEditor ui:field="hostedEngineDeployActionsEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <e:ListModelListBoxEditor ui:field="hostedEngineDeployActionsEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>
                             </b:Container>
                         </t:content>
