@@ -1142,7 +1142,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
         if (numaTune != null) {
             Map<String, Object> numaTuneSetting =
-                    NumaSettingFactory.buildVmNumatuneSetting(numaTune, vmNumaNodes, totalVdsNumaNodes);
+                    NumaSettingFactory.buildVmNumatuneSetting(numaTune, vmNumaNodes);
             if (!numaTuneSetting.isEmpty()) {
                 createInfo.put(VdsProperties.NUMA_TUNE, numaTuneSetting);
             }

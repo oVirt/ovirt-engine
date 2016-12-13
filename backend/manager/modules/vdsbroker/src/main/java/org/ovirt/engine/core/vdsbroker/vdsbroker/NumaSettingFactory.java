@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -53,8 +52,7 @@ public class NumaSettingFactory {
 
     public static Map<String, Object> buildVmNumatuneSetting(
             NumaTuneMode numaTuneMode,
-            List<VmNumaNode> vmNumaNodes,
-            List<VdsNumaNode> vdsNumaNodes) {
+            List<VmNumaNode> vmNumaNodes) {
 
         List<Map<String, String>> memNodeList = new ArrayList<>();
         for (VmNumaNode node : vmNumaNodes) {
@@ -78,13 +76,6 @@ public class NumaSettingFactory {
         Map<String, Object> createNumaTune = new HashMap<>();
         createNumaTune.put(VdsProperties.NUMA_TUNE_MEMNODES, memNodeList);
         createNumaTune.put(VdsProperties.NUMA_TUNE_MODE, numaTuneMode.getValue());
-
-        // Unpinned nodes can run on any host node
-        createNumaTune.put(VdsProperties.NUMA_TUNE_NODESET,
-                NumaUtils.buildStringFromListForNuma(vdsNumaNodes.stream()
-                        .map(VdsNumaNode::getIndex)
-                        .collect(Collectors.toList())));
-
 
         return createNumaTune;
     }

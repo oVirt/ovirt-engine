@@ -63,19 +63,17 @@ public class NumaSettingFactoryTest {
                 NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, vdsNumaNodes);
         Assertions.assertThat(cpuPinning).isEmpty();
         Map<String, Object> mapping =
-                NumaSettingFactory.buildVmNumatuneSetting(NumaTuneMode.INTERLEAVE, vmNumaNodes, vdsNumaNodes);
+                NumaSettingFactory.buildVmNumatuneSetting(NumaTuneMode.INTERLEAVE, vmNumaNodes);
         Assertions.assertThat(mapping).doesNotContainKeys(VdsProperties.NUMA_TUNE_MODE, VdsProperties.NUMA_TUNE_NODESET);
     }
 
     @Test
     public void testBuildVmNumatuneSetting() throws Exception {
         Map<String, Object> numaTune =
-                NumaSettingFactory.buildVmNumatuneSetting(numaTuneMode, vmNumaNodes, vdsNumaNodes);
-        assertEquals(3, numaTune.size());
+                NumaSettingFactory.buildVmNumatuneSetting(numaTuneMode, vmNumaNodes);
+        assertEquals(2, numaTune.size());
         assertTrue(numaTune.containsKey(VdsProperties.NUMA_TUNE_MODE));
         assertEquals(NumaTuneMode.INTERLEAVE.getValue(), numaTune.get(VdsProperties.NUMA_TUNE_MODE));
-        assertTrue(numaTune.containsKey(VdsProperties.NUMA_TUNE_NODESET));
-        assertEquals("0,1", numaTune.get(VdsProperties.NUMA_TUNE_NODESET));
 
         assertTrue(numaTune.containsKey(VdsProperties.NUMA_TUNE_MEMNODES));
         List<Map<String, String>> memNodes =
