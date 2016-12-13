@@ -72,6 +72,7 @@ public enum EngineMessage {
     VAR__TYPE__STORAGE_DEVICE,
     VAR__TYPE__GEOREP_MOUNT_BROKER,
     VAR__TYPE__STORAGE_DOMAIN_DR,
+    VAR__TYPE__GLUSTER_WEBHOOK,
 
     // External Event
     VAR__TYPE__EXTERNAL_EVENT,

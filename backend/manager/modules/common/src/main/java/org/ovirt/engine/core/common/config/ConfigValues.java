@@ -1556,6 +1556,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     DefaultRouteReportedByVdsm(),
 
+    @TypeConverterAttribute(Boolean.class)
+    GlusterEventingSupported,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

@@ -839,6 +839,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__TYPE__GLUSTER_SERVICE();
 
+    String VAR__TYPE__GLUSTER_WEBHOOK();
+
     String VAR__TYPE__STORAGE_DEVICE();
 
     String VAR__TYPE__STORAGE_DOMAIN_DR();
