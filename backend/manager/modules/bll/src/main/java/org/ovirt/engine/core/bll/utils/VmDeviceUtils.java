@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.utils;
 
+import static java.lang.String.format;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -625,16 +628,16 @@ public class VmDeviceUtils {
      */
 
     /**
-     * Add given number of USB controllers to the VM.
+     * Add given number of sets of USB controllers suitable for SPICE USB redirection to the VM.
      */
-    public void addUsbControllers(Guid vmId, int numberOfControllers) {
+    public void addSpiceUsbControllers(Guid vmId, int numberOfControllers) {
         // For each controller we need to create one EHCI and companion UHCI controllers
         for (int index = 0; index < numberOfControllers; index++) {
             addManagedDevice(
                     new VmDeviceId(Guid.newGuid(), vmId),
                     VmDeviceGeneralType.CONTROLLER,
                     VmDeviceType.USB,
-                    getUsbControllerSpecParams(EHCI_MODEL, 1, index),
+                    getSpiceUsbControllerSpecParams(EHCI_MODEL, 1, index),
                     true,
                     false);
             for (int companionIndex = 1; companionIndex <= COMPANION_USB_CONTROLLERS; companionIndex++) {
@@ -642,19 +645,23 @@ public class VmDeviceUtils {
                         new VmDeviceId(Guid.newGuid(), vmId),
                         VmDeviceGeneralType.CONTROLLER,
                         VmDeviceType.USB,
-                        getUsbControllerSpecParams(UHCI_MODEL, companionIndex, index),
+                        getSpiceUsbControllerSpecParams(UHCI_MODEL, companionIndex, index),
                         true,
                         false);
             }
         }
     }
+    private Map<String, Object> getSpiceUsbControllerSpecParams(String model, int controllerNumber, int index) {
+        return createUsbControllerSpecParams(model + controllerNumber, index);
+    }
+
 
     /**
      * Returns USB controller spec params.
      */
-    private Map<String, Object> getUsbControllerSpecParams(String model, int controllerNumber, int index) {
-        Map<String, Object> specParams = new HashMap<>();
-        specParams.put(VdsProperties.Model, model + controllerNumber);
+    private Map<String, Object> createUsbControllerSpecParams(String model, int index) {
+        final HashMap<String, Object> specParams = new HashMap<>();
+        specParams.put(VdsProperties.Model, model);
         specParams.put(VdsProperties.Index, Integer.toString(index));
         return specParams;
     }
@@ -681,47 +688,121 @@ public class VmDeviceUtils {
      */
 
     /**
-     * Update USB slots in the new VM, if USB policy of the new VM differs from one of the old VM.
+     * Update USB slots and controllers in the new VM, if USB policy of the new VM differs from one of the old VM.
      */
     private void updateUsbSlots(VmBase oldVm, VmBase newVm) {
         UsbPolicy oldUsbPolicy = UsbPolicy.DISABLED;
         UsbPolicy newUsbPolicy = newVm.getUsbPolicy();
-        int currentNumberOfSlots = 0;
+        int oldNumberOfSlots = 0;
 
         if (oldVm != null) {
             oldUsbPolicy = oldVm.getUsbPolicy();
-            currentNumberOfSlots = getUsbSlots(oldVm.getId()).size();
+            oldNumberOfSlots = getUsbSlots(oldVm.getId()).size();
         }
 
-        final int usbSlots = Config.<Integer> getValue(ConfigValues.NumberOfUSBSlots);
+        final int newNumberOfUsbSlots = Config.<Integer> getValue(ConfigValues.NumberOfUSBSlots);
 
-        // We add USB slots if they are disabled in oldVm configuration, but enabled in newVm
-        if (!oldUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE) && newUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE)) {
-            if (usbSlots > 0) {
-                removeUsbControllers(newVm.getId());
-                addUsbControllers(newVm.getId(), getNeededNumberOfUsbControllers(usbSlots));
-                addUsbSlots(newVm.getId(), usbSlots);
-            }
-        // Remove USB slots and controllers if the policy is to disable
-        } else if (newUsbPolicy.equals(UsbPolicy.DISABLED)) {
-            removeUsbControllers(newVm.getId());
-            removeUsbSlots(newVm.getId());
-        // If the USB policy is to enable (and was enabled before), we need to update the number of slots
-        } else if (newUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE)) {
-            if (currentNumberOfSlots < usbSlots) {
-                // Add slots and controllers
-                if (currentNumberOfSlots == 0) {
-                    addUsbControllers(newVm.getId(), getNeededNumberOfUsbControllers(usbSlots));
-                }
-                addUsbSlots(newVm.getId(), usbSlots - currentNumberOfSlots);
-            } else if (currentNumberOfSlots > usbSlots) {
-                // Remove slots and controllers
-                removeUsbSlots(newVm.getId(), currentNumberOfSlots - usbSlots);
-                if (usbSlots == 0) {
-                    removeUsbControllers(newVm.getId());
-                }
-            }
+        if (UsbPolicy.DISABLED == oldUsbPolicy && UsbPolicy.ENABLED_NATIVE == newUsbPolicy) {
+            disableNormalUsb(newVm.getId());
+            enableSpiceUsb(newVm.getId(), newNumberOfUsbSlots);
+            return;
         }
+        if (UsbPolicy.ENABLED_NATIVE == oldUsbPolicy && UsbPolicy.ENABLED_NATIVE == newUsbPolicy) {
+            updateSpiceUsb(newVm.getId(), oldNumberOfSlots, newNumberOfUsbSlots);
+            return;
+        }
+        if (UsbPolicy.ENABLED_NATIVE == oldUsbPolicy && UsbPolicy.DISABLED == newUsbPolicy) {
+            disableSpiceUsb(newVm.getId());
+            enableNormalUsb(newVm);
+            return;
+        }
+        if (UsbPolicy.DISABLED == oldUsbPolicy && UsbPolicy.DISABLED == newUsbPolicy) {
+            updateNormalUsb(newVm);
+            return;
+        }
+        throw new RuntimeException(
+                format("Unexpected state: oldUsbPolicy=%s, newUsbPolicy=%s", oldUsbPolicy, newUsbPolicy));
+    }
+
+    private void disableNormalUsb(Guid vmId) {
+        removeUsbControllers(vmId);
+    }
+
+    private void enableSpiceUsb(Guid vmId, int newNumberOfUsbSlots) {
+        if (newNumberOfUsbSlots > 0) {
+            addSpiceUsbControllers(vmId, getNeededNumberOfUsbControllers(newNumberOfUsbSlots));
+            addUsbSlots(vmId, newNumberOfUsbSlots);
+        }
+    }
+
+    private void updateSpiceUsb(Guid vmId, int oldNumberOfSlots, int newNumberOfUsbSlots) {
+        if (oldNumberOfSlots > newNumberOfUsbSlots) {
+            // Remove slots and controllers
+            removeUsbSlots(vmId, oldNumberOfSlots - newNumberOfUsbSlots);
+            if (newNumberOfUsbSlots == 0) {
+                removeUsbControllers(vmId);
+            }
+            return;
+        }
+        if (oldNumberOfSlots < newNumberOfUsbSlots) {
+            // Add slots and controllers
+            if (oldNumberOfSlots == 0) {
+                addSpiceUsbControllers(vmId, getNeededNumberOfUsbControllers(newNumberOfUsbSlots));
+            }
+            addUsbSlots(vmId, newNumberOfUsbSlots - oldNumberOfSlots);
+            return;
+        }
+    }
+
+    private void disableSpiceUsb(Guid vmId) {
+        removeUsbControllers(vmId);
+        removeUsbSlots(vmId);
+    }
+
+    private void enableNormalUsb(VmBase vmBase) {
+        final UsbControllerModel controllerModel = getUsbControllerModel(vmBase);
+        if (controllerModel == null) {
+            return;
+        }
+        addManagedDevice(
+                new VmDeviceId(Guid.newGuid(), vmBase.getId()),
+                VmDeviceGeneralType.CONTROLLER,
+                VmDeviceType.USB,
+                createUsbControllerSpecParams(controllerModel.libvirtName, 0),
+                true,
+                false);
+    }
+
+    private void updateNormalUsb(VmBase vmBase) {
+        final List<VmDevice> usbControllers = getUsbControllers(vmBase.getId());
+        if (usbControllers.size() > 1) {
+            throw new IllegalStateException(format("At most one USB controller expected for VM=%s(%s), found=%s",
+                    vmBase.getName(),
+                    vmBase.getId(),
+                    usbControllers));
+        }
+        final UsbControllerModel newUsbControllerModel = getUsbControllerModel(vmBase);
+        if ((usbControllers.isEmpty() && newUsbControllerModel == null)
+            || (!usbControllers.isEmpty()
+                && newUsbControllerModel != null
+                && newUsbControllerModel.libvirtName.equals(
+                        getUsbControllerModelName(usbControllers.get(0))))) {
+            return;
+        }
+        disableNormalUsb(vmBase.getId());
+        enableNormalUsb(vmBase);
+    }
+
+    /**
+     * @return usb controller model defined as defined in osinfo file for VM's OS and effective compatibility version
+     */
+    private UsbControllerModel getUsbControllerModel(VmBase vmBase) {
+        final VM vm = vmDao.get(vmBase.getId());
+        return osRepository.getOsUsbControllerModel(vmBase.getOsId(), vm.getCompatibilityVersion());
+    }
+
+    private String getUsbControllerModelName(VmDevice usbControllerDevice) {
+        return (String) usbControllerDevice.getSpecParams().get(VdsProperties.Model);
     }
 
     /**
