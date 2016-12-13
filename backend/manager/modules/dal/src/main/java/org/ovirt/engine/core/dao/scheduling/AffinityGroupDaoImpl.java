@@ -83,9 +83,11 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
                 .addValue("name", entity.getName())
                 .addValue("description", entity.getDescription())
                 .addValue("cluster_id", entity.getClusterId())
-                .addValue("vm_positive", entity.getVmPolarityBooleanObject())
+                .addValue("vm_positive",
+                        entity.isVmAffinityEnabled() ? entity.isVmPositive() : false)
                 .addValue("vm_enforcing", entity.isVmEnforcing())
-                .addValue("vds_positive", entity.getVdsPolarityBooleanObject())
+                .addValue("vds_positive",
+                        entity.isVdsAffinityEnabled() ? entity.isVdsPositive() : false)
                 .addValue("vds_enforcing", entity.isVdsEnforcing())
                 .addValue("vms_affinity_enabled", entity.isVmAffinityEnabled())
                 .addValue("vm_ids", createArrayOf("uuid", entity.getVmIds().toArray()))

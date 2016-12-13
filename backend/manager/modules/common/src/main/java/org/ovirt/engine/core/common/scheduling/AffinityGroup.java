@@ -179,6 +179,10 @@ public class AffinityGroup implements BusinessEntity<Guid>, IVdcQueryable, Namea
         return vmAffinityRule != EntityAffinityRule.DISABLED;
     }
 
+    public boolean isVdsAffinityEnabled() {
+        return vdsAffinityRule != EntityAffinityRule.DISABLED;
+    }
+
     public boolean isVdsPositive() {
         return vdsAffinityRule == EntityAffinityRule.POSITIVE;
     }
