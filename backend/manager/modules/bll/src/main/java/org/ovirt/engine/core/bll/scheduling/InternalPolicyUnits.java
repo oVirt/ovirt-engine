@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
-
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.policyunits.BasicWeightSelectorPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
@@ -92,7 +90,6 @@ public class InternalPolicyUnits {
         return Collections.unmodifiableSet(enabledUnits);
     }
 
-    @NotNull
     public static PolicyUnitImpl instantiate(Class<? extends PolicyUnitImpl> unitType, PendingResourceManager pendingResourceManager)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         // This check is only performed once during the static initializer run

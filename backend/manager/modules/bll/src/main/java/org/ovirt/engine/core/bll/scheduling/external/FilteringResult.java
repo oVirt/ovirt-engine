@@ -3,8 +3,6 @@ package org.ovirt.engine.core.bll.scheduling.external;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
 import org.ovirt.engine.core.compat.Guid;
 
 public class FilteringResult extends SchedulerResult {
@@ -14,7 +12,6 @@ public class FilteringResult extends SchedulerResult {
         possibleHosts.add(host);
     }
 
-    @NotNull
     public List<Guid> getHosts(){
         return possibleHosts;
     }

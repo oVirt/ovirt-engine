@@ -10,7 +10,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
@@ -68,7 +67,7 @@ public class LabelFilterPolicyUnit extends PolicyUnitImpl {
         final Map<Guid, Set<Guid>> objectToTags;
         final VM vm;
 
-        public TagMatcher(@NotNull Map<Guid, Set<Guid>> objectToTags, @NotNull VM vm) {
+        public TagMatcher(Map<Guid, Set<Guid>> objectToTags, VM vm) {
             this.objectToTags = objectToTags;
             this.vm = vm;
         }

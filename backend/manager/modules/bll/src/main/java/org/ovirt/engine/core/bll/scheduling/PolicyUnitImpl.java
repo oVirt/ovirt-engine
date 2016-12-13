@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -67,21 +66,18 @@ public abstract class PolicyUnitImpl {
         this.pendingResourceManager = pendingResourceManager;
     }
 
-    @NotNull
-    public List<VDS> filter(@NotNull Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
+    public List<VDS> filter(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         log.error("Policy unit '{}' filter is not implemented", getPolicyUnit().getName());
         return hosts;
     }
 
-    @NotNull
-    public List<Pair<Guid, Integer>> score(@NotNull  Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
+    public List<Pair<Guid, Integer>> score( Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
         log.error("Policy unit '{}' function is not implemented", getPolicyUnit().getName());
 
         return hosts.stream().map(host -> new Pair<>(host.getId(), 1)).collect(Collectors.toList());
     }
 
-    @NotNull
-    public Optional<BalanceResult> balance(@NotNull Cluster cluster,
+    public Optional<BalanceResult> balance(Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {

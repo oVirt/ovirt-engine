@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -102,7 +101,6 @@ public class ExternalSchedulerDiscovery {
         markExternalPoliciesAsDisabled(policyUnitDao.getAll());
     }
 
-    @NotNull
     private PolicyUnit compareToDB(List<PolicyUnit> dbEntries,
                                    ExternalSchedulerDiscoveryUnit discoveryUnit,
                                    PolicyUnitType type) {
@@ -134,7 +132,6 @@ public class ExternalSchedulerDiscovery {
         return sendToDb(discoveryUnit, null, type);
     }
 
-    @NotNull
     private PolicyUnit sendToDb(ExternalSchedulerDiscoveryUnit discovery,
             /* Nullable */PolicyUnit policyUnit, PolicyUnitType type) {
         PolicyUnit policy = createFromDiscoveryUnit(discovery, type);

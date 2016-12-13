@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.validation.constraints.NotNull;
-
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -53,7 +51,6 @@ public class BasicWeightSelectorPolicyUnit extends PolicyUnitImpl {
         }
 
         @Override
-        @NotNull
         public Optional<Guid> best() {
             Optional<Guid> bestHostEntry = weightTable.entrySet().stream()
                     .min((a, b) -> Integer.compare(a.getValue(), b.getValue()))

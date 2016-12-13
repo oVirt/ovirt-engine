@@ -3,8 +3,6 @@ package org.ovirt.engine.core.dao.scheduling;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.constraints.NotNull;
-
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,7 +19,7 @@ public interface ClusterPolicyDao extends ModificationDao<ClusterPolicy, Guid> {
      * @return The entity instance, or {@code null} if not found.
      */
     ClusterPolicy get(Guid id,
-            @NotNull Map<Guid, PolicyUnitType> internalUnitTypes);
+            Map<Guid, PolicyUnitType> internalUnitTypes);
 
     /**
      * Retrieves all the entities of type {@link ClusterPolicy}.
@@ -31,5 +29,5 @@ public interface ClusterPolicyDao extends ModificationDao<ClusterPolicy, Guid> {
      *
      * @return A list of all the entities, or an empty list if none is found.
      */
-    List<ClusterPolicy> getAll(@NotNull Map<Guid, PolicyUnitType> internalUnitTypes);
+    List<ClusterPolicy> getAll(Map<Guid, PolicyUnitType> internalUnitTypes);
 }
