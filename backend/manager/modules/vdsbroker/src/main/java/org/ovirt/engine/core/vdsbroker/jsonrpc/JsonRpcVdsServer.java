@@ -2136,6 +2136,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturn(response);
     }
 
+    @Override
     public StatusOnlyReturn registerSecrets(Map<String, String>[] libvirtSecrets, boolean clearUnusedSecrets) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.registerSecrets").withParameter("secrets", libvirtSecrets)
@@ -2302,7 +2303,6 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new DomainXmlListReturn(response);
     }
 
-
     @Override
     public StatusOnlyReturn hotplugLease(Guid vmId, Guid storageDomainId) {
         JsonRpcRequest request =
@@ -2314,11 +2314,29 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturn glusterWebhookAdd(String url, String bearerToken) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterEvent.webhookAdd")
+                .withParameter("url", url)
+                .withParameter("bearerToken", bearerToken)
+                .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
     public StatusOnlyReturn hotunplugLease(Guid vmId, Guid storageDomainId) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.hotunplugLease").withParameter("vmID", vmId.toString())
                         .withParameter("lease", createLeaseDict(vmId, storageDomainId))
                         .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    public StatusOnlyReturn glusterWebhookSync() {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterEvent.webhookSync").build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
     }
@@ -2341,4 +2359,26 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request);
         return new LldpReturn(response);
     }
+
+    @Override
+    public StatusOnlyReturn glusterWebhookDelete(String url) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterEvent.webhookDelete")
+                .withParameter("url", url)
+                .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
+    public StatusOnlyReturn glusterWebhookUpdate(String url, String bearerToken) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterEvent.webhookUpdate")
+                .withParameter("url", url)
+                .withParameter("bearerToken", bearerToken)
+                .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
 }

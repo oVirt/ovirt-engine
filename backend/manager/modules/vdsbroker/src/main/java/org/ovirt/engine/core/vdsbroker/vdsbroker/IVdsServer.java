@@ -459,6 +459,14 @@ public interface IVdsServer {
 
     StorageDeviceListReturn glusterStorageDeviceList();
 
+    StatusOnlyReturn glusterWebhookAdd(String url, String bearerToken);
+
+    StatusOnlyReturn glusterWebhookSync();
+
+    StatusOnlyReturn glusterWebhookDelete(String url);
+
+    StatusOnlyReturn glusterWebhookUpdate(String url, String bearerToken);
+
     StatusOnlyReturn hostdevChangeNumvfs(String deviceName, int numOfVfs);
 
     StatusOnlyReturn convertVmFromExternalSystem(String url, String user, String password, Map<String, Object> vm, String jobUUID);

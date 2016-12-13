@@ -873,6 +873,16 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String GlusterHostFailedToRunRestorecon();
 
+    String GlusterEventException();
+
+    String GlusterWebhookAddException();
+
+    String GlusterWebhookUpdateException();
+
+    String GlusterWebhookSyncException();
+
+    String GlusterWebhookDeleteException();
+
     String CINDER_ERROR();
 
     String V2V_JOB_DOESNT_EXIST();
