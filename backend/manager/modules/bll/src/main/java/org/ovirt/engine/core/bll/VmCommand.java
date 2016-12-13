@@ -438,9 +438,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     private String cdPathWindowsToLinux(String windowsPath, String isoPrefix) {
-        if (StringUtils.isEmpty(windowsPath)) {
-            return windowsPath; // empty string is used for 'eject'.
-        }
         String fileName = new File(windowsPath).getName();
         return String.format("%1$s/%2$s", isoPrefix, fileName);
     }
