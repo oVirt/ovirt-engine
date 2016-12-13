@@ -10,7 +10,6 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -138,8 +137,7 @@ public class RunVmCommandTest extends BaseCommandTest {
      *            - Valid Iso patch or blank (when the Iso is not active.
      */
     private void setIsoPrefixVDSMethod(final String isoPrefix) {
-        doAnswer(invocation -> command.cdPathWindowsToLinux(invocation.getArguments()[0].toString(), isoPrefix))
-                .when(command).cdPathWindowsToLinux(anyString());
+        doReturn(isoPrefix).when(command).getIsoPrefix(any(Guid.class), any(Guid.class));
     }
 
     @Test

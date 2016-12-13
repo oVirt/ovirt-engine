@@ -437,7 +437,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return cdPathWindowsToLinux(windowsPath, getIsoPrefix(storagePoolId, vdsId));
     }
 
-    protected String cdPathWindowsToLinux(String windowsPath, String isoPrefix) {
+    private String cdPathWindowsToLinux(String windowsPath, String isoPrefix) {
         if (StringUtils.isEmpty(windowsPath)) {
             return windowsPath; // empty string is used for 'eject'.
         }
