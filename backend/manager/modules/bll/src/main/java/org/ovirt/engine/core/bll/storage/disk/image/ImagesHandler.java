@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,7 +52,6 @@ import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -423,24 +421,6 @@ public final class ImagesHandler {
                 .getImageStorageDomainMapDao()
                 .save(imageStorageDomainMap);
         return imageStorageDomainMap;
-    }
-
-    public static String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId, Guid vdsId) {
-        if (StringUtils.isEmpty(windowsPath)) {
-            return ""; // empty string is used for 'eject'
-        }
-        return cdPathWindowsToLinux(windowsPath, (String) Backend.getInstance()
-                .getResourceManager()
-                .runVdsCommand(VDSCommandType.IsoPrefix, new VdsAndPoolIDVDSParametersBase(vdsId, storagePoolId))
-                .getReturnValue());
-    }
-
-    public static String cdPathWindowsToLinux(String windowsPath, String isoPrefix) {
-        if (StringUtils.isEmpty(windowsPath)) {
-            return windowsPath; // empty string is used for 'eject'.
-        }
-        String fileName = new File(windowsPath).getName();
-        return String.format("%1$s/%2$s", isoPrefix, fileName);
     }
 
     public static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId) {

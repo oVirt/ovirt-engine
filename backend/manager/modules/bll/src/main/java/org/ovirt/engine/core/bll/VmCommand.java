@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -8,6 +9,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
@@ -38,6 +40,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.GuidUtils;
 
@@ -423,5 +427,22 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
 
         return true;
+    }
+
+    protected String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId, Guid vdsId) {
+        if (StringUtils.isEmpty(windowsPath)) {
+            return ""; // empty string is used for 'eject'
+        }
+        return cdPathWindowsToLinux(windowsPath, (String) runVdsCommand
+                (VDSCommandType.IsoPrefix, new VdsAndPoolIDVDSParametersBase(vdsId, storagePoolId))
+                .getReturnValue());
+    }
+
+    protected String cdPathWindowsToLinux(String windowsPath, String isoPrefix) {
+        if (StringUtils.isEmpty(windowsPath)) {
+            return windowsPath; // empty string is used for 'eject'.
+        }
+        String fileName = new File(windowsPath).getName();
+        return String.format("%1$s/%2$s", isoPrefix, fileName);
     }
 }

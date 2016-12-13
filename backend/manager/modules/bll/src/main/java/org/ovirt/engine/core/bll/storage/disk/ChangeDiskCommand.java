@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmOperationCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
@@ -92,7 +91,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
             iface = getVmDeviceUtils().getCdInterface(getVm());
             index = VmDeviceCommonUtils.getCdDeviceIndex(iface);
         }
-        cdImagePath = ImagesHandler.cdPathWindowsToLinux(
+        cdImagePath = cdPathWindowsToLinux(
                 getParameters().getCdImagePath(),
                 getVm().getStoragePoolId(),
                 getVm().getRunOnVds());
