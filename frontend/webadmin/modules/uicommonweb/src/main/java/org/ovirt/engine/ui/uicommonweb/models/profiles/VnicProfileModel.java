@@ -164,8 +164,8 @@ public abstract class VnicProfileModel extends Model {
         setNetworkQoS(new ListModel<NetworkQoS>());
         setNetworkFilter(new ListModel<NetworkFilter>());
         setPortMirroring(new EntityModel<Boolean>());
-        setPassthrough(new EntityModel<Boolean>(false));
-        setMigratable(new EntityModel<Boolean>(false));
+        setPassthrough(new EntityModel<Boolean>());
+        setMigratable(new EntityModel<Boolean>());
         setCustomPropertySheet(new KeyValueModel());
         EntityModel<Boolean> publicUse = new EntityModel<>();
         publicUse.setEntity(true);
@@ -189,6 +189,10 @@ public abstract class VnicProfileModel extends Model {
 
 
         initPassthroughChangeListener();
+
+        getPassthrough().setEntity(false);
+        getMigratable().setEntity(false);
+
         initCustomPropertySheet(dcCompatibilityVersion);
         initNetworkQoSList(dcId);
         initNetworkFilterList(dcCompatibilityVersion);
