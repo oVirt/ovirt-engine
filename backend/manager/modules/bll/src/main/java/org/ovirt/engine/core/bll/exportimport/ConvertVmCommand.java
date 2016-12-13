@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConvertVmVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -197,12 +196,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
 
     protected String getVirtioIsoPath() {
         return getParameters().getVirtioIsoName() == null ? null :
-            new File(getIsoPrefix(), getParameters().getVirtioIsoName()).getPath();
-    }
-
-    private String getIsoPrefix() {
-        return (String) runVdsCommand(VDSCommandType.IsoPrefix,
-                new VdsAndPoolIDVDSParametersBase(getVdsId(), getStoragePoolId())).getReturnValue();
+            new File(getIsoPrefix(getStoragePoolId(), getVdsId()), getParameters().getVirtioIsoName()).getPath();
     }
 
     ////////////////////

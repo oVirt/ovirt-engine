@@ -434,9 +434,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         if (StringUtils.isEmpty(windowsPath)) {
             return ""; // empty string is used for 'eject'
         }
-        return cdPathWindowsToLinux(windowsPath, (String) runVdsCommand
-                (VDSCommandType.IsoPrefix, new VdsAndPoolIDVDSParametersBase(vdsId, storagePoolId))
-                .getReturnValue());
+        return cdPathWindowsToLinux(windowsPath, getIsoPrefix(storagePoolId, vdsId));
     }
 
     protected String cdPathWindowsToLinux(String windowsPath, String isoPrefix) {
@@ -475,4 +473,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 ).getSucceeded();
     }
 
+    protected String getIsoPrefix(Guid storagePoolId, Guid vdsId) {
+        return (String) runVdsCommand(VDSCommandType.IsoPrefix,
+                new VdsAndPoolIDVDSParametersBase(vdsId, storagePoolId)).getReturnValue();
+    }
 }
