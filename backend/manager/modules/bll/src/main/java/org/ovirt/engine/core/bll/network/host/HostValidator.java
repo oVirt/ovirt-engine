@@ -2,14 +2,23 @@ package org.ovirt.engine.core.bll.network.host;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HostValidator {
+
+    private static final Logger logger = LoggerFactory.getLogger(HostValidator.class);
+    private static final List<VDSStatus> LEGAL_STATUSES =
+            Arrays.asList(VDSStatus.Maintenance, VDSStatus.Up, VDSStatus.NonOperational);
+    private static final String LEGAL_STATUSES_STR =
+            LEGAL_STATUSES.stream().map(VDSStatus::name).collect(Collectors.joining(", "));
 
     public static final String VAR_HOST_STATUS = "hostStatus";
     private final VDS host;
@@ -20,7 +29,6 @@ public class HostValidator {
         this.internalExecution = internalExecution;
     }
 
-
     private ValidationResult hostExist() {
         if (host == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
@@ -30,15 +38,19 @@ public class HostValidator {
     }
 
     private ValidationResult hostStatusLegalForSetupNetworks() {
-        List<VDSStatus> supportedStatuses =
-                Arrays.asList(VDSStatus.Maintenance, VDSStatus.Up, VDSStatus.NonOperational);
 
-        boolean hostStatusLegalForSetupNetworks = supportedStatuses.contains(host.getStatus())
-                || host.getStatus() == VDSStatus.Installing && internalExecution;
+        VDSStatus hostStatus = host.getStatus();
+        boolean hostStatusLegalForSetupNetworks = LEGAL_STATUSES.contains(hostStatus)
+                || hostStatus == VDSStatus.Installing && internalExecution;
 
         if (!hostStatusLegalForSetupNetworks) {
+            logger.error(
+                    "Unable to setup network: operation can only be done when Host status is one of: {};" +
+                            " current status is {}",
+                    LEGAL_STATUSES_STR,
+                    hostStatus);
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
-                ReplacementUtils.replaceWith(VAR_HOST_STATUS, supportedStatuses, ",", supportedStatuses.size()));
+                    ReplacementUtils.replaceWith(VAR_HOST_STATUS, LEGAL_STATUSES, ",", LEGAL_STATUSES.size()));
         }
 
         return ValidationResult.VALID;
