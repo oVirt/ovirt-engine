@@ -50,6 +50,8 @@ public interface IVdsServer {
 
     StatusOnlyReturn allocateVolume(String spUUID, String sdUUID, String imgGUID, String volUUID, String size);
 
+    StatusOnlyReturn moveDomainDevice(String jobId, Map<String, Object> moveParams);
+
     StatusOnlyReturn destroy(String vmId);
 
     StatusOnlyReturn shutdown(String vmId, String timeout, String message);

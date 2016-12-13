@@ -118,6 +118,7 @@ public enum VDSCommandType {
     MarkPoolInReconstructMode("org.ovirt.engine.core.vdsbroker.irsbroker"),
     ExtendStorageDomain("org.ovirt.engine.core.vdsbroker.irsbroker"),
     ResizeStorageDomainPV("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    MoveStorageDomainDevice("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HotPlugDisk("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HotUnPlugDisk("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HotPlugNic("org.ovirt.engine.core.vdsbroker.vdsbroker"),
