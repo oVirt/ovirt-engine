@@ -213,8 +213,8 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
 
     private boolean validateName(final ImportVmData data) {
         final int maxNameLength = getMaxNameLength();
-        EntityModel<String> tmp = new EntityModel<>(data.getVm().getName());
-        tmp.validateEntity(
+        EntityModel<String> vmName = new EntityModel<>(data.getVm().getName());
+        vmName.validateEntity(
                 new IValidation[] {
                         new NotEmptyValidation(),
                         new LengthValidation(maxNameLength),
@@ -230,14 +230,14 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                         }
                 });
 
-        data.setError(tmp.getIsValid() ? null : ConstantsManager.getInstance().getConstants().invalidName());
+        data.setError(vmName.getIsValid() ? null : ConstantsManager.getInstance().getConstants().invalidName());
 
         // Updating the 'name' model in general sub-tab
         VmImportGeneralModel model = (VmImportGeneralModel) getDetailModels().get(0);
-        model.getName().setInvalidityReasons(tmp.getInvalidityReasons());
-        model.getName().setIsValid(tmp.getIsValid());
+        model.getName().setInvalidityReasons(vmName.getInvalidityReasons());
+        model.getName().setIsValid(vmName.getIsValid());
 
-        return tmp.getIsValid();
+        return vmName.getIsValid();
     }
 
     private class UniqueNameValidator implements IValidation {
