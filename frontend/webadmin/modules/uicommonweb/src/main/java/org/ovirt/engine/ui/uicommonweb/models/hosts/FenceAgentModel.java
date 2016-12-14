@@ -370,11 +370,15 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
             @Override
             protected void validateKeyValuePair(String key, String value, ValidationResult result) {
                 super.validateKeyValuePair(key, value, result);
-                IntegerValidation intValidation = new IntegerValidation();
-                ValidationResult intResult = intValidation.validate(value);
-                if (!intResult.getSuccess()) {
-                    result.getReasons().addAll(intResult.getReasons());
-                    result.setSuccess(false);
+                // Validate that port is an integer, this is the only field right now that has to be an
+                // integer.
+                if (PM_PORT_KEY.equals(key)) {
+                    IntegerValidation intValidation = new IntegerValidation();
+                    ValidationResult intResult = intValidation.validate(value);
+                    if (!intResult.getSuccess()) {
+                        result.getReasons().addAll(intResult.getReasons());
+                        result.setSuccess(false);
+                    }
                 }
             }
         }});
