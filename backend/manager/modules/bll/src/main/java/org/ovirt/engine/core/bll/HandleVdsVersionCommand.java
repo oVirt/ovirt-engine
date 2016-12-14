@@ -102,7 +102,6 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
                 return;
             }
         }
-        return;
     }
 
     private void reportNonOperationReason(NonOperationalReason reason, String compatibleVersions,
