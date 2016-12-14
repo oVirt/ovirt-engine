@@ -104,7 +104,8 @@ public class RunVmValidator {
     public boolean canRunVm(List<String> messages, StoragePool storagePool,
             List<Guid> vdsBlackList,
             List<Guid> vdsWhiteList,
-            Cluster cluster) {
+            Cluster cluster,
+            boolean runInUnknownStatus) {
 
         if (vm.getStatus() == VMStatus.Paused) {
             // if the VM is paused, we should only check the VDS status
@@ -132,7 +133,7 @@ public class RunVmValidator {
                 validate(validateDisplayType(), messages) &&
                 validate(new VmValidator(vm).vmNotLocked(), messages) &&
                 validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) &&
-                validate(validateVmStatusUsingMatrix(vm), messages) &&
+                ((runInUnknownStatus && vm.getStatus() == VMStatus.Unknown) || validate(validateVmStatusUsingMatrix(vm), messages)) &&
                 validate(validateStoragePoolUp(vm, storagePool, getVmImageDisks()), messages) &&
                 validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath(), activeIsoDomainId), messages)  &&
                 validate(vmDuringInitialization(vm), messages) &&
