@@ -2,22 +2,45 @@ package org.ovirt.engine.core.common.businessentities.network;
 
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-
-
 
 /**
  * <code>VmNicFilterParameter</code> defines a name value pair of parameters for {@link NetworkFilter}
  * for instances of {@link VmNic}.
  */
 public class VmNicFilterParameter implements BusinessEntity<Guid>, Nameable {
+    private static final long serialVersionUID = 5957153846605776658L;
 
+    @NotNull
     private Guid id;
+
+    @NotNull
     private Guid vmInterfaceId;
+
+    /*
+     * pattern from libvirt/docs/schemas/nwfilter.rng
+     */
+    @NotNull
+    @Pattern(regexp = "[a-zA-Z0-9_]+",
+            message = "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_NAME",
+            groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
+
+    /*
+    * pattern from libvirt/docs/schemas/nwfilter.rng
+    */
+    @NotNull
+    @Pattern(regexp = "[a-zA-Z0-9_\\.:]+",
+            message = "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_VALUE",
+            groups = { CreateEntity.class, UpdateEntity.class })
     private String value;
 
     public VmNicFilterParameter() {
