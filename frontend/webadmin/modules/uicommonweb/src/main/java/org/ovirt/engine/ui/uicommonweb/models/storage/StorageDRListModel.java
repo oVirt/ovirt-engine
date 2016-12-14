@@ -187,7 +187,7 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
             }
         }), storageDomain.getId());
 
-        UICommand okCommand = UICommand.createDefaultOkUiCommand("onNewDR", this); //$NON-NLS-1$
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         model.getCommands().add(okCommand);
 
         UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
@@ -196,7 +196,7 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
     }
 
 
-    private void onNewDR() {
+    private void onSave() {
         final StorageDRModel model = (StorageDRModel) getWindow();
 
         if (!model.validate()) {
@@ -227,6 +227,46 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
                 this);
     }
 
+    private void editDR() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        final StorageDomain storageDomain = getEntity();
+        if (storageDomain == null) {
+            return;
+        }
+        final StorageDomainDR selectedDR = getSelectedItem();
+        StorageSyncSchedule schedule = new StorageSyncSchedule(selectedDR.getScheduleCronExpression());
+        final StorageDRModel model = new StorageDRModel();
+        model.setHelpTag(HelpTag.new_storage_dr);
+        model.setTitle(ConstantsManager.getInstance().getConstants().edit());
+        model.setHashName("edit_dr"); //$NON-NLS-1$
+        model.getStorageDomain().setEntity(storageDomain);
+        setWindow(model);
+        model.startProgress();
+
+        model.getFrequency().setSelectedItem(schedule.getFrequency());
+        model.getHour().setSelectedItem(schedule.getHour());
+        model.getMins().setSelectedItem(schedule.getMins());
+
+        AsyncDataProvider.getInstance().getGlusterGeoRepSessionsForStorageDomain(new AsyncQuery<>(new AsyncCallback<List<GlusterGeoRepSession>>() {
+            @Override
+            public void onSuccess(List<GlusterGeoRepSession> geoRepSessions) {
+                model.getGeoRepSession().setItems(geoRepSessions);
+                model.getGeoRepSession().setSelectedItem(Linq.firstOrNull(geoRepSessions,
+                        new Linq.IdPredicate<>(selectedDR.getGeoRepSessionId())));
+                model.stopProgress();
+            }
+        }), storageDomain.getId());
+
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
+        model.getCommands().add(okCommand);
+
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        model.getCommands().add(cancelCommand);
+    }
+
     public void postSaveAction(VdcReturnValueBase returnValue) {
         if (returnValue != null && returnValue.getSucceeded()) {
             setWindow(null);
@@ -239,8 +279,10 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
 
         if (command == getNewCommand()) {
             newDR();
-        } else if (command.getName().equalsIgnoreCase("onNewDR")) {//$NON-NLS-1$
-            onNewDR();
+        } else if (command == getEditCommand()) {
+            editDR();
+        } else if (command.getName().equalsIgnoreCase("OnSave")) {//$NON-NLS-1$
+            onSave();
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
