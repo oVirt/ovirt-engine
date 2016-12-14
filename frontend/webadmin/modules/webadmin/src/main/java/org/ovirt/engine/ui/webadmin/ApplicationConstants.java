@@ -2501,6 +2501,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String publicNetwork();
 
+    String publicNetworkTooltip();
+
     String networkProvider();
 
     String externalVms();

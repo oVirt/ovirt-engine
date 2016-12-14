@@ -170,7 +170,12 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImp
 
                     @Override
                     public SafeHtml getTooltip() {
-                        return ImportNetworksPopupView.templates.textForCheckBoxHeader(constants.publicNetwork());
+                        return ImportNetworksPopupView.templates.textForCheckBoxHeader(constants.publicNetworkTooltip());
+                    }
+
+                    @Override
+                    public String getLabel() {
+                        return constants.publicNetwork();
                     }
                 };
 
