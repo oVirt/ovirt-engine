@@ -292,7 +292,8 @@ public class VmPoolHandler implements BackendService {
                         fetchStoragePool(vm.getStoragePoolId()),
                         Collections.<Guid> emptyList(),
                         Collections.emptyList(),
-                        clusterDao.get(vm.getClusterId()));
+                        clusterDao.get(vm.getClusterId()),
+                        false);
     }
 
     private Guid findActiveISODomain(Guid storagePoolId) {

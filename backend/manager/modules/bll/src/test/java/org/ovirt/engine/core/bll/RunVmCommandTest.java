@@ -464,7 +464,8 @@ public class RunVmCommandTest extends BaseCommandTest {
                 any(StoragePool.class),
                 anyListOf(Guid.class),
                 anyListOf(Guid.class),
-                any(Cluster.class))).thenReturn(true);
+                any(Cluster.class),
+                any(boolean.class))).thenReturn(true);
         when(runVmValidator.validateNetworkInterfaces()).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;

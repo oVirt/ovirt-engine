@@ -51,6 +51,7 @@ public class RunVmParams extends VmOperationParameterBase {
     private Boolean bootMenuEnabled;
     private Boolean spiceFileTransferEnabled;
     private Boolean spiceCopyPasteEnabled;
+    private boolean runInUnknownStatus;
 
     private RunVmFlow cachedFlow;
 
@@ -288,6 +289,14 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setCachedFlow(RunVmFlow cachedFlow) {
         this.cachedFlow = cachedFlow;
+    }
+
+    public boolean isRunInUnknownStatus() {
+        return runInUnknownStatus;
+    }
+
+    public void setRunInUnknownStatus(boolean runInUnknownStatus) {
+        this.runInUnknownStatus = runInUnknownStatus;
     }
 
 }
