@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.SetHaMaintenanceParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
@@ -28,7 +27,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -333,26 +331,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         privateAssignTagsCommand = value;
     }
 
-    private UICommand privateEnableGlobalHaMaintenanceCommand;
-
-    public UICommand getEnableGlobalHaMaintenanceCommand() {
-        return privateEnableGlobalHaMaintenanceCommand;
-    }
-
-    private void setEnableGlobalHaMaintenanceCommand(UICommand value) {
-        privateEnableGlobalHaMaintenanceCommand = value;
-    }
-
-    private UICommand privateDisableGlobalHaMaintenanceCommand;
-
-    public UICommand getDisableGlobalHaMaintenanceCommand() {
-        return privateDisableGlobalHaMaintenanceCommand;
-    }
-
-    private void setDisableGlobalHaMaintenanceCommand(UICommand value) {
-        privateDisableGlobalHaMaintenanceCommand = value;
-    }
-
     UICommand editConsoleCommand;
 
     public void setEditConsoleCommand(UICommand editConsoleCommand) {
@@ -451,8 +429,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         setRetrieveIsoImagesCommand(new UICommand("RetrieveIsoImages", this)); //$NON-NLS-1$
         setChangeCdCommand(new UICommand("ChangeCD", this)); //$NON-NLS-1$
         setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
-        setEnableGlobalHaMaintenanceCommand(new UICommand("EnableGlobalHaMaintenance", this)); //$NON-NLS-1$
-        setDisableGlobalHaMaintenanceCommand(new UICommand("DisableGlobalHaMaintenance", this)); //$NON-NLS-1$
 
         setIsoImages(new ObservableCollection<ChangeCDModel>());
         ChangeCDModel tempVar = new ChangeCDModel();
@@ -1665,19 +1641,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 }, model);
     }
 
-    private void setGlobalHaMaintenance(boolean enabled) {
-        VM vm = getSelectedItem();
-        if (vm == null) {
-            return;
-        }
-        if (!vm.isHostedEngine()) {
-            return;
-        }
-
-        SetHaMaintenanceParameters params = new SetHaMaintenanceParameters(vm.getRunOnVds(), HaMaintenanceMode.GLOBAL, enabled);
-        Frontend.getInstance().runAction(VdcActionType.SetHaMaintenance, params);
-    }
-
     private void preSave() {
         final UnitVmModel model = (UnitVmModel) getWindow();
 
@@ -2008,8 +1971,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ChangeDisk));
         getAssignTagsCommand().setIsExecutionAllowed(vmsSelected);
 
-        updateHaMaintenanceAvailability(items);
-
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null || singleVmSelected);
 
         getConsoleConnectCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
@@ -2048,25 +2009,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
 
         return false;
-    }
-
-    private void updateHaMaintenanceAvailability(List items) {
-        if (items == null || items.size() != 1) {
-            setHaMaintenanceAvailability(false);
-            return;
-        }
-
-        VM vm = getSelectedItem();
-        if (vm == null || !vm.isHostedEngine()) {
-            setHaMaintenanceAvailability(false);
-        } else {
-            setHaMaintenanceAvailability(true);
-        }
-    }
-
-    private void setHaMaintenanceAvailability(boolean isAvailable) {
-        getEnableGlobalHaMaintenanceCommand().setIsExecutionAllowed(isAvailable);
-        getDisableGlobalHaMaintenanceCommand().setIsExecutionAllowed(isAvailable);
     }
 
     /**
@@ -2146,12 +2088,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
         else if (command == getChangeCdCommand()) {
             changeCD();
-        }
-        else if (command == getEnableGlobalHaMaintenanceCommand()) {
-            setGlobalHaMaintenance(true);
-        }
-        else if (command == getDisableGlobalHaMaintenanceCommand()) {
-            setGlobalHaMaintenance(false);
         }
         else if (command == getAssignTagsCommand()) {
             assignTags();

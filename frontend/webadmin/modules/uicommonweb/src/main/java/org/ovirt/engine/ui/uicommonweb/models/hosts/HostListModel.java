@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
+import org.ovirt.engine.core.common.action.SetHaMaintenanceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -325,6 +327,26 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         this.numaSupportCommand = numaSupportCommand;
     }
 
+    private UICommand privateEnableGlobalHaMaintenanceCommand;
+
+    public UICommand getEnableGlobalHaMaintenanceCommand() {
+        return privateEnableGlobalHaMaintenanceCommand;
+    }
+
+    private void setEnableGlobalHaMaintenanceCommand(UICommand value) {
+        privateEnableGlobalHaMaintenanceCommand = value;
+    }
+
+    private UICommand privateDisableGlobalHaMaintenanceCommand;
+
+    public UICommand getDisableGlobalHaMaintenanceCommand() {
+        return privateDisableGlobalHaMaintenanceCommand;
+    }
+
+    private void setDisableGlobalHaMaintenanceCommand(UICommand value) {
+        privateDisableGlobalHaMaintenanceCommand = value;
+    }
+
     private final HostEventListModel privateHostEventListModel;
 
     private HostEventListModel getHostEventListModel() {
@@ -435,6 +457,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         setNumaSupportCommand(new UICommand("NumaSupport", this)); //$NON-NLS-1$
         getConfigureLocalStorageCommand().setAvailableInModes(ApplicationMode.VirtOnly);
         getSelectAsSpmCommand().setAvailableInModes(ApplicationMode.VirtOnly);
+        setEnableGlobalHaMaintenanceCommand(new UICommand("EnableGlobalHaMaintenance", this)); //$NON-NLS-1$
+        setDisableGlobalHaMaintenanceCommand(new UICommand("DisableGlobalHaMaintenance", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -1677,6 +1701,28 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         Frontend.getInstance().runAction(VdcActionType.HostEnrollCertificate, new VdsActionParameters(host.getId()));
     }
 
+    private void updateHaMaintenanceAvailability() {
+        VDS vds = getSelectedItem();
+        boolean singleVdsSelected = singleHostSelected(getSelectedItems());
+        boolean haConfigured = vds != null && vds.getHighlyAvailableIsConfigured();
+        boolean inGlobalMaintenance = vds != null && vds.getHighlyAvailableGlobalMaintenance();
+
+        getEnableGlobalHaMaintenanceCommand().setIsExecutionAllowed(!inGlobalMaintenance
+                && haConfigured && singleVdsSelected);
+        getDisableGlobalHaMaintenanceCommand().setIsExecutionAllowed(inGlobalMaintenance
+                && haConfigured && singleVdsSelected);
+    }
+
+    private void setGlobalHaMaintenance(boolean enabled) {
+        VDS vds = getSelectedItem();
+        if (vds == null || !vds.getHighlyAvailableIsConfigured()) {
+            return;
+        }
+
+        SetHaMaintenanceParameters params = new SetHaMaintenanceParameters(vds.getId(), HaMaintenanceMode.GLOBAL, enabled);
+        Frontend.getInstance().runAction(VdcActionType.SetHaMaintenance, params);
+    }
+
     @Override
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
@@ -1870,6 +1916,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
         getNumaSupportCommand().setIsVisible(numaVisible);
 
+        updateHaMaintenanceAvailability();
     }
 
     private boolean canCheckForHostUpgrade(VDS host) {
@@ -1882,7 +1929,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     private boolean singleHostSelected(List<VDS> items) {
-        return items.size() == 1 && items.get(0) instanceof VDS;
+        return items != null && items.size() == 1 && items.get(0) != null;
     }
 
     private Boolean hasAdminSystemPermission = null;
@@ -2015,6 +2062,12 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
         else if (command == getNumaSupportCommand()) {
             numaSupport();
+        }
+        else if (command == getEnableGlobalHaMaintenanceCommand()) {
+            setGlobalHaMaintenance(true);
+        }
+        else if (command == getDisableGlobalHaMaintenanceCommand()) {
+            setGlobalHaMaintenance(false);
         }
         else if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
             onAssignTags();

@@ -447,18 +447,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getAssignTagsCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.enableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEnableGlobalHaMaintenanceCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.disableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getDisableGlobalHaMaintenanceCommand();
-            }
-        });
 
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.guideMeVm(),
                 resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {

@@ -439,6 +439,20 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         });
 
+        // HA global maintenance
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.enableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEnableGlobalHaMaintenanceCommand();
+            }
+        });
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.disableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getDisableGlobalHaMaintenanceCommand();
+            }
+        });
+
     }
 
     @Override
