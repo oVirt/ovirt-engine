@@ -216,18 +216,21 @@ public class VdsManager {
                 refreshRate,
                 TimeUnit.MILLISECONDS));
 
-        double availableUpdatesRefreshRate = Config.<Double> getValue(ConfigValues.HostPackagesUpdateTimeInHours);
-        final int HOURS_TO_MINUTES = 60;
-        long rateInMinutes = Math.round(availableUpdatesRefreshRate * HOURS_TO_MINUTES);
 
-        registeredJobs.add(sched.scheduleAFixedDelayJob(
-                this,
-                "availableUpdates",
-                new Class[0],
-                new Object[0],
-                RandomUtils.nextInt(HOURS_TO_MINUTES) + 1,
-                rateInMinutes,
-                TimeUnit.MINUTES));
+        double availableUpdatesRefreshRate = Config.<Double> getValue(ConfigValues.HostPackagesUpdateTimeInHours);
+        if (availableUpdatesRefreshRate > 0) {
+            final int HOURS_TO_MINUTES = 60;
+            long rateInMinutes = Math.round(availableUpdatesRefreshRate * HOURS_TO_MINUTES);
+
+            registeredJobs.add(sched.scheduleAFixedDelayJob(
+                    this,
+                    "availableUpdates",
+                    new Class[0],
+                    new Object[0],
+                    RandomUtils.nextInt(HOURS_TO_MINUTES) + 1,
+                    rateInMinutes,
+                    TimeUnit.MINUTES));
+        }
 
         vmsRefresher = getRefresherFactory().create(this);
         vmsRefresher.startMonitoring();
