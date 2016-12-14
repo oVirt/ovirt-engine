@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import org.ovirt.engine.core.common.errors.VDSError;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HostJobInfo {
@@ -82,5 +83,17 @@ public class HostJobInfo {
         public boolean isAlive() {
             return this == running || this == pending;
         }
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("id", getId())
+                .append("type", getType())
+                .append("description", getDescription())
+                .append("status", getStatus())
+                .append("progress", getProgress())
+                .append("error", getError())
+                .build();
     }
 }

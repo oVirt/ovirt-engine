@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.errors;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VDSError {
@@ -51,5 +52,13 @@ public class VDSError {
 
     public void setVdsId(Guid vdsId) {
         this.vdsId = vdsId;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("code", getCode())
+                .append("message", getMessage())
+                .build();
     }
 }
