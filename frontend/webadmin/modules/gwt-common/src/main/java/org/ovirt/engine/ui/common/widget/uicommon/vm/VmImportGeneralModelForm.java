@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBox;
-import org.ovirt.engine.ui.common.widget.editor.TextBoxChanger;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
@@ -15,7 +15,9 @@ import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -26,7 +28,7 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
     }
 
     @Path("name.entity")
-    TextBoxChanger name = new TextBoxChanger();
+    StringEntityModelTextBoxOnlyEditor name = new StringEntityModelTextBoxOnlyEditor();
     StringValueLabel description = new StringValueLabel();
     @UiField(provided = true)
     @Path("operatingSystems.selectedItem")
@@ -91,7 +93,10 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
     public void initialize() {
         driver.initialize(this);
 
-        name.setWidth("130px"); //$NON-NLS-1$
+        name.asValueBox().setWidth("130px"); //$NON-NLS-1$
+        name.asValueBox().getElement().getParentElement().getStyle().setTop(0, Style.Unit.PX);
+        name.asValueBox().getElement().getParentElement().getStyle().setLeft(-5, Style.Unit.PX);
+
         operatingSystems.setWidth("130px"); //$NON-NLS-1$
 
         formBuilder.addFormItem(new FormItem(constants.nameVm(), name, 0, 0));
