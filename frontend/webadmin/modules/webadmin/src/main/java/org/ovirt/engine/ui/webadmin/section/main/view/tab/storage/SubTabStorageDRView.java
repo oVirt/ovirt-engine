@@ -105,6 +105,13 @@ public class SubTabStorageDRView extends AbstractSubTabTableView<StorageDomain, 
                 return getDetailModel().getNewCommand();
             }
         });
+
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomainDR>(constants.editDRSetup()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getEditCommand();
+            }
+        });
     }
 
     @Override

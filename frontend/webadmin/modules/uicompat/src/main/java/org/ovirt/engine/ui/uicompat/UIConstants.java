@@ -2046,5 +2046,7 @@ public interface UIConstants extends Constants {
     String heHostRemovalWarning();
 
     String storageDomainDRTitle();
+
+    String noManagedGlusterVolumeMessage();
 }
 

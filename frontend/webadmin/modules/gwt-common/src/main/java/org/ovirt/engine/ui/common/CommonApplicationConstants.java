@@ -1631,6 +1631,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String newDRSetup();
 
+    String editDRSetup();
+
     String graphicalConsoleOptionsVmPopup();
 
     String serialConsoleOptionsVmPopup();
