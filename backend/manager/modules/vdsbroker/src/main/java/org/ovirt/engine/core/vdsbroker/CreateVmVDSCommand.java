@@ -95,12 +95,6 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
             return false;
         }
 
-        if (vmDynamicFromDb.getStatus() != VMStatus.Down && vmDynamicFromDb.getStatus() != VMStatus.Suspended) {
-            log.info("VM Running failed - vm '{}'({}) already running, status {}", vmName, guid, vmStatus);
-            getVDSReturnValue().setReturnValue(vmDynamicFromDb.getStatus());
-            return false;
-        }
-
         List<Snapshot> snapshots = snapshotDao.getAll(guid);
         if (!snapshots.isEmpty() && SnapshotStatus.LOCKED == snapshots.get(snapshots.size() - 1).getStatus()) {
             log.info("VM Running failed - VM '{}'({}) - cannot run VM when VM during Snapshot", vmName, guid);
