@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public enum QcowCompat {
     Undefined(0, "Undefined"),
-    QCOW2_V2(1, "0.1"),
+    QCOW2_V2(1, "0.10"),
     QCOW2_V3(2, "1.1");
 
     private int value;
