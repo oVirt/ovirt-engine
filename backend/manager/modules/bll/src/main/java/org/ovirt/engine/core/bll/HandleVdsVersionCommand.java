@@ -63,8 +63,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         // partialVdcVersion will hold the engine's version (minor and major parts),
         // this will be compared to vdsm supported engines to see if vdsm can be added
         // to cluster
-        Version partialVdcVersion =
-                new Version(new Version(Config.<String> getValue(ConfigValues.VdcVersion)).toString(2));
+        Version partialVdcVersion = new Version(new Version(Config.getValue(ConfigValues.VdcVersion)).toString(2));
         RpmVersion vdsVersion = vds.getVersion();
         Version vdsmVersion = new Version(vdsVersion.getMajor(), vdsVersion.getMinor());
         if (!StringUtils.isEmpty(vds.getSupportedEngines())) {
