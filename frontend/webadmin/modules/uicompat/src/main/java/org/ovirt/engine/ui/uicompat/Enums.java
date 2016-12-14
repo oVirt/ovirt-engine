@@ -84,6 +84,8 @@ public interface Enums extends LocalizedEnums {
 
     String StorageFormatType___V3();
 
+    String StorageFormatType___V4();
+
     String VolumeFormat___COW();
 
     String VolumeFormat___RAW();
