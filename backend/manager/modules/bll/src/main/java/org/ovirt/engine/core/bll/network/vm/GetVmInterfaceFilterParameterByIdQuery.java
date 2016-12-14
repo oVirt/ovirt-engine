@@ -1,0 +1,23 @@
+package org.ovirt.engine.core.bll.network.vm;
+
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
+
+public class GetVmInterfaceFilterParameterByIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmNicFilterParameterDao vmNicFilterParameterDao;
+
+    public GetVmInterfaceFilterParameterByIdQuery(P parameters) {
+        super(parameters);
+    }
+
+    @Override
+    protected void executeQueryCommand() {
+        getQueryReturnValue().setReturnValue(vmNicFilterParameterDao.get(getParameters().getId(),
+                getUserID(),
+                getParameters().isFiltered()));
+    }
+}
