@@ -231,6 +231,12 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                 });
 
         data.setError(tmp.getIsValid() ? null : ConstantsManager.getInstance().getConstants().invalidName());
+
+        // Updating the 'name' model in general sub-tab
+        VmImportGeneralModel model = (VmImportGeneralModel) getDetailModels().get(0);
+        model.getName().setInvalidityReasons(tmp.getInvalidityReasons());
+        model.getName().setIsValid(tmp.getIsValid());
+
         return tmp.getIsValid();
     }
 
