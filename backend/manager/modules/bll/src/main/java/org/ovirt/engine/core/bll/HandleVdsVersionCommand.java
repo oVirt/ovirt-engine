@@ -43,15 +43,13 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
 
     @Override
     protected boolean validate() {
-        boolean result = true;
         if (getVds() == null) {
-            addValidationMessage(EngineMessage.VDS_INVALID_SERVER_ID);
-            result = false;
-        } else if (getVds().getStatus() == VDSStatus.Connecting || getVds().getStatus() == VDSStatus.NonResponsive) {
-            addValidationMessage(EngineMessage.VDS_CANNOT_CHECK_VERSION_HOST_NON_RESPONSIVE);
-            result = false;
+            return failValidation(EngineMessage.VDS_INVALID_SERVER_ID);
         }
-        return result;
+        if (getVds().getStatus() == VDSStatus.Connecting || getVds().getStatus() == VDSStatus.NonResponsive) {
+            return failValidation(EngineMessage.VDS_CANNOT_CHECK_VERSION_HOST_NON_RESPONSIVE);
+        }
+        return true;
     }
 
     @Override
