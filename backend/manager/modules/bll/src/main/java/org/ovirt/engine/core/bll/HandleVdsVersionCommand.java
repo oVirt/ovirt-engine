@@ -82,7 +82,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         else if (!VersionSupport.checkClusterVersionSupported(cluster.getCompatibilityVersion(), vds)) {
             reportNonOperationReason(NonOperationalReason.CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER,
                                      cluster.getCompatibilityVersion().toString(),
-                                     vds.getSupportedClusterLevels().toString());
+                                     vds.getSupportedClusterLevels());
         } else {
             checkClusterAdditionalFeaturesSupported(cluster, vds);
         }
