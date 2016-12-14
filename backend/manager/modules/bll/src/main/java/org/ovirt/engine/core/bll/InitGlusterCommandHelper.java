@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.utils.GlusterEventFactory;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.gluster.SyncGlusterStorageDevicesParameter;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -91,6 +92,10 @@ public class InitGlusterCommandHelper {
         refreshGlusterStorageDevices(vds);
         boolean ret = initGlusterPeerProcess(vds);
         glusterServerDao.updatePeerStatus(vds.getId(), ret ? PeerStatus.CONNECTED : PeerStatus.DISCONNECTED);
+        //add webhook on cluster if eventing is supported
+        if (ret) {
+            addGlusterWebhook(vds);
+        }
         return ret;
     }
 
@@ -100,6 +105,16 @@ public class InitGlusterCommandHelper {
                     new SyncGlusterStorageDevicesParameter(vds.getId(), true));
         } catch (EngineException e) {
             log.error("Could not refresh storage devices from gluster host '{}'", vds.getName());
+        }
+    }
+
+    private void addGlusterWebhook(VDS vds) {
+        try {
+            backend.runInternalAction(ActionType.AddGlusterWebhookInternal,
+                    new VdsActionParameters(vds.getId()));
+        } catch (RuntimeException e) {
+            log.error("Could not add gluster webhook for gluster host '{}'", vds.getName());
+            log.debug("Exception", e);
         }
     }
 
