@@ -71,6 +71,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bindTypeAndImplAsSingleton(ClientLogProvider.class, LocalStorageLogHandler.class);
         bind(BrowserHacks.class).asEagerSingleton();
         bind(ElementTooltipUtils.CellWidgetTooltipReaper.class).asEagerSingleton();
+        bind(ElementTooltipUtils.TooltipHideOnRootPanelClick.class).asEagerSingleton();
         requestStaticInjection(AssetProvider.class);
     }
 

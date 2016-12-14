@@ -18,8 +18,11 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * jQuery/Bootstrap tooltip utility methods.
@@ -42,6 +45,18 @@ public final class ElementTooltipUtils {
             return true;
         }
 
+    }
+
+    public static class TooltipHideOnRootPanelClick {
+
+        public TooltipHideOnRootPanelClick() {
+            RootPanel.get().addDomHandler(new MouseDownHandler() {
+                @Override
+                public void onMouseDown(MouseDownEvent event) {
+                    ElementTooltipUtils.hideAllTooltips();
+                }
+            }, MouseDownEvent.getType());
+        }
     }
 
     // Reaper lists to track elements on which the tooltip must be destroyed.
