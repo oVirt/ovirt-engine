@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.errors;
 
-import java.util.ArrayList;
-
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -9,7 +7,6 @@ public class VDSError {
 
     private String message;
     private EngineError code;
-    private ArrayList<Object> args;
     private Guid vdsId;
 
     public VDSError(EngineError code, String message) {
@@ -32,14 +29,6 @@ public class VDSError {
 
     public void setCode(EngineError value) {
         code = value;
-    }
-
-    public ArrayList<Object> getArgs() {
-        return args;
-    }
-
-    public void setArgs(ArrayList<Object> value) {
-        args = value;
     }
 
     public VDSError() {
