@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
@@ -18,14 +18,14 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.Impor
 
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
+public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM, ImportVmData, RegisterVmModel> {
 
     private ImportVmGeneralSubTabView generalView;
     private VmImportGeneralModel vmImportGeneralModel;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    public RegisterVmInfoPanel(RegisterEntityModel<VM> model) {
+    public RegisterVmInfoPanel(RegisterVmModel model) {
         super(model);
     }
 

@@ -18,14 +18,14 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class RegisterVmModel extends RegisterEntityModel<VM> {
+public class RegisterVmModel extends RegisterEntityModel<VM, ImportVmData> {
 
     public static final String VNIC_PROFILE_MAPPING_COMMAND = "vnicProfileMapping"; //$NON-NLS-1$
 
@@ -81,7 +81,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM> {
 
     private void updateExternalVnicProfilesPerTargetCluster() {
         final Map<Cluster, Set<VnicProfileMappingEntity>> result = new HashMap<>();
-        for (ImportEntityData<VM> vmImportEntityData : getEntities().getItems()) {
+        for (ImportVmData vmImportEntityData : getEntities().getItems()) {
             final Cluster cluster = vmImportEntityData.getCluster().getSelectedItem();
             final Set<VnicProfileMappingEntity> clusterVnicProfileMappings;
             if (result.containsKey(cluster)) {
@@ -103,7 +103,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM> {
         externalVnicProfilesPerTargetCluster = result;
     }
 
-    private Set<VnicProfileMappingEntity> getNewVnicProfileMappings(ImportEntityData<VM> vmImportEntityData,
+    private Set<VnicProfileMappingEntity> getNewVnicProfileMappings(ImportVmData vmImportEntityData,
             Set<VnicProfileMappingEntity> previousClusterVnicProfileMappings) {
         final Set<VnicProfileMappingEntity> result = new HashSet<>();
         for (VmNetworkInterface vnic : vmImportEntityData.getEntity().getInterfaces()) {
@@ -122,7 +122,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM> {
 
     protected void onSave() {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        for (ImportEntityData<VM> entityData : getEntities().getItems()) {
+        for (ImportVmData entityData : getEntities().getItems()) {
             VM vm = entityData.getEntity();
             Cluster cluster = entityData.getCluster().getSelectedItem();
 

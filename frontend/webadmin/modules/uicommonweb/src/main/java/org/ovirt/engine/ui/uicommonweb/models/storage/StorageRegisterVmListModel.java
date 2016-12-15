@@ -4,11 +4,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class StorageRegisterVmListModel extends StorageRegisterEntityListModel<VM> {
+public class StorageRegisterVmListModel extends StorageRegisterEntityListModel<VM, ImportVmData> {
 
     public StorageRegisterVmListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().vmImportTitle());
@@ -17,7 +16,7 @@ public class StorageRegisterVmListModel extends StorageRegisterEntityListModel<V
     }
 
     @Override
-    RegisterEntityModel createRegisterEntityModel() {
+    RegisterEntityModel<VM, ImportVmData> createRegisterEntityModel() {
         RegisterVmModel model = new RegisterVmModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
         model.setHelpTag(HelpTag.register_virtual_machine);
@@ -27,7 +26,7 @@ public class StorageRegisterVmListModel extends StorageRegisterEntityListModel<V
     }
 
     @Override
-    ImportEntityData<VM> createImportEntityData(VM entity) {
+    ImportVmData createImportEntityData(VM entity) {
         return new ImportVmData(entity);
     }
 

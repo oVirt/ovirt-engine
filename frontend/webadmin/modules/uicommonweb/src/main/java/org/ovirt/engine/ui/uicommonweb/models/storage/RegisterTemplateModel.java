@@ -10,15 +10,15 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class RegisterTemplateModel extends RegisterEntityModel<VmTemplate> {
+public class RegisterTemplateModel extends RegisterEntityModel<VmTemplate, ImportTemplateData> {
 
     protected void onSave() {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        for (ImportEntityData<VmTemplate> entityData : getEntities().getItems()) {
+        for (ImportTemplateData entityData : getEntities().getItems()) {
             VmTemplate vmTemplate = entityData.getEntity();
             Cluster cluster = entityData.getCluster().getSelectedItem();
 

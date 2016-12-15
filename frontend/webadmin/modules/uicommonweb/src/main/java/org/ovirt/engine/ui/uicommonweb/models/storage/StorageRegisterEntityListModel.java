@@ -16,7 +16,12 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 
-public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable> extends SearchableListModel<StorageDomain, T> {
+/**
+ * @param <T> business entity type
+ * @param <D> an <code>ImportEntityData</code> that wraps the business entity
+ */
+public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable, D extends ImportEntityData<T>>
+        extends SearchableListModel<StorageDomain, T> {
 
     private UICommand importCommand;
 
@@ -36,9 +41,9 @@ public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable> ex
         updateActionAvailability();
     }
 
-    abstract RegisterEntityModel<T> createRegisterEntityModel();
+    abstract RegisterEntityModel<T, D> createRegisterEntityModel();
 
-    abstract ImportEntityData<T> createImportEntityData(T entity);
+    abstract D createImportEntityData(T entity);
 
     @Override
     protected void onEntityChanged() {
@@ -96,8 +101,8 @@ public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable> ex
         }
     }
 
-    protected List<ImportEntityData<T>> getImportEntities() {
-        List<ImportEntityData<T>> entities = new ArrayList<>();
+    protected List<D> getImportEntities() {
+        List<D> entities = new ArrayList<>();
         for (T item : getSelectedItems()) {
             entities.add(createImportEntityData(item));
         }
@@ -111,7 +116,7 @@ public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable> ex
             return;
         }
 
-        RegisterEntityModel<T> model = createRegisterEntityModel();
+        RegisterEntityModel<T, D> model = createRegisterEntityModel();
         model.setStorageDomainId(getEntity().getId());
         setWindow(model);
 

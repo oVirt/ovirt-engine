@@ -31,13 +31,15 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
+
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.view.client.NoSelectionModel;
 
-public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
+public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, M extends RegisterEntityModel<T, D>>
+        extends TabLayoutPanel {
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -47,9 +49,9 @@ public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
     protected EntityModelCellTable<ListModel> appsTable;
     protected EntityModelCellTable<ListModel> containersTable;
 
-    protected RegisterEntityModel<T> registerEntityModel;
+    protected M registerEntityModel;
 
-    public RegisterEntityInfoPanel(RegisterEntityModel<T> registerEntityModel) {
+    public RegisterEntityInfoPanel(M registerEntityModel) {
         super(ApplicationTemplates.TAB_BAR_HEIGHT, Style.Unit.PX);
         this.registerEntityModel = registerEntityModel;
 

@@ -15,10 +15,12 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.Registe
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplate, RegisterTemplateModel>
+public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplate, ImportTemplateData, RegisterTemplateModel>
         implements RegisterTemplatePopupPresenterWidget.ViewDef {
 
-    interface Driver extends UiCommonEditorDriver<RegisterTemplateModel, RegisterEntityPopupView<VmTemplate, RegisterTemplateModel>> {
+    interface Driver extends UiCommonEditorDriver<
+            RegisterTemplateModel,
+            RegisterEntityPopupView<VmTemplate, ImportTemplateData, RegisterTemplateModel>> {
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
