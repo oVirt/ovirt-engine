@@ -30,61 +30,56 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, ImportVmDat
         super(eventBus, driver);
     }
 
-    private VM getEntity(Object object) {
-        return ((ImportVmData) object).getVm();
-    }
-
     @Override
     protected void createEntityTable(RegisterVmModel model) {
-        AbstractTextColumn<Object> nameColumn = new AbstractTextColumn<Object>() {
+        AbstractTextColumn<ImportVmData> nameColumn = new AbstractTextColumn<ImportVmData>() {
             @Override
-            public String getValue(Object object) {
-                return getEntity(object).getName();
+            public String getValue(ImportVmData importVmData) {
+                return importVmData.getVm().getName();
             }
         };
         entityTable.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Object> originColumn = new AbstractEnumColumn<Object, OriginType>() {
+        AbstractTextColumn<ImportVmData> originColumn = new AbstractEnumColumn<ImportVmData, OriginType>() {
             @Override
-            protected OriginType getRawValue(Object object) {
-                return getEntity(object).getOrigin();
+            protected OriginType getRawValue(ImportVmData importVmData) {
+                return importVmData.getVm().getOrigin();
             }
         };
         entityTable.addColumn(originColumn, constants.originVm(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Object> memoryColumn = new AbstractTextColumn<Object>() {
+        AbstractTextColumn<ImportVmData> memoryColumn = new AbstractTextColumn<ImportVmData>() {
             @Override
-            public String getValue(Object object) {
-                int size = getEntity(object).getVmMemSizeMb();
+            public String getValue(ImportVmData importVmData) {
+                int size = importVmData.getVm().getVmMemSizeMb();
                 return size + " MB"; //$NON-NLS-1$
             }
         };
         entityTable.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Object> cpuColumn = new AbstractTextColumn<Object>() {
+        AbstractTextColumn<ImportVmData> cpuColumn = new AbstractTextColumn<ImportVmData>() {
             @Override
-            public String getValue(Object object) {
-                int numOfCpus = getEntity(object).getNumOfCpus();
+            public String getValue(ImportVmData importVmData) {
+                int numOfCpus = importVmData.getVm().getNumOfCpus();
                 return String.valueOf(numOfCpus);
             }
         };
         entityTable.addColumn(cpuColumn, constants.cpusVm(), "50px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Object> archColumn = new AbstractTextColumn<Object>() {
+        AbstractTextColumn<ImportVmData> archColumn = new AbstractTextColumn<ImportVmData>() {
             @Override
-            public String getValue(Object object) {
-                ArchitectureType clusterArch = getEntity(object).getClusterArch();
+            public String getValue(ImportVmData importVmData) {
+                ArchitectureType clusterArch = importVmData.getVm().getClusterArch();
                 return String.valueOf(clusterArch);
             }
         };
         entityTable.addColumn(archColumn, constants.architectureVm(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Object> diskColumn = new AbstractTextColumn<Object>() {
+        AbstractTextColumn<ImportVmData> diskColumn = new AbstractTextColumn<ImportVmData>() {
             @Override
-            public String getValue(Object object) {
-                int numOfDisks = getEntity(object).getDiskMap().size();
+            public String getValue(ImportVmData importVmData) {
+                int numOfDisks = importVmData.getVm().getDiskMap().size();
                 return String.valueOf(numOfDisks);
-
             }
         };
         entityTable.addColumn(diskColumn, constants.disksVm(), "50px"); //$NON-NLS-1$
