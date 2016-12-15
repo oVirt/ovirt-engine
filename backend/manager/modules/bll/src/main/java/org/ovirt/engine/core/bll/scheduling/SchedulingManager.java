@@ -344,7 +344,8 @@ public class SchedulingManager implements BackendService {
 
             return bestHost;
         } catch (InterruptedException e) {
-            log.error(String.format("scheduling interrupted, correlation Id: %1$s", correlationId), e);
+            log.error("scheduling interrupted, correlation Id: {}: {}", correlationId, e.getMessage());
+            log.debug("Exception: ", e);
             return Optional.empty();
         } finally {
             releaseCluster(cluster.getId());

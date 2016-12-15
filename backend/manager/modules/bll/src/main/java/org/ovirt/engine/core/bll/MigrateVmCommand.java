@@ -207,8 +207,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             resourceManager.getVmManager(getVmId()).getStatistics().setMigrationProgressPercent(0);
             setSucceeded(initVdss() && perform());
         } catch (Exception e) {
-            cleanupPassthroughVnics(getDestinationVdsId());
             setSucceeded(false);
+        }
+
+        if (!getSucceeded()) {
+            cleanupPassthroughVnics(getDestinationVdsId());
         }
     }
 
@@ -485,8 +488,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             try {
                 plugNics(allVmPassthroughNics);
             } catch(Exception e) {
-                log.debug("Failed to plug nic back after migration", e);
-                log.error("Failed to plug nic back after migration");
+                auditLogDirector.log(this, AuditLogType.VM_MIGRATION_PLUGGING_VM_NICS_FAILED);
+                log.error("Failed to plug nics back after migration of vm {}: {}", getVmName(), e.getMessage());
+                log.debug("Exception: ", e);
             }
         }
     }
