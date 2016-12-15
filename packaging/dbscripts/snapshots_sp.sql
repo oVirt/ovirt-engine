@@ -58,7 +58,8 @@ CREATE OR REPLACE FUNCTION UpdateSnapshot (
     v_vm_configuration TEXT,
     v_memory_volume VARCHAR(255),
     v_memory_dump_disk_id UUID,
-    v_memory_metadata_disk_id UUID
+    v_memory_metadata_disk_id UUID,
+    v_vm_configuration_broken BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -73,6 +74,7 @@ BEGIN
         memory_volume = v_memory_volume,
         memory_dump_disk_id = v_memory_dump_disk_id,
         memory_metadata_disk_id = v_memory_metadata_disk_id,
+        vm_configuration_broken = v_vm_configuration_broken,
         _update_date = NOW()
     WHERE snapshot_id = v_snapshot_id;
 END;$PROCEDURE$
@@ -210,7 +212,8 @@ CREATE TYPE GetAllFromSnapshotsByVmId_rs AS (
         memory_dump_disk_id UUID,
         memory_metadata_disk_id UUID,
         vm_configuration TEXT,
-        vm_configuration_available BOOLEAN
+        vm_configuration_available BOOLEAN,
+        vm_configuration_broken BOOLEAN
         );
 
 CREATE OR REPLACE FUNCTION GetAllFromSnapshotsByVmId (
@@ -239,7 +242,8 @@ BEGIN
             ELSE NULL
             END,
         vm_configuration IS NOT NULL
-        AND LENGTH(vm_configuration) > 0
+        AND LENGTH(vm_configuration) > 0,
+        vm_configuration_broken
     FROM snapshots
     WHERE vm_id = v_vm_id
         AND (

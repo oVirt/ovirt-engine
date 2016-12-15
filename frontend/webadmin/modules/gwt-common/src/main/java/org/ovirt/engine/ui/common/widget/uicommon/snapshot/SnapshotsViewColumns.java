@@ -91,6 +91,10 @@ public class SnapshotsViewColumns {
                         descriptionStr, StringUtils.join(Linq.getDiskAliases(snapshot.getDiskImages()), ", ")); //$NON-NLS-1$
                 description = templates.snapshotDescription("color:gold", descriptionStr); //$NON-NLS-1$
             }
+            else if (snapshot.isVmConfigurationBroken()) {
+                descriptionStr = descriptionStr + " (" + constants.brokenVmConfiguration() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                description = templates.snapshotDescription("color:red", descriptionStr); //$NON-NLS-1$
+            }
 
             return description;
         }

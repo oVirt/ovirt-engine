@@ -92,6 +92,17 @@ public class SnapshotsValidator {
     }
 
     /**
+     * Checks if the given snapshot's VM configuration in broken.
+     */
+    public ValidationResult snapshotVmConfigurationBroken(Snapshot snapshot, String vmName) {
+        return !snapshot.isVmConfigurationBroken()
+                ? ValidationResult.VALID
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION,
+                String.format("$VmName %1$s", vmName),
+                String.format("$SnapshotName %1$s", snapshot.getDescription()));
+    }
+
+    /**
      * Create result that indicates if snapshot exists or not.
      *
      * @param snapshotExists
