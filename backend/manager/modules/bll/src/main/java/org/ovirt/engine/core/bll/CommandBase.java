@@ -190,8 +190,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         this.context = new CommandContext(new EngineContext());
         this.commandId = commandId;
         this.commandData = new HashMap<>();
-
-        this.context.withCompensationContext(createDefaultCompensationContext());
     }
 
     /**
@@ -202,6 +200,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         if (!isCompensationContext()) {
             initCommandBase();
             init();
+        } else {
+            this.context.withCompensationContext(createDefaultCompensationContext());
         }
     }
 
