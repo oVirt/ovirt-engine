@@ -107,9 +107,10 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
     }
 
     private void amendVolume(Guid imageId) {
-        AmendVolumeCommandParameters parameters = new AmendVolumeCommandParameters(getDiskImage().getStoragePoolId(),
-                buildImageLocationInfo(getDiskImage().getStorageIds().get(0), getDiskImage().getId(),
-                        getDiskImage().getImageId()), getParameters().getQcowCompat());
+        AmendVolumeCommandParameters parameters =
+                new AmendVolumeCommandParameters(getDiskImage().getStoragePoolId(),
+                        buildImageLocationInfo(getDiskImage().getStorageIds().get(0), getDiskImage().getId(), imageId),
+                        getParameters().getQcowCompat());
 
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setParentCommand(getActionType());

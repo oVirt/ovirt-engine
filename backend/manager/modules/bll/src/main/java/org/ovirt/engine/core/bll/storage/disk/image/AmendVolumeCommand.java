@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.AmendVolumeCommandParameters;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.vdscommands.AmendVolumeVDSCommandParameters;
@@ -29,7 +30,7 @@ public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
 
     @Inject
     private VdsmImagePoller poller;
-    private DiskImage diskImage;
+    private Image image;
 
     public AmendVolumeCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -39,12 +40,12 @@ public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
         super(commandId);
     }
 
-    private DiskImage getDiskImage() {
-        if (diskImage == null) {
+    private Image getImage() {
+        if (image == null) {
             VdsmImageLocationInfo info = (VdsmImageLocationInfo) getParameters().getVolInfo();
-            diskImage = diskImageDao.get(info.getImageId());
+            image = imageDao.get(info.getImageId());
         }
-        return diskImage;
+        return image;
     }
 
     @Override
@@ -61,7 +62,7 @@ public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
                         info.getImageGroupId(),
                         info.getImageId(),
                         getParameters().getQcowCompat()),
-                getDiskImage().getStoragePoolId(), this);
+                getParameters().getStoragePoolId(), this);
         if (!vdsReturnValue.getSucceeded()) {
             setCommandStatus(CommandStatus.FAILED);
         }
@@ -102,4 +103,11 @@ public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
         }
         return null;
     }
+
+    protected void endSuccessfully() {
+        getImage().setQcowCompat(getParameters().getQcowCompat());
+        imageDao.update(getImage());
+        setSucceeded(true);
+    }
+
 }
