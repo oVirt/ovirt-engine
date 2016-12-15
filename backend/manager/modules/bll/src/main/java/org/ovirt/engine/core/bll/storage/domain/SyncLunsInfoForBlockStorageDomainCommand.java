@@ -103,12 +103,14 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     }
 
     private void cleanupLunsFromDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
-        for (LUNs lunFromDb : lunsFromDb) {
-            if (!isDummyLun(lunFromDb) && !containsLun(lunsFromVgInfo, lunFromDb)) {
-                lunDao.remove(lunFromDb.getLUNId());
-                log.info("Removed LUN ID '{}'", lunFromDb.getLUNId());
-            }
-        }
+        lunsFromDb.stream()
+                .map(LUNs::getLUNId)
+                .filter(lunId -> !lunId.startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX))
+                .filter(lunId -> lunsFromVgInfo.stream().noneMatch(lun -> lun.getLUNId().equals(lunId)))
+                .forEach(lunId -> {
+                    lunDao.remove(lunId);
+                    log.info("Removed LUN ID '{}'", lunId);
+                });
     }
 
     /**
@@ -170,19 +172,6 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                     .collect(Collectors.toList());
             discardHelper.logIfLunsBreakStorageDomainDiscardFunctionality(lunsToUpdateInDb, getStorageDomainId());
         }
-    }
-
-    private boolean isDummyLun(LUNs lun) {
-        return lun.getLUNId().startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX);
-    }
-
-    private boolean containsLun(List<LUNs> luns, LUNs lunToFind) {
-        for (LUNs lun : luns) {
-            if (lun.getLUNId().equals(lunToFind.getLUNId())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
