@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.uicommon.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -27,9 +28,17 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.gwtplatform.dispatch.annotation.GenEvent;
 
 public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagListModel>
         implements SearchableTreeModelProvider<TagModel, TagListModel>, TreeModelWithElementId {
+
+    @GenEvent
+    public class TagActivationChange {
+
+        List<TagModel> activeTags;
+
+    }
 
     private final DefaultSelectionEventManager<TagModel> selectionManager =
             DefaultSelectionEventManager.createDefaultManager();
@@ -58,6 +67,7 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
                 TagModelProvider.this.setSelectedItems(Arrays.asList(selectionModel.getSelectedObject()));
             }
         });
+
     }
 
     @Override
@@ -66,7 +76,6 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
 
         // Add model reset handler
         model.getResetRequestedEvent().addListener(new IEventListener<EventArgs>() {
-            @SuppressWarnings("unchecked")
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (model.getItems() == null) {
@@ -78,6 +87,28 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
                     updateDataProvider(Arrays.asList(root));
                 }
             }
+        });
+
+        model.getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
+
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                // The selectedItemsChangedEvent only gets fired when activating/deactiving a tag. Changing
+                // the selection in the tag tree does not fire this event.
+                TagActivationChangeEvent.fire(TagModelProvider.this, activeTagList(model.getRootNode()));
+            }
+
+            private List<TagModel> activeTagList(TagModel model) {
+                List<TagModel> result = new ArrayList<>();
+                if (model.getSelection()) {
+                    result.add(model);
+                }
+                for (TagModel child : model.getChildren()) {
+                    result.addAll(activeTagList(child));
+                }
+                return result;
+            }
+
         });
     }
 

@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandl
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager.PluginInvocationCondition;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.entity.SystemTreeItemObject;
+import org.ovirt.engine.ui.webadmin.plugin.entity.TagObject;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsArrayHelper;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent.ClusterSelectionChangeHandler;
@@ -42,6 +43,7 @@ import org.ovirt.engine.ui.webadmin.system.MessageReceivedEvent;
 import org.ovirt.engine.ui.webadmin.system.MessageReceivedEvent.MessageReceivedHandler;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeSelectionChangeEvent.SystemTreeSelectionChangeHandler;
+import org.ovirt.engine.ui.webadmin.uicommon.model.TagActivationChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -204,6 +206,16 @@ public class PluginEventHandler {
                         });
             }
         });
+
+        // Tag Activation Change Event.
+        eventBus.addHandler(TagActivationChangeEvent.getType(), new TagActivationChangeEvent.TagActivationChangeHandler() {
+            @Override
+            public void onTagActivationChange(TagActivationChangeEvent event) {
+                manager.invokePluginsNow("TagActivationChange", //$NON-NLS-1$
+                        TagObject.activeTagArray(event.getActiveTags()));
+            }
+        });
+
     }
 
 }

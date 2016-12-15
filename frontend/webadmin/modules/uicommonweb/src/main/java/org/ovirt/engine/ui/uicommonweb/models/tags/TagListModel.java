@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.tags;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
@@ -313,7 +314,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     private void onTagSelectionChanged(Object sender, EventArgs e) {
         TagModel model = (TagModel) sender;
 
-        ArrayList<TagModel> list = new ArrayList<>();
+        List<TagModel> list = new ArrayList<>();
         if (getSelectedItems() != null) {
             for (Object item : getSelectedItems()) {
                 list.add((TagModel) item);
@@ -536,5 +537,9 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     @Override
     protected String getListName() {
         return "TagListModel"; //$NON-NLS-1$
+    }
+
+    public TagModel getRootNode() {
+        return getItems().iterator().next();
     }
 }

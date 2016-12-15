@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityType;
+import org.ovirt.engine.ui.webadmin.plugin.entity.TagObject;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunctionResultHelper;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabProxyFactory;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
@@ -20,6 +21,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.SetDynamicTabContentU
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CloseDynamicPopupEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DynamicUrlContentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.SetDynamicPopupContentUrlEvent;
+import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
@@ -51,6 +53,7 @@ public class PluginUiFunctions implements HasHandlers {
     private final DynamicUrlContentTabProxyFactory dynamicUrlContentTabProxyFactory;
     private final Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider;
 
+    private final TagModelProvider tagModelProvider;
     private final PlaceManager placeManager;
     private final AlertManager alertManager;
 
@@ -59,10 +62,12 @@ public class PluginUiFunctions implements HasHandlers {
             DynamicUrlContentTabProxyFactory dynamicUrlContentTabProxyFactory,
             Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider,
             PlaceManager placeManager,
-            AlertManager alertManager) {
+            AlertManager alertManager,
+            TagModelProvider tagModelProvider) {
         this.eventBus = eventBus;
         this.dynamicUrlContentTabProxyFactory = dynamicUrlContentTabProxyFactory;
         this.dynamicUrlContentPopupPresenterWidgetProvider = dynamicUrlContentPopupPresenterWidgetProvider;
+        this.tagModelProvider = tagModelProvider;
         this.placeManager = placeManager;
         this.alertManager = alertManager;
     }
@@ -307,4 +312,7 @@ public class PluginUiFunctions implements HasHandlers {
         return currentLocale;
     }
 
+    public TagObject getRootTagNode() {
+        return TagObject.from(tagModelProvider.getModel().getRootNode());
+    }
 }
