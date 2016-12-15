@@ -27,10 +27,10 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
-public abstract class RegisterEntityModel<T> extends Model {
+public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> extends Model {
 
     private UICommand cancelCommand;
-    private ListModel<ImportEntityData<T>> entities;
+    private ListModel<E> entities;
     private ListModel<Cluster> cluster;
     private EntityModel<Map<Guid, List<Quota>>> clusterQuotasMap;
     private EntityModel<Map<Guid, Quota>> diskQuotaMap;
@@ -39,7 +39,7 @@ public abstract class RegisterEntityModel<T> extends Model {
     private StoragePool storagePool;
 
     public RegisterEntityModel() {
-        setEntities(new ListModel<ImportEntityData<T>>());
+        setEntities(new ListModel<E>());
         setCluster(new ListModel<Cluster>());
 
         setClusterQuotasMap(new EntityModel<Map<Guid, List<Quota>>>());
@@ -199,11 +199,11 @@ public abstract class RegisterEntityModel<T> extends Model {
         this.cancelCommand = cancelCommand;
     }
 
-    public ListModel<ImportEntityData<T>> getEntities() {
+    public ListModel<E> getEntities() {
         return entities;
     }
 
-    public void setEntities(ListModel<ImportEntityData<T>> entities) {
+    public void setEntities(ListModel<E> entities) {
         this.entities = entities;
     }
 

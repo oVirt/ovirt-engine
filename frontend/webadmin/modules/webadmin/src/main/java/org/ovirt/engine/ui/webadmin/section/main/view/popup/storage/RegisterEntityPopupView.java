@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
-public abstract class RegisterEntityPopupView<E, M extends RegisterEntityModel<E>>
+public abstract class RegisterEntityPopupView<E, D extends ImportEntityData<E>, M extends RegisterEntityModel<E, D>>
         extends AbstractModelBoundPopupView<M>
         implements AbstractModelBoundPopupPresenterWidget.ViewDef<M> {
 
@@ -44,9 +44,9 @@ public abstract class RegisterEntityPopupView<E, M extends RegisterEntityModel<E
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    protected final UiCommonEditorDriver<M, RegisterEntityPopupView<E, M>> driver;
+    protected final UiCommonEditorDriver<M, RegisterEntityPopupView<E, D, M>> driver;
 
-    protected RegisterEntityInfoPanel<E> registerEntityInfoPanel;
+    protected RegisterEntityInfoPanel<E, D, M> registerEntityInfoPanel;
 
     private M registerEntityModel;
 
@@ -58,12 +58,12 @@ public abstract class RegisterEntityPopupView<E, M extends RegisterEntityModel<E
 
     @UiField(provided = true)
     @Ignore
-    EntityModelCellTable<ListModel<ImportEntityData<E>>> entityTable;
+    EntityModelCellTable<ListModel<D>> entityTable;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public RegisterEntityPopupView(EventBus eventBus, UiCommonEditorDriver<M, RegisterEntityPopupView<E, M>> driver) {
+    public RegisterEntityPopupView(EventBus eventBus, UiCommonEditorDriver<M, RegisterEntityPopupView<E, D, M>> driver) {
         super(eventBus);
         this.driver = driver;
 
@@ -107,8 +107,8 @@ public abstract class RegisterEntityPopupView<E, M extends RegisterEntityModel<E
         model.getEntities().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ListModel<ImportEntityData<E>> entities = (ListModel<ImportEntityData<E>>) sender;
-                ImportEntityData<E> importEntityData = entities.getSelectedItem();
+                ListModel<D> entities = (ListModel<D>) sender;
+                D importEntityData = entities.getSelectedItem();
                 if (importEntityData != null) {
                     registerEntityInfoPanel.updateTabsData(importEntityData);
                 }
@@ -154,22 +154,22 @@ public abstract class RegisterEntityPopupView<E, M extends RegisterEntityModel<E
         driver.cleanup();
     }
 
-    protected Column<ImportEntityData<E>, String> getClusterColumn() {
+    protected Column<D, String> getClusterColumn() {
         CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
         customSelectionCell.setStyle("input-group col-xs-11 gwt-ListBox"); //$NON-NLS-1$
 
-        Column<ImportEntityData<E>, String> column = new Column<ImportEntityData<E>, String>(customSelectionCell) {
+        Column<D, String> column = new Column<D, String>(customSelectionCell) {
             @Override
-            public String getValue(ImportEntityData<E> object) {
+            public String getValue(D object) {
                 ((CustomSelectionCell) getCell()).setOptions(object.getClusterNames());
 
                 return object.getCluster().getSelectedItem() != null ?
                         object.getCluster().getSelectedItem().getName() : constants.empty();
             }
         };
-        column.setFieldUpdater(new FieldUpdater<ImportEntityData<E>, String>() {
+        column.setFieldUpdater(new FieldUpdater<D, String>() {
             @Override
-            public void update(int index, ImportEntityData<E> object, String value) {
+            public void update(int index, D object, String value) {
                 object.selectClusterByName(value);
                 refreshEntityTable();
             }
@@ -178,13 +178,13 @@ public abstract class RegisterEntityPopupView<E, M extends RegisterEntityModel<E
         return column;
     }
 
-    protected Column<ImportEntityData<E>, String> getClusterQuotaColumn() {
+    protected Column<D, String> getClusterQuotaColumn() {
         CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
         customSelectionCell.setStyle("input-group col-xs-11 gwt-ListBox"); //$NON-NLS-1$
 
-        Column<ImportEntityData<E>, String> column = new Column<ImportEntityData<E>, String>(customSelectionCell) {
+        Column<D, String> column = new Column<D, String>(customSelectionCell) {
             @Override
-            public String getValue(ImportEntityData<E> object) {
+            public String getValue(D object) {
                 Guid clusterId = object.getCluster().getSelectedItem() != null ?
                         object.getCluster().getSelectedItem().getId() : null;
                 List<Quota> quotas = registerEntityModel.getClusterQuotasMap().getEntity().get(clusterId);
@@ -196,9 +196,9 @@ public abstract class RegisterEntityPopupView<E, M extends RegisterEntityModel<E
                         object.getClusterQuota().getSelectedItem().getQuotaName() : constants.empty();
             }
         };
-        column.setFieldUpdater(new FieldUpdater<ImportEntityData<E>, String>() {
+        column.setFieldUpdater(new FieldUpdater<D, String>() {
             @Override
-            public void update(int index, ImportEntityData<E> object, String value) {
+            public void update(int index, D object, String value) {
                 registerEntityModel.selectQuotaByName(value, object.getClusterQuota());
 
             }

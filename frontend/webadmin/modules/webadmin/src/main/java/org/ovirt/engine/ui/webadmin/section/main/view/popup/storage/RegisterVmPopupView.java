@@ -17,10 +17,10 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.Registe
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmModel>
+public class RegisterVmPopupView extends RegisterEntityPopupView<VM, ImportVmData, RegisterVmModel>
         implements RegisterVmPopupPresenterWidget.ViewDef {
 
-    interface Driver extends UiCommonEditorDriver<RegisterVmModel, RegisterEntityPopupView<VM, RegisterVmModel>> {
+    interface Driver extends UiCommonEditorDriver<RegisterVmModel, RegisterEntityPopupView<VM, ImportVmData, RegisterVmModel>> {
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();

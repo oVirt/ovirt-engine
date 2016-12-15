@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
@@ -13,14 +13,15 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportTemplateGeneralSubTabView;
+
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class RegisterTemplateInfoPanel extends RegisterEntityInfoPanel<VmTemplate> {
+public class RegisterTemplateInfoPanel extends RegisterEntityInfoPanel<VmTemplate, ImportTemplateData, RegisterTemplateModel> {
 
     private ImportTemplateGeneralSubTabView generalView;
     private TemplateGeneralModel templateGeneralModel;
 
-    public RegisterTemplateInfoPanel(RegisterEntityModel<VmTemplate> model) {
+    public RegisterTemplateInfoPanel(RegisterTemplateModel model) {
         super(model);
     }
 
