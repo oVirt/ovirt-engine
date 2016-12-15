@@ -281,6 +281,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String previousCurrentSnapshotLabel();
 
+    String brokenVmConfiguration();
+
     String latchApproveOperationLabel();
 
     String latchApproveUnpinningLabel();

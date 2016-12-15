@@ -52,6 +52,8 @@ public class Snapshot implements IVdcQueryable, BusinessEntityWithStatus<Guid, S
      */
     private boolean vmConfigurationAvailable;
 
+    private boolean vmConfigurationBroken;
+
     /**
      * The type of snapshot taken (regular, live, etC).
      */
@@ -180,6 +182,14 @@ public class Snapshot implements IVdcQueryable, BusinessEntityWithStatus<Guid, S
         return vmConfigurationAvailable;
     }
 
+    public boolean isVmConfigurationBroken() {
+        return vmConfigurationBroken;
+    }
+
+    public void setVmConfigurationBroken(boolean vmConfigurationBroken) {
+        this.vmConfigurationBroken = vmConfigurationBroken;
+    }
+
     public SnapshotType getType() {
         return type;
     }
@@ -260,7 +270,8 @@ public class Snapshot implements IVdcQueryable, BusinessEntityWithStatus<Guid, S
                 type,
                 vmConfiguration,
                 vmId,
-                diskImages
+                diskImages,
+                vmConfigurationBroken
         );
     }
 
@@ -282,7 +293,8 @@ public class Snapshot implements IVdcQueryable, BusinessEntityWithStatus<Guid, S
                 && type == other.type
                 && Objects.equals(vmConfiguration, other.vmConfiguration)
                 && Objects.equals(vmId, other.vmId)
-                && Objects.equals(diskImages, other.diskImages);
+                && Objects.equals(diskImages, other.diskImages)
+                && vmConfigurationBroken == other.vmConfigurationBroken;
     }
 
     public enum SnapshotStatus {

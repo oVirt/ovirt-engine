@@ -393,7 +393,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         if (!validate(vmValidator.vmDown())
                 || !validate(snapshotsValidator.snapshotExists(getVmId(), getParameters().getDstSnapshotId()))
                 || !validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
-                || !validate(snapshotsValidator.vmNotInPreview(getVmId()))) {
+                || !validate(snapshotsValidator.vmNotInPreview(getVmId()))
+                || !validate(snapshotsValidator.snapshotVmConfigurationBroken(getDstSnapshot(), getVmName()))) {
             return false;
         }
 

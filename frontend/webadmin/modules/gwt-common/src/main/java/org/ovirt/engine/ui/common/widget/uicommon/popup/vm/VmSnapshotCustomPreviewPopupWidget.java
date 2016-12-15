@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -140,6 +141,16 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 }
 
                 return snapshotVmConf != null && snapshotVmConf.equals(toPreviewVmConf);
+            }
+
+            @Override
+            public void render(Context context, SnapshotModel snapshotModel, SafeHtmlBuilder sb) {
+                if (!snapshotModel.getEntity().isVmConfigurationBroken()) {
+                    super.render(context, snapshotModel, sb);
+                }
+                else {
+                    sb.appendEscaped(constants.notAvailableLabel());
+                }
             }
         };
 
@@ -281,10 +292,12 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 if (BrowserEvents.CLICK.equals(nativeEvent.getType())) {
                     if (clickAt - lastClick < 300) { // double click: 2 clicks detected within 300 ms
                         SnapshotModel selectedSnapshotModel = (SnapshotModel) event.getValue();
-                        previewSnapshotModel.clearSelection();
-                        previewSnapshotModel.selectSnapshot(selectedSnapshotModel.getEntity().getId());
-                        updateWarnings();
-                        refreshTable(previewTable);
+                        if (!selectedSnapshotModel.getEntity().isVmConfigurationBroken()) {
+                            previewSnapshotModel.clearSelection();
+                            previewSnapshotModel.selectSnapshot(selectedSnapshotModel.getEntity().getId());
+                            updateWarnings();
+                            refreshTable(previewTable);
+                        }
                     }
                     lastClick = System.currentTimeMillis();
                 }

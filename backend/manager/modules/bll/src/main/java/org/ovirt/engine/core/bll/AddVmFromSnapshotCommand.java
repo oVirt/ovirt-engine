@@ -149,7 +149,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
         // If snapshot does not exist, there is not point in checking any of the VM related checks
         if (!validate(snapshotsValidator.snapshotExists(getSnapshot()))
-                || !validate(snapshotsValidator.vmNotDuringSnapshot(getSnapshot().getVmId()))) {
+                || !validate(snapshotsValidator.vmNotDuringSnapshot(getSnapshot().getVmId()))
+                || !validate(snapshotsValidator.snapshotVmConfigurationBroken(getSnapshot(), getVmName()))) {
             return false;
         }
 

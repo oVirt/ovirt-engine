@@ -813,8 +813,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         boolean isLocked = getIsLocked();
         boolean isSelected = snapshot != null && snapshot.getType() != SnapshotType.ACTIVE;
         boolean isStateless = getIsStateless();
+        boolean isVmConfigurationBroken = snapshot != null && snapshot.isVmConfigurationBroken();
 
-        getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
+                getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
                 && VdcActionUtils.canExecute(vmList, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
         getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
         getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
@@ -824,9 +825,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         getRemoveCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && !isStateless
                 && isVmQualifiedForSnapshotMerge);
         getCloneVmCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
-                && !isVmImageLocked && !isStateless);
+                && !isVmImageLocked && !isStateless && !isVmConfigurationBroken);
         getCloneTemplateCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
-                && !isVmImageLocked && !isStateless);
+                && !isVmImageLocked && !isStateless && !isVmConfigurationBroken);
     }
 
     public boolean getIsPreviewing() {

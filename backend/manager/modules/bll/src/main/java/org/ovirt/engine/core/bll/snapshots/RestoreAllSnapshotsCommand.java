@@ -146,8 +146,14 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         List<CinderDisk> cinderVolumesToRemove = new ArrayList<>();
         List<CinderDisk> cinderDisksToRemove = new ArrayList<>();
-        removeSnapshotsFromDB();
         removeUnusedImages(cinderVolumesToRemove);
+
+        if (getSnapshot().getType() == SnapshotType.REGULAR) {
+            snapshotsToRemove.addAll(findSnapshotsWithOnlyIllegalDisks());
+            setNewerVmConfigurationsAsBroken();
+        }
+
+        removeSnapshotsFromDB();
 
         if (!getTaskIdList().isEmpty() || !cinderDisksToRestore.isEmpty() || !cinderVolumesToRemove.isEmpty()) {
             deleteOrphanedImages(cinderDisksToRemove);
@@ -495,21 +501,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 snapshotDao.getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW);
         snapshotDao.updateStatus(previewedSnapshotId, SnapshotStatus.OK);
         snapshotsToRemove.add(removedSnapshot.getId());
-        List<DiskImage> images = diskImageDao.getAllSnapshotsForVmSnapshot(removedSnapshot.getId());
-        for (DiskImage image : images) {
-            if (image.getDiskStorageType() == DiskStorageType.IMAGE) {
-                DiskImage parentImage = diskImageDao.getSnapshotById(image.getParentId());
-                Guid snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
-                Snapshot candidateSnapToRemove = snapshotDao.get(snapshotToRemove);
-
-                while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)
-                        && isSnapshotEligibleToBeDeleted(candidateSnapToRemove)) {
-                    snapshotsToRemove.add(snapshotToRemove);
-                    parentImage = diskImageDao.getSnapshotById(parentImage.getParentId());
-                    snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
-                }
-            }
-        }
         addRedundantCinderSnapshots(previewedSnapshotId, imagesFromActiveSnapshot);
     }
 
@@ -536,6 +527,42 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             }
         }
         return criticalSnapshotsChain;
+    }
+
+    private Set<Guid> findSnapshotsWithOnlyIllegalDisks() {
+        List<Snapshot> newerSnapshots = getNewerSnapshots(snapshot);
+        Set<Guid> snapshotsToRemove = new HashSet<>();
+
+        newerSnapshots.forEach(snapshot -> {
+            VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
+                    snapshot.getVmConfiguration(), snapshot.getVmId(), snapshot.getId());
+            if (vm != null) {
+                boolean shouldRemove = vm.getImages().isEmpty() || vm.getImages().stream().allMatch(
+                        diskImage -> diskImage.getImageStatus() == ImageStatus.ILLEGAL);
+                if (shouldRemove) {
+                    snapshotsToRemove.add(snapshot.getId());
+                }
+            }
+        });
+
+        return snapshotsToRemove;
+    }
+
+    private void setNewerVmConfigurationsAsBroken() {
+        List<Snapshot> newerSnapshots = getNewerSnapshots(snapshot);
+
+        newerSnapshots.forEach(newerSnapshot -> {
+            newerSnapshot.setVmConfigurationBroken(true);
+            snapshotDao.update(newerSnapshot);
+        });
+    }
+
+    private List<Snapshot> getNewerSnapshots(Snapshot snapshot) {
+        return snapshotDao.getAllWithConfiguration(getVmId()).stream().filter(
+                snapshotFromDao ->
+                        snapshotFromDao.getType() == SnapshotType.REGULAR &&
+                                snapshotFromDao.getCreationDate().getTime() > snapshot.getCreationDate().getTime())
+                .collect(Collectors.toList());
     }
 
     @Override

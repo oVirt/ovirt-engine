@@ -79,7 +79,8 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
     protected boolean validate() {
         SnapshotsValidator snapshotsValidator = createSnapshotsValidator();
         if (!validate(snapshotsValidator.snapshotExists(getSnapshot()))
-                || !validate(snapshotsValidator.vmNotDuringSnapshot(getSnapshot().getVmId()))) {
+                || !validate(snapshotsValidator.vmNotDuringSnapshot(getSnapshot().getVmId()))
+                || !validate(snapshotsValidator.snapshotVmConfigurationBroken(getSnapshot(), getVmName()))) {
             return false;
         }
 

@@ -47,7 +47,8 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
                 .addValue("vm_configuration", entity.getVmConfiguration())
                 .addValue("memory_volume", getNullableRepresentation(entity.getMemoryVolume()))
                 .addValue("memory_dump_disk_id", entity.getMemoryDiskId())
-                .addValue("memory_metadata_disk_id", entity.getMetadataDiskId());
+                .addValue("memory_metadata_disk_id", entity.getMetadataDiskId())
+                .addValue("vm_configuration_broken", entity.isVmConfigurationBroken());
     }
 
     @Override
@@ -189,6 +190,7 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
             snapshot.setMemoryVolume(rs.getString("memory_volume"));
             snapshot.setMemoryDiskId(getGuid(rs, "memory_dump_disk_id"));
             snapshot.setMetadataDiskId(getGuid(rs, "memory_metadata_disk_id"));
+            snapshot.setVmConfigurationBroken(rs.getBoolean("vm_configuration_broken"));
 
             return snapshot;
         }
