@@ -84,6 +84,8 @@ public enum ConfigurationValues {
     MaxCpuLimitQosValue,
     CORSSupport,
     CORSAllowedOrigins,
+    CORSAllowDefaultOrigins,
+    CORSDefaultOriginSuffixes,
     HostDevicePassthroughCapabilities,
     MaxIoThreadsPerVm(ConfigAuthType.User),
     DisplayUncaughtUIExceptions,

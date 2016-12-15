@@ -54,7 +54,7 @@
     </filter>
     <filter-mapping>
         <filter-name>CORSSupport</filter-name>
-        <url-pattern>/DONOTUSEYET/*</url-pattern>
+        <url-pattern>/sso/*</url-pattern>
     </filter-mapping>
 
     <!-- Locale Filter, determines the user locale -->

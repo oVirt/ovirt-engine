@@ -648,6 +648,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         case GetDbUserBySession:
         case GetEngineSessionIdForSsoToken:
         case ValidateSession:
+        case GetDefaultAllowedOrigins:
             return runQueryImpl(actionType, parameters, false);
         case GetConfigurationValue:
             GetConfigurationValueParameters configParameters = (GetConfigurationValueParameters) parameters;
@@ -658,6 +659,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             case UserSessionTimeOutInterval:
             case CORSSupport:
             case CORSAllowedOrigins:
+            case CORSAllowDefaultOrigins:
+            case CORSDefaultOriginSuffixes:
                 return runQueryImpl(actionType, parameters, false);
             default:
                 break;

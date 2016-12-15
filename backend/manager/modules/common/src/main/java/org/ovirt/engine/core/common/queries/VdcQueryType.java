@@ -216,6 +216,7 @@ public enum VdcQueryType implements Serializable {
     GetUserProfileAsList(VdcQueryAuthType.User),
     GetAllUserProfiles,
     IsPasswordDelegationPossible(VdcQueryAuthType.User),
+    GetDefaultAllowedOrigins,
 
     // Directory queries:
     GetDirectoryUserById(VdcQueryAuthType.User),

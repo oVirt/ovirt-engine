@@ -1721,6 +1721,26 @@ public enum ConfigValues {
     CORSAllowedOrigins,
 
     /**
+     * If CORS is enabled (with the {@code CORSSupport} parameter set to {@code true} then this indicates
+     * whether all configured hosts shall be taken as allowed origins.
+     */
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    CORSAllowDefaultOrigins,
+
+    /**
+     * If CORS is enabled (with the {@code CORSSupport} parameter set to {@code true}
+     * same as the {@code CORSAllowDefaultOrigins} is set to {@code true},
+     * then the (@code CORSDefaultOriginSuffixes) indicate what suffices will be added
+     * to the by-default-allowed origins (means all hosts).
+     *
+     * A comma-separated list like ":9090,:1234"
+     */
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    CORSDefaultOriginSuffixes,
+
+    /**
      * Interval in seconds after which is safe to check host storage lease status when host stopped responding
      * to monitoring
      */
