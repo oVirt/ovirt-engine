@@ -12,13 +12,14 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.register.RegisterVmData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmGeneralSubTabView;
 
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM, ImportVmData, RegisterVmModel> {
+public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM, RegisterVmData, RegisterVmModel> {
 
     private ImportVmGeneralSubTabView generalView;
     private VmImportGeneralModel vmImportGeneralModel;

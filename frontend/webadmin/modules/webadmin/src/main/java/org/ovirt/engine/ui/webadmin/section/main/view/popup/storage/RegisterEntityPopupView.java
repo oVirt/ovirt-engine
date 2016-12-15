@@ -94,7 +94,7 @@ public abstract class RegisterEntityPopupView<E, D extends ImportEntityData<E>, 
         model.getEntities().setSelectedItem(Linq.firstOrNull(model.getEntities().getItems()));
     }
 
-    private void refreshEntityTable() {
+    protected void refreshEntityTable() {
         entityTable.asEditor().edit(entityTable.asEditor().flush());
         entityTable.redraw();
     }
@@ -200,7 +200,6 @@ public abstract class RegisterEntityPopupView<E, D extends ImportEntityData<E>, 
             @Override
             public void update(int index, D object, String value) {
                 registerEntityModel.selectQuotaByName(value, object.getClusterQuota());
-
             }
         });
 
