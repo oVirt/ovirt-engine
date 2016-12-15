@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -103,10 +104,11 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     }
 
     private void cleanupLunsFromDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
+        Set<String> lunIdsFromVgInfo = lunsFromVgInfo.stream().map(LUNs::getLUNId).collect(Collectors.toSet());
         lunsFromDb.stream()
                 .map(LUNs::getLUNId)
                 .filter(lunId -> !lunId.startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX))
-                .filter(lunId -> lunsFromVgInfo.stream().noneMatch(lun -> lun.getLUNId().equals(lunId)))
+                .filter(lunId -> !lunIdsFromVgInfo.contains(lunId))
                 .forEach(lunId -> {
                     lunDao.remove(lunId);
                     log.info("Removed LUN ID '{}'", lunId);
