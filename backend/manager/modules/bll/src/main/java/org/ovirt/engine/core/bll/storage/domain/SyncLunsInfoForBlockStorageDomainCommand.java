@@ -105,14 +105,12 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
 
     private void cleanupLunsFromDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
         Set<String> lunIdsFromVgInfo = lunsFromVgInfo.stream().map(LUNs::getLUNId).collect(Collectors.toSet());
-        lunsFromDb.stream()
-                .map(LUNs::getLUNId)
-                .filter(lunId -> !lunId.startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX))
-                .filter(lunId -> !lunIdsFromVgInfo.contains(lunId))
-                .forEach(lunId -> {
-                    lunDao.remove(lunId);
-                    log.info("Removed LUN ID '{}'", lunId);
-                });
+        List<LUNs> lunsToRemove = lunsFromDb.stream()
+                .filter(lun -> !lun.getLUNId().startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX))
+                .filter(lun -> !lunIdsFromVgInfo.contains(lun.getLUNId()))
+                .peek(lun -> log.info("Removing LUN ID '{}'", lun.getLUNId()))
+                .collect(Collectors.toList());
+        lunDao.removeAllInBatch(lunsToRemove);
     }
 
     /**
