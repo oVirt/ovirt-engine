@@ -11,6 +11,7 @@ public class StorageConstants {
     public static final String GLANCE_DISK_ALIAS_PREFIX = "GlanceDisk-";
     public static final short LOW_SPACE_THRESHOLD = 100; // low space threshold maximum value (%)
     public static final String LSM_AUTO_GENERATED_SNAPSHOT_DESCRIPTION = "Auto-generated for Live Storage Migration";
+    public static final String GUID = "guid";
     public static final double QCOW_OVERHEAD_FACTOR = 1.1;
     public static final String STEP_DEVICE_TYPE = "device";
 }

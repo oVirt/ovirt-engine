@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.HostJobInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.vdscommands.AmendVolumeVDSCommandParameters;
@@ -88,6 +90,15 @@ public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
         }
 
         return super.getCommandStepSubjectEntities();
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+        }
+        jobProperties.put(StorageConstants.GUID, getImage().getId().toString());
+        return jobProperties;
     }
 
     private boolean isVdsmImage() {

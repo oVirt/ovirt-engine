@@ -88,6 +88,16 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
     }
 
     @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+        }
+        jobProperties.put("action", "Amending");
+        jobProperties.put("diskalias", getDiskImage().getDiskAlias());
+        return jobProperties;
+    }
+
+    @Override
     public CommandCallback getCallback() {
         return new SerialChildCommandsExecutionCallback();
     }
