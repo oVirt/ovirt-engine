@@ -423,7 +423,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     private void reportExternalMacs() {
         final VM vm = getVm();
-        final Set<String> externalMacAddresses = externalVmMacsFinder.findExternalMacAddresses(vm, getContext());
+        final Set<String> externalMacAddresses = externalVmMacsFinder.findExternalMacAddresses(vm);
         if (CollectionUtils.isNotEmpty(externalMacAddresses)) {
             auditLog(createExternalMacsAuditLog(vm, externalMacAddresses), AuditLogType.MAC_ADDRESS_IS_EXTERNAL);
         }

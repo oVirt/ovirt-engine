@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.network.vm.mac;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +17,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
@@ -46,12 +44,12 @@ public class OutOfRangeVmMacsFinderTest {
     @Test
     public void testFindProblematicMacs() {
         final Set<String> externalMacs = new HashSet<>();
-        when(mockExternalVmMacsFinder.findExternalMacAddresses(vm, null)).thenReturn(externalMacs);
+        when(mockExternalVmMacsFinder.findExternalMacAddresses(vm)).thenReturn(externalMacs);
 
         final Collection<String> actual = underTest.findProblematicMacs(vm);
 
         assertThat(actual, sameInstance(externalMacs));
-        verify(mockExternalVmMacsFinder).findExternalMacAddresses(vmCaptor.capture(), isNull(CommandContext.class));
+        verify(mockExternalVmMacsFinder).findExternalMacAddresses(vmCaptor.capture());
         assertThat(vmCaptor.getValue().getClusterId(), is(CLUSTER_ID));
     }
 }

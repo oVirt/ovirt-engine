@@ -14,9 +14,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
+import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -24,8 +23,6 @@ import org.ovirt.engine.core.compat.Guid;
 @RunWith(MockitoJUnitRunner.class)
 public class ExternalVmMacsFinderTest {
 
-    private static final String SESSION_ID = "session id";
-    private static final CommandContext COMMAND_CONTEXT = CommandContext.createContext(SESSION_ID);
     private static final Guid CLUSTER_ID = Guid.newGuid();
     private static final String MAC_ADDRESS_1 = "mac address 1";
     private static final String MAC_ADDRESS_2 = "mac address 2";
@@ -34,7 +31,7 @@ public class ExternalVmMacsFinderTest {
     private MacPoolPerCluster mockMacPoolPerCluster;
 
     @Mock
-    private MacPool mockMacPool;
+    private ReadMacPool mockReadMacPool;
 
     @InjectMocks
     private ExternalVmMacsFinder underTest;
@@ -47,7 +44,7 @@ public class ExternalVmMacsFinderTest {
     public void setUp() {
         vm = createVm();
 
-        when(mockMacPoolPerCluster.getMacPoolForCluster(CLUSTER_ID, COMMAND_CONTEXT)).thenReturn(mockMacPool);
+        when(mockMacPoolPerCluster.getMacPoolForCluster(CLUSTER_ID)).thenReturn(mockReadMacPool);
     }
 
     private VM createVm() {
@@ -60,18 +57,18 @@ public class ExternalVmMacsFinderTest {
 
     @Test
     public void testFindExternalMacAddresses() {
-        when(mockMacPool.isMacInRange(MAC_ADDRESS_1)).thenReturn(Boolean.TRUE);
-        when(mockMacPool.isMacInRange(MAC_ADDRESS_2)).thenReturn(Boolean.FALSE);
+        when(mockReadMacPool.isMacInRange(MAC_ADDRESS_1)).thenReturn(Boolean.TRUE);
+        when(mockReadMacPool.isMacInRange(MAC_ADDRESS_2)).thenReturn(Boolean.FALSE);
         vm.setInterfaces(Arrays.asList(vNic1, vNic2));
 
-        final Set<String> actual = underTest.findExternalMacAddresses(vm, COMMAND_CONTEXT);
+        final Set<String> actual = underTest.findExternalMacAddresses(vm);
 
         assertThat(actual, contains(MAC_ADDRESS_2));
     }
 
     @Test
     public void testFindExternalMacAddressesVnicsNull() {
-        final Set<String> actual = underTest.findExternalMacAddresses(vm, COMMAND_CONTEXT);
+        final Set<String> actual = underTest.findExternalMacAddresses(vm);
 
         assertThat(actual, empty());
     }

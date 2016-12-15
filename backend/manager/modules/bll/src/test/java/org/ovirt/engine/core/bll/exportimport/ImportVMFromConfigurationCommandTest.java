@@ -30,7 +30,6 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
@@ -136,7 +135,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(anyMapOf(Guid.class, StorageDomain.class));
         doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(anyMapOf(Guid.class, StorageDomain.class));
         final VM expectedVm = cmd.getVm();
-        when(externalVmMacsFinder.findExternalMacAddresses(eq(expectedVm), any(CommandContext.class)))
+        when(externalVmMacsFinder.findExternalMacAddresses(eq(expectedVm)))
                 .thenReturn(Collections.emptySet());
         when(validator.validateUnregisteredEntity(
                 any(IVdcQueryable.class),

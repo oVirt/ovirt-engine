@@ -22,6 +22,6 @@ class OutOfRangeVmMacsFinder implements ProblematicVmMacsFinder {
     @Override
     public Collection<String> findProblematicMacs(VM vm) {
         vm.setClusterId(clusterId);
-        return externalVmMacsFinder.findExternalMacAddresses(vm, null);
+        return externalVmMacsFinder.findExternalMacAddresses(vm);
     }
 }

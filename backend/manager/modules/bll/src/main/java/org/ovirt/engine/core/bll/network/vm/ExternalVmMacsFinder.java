@@ -9,9 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
+import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
@@ -24,17 +23,17 @@ public class ExternalVmMacsFinder {
         this.macPoolPerCluster = Objects.requireNonNull(macPoolPerCluster, "macPoolPerCluster cannot be null");
     }
 
-    public Set<String> findExternalMacAddresses(VM vm, CommandContext commandContext) {
+    public Set<String> findExternalMacAddresses(VM vm) {
         final List<VmNetworkInterface> interfaces = vm.getInterfaces();
         if (interfaces == null) {
             return Collections.emptySet();
         }
-        final MacPool macPool = macPoolPerCluster.getMacPoolForCluster(vm.getClusterId(), commandContext);
+        final ReadMacPool readMacPool = macPoolPerCluster.getMacPoolForCluster(vm.getClusterId());
         return interfaces
                 .stream()
                 .map(VmNetworkInterface::getMacAddress)
                 .filter(Objects::nonNull)
-                .filter(((Predicate<String>) macPool::isMacInRange).negate())
+                .filter(((Predicate<String>) readMacPool::isMacInRange).negate())
                 .collect(Collectors.toSet());
     }
 
