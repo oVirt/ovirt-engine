@@ -153,6 +153,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
+import org.ovirt.engine.core.common.queries.ValidateVmMacsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -3352,5 +3353,12 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllGlusterVolumesForStorageDomain,
                 new VdcQueryParametersBase(),
                 aQuery);
+    }
+
+    public void validateVmMacs(AsyncQuery<Map<Guid, List<List<String>>>> asyncQuery, Map<Guid, List<VM>> vmsByCluster) {
+        asyncQuery.converterCallback = new CastingConverter<>();
+        Frontend.getInstance().runQuery(VdcQueryType.ValidateVmMacs,
+                new ValidateVmMacsParameters(vmsByCluster),
+                asyncQuery);
     }
 }
