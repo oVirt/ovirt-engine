@@ -2798,6 +2798,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String negativeAffinity();
 
+    String affinityRuleLabel();
+
     String hardEnforcingAffinity();
 
     String softEnforcingAffinity();

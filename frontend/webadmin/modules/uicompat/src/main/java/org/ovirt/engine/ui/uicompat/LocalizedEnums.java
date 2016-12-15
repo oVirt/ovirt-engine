@@ -1244,5 +1244,11 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String HostedEngineDeployConfiguration$Action___UNDEPLOY();
 
     String AuditLogType___MAC_ADDRESS_IS_EXTERNAL();
+
+    String EntityAffinityRule___DISABLED();
+
+    String EntityAffinityRule___NEGATIVE();
+
+    String EntityAffinityRule___POSITIVE();
 }
 

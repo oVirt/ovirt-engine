@@ -21,7 +21,7 @@ public class EditAffinityGroupModel extends AffinityGroupModel {
 
         getName().setEntity(getAffinityGroup().getName());
         getDescription().setEntity(getAffinityGroup().getDescription());
-        getPositive().setEntity(getAffinityGroup().isVmPositive());
+        getVmAffinityRule().setSelectedItem(getAffinityGroup().getVmAffinityRule());
         getEnforcing().setEntity(getAffinityGroup().isVmEnforcing());
     }
 

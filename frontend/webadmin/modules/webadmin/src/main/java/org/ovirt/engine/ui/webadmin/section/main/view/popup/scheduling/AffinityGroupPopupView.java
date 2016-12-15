@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 
+import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -8,10 +9,12 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.VmsSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.model.AffinityGroupModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -47,17 +50,12 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     @WithElementId("description")
     StringEntityModelTextBoxEditor descriptionEditor;
 
-    @Path(value = "positive.entity")
-    @WithElementId("positive")
+    @Path(value = "vmAffinityRule.selectedItem")
     @UiField(provided=true)
-    EntityModelCheckBoxEditor positiveEditor;
+    ListModelListBoxEditor<EntityAffinityRule> vmAffinityRuleEditor;
 
     @UiField(provided=true)
-    InfoIcon positiveEditorInfoIcon;
-
-    @UiField
-    @Ignore
-    EnableableFormLabel positiveEditorLabel;
+    InfoIcon vmAffinityRuleEditorInfoIcon;
 
     @Path(value = "enforcing.entity")
     @WithElementId("enforcing")
@@ -81,23 +79,23 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     @Inject
     public AffinityGroupPopupView(EventBus eventBus) {
         super(eventBus);
-        initCheckBoxEditors();
+        initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }
 
-    private void initCheckBoxEditors() {
-        positiveEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        positiveEditor.hideLabel();
-        positiveEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupPolarityInfo()));
+    private void initEditors() {
+        vmAffinityRuleEditor = new ListModelListBoxEditor<>(new EnumRenderer<EntityAffinityRule>());
+        vmAffinityRuleEditor.hideLabel();
+        vmAffinityRuleEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupPolarityInfo()));
 
         enforcingEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         enforcingEditor.hideLabel();
         enforcingEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupEnforcInfo()));
     }
 
-    public void edit(AffinityGroupModel model) {
+    public void edit(final AffinityGroupModel model) {
         driver.edit(model);
         addRemoveVmWidget.edit(model.getVmsSelectionModel());
     }

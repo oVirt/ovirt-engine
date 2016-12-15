@@ -4,6 +4,7 @@
     xmlns:ui="urn:ui:com.google.gwt.uibinder"
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
     xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
@@ -49,10 +50,12 @@
                         <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.affinityDescriptionLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                     </b:Row>
                     <b:Row>
-                        <b:Column size="LG_12">
-                            <ge:EntityModelCheckBoxEditor ui:field="positiveEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
-                            <l:EnableableFormLabel ui:field="positiveEditorLabel" addStyleNames="{style.floatLeft} {style.patternFlyRadio}" text="{constants.affinityGroupPolarityLabel}" />
-                            <d:InfoIcon ui:field="positiveEditorInfoIcon" addStyleNames="{style.infoIcon}"/>
+                        <b:Column size="LG_6">
+                            <g:Label text="{constants.affinityRuleLabel}" addStyleNames="{style.floatLeft}" />
+                            <d:InfoIcon ui:field="vmAffinityRuleEditorInfoIcon" addStyleNames="{style.infoIcon}"/>
+                        </b:Column>
+                        <b:Column size="LG_6">
+                            <e:ListModelListBoxEditor ui:field="vmAffinityRuleEditor" usePatternFly="true" />
                         </b:Column>
                     </b:Row>
                     <b:Row>

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -22,7 +23,10 @@ import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class AffinityGroupModel extends Model {
@@ -32,7 +36,7 @@ public abstract class AffinityGroupModel extends Model {
 
     private EntityModel<String> name;
     private EntityModel<String> description;
-    private EntityModel<Boolean> positive;
+    private ListModel<EntityAffinityRule> vmAffinityRule;
     private EntityModel<Boolean> enforcing;
     private VmsSelectionModel vmsSelectionModel;
     private final Guid clusterId;
@@ -50,8 +54,17 @@ public abstract class AffinityGroupModel extends Model {
 
         setName(new EntityModel<String>());
         setDescription(new EntityModel<String>());
-        setPositive(new EntityModel<>(true));
+        setVmAffinityRule(new ListModel<EntityAffinityRule>());
+        vmAffinityRule.setItems(Arrays.asList(EntityAffinityRule.values()), EntityAffinityRule.DISABLED);
         setEnforcing(new EntityModel<>(true));
+        enforcing.setIsChangeable(false);
+
+        vmAffinityRule.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                enforcing.setIsChangeable(vmAffinityRule.getSelectedItem() != EntityAffinityRule.DISABLED);
+            }
+        });
 
         setVmsSelectionModel(new VmsSelectionModel());
 
@@ -98,12 +111,12 @@ public abstract class AffinityGroupModel extends Model {
         this.description = description;
     }
 
-    public EntityModel<Boolean> getPositive() {
-        return positive;
+    public ListModel<EntityAffinityRule> getVmAffinityRule() {
+        return vmAffinityRule;
     }
 
-    private void setPositive(EntityModel<Boolean> positive) {
-        this.positive = positive;
+    private void setVmAffinityRule(ListModel<EntityAffinityRule> vmAffinityRule) {
+        this.vmAffinityRule = vmAffinityRule;
     }
 
     public EntityModel<Boolean> getEnforcing() {
@@ -140,9 +153,7 @@ public abstract class AffinityGroupModel extends Model {
         group.setDescription(getDescription().getEntity());
         group.setClusterId(clusterId);
         group.setVmEnforcing(getEnforcing().getEntity());
-        group.setVmAffinityRule(getPositive().getEntity().booleanValue() ?
-                EntityAffinityRule.POSITIVE :
-                EntityAffinityRule.NEGATIVE);
+        group.setVmAffinityRule(getVmAffinityRule().getSelectedItem());
         group.setVmIds(getVmsSelectionModel().getSelectedVmIds());
 
         startProgress();
