@@ -1418,7 +1418,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             Step taskStep =
                     executionHandler.addTaskStep(getExecutionContext(),
                             getCommandStep(),
-                            null,
+                            ExecutionMessageDirector.resolveStepMessage(getCommandStep(), getJobMessageProperties()),
                             getCommandStepSubjectEntities());
             if (taskStep != null) {
                 if (shouldUpdateStepProgress()) {
