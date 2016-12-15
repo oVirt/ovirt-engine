@@ -19,7 +19,7 @@ public class TemplateInterfacePopupView extends AbstractModelBoundWidgetPopupVie
     public TemplateInterfacePopupView(EventBus eventBus) {
         super(eventBus,
                 new TemplateNetworkInterfacePopupWidget(eventBus), "490px", //$NON-NLS-1$
-                "320px"); //$NON-NLS-1$
+                "350px"); //$NON-NLS-1$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
