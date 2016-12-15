@@ -159,7 +159,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
      * Saves the new or updates the existing luns in the DB.
      */
     protected void updateLunsInDb(Map<Consumer<List<LUNs>>, List<LUNs>> lunsToUpdateInDbMap) {
-        lunsToUpdateInDbMap.entrySet().stream().forEach(entry -> entry.getKey().accept(entry.getValue()));
+        lunsToUpdateInDbMap.entrySet().forEach(entry -> entry.getKey().accept(entry.getValue()));
 
         if (lunsToUpdateInDbMap.containsKey(saveNewLuns) || lunsToUpdateInDbMap.containsKey(updateExistingLuns)) {
             Collection<LUNs> lunsToUpdateInDb = lunsToUpdateInDbMap.entrySet().stream()
