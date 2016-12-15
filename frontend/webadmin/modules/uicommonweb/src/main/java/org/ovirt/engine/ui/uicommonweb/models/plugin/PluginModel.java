@@ -22,4 +22,13 @@ public class PluginModel extends SearchableListModel<Void, Void> {
         return getHistoryToken();
     }
 
+    @Override
+    public boolean getIsAvailable() {
+        return true;
+    }
+
+    @Override
+    public void setIsAvailable(boolean value) {
+        // No-op. This is not really needed due to the getter override, but for consistency sake its a no-op
+    }
 }

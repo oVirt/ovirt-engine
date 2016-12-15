@@ -269,6 +269,10 @@ public class CommonModel extends ListModel<SearchableListModel> {
             getUserList().setIsAvailable(true);
         } else {
             updateAvailability(SystemTreeItemType.System, null);
+            // When a tag is unselected, clear out any stored search string for the model.
+            getHostList().setSearchString(getHostList().getDefaultSearchString());
+            getVmList().setSearchString(getVmList().getDefaultSearchString());
+            getUserList().setSearchString(getUserList().getDefaultSearchString());
         }
 
         // Switch the selected item as neccessary.
