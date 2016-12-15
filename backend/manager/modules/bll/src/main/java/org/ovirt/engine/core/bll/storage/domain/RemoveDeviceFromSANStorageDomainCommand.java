@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import static org.ovirt.engine.core.common.constants.StorageConstants.STEP_DEVICE_TYPE;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -103,6 +106,16 @@ public class RemoveDeviceFromSANStorageDomainCommand<T extends RemoveDeviceFromS
 
     @Override
     protected StepEnum getCommandStep() {
-        return StepEnum.REDUCE_DOMAIN_DEVICE;
+        return StepEnum.REMOVE_DEVICE_FROM_DOMAIN;
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+        }
+
+        jobProperties.put(STEP_DEVICE_TYPE, getParameters().getDeviceId());
+        return jobProperties;
     }
 }
