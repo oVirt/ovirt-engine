@@ -17,6 +17,8 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -62,6 +64,9 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
             return false;
         }
         setStoragePoolId(getDiskImage().getStoragePoolId());
+        if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+            return false;
+        }
         if (!FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_AMEND_NOT_SUPPORTED_BY_DC_VERSION,
                     String.format("$dataCenterVersion %s", getStoragePool().getCompatibilityVersion().toString()));
@@ -69,7 +74,11 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
         if (getDiskImage().getVmEntityType().isTemplateType()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_TEMPLATE_DISK);
         }
-
+        setStorageDomainId(getDiskImage().getStorageIds().get(0));
+        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
+        if (!validate(storageDomainValidator.isDomainExistAndActive())) {
+            return false;
+        }
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Collections.singletonList(getDiskImage()));
         return validate(diskImagesValidator.diskImagesNotIllegal()) &&
                 validate(diskImagesValidator.diskImagesNotLocked());
