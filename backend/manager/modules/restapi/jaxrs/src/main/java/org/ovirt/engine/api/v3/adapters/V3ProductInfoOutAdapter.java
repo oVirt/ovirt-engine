@@ -39,6 +39,7 @@ public class V3ProductInfoOutAdapter implements V3Adapter<ProductInfo, V3Product
             toVersion.setMinor(fromVersion.getMinor());
             toVersion.setBuild(fromVersion.getBuild());
             toVersion.setRevision(fromVersion.getRevision());
+            toVersion.setFullVersion(fromVersion.getFullVersion());
             to.setVersion(toVersion);
             to.setFullVersion(fromVersion.getFullVersion());
         }
