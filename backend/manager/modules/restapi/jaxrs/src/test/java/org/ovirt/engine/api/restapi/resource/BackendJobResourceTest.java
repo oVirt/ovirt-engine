@@ -7,11 +7,9 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Job;
-import org.ovirt.engine.api.model.JobStatus;
 import org.ovirt.engine.core.common.action.EndExternalJobParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -47,9 +45,9 @@ public class BackendJobResourceTest
         setUriInfo(setUpActionExpectations(VdcActionType.EndExternalJob,
                 EndExternalJobParameters.class,
               new String[] { "JobId", "Status", "Force" },
-              new Object[] { GUIDS[0], JobExecutionStatus.FINISHED, false }, true, true));
+              new Object[] { GUIDS[0], true, false }, true, true));
         Action action = new Action();
-        action.setStatus(JobStatus.FINISHED.value());
+        action.setSucceeded(true);
         verifyActionResponse(resource.end(action));
     }
 

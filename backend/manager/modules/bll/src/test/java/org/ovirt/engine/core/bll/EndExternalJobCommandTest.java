@@ -8,14 +8,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.action.EndExternalJobParameters;
 import org.ovirt.engine.core.common.job.Job;
-import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
 
 public class EndExternalJobCommandTest extends BaseCommandTest {
     private static final Guid jobId = Guid.newGuid();
-    private EndExternalJobParameters parameters =
-            new EndExternalJobParameters(jobId, JobExecutionStatus.FINISHED, false);
+    private EndExternalJobParameters parameters = new EndExternalJobParameters(jobId, true, false);
     @Mock
     private JobDao jobDaoMock;
 

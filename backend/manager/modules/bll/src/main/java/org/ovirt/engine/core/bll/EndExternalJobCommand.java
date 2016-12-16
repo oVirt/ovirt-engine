@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -59,7 +58,7 @@ public class EndExternalJobCommand <T extends EndExternalJobParameters> extends 
         context.setMonitored(true);
         context.setExecutionMethod(ExecutionMethod.AsJob);
         context.setJob(job);
-        executionHandler.endJob(context, JobExecutionStatus.FINISHED == getParameters().getStatus());
+        executionHandler.endJob(context, getParameters().getStatus());
         if (getParameters().isForce()) {
             // mark job as auto-cleared
             job.setAutoCleared(true);

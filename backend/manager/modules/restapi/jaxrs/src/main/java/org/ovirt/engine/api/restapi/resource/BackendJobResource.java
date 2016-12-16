@@ -4,11 +4,9 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Job;
-import org.ovirt.engine.api.model.JobStatus;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.JobResource;
 import org.ovirt.engine.api.resource.StepsResource;
-import org.ovirt.engine.api.restapi.types.JobMapper;
 import org.ovirt.engine.core.common.action.EndExternalJobParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -28,10 +26,12 @@ public class BackendJobResource extends AbstractBackendActionableResource<Job, o
 
     @Override
     public Response end(Action action) {
-        validateParameters(action, "status");
-        JobStatus status = JobStatus.fromValue(action.getStatus());
-        return doAction(VdcActionType.EndExternalJob,
-                new EndExternalJobParameters(guid, JobMapper.mapJobStatus(status), action.isSetForce() ? action.isForce() : false), action);
+        EndExternalJobParameters parameters = new EndExternalJobParameters(
+            guid,
+            action.isSetSucceeded() ? action.isSucceeded() : true,
+            action.isSetForce() ? action.isForce() : false
+        );
+        return doAction(VdcActionType.EndExternalJob, parameters, action);
     }
 
     @Override
