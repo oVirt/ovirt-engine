@@ -27,7 +27,7 @@ public class DefaultCompensationContext extends CompensationContextBase {
 
     /**
      * A set of all the entities which have been snapshotted ever in this context, since we only want to save the
-     * initial snapshot of each entity the comand has changed/created.
+     * initial snapshot of each entity the command has changed/created.
      */
     private Set<CachedEntityEntry> cachedEntities = new HashSet<>();
 
