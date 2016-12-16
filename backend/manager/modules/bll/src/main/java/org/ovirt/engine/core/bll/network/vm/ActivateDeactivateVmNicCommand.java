@@ -18,7 +18,6 @@ import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -387,16 +386,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     protected ValidationResult macAvailable() {
         VmNic nic = getParameters().getNic();
 
-        MacPool macPool = getMacPool();
-        Boolean allowDupMacs = macPool.isDuplicateMacAddressesAllowed();
-
-        boolean cannotUseThisMac = !allowDupMacs
-                && new VmInterfaceManager(macPool).existsPluggedInterfaceWithSameMac(nic);
-
         EngineMessage failMessage = EngineMessage.NETWORK_MAC_ADDRESS_IN_USE;
         return ValidationResult
                 .failWith(failMessage, ReplacementUtils.getVariableAssignmentString(failMessage, nic.getMacAddress()))
-                .when(cannotUseThisMac);
+                .when(new VmInterfaceManager().tooManyPluggedInterfaceWithSameMac(nic, getMacPool()));
     }
 
     protected boolean checkSriovHotPlugSupported() {

@@ -18,6 +18,8 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
+import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -71,6 +73,7 @@ public class VmDeviceUtils {
     private final ClusterDao clusterDao;
     private final VmTemplateDao vmTemplateDao;
     private final VmHandler vmHandler;
+    private final MacPoolPerCluster macPoolPerCluster;
 
     private OsRepository osRepository;
 
@@ -80,13 +83,15 @@ public class VmDeviceUtils {
             DiskDao diskDao,
             ClusterDao clusterDao,
             VmTemplateDao vmTemplateDao,
-            VmHandler vmHandler) {
+            VmHandler vmHandler,
+            MacPoolPerCluster macPoolPerCluster) {
         this.vmDao = vmDao;
         this.vmDeviceDao = vmDeviceDao;
         this.diskDao = diskDao;
         this.clusterDao = clusterDao;
         this.vmTemplateDao = vmTemplateDao;
         this.vmHandler = vmHandler;
+        this.macPoolPerCluster = macPoolPerCluster;
         init();
     }
 
@@ -615,9 +620,11 @@ public class VmDeviceUtils {
             null);
     }
 
-    private boolean canPlugInterface(VmNic iface) {
+    private boolean canPlugInterface(VmNic iface, VmBase vmBase) {
+        ReadMacPool macPool = macPoolPerCluster.getMacPoolForCluster(vmBase.getClusterId());
         VmInterfaceManager vmIfaceManager = new VmInterfaceManager();
-        if (vmIfaceManager.existsPluggedInterfaceWithSameMac(iface)) {
+
+        if (vmIfaceManager.tooManyPluggedInterfaceWithSameMac(iface, macPool)) {
             vmIfaceManager.auditLogMacInUseUnplug(iface);
             return false;
         } else {
@@ -1591,7 +1598,7 @@ public class VmDeviceUtils {
                 exportedDevice = vmDevice;
             }
 
-            exportedDevice.setIsPlugged(exportedDevice.getIsPlugged() && canPlugInterface(iface));
+            exportedDevice.setIsPlugged(exportedDevice.getIsPlugged() && canPlugInterface(iface, vmBase));
             updateImportedVmDevice(vmBase, vmDevice, deviceId, vmDevicesToUpdate);
         }
     }
