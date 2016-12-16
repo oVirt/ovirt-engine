@@ -208,10 +208,10 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         // VDS vds = ResourceManager.Instance.getVds(vdsId);
         VDS vds = vdsDao.get(vdsId);
         // we can get here when vds status was set already to Maintenance
-        if ((vds.getStatus() != VDSStatus.Maintenance) && (vds.getStatus() != VDSStatus.NonResponsive)
-                && (vds.getStatus() != VDSStatus.Up) && (vds.getStatus() != VDSStatus.Error)
-                && (vds.getStatus() != VDSStatus.PreparingForMaintenance) && (vds.getStatus() != VDSStatus.Down
-                && (vds.getStatus() != VDSStatus.InstallFailed))) {
+        if (vds.getStatus() != VDSStatus.Maintenance && vds.getStatus() != VDSStatus.NonResponsive
+                && vds.getStatus() != VDSStatus.Up && vds.getStatus() != VDSStatus.Error
+                && vds.getStatus() != VDSStatus.PreparingForMaintenance && vds.getStatus() != VDSStatus.Down
+                && vds.getStatus() != VDSStatus.InstallFailed) {
             returnValue = false;
             reasons.add(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL.toString());
         }
