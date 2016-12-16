@@ -10,6 +10,7 @@ import javax.transaction.Transaction;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -141,13 +142,26 @@ public class VmInterfaceManager {
     }
 
     /***
+     * Returns whether or not there are too many network interfaces with
+     * the same MAC address as the given interface plugged in
+     *
+     * @param iface
+     *            the network interface with MAC address
+     * @return <code>true</code> if the MAC is used by too many other plugged network interface,
+     *         <code>false</code> otherwise.
+     */
+    public boolean tooManyPluggedInterfaceWithSameMac(VmNic iface, ReadMacPool readMacPool) {
+        return !readMacPool.isDuplicateMacAddressesAllowed() && existsPluggedInterfaceWithSameMac(iface);
+    }
+
+    /***
      * Returns whether or not there is a plugged network interface with the same MAC address as the given interface
      *
      * @param interfaceToPlug
      *            the network interface that needs to be plugged
      * @return <code>true</code> if the MAC is used by another plugged network interface, <code>false</code> otherwise.
      */
-    public boolean existsPluggedInterfaceWithSameMac(VmNic interfaceToPlug) {
+    private boolean existsPluggedInterfaceWithSameMac(VmNic interfaceToPlug) {
         List<VmNic> vmNetworkIntrefaces = getVmNicDao().getPluggedForMac(interfaceToPlug.getMacAddress());
         for (VmNic vmNetworkInterface : vmNetworkIntrefaces) {
             if (!interfaceToPlug.getId().equals(vmNetworkInterface.getId())) {
