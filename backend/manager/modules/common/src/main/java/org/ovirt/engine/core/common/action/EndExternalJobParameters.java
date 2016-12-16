@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public class EndExternalJobParameters extends VdcActionParametersBase {
@@ -10,7 +9,7 @@ public class EndExternalJobParameters extends VdcActionParametersBase {
      */
     private static final long serialVersionUID = 1L;
     private Guid jobId;
-    private JobExecutionStatus exitStatus;
+    private boolean exitStatus;
     private boolean force;
 
 
@@ -22,11 +21,11 @@ public class EndExternalJobParameters extends VdcActionParametersBase {
         this.jobId = jobId;
     }
 
-    public JobExecutionStatus getStatus() {
+    public boolean getStatus() {
         return exitStatus;
     }
 
-    public void setStatus(JobExecutionStatus status) {
+    public void setStatus(Boolean status) {
         this.exitStatus = status;
     }
 
@@ -41,7 +40,7 @@ public class EndExternalJobParameters extends VdcActionParametersBase {
     public EndExternalJobParameters() {
     }
 
-    public EndExternalJobParameters(Guid jobId, JobExecutionStatus status, boolean force) {
+    public EndExternalJobParameters(Guid jobId, boolean status, boolean force) {
         super();
         this.jobId = jobId;
         this.exitStatus = status;

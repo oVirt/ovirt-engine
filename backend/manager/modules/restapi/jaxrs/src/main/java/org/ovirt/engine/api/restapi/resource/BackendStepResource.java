@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -45,9 +44,11 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
 
     @Override
     public Response end(Action action) {
-        validateParameters(action, "succeeded");
-        return doAction(VdcActionType.EndExternalStep,
-                new EndExternalStepParameters(guid, action.isSucceeded()), action);
+        EndExternalStepParameters parameters = new EndExternalStepParameters(
+            guid,
+            action.isSetSucceeded() ? action.isSucceeded(): true
+        );
+        return doAction(VdcActionType.EndExternalStep, parameters, action);
     }
 
     @Override
