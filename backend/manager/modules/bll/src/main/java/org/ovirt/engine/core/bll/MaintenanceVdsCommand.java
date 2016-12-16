@@ -112,7 +112,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 getCluster(),
                 vm,
                 blacklist, //blacklist only contains the host we're putting to maintenance
-                Collections.<Guid>emptyList(), //no whitelist
+                Collections.emptyList(), //no whitelist
                 new ArrayList<>()
         );
     }
