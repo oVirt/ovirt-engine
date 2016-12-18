@@ -364,6 +364,7 @@ select fn_db_add_config_value('NicDHCPDelayGraceInMS','60','general');
 select fn_db_add_config_value('NumberOfFailedRunsOnVds','3','general');
 select fn_db_add_config_value('NumberOfUSBSlots','4','general');
 select fn_db_add_config_value('NumberVmRefreshesBeforeSave','5','general');
+select fn_db_add_config_value('NumberVdsRefreshesBeforeRetryToStartUnknownVms','30','general');
 select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','true', 'general');
 select fn_db_add_config_value('MaxSchedulerWeight','1000','general');
 select fn_db_add_config_value('SpeedOptimizationSchedulingThreshold','10','general');
