@@ -799,8 +799,11 @@ public class VmDeviceUtils {
      * @return usb controller model defined as defined in osinfo file for VM's OS and effective compatibility version
      */
     private UsbControllerModel getUsbControllerModel(VmBase vmBase) {
-        final VM vm = vmDao.get(vmBase.getId());
-        return osRepository.getOsUsbControllerModel(vmBase.getOsId(), vm.getCompatibilityVersion());
+        return osRepository.getOsUsbControllerModel(
+                vmBase.getOsId(),
+                vmBase.getCustomCompatibilityVersion() != null ?
+                        vmBase.getCustomCompatibilityVersion()
+                        : clusterDao.get(vmBase.getClusterId()).getCompatibilityVersion());
     }
 
     private String getUsbControllerModelName(VmDevice usbControllerDevice) {
