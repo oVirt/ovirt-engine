@@ -46,9 +46,9 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     private boolean validateStoragePropertiesUpdate() {
         StorageDomainValidator storageDomainValidator = getStorageDomainValidator();
         if (!checkStorageDomainStatusNotEqual(StorageDomainStatus.Locked) ||
-               !validateStorageNameUpdate() ||
-               !validateDiscardAfterDeleteLegal(storageDomainValidator)) {
-           return false;
+                !validateStorageNameUpdate() ||
+                !validateDiscardAfterDeleteLegal(storageDomainValidator)) {
+            return false;
         }
 
         // Collect changed fields to update in a list.
