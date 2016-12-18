@@ -12,7 +12,7 @@ import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class PollVmStatsRefresher extends VmStatsRefresher {
+public class PollVmStatsRefresher extends VmStatsRefresher {
 
     private static final Logger log = LoggerFactory.getLogger(PollVmStatsRefresher.class);
     protected static final int VMS_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
@@ -21,30 +21,25 @@ public abstract class PollVmStatsRefresher extends VmStatsRefresher {
     @Inject
     private SchedulerUtilQuartzImpl scheduler;
     private String vmsMonitoringJobId;
-    private final int refreshRate;
 
-    public PollVmStatsRefresher(VdsManager vdsManager, int refreshRate) {
+    public PollVmStatsRefresher(VdsManager vdsManager) {
         super(vdsManager);
-        this.refreshRate = refreshRate;
     }
 
     @OnTimerMethodAnnotation("poll")
     public void poll() {
         if (vdsManager.isMonitoringNeeded()) {
-            VmsListFetcher fetcher = getVmsFetcher();
+            VmsListFetcher fetcher = new VmsStatisticsFetcher(vdsManager);
 
             long fetchTime = System.nanoTime();
             if (fetcher.fetch()) {
-                getVmsMonitoring().perform(fetcher.getChangedVms(), fetchTime, vdsManager, isTimeToRefreshStatistics());
+                getVmsMonitoring().perform(fetcher.getChangedVms(), fetchTime, vdsManager, true);
                 processDevices(fetcher.getVdsmVms().stream(), fetchTime);
             } else {
                 log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", vdsManager.getVdsName());
             }
         }
     }
-
-    protected abstract VmsListFetcher getVmsFetcher();
-    protected abstract boolean isTimeToRefreshStatistics();
 
     public void startMonitoring() {
         vmsMonitoringJobId =
@@ -54,7 +49,7 @@ public abstract class PollVmStatsRefresher extends VmStatsRefresher {
                         new Class[0],
                         new Object[0],
                         0,
-                        refreshRate,
+                        VMS_REFRESH_RATE * NUMBER_VMS_REFRESHES_BEFORE_SAVE,
                         TimeUnit.MILLISECONDS);
     }
 
