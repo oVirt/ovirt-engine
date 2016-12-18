@@ -262,6 +262,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("1")
     NumberVmRefreshesBeforeSave,
     @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    NumberVdsRefreshesBeforeRetryToStartUnknownVms,
+    @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
     AutoRepoDomainRefreshTime,
     @TypeConverterAttribute(Boolean.class)

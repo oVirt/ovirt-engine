@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -149,6 +150,8 @@ public class VdsManager {
     private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
     private VmStatsRefresher vmsRefresher;
     protected int refreshIteration;
+    private int autoRestartUnknownVmsIteration;
+    private final ReentrantLock autoStartVmsWithLeasesLock;
 
     protected final int HOST_REFRESH_RATE;
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
@@ -164,6 +167,7 @@ public class VdsManager {
         vdsId = vds.getId();
         unrespondedAttempts = new AtomicInteger();
         failedToRunVmAttempts = new AtomicInteger();
+        autoStartVmsWithLeasesLock = new ReentrantLock();
     }
 
     @PostConstruct
@@ -864,17 +868,40 @@ public class VdsManager {
                     if (cachedVds.getStatus() != VDSStatus.NonResponsive) {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
                         moveVmsToUnknown(vmsRunningOnVds);
+                        // we want to try to restart VMs with lease right after they switch to unknown
+                        autoRestartUnknownVmsIteration = -1;
                         logHostFailToRespond(ex);
                         resourceManager.getEventListener().vdsNotResponding(cachedVds);
                     } else {
                         saveToDb = false;
                     }
+                    restartVmsWithLeaseIfNeeded(vmsRunningOnVds);
                 }
             }
         }
         if (saveToDb) {
             updateDynamicData(cachedVds.getDynamicData());
             updateStatisticsData(cachedVds.getStatisticsData());
+        }
+    }
+
+    private void restartVmsWithLeaseIfNeeded(List<VmDynamic> vms) {
+        if (vms.isEmpty() || !autoStartVmsWithLeasesLock.tryLock()) {
+            return;
+        }
+
+        try {
+            int skippedIterations = Config.<Integer>getValue(ConfigValues.NumberVdsRefreshesBeforeRetryToStartUnknownVms);
+            autoRestartUnknownVmsIteration++;
+            // we don't want to restart VMs with lease too frequently
+            if (autoRestartUnknownVmsIteration % (skippedIterations + 1) == 0) {
+                resourceManager.getEventListener().restartVmsWithLease(vms.stream()
+                        .map(VmDynamic::getId)
+                        .filter(vmId -> resourceManager.getVmManager(vmId).getLeaseStorageDomainId() != null)
+                        .collect(Collectors.toList()));
+            }
+        } finally {
+            autoStartVmsWithLeasesLock.unlock();
         }
     }
 

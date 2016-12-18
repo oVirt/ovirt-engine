@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
+import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -623,5 +624,28 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void importHostedEngineVm(final VM vm) {
         ThreadPoolUtil.execute(() -> hostedEngineImporterProvider.get().doImport(vm));
+    }
+
+    @Override
+    public void restartVmsWithLease(List<Guid> vmIds) {
+        if (vmIds.isEmpty()) {
+            return;
+        }
+
+        EngineLock engineLock = new EngineLock(Collections.emptyMap(), Collections.emptyMap());
+        ThreadPoolUtil.execute(() -> {
+            for (Guid vmId : vmIds) {
+                backend.runInternalAction(
+                        VdcActionType.RunVm,
+                        buildRunVmParameters(vmId),
+                        ExecutionHandler.createInternalJobContext(engineLock));
+            }
+        });
+    }
+
+    private RunVmParams buildRunVmParameters(Guid vmId) {
+        RunVmParams parameters = new RunVmParams(vmId);
+        parameters.setRunInUnknownStatus(true);
+        return parameters;
     }
 }

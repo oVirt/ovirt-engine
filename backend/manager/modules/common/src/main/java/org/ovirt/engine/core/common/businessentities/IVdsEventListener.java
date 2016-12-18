@@ -81,4 +81,6 @@ public interface IVdsEventListener {
     HostUpgradeManagerResult checkForUpdates(VDS host);
 
     void importHostedEngineVm(VM vm);
+
+    void restartVmsWithLease(List<Guid> vmIds);
 }
