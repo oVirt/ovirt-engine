@@ -860,9 +860,10 @@ public class VdsManager {
                 if (cachedVds.getStatus() == VDSStatus.Maintenance) {
                     saveToDb = false;
                 } else {
+                    List<VmDynamic> vmsRunningOnVds = vmDynamicDao.getAllRunningForVds(getVdsId());
                     if (cachedVds.getStatus() != VDSStatus.NonResponsive) {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
-                        moveVmsToUnknown();
+                        moveVmsToUnknown(vmsRunningOnVds);
                         logHostFailToRespond(ex);
                         resourceManager.getEventListener().vdsNotResponding(cachedVds);
                     } else {
@@ -1022,8 +1023,11 @@ public class VdsManager {
         return System.currentTimeMillis() > nextMaintenanceAttemptTime;
     }
 
-    private void moveVmsToUnknown() {
-        List<VmDynamic> vms = getVmsToMoveToUnknown();
+    private void moveVmsToUnknown(List<VmDynamic> vms) {
+        if (vms.isEmpty()) {
+            return;
+        }
+
         for (VmDynamic vm : vms) {
             destroyVmOnDestination(vm);
             resourceManager.removeAsyncRunningVm(vm.getId());
@@ -1063,19 +1067,6 @@ public class VdsManager {
                         resourceManager.getVmManager(vm.getId()).getName(), vm.getMigratingToVds());
             }
         });
-    }
-
-    private List<VmDynamic> getVmsToMoveToUnknown() {
-        List<VmDynamic> vmList = vmDynamicDao.getAllRunningForVds(getVdsId());
-        List<VmDynamic> migratingVms = vmDynamicDao.getAllMigratingToHost(getVdsId());
-        for (VmDynamic incomingVm : migratingVms) {
-            if (incomingVm.getStatus() == VMStatus.MigratingTo) {
-                // this VM is finished the migration handover and is running on this host now
-                // and should be treated as well.
-                vmList.add(incomingVm);
-            }
-        }
-        return vmList;
     }
 
     public boolean isInitialized() {
