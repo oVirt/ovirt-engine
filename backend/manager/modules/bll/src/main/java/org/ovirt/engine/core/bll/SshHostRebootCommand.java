@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 
 @NonTransactiveCommandAttribute
-public class SshHostRebootCommand <T extends VdsActionParameters> extends VdsCommand {
+public class SshHostRebootCommand <T extends VdsActionParameters> extends VdsCommand<T> {
 
     public SshHostRebootCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
