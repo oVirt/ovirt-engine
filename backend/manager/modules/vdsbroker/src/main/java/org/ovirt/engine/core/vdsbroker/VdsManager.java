@@ -846,12 +846,12 @@ public class VdsManager {
     public void handleNetworkException(VDSNetworkException ex) {
         boolean saveToDb = true;
         if (cachedVds.getStatus() != VDSStatus.Down) {
-            long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
             if (isHostInGracePeriod(false)) {
                 if (cachedVds.getStatus() != VDSStatus.Connecting
                         && cachedVds.getStatus() != VDSStatus.PreparingForMaintenance
                         && cachedVds.getStatus() != VDSStatus.NonResponsive) {
                     setStatus(VDSStatus.Connecting, cachedVds);
+                    long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
                     logChangeStatusToConnecting(timeoutToFence);
                 } else {
                     saveToDb = false;
@@ -861,13 +861,12 @@ public class VdsManager {
                 if (cachedVds.getStatus() == VDSStatus.Maintenance) {
                     saveToDb = false;
                 } else {
+                    setStatus(VDSStatus.NonResponsive, cachedVds);
                     if (cachedVds.getStatus() != VDSStatus.NonResponsive) {
-                        setStatus(VDSStatus.NonResponsive, cachedVds);
                         moveVmsToUnknown();
+                        long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
                         logHostFailToRespond(ex, timeoutToFence);
                         resourceManager.getEventListener().vdsNotResponding(cachedVds);
-                    } else {
-                        setStatus(VDSStatus.NonResponsive, cachedVds);
                     }
                 }
             }
