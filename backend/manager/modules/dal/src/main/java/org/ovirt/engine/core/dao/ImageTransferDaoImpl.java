@@ -31,13 +31,6 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
     }
 
     @Override
-    public List<Guid> getAllIds() {
-        return getCallsHandler().executeReadList("GetAllImageUploadIds",
-                createGuidMapper(),
-                getCustomMapSqlParameterSource());
-    }
-
-    @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return getCustomMapSqlParameterSource().addValue("command_id", id);
     }

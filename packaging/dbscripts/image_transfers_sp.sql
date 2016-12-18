@@ -13,17 +13,6 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION GetAllImageUploadIds()
-RETURNS SETOF UUID STABLE
-AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-    SELECT image_transfers.command_id
-    FROM image_transfers;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-
 CREATE OR REPLACE FUNCTION GetImageUploadsByCommandId(v_command_id UUID)
 RETURNS SETOF image_transfers STABLE
 AS $PROCEDURE$
