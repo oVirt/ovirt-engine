@@ -72,6 +72,22 @@ class Plugin(plugin.PluginBase):
             oengcommcons.ProvisioningEnv.POSTGRES_LC_MESSAGES,
             oengcommcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_LC_MESSAGES
         )
+        self.environment.setdefault(
+            oengcommcons.ProvisioningEnv.PG_AUTOVACUUM_VACUUM_SCALE_FACTOR,
+            oengcommcons.Defaults.PG_PROV_AUTOVACUUM_VACUUM_SCALE_FACTOR
+        )
+        self.environment.setdefault(
+            oengcommcons.ProvisioningEnv.PG_AUTOVACUUM_ANALYZE_SCALE_FACTOR,
+            oengcommcons.Defaults.PG_PROV_AUTOVACUUM_ANALYZE_SCALE_FACTOR
+        )
+        self.environment.setdefault(
+            oengcommcons.ProvisioningEnv.PG_AUTOVACUUM_MAX_WORKERS,
+            oengcommcons.Defaults.PG_PROV_AUTOVACUUM_MAX_WORKERS
+        )
+        self.environment.setdefault(
+            oengcommcons.ProvisioningEnv.PG_AUTOVACUUM_MAINTENANCE_WORK_MEM,
+            oengcommcons.Defaults.PG_PROV_AUTOVACUUM_MAINTENANCE_WORK_MEM
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
