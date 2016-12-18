@@ -33,7 +33,7 @@ from ovirt_engine import util as outil
 
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine_common import constants as oengcommcons
-
+from ovirt_engine_setup.engine_common.constants import ProvisioningEnv
 from ovirt_setup_lib import hostname as osetuphostname
 from ovirt_setup_lib import dialog
 
@@ -915,6 +915,76 @@ class OvirtUtils(base.Base):
                     "Please use a Postgresql server of version '{expected}'."
                 ),
             },
+            {
+                'key': 'autovacuum_vacuum_scale_factor',
+                'expected': self.environment[
+                    ProvisioningEnv.PG_AUTOVACUUM_VACUUM_SCALE_FACTOR
+                ],
+                'ok': lambda key, current, expected: (
+                    float(current) <= float(expected)
+                ),
+                'check_on_use': True,
+                'needed_on_create': True,
+                'error_msg': '{specific}{pg_conf_msg}'.format(
+                    specific=_(
+                        '{name} requires {key} to be at most {expected}. '
+                    ),
+                    pg_conf_msg=self._PG_CONF_MSG,
+                )
+            },
+            {
+                'key': 'autovacuum_analyze_scale_factor',
+                'expected': self.environment[
+                    ProvisioningEnv.PG_AUTOVACUUM_ANALYZE_SCALE_FACTOR
+                ],
+                'ok': lambda key, current, expected: (
+                    float(current) <= float(expected)
+                ),
+                'check_on_use': True,
+                'needed_on_create': True,
+                'error_msg': '{specific}{pg_conf_msg}'.format(
+                    specific=_(
+                        '{name} requires {key} to be at most {expected}. '
+                    ),
+                    pg_conf_msg=self._PG_CONF_MSG,
+                )
+            },
+            {
+                'key': 'autovacuum_max_workers',
+                'expected': self.environment[
+                    ProvisioningEnv.PG_AUTOVACUUM_MAX_WORKERS
+                ],
+                'ok': lambda key, current, expected: (
+                    int(current) >= int(expected)
+                ),
+                'check_on_use': True,
+                'needed_on_create': True,
+                'error_msg': '{specific}{pg_conf_msg}'.format(
+                    specific=_(
+                        '{name} requires {key} to be at least {expected}. '
+                    ),
+                    pg_conf_msg=self._PG_CONF_MSG,
+                )
+            },
+            {
+                'key': 'maintenance_work_mem',
+                'expected': self.environment[
+                    ProvisioningEnv.PG_AUTOVACUUM_MAINTENANCE_WORK_MEM
+                ],
+                'useQueryForValue': True,
+                'ok': lambda key, current, expected: (
+                    int(current) >= int(expected)
+                ),
+                'check_on_use': True,
+                'needed_on_create': True,
+                'error_msg': '{specific}{pg_conf_msg}'.format(
+                    specific=_(
+                        '{name} requires {key} to be at least {expected}. '
+                    ),
+                    pg_conf_msg=self._PG_CONF_MSG,
+                )
+            },
+
         )
 
     _RE_KEY_VALUE = re.compile(
@@ -940,8 +1010,16 @@ class OvirtUtils(base.Base):
         ]:
             key = item['key']
             expected = item['expected']
+            # When using 'show some_setting', the returned value is prettified
+            # e.g for memory values you'd get '64MB' and not 64. When a number
+            # is needed, prefer a query to the pg_settings table instead.
+            if item.get('useQueryForValue', False):
+                get_statement = 'select setting {key} from pg_settings' \
+                                ' where name = \'{key}\''.format(key=key)
+            else:
+                get_statement = 'show {key}'.format(key=key)
             current = statement.execute(
-                statement='show {key}'.format(key=key),
+                statement=get_statement,
                 ownConnection=True,
                 transaction=False,
             )[0][key]
