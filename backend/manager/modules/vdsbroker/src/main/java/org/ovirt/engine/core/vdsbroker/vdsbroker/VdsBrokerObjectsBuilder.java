@@ -1650,29 +1650,23 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    public static VMStatus convertToVmStatus(String statusName) {
-        VMStatus status = VMStatus.Unassigned;
+    public static VMStatus convertToVmStatus(String status) {
+        switch(status) {
+        case VdsProperties.MIGRATION_SOURCE:
+            return VMStatus.MigratingFrom;
 
-        // TODO: The following condition should deleted as soon as we drop compatibility with 3.3 since "Running" state
-        // will be replaced "Up" state and "Unknown" will exist no more. The "Up" state will be processed by
-        // EnumUtils as other states below.
-        if ("Running".equals(statusName) || "Unknown".equals(statusName)) {
-            status = VMStatus.Up;
-        }
-        else if ("Migration Source".equals(statusName)) {
-            status = VMStatus.MigratingFrom;
-        }
-        else if ("Migration Destination".equals(statusName)) {
-            status = VMStatus.MigratingTo;
-        } else {
+        case VdsProperties.MIGRATION_DESTINATION:
+            return VMStatus.MigratingTo;
+
+        default:
+            status = status.replace(" ", "");
             try {
-                statusName = statusName.replace(" ", "");
-                status = EnumUtils.valueOf(VMStatus.class, statusName, true);
+                return EnumUtils.valueOf(VMStatus.class, status, true);
             } catch (Exception e) {
-                log.error("Illegal Vm status: '{}'.", statusName);
+                log.error("Illegal VM status: '{}'.", status);
+                return VMStatus.Unassigned;
             }
         }
-        return status;
     }
 
     /**
