@@ -59,7 +59,7 @@ public class SshHostRebootCommand <T extends VdsActionParameters> extends VdsCom
 
                 log.info("Executing SSH reboot command on host {}", getVds().getHostName());
                 sshClient.executeCommand(
-                        Config.<String> getValue(ConfigValues.SshHostRebootCommand, version),
+                        Config.getValue(ConfigValues.SshHostRebootCommand, version),
                         null,
                         cmdOut,
                         cmdErr
