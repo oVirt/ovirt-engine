@@ -732,8 +732,9 @@ public abstract class AbstractDiskModel extends DiskModel {
         getIsSgIoUnfiltered().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
         getIsScsiPassthrough().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
         getIsUsingScsiReservation().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
-        updatePassDiscardAvailability();
+        getIsReadOnly().setIsAvailable(!DiskInterface.IDE.equals(diskInterface));
 
+        updatePassDiscardAvailability();
         updateScsiPassthroughChangeability();
         updateScsiReservationChangeability();
         updateReadOnlyChangeability();
@@ -823,8 +824,6 @@ public abstract class AbstractDiskModel extends DiskModel {
         DiskInterface diskInterface = getDiskInterface().getSelectedItem();
 
         if (diskInterface == DiskInterface.IDE) {
-            getIsReadOnly().setChangeProhibitionReason(constants.cannotEnableIdeInterfaceForReadOnlyDisk());
-            getIsReadOnly().setIsChangeable(false);
             getIsReadOnly().setEntity(false);
             return;
         }
