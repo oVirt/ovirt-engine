@@ -648,6 +648,9 @@ select fn_db_add_config_value('HystrixMonitoringEnabled','false','general');
 
 select fn_db_add_config_value_for_versions_up_to('GetNamesOfVmsFromExternalProviderSupported', 'false', '4.0');
 
+-- engine-backup
+select fn_db_add_config_value('DbJustRestored','0','general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
