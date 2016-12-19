@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
@@ -73,6 +75,10 @@ public class OsRepositoryImplTest {
         preferences.node("/os/windows_8/sysprepFileName").put("value", UNATTEND_XML);
         preferences.node("/os/windows_xp/id").put("value", "1");
         preferences.node("/os/windows_xp/sysprepFileName").put("value", SYSPREP_INF);
+        preferences.node("/os/rhel7/devices/usb/controller").put("value", "nec-xhci");
+        preferences.node("/os/rhel6/id").put("value", "999");
+        preferences.node("/os/rhel6/devices/usb/controller").put("value", "nec-xhci");
+        preferences.node("/os/rhel6/devices/usb/controller").put("value.4.0", "none");
         OsRepositoryImpl.INSTANCE.init(preferences);
     }
 
@@ -313,5 +319,37 @@ public class OsRepositoryImplTest {
         }
         invalidNode.removeNode();
         OsRepositoryImpl.INSTANCE.init(preferences); // must pass with no exceptions
+    }
+
+    @Test
+    public void testExistingUsbControllerModelWithoutVersion() {
+        final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
+                OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel7"),
+                null);
+        assertEquals(UsbControllerModel.NEC_XHCI, model);
+    }
+
+    @Test
+    public void testExistingUsbControllerModelWithVersion() {
+        final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
+                OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel6"),
+                Version.v4_0);
+        assertEquals(UsbControllerModel.NONE, model);
+    }
+
+    @Test
+    public void testExistingUsbControllerModelWithNonExistingVersion() {
+        final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
+                OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel6"),
+                Version.v4_1);
+        assertEquals(UsbControllerModel.NEC_XHCI, model);
+    }
+
+    @Test
+    public void testNonExistingUsbControllerModel() {
+        final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
+                OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_8"),
+                null);
+        assertNull(model);
     }
 }
