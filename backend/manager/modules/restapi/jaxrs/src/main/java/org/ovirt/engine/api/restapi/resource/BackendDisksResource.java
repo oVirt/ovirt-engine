@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.List;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -12,6 +13,7 @@ import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -123,5 +125,18 @@ public class BackendDisksResource
             collection.getDisks().add(addLinks(populate(map(disk), disk)));
         }
         return collection;
+    }
+
+    @Override
+    protected Disk addLinks(Disk model, Class<? extends BaseResource> suggestedParent, String... subCollectionMembersToExclude) {
+        // Currently the method that adds the links doesn't take into account that links need to be added also to
+        // elements of lists, so whe need to add them explicitly:
+        Disk disk = super.addLinks(model, suggestedParent, subCollectionMembersToExclude);
+        if (disk.isSetStorageDomains()) {
+            disk.getStorageDomains().getStorageDomains().forEach(
+                storageDomain -> LinkHelper.addLinks(storageDomain, null, false)
+            );
+        }
+        return disk;
     }
 }
