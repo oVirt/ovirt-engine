@@ -798,12 +798,18 @@ public class VmDeviceUtils {
     /**
      * @return usb controller model defined as defined in osinfo file for VM's OS and effective compatibility version
      */
+    /*
+     * TODO: It would be cleaner to return a value denoting unknown model for instance type input since instance types
+     * doesn't actually have any operating system set. Current solution works since no usb controller devices are
+     * created for instance types.
+     */
     private UsbControllerModel getUsbControllerModel(VmBase vmBase) {
-        return osRepository.getOsUsbControllerModel(
-                vmBase.getOsId(),
-                vmBase.getCustomCompatibilityVersion() != null ?
-                        vmBase.getCustomCompatibilityVersion()
-                        : clusterDao.get(vmBase.getClusterId()).getCompatibilityVersion());
+        final Version version = vmBase.getCustomCompatibilityVersion() != null
+                ? vmBase.getCustomCompatibilityVersion()
+                : vmBase.getClusterId() != null
+                        ? clusterDao.get(vmBase.getClusterId()).getCompatibilityVersion()
+                        : null;
+        return osRepository.getOsUsbControllerModel(vmBase.getOsId(), version);
     }
 
     private String getUsbControllerModelName(VmDevice usbControllerDevice) {
