@@ -89,7 +89,7 @@ public class GetVolumeInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters
                         .toString(), true));
             }
 
-            if (struct.containsKey("lease")) {
+            if (struct.containsKey("lease") && struct.get("lease") != null) {
                 Map<String, Object> leaseStatus = (Map<String, Object>) struct.get("lease");
                 newImage.getImage().setLeaseStatus(VdsBrokerObjectsBuilder.buildLeaseStatus(leaseStatus));
             }
