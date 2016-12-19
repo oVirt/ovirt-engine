@@ -102,8 +102,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         params.setSkipChecks(true);
         params.setSkipLock(true);
         params.setShouldBeLogged(true);
-        getBackend().runInternalAction(VdcActionType.DeactivateStorageDomain, params,
-                cloneContext().withoutLock());
+        runInternalActionWithTasksContext(VdcActionType.DeactivateStorageDomain, params);
     }
 
     @Override
