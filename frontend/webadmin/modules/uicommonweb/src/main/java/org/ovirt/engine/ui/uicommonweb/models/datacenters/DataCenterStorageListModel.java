@@ -301,8 +301,8 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                                 if (getEntity().getStoragePoolFormatType() == null) {
                                     addToList = true;
                                 }
-                                else if (getEntity().getStoragePoolFormatType() == a.getStorageStaticData()
-                                        .getStorageFormat()) {
+                                else if (getEntity().getStoragePoolFormatType().compareTo(a.getStorageStaticData()
+                                        .getStorageFormat()) >= 0) {
                                     addToList = true;
                                 }
                                 else {
