@@ -172,6 +172,10 @@ public class InstanceImageLineModel extends EntityModel {
     }
 
     public void attachDisk() {
+        if (parentModel.getUnitVmModel().getSelectedCluster() == null || parentModel.getUnitVmModel().getSelectedDataCenter() == null) {
+            return;
+        }
+
         InstanceImagesAttachDiskModel model = new InstanceImagesAttachDiskModel() {
             @Override
             public void onSave() {
