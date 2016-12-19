@@ -29,6 +29,7 @@ from ovirt_engine import configfile
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
 
@@ -102,6 +103,7 @@ class Plugin(plugin.PluginBase):
         self.environment[oenginecons.EngineDBEnv.CONNECTION] = None
         self.environment[oenginecons.EngineDBEnv.STATEMENT] = None
         self.environment[oenginecons.EngineDBEnv.NEW_DATABASE] = True
+        self.environment[oenginecons.EngineDBEnv.JUST_RESTORED] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -163,6 +165,31 @@ class Plugin(plugin.PluginBase):
                     self.logger.warning(msg)
                 else:
                     raise RuntimeError(msg)
+            if not self.environment[
+                oenginecons.EngineDBEnv.NEW_DATABASE
+            ]:
+                statement = database.Statement(
+                    dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+                    environment=self.environment,
+                )
+                try:
+                    justRestored = vdcoption.VdcOption(
+                        statement=statement,
+                    ).getVdcOption(
+                        'DbJustRestored',
+                        ownConnection=True,
+                    )
+                    self.environment[
+                        oenginecons.EngineDBEnv.JUST_RESTORED
+                    ] = (justRestored == '1')
+                except RuntimeError:
+                    pass
+                if self.environment[
+                    oenginecons.EngineDBEnv.JUST_RESTORED
+                ]:
+                    self.logger.info(_(
+                        'The engine DB has been restored from a backup'
+                    ))
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

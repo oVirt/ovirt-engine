@@ -1128,6 +1128,7 @@ __EOF__
 		restoreDB "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ORIG_DB_USER}" "${DB_DUMP_COMPRESSOR}" "${DB_DUMP_FORMAT}" "${DB_RESTORE_JOBS}"
 		if [ -z "${KEEP_TEMPORARY_DATA}" ]; then
 			output "  - Cleaning up temporary tables in engine database '${ENGINE_DB_DATABASE}'"
+			setDbJustRestored "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_TABLES_TO_CLEAN_ON_RESTORE}"
 			cleanDbTempData "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_TABLES_TO_CLEAN_ON_RESTORE}"
 			resetDwhCurrentlyRunning "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ENGINE_TABLES_TO_CLEAN_ON_RESTORE}"
 		fi
@@ -1468,6 +1469,31 @@ resetDwhCurrentlyRunning() {
 		output '  - Resetting DwhCurrentlyRunning in dwh_history_timekeeping in engine database'
 		pg_cmd psql -t -c "${upd_q}" >> "${LOG}" 2>&1 \
 			|| logdie "Failed resetting DwhCurrentlyRunning"
+	fi
+}
+
+setDbJustRestored() {
+	local user="$1"
+	local host="$2"
+	local port="$3"
+	local database="$4"
+	local psqlout="${TEMP_FOLDER}/psql-dbjustrestored-out"
+
+	local sel_q="SELECT count(*) as count FROM vdc_options WHERE option_name='DbJustRestored' and version='general'"
+	local ins_q="INSERT INTO vdc_options (option_name, option_value, version) VALUES ('DbJustRestored', '1', 'general')"
+	local upd_q="UPDATE vdc_options SET option_value='1' WHERE option_name='DbJustRestored' and version='general'"
+
+	pg_cmd psql -t -c "${sel_q}" > "${psqlout}" 2>> "${LOG}" \
+		|| logdie "Failed checking DbJustRestored"
+
+	if grep -q '1' "${psqlout}"; then
+		output '  - Updating DbJustRestored VdcOption in engine database'
+		pg_cmd psql -t -c "${upd_q}" >> "${LOG}" 2>&1 \
+			|| logdie "Failed updating DbJustRestored"
+	else
+		output '  - Inserting DbJustRestored VdcOption in engine database'
+		pg_cmd psql -t -c "${ins_q}" >> "${LOG}" 2>&1 \
+			|| logdie "Failed inserting DbJustRestored"
 	fi
 }
 
