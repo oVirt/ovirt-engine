@@ -550,6 +550,7 @@ class EngineDBEnv(object):
     STATEMENT = 'OVESETUP_DB/statement'
     PGPASS_FILE = 'OVESETUP_DB/pgPassFile'
     NEW_DATABASE = 'OVESETUP_DB/newDatabase'
+    JUST_RESTORED = 'OVESETUP_DB/justRestored'
 
     @osetupattrs(
         answerfile=True,

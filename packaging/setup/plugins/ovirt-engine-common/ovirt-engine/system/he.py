@@ -53,6 +53,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: (
             self.environment[oenginecons.CoreEnv.ENABLE] and
             not self.environment[oenginecons.EngineDBEnv.NEW_DATABASE] and
+            not self.environment[oenginecons.EngineDBEnv.JUST_RESTORED] and
             not self.environment[
                 osetupcons.ConfigEnv.CONTINUE_SETUP_ON_HE_VM
             ]

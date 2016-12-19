@@ -60,6 +60,19 @@ class Plugin(plugin.PluginBase):
                 },
             ),
         )
+        # Restoring DbJustRestored because the DB has been "imported"
+        vdcoption.VdcOption(
+            statement=self.environment[
+                oenginecons.EngineDBEnv.STATEMENT
+            ]
+        ).updateVdcOptions(
+            options=(
+                {
+                    'name': 'DbJustRestored',
+                    'value': '0',
+                },
+            ),
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

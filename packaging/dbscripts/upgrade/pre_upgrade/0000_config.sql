@@ -628,6 +628,9 @@ select fn_db_add_config_value('UploadImageXhrMaxRetries','3','general');
 select fn_db_add_config_value_for_versions_up_to('AdPartnerMacSupported','false','3.6');
 select fn_db_add_config_value_for_versions_up_to('OvsSupported','false','3.6');
 
+-- engine-backup
+select fn_db_add_config_value('DbJustRestored','0','general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
