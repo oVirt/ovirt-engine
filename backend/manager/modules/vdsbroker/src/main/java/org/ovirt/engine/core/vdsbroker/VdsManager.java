@@ -851,8 +851,7 @@ public class VdsManager {
                         && cachedVds.getStatus() != VDSStatus.PreparingForMaintenance
                         && cachedVds.getStatus() != VDSStatus.NonResponsive) {
                     setStatus(VDSStatus.Connecting, cachedVds);
-                    long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
-                    logChangeStatusToConnecting(timeoutToFence);
+                    logChangeStatusToConnecting();
                 } else {
                     saveToDb = false;
                 }
@@ -861,12 +860,13 @@ public class VdsManager {
                 if (cachedVds.getStatus() == VDSStatus.Maintenance) {
                     saveToDb = false;
                 } else {
-                    setStatus(VDSStatus.NonResponsive, cachedVds);
                     if (cachedVds.getStatus() != VDSStatus.NonResponsive) {
+                        setStatus(VDSStatus.NonResponsive, cachedVds);
                         moveVmsToUnknown();
-                        long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
-                        logHostFailToRespond(ex, timeoutToFence);
+                        logHostFailToRespond(ex);
                         resourceManager.getEventListener().vdsNotResponding(cachedVds);
+                    } else {
+                        saveToDb = false;
                     }
                 }
             }
@@ -899,7 +899,8 @@ public class VdsManager {
                 || (lastUpdate + timeoutToFence) > System.currentTimeMillis();
     }
 
-    private void logHostFailToRespond(VDSNetworkException ex, long timeoutToFence) {
+    private void logHostFailToRespond(VDSNetworkException ex) {
+        long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
         log.info(
                 "Server failed to respond, vds_id='{}', vds_name='{}', vm_count={}, " +
                         "spm_status='{}', non-responsive_timeout (seconds)={}, error: {}",
@@ -916,7 +917,8 @@ public class VdsManager {
         }
     }
 
-    private void logChangeStatusToConnecting(long timeoutToFence) {
+    private void logChangeStatusToConnecting() {
+        long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
         String msg;
         AuditLogType auditLogType;
 
