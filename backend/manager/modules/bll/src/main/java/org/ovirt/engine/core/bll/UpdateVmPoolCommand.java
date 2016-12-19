@@ -108,7 +108,7 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
         VdcQueryReturnValue currentVmsInPoolQuery =
                 runInternalQuery(VdcQueryType.GetAllPoolVms, new IdQueryParameters(getVmPool().getVmPoolId()));
         List<VM> poolVmsBeforeAdd =
-                currentVmsInPoolQuery.getSucceeded() ? currentVmsInPoolQuery.<List<VM>> getReturnValue() : null;
+                currentVmsInPoolQuery.getSucceeded() ? currentVmsInPoolQuery.getReturnValue() : null;
 
         super.executeCommand();
         getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
