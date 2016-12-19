@@ -197,10 +197,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                         cloneContextAndDetachFromParent());
             } else {
                 RemoveSnapshotSingleDiskParameters parameters = buildRemoveSnapshotSingleDiskParameters(
-                        source, dest, VdcActionType.ColdMergeSnapshotSingleDisk);
-                runInternalActionWithTasksContext(
-                        getSnapshotActionType(),
-                        parameters);
+                        source, dest, getSnapshotActionType());
+                VdcReturnValueBase vdcReturnValue = runInternalActionWithTasksContext(
+                        getSnapshotActionType(), parameters);
+                getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
             }
 
             List<Guid> quotasToRemoveFromCache = new ArrayList<>();
