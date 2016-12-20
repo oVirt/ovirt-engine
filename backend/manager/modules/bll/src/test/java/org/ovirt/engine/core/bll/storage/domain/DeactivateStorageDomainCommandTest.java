@@ -40,7 +40,6 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 
 public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
@@ -61,8 +60,6 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     private VDS vds;
     @Mock
     private VmStaticDao vmStaticDao;
-    @Mock
-    private VmDynamicDao vmDynamicDao;
     @Mock
     private EventQueue eventQueue;
 
