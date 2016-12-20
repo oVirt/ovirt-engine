@@ -33,19 +33,24 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BalloonEnabled;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.HasDiskWindow;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E, T> {
+public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E, T> implements HasDiskWindow {
+
+    public static final String DISK_WINDOW = "DiskWindow"; //$NON-NLS-1$
 
     private VM privatecurrentVm;
 
@@ -456,4 +461,16 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
 
     protected abstract void sendWarningForNonExportableDisks(T entity);
 
+    private Model diskModel;
+
+    public void setDiskWindow(Model value) {
+        if (diskModel != value) {
+            diskModel = value;
+            onPropertyChanged(new PropertyChangedEventArgs(DISK_WINDOW));
+        }
+    }
+
+    public Model getDiskWindow() {
+        return diskModel;
+    }
 }
