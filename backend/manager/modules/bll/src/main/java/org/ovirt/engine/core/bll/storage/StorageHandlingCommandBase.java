@@ -12,11 +12,15 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.storage.disk.image.MetadataDiskDescriptionHandler;
@@ -45,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
@@ -75,6 +80,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     private CinderBroker cinderBroker;
     protected List<DiskImage> ovfDisks;
     protected List<UnregisteredDisk> unregisteredDisks = new ArrayList<>();
+
+    @Inject
+    protected MacPoolPerCluster macPoolPerCluster;
 
     protected StorageHandlingCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -216,6 +224,22 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                     entityId);
             unregisteredOVFDataDao.removeEntity(entityId, storageDomainId);
         }
+    }
+
+    protected void releaseStorageDomainMacPool(List<VM> vmList) {
+        Map<Guid, List<Guid>> vmsByCluster = vmList.stream()
+                .collect(Collectors.groupingBy(VM::getClusterId, Collectors.mapping(VM::getId, Collectors.toList())));
+        vmsByCluster.entrySet().forEach(e -> {
+            Guid clusterId = e.getKey();
+            List<Guid> vmsId = e.getValue();
+            MacPool macPool = macPoolPerCluster.getMacPoolForCluster(clusterId, getContext());
+            macPool.freeMacs(vmsId
+                    .stream()
+                    .flatMap(v -> vmNicDao.getAllForVm(v).stream())
+                    .map(VmNic::getMacAddress)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        });
     }
 
     /**
