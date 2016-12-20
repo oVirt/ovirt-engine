@@ -103,11 +103,6 @@ public class VmPoolHandler implements BackendService {
         return success;
     }
 
-    private void releaseLock(EngineLock lock) {
-        lockManager.releaseLock(lock);
-        log.info("Lock freed to object '{}'", lock);
-    }
-
     public Guid acquireVm(Guid vmId, boolean leaveLocked) {
         if (!leaveLocked) {
             return vmId;
@@ -115,13 +110,6 @@ public class VmPoolHandler implements BackendService {
 
         EngineLock lock = createLock(vmId);
         return acquireLock(lock) ? vmId : Guid.Empty;
-    }
-
-    public void releaseVm(Guid vmId, boolean wasLocked) {
-        if (wasLocked) {
-            EngineLock lock = createLock(vmId);
-            releaseLock(lock);
-        }
     }
 
     private Stream<Guid> selectVms(Guid vmPoolId, VMStatus vmStatus, Predicate<Guid> vmIdFilter, boolean leaveLocked) {
