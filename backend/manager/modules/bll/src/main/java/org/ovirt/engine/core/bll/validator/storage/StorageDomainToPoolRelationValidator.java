@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 
 /**
@@ -25,9 +24,6 @@ public class StorageDomainToPoolRelationValidator {
 
     protected StorageDomainDao getStorageDomainDao() {
         return DbFacade.getInstance().getStorageDomainDao();
-    }
-    protected StoragePoolDao getStoragePoolDao() {
-        return DbFacade.getInstance().getStoragePoolDao();
     }
 
     private boolean isStorageDomainOfTypeIsoOrExport() {

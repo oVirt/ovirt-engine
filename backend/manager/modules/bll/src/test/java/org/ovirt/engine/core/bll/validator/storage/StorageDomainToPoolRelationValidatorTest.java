@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,9 +35,8 @@ public class StorageDomainToPoolRelationValidatorTest {
     private StorageDomainToPoolRelationValidator validator;
 
     @Mock
-    private StoragePoolDao storagePoolDao;
-    @Mock
     private StorageDomainDao storageDomainDao;
+
     @Mock
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
@@ -64,8 +62,6 @@ public class StorageDomainToPoolRelationValidatorTest {
         validator = spy(new StorageDomainToPoolRelationValidator(storageDomain.getStorageStaticData(), storagePool));
 
         doReturn(storagePoolIsoMapDao).when(validator).getStoragePoolIsoMapDao();
-
-        doReturn(storagePoolDao).when(validator).getStoragePoolDao();
         doReturn(storageDomainDao).when(validator).getStorageDomainDao();
     }
 
