@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.VmErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
@@ -177,13 +178,13 @@ public class VirtualMachineModule extends AbstractGinModule {
                     public String[] getWindowPropertyNames() {
                         List<String> names = new ArrayList<>();
                         names.addAll(Arrays.asList(super.getWindowPropertyNames()));
-                        names.add(VmListModel.DISK_WINDOW);
+                        names.add(VmBaseListModel.DISK_WINDOW);
                         return names.toArray(new String[names.size()]);
                     }
 
                     @Override
                     public Model getWindowModel(VmListModel<Void> source, String propertyName) {
-                        if (VmListModel.DISK_WINDOW.equals(propertyName)) {
+                        if (VmBaseListModel.DISK_WINDOW.equals(propertyName)) {
                             return source.getDiskWindow();
                         }
                         return super.getWindowModel(source, propertyName);
@@ -191,7 +192,7 @@ public class VirtualMachineModule extends AbstractGinModule {
 
                     @Override
                     public void clearWindowModel(VmListModel<Void> source, String propertyName) {
-                        if (VmListModel.DISK_WINDOW.equals(propertyName)) {
+                        if (VmBaseListModel.DISK_WINDOW.equals(propertyName)) {
                             source.setDiskWindow(null);
                         } else {
                             super.clearWindowModel(source, propertyName);

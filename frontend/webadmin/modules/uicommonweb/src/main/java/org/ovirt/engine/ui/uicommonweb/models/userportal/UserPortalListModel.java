@@ -63,6 +63,7 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.CloneVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
+import org.ovirt.engine.ui.uicommonweb.models.vms.HasDiskWindow;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
@@ -94,10 +95,12 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class UserPortalListModel extends AbstractUserPortalListModel {
+public class UserPortalListModel extends AbstractUserPortalListModel implements HasDiskWindow {
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     public static final EventDefinition searchCompletedEventDefinition;
     private Event<EventArgs> privateSearchCompletedEvent;
+
+    public static final String DISK_WINDOW = "DiskWindow"; //$NON-NLS-1$
 
     /** The edited VM could be different than the selected VM in the grid
      *  when the VM has next-run configuration */
@@ -1292,5 +1295,18 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         // this is done on the background - the window is not visible anymore
         gettempVm().setId(vmId);
         model.getInstanceImages().executeDiskModifications(gettempVm());
+    }
+
+    private Model diskModel;
+
+    public void setDiskWindow(Model value) {
+        if (diskModel != value) {
+            diskModel = value;
+            onPropertyChanged(new PropertyChangedEventArgs(DISK_WINDOW));
+        }
+    }
+
+    public Model getDiskWindow() {
+        return diskModel;
     }
 }
