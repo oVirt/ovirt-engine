@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
@@ -39,7 +40,8 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     @Override
     public HostUpgradeManagerResult checkForUpdates(final VDS host) {
-        Collection<String> packages = getPackagesForCheckUpdate(host.getVdsType());
+        Collection<String> packages = getPackagesForCheckUpdate(host.getVdsType(),
+                host.getClusterCompatibilityVersion());
         try (final VdsDeploy hostPackagesManager = createPackagesManager(host, false)) {
             VdsDeployPackagesUnit unit = new VdsDeployPackagesUnit(packages, true);
             hostPackagesManager.addUnit(unit);
@@ -90,7 +92,8 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     @Override
     public void update(final VDS host) {
-        Collection<String> packages = getPackagesForCheckUpdate(host.getVdsType());
+        Collection<String> packages = getPackagesForCheckUpdate(host.getVdsType(),
+                host.getClusterCompatibilityVersion());
         try (final VdsDeploy hostPackagesManager = createPackagesManager(host, true)) {
             hostPackagesManager.addUnit(new VdsDeployPackagesUnit(packages, false));
             hostPackagesManager.execute();
@@ -109,11 +112,11 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         return hostPackagesManager;
     }
 
-    protected static Collection<String> getPackagesForCheckUpdate(VDSType hostType) {
+    protected static Collection<String> getPackagesForCheckUpdate(VDSType hostType, Version version) {
         List<String> systemPackages = new ArrayList<>();
         List<String> userPackages = new ArrayList<>();
         if (hostType == VDSType.VDS) {
-            systemPackages = Config.getValue(ConfigValues.PackageNamesForCheckUpdate);
+            systemPackages = Config.getValue(ConfigValues.PackageNamesForCheckUpdate, version.toString());
             userPackages = Config.getValue(ConfigValues.UserPackageNamesForCheckUpdate);
         } else if (hostType == VDSType.oVirtNode) {
             systemPackages = Config.getValue(ConfigValues.OvirtNodePackageNamesForCheckUpdate);
