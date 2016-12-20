@@ -200,7 +200,8 @@ select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefau
 select fn_db_add_config_value('HostDevicePassthroughCapabilities', 'pci,scsi,usb_device', 'general');
 
 -- A list of system required packages to be checked and updated on the host
-select fn_db_add_config_value('PackageNamesForCheckUpdate','vdsm,vdsm-cli','general');
+select fn_db_add_config_value_for_versions_up_to('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-imageio-common,ovirt-imageio-daemon,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli','4.0');
+select fn_db_add_config_value('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-imageio-common,ovirt-imageio-daemon,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli,collectd,collectd-disk,collectd-netlink,collectd-virt,collectd-write_http,fluentd,rubygem-fluent-plugin-rewrite-tag-filter,rubygem-fluent-plugin-secure-forward','4.1');
 
 -- A comma delimited list of package names provided by the user for availability check and update for the host
 select fn_db_add_config_value('UserPackageNamesForCheckUpdate','','general');
@@ -767,7 +768,6 @@ select fn_db_update_config_value('OvirtInitialSupportedIsoVersion','2.5.5:5.8','
 select fn_db_update_config_value('OvirtIsoPrefix','^ovirt-node-iso-([0-9].*)\.iso$:^rhevh-([0-9].*)\.iso$','general');
 select fn_db_update_config_value('OvirtNodeOS','^ovirt.*$:^rhev.*$','general');
 select fn_db_update_config_value('oVirtISOsRepositoryPath','/usr/share/ovirt-node-iso:/usr/share/rhev-hypervisor','general');
-select fn_db_update_config_value('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-imageio-common,ovirt-imageio-daemon,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli','general');
 select fn_db_update_config_value('PostgresPagingSyntax','OFFSET (%1$s -1) LIMIT %2$s','general');
 select fn_db_update_config_value('PostgresSearchTemplate','SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
 select fn_db_update_config_value('RhevhLocalFSPath','/data/images/rhev','general');
