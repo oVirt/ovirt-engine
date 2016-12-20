@@ -113,7 +113,6 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
 
     @Test
     public void testVmsWithIsoAttached() {
-        setup();
         mockDomain();
         doReturn(domain).when(cmd).getStorageDomain();
 
