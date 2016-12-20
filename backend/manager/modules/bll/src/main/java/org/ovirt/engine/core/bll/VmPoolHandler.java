@@ -290,7 +290,7 @@ public class VmPoolHandler implements BackendService {
                 .canRunVm(
                         messages,
                         fetchStoragePool(vm.getStoragePoolId()),
-                        Collections.<Guid> emptyList(),
+                        Collections.emptyList(),
                         Collections.emptyList(),
                         clusterDao.get(vm.getClusterId()),
                         false);
