@@ -43,11 +43,11 @@
     <metamodel.version>1.1.9</metamodel.version>
     <model.version>4.1.24</model.version>
 
-    <!-- Name of the product and engine as used in teh API documentation: -->
+    <!-- Name of the product and engine as used in the API documentation: -->
     <product.name>oVirt</product.name>
     <engine.name>oVirt Engine</engine.name>
 
-    <!-- oVirt extentions versions -->
+    <!-- oVirt extensions versions -->
     <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
 
     <!-- Dependencies Versions -->
@@ -683,7 +683,7 @@
       </plugin>
 
       <!-- Run findbugs in all the projects with the general and
-           project specific lists of exclussions: -->
+           project specific lists of exclusions: -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
