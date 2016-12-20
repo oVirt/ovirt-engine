@@ -474,6 +474,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(cancelCommand);
+
+        model.getIsHighlyAvailable().setEntity(template.isAutoStartup());
     }
 
     protected String getEditTemplateAdvancedModelKey() {
