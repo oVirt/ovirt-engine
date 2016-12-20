@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
@@ -105,6 +109,31 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
         }
         else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
+        }
+    }
+
+    @Override
+    public String[] getWindowPropertyNames() {
+        List<String> names = new ArrayList<>();
+        names.addAll(Arrays.asList(super.getWindowPropertyNames()));
+        names.add(UserPortalListModel.DISK_WINDOW);
+        return names.toArray(new String[names.size()]);
+    }
+
+    @Override
+    public Model getWindowModel(UserPortalListModel source, String propertyName) {
+        if (UserPortalListModel.DISK_WINDOW.equals(propertyName)) {
+            return source.getDiskWindow();
+        }
+        return super.getWindowModel(source, propertyName);
+    }
+
+    @Override
+    public void clearWindowModel(UserPortalListModel source, String propertyName) {
+        if (UserPortalListModel.DISK_WINDOW.equals(propertyName)) {
+            source.setDiskWindow(null);
+        } else {
+            super.clearWindowModel(source, propertyName);
         }
     }
 

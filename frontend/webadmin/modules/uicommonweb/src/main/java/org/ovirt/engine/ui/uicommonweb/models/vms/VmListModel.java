@@ -75,7 +75,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
@@ -110,8 +109,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     public static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
     private static final String CMD_BACK = "Back"; //$NON-NLS-1$
     private static final String CMD_IMPORT = "Import"; //$NON-NLS-1$
-
-    public static final String DISK_WINDOW = "DiskWindow"; //$NON-NLS-1$
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
@@ -2384,16 +2381,4 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         return entity.getStoragePoolId();
     }
 
-    private Model diskModel;
-
-    public void setDiskWindow(Model value) {
-        if (diskModel != value) {
-            diskModel = value;
-            onPropertyChanged(new PropertyChangedEventArgs(VmListModel.DISK_WINDOW));
-        }
-    }
-
-    public Model getDiskWindow() {
-        return diskModel;
-    }
 }
