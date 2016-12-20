@@ -195,6 +195,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     private void handleMasterDomain(StorageDomain masterDomain) {
         TransactionSupport.executeInNewTransaction(() -> {
+            releaseStorageDomainMacPool(vmDao.getAllForStoragePool(getStoragePoolId()));
             detachStorageDomainWithEntities(masterDomain);
             getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
             masterDomain.setStorageDomainType(StorageDomainType.Data);
