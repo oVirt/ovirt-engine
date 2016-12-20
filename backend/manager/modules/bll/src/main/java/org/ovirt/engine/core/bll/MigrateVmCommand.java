@@ -375,7 +375,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 dstVdsHost,
                 MigrationMethod.ONLINE,
                 isTunnelMigrationUsed(),
-                getMigrationNetworkIp(),
+                getLiteralMigrationNetworkIp(),
                 getVds().getClusterCompatibilityVersion(),
                 getMaximumMigrationDowntime(),
                 autoConverge,
@@ -558,7 +558,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 : getCluster().isTunnelMigration();
     }
 
-    private String getMigrationNetworkIp() {
+    private String getLiteralMigrationNetworkIp() {
         Network migrationNetwork = null;
 
         // Find migrationNetworkCluster
@@ -581,11 +581,18 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             final String migrationDestinationIpv6Address =
                     findValidMigrationIpAddress(migrationNetwork, VdsNetworkInterface::getIpv6Address);
             if (migrationDestinationIpv6Address != null) {
-                return migrationDestinationIpv6Address;
+                return formatIpv6AddressForUri(migrationDestinationIpv6Address);
             }
         }
-
         return null;
+    }
+
+    private String formatIpv6AddressForUri(String migrationDestinationIpv6Address) {
+        if (FeatureSupported.isIpv6MigrationProperlyHandled(getCluster().getCompatibilityVersion())) {
+            return migrationDestinationIpv6Address;
+        } else {
+            return String.format("[%s]", migrationDestinationIpv6Address);
+        }
     }
 
     private String findValidMigrationIpAddress(Network migrationNetwork,
