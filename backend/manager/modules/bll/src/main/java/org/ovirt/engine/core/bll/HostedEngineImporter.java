@@ -35,6 +35,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +68,8 @@ public class HostedEngineImporter {
     private StorageDomainDao storageDomainDao;
     @Inject
     private VmHandler vmHandler;
+    @Inject
+    private ResourceManager resourceManager;
 
     /**
      * Import the VM into ovirt engine by removing the old, un-managed VM
@@ -93,6 +96,8 @@ public class HostedEngineImporter {
                 heVmImported = importHEVM(vm, sd);
 
                 if (heVmImported.getSucceeded()) {
+                    resourceManager.getVmManager(vm.getId()).update(vm.getStaticData());
+
                     log.info("Successfully imported the Hosted Engine VM");
                     auditLogDirector.log(new AuditLogableBase(), AuditLogType.HOSTED_ENGINE_VM_IMPORT_SUCCEEDED);
                 } else {
