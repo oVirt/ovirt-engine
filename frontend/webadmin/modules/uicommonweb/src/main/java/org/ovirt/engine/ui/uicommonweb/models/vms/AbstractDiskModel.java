@@ -824,8 +824,6 @@ public abstract class AbstractDiskModel extends DiskModel {
         DiskInterface diskInterface = getDiskInterface().getSelectedItem();
 
         if (diskInterface == DiskInterface.IDE) {
-            getIsReadOnly().setChangeProhibitionReason(constants.cannotEnableIdeInterfaceForReadOnlyDisk());
-            getIsReadOnly().setIsChangeable(false);
             getIsReadOnly().setEntity(false);
             return;
         }
