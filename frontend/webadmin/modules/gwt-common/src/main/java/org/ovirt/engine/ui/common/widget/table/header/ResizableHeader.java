@@ -124,6 +124,7 @@ public class ResizableHeader<T> extends SafeHtmlHeader {
                 set.add(BrowserEvents.CLICK); // for sorting
                 set.add(BrowserEvents.MOUSEMOVE); // for changing mouse cursor
                 set.add(BrowserEvents.CHANGE); // for checkbox toggle
+                set.add(BrowserEvents.MOUSEDOWN); // for resizing
                 return set;
             }
         };
