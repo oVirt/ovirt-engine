@@ -111,6 +111,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     @Test
     public void testVmsWithIsoAttached() {
         mockDomain();
+        domain.setStorageDomainType(StorageDomainType.ISO);
         doReturn(domain).when(cmd).getStorageDomain();
 
         VmStatic vmStatic = new VmStatic();
@@ -125,6 +126,5 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
 
     private void mockDomain() {
         domain = new StorageDomain();
-        domain.setStorageDomainType(StorageDomainType.ISO);
     }
 }
