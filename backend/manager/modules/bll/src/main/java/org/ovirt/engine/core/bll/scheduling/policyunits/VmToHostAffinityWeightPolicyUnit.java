@@ -36,7 +36,7 @@ public class VmToHostAffinityWeightPolicyUnit extends VmToHostAffinityPolicyUnit
     public List<Pair<Guid, Integer>> score(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
 
         Map<Guid, Integer> hostViolations =
-                getAffinityHostsResult(false, hosts, vm, new PerHostMessages()).getHostViolations();
+                getHostViolationCount(false, hosts, vm, new PerHostMessages());
 
         List<Pair<Guid, Integer>> retList = new ArrayList<>();
         int score;
