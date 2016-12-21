@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
+import org.ovirt.engine.core.compat.Guid;
 
 @SchedulingUnit(
         guid = "e69808a9-8a41-40f1-94ba-dd5d385d82d8",
@@ -33,6 +35,11 @@ public class VmToHostAffinityFilterPolicyUnit extends VmToHostAffinityPolicyUnit
             VM vm,
             Map<String, String> parameters,
             PerHostMessages messages) {
-        return getAffinityHostsResult(true, hosts, vm, messages).getAcceptableHosts();
+
+        Map<Guid, Integer> hostViolations = getHostViolationCount(true, hosts, vm, messages);
+
+        return hosts.stream()
+                .filter(host -> !hostViolations.containsKey(host.getId()))
+                .collect(Collectors.toList());
     }
 }
