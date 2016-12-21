@@ -4,6 +4,8 @@ import org.gwtbootstrap3.client.ui.Anchor;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Focusable;
@@ -58,23 +60,23 @@ public class UiCommandLink extends AbstractUiCommandButton implements Focusable 
     @Override
     protected void updateButton() {
         super.updateButton();
-        tooltip.setText(buildTooltipText());
+        tooltip.setHtml(buildTooltipHtml());
     }
 
     /**
      * Use prohibition reasons for tooltip
      */
-    protected String buildTooltipText() {
-        StringBuilder tooltipText = new StringBuilder();
+    protected SafeHtml buildTooltipHtml() {
+        SafeHtmlBuilder tooltipText = new SafeHtmlBuilder();
         if (!getCommand().getExecuteProhibitionReasons().isEmpty()) {
             for (String reason: getCommand().getExecuteProhibitionReasons()) {
-                if (tooltipText.length() == 0) {
-                    tooltipText.append(", "); //$NON-NLS-1$
+                if (tooltipText.toSafeHtml().asString().length() != 0) {
+                    tooltipText.appendHtmlConstant("<br/><br/>"); //$NON-NLS-1$
                 }
-                tooltipText.append(reason);
+                tooltipText.appendEscaped(reason);
             }
         }
-        return tooltipText.toString();
+        return tooltipText.toSafeHtml();
     }
 
     @Override
