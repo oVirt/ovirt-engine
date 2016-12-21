@@ -413,6 +413,7 @@ public enum VdcQueryType implements Serializable {
     GetGlusterTunedProfiles,
     GetGlusterVolumeSnapshotCliScheduleFlag,
     GetAllGlusterVolumesForStorageDomain,
+    GetGeoRepSessionsForStorageDomain,
 
     GetDefaultConfigurationVersion(VdcQueryAuthType.User),
     GetProductVersion(VdcQueryAuthType.User),
