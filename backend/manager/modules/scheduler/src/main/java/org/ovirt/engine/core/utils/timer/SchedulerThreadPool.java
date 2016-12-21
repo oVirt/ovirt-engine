@@ -33,6 +33,7 @@ public class SchedulerThreadPool implements ThreadPool {
             executorService.submit(runnable);
             return true;
         } catch (RejectedExecutionException e) {
+            log.error("Task rejected due to: ", e);
             return false;
         }
     }
