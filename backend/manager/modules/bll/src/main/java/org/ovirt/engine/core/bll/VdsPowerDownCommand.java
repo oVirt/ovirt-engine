@@ -103,7 +103,7 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
 
                 log.info("Executing SSH power down command on host {}", getVds().getHostName());
                 sshClient.executeCommand(
-                        Config.<String> getValue(ConfigValues.SshVdsPowerdownCommand, version),
+                        Config.getValue(ConfigValues.SshVdsPowerdownCommand, version),
                         null,
                         cmdOut,
                         cmdErr
