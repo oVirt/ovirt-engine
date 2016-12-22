@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.arem;
 
 import static java.util.Collections.min;
-import static java.util.Comparator.comparingInt;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -74,10 +73,8 @@ public class AffinityRulesEnforcer {
      * Choose a VM to migrate by applying VM to host affinity rules.
      * Candidate VMs will selected in the following order:
      * <p>
-     * 1.Candidate VMs violating positive enforcing affinity to hosts.
-     * 2.Candidate VMs violating negative enforcing affinity to hosts.
-     * 3.Candidate VMs violating positive non enforcing affinity to hosts.
-     * 4.Candidate VMs violating negative non enforcing affinity to hosts.
+     * 1.Candidate VMs violating enforcing affinity to hosts.
+     * 2.Candidate VMs violating non enforcing affinity to hosts.
      *
      * @param cluster           Current cluster
      * @param allAffinityGroups All affinity groups for the current cluster.
@@ -93,25 +90,12 @@ public class AffinityRulesEnforcer {
         }
         Map<Guid, VM> vmsMap = getVMsMap(allVmToHostsAffinityGroups);
 
-        List<Guid> candidateVMsPositiveEnforcingAffinity =
-                getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, vmsMap, true, true);
-        List<Guid> candidateVMsNegativeEnforcingAffinity =
-                getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, vmsMap, false, true);
-        List<Guid> candidateVMsPositiveNonEnforcingAffinity =
-                getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, vmsMap, true, false);
-        List<Guid> candidateVMsNegativeNonEnforcingAffinity =
-                getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, vmsMap, false, false);
+        List<Guid> candidateVMs =
+                getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, vmsMap, true);
 
         //TODO check intersections between candidate groups and warn user if needed.
-
-        List<Guid> candidateVMs = new ArrayList<>();
-        candidateVMs.addAll(candidateVMsPositiveEnforcingAffinity);
-        candidateVMs.addAll(candidateVMsNegativeEnforcingAffinity);
-        candidateVMs.addAll(candidateVMsPositiveNonEnforcingAffinity);
-        candidateVMs.addAll(candidateVMsNegativeNonEnforcingAffinity);
-
-        if (!candidateVMs.isEmpty()) {
-            log.info("vm to hosts affinity group violation detected");
+        if (candidateVMs.isEmpty()) {
+            log.debug("No vm to hosts hard-affinity group violation detected");
         }
 
         for (Guid id : candidateVMs) {
@@ -120,6 +104,21 @@ public class AffinityRulesEnforcer {
                 return Optional.of(candidateVM);
             }
         }
+
+        candidateVMs =
+                getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, vmsMap, false);
+
+        if (candidateVMs.isEmpty()) {
+            log.debug("No vm to hosts soft-affinity group violation detected");
+        }
+
+        for (Guid id : candidateVMs) {
+            VM candidateVM = vmsMap.get(id);
+            if (isVmMigrationValid(cluster, candidateVM)) {
+                return Optional.of(candidateVM);
+            }
+        }
+
         return Optional.empty();
     }
 
@@ -147,114 +146,50 @@ public class AffinityRulesEnforcer {
 
     /**
      * Get a list of candidate VMs (by VM ids) from the VM to host affinity groups.
-     * This list will contain all VMs that violate the host positive
-     * and host enforcing policies of the given affinity groups.
+     * This list will contain all VMs that violate the host affinity policies
+     * sorted according to the number of violations (descending).
      *
      * @param allVMtoHostsAffinityGroups VM to Host affinity groups.
      * @param vmsMap                     VMs map with key: vm id , value: associated vm object.
-     * @param isVdsAffinityPositive      true - positive affinity, false - negative affinity.
      * @param isVdsAffinityEnforcing     true - Hard affinity constraint, false - Soft affinity constraint.
      * @return list of candidate VMs for migration by VM to Host affinities.
      */
     private List<Guid> getVmToHostsAffinityGroupCandidates(List<AffinityGroup> allVMtoHostsAffinityGroups,
-            Map<Guid, VM> vmsMap, boolean isVdsAffinityPositive, boolean isVdsAffinityEnforcing) {
-        Map<Guid, Set<Guid>> vmToHostsAffinityMap = new HashMap<>();
+            Map<Guid, VM> vmsMap, boolean isVdsAffinityEnforcing) {
+        Map<Guid, Integer> vmToHostsAffinityMap = new HashMap<>();
+
+        // Iterate over all affinity groups and check the currently running
+        // VMs for compliance, record violations per VM
         allVMtoHostsAffinityGroups.stream()
-                .filter(ag -> ag.getVdsPolarityBooleanObject().equals(isVdsAffinityPositive))
+                .filter(AffinityGroup::isVdsAffinityEnabled)
                 .filter(ag -> ag.isVdsEnforcing() == isVdsAffinityEnforcing)
                 .forEach(g -> {
+                    Set<Guid> affHosts = new HashSet<>(g.getVdsIds());
                     g.getVmIds()
                             .forEach(vm_id -> {
-                                mapVmsToHosts(vm_id, vmToHostsAffinityMap, vmsMap, g);
+                                VM vm = vmsMap.get(vm_id);
+
+                                if (vm == null) {
+                                    return;
+                                }
+
+                                if (affHosts.contains(vm.getRunOnVds()) && !g.isVdsPositive()) {
+                                    // Negative affinity violated
+                                    vmToHostsAffinityMap.put(vm_id,
+                                            1 + vmToHostsAffinityMap.getOrDefault(vm_id, 0));
+                                } else if (!affHosts.contains(vm.getRunOnVds()) && g.isVdsPositive()) {
+                                    // Positive affinity violated
+                                    vmToHostsAffinityMap.put(vm_id,
+                                            1 + vmToHostsAffinityMap.getOrDefault(vm_id, 0));
+                                }
                             });
                 });
 
-        return getSortedVmsViolatingVmToHostsAffinity(vmToHostsAffinityMap, vmsMap, isVdsAffinityPositive);
-    }
-
-    /**
-     * Determines the set of hosts on which the indicated VM
-     * can or cannot run (according to positive/negative affinity)
-     * from those within the provided affinity group and adds them to the VM to Hosts Affinity map
-     *
-     * @param id                   VM id
-     * @param vmToHostsAffinityMap current VM to Hosts Affinity map to be updated.
-     * @param vmsMap               VMs map with key: vm id , value :associated vm object.
-     * @param affinityGroup        Current affinity group.
-     */
-    private void mapVmsToHosts(Guid id, Map<Guid, Set<Guid>> vmToHostsAffinityMap, Map<Guid, VM> vmsMap,
-            AffinityGroup affinityGroup) {
-
-        //non running vms are not handled
-        if (vmsMap.get(id).getRunOnVds() == null) {
-            return;
-        }
-        Set<Guid> hosts = new HashSet<>(affinityGroup.getVdsIds());
-        Set<Guid> currentHosts = vmToHostsAffinityMap.get(id);
-        if (currentHosts == null) {
-            vmToHostsAffinityMap.put(id, hosts);
-        } else {
-            vmToHostsAffinityMap.get(id).addAll(hosts);
-            if (affinityGroup.isVdsPositive()) {
-                Set<Guid> intersections = new HashSet<>(currentHosts);
-                intersections.retainAll(hosts);
-                if (intersections.isEmpty()) {
-                    log.warn("VM {} {} belongs to a completely different positive affinity hosts group: {}.", id, vmsMap
-                            .get(id).getName(), affinityGroup.getName());
-                }
-            }
-        }
-    }
-
-    /**
-     * Check affinity group violations according to VM to Host affinity rules
-     * and return a sorted list of violating VMs.
-     * <p>
-     * Possible violations:
-     * <p>
-     * 1.Positive affinity -
-     * VMs that are not running on any of the hosts from vmToHostsAffinityMap are violating positive affinity.
-     * The candidates are sorted by the largest hosts group first (as taken from vmToHostsAffinityMap).
-     * 2.Negative affinity -
-     * VMs that are running on at least one of the hosts from vmToHostsAffinityMap are violating negative affinity.
-     * The candidates are sorted by the smallest hosts group first (as taken from vmToHostsAffinityMap).
-     *
-     * @param vmToHostsAffinityMap  current VM to Hosts Affinity map.
-     * @param vmsMap                VMs map with key: vm id, value: associated vm object.
-     * @param isVdsAffinityPositive true - positive affinity, false - negative affinity.
-     * @return Sorted list of candidate VMs that violate VM to Host affinity.
-     */
-    private List<Guid> getSortedVmsViolatingVmToHostsAffinity(Map<Guid, Set<Guid>> vmToHostsAffinityMap,
-            Map<Guid, VM> vmsMap, boolean isVdsAffinityPositive) {
-
-        List<Guid> nonViolatingVms = vmToHostsAffinityMap.keySet().stream()
-                .filter(vm_id -> {
-                    Set<Guid> hosts = vmToHostsAffinityMap.get(vm_id);
-                    boolean vmRunsOnAffinityHost = hosts.contains(vmsMap.get(vm_id).getRunOnVds());
-
-                    if ((isVdsAffinityPositive && vmRunsOnAffinityHost)
-                            || (!isVdsAffinityPositive && !vmRunsOnAffinityHost)) {
-                        return true;
-                    }
-                    return false;
-                })
+        // Sort according the to the number of violations
+        return vmToHostsAffinityMap.entrySet().stream()
+                .sorted(Comparator.comparing(Map.Entry::getValue))
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-
-        vmToHostsAffinityMap.keySet().removeAll(nonViolatingVms);
-
-        List<Guid> candidateVMids = new ArrayList<>();
-
-        //for negative affinity groups sort the candidates from the smallest hosts group first
-        vmToHostsAffinityMap.entrySet()
-                .stream()
-                .sorted(comparingInt(e -> e.getValue().size()))
-                .forEachOrdered(x -> candidateVMids.add(x.getKey()));
-
-        //for positive affinity groups sort the candidates from the largest hosts group first
-        if (isVdsAffinityPositive) {
-            Collections.reverse(candidateVMids);
-        }
-        return candidateVMids;
     }
 
     private VM chooseNextVmToMigrateFromVMsAffinity(Cluster cluster, List<AffinityGroup> allAffinityGroups) {
