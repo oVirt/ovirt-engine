@@ -82,7 +82,6 @@ import org.ovirt.engine.api.resource.openstack.OpenstackImageProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackNetworkProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.invocation.Current;
-import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendDomainsResource;
@@ -159,29 +158,23 @@ public class BackendApiResource
 
 
     private Collection<DetailedLink> getLinks() {
-        return ApiRootLinksCreator.getLinks(getLinkBase());
+        return ApiRootLinksCreator.getLinks(getAbsolutePath());
     }
 
     private Collection<DetailedLink> getGlusterLinks() {
-        return ApiRootLinksCreator.getGlusterLinks(getLinkBase());
+        return ApiRootLinksCreator.getGlusterLinks(getAbsolutePath());
     }
 
-    private String getLinkBase() {
+    private String getAbsolutePath(String... segments) {
         Current current = getCurrent();
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(current.getPrefix());
-        if (current.getVersionSource() == VersionSource.URL) {
-            buffer.append("/v");
-            buffer.append(current.getVersion());
-        }
-        return buffer.toString();
+        return current.getAbsolutePath(segments);
     }
 
     private Template createBlankTemplate() {
         Template template = new Template();
         String id = "00000000-0000-0000-0000-000000000000";
         template.setId(id);
-        template.setHref(getLinkBase() + "/templates/" + id);
+        template.setHref(getAbsolutePath( "templates", id));
         return template;
     }
 
@@ -189,7 +182,7 @@ public class BackendApiResource
         Tag tag = new Tag();
         String id = "00000000-0000-0000-0000-000000000000";
         tag.setId(id);
-        tag.setHref(getLinkBase() + "/tags/" + id);
+        tag.setHref(getAbsolutePath("tags", id));
         return tag;
     }
 

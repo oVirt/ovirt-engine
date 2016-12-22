@@ -145,7 +145,7 @@ public class V3StorageDomainServer extends V3Server<StorageDomainResource> {
         return new V3StorageDomainVmsServer(getDelegate().getVmsResource());
     }
 
-    @Path("{action: (isattached|refreshluns)}/{oid}")
+    @Path("{action: (?:isattached|refreshluns)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

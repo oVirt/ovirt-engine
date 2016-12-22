@@ -27,7 +27,6 @@ import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
-import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.v3.V3Adapter;
 import org.ovirt.engine.api.v3.types.V3API;
 import org.ovirt.engine.api.v3.types.V3Link;
@@ -81,14 +80,7 @@ public class V3ApiOutAdapter implements V3Adapter<Api, V3API> {
     private V3Link makeCapabilitiesLink() {
         // Calculate the href:
         Current current = CurrentManager.get();
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(current.getPrefix());
-        if (current.getVersionSource() == VersionSource.URL) {
-            buffer.append("/v");
-            buffer.append(current.getVersion());
-        }
-        buffer.append("/capabilities");
-        String href = buffer.toString();
+        String href = current.getAbsolutePath("capabilities");
 
         // Make the link:
         V3Link link = new V3Link();

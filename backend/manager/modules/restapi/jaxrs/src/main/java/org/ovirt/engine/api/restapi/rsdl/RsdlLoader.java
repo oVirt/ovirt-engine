@@ -27,7 +27,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
-import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.rsdl.RsdlIOManager;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.uutils.xml.SecureDocumentBuilderFactory;
@@ -54,13 +53,7 @@ public class RsdlLoader {
         String resourcePath = String.format("/v%s/%s", current.getVersion(), fileName);
 
         // Calculate the prefix that will be used in the "href" attributes:
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(current.getPrefix());
-        if (current.getVersionSource() == VersionSource.URL) {
-            buffer.append("/v");
-            buffer.append(current.getVersion());
-        }
-        String prefix = buffer.toString();
+        String prefix = current.getAbsolutePath();
 
         // Load the RSDL document into a DOM tree and then modify all the "href" attributes to include the prefix that
         // has been previously calculated:

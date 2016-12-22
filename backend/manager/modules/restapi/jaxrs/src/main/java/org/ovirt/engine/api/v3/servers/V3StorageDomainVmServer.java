@@ -80,7 +80,7 @@ public class V3StorageDomainVmServer extends V3Server<StorageDomainVmResource> {
         return new V3StorageDomainContentDisksServer(getDelegate().getDisksResource());
     }
 
-    @Path("{action: (import|register)}/{oid}")
+    @Path("{action: (?:import|register)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

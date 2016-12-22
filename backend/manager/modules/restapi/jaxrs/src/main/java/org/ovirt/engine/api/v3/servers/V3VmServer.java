@@ -330,7 +330,7 @@ public class V3VmServer extends V3Server<VmResource> {
         return new V3StatisticsServer(getDelegate().getStatisticsResource());
     }
 
-    @Path("{action: (cancelmigration|clone|commit_snapshot|detach|export|freezefilesystems|logon|maintenance|migrate|move|preview_snapshot|reboot|reordermacaddresses|shutdown|start|stop|suspend|thawfilesystems|ticket|undo_snapshot)}/{oid}")
+    @Path("{action: (?:cancelmigration|clone|commit_snapshot|detach|export|freezefilesystems|logon|maintenance|migrate|move|preview_snapshot|reboot|reordermacaddresses|shutdown|start|stop|suspend|thawfilesystems|ticket|undo_snapshot)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

@@ -105,7 +105,7 @@ public class V3ClusterServer extends V3Server<ClusterResource> {
         return new V3GlusterVolumesServer(getDelegate().getGlusterVolumesResource());
     }
 
-    @Path("{action: (resetemulatedmachine)}/{oid}")
+    @Path("{action: (?:resetemulatedmachine)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
