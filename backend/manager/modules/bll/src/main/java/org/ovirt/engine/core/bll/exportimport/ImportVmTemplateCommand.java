@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -81,6 +82,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
+
+    @Inject
+    private BlockStorageDiscardFunctionalityHelper discardHelper;
 
     private Version effectiveCompatibilityVersion;
     private StorageDomain sourceDomain;
@@ -352,6 +356,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         if (!doesVmTemplateContainImages || getParameters().isImagesExistOnTargetStorageDomain()) {
             endMoveOrCopyCommand();
         }
+        discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmTemplateId());
         checkTrustedService();
         setSucceeded(true);
     }
