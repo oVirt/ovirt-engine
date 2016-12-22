@@ -21,7 +21,7 @@ public class BasicMigrationHandler implements MigrationHandler {
         MigrateVmParameters parameters = new MigrateVmParameters(false, vmToMigrate);
         parameters.setInitialHosts(new ArrayList<>(initialHosts));
         parameters.setReason(reason);
-        backendInternal.runInternalAction(VdcActionType.MigrateVm,
+        backendInternal.runInternalAction(VdcActionType.BalanceVm,
                 parameters,
                 ExecutionHandler.createInternalJobContext());
     }
