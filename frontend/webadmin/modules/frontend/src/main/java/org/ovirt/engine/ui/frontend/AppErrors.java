@@ -753,6 +753,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__ACTION__VOLUME_SNAPSHOT_CONFIG_UPDATE();
 
+    String VAR__ACTION__SCHEDULE();
+
     String VAR__HOST_STATUS__UP();
 
     String VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL();
@@ -802,6 +804,8 @@ public interface AppErrors extends ConstantsWithLookup {
     String VAR__TYPE__GLUSTER_SERVICE();
 
     String VAR__TYPE__STORAGE_DEVICE();
+
+    String VAR__TYPE__STORAGE_DOMAIN_DR();
 
     String ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED();
 
@@ -2688,5 +2692,15 @@ public interface AppErrors extends ConstantsWithLookup {
     String NETWORK_OUT_OF_RANGE_MACS();
 
     String ERROR_STORAGE_DOMAIN_SYNC_EXISTS();
+
+    String ACTION_TYPE_FAILED_GEOREP_SESSION_USED_IN_STORAGE_SYNC();
+
+    String SCHEDULE_HOUR_OUT_OF_RANGE();
+
+    String SCHEDULE_MINS_OUT_OF_RANGE();
+
+    String STORAGE_DOMAIN_SYNC_SCHEDULING_IN_PROGRESS();
+
+    String VALIDATION_INVALID_SCHEDULE();
 }
 

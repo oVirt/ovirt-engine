@@ -8280,6 +8280,21 @@
             <value>2010-10-21 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
         </row>
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c0699999</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
+            <value>test-vol-replicate-2</value>
+            <value>REPLICATE</value>
+            <value>UP</value>
+            <value>3</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>false</value>
+            <value>2010-10-21 03:38:22</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
     </table>
     <table name="gluster_volume_details">
         <column>volume_id</column>
@@ -9092,6 +9107,16 @@
             <value>44f645f6-3fe9-4b35-a30c-be0d1a835ea8</value>
             <value>slave-replica</value>
             <value>44f645f6-3fe9-4b35-a30c-11111a835ea8</value>
+            <value>CREATED</value>
+        </row>
+        <row>
+            <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a777</value>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c0699999</value>
+            <value>192.168.122.18:slave-replica2</value>
+            <value>192.168.122.18</value>
+            <value>44f645f6-3fe9-4b35-a30c-be0d1a835555</value>
+            <value>slave-replica2</value>
+            <value>44f645f6-3fe9-4b35-a30c-11111a835555</value>
             <value>CREATED</value>
         </row>
      </table>
@@ -9978,6 +10003,18 @@
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+        </row>
+    </table>
+    <table name="storage_domain_dr">
+        <column>storage_domain_id</column>
+        <column>georep_session_id</column>
+        <column>sync_schedule</column>
+        <column>qrtz_job_id</column>
+        <row>
+            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5</value>
+            <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a777</value>
+            <value>0 30 22 * * ? *</value>
+            <value>qrtzjob1</value>
         </row>
     </table>
 </dataset>

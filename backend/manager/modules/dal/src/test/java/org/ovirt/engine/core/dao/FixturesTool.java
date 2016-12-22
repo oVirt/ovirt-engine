@@ -741,6 +741,7 @@ public class FixturesTool {
      * Gluster Geo rep session
      */
     public static final Guid GLUSTER_GEOREP_SESSION_ID = new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a755");
+    public static final Guid GLUSTER_GEOREP_SESSION_ID2 = new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a777");
 
     public static final Guid GLUSTER_GEOREP_SESSION_SLAVE_VOLUME_ID = new Guid("44f645f6-3fe9-4b35-a30c-11111a835ea8");
 
@@ -835,4 +836,6 @@ public class FixturesTool {
     public static final Guid HOST_NIC_VFS_CONFIG = new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c1");
     public static final Guid HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_1 = new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c2");
     public static final Guid HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_2 = new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c3");
+
+    public static final Guid POSIX_STORAGE_DOMAIN_ID = new Guid("bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5");
 }

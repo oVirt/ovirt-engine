@@ -102,6 +102,7 @@ import org.ovirt.engine.core.dao.RoleGroupMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.StepSubjectEntityDao;
+import org.ovirt.engine.core.dao.StorageDomainDRDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
@@ -1216,6 +1217,10 @@ public class DbFacade {
 
     public ImageTransferDao getImageTransferDao() {
         return getDao(ImageTransferDao.class);
+    }
+
+    public StorageDomainDRDao getStorageDomainDRDao() {
+        return getDao(StorageDomainDRDao.class);
     }
 
 }
