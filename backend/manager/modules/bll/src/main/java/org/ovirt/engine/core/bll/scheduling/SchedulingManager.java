@@ -328,7 +328,7 @@ public class SchedulingManager implements BackendService {
             }
 
             Optional<Guid> bestHost = selectBestHost(cluster, vm, destHostIdList, vdsList, policy, parameters);
-            if (bestHost.isPresent()) {
+            if (bestHost.isPresent() && !bestHost.get().equals(vm.getRunOnVds())) {
                 Guid bestHostId = bestHost.get();
                 getPendingResourceManager().addPending(new PendingCpuCores(bestHostId, vm, vm.getNumOfCpus()));
 

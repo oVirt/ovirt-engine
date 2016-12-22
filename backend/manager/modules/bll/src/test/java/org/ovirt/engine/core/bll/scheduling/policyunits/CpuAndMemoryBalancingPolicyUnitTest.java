@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -45,13 +48,16 @@ public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest 
         // mock host Dao
         VdsDao vdsDao = mock(VdsDao.class);
         doReturn(vdsDao).when(unit).getVdsDao();
-        doReturn(new ArrayList(hosts.values())).when(vdsDao).getAllForCluster(any(Guid.class));
+        doReturn(new ArrayList<>(hosts.values())).when(vdsDao).getAllForCluster(any(Guid.class));
 
         // mock VM Dao
         VmDao vmDao = mock(VmDao.class);
         doReturn(vmDao).when(unit).getVmDao();
         for (Guid guid: hosts.keySet()) {
             doReturn(vmsOnAHost(vms.values(), guid)).when(vmDao).getAllRunningForVds(guid);
+        }
+        for (Map.Entry<Guid, VM> vm: vms.entrySet()) {
+            doReturn(vm.getValue()).when(vmDao).get(vm.getKey());
         }
 
         VmStatisticsDao vmStatisticsDao = mock(VmStatisticsDao.class);
@@ -71,5 +77,13 @@ public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest 
             }
         }
         return result;
+    }
+
+    protected List<Guid> validMigrationTargets(CpuAndMemoryBalancingPolicyUnit unit, Optional<BalanceResult> result) {
+        VM vm = unit.getVmDao().get(result.get().getVmToMigrate());
+        return result.get().getCandidateHosts()
+                .stream()
+                .filter(h -> !h.equals(vm.getRunOnVds()))
+                .collect(Collectors.toList());
     }
 }

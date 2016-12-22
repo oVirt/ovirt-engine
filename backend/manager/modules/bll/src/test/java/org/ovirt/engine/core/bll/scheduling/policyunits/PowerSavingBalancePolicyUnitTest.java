@@ -11,6 +11,7 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -66,8 +67,10 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
-        assertEquals(1, result.get().getCandidateHosts().size());
-        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
+
+        List<Guid> validMigrationTargets = validMigrationTargets(unit, result);
+        assertEquals(1, validMigrationTargets.size());
+        assertEquals(DESTINATION_HOST, validMigrationTargets.get(0));
     }
 
     @Test
@@ -93,8 +96,9 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        assertEquals(1, result.get().getCandidateHosts().size());
-        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
+        List<Guid> validMigrationTargets = validMigrationTargets(unit, result);
+        assertEquals(1, validMigrationTargets.size());
+        assertEquals(DESTINATION_HOST, validMigrationTargets.get(0));
     }
 
     @Test
@@ -120,8 +124,9 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        assertEquals(1, result.get().getCandidateHosts().size());
-        assertNotEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
+        List<Guid> validMigrationTargets = validMigrationTargets(unit, result);
+        assertEquals(1, validMigrationTargets.size());
+        assertNotEquals(DESTINATION_HOST, validMigrationTargets.get(0));
     }
 
     @Test
@@ -146,8 +151,9 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
-        assertEquals(1, result.get().getCandidateHosts().size());
-        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
+        List<Guid> validMigrationTargets = validMigrationTargets(unit, result);
+        assertEquals(1, validMigrationTargets.size());
+        assertEquals(DESTINATION_HOST, validMigrationTargets.get(0));
     }
 
     @Test

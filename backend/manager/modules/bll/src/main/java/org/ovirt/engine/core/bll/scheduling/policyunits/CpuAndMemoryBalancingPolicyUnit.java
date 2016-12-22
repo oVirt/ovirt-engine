@@ -116,6 +116,14 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             result = getBalance(findVmAndDestinations, overUtilizedSecondaryHosts, underUtilizedHosts);
         }
 
+        // add the current host, it is possible it is the best host after all,
+        // because the balancer does not know about affinity for example
+        Optional<BalanceResult> finalResult = result;
+        result.map(BalanceResult::getCurrentHost)
+                .filter(Objects::nonNull)
+                .ifPresent(h ->
+                        finalResult.ifPresent(res -> res.getCandidateHosts().add(h)));
+
         return result;
     }
 
@@ -125,9 +133,10 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
 
         return findVmAndDestinations.invoke(overUtilizedHosts, underUtilizedHosts, getVmDao(), getVmStatisticsDao())
                 .map(res -> new BalanceResult(res.getVmToMigrate().getId(),
-                                res.getDestinationHosts().stream()
-                                    .map(VDS::getId)
-                                    .collect(Collectors.toList()))
+                        res.getDestinationHosts().stream()
+                                .map(VDS::getId)
+                                .collect(Collectors.toList()),
+                        res.getVmToMigrate().getRunOnVds())
                     );
     }
 
