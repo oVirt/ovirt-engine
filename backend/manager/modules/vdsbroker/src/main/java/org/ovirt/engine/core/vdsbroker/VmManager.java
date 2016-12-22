@@ -35,6 +35,8 @@ public class VmManager {
 
     private final ReentrantLock lock;
     private Long vmDataChangedTime;
+    /** how long to wait for a response for power-off operation, in nanoseconds */
+    private long powerOffTimeout;
 
     private int convertOperationProgress;
     private String convertOperationDescription;
@@ -66,6 +68,7 @@ public class VmManager {
 
     @PostConstruct
     public void init() {
+        setPowerOffTimeout(System.nanoTime());
         VmStatic vmStatic = vmStaticDao.get(vmId);
         // vmStatic is null for externally managed VMs
         if (vmStatic != null) {
@@ -225,6 +228,16 @@ public class VmManager {
 
     public Guid getLeaseStorageDomainId() {
         return leaseStorageDomainId;
+    }
+
+    public long getPowerOffTimeout() {
+        return powerOffTimeout;
+    }
+
+    public long setPowerOffTimeout(long powerOffTimeout) {
+        long result = this.powerOffTimeout;
+        this.powerOffTimeout = powerOffTimeout;
+        return result;
     }
 
 }
