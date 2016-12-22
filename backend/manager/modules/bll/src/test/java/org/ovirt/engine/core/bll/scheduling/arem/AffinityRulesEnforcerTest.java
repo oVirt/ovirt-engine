@@ -191,18 +191,31 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.add(bigGroup);
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm4, vm6);
 
-        bigGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.POSITIVE, true,
-                Arrays.asList(host2, host3), vm1, vm2, vm3);
-        smallGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
-                .POSITIVE, true, Arrays.asList(host1), vm4);
+    }
+
+    @Test
+    public void shouldFixVmWithMostViolationsFirst() {
+        AffinityGroup groupA =
+                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                                .POSITIVE, true,
+                        Arrays.asList(host2), vm1, vm2);
+        AffinityGroup groupB =
+                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                                .POSITIVE, true,
+                        Arrays.asList(host3), vm1, vm2);
+        AffinityGroup groupC =
+                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .POSITIVE, true, Arrays.asList(host1), vm4);
         affinityGroups.clear();
-        affinityGroups.add(smallGroup);
-        affinityGroups.add(bigGroup);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
+        affinityGroups.add(groupA);
+        affinityGroups.add(groupB);
+        affinityGroups.add(groupC);
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isEqualTo(vm4);
         affinityGroups.clear();
-        affinityGroups.add(bigGroup);
-        affinityGroups.add(smallGroup);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
+        affinityGroups.add(groupB);
+        affinityGroups.add(groupC);
+        affinityGroups.add(groupA);
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isEqualTo(vm4);
     }
 
     @Test
