@@ -537,6 +537,9 @@ public enum VdcActionType {
     RemoveLabel(6101, ActionGroup.TAG_MANAGEMENT, false, QuotaDependency.NONE),
     UpdateLabel(6102, ActionGroup.TAG_MANAGEMENT, false, QuotaDependency.NONE),
 
+    // Scheduling and balancing
+    BalanceVm(6200, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
+
     // CoCo
     RunAsyncAction(7000, QuotaDependency.NONE);
 

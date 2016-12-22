@@ -217,7 +217,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return cachedVmPassthroughNics;
     }
 
-    private boolean perform() {
+    protected boolean perform() {
         try {
             getParameters().setStartTime(new Date());
 
@@ -845,7 +845,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     // hosts that cannot be selected for scheduling (failed hosts + VM source host)
-    private List<Guid> getVdsBlackList() {
+    protected List<Guid> getVdsBlackList() {
         List<Guid> blackList = new ArrayList<>(getRunVdssList());
         if (getVdsId() != null) {
             blackList.add(getVdsId());

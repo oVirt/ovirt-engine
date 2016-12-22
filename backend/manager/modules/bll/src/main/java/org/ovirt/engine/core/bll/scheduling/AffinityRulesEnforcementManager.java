@@ -97,7 +97,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
         parameters.setReason(AuditLogDirector.getMessage(
                 AuditLogType.MIGRATION_REASON_AFFINITY_ENFORCEMENT));
 
-        backend.runInternalAction(VdcActionType.MigrateVm,
+        backend.runInternalAction(VdcActionType.BalanceVm,
                 parameters,
                 ExecutionHandler.createInternalJobContext());
     }
