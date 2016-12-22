@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -10,12 +12,16 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
+import org.ovirt.engine.core.dao.StorageDomainDRDao;
 
 /**
  * BLL command to stop a geo-replication session
  */
 @NonTransactiveCommandAttribute
 public class DeleteGeoRepSessionCommand extends GeoRepSessionCommandBase<GlusterVolumeGeoRepSessionParameters> {
+
+    @Inject
+    private StorageDomainDRDao storageDomainDRDao;
 
     public DeleteGeoRepSessionCommand(GlusterVolumeGeoRepSessionParameters params, CommandContext context) {
         super(params, context);
@@ -32,6 +38,15 @@ public class DeleteGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
         addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
         addValidationMessageVariable("volumeName", getGlusterVolumeName());
         addValidationMessageVariable("cluster", getClusterName());
+    }
+
+    @Override
+    protected boolean validate() {
+        if (!storageDomainDRDao.getWithGeoRepSession(getParameters().getGeoRepSessionId()).isEmpty()) {
+            //cannot delete this session as there's an storage domain sync setup against this.
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_USED_IN_STORAGE_SYNC);
+        }
+        return super.validate();
     }
 
     @Override

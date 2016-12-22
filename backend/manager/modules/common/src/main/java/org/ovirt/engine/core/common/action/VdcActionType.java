@@ -331,6 +331,7 @@ public enum VdcActionType {
     CopyImageGroupWithData(1035, QuotaDependency.STORAGE),
     GlusterStorageSync(1036, QuotaDependency.NONE),
     GlusterStorageGeoRepSyncInternal(1037, QuotaDependency.NONE),
+    ScheduleGlusterStorageSync(1038, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
 
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),

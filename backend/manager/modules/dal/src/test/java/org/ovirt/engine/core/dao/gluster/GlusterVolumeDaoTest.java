@@ -449,7 +449,6 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetVolumesSupportedAsStorageDomain() {
-        dao.updateReplicaCount(EXISTING_VOL_REPL_ID, 3);
         List<GlusterVolumeEntity> vols = dao.getVolumesSupportedAsStorageDomain();
         assertEquals(1, vols.size());
     }
