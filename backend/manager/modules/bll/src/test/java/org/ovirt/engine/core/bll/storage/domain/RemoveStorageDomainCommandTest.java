@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 /** A test case for the {@link RemoveStorageDomainCommand} */
@@ -46,9 +45,6 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
 
     @Mock
     private StorageDomainDao storageDomainDaoMock;
-
-    @Mock
-    private StoragePoolDao storagePoolDaoMock;
 
     @Mock
     private VdsDao vdsDaoMock;
