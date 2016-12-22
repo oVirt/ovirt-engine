@@ -62,7 +62,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
 
             // sending a shutdown command to the VM:
             setActionReturnValue(runVdsCommand(VDSCommandType.DestroyVm,
-                            new DestroyVmVDSCommandParameters(getVdsId(), getVmId(), getParameters().getStopReason(), false, true, secondsToWait))
+                            new DestroyVmVDSCommandParameters(getVdsId(), getVmId(), getParameters().getStopReason(), true, secondsToWait))
                     .getReturnValue());
         }
         else {

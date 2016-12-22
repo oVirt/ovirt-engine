@@ -72,13 +72,13 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
             runVdsCommand(
                     VDSCommandType.DestroyVm,
                     new DestroyVmVDSCommandParameters(getVm().getMigratingToVds(),
-                            getVmId(), getParameters().getStopReason(), true, false, 0));
+                            getVmId(), getParameters().getStopReason(), false, 0));
         }
 
         setActionReturnValue(runVdsCommand(
                 VDSCommandType.DestroyVm,
                 new DestroyVmVDSCommandParameters(getVdsId(), getVmId(),
-                        getParameters().getStopReason(), false, false, 0)).getReturnValue());
+                        getParameters().getStopReason(), false, 0)).getReturnValue());
     }
 
     @Override

@@ -64,7 +64,6 @@ public class RestartVdsVmsOperation {
                             new DestroyVmVDSCommandParameters(
                                     new Guid(vm.getMigratingToVds().toString()),
                                     vm.getId(),
-                                    true,
                                     false,
                                     0
                             )

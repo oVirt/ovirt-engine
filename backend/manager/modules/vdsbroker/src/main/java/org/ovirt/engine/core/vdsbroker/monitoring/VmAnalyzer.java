@@ -316,7 +316,7 @@ public class VmAnalyzer {
         runVdsCommand(
                 VDSCommandType.Destroy,
                 new DestroyVmVDSCommandParameters(vdsManager.getVdsId(),
-                        vdsmVm.getVmDynamic().getId(), null, false, false, 0, true));
+                        vdsmVm.getVmDynamic().getId(), null, false, 0, true));
     }
 
     private void saveDynamic(VmDynamic vmDynamic) {
@@ -416,7 +416,7 @@ public class VmAnalyzer {
     private void destroyVmOnDestinationHost() {
         VDSReturnValue destoryReturnValue = runVdsCommand(
                 VDSCommandType.DestroyVm,
-                new DestroyVmVDSCommandParameters(dbVm.getMigratingToVds(), dbVm.getId(), true, false, 0));
+                new DestroyVmVDSCommandParameters(dbVm.getMigratingToVds(), dbVm.getId(), false, 0));
         if (destoryReturnValue.getSucceeded()) {
             log.info("Stopped migrating VM: '{}'({}) on VDS: '{}'",
                     dbVm.getId(), getVmManager().getName(), dbVm.getMigratingToVds());

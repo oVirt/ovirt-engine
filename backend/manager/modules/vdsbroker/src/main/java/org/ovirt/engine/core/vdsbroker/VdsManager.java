@@ -1086,7 +1086,7 @@ public class VdsManager {
         ThreadPoolUtil.execute(() -> {
             VDSReturnValue returnValue = resourceManager.runVdsCommand(
                     VDSCommandType.DestroyVm,
-                    new DestroyVmVDSCommandParameters(vm.getMigratingToVds(), vm.getId(), true, false, 0));
+                    new DestroyVmVDSCommandParameters(vm.getMigratingToVds(), vm.getId(), false, 0));
 
             if (returnValue != null && returnValue.getSucceeded()) {
                 log.info("Stopped migrating VM: '{}' on VDS: '{}'",
