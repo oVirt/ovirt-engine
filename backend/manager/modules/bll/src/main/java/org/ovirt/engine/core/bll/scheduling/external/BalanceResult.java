@@ -9,10 +9,16 @@ import org.ovirt.engine.core.compat.Guid;
 public class BalanceResult extends SchedulerResult {
     private List<Guid> candidateHosts = new ArrayList<>();
     private Guid vmToMigrate = null;
+    private Guid currentHost = null;
 
     public BalanceResult(Guid vmToMigrate, List<Guid> candidateHosts) {
         this.vmToMigrate = vmToMigrate;
         this.candidateHosts = candidateHosts;
+    }
+
+    public BalanceResult(Guid vmToMigrate, List<Guid> candidateHosts, Guid currentHost) {
+        this(vmToMigrate, candidateHosts);
+        this.currentHost = currentHost;
     }
 
     public BalanceResult() {
@@ -36,5 +42,13 @@ public class BalanceResult extends SchedulerResult {
 
     public boolean isValid() {
         return vmToMigrate != null;
+    }
+
+    public Guid getCurrentHost() {
+        return currentHost;
+    }
+
+    public void setCurrentHost(Guid currentHost) {
+        this.currentHost = currentHost;
     }
 }

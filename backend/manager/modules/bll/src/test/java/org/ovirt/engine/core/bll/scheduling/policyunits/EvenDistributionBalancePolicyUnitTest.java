@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -55,7 +56,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        assertEquals(1, result.get().getCandidateHosts().size());
+        assertEquals(2, result.get().getCandidateHosts().size());
         assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
     }
 
@@ -79,8 +80,10 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        assertEquals(1, result.get().getCandidateHosts().size());
-        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
+
+        List<Guid> candidateHosts = validMigrationTargets(unit, result);
+        assertEquals(1, candidateHosts.size());
+        assertEquals(DESTINATION_HOST, candidateHosts.get(0));
     }
 
     /**
@@ -129,8 +132,11 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        assertEquals(1, result.get().getCandidateHosts().size());
-        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
+
+        List<Guid> candidateHosts = validMigrationTargets(unit, result);
+
+        assertEquals(1, candidateHosts.size());
+        assertEquals(DESTINATION_HOST, candidateHosts.get(0));
     }
 
     /**
