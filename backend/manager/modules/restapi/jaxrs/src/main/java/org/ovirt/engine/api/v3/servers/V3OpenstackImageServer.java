@@ -49,7 +49,7 @@ public class V3OpenstackImageServer extends V3Server<OpenstackImageResource> {
         return adaptAction(getDelegate()::doImport, action);
     }
 
-    @Path("{action: (import)}/{oid}")
+    @Path("{action: (?:import)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

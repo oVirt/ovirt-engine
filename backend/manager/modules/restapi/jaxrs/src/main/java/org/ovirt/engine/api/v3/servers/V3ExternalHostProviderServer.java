@@ -71,7 +71,7 @@ public class V3ExternalHostProviderServer extends V3Server<ExternalHostProviderR
         return new V3ExternalHostsServer(getDelegate().getHostsResource());
     }
 
-    @Path("{action: (importcertificates|testconnectivity)}/{oid}")
+    @Path("{action: (?:importcertificates|testconnectivity)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

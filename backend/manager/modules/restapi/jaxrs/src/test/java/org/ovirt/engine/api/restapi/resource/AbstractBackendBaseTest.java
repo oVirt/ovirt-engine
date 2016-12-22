@@ -450,6 +450,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
         UriInfo uriInfo = setUpBasicUriExpectations();
         if (baseUri != null) {
+            CurrentManager.get().setPath(baseUri);
             expect(uriInfo.getPath()).andReturn(baseUri).anyTimes();
         }
 

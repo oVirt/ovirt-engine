@@ -61,7 +61,7 @@ public class V3OpenstackVolumeProviderServer extends V3Server<OpenstackVolumePro
         return new V3OpenstackVolumeAuthenticationKeysServer(getDelegate().getAuthenticationKeysResource());
     }
 
-    @Path("{action: (importcertificates|testconnectivity)}/{oid}")
+    @Path("{action: (?:importcertificates|testconnectivity)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

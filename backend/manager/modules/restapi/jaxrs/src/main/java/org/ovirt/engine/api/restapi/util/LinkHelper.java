@@ -329,7 +329,6 @@ import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypeResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypesResource;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
-import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -981,17 +980,10 @@ public class LinkHelper {
 
     private static String getPathWithoutParent(BaseResource entity, ApiLocationMetadata locationMetadata) {
         Current current = CurrentManager.get();
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(current.getPrefix());
-        if (current.getVersionSource() == VersionSource.URL) {
-            buffer.append("/v");
-            buffer.append(current.getVersion());
-        }
-        buffer.append("/");
-        buffer.append(getRelativePath(locationMetadata.getCollectionServiceClass()));
-        buffer.append("/");
-        buffer.append(entity.getId());
-        return buffer.toString();
+        return current.getAbsolutePath(
+            getRelativePath(locationMetadata.getCollectionServiceClass()),
+            entity.getId()
+        );
     }
 
     private static String getPathConsideringParent(BaseResource entity, ApiLocationMetadata locationMetadata) {

@@ -56,7 +56,7 @@ public class V3OpenstackNetworkProviderServer extends V3Server<OpenstackNetworkP
         return new V3OpenstackNetworksServer(getDelegate().getNetworksResource());
     }
 
-    @Path("{action: (importcertificates|testconnectivity)}/{oid}")
+    @Path("{action: (?:importcertificates|testconnectivity)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

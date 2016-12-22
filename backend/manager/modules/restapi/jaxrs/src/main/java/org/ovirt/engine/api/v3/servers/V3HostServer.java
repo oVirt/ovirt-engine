@@ -247,7 +247,7 @@ public class V3HostServer extends V3Server<HostResource> {
         return new V3StatisticsServer(getDelegate().getStatisticsResource());
     }
 
-    @Path("{action: (activate|approve|commitnetconfig|deactivate|enrollcertificate|fence|forceselectspm|install|iscsidiscover|iscsilogin|refresh|setupnetworks|unregisteredstoragedomainsdiscover|upgrade)}/{oid}")
+    @Path("{action: (?:activate|approve|commitnetconfig|deactivate|enrollcertificate|fence|forceselectspm|install|iscsidiscover|iscsilogin|refresh|setupnetworks|unregisteredstoragedomainsdiscover|upgrade)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }
