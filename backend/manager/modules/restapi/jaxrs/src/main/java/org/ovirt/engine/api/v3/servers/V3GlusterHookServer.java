@@ -71,7 +71,7 @@ public class V3GlusterHookServer extends V3Server<GlusterHookResource> {
         return adaptAction(getDelegate()::resolve, action);
     }
 
-    @Path("{action: (disable|enable|resolve)}/{oid}")
+    @Path("{action: (?:disable|enable|resolve)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

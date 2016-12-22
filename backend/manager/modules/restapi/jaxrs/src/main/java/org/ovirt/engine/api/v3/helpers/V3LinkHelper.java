@@ -19,37 +19,16 @@ import java.util.List;
 
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
-import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.v3.types.V3Link;
 
 public class V3LinkHelper {
-    /**
-     * Creates a new string builder and populates it with the prefix that should be used to populate the "href"
-     * attribute of links, taking into account the version of the API that has been requested and how it has been
-     * requested (with the "Version" header or with the URL suffix).
-     */
-    public static StringBuilder linkBuffer() {
-        Current current = CurrentManager.get();
-        StringBuilder builder = new StringBuilder();
-        builder.append(current.getPrefix());
-        if (current.getVersionSource() == VersionSource.URL) {
-            builder.append("/v");
-            builder.append(current.getVersion());
-        }
-        return builder;
-    }
-
     /**
      * Calculates an "href" using the given segments. For example, if the segments are {@code vms}, {@code 123} and
      * {@code disks} the result will be {@code <link rel="disks" href="/ovirt-engine/api/v3/vms/123/disks"/>}.
      */
     public static String linkHref(String... segments) {
-        StringBuilder href = linkBuffer();
-        for (String segment : segments) {
-            href.append("/");
-            href.append(segment);
-        }
-        return href.toString();
+        Current current = CurrentManager.get();
+        return current.getAbsolutePath(segments);
     }
 
     /**

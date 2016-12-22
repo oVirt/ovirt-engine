@@ -70,7 +70,7 @@ public class V3SnapshotServer extends V3Server<SnapshotResource> {
         return new V3SnapshotNicsServer(getDelegate().getNicsResource());
     }
 
-    @Path("{action: (restore)}/{oid}")
+    @Path("{action: (?:restore)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

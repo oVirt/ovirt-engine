@@ -62,7 +62,7 @@ public class V3JobServer extends V3Server<JobResource> {
         return new V3StepsServer(getDelegate().getStepsResource());
     }
 
-    @Path("{action: (clear|end)}/{oid}")
+    @Path("{action: (?:clear|end)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

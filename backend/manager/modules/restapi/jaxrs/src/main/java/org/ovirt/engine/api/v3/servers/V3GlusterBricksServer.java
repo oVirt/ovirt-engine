@@ -91,7 +91,7 @@ public class V3GlusterBricksServer extends V3Server<GlusterBricksResource> {
         return new V3GlusterBrickServer(getDelegate().getBrickResource(id));
     }
 
-    @Path("{action: (activate|migrate|stopmigrate)}/{oid}")
+    @Path("{action: (?:activate|migrate|stopmigrate)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

@@ -6,13 +6,14 @@ import java.net.URI;
 import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.api.restapi.invocation.Current;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -186,8 +187,10 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
 
         String ids = asString(actionResult.getVdsmTaskIdList());
         action.setId(ids);
-        action.setHref(UriBuilder.fromPath(getPath(uriInfo)).path(ids).build().toString());
-        String path = getPath(uriInfo);
+
+        Current current = CurrentManager.get();
+        String path = current.getRelativePath();
+        action.setHref(path + "/" + ids);
         addOrUpdateLink(action, "parent", path.substring(0, path.lastIndexOf("/")));
         addOrUpdateLink(action, "replay", path);
 

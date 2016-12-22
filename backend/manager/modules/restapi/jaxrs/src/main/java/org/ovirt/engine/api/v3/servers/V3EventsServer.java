@@ -61,7 +61,7 @@ public class V3EventsServer extends V3Server<EventsResource> {
         return new V3EventServer(getDelegate().getEventResource(id));
     }
 
-    @Path("{action: (undelete)}/{oid}")
+    @Path("{action: (?:undelete)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

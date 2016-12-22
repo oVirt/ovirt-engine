@@ -7,7 +7,6 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
-import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -35,14 +34,8 @@ public abstract class AbstractBackendAsyncStatusResource<R extends BaseResource>
     @Override
     protected R addLinks(R model, Class<? extends BaseResource> suggestedParent, String... excludeSubCollectionMembers) {
         Current current = CurrentManager.get();
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(current.getPrefix());
-        if (current.getVersionSource() == VersionSource.URL) {
-            buffer.append("/v");
-            buffer.append(current.getVersion());
-        }
-        buffer.append(current.getPath());
-        model.setHref(buffer.toString());
+        String href = current.getRelativePath();
+        model.setHref(href);
         return model;
     }
 
