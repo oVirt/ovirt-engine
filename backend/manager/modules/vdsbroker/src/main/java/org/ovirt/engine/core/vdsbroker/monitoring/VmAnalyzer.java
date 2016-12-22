@@ -304,9 +304,10 @@ public class VmAnalyzer {
                 break;
 
             case Normal:
-                auditVmOnDownNormal();
+                boolean powerOff = System.nanoTime() - getVmManager().getPowerOffTimeout() < 0;
+                auditVmOnDownNormal(powerOff);
                 clearVm(vdsmVm.getVmDynamic().getExitStatus(),
-                        vdsmVm.getVmDynamic().getExitMessage(),
+                        powerOff ? getPowerOffExitMessage() : vdsmVm.getVmDynamic().getExitMessage(),
                         vdsmVm.getVmDynamic().getExitReason());
                 resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
 
@@ -315,6 +316,10 @@ public class VmAnalyzer {
                 }
             }
         }
+    }
+
+    private String getPowerOffExitMessage() {
+        return String.format("VM %s power off complete", getVmManager().getName());
     }
 
     private void destroyVm() {
@@ -328,17 +333,17 @@ public class VmAnalyzer {
         vmDynamicToSave = vmDynamic;
     }
 
-    private void auditVmOnDownNormal() {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId()));
+    private void auditVmOnDownNormal(boolean powerOff) {
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsManager.getVdsId(), getVmId()));
         logable.addCustomValue("ExitMessage",
-                vdsmVm.getVmDynamic().getExitMessage() != null ?
+                !powerOff && vdsmVm.getVmDynamic().getExitMessage() != null ?
                         "Exit message: " + vdsmVm.getVmDynamic().getExitMessage()
                         : " ");
         auditLog(logable, AuditLogType.VM_DOWN);
     }
 
     private void auditVmOnDownError() {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId()));
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsManager.getVdsId(), getVmId()));
         logable.addCustomValue("ExitMessage",
                 vdsmVm.getVmDynamic().getExitMessage() != null ?
                         "Exit message: " + vdsmVm.getVmDynamic().getExitMessage()
@@ -757,6 +762,14 @@ public class VmAnalyzer {
      * 3. Otherwise, the VM went down unexpectedly
      */
     private void proceedDisappearedVm() {
+        if (System.nanoTime() - getVmManager().getPowerOffTimeout() < 0) {
+            auditVmOnDownNormal(true);
+            clearVm(VmExitStatus.Normal,
+                    getPowerOffExitMessage(),
+                    VmExitReason.Success);
+            return;
+        }
+
         switch (dbVm.getStatus()) {
         case MigratingFrom:
             handOverVm();
