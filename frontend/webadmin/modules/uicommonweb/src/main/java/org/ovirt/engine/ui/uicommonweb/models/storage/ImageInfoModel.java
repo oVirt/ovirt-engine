@@ -20,6 +20,7 @@ public class ImageInfoModel extends EntityModel<String> {
     private int virtualSize;
     private QemuCompat qcowCompat;
     private Boolean backingFile;
+    private Boolean fileLoaded = false;
 
     public VolumeFormat getFormat() {
         return format;
@@ -61,23 +62,38 @@ public class ImageInfoModel extends EntityModel<String> {
         this.backingFile = backingFile;
     }
 
+    public Boolean getFileLoaded() {
+        return fileLoaded;
+    }
+
+    public void setFileLoaded(Boolean fileLoaded) {
+        this.fileLoaded = fileLoaded;
+    }
+
     public native void initialize(Element imageFileUploadElement) /*-{
         var self = this;
 
         imageFileUploadElement.addEventListener('change', onChange);
 
         function onChange() {
+            self.@org.ovirt.engine.ui.uicommonweb.models.storage.ImageInfoModel::clearModel()();
+
             // See http://git.qemu.org/?p=qemu.git;a=blob;f=docs/specs/qcow2.txt
             var file = imageFileUploadElement.files[0];
             var reader = new FileReader();
             reader.onload = function(e) {
                 var header = reader.result;
+                if (header.byteLength == 0) {
+                    // can't open the file
+                    return;
+                }
                 var headerStr = readString(header.slice(0, 4));
                 var info = {};
                 info.format = headerStr == "QFI\xfb" ? "COW" : "RAW";
                 info.actualSize = toGB(file.size);
                 info.virtualSize = 0;
                 info.backingFile = false;
+                info.fileLoaded = true;
 
                 if (info.format == "COW") {
                     var version = readUint32(header.slice(4, 8));
@@ -87,8 +103,8 @@ public class ImageInfoModel extends EntityModel<String> {
                     info.virtualSize = toGB(readUint64(header.slice(24, 32)));
                 }
                 self.@org.ovirt.engine.ui.uicommonweb.models.storage.ImageInfoModel::updateModel(*) (
-                    info.format, info.actualSize, info.virtualSize, info.qcowCompat, info.backingFile);
-            }
+                    info.format, info.actualSize, info.virtualSize, info.qcowCompat, info.backingFile, info.fileLoaded);
+            };
             var blob = file.slice(0, 32);
             reader.readAsArrayBuffer(blob);
         };
@@ -115,17 +131,36 @@ public class ImageInfoModel extends EntityModel<String> {
         };
     }-*/;
 
-    public void updateModel(String format, int actualSize, int virtualSize, String qcowCompat, boolean backingFile) {
+    public void updateModel(String format, int actualSize, int virtualSize, String qcowCompat,
+                            boolean backingFile, boolean fileLoaded) {
         setFormat(VolumeFormat.valueOf(format));
         setActualSize(actualSize);
         setVirtualSize(virtualSize);
         setQcowCompat(QemuCompat.forValue(qcowCompat));
         setBackingFile(backingFile);
+        setFileLoaded(fileLoaded);
 
         getEntityChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
+    public void clearModel() {
+        setFormat(null);
+        setActualSize(0);
+        setVirtualSize(0);
+        setQcowCompat(null);
+        setBackingFile(null);
+        setFileLoaded(false);
+
+        setIsValid(true);
+        getInvalidityReasons().clear();
+        getEntityChangedEvent().raise(this, EventArgs.EMPTY);
+    }
+
     public boolean validate() {
+        if (!fileLoaded) {
+            getInvalidityReasons().add(constants.uploadImageCannotBeOpened());
+            return false;
+        }
         if (backingFile) {
             getInvalidityReasons().add(constants.uploadImageBackingFileUnsupported());
             return false;
