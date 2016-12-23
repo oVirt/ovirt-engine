@@ -1005,7 +1005,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
                                                             list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "server.allow-insecure", "on")));//$NON-NLS-1$ $NON-NLS-2$
 
-                                                            final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "10");//$NON-NLS-1$//$NON-NLS-2$
+                                                            final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "30");//$NON-NLS-1$//$NON-NLS-2$
                                                             IPredicate<GlusterVolumeOptionEntity> predicaetFilter = new IPredicate<GlusterVolumeOptionEntity>() {
                                                                 @Override
                                                                 public boolean match(GlusterVolumeOptionEntity obj) {
@@ -1291,7 +1291,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                             }), volumeEntity.getClusterId());
                         }
                     } else {
-                        clusterSnapshotConfigModel.getClusters().setItems((List<Cluster>) returnValue);
+                        clusterSnapshotConfigModel.getClusters().setItems(returnValue);
                     }
                 }
             }
