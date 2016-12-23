@@ -43,7 +43,11 @@ public class GlusterVolumeGeoRepStatusDetail extends GlusterVolumeGeoRepStatus {
             details.setFailures(failures);
 
             if (innerMap.containsKey(CHECK_POINT_COMPLETED)) {
-                details.setCheckpointCompleted(Boolean.valueOf(innerMap.get(CHECK_POINT_COMPLETED).toString()));
+                if ("YES".equalsIgnoreCase(innerMap.get(CHECK_POINT_COMPLETED).toString())) {
+                    details.setCheckpointCompleted(true);
+                } else {
+                    details.setCheckpointCompleted(false);
+                }
             }
             String timezone = innerMap.containsKey(TIMEZONE) ? innerMap.get(TIMEZONE).toString() : null;
 
