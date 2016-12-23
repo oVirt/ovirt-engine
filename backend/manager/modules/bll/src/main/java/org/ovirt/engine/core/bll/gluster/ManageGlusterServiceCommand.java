@@ -18,17 +18,22 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -42,6 +47,9 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
 
     @Inject
     private GlusterServiceDao glusterServiceDao;
+
+    @Inject
+    private GlusterServerDao glusterServerDao;
 
     private static final Map<String, ManageActionDetail> manageActionDetailsMap = new HashMap<>();
 
@@ -90,7 +98,12 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTERID_AND_SERVERID_BOTH_NULL);
         }
 
-        if (!Guid.isNullOrEmpty(getClusterId()) && getGlusterUtils().getAllUpServers(getClusterId()).size() == 0) {
+        /*
+         * only check for upserver if this is a cluster wide service change.
+         * On a server level change, this validation leads to chicken-egg if glusterd is not running
+         */
+        if (!Guid.isNullOrEmpty(getClusterId()) && Guid.isNullOrEmpty(getParameters().getServerId())
+                && getGlusterUtils().getAllUpServers(getClusterId()).size() == 0) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SERVERS_FOR_CLUSTER);
         }
 
@@ -179,6 +192,18 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
             handleVdsError(getAuditLogTypeValue(), returnValue.getVdsError().getMessage());
         } else {
             updateService(getParameters().getServerId(), (List<GlusterServerService>) returnValue.getReturnValue());
+            //if glusterd was restarted, update peer status and host status
+            if (getParameters().getServiceType() == ServiceType.GLUSTER
+                    && (GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART
+                            .equals(getParameters().getActionType())
+                    || GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START
+                            .equals(getParameters().getActionType()))) {
+                glusterServerDao.updatePeerStatus(getParameters().getServerId(), PeerStatus.CONNECTED);
+                //only if cluster supports only gluster service
+                if (!getCluster().supportsVirtService()) {
+                    runVdsCommand(VDSCommandType.SetVdsStatus,  new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Initializing));
+                }
+            }
         }
     }
 
