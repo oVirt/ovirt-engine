@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDiskPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.ImageInfoForm;
 import org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -185,6 +186,12 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         }
 
         imageInfoForm.initialize(model.getImageInfoModel());
+        model.getImageInfoModel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                model.setIsValid(model.getImageInfoModel().getIsValid());
+            }
+        });
         model.getImageInfoModel().initialize(model.getImageFileUploadElement());
     }
 
