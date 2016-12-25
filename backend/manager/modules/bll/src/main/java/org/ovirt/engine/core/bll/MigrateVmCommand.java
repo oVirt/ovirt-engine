@@ -100,7 +100,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
      * migration and re-plug them back after migration.
      */
     private List<VmNetworkInterface> allVmPassthroughNics;
-    private String namesOfNotRepluggedNics;
 
     public MigrateVmCommand(T migrateVmParameters, CommandContext cmdContext) {
         super(migrateVmParameters, cmdContext);
@@ -305,18 +304,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                     .collect(Collectors.toSet());
             networkDeviceHelper.setVmIdOnVfs(getDestinationVdsId(), null, vfsToUnregister);
 
-            namesOfNotRepluggedNics = notRepluggedNics.stream().map(VmNic::getName).collect(Collectors.joining(","));
+            addCustomValue("NamesOfNotRepluggedNics",
+                    notRepluggedNics.stream().map(VmNic::getName).collect(Collectors.joining(",")));
             auditLogDirector.log(this, AuditLogType.VM_MIGRATION_NOT_ALL_VM_NICS_WERE_PLUGGED_BACK);
         }
 
 
         return plugOfAllMacsSucceeded;
-    }
-
-    //this method is used by AuditLogDirector
-    @SuppressWarnings("unused")
-    public String getNamesOfNotRepluggedNics() {
-        return namesOfNotRepluggedNics;
     }
 
     private List<ActivateDeactivateVmNicParameters> createActivateDeactivateVmNicParameters(List<VmNetworkInterface> vmNics,
