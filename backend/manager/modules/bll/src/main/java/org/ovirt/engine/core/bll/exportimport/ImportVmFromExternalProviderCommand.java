@@ -313,6 +313,10 @@ implements QuotaStorageDependent {
         }
     }
 
+    private static String replaceInvalidDiskAliasChars(String alias) {
+        return alias.replace(' ', '_');
+    }
+
     protected static String renameDiskAlias(OriginType originType, String alias) {
         Matcher matcher;
         if (originType == OriginType.VMWARE) {
@@ -321,10 +325,10 @@ implements QuotaStorageDependent {
             matcher = DISK_NAME_PATTERN.matcher(alias);
         }
         if (matcher.matches()) {
-            return matcher.group(1);
+            return replaceInvalidDiskAliasChars(matcher.group(1));
         }
 
-        return alias;
+        return replaceInvalidDiskAliasChars(alias);
     }
 
     @Override
