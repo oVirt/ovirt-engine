@@ -807,10 +807,8 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         device.put(VdsProperties.Type, VdsProperties.VmLease);
         device.put(VdsProperties.Device, VdsProperties.VmLease);
         device.put(VdsProperties.DeviceId, Guid.newGuid());
-        Map<String, Object> specParams = new HashMap<>();
-        specParams.put(VdsProperties.VmLeaseSdId, vm.getLeaseStorageDomainId());
-        specParams.put(VdsProperties.VmLeaseId, vm.getId());
-        device.put(VdsProperties.SpecParams, specParams);
+        device.put(VdsProperties.VmLeaseSdId, vm.getLeaseStorageDomainId().toString());
+        device.put(VdsProperties.VmLeaseId, vm.getId().toString());
         devices.add(device);
     }
 
