@@ -109,7 +109,7 @@ public final class ValidationResult {
      * failure messages as Strings
      */
     public List<String> getMessagesAsStrings() {
-        return messages.stream().map(m -> m.name()).collect(Collectors.toList());
+        return messages.stream().map(Enum::name).collect(Collectors.toList());
     }
 
     /**
