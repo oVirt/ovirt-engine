@@ -57,7 +57,7 @@ public final class ValidationResult {
 
         this.messages.addAll(messages);
         this.variableReplacements = variableReplacements == null || variableReplacements.length == 0 ?
-                Collections.<String>emptyList() :
+                Collections.emptyList() :
                 Collections.unmodifiableList(Arrays.asList(variableReplacements));
     }
 
