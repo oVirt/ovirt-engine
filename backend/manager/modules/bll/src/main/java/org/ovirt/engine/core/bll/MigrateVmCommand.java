@@ -274,43 +274,46 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
      * any of them back, we will create least problem, if we try to plug back each of them. Also for each such failure,
      * we must release preallocated VF.
      * @param vmNics vmNics to plug in
-     * @return false if any nic failed to be plugged back.
      */
-    private boolean plugNics(List<VmNetworkInterface> vmNics) {
-        List<ActivateDeactivateVmNicParameters> parametersList = createActivateDeactivateVmNicParameters(vmNics,
-                PlugAction.PLUG);
+    private void plugPassthroughNics(List<VmNetworkInterface> vmNics) {
+        try {
+            List<ActivateDeactivateVmNicParameters> parametersList = createActivateDeactivateVmNicParameters(vmNics,
+                    PlugAction.PLUG);
 
-        boolean plugOfAllMacsSucceeded = true;
-        log.debug("About to call {} with parameters: {}",
-                VdcActionType.ActivateDeactivateVmNic,
-                Arrays.toString(parametersList.toArray()));
-        Map<Guid, String> vnicToVfMap = getVnicToVfMap(getDestinationVdsId());
-        List<VmNic> notRepluggedNics = new ArrayList<>();
+            boolean plugOfAllMacsSucceeded = true;
+            log.debug("About to call {} with parameters: {}",
+                    VdcActionType.ActivateDeactivateVmNic,
+                    Arrays.toString(parametersList.toArray()));
+            Map<Guid, String> vnicToVfMap = getVnicToVfMap(getDestinationVdsId());
+            List<VmNic> notRepluggedNics = new ArrayList<>();
 
-        for (ActivateDeactivateVmNicParameters parameter : parametersList) {
-            VdcReturnValueBase returnValue = runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameter);
+            for (ActivateDeactivateVmNicParameters parameter : parametersList) {
+                VdcReturnValueBase returnValue = runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameter);
 
-            boolean nicPlugSucceeded = returnValue.getSucceeded();
-            plugOfAllMacsSucceeded &= nicPlugSucceeded;
-            if (!nicPlugSucceeded) {
-                notRepluggedNics.add(parameter.getNic());
+                boolean nicPlugSucceeded = returnValue.getSucceeded();
+                plugOfAllMacsSucceeded &= nicPlugSucceeded;
+                if (!nicPlugSucceeded) {
+                    notRepluggedNics.add(parameter.getNic());
+                }
             }
+
+            if (!plugOfAllMacsSucceeded) {
+                Set<String> vfsToUnregister = notRepluggedNics.stream()
+                        .map(VmNic::getId)
+                        .map(vnicToVfMap::get)
+                        .collect(Collectors.toSet());
+                networkDeviceHelper.setVmIdOnVfs(getDestinationVdsId(), null, vfsToUnregister);
+
+                addCustomValue("NamesOfNotRepluggedNics",
+                        notRepluggedNics.stream().map(VmNic::getName).collect(Collectors.joining(",")));
+                auditLogDirector.log(this, AuditLogType.VM_MIGRATION_NOT_ALL_VM_NICS_WERE_PLUGGED_BACK);
+            }
+
+        } catch(Exception e) {
+            auditLogDirector.log(this, AuditLogType.VM_MIGRATION_PLUGGING_VM_NICS_FAILED);
+            log.error("Failed to plug nics back after migration of vm {}: {}", getVmName(), e.getMessage());
+            log.debug("Exception: ", e);
         }
-
-        if (!plugOfAllMacsSucceeded) {
-            Set<String> vfsToUnregister = notRepluggedNics.stream()
-                    .map(VmNic::getId)
-                    .map(vnicToVfMap::get)
-                    .collect(Collectors.toSet());
-            networkDeviceHelper.setVmIdOnVfs(getDestinationVdsId(), null, vfsToUnregister);
-
-            addCustomValue("NamesOfNotRepluggedNics",
-                    notRepluggedNics.stream().map(VmNic::getName).collect(Collectors.joining(",")));
-            auditLogDirector.log(this, AuditLogType.VM_MIGRATION_NOT_ALL_VM_NICS_WERE_PLUGGED_BACK);
-        }
-
-
-        return plugOfAllMacsSucceeded;
     }
 
     private List<ActivateDeactivateVmNicParameters> createActivateDeactivateVmNicParameters(List<VmNetworkInterface> vmNics,
@@ -472,16 +475,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             getDowntime();
             vmDynamicDao.clearMigratingToVds(getVmId());
             updateVmAfterMigrationToDifferentCluster();
+            plugPassthroughNics(allVmPassthroughNics);
         }
         finally {
             super.runningSucceded();
-            try {
-                plugNics(allVmPassthroughNics);
-            } catch(Exception e) {
-                auditLogDirector.log(this, AuditLogType.VM_MIGRATION_PLUGGING_VM_NICS_FAILED);
-                log.error("Failed to plug nics back after migration of vm {}: {}", getVmName(), e.getMessage());
-                log.debug("Exception: ", e);
-            }
         }
     }
 
