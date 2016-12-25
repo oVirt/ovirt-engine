@@ -227,11 +227,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             allVmPassthroughNics = getAllVmPassthroughNics();
             log.debug("Performing migration with following passthrough nics: {}", allVmPassthroughNics);
 
-            if (!unplugNics(allVmPassthroughNics)) {
-                return false;
-            }
-
-            if (connectLunDisks(getDestinationVdsId()) && migrateVm()) {
+            if (unplugNics(allVmPassthroughNics) && connectLunDisks(getDestinationVdsId()) && migrateVm()) {
                 ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                 return true;
             }
