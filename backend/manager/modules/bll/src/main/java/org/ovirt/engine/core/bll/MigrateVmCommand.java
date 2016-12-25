@@ -766,6 +766,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         // if vm is up and rerun is called then it got up on the source, try to rerun
         if (getVm() != null && getVm().getStatus() == VMStatus.Up) {
+            // this will clean all VF reservations made in {@link #initVdss}.
+            cleanupPassthroughVnics(getDestinationVdsId());
             super.rerun();
         } else {
             // vm went down on the destination and source, migration failed.
