@@ -3,6 +3,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Sole purpose of this command is to check connectivity with VDSM by invoking getCapabilities verb. Generally it is
@@ -12,6 +14,8 @@ import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 @Logged(executionLevel = LogLevel.TRACE, errorLevel = LogLevel.DEBUG)
 public class PollVDSCommand<P extends VdsIdVDSCommandParametersBase> extends FutureVDSCommand<P> {
 
+    private static final Logger log = LoggerFactory.getLogger(PollVDSCommand.class);
+
     public PollVDSCommand(P parameters) {
         super(parameters);
     }
@@ -19,6 +23,15 @@ public class PollVDSCommand<P extends VdsIdVDSCommandParametersBase> extends Fut
     @Override
     protected void executeVdsBrokerCommand() {
         httpTask = getBroker().poll();
+    }
+
+    @Override
+    protected void proceedProxyReturnValue() {
+        try {
+            super.proceedProxyReturnValue();
+        } catch (VDSNetworkException ignored) {
+            log.debug("VDSNetworkException was caught and ignored", ignored);
+        }
     }
 
     /**
