@@ -90,6 +90,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
@@ -724,7 +725,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected boolean isDisksVolumeFormatValid() {
         if (diskInfoDestinationMap.values().stream()
-                .anyMatch(d -> d.getVolumeFormat() != VolumeFormat.COW)) {
+                .anyMatch(d -> d.getDiskStorageType() != DiskStorageType.CINDER &&
+                        d.getVolumeFormat() != VolumeFormat.COW)) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_THIN_TEMPLATE_DISKS_SHOULD_ONLY_BE_COW);
         }
         return true;
