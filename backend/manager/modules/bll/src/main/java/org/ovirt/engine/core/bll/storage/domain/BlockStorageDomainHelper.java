@@ -10,7 +10,9 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,5 +51,18 @@ public class BlockStorageDomainHelper {
                 .filter(x -> x.equals(storageDomain.getVgMetadataDevice())
                         || x.equals(storageDomain.getFirstMetadataDevice()))
                 .collect(toList());
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<LUNs> getVgLUNsInfo(StorageDomainStatic storageDomain, Guid vdsId) {
+        try {
+            return (List<LUNs>) resourceManager.runVdsCommand(VDSCommandType.GetVGInfo,
+                    new GetVGInfoVDSCommandParameters(vdsId, storageDomain.getStorage()))
+                    .getReturnValue();
+        } catch (Exception e) {
+            log.info("Failed to get the domain info, ignoring");
+        }
+
+        return null;
     }
 }
