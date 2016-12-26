@@ -55,8 +55,8 @@ public final class FileStatsReturn extends StatusReturn {
     }
 
     private void createDefaultFileStats(Object[] fileNames) {
-        for (int i = 0; i < fileNames.length; i++) {
-            fileStats.put((String) fileNames[i], Collections.emptyMap());
+        for (Object fileName : fileNames) {
+            fileStats.put((String) fileName, Collections.emptyMap());
         }
     }
 
