@@ -84,11 +84,13 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
         persistCommandIfNeeded();
     }
 
-    // This method is here in order to complete the information/perform validation for domains for which we don't have
-    // the metadata device information (as we didn't have that information prior to v4.1). We don't want to perform
-    // vdsm call in the synchronous validate() to get that information, therefore it's perform as part of the
-    // asynchronous execution.
+
+    // Includes validations that involve storage access and shouldn't be performed on the command synchronous part.
     private void validateRemove() {
+        // Performed here in order to complete the information/perform validation for domains for which we don't have
+        // the metadata device information (as we didn't have that information prior to v4.1). We don't want to perform
+        // vdsm call in the synchronous validate() to get that information, therefore it's perform as part of the
+        // asynchronous execution.
         if (getStorageDomain().getVgMetadataDevice() == null || getStorageDomain().getFirstMetadataDevice() == null) {
             blockStorageDomainHelper.fillMetadataDevicesInfo(getStorageDomain().getStorageStaticData(),
                     getParameters().getVdsId());
@@ -101,6 +103,34 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
                         AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED_METADATA_DEVICES);
                 throw new EngineException(EngineError.GeneralException, "Cannot perform on metadata devices");
             }
+        }
+
+        // Performed here in order to avoid storage access during the validate() execution.
+        validateFreeSpace();
+    }
+
+    public void validateFreeSpace() {
+        List<LUNs> allLuns =
+                blockStorageDomainHelper.getVgLUNsInfo(getStorageDomain().getStorageStaticData(), getVdsId());
+        if (allLuns == null) {
+            getAuditLogDirector().log(this,
+                    AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED_TO_GET_DOMAIN_INFO);
+            throw new EngineException(EngineError.GeneralException, "Failed to get the vg info");
+        }
+        long freeExtents = allLuns.stream()
+                .filter(l -> getParameters().getDstDevices().contains(l.getLUNId()))
+                .mapToLong(l -> l.getPeCount() - l.getPeAllocatedCount())
+                .sum();
+
+        long neededExtents = allLuns.stream()
+                .filter(l -> getParameters().getDevicesToReduce().contains(l.getLUNId()))
+                .mapToLong(LUNs::getPeAllocatedCount)
+                .sum();
+
+        if (neededExtents > freeExtents) {
+            getAuditLogDirector().log(this,
+                    AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED_NO_FREE_SPACE);
+            throw new EngineException(EngineError.GeneralException, "Not enough free space on the destination devices");
         }
     }
 
