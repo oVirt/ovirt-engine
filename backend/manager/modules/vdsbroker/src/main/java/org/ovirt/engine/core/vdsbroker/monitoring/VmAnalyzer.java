@@ -284,13 +284,13 @@ public class VmAnalyzer {
             break;
 
         default:
-            auditVmOnDownEvent();
-            clearVm(vdsmVm.getVmDynamic().getExitStatus(),
-                    vdsmVm.getVmDynamic().getExitMessage(),
-                    vdsmVm.getVmDynamic().getExitReason());
-
             switch (vdsmVm.getVmDynamic().getExitStatus()) {
             case Error:
+                auditVmOnDownError();
+                clearVm(vdsmVm.getVmDynamic().getExitStatus(),
+                        vdsmVm.getVmDynamic().getExitMessage(),
+                        vdsmVm.getVmDynamic().getExitReason());
+
                 if (resourceManager.isVmInAsyncRunningList(vdsmVm.getVmDynamic().getId())) {
                     setRerunFlag();
                     break;
@@ -304,7 +304,12 @@ public class VmAnalyzer {
                 break;
 
             case Normal:
+                auditVmOnDownNormal();
+                clearVm(vdsmVm.getVmDynamic().getExitStatus(),
+                        vdsmVm.getVmDynamic().getExitMessage(),
+                        vdsmVm.getVmDynamic().getExitReason());
                 resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
+
                 if (getVmManager().isColdReboot()) {
                     setColdRebootFlag();
                 }
@@ -323,14 +328,22 @@ public class VmAnalyzer {
         vmDynamicToSave = vmDynamic;
     }
 
-    private void auditVmOnDownEvent() {
-        AuditLogType type = vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Normal ?
-                AuditLogType.VM_DOWN : AuditLogType.VM_DOWN_ERROR;
+    private void auditVmOnDownNormal() {
         AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId()));
-        if (vdsmVm.getVmDynamic().getExitMessage() != null) {
-            logable.addCustomValue("ExitMessage", "Exit message: " + vdsmVm.getVmDynamic().getExitMessage());
-        }
-        auditLog(logable, type);
+        logable.addCustomValue("ExitMessage",
+                vdsmVm.getVmDynamic().getExitMessage() != null ?
+                        "Exit message: " + vdsmVm.getVmDynamic().getExitMessage()
+                        : " ");
+        auditLog(logable, AuditLogType.VM_DOWN);
+    }
+
+    private void auditVmOnDownError() {
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId()));
+        logable.addCustomValue("ExitMessage",
+                vdsmVm.getVmDynamic().getExitMessage() != null ?
+                        "Exit message: " + vdsmVm.getVmDynamic().getExitMessage()
+                        : " ");
+        auditLog(logable, AuditLogType.VM_DOWN_ERROR);
     }
 
     private void auditVmSuspended() {
