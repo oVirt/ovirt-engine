@@ -44,6 +44,10 @@ public class LUNs implements BusinessEntity<String> {
 
     private Long discardMaxSize;
 
+    private Long peCount;
+
+    private Long peAllocatedCount;
+
     private Boolean discardZeroesData;
 
     private String vendorName;
@@ -216,6 +220,22 @@ public class LUNs implements BusinessEntity<String> {
         pvSize = value;
     }
 
+    public Long getPeCount() {
+        return peCount;
+    }
+
+    public void setPeCount(Long peCount) {
+        this.peCount = peCount;
+    }
+
+    public Long getPeAllocatedCount() {
+        return peAllocatedCount;
+    }
+
+    public void setPeAllocatedCount(Long peAllocatedCount) {
+        this.peAllocatedCount = peAllocatedCount;
+    }
+
     public Long getDiscardMaxSize() {
         return discardMaxSize;
     }
@@ -346,6 +366,8 @@ public class LUNs implements BusinessEntity<String> {
                 .append("lunConnections", getLunConnections())
                 .append("deviceSize", getDeviceSize())
                 .append("pvSize", getPvSize())
+                .append("peCount", getPeCount())
+                .append("peAllocatedCount", getPeAllocatedCount())
                 .append("vendorName", getVendorName())
                 .append("pathsDictionary", getPathsDictionary())
                 .append("pathsCapacity", getPathsCapacity())
