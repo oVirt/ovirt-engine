@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.inject.Singleton;
@@ -21,8 +22,8 @@ public class ExternalVnicProfileMappingFinder {
             Collection<ExternalVnicProfileMapping> externalVnicProfileMappings) {
         return externalVnicProfileMappings
                 .stream()
-                .filter(mapping -> mapping.getExternalNetworkName().equals(networkName)
-                        && mapping.getExternalNetworkProfileName().equals(vnicProfileName))
+                .filter(mapping -> Objects.equals(mapping.getExternalNetworkName(), networkName)
+                        && Objects.equals(mapping.getExternalNetworkProfileName(), vnicProfileName))
                 .findFirst();
     }
 }
