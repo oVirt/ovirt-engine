@@ -12,6 +12,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -30,6 +33,9 @@ import org.ovirt.engine.core.di.Injector;
 
 @Singleton
 public class BlockStorageDiscardFunctionalityHelper {
+
+    @Inject
+    private DiskDao diskDao;
 
     @Inject
     private DiskImageDao diskImageDao;
@@ -42,6 +48,9 @@ public class BlockStorageDiscardFunctionalityHelper {
 
     @Inject
     private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private DiskHandler diskHandler;
 
     public ValidationResult isExistingDiscardFunctionalityPreserved(Collection<LUNs> lunsToAdd,
             StorageDomain storageDomain) {
@@ -130,10 +139,15 @@ public class BlockStorageDiscardFunctionalityHelper {
         }
     }
 
-    public void logIfDisksWithIllegalPassDiscardExist(Map<Disk, DiskVmElement> diskToDiskVmElement,
-            Map<Guid, Guid> diskIdToDestSdId) {
+    public void logIfDisksWithIllegalPassDiscardExist(Guid vmId) {
+        Collection<DiskImage> disks = DisksFilter.filterImageDisks(diskDao.getAllForVm(vmId));
+        Collection<DiskVmElement> diskVmElements = diskVmElementDao.getAllForVm(vmId);
+        Map<Disk, DiskVmElement> diskToDiskVmElement = diskHandler.getDiskToDiskVmElementMap(disks, diskVmElements);
+        Map<Guid, Guid> diskIdToDestSdId = disks.stream()
+                .collect(Collectors.toMap(DiskImage::getId, diskImage -> diskImage.getStorageIds().get(0)));
         MultipleDiskVmElementValidator multipleDiskVmElementValidator =
                 new MultipleDiskVmElementValidator(diskToDiskVmElement);
+
         Collection<Guid> disksWithoutSupportForPassDiscard = multipleDiskVmElementValidator
                 .getDisksWithoutSupportForPassDiscard(diskIdToDestSdId);
         if (!disksWithoutSupportForPassDiscard.isEmpty()) {
