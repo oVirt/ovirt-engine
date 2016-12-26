@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ColdMergeCommandParameters;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.vdscommands.SPMColdMergeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -20,6 +21,7 @@ public abstract class MergeSPMBaseCommand<T extends ColdMergeCommandParameters> 
     }
 
     protected void executeSPMMergeCommand(VDSCommandType vdsCommandType) {
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getSubchainInfo().getImageGroupId()));
         SPMColdMergeVDSCommandParameters parameters = new SPMColdMergeVDSCommandParameters(getParameters().getStoragePoolId(),
                 getParameters().getSubchainInfo());
 

@@ -7,7 +7,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.SPMGetVolumeInfoVDSCommandParameters;
@@ -25,6 +27,8 @@ public class DestroyImageCheckCommand<T extends DestroyImageParameters>
 
     @Override
     protected void executeCommand() {
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroupId()));
+
         List<Guid> failedGuids = getFailedVolumeIds();
 
         if (failedGuids.isEmpty()) {

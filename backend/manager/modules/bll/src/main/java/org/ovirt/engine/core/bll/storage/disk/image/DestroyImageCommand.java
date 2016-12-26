@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -38,6 +39,8 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
 
     @Override
     protected void executeCommand() {
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroupId()));
+
         Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
 
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.DestroyImage,
