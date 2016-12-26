@@ -157,6 +157,15 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
                 }
             }
         }
+
+        if (xlun.containsKey("pe_count")) {
+            lun.setPeCount(IrsBrokerCommand.assignLongValue(xlun, "pe_count"));
+        }
+
+        if (xlun.containsKey("pe_alloc_count")) {
+            lun.setPeAllocatedCount(IrsBrokerCommand.assignLongValue(xlun, "pe_alloc_count"));
+        }
+
         if (FeatureSupported.passDiscardSupported(compatibilityVersion)) {
             if (xlun.containsKey("discard_max_bytes")) {
                 lun.setDiscardMaxSize(((Number) xlun.get("discard_max_bytes")).longValue());
