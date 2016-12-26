@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -27,8 +26,6 @@ import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
-import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
-import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -52,9 +49,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
@@ -83,9 +78,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     @Inject
     private CpuProfileHelper cpuProfileHelper;
-
-    @Inject
-    private DiskHandler diskHandler;
 
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;
@@ -411,7 +403,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             addVmToDb();
             processImages();
             vmHandler.addVmInitToDB(getVm().getStaticData());
-            logIfDisksHaveIllegalPassDiscard();
+            discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
         } catch (RuntimeException e) {
             macPool.freeMacs(macsAdded);
             throw e;
@@ -634,15 +626,5 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             jobProperties.put(VdcObjectType.Cluster.name().toLowerCase(), getClusterName());
         }
         return jobProperties;
-    }
-
-    private void logIfDisksHaveIllegalPassDiscard() {
-        Map<Guid, DiskImage> disksMap = DisksFilter.filterImageDisks(diskDao.getAllForVm(getVmId()), DisksFilter.ONLY_IMAGES)
-                .stream().collect(Collectors.toMap(Disk::getId, Function.identity()));
-        Map<Disk, DiskVmElement> diskToDiskVmElement = diskHandler.getDiskToDiskVmElementMap(getVmId(), disksMap);
-        Map<Guid, Guid> diskIdToDestSdId = disksMap.values().stream()
-                .collect(Collectors.toMap(DiskImage::getId, diskImage -> diskImage.getStorageIds().get(0)));
-
-        discardHelper.logIfDisksWithIllegalPassDiscardExist(diskToDiskVmElement, diskIdToDestSdId);
     }
 }
