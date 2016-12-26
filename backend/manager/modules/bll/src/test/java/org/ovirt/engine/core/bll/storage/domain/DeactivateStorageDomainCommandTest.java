@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.EnumSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
@@ -124,7 +126,34 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
                 .contains(EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED.toString()));
     }
 
+    @Test
+    public void testDeactivateNoExistingDomainFails() {
+        doReturn(null).when(cmd).getStorageDomain();
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+    }
+
+    @Test
+    public void testDeactivateNoActiveDomainFails() {
+        mockDomain();
+        EnumSet<StorageDomainStatus> invalidStatuses = EnumSet.allOf(StorageDomainStatus.class);
+        invalidStatuses.remove(StorageDomainStatus.Active);
+        invalidStatuses.stream().forEach(s -> {
+            domain.setStatus(s);
+            ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
+        });
+    }
+
+    @Test
+    public void testDeactivateHostedDomainStorageFails() {
+        mockDomain();
+        domain.setHostedEngineStorage(true);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
+    }
+
     private void mockDomain() {
         domain = new StorageDomain();
+        domain.setId(Guid.newGuid());
+        domain.setStatus(StorageDomainStatus.Active);
+        doReturn(domain).when(cmd).getStorageDomain();
     }
 }
