@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -84,6 +85,7 @@ implements QuotaStorageDependent {
         setVdsId(getParameters().getProxyHostId());
         setStorageDomainId(getParameters().getDestDomainId());
         setStoragePoolId(getCluster() != null ? getCluster().getStoragePoolId() : null);
+        setSingleQxlPci();
         checkImageTarget();
         VM vm = getVm();
         if (vm.getMaxMemorySizeMb() == 0) {
@@ -442,6 +444,13 @@ implements QuotaStorageDependent {
 
     protected Guid getActiveIsoDomainId() {
         return isoDomainListSynchronizer.findActiveISODomain(getStoragePoolId());
+    }
+
+    private void setSingleQxlPci() {
+        if (!osRepository.isSingleQxlDeviceEnabled(getVm().getVmOsId())
+                || getVm().getDefaultDisplayType() != DisplayType.qxl) {
+            getVm().getStaticData().setSingleQxlPci(false);
+        }
     }
 
 }
