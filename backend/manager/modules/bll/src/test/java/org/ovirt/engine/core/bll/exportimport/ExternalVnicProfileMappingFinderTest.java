@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll.exportimport;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
@@ -29,6 +31,7 @@ public class ExternalVnicProfileMappingFinderTest {
     private List<ExternalVnicProfileMapping> externalVnicProfileMappings;
     private ExternalVnicProfileMapping externalVnicProfileMapping1;
     private ExternalVnicProfileMapping externalVnicProfileMapping2;
+    private ExternalVnicProfileMapping emptySourceMapping;
 
     @Before
     public void setUp() {
@@ -39,6 +42,7 @@ public class ExternalVnicProfileMappingFinderTest {
         externalVnicProfileMapping2 =
                 new ExternalVnicProfileMapping(NETWORK_NAME, VNIC_PROFILE2_NAME, null);
         externalVnicProfileMappings = asList(externalVnicProfileMapping1, externalVnicProfileMapping2);
+        emptySourceMapping = new ExternalVnicProfileMapping(null, null, TARGET_VNIC_PROFILE_ID);
     }
 
     @Test
@@ -55,6 +59,22 @@ public class ExternalVnicProfileMappingFinderTest {
                 underTest.findMappingEntry(NETWORK_NAME, VNIC_PROFILE1_NAME, externalVnicProfileMappings);
 
         assertThat(actual.get(), sameInstance(externalVnicProfileMapping1));
+    }
+
+    @Test
+    public void testFindMappingEntryEmptyExternal() {
+        final Optional<ExternalVnicProfileMapping> actual =
+                underTest.findMappingEntry(NETWORK_NAME, VNIC_PROFILE1_NAME, singletonList(emptySourceMapping));
+
+        assertFalse(actual.isPresent());
+    }
+
+    @Test
+    public void testFindMappingEntryEmptySourceVnicProfile() {
+        final Optional<ExternalVnicProfileMapping> actual =
+                underTest.findMappingEntry(null, null, singletonList(emptySourceMapping));
+
+        assertThat(actual.get(), sameInstance(emptySourceMapping));
     }
 
     @Test
