@@ -2805,6 +2805,7 @@
         <column>provider_id</column>
         <column>console_disconnect_action</column>
         <column>migration_policy_id</column>
+        <column>lease_sd_id</column>
         <!-- Templates -->
         <row>
             <value>00000000-0000-0000-0000-000000000000</value>
@@ -2876,6 +2877,7 @@
             <value>a3b954f0-31ff-3166-b7a1-28b23202b198</value>
             <null />
             <value>LOCK_SCREEN</value>
+            <null />
             <null />
         </row>
         <row>
@@ -2949,6 +2951,7 @@
             <null />
             <value>LOCK_SCREEN</value>
             <null />
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -3021,6 +3024,7 @@
             <null />
             <value>LOCK_SCREEN</value>
             <null />
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -3092,6 +3096,7 @@
             <value>a3b954f0-31ff-3166-b7a1-28b23202b198</value>
             <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
             <value>LOCK_SCREEN</value>
+            <null />
             <null />
         </row>
          <row>
@@ -3165,6 +3170,7 @@
             <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
             <value>LOCK_SCREEN</value>
              <null />
+            <null />
         </row>
          <row>
             <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
@@ -3237,6 +3243,7 @@
             <null />
             <value>LOCK_SCREEN</value>
              <null />
+            <null />
         </row>
          <row>
             <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
@@ -3309,6 +3316,7 @@
             <null />
             <value>LOCK_SCREEN</value>
              <null />
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
@@ -3380,6 +3388,7 @@
             <value>a3b954f0-31ff-3166-b7a1-28b23202b198</value>
             <null />
             <value>LOCK_SCREEN</value>
+            <null />
             <null />
         </row>
 
@@ -3455,6 +3464,7 @@
             <null />
             <value>LOCK_SCREEN</value>
             <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -3527,6 +3537,7 @@
             <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
             <value>LOCK_SCREEN</value>
             <null />
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -3598,6 +3609,7 @@
             <value>a3b954f0-31ff-3166-b7a1-28b23202b198</value>
             <null />
             <value>LOCK_SCREEN</value>
+            <null />
             <null />
         </row>
         <row>
@@ -3671,6 +3683,7 @@
             <null />
             <value>LOCK_SCREEN</value>
             <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -3742,6 +3755,7 @@
             <value>a3b954f0-31ff-3166-b7a1-28b23202b198</value>
             <null />
             <value>LOCK_SCREEN</value>
+            <null />
             <null />
         </row>
         <row>
@@ -3815,6 +3829,7 @@
             <null />
             <value>LOCK_SCREEN</value>
             <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -3886,6 +3901,7 @@
             <value>a3b954f0-31ff-3166-b7a1-28b23202b198</value>
             <null />
             <value>LOCK_SCREEN</value>
+            <null />
             <null />
         </row>
         <row>
@@ -3959,6 +3975,7 @@
             <null />
             <value>LOCK_SCREEN</value>
             <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
@@ -4030,6 +4047,7 @@
             <value>a3b954f0-31ff-3166-b7a1-28b23202b198</value>
             <null />
             <value>LOCK_SCREEN</value>
+            <null />
             <null />
         </row>
     </table>
