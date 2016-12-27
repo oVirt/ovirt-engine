@@ -150,13 +150,11 @@ public class MultipleStorageDomainsValidator {
      */
     private ValidationResult validOrFirstFailure
         (Function<Map.Entry<Guid, StorageDomainValidator>, ValidationResult> predicate) {
-
-        for (Map.Entry<Guid, StorageDomainValidator> entry : domainValidators.entrySet()) {
-            ValidationResult currResult = predicate.apply(entry);
-            if (!currResult.isValid()) {
-                return currResult;
-            }
-        }
-        return ValidationResult.VALID;
+        return domainValidators.entrySet()
+                .stream()
+                .map(predicate)
+                .filter(v -> !v.isValid())
+                .findFirst()
+                .orElse(ValidationResult.VALID);
     }
 }
