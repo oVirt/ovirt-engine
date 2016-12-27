@@ -187,7 +187,7 @@ public class FenceProxyLocator {
 
     protected List<FenceProxySourceType> getDefaultFenceProxySources() {
         return FenceProxySourceTypeHelper.parseFromString(
-                Config.<String>getValue(ConfigValues.FenceProxyDefaultPreferences));
+                Config.getValue(ConfigValues.FenceProxyDefaultPreferences));
     }
 
     protected int getFindFenceProxyRetries() {
