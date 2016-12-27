@@ -109,25 +109,9 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
             }
 
-            if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
-                List<StorageDomain> domains =
-                        storageDomainDao.getAllForStoragePool(getStorageDomain().getStoragePoolId());
-
-                List<StorageDomain> activeDomains = filterDomainsByStatus(domains, StorageDomainStatus.Active);
-
-                List<StorageDomain> dataDomains = activeDomains.stream()
-                        .filter(d -> d.getStorageDomainType() == StorageDomainType.Data).collect(Collectors.toList());
-
-                if (!activeDomains.isEmpty() && dataDomains.isEmpty()) {
-                    return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_NON_DATA_DOMAINS);
-                }
-
-                List<StorageDomain> busyDomains = domains.stream()
-                        .filter(d -> d.getStatus().isStorageDomainInProcess()).collect(Collectors.toList());
-
-                if (!busyDomains.isEmpty()) {
-                    return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_LOCKED_DOMAINS);
-                }
+            if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master
+                    && !validateMasterDeactivationAllowed()) {
+                return false;
             }
         }
 
@@ -149,6 +133,28 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                     commandEntityDao.getCommandIdsByEntity(getParameters().getStorageDomainId()).size() > 0)) {
                 return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
             }
+        }
+        return true;
+    }
+
+    private boolean validateMasterDeactivationAllowed() {
+        List<StorageDomain> domains =
+                storageDomainDao.getAllForStoragePool(getStorageDomain().getStoragePoolId());
+
+        List<StorageDomain> activeDomains = filterDomainsByStatus(domains, StorageDomainStatus.Active);
+
+        List<StorageDomain> dataDomains = activeDomains.stream()
+                .filter(d -> d.getStorageDomainType() == StorageDomainType.Data).collect(Collectors.toList());
+
+        if (!activeDomains.isEmpty() && dataDomains.isEmpty()) {
+            return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_NON_DATA_DOMAINS);
+        }
+
+        List<StorageDomain> busyDomains = domains.stream()
+                .filter(d -> d.getStatus().isStorageDomainInProcess()).collect(Collectors.toList());
+
+        if (!busyDomains.isEmpty()) {
+            return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_LOCKED_DOMAINS);
         }
         return true;
     }
