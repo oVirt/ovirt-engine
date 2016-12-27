@@ -329,7 +329,31 @@ public class DisksViewColumns {
     }
 
     public static final AbstractColumn<Disk, Disk> getStatusColumn(String sortBy) {
-        AbstractTextColumn<Disk> statusColumn = new AbstractEnumColumn<Disk, ImageStatus>() {
+        DiskUploadImageProgressColumn uploadImageProgressColumn = new DiskUploadImageProgressColumn();
+        DiskProgressColumn diskProgressColumn = new DiskProgressColumn();
+
+        List<HasCell<Disk, ?>> list = new ArrayList<>();
+        list.add(getStatusOnlyColumn(null));
+        list.add(uploadImageProgressColumn);
+        list.add(diskProgressColumn);
+
+        Cell<Disk> compositeCell = new StatusCompositeCell<>(list);
+
+        AbstractColumn<Disk, Disk> column = new AbstractColumn<Disk, Disk>(compositeCell) {
+            @Override
+            public Disk getValue(Disk object) {
+                return object;
+            }
+        };
+
+        if (sortBy != null) {
+            column.makeSortable(sortBy);
+        }
+        return column;
+    }
+
+    public static final AbstractTextColumn<Disk> getStatusOnlyColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, ImageStatus>() {
             @Override
             protected ImageStatus getRawValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ||
@@ -347,28 +371,7 @@ public class DisksViewColumns {
             }
         };
 
-        DiskUploadImageProgressColumn uploadImageProgressColumn = new DiskUploadImageProgressColumn();
-        DiskProgressColumn diskProgressColumn = new DiskProgressColumn();
-
-
-        List<HasCell<Disk, ?>> list = new ArrayList<>();
-        list.add(statusColumn);
-        list.add(uploadImageProgressColumn);
-        list.add(diskProgressColumn);
-
-        Cell<Disk> compositeCell = new StatusCompositeCell<>(list);
-
-        AbstractColumn<Disk, Disk> column = new AbstractColumn<Disk, Disk>(compositeCell) {
-            @Override
-            public Disk getValue(Disk object) {
-                return object;
-            }
-        };
-
-        if (sortBy != null) {
-            column.makeSortable(sortBy);
-        }
-        return column;
+        return makeSortable(column, sortBy);
     }
 
     public static final AbstractTextColumn<Disk> getDescriptionColumn(String sortBy) {
