@@ -39,8 +39,6 @@ public class MultipleStorageDomainsValidatorTest {
     @Mock
     private StorageDomainDao dao;
 
-    private Guid spId;
-
     private Guid sdId1;
     private Guid sdId2;
     private Guid sdId3;
@@ -55,7 +53,7 @@ public class MultipleStorageDomainsValidatorTest {
 
     @Before
     public void setUp() {
-        spId = Guid.newGuid();
+        Guid spId = Guid.newGuid();
 
         sdId1 = Guid.newGuid();
         sdId2 = Guid.newGuid();
