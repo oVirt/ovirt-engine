@@ -804,6 +804,293 @@
         </row>
     </table>
 
+    <table name="storage_domain_static">
+        <column>id</column>
+        <column>storage</column>
+        <column>storage_name</column>
+        <column>storage_domain_type</column>
+        <column>storage_type</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <column>last_time_used_as_master</column>
+        <column>storage_description</column>
+        <column>wipe_after_delete</column>
+        <column>warning_low_space_indicator</column>
+        <column>critical_space_action_blocker</column>
+        <column>first_metadata_device</column>
+        <column>vg_metadata_device</column>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9aa</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c2982</value>
+            <value>scale_sd4</value>
+            <value>2</value>
+            <value>1</value>
+            <value>2014-10-14 16:33:00</value>
+            <value>2014-10-14 16:33:00</value>
+            <value>5</value>
+            <value>description0</value>
+            <value>true</value>
+            <value>5</value>
+            <value>10</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ</value>
+            <value>scale_sd5</value>
+            <value>0</value>
+            <value>3</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+            <value>5</value>
+            <value>description1</value>
+            <value>false</value>
+            <value>5</value>
+            <value>10</value>
+            <value>DOMAIN_METADATA_LUN-1</value>
+            <value>VG_DOMAIN_METADATA_LUN-1</value>
+        </row>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ac</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePz</value>
+            <value>scale_sd6</value>
+            <value>0</value>
+            <value>3</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+            <value>15</value>
+            <value>description2</value>
+            <value>true</value>
+            <value>5</value>
+            <value>10</value>
+            <value>DOMAIN_METADATA_LUN-2</value>
+            <value>DOMAIN_METADATA_LUN-2</value>
+        </row>
+        <row>
+            <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297f</value>
+            <value>nfs_master</value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+            <value>0</value>
+            <value>description3</value>
+            <value>false</value>
+            <value>6</value>
+            <value>9</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c2981</value>
+            <value>nfs_master2</value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+            <value>5</value>
+            <value>description4</value>
+            <value>true</value>
+            <value>6</value>
+            <value>9</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa41</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c2983</value>
+            <value>nfs_3</value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+            <value>5</value>
+            <value>description4</value>
+            <value>false</value>
+            <value>6</value>
+            <value>9</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
+            <value>12bd6d9a-84e0-47af-85cd-91fcc038ce06</value>
+            <value>nfs_iso</value>
+            <value>2</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+            <value>0</value>
+            <value>description5</value>
+            <value>true</value>
+            <value>4</value>
+            <value>8</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
+            <value>ce955502-e8c7-4539-a260-c1d1fc00afe4</value>
+            <value>nfs_Iso2</value>
+            <value>2</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+            <value>0</value>
+            <value>description6</value>
+            <value>true</value>
+            <value>4</value>
+            <value>8</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa32</value>
+            <value>c6d12efe-f0c5-4ce8-b755-21c7aac09c5c</value>
+            <value>nfs_master3</value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+            <value>7</value>
+            <value>description7</value>
+            <value>false</value>
+            <value>4</value>
+            <value>8</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>a7957057-b5de-47bb-b8e0-2f8dbd9e63d8</value>
+            <value>c18d59a9-c218-4076-8cd4-e19b43565111</value>
+            <value>iscsi_domain</value>
+            <value>1</value>
+            <value>3</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>7</value>
+            <value>ISCSI domain, part of 'rhel6.Mixed' storage pool</value>
+            <value>false</value>
+            <value>4</value>
+            <value>8</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5</value>
+            <value>85422037-cdf4-4b98-9ae1-39588af0a7b4</value>
+            <value>posix_domain</value>
+            <value>1</value>
+            <value>6</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>7</value>
+            <value>POSIX domain, part of 'rhel6.Mixed' storage pool</value>
+            <value>true</value>
+            <value>4</value>
+            <value>8</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f6</value>
+            <value>85422037-cdf4-4b98-9ae1-39588af0a7b5</value>
+            <value>cinder_domain</value>
+            <value>4</value>
+            <value>9</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>2014-04-24 12:00:00</value>
+            <value>7</value>
+            <value>Cinder domain</value>
+            <value>false</value>
+            <null />
+            <null />
+            <null/>
+            <null/>
+        </row>
+    </table>
+
+    <table name="storage_domain_dynamic">
+        <column>id</column>
+        <column>available_disk_size</column>
+        <column>used_disk_size</column>
+        <column>_update_date</column>
+        <column>external_status</column>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9aa</value>
+            <value>196</value>
+            <value>3</value>
+            <null />
+            <value>0</value>
+        </row>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>196</value>
+            <value>3</value>
+            <null />
+            <value>1</value>
+        </row>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ac</value>
+            <value>196</value>
+            <value>3</value>
+            <null />
+            <value>2</value>
+        </row>
+        <row>
+            <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
+            <value>14</value>
+            <value>14</value>
+            <null />
+            <value>3</value>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>14</value>
+            <value>14</value>
+            <null />
+            <value>4</value>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa41</value>
+            <value>14</value>
+            <value>14</value>
+            <null />
+            <value>0</value>
+        </row>
+        <row>
+            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
+            <value>14</value>
+            <value>14</value>
+            <null />
+            <value>0</value>
+        </row>
+        <row>
+            <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
+            <value>14</value>
+            <value>14</value>
+            <null />
+            <value>0</value>
+        </row>
+        <row>
+            <value>a7957057-b5de-47bb-b8e0-2f8dbd9e63d8</value>
+            <value>666</value>
+            <value>666</value>
+            <null />
+            <value>0</value>
+        </row>
+        <row>
+            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5</value>
+            <value>666</value>
+            <value>666</value>
+            <null />
+            <value>0</value>
+        </row>
+    </table>
+
     <table name="cluster_policies">
         <column>id</column>
         <column>name</column>
@@ -4822,292 +5109,6 @@
             <value>100</value>
             <value>200</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
-        </row>
-    </table>
-    <table name="storage_domain_static">
-        <column>id</column>
-        <column>storage</column>
-        <column>storage_name</column>
-        <column>storage_domain_type</column>
-        <column>storage_type</column>
-        <column>_create_date</column>
-        <column>_update_date</column>
-        <column>last_time_used_as_master</column>
-        <column>storage_description</column>
-        <column>wipe_after_delete</column>
-        <column>warning_low_space_indicator</column>
-        <column>critical_space_action_blocker</column>
-        <column>first_metadata_device</column>
-        <column>vg_metadata_device</column>
-        <row>
-            <value>72e3a666-89e1-4005-a7ca-f7548004a9aa</value>
-            <value>0cc146e8-e5ed-482c-8814-270bc48c2982</value>
-            <value>scale_sd4</value>
-            <value>2</value>
-            <value>1</value>
-            <value>2014-10-14 16:33:00</value>
-            <value>2014-10-14 16:33:00</value>
-            <value>5</value>
-            <value>description0</value>
-            <value>true</value>
-            <value>5</value>
-            <value>10</value>
-            <null/>
-            <null/>
-        </row>
-        <row>
-            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
-            <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ</value>
-            <value>scale_sd5</value>
-            <value>0</value>
-            <value>3</value>
-            <value>2010-11-23 10:47:55</value>
-            <value>2010-11-23 10:48:10</value>
-            <value>5</value>
-            <value>description1</value>
-            <value>false</value>
-            <value>5</value>
-            <value>10</value>
-            <value>DOMAIN_METADATA_LUN-1</value>
-            <value>VG_DOMAIN_METADATA_LUN-1</value>
-        </row>
-        <row>
-            <value>72e3a666-89e1-4005-a7ca-f7548004a9ac</value>
-            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePz</value>
-            <value>scale_sd6</value>
-            <value>0</value>
-            <value>3</value>
-            <value>2010-11-23 10:47:55</value>
-            <value>2010-11-23 10:48:10</value>
-            <value>15</value>
-            <value>description2</value>
-            <value>true</value>
-            <value>5</value>
-            <value>10</value>
-            <value>DOMAIN_METADATA_LUN-2</value>
-            <value>DOMAIN_METADATA_LUN-2</value>
-        </row>
-        <row>
-            <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
-            <value>0cc146e8-e5ed-482c-8814-270bc48c297f</value>
-            <value>nfs_master</value>
-            <value>0</value>
-            <value>1</value>
-            <value>2010-11-23 10:47:55</value>
-            <value>2010-11-23 10:48:10</value>
-            <value>0</value>
-            <value>description3</value>
-            <value>false</value>
-            <value>6</value>
-            <value>9</value>
-            <null/>
-            <null/>
-        </row>
-        <row>
-            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
-            <value>0cc146e8-e5ed-482c-8814-270bc48c2981</value>
-            <value>nfs_master2</value>
-            <value>0</value>
-            <value>1</value>
-            <value>2010-11-23 10:47:55</value>
-            <value>2010-11-23 10:48:10</value>
-            <value>5</value>
-            <value>description4</value>
-            <value>true</value>
-            <value>6</value>
-            <value>9</value>
-            <null/>
-            <null/>
-        </row>
-        <row>
-            <value>d9ede37f-e6c3-4bf9-a984-19174070aa41</value>
-            <value>0cc146e8-e5ed-482c-8814-270bc48c2983</value>
-            <value>nfs_3</value>
-            <value>0</value>
-            <value>1</value>
-            <value>2010-11-23 10:47:55</value>
-            <value>2010-11-23 10:48:10</value>
-            <value>5</value>
-            <value>description4</value>
-            <value>false</value>
-            <value>6</value>
-            <value>9</value>
-            <null/>
-            <null/>
-        </row>
-        <row>
-            <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
-            <value>12bd6d9a-84e0-47af-85cd-91fcc038ce06</value>
-            <value>nfs_iso</value>
-            <value>2</value>
-            <value>1</value>
-            <value>2010-11-23 10:47:55</value>
-            <value>2010-11-23 10:48:10</value>
-            <value>0</value>
-            <value>description5</value>
-            <value>true</value>
-            <value>4</value>
-            <value>8</value>
-            <null/>
-            <null/>
-        </row>
-        <row>
-            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
-            <value>ce955502-e8c7-4539-a260-c1d1fc00afe4</value>
-            <value>nfs_Iso2</value>
-            <value>2</value>
-            <value>1</value>
-            <value>2010-11-23 10:47:55</value>
-            <value>2010-11-23 10:48:10</value>
-            <value>0</value>
-            <value>description6</value>
-            <value>true</value>
-            <value>4</value>
-            <value>8</value>
-            <null/>
-            <null/>
-        </row>
-        <row>
-            <value>d9ede37f-e6c3-4bf9-a984-19174070aa32</value>
-            <value>c6d12efe-f0c5-4ce8-b755-21c7aac09c5c</value>
-            <value>nfs_master3</value>
-            <value>0</value>
-            <value>1</value>
-            <value>2010-11-23 10:47:55</value>
-            <value>2010-11-23 10:48:10</value>
-            <value>7</value>
-            <value>description7</value>
-            <value>false</value>
-            <value>4</value>
-            <value>8</value>
-            <null/>
-            <null/>
-        </row>
-        <row>
-            <value>a7957057-b5de-47bb-b8e0-2f8dbd9e63d8</value>
-            <value>c18d59a9-c218-4076-8cd4-e19b43565111</value>
-            <value>iscsi_domain</value>
-            <value>1</value>
-            <value>3</value>
-            <value>2014-04-24 12:00:00</value>
-            <value>2014-04-24 12:00:00</value>
-            <value>7</value>
-            <value>ISCSI domain, part of 'rhel6.Mixed' storage pool</value>
-            <value>false</value>
-            <value>4</value>
-            <value>8</value>
-            <null/>
-            <null/>
-        </row>
-        <row>
-            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5</value>
-            <value>85422037-cdf4-4b98-9ae1-39588af0a7b4</value>
-            <value>posix_domain</value>
-            <value>1</value>
-            <value>6</value>
-            <value>2014-04-24 12:00:00</value>
-            <value>2014-04-24 12:00:00</value>
-            <value>7</value>
-            <value>POSIX domain, part of 'rhel6.Mixed' storage pool</value>
-            <value>true</value>
-            <value>4</value>
-            <value>8</value>
-            <null/>
-            <null/>
-        </row>
-        <row>
-            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f6</value>
-            <value>85422037-cdf4-4b98-9ae1-39588af0a7b5</value>
-            <value>cinder_domain</value>
-            <value>4</value>
-            <value>9</value>
-            <value>2014-04-24 12:00:00</value>
-            <value>2014-04-24 12:00:00</value>
-            <value>7</value>
-            <value>Cinder domain</value>
-            <value>false</value>
-            <null />
-            <null />
-            <null/>
-            <null/>
-        </row>
-    </table>
-
-    <table name="storage_domain_dynamic">
-        <column>id</column>
-        <column>available_disk_size</column>
-        <column>used_disk_size</column>
-        <column>_update_date</column>
-        <column>external_status</column>
-        <row>
-            <value>72e3a666-89e1-4005-a7ca-f7548004a9aa</value>
-            <value>196</value>
-            <value>3</value>
-            <null />
-            <value>0</value>
-        </row>
-        <row>
-            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
-            <value>196</value>
-            <value>3</value>
-            <null />
-            <value>1</value>
-        </row>
-        <row>
-            <value>72e3a666-89e1-4005-a7ca-f7548004a9ac</value>
-            <value>196</value>
-            <value>3</value>
-            <null />
-            <value>2</value>
-        </row>
-		<row>
-            <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
-            <value>14</value>
-            <value>14</value>
-            <null />
-            <value>3</value>
-        </row>
-        <row>
-            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
-            <value>14</value>
-            <value>14</value>
-            <null />
-            <value>4</value>
-        </row>
-        <row>
-            <value>d9ede37f-e6c3-4bf9-a984-19174070aa41</value>
-            <value>14</value>
-            <value>14</value>
-            <null />
-            <value>0</value>
-        </row>
-        <row>
-            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
-            <value>14</value>
-            <value>14</value>
-            <null />
-            <value>0</value>
-        </row>
-        <row>
-            <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
-            <value>14</value>
-            <value>14</value>
-            <null />
-            <value>0</value>
-        </row>
-        <row>
-            <value>a7957057-b5de-47bb-b8e0-2f8dbd9e63d8</value>
-            <value>666</value>
-            <value>666</value>
-            <null />
-            <value>0</value>
-        </row>
-        <row>
-            <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5</value>
-            <value>666</value>
-            <value>666</value>
-            <null />
-            <value>0</value>
         </row>
     </table>
 
