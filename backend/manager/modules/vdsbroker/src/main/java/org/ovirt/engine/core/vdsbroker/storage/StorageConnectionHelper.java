@@ -3,17 +3,19 @@ package org.ovirt.engine.core.vdsbroker.storage;
 import java.util.Map;
 
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
 import org.ovirt.engine.core.utils.collections.DefaultValueMap;
 
 @Singleton
 public class StorageConnectionHelper {
+    @Inject
+    private StorageServerConnectionExtensionDao storageServerConnectionExtensionDao;
 
     public Map<String, String> createStructFromConnection(final StorageServerConnections connection, final Guid vdsId) {
 
@@ -45,7 +47,7 @@ public class StorageConnectionHelper {
 
     public Pair<String, String> getStorageConnectionCredentialsForhost(Guid hostId, StorageServerConnections connection) {
         Pair<String, String> credentials;
-        StorageServerConnectionExtension connExt = getConnectionExtensionDao().getByHostIdAndTarget(hostId, connection.getIqn());
+        StorageServerConnectionExtension connExt = storageServerConnectionExtensionDao.getByHostIdAndTarget(hostId, connection.getIqn());
         if (connExt == null) {
             credentials = new Pair<>(connection.getUserName(), connection.getPassword());
         }
@@ -53,9 +55,5 @@ public class StorageConnectionHelper {
             credentials = new Pair<>(connExt.getUserName(), connExt.getPassword());
         }
         return credentials;
-    }
-
-    protected StorageServerConnectionExtensionDao getConnectionExtensionDao() {
-        return DbFacade.getInstance().getStorageServerConnectionExtensionDao();
     }
 }
