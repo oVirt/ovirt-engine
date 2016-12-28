@@ -79,7 +79,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
         try (
             final EngineSSHClient sshClient = new EngineSSHClient();
             final ByteArrayOutputStream cmdOut = new ByteArrayOutputStream();
-            final ByteArrayOutputStream cmdErr = new ByteArrayOutputStream();
+            final ByteArrayOutputStream cmdErr = new ByteArrayOutputStream()
         ) {
             try {
                 log.info("Opening SSH Soft Fencing session on host '{}'", getVds().getHostName());
