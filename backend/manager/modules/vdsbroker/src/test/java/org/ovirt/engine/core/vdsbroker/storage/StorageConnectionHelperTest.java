@@ -2,13 +2,13 @@ package org.ovirt.engine.core.vdsbroker.storage;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
@@ -22,11 +22,11 @@ public class StorageConnectionHelperTest {
     @Mock
     private StorageServerConnectionExtensionDao connExtDaoMock;
 
+    @Spy
     private StorageConnectionHelper helper;
 
     @Before
     public void setup() {
-        helper = spy(StorageConnectionHelper.getInstance());
         doReturn(connExtDaoMock).when(helper).getConnectionExtensionDao();
     }
 

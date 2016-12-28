@@ -26,6 +26,9 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
     @Inject
     private AuditLogDirector auditLogDirector;
 
+    @Inject
+    private StorageConnectionHelper storageConnectionHelper;
+
     public ConnectStorageServerVDSCommand(P parameters) {
         super(parameters);
     }
@@ -62,8 +65,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
         final Map<String, String>[] result = new HashMap[getParameters().getConnectionList().size()];
         int i = 0;
         for (StorageServerConnections connection : getParameters().getConnectionList()) {
-            result[i] = StorageConnectionHelper.getInstance().createStructFromConnection(connection,
-                    getParameters().getVdsId());
+            result[i] = storageConnectionHelper.createStructFromConnection(connection, getParameters().getVdsId());
             i++;
         }
         return result;

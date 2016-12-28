@@ -2,6 +2,8 @@ package org.ovirt.engine.core.vdsbroker.storage;
 
 import java.util.Map;
 
+import javax.ejb.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -10,16 +12,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
 import org.ovirt.engine.core.utils.collections.DefaultValueMap;
 
+@Singleton
 public class StorageConnectionHelper {
-
-    private static final StorageConnectionHelper INSTANCE = new StorageConnectionHelper();
-
-    private StorageConnectionHelper() {
-    }
-
-    public static StorageConnectionHelper getInstance() {
-        return INSTANCE;
-    }
 
     public Map<String, String> createStructFromConnection(final StorageServerConnections connection, final Guid vdsId) {
 

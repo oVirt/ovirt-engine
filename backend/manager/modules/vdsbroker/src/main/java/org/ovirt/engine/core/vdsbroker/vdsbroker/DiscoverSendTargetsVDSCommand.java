@@ -3,12 +3,17 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.DiscoverSendTargetsVDSCommandParameters;
 import org.ovirt.engine.core.vdsbroker.storage.StorageConnectionHelper;
 
 public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSCommandParameters>
         extends VdsBrokerCommand<P> {
+    @Inject
+    private StorageConnectionHelper storageConnectionHelper;
+
     protected IQNListReturn _result;
 
     public DiscoverSendTargetsVDSCommand(P parameters) {
@@ -18,7 +23,7 @@ public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSComma
     @Override
     protected void executeVdsBrokerCommand() {
         _result = getBroker().discoverSendTargets(
-                StorageConnectionHelper.getInstance().createStructFromConnection(getParameters().getConnection(), getParameters().getVdsId()));
+                storageConnectionHelper.createStructFromConnection(getParameters().getConnection(), getParameters().getVdsId()));
         proceedProxyReturnValue();
         setReturnValue(_result.isFullTargets() ? parseFullTargets(_result.getIqnList())
                 : parseTargets(_result.getIqnList()));
