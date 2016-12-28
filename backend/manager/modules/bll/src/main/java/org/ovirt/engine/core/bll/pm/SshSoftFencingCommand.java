@@ -90,7 +90,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
 
                 log.info("Executing SSH Soft Fencing command on host '{}'", getVds().getHostName());
                 sshClient.executeCommand(
-                    Config.<String> getValue(ConfigValues.SshSoftFencingCommand, version),
+                    Config.getValue(ConfigValues.SshSoftFencingCommand, version),
                     null,
                     cmdOut,
                     cmdErr
