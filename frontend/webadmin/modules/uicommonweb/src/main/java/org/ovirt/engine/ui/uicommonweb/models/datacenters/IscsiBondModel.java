@@ -107,6 +107,8 @@ public class IscsiBondModel extends Model {
 
     @Override
     public void executeCommand(UICommand command) {
+        super.executeCommand(command);
+
         if ("OnSave".equalsIgnoreCase(command.getName())) { //$NON-NLS-1$
             onSave();
         }
