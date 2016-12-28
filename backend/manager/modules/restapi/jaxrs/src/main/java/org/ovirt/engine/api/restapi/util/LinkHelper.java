@@ -491,8 +491,8 @@ public class LinkHelper {
         map = new LocationByParentMap(FileResource.class, FilesResource.class, StorageDomain.class);
         TYPES.put(File.class, map);
 
-        map = new LocationByParentMap(ImageResource.class, ImagesResource.class);
-        map.add(ImageResource.class, ImagesResource.class, StorageDomain.class);
+        map = new LocationByParentMap(ImageResource.class, ImagesResource.class, StorageDomain.class);
+        map.add(ImageTransferResource.class, ImageTransfersResource.class, ImageTransfer.class);
         TYPES.put(Image.class, map);
 
         map = new LocationByParentMap(GroupResource.class, GroupsResource.class);
