@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -46,17 +45,6 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
 
     public UpdateVmPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-        if (getParameters().getVmStaticData().getMaxMemorySizeMb() == 0) {
-            getParameters().getVmStaticData().setMaxMemorySizeMb(
-                    VmCommonUtils.maxMemorySizeWithHotplugInMb(
-                            getParameters().getVmStaticData().getOsId(),
-                            getEffectiveCompatibilityVersion()));
-        }
     }
 
     @Override
