@@ -165,6 +165,18 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturn updateVolume(String jobId, Map<?, ?> volumeInfo, Map<?, ?> volumeAttributes) {
+        JsonRpcRequest request =
+                new RequestBuilder("SDM.update_volume")
+                        .withParameter("job_id", jobId)
+                        .withParameter("vol_info", volumeInfo)
+                        .withParameter("vol_attr", volumeAttributes)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
     public StatusOnlyReturn moveDomainDevice(String jobId, Map<String, Object> moveParams) {
         JsonRpcRequest request =
                 new RequestBuilder("SDM.move_domain_device")
