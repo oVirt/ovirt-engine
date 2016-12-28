@@ -22,7 +22,6 @@ public class StorageConnectionHelperTest {
     @Mock
     private StorageServerConnectionExtensionDao connExtDaoMock;
 
-    @Mock
     private StorageConnectionHelper helper;
 
     @Before
