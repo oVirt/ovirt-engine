@@ -631,7 +631,8 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
     private void updateDiscardAfterDelete() {
         if (getDataCenter().getSelectedItem() != null && getAvailableStorageTypeItems().getSelectedItem() != null) {
             boolean isBlockDomain = getAvailableStorageTypeItems().getSelectedItem().isBlockDomain();
-            if (!isBlockDomain) {
+            boolean isStorageDomainUnattached = getDataCenter().getSelectedItem().getId().equals(Guid.Empty);
+            if (!isBlockDomain || isStorageDomainUnattached) {
                 getDiscardAfterDelete().setIsAvailable(false);
                 getDiscardAfterDelete().setEntity(false);
                 return;
