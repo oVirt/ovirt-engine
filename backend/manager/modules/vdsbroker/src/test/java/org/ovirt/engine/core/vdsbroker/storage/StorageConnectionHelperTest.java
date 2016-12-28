@@ -32,7 +32,7 @@ public class StorageConnectionHelperTest {
 
     @Test
     public void testCredentialsWithNoConnectionExtension() {
-        StorageServerConnections conn = createConnectionWithCredentials("target1", "userConn", "pwdConn");
+        StorageServerConnections conn = createConnectionWithCredentials("target1");
 
         Pair<String, String> credentials = helper.getStorageConnectionCredentialsForhost(Guid.newGuid(), conn);
         assertCredentials(credentials, conn.getUserName(), conn.getPassword());
@@ -40,8 +40,8 @@ public class StorageConnectionHelperTest {
 
     @Test
     public void testCredentialsWithConnectionExtension() {
-        StorageServerConnections conn = createConnectionWithCredentials("target1", "userConn", "pwdConn");
-        StorageServerConnectionExtension connExt = createConnectionExtension(Guid.newGuid(), "target1", "userConnExt", "pwdConnExt");
+        StorageServerConnections conn = createConnectionWithCredentials("target1");
+        StorageServerConnectionExtension connExt = createConnectionExtension(Guid.newGuid());
         when(connExtDaoMock.getByHostIdAndTarget(connExt.getHostId(), connExt.getIqn())).thenReturn(connExt);
 
         Pair<String, String> credentials = helper.getStorageConnectionCredentialsForhost(connExt.getHostId(), conn);
@@ -50,8 +50,8 @@ public class StorageConnectionHelperTest {
 
     @Test
     public void testCredentialsWithConnectionExtensionSameHostDifferentTarget() {
-        StorageServerConnections conn = createConnectionWithCredentials("target2", "userConn", "pwdConn");
-        StorageServerConnectionExtension connExt = createConnectionExtension(Guid.newGuid(), "target1", "userConnExt", "pwdConnExt");
+        StorageServerConnections conn = createConnectionWithCredentials("target2");
+        StorageServerConnectionExtension connExt = createConnectionExtension(Guid.newGuid());
         when(connExtDaoMock.getByHostIdAndTarget(connExt.getHostId(), connExt.getIqn())).thenReturn(connExt);
 
         Pair<String, String> credentials = helper.getStorageConnectionCredentialsForhost(connExt.getHostId(), conn);
@@ -60,28 +60,28 @@ public class StorageConnectionHelperTest {
 
     @Test
     public void testCredentialsWithConnectionExtensionDifferentHostSameTarget() {
-        StorageServerConnections conn = createConnectionWithCredentials("target1", "userConn", "pwdConn");
-        StorageServerConnectionExtension connExt = createConnectionExtension(Guid.newGuid(), "target1", "userConnExt", "pwdConnExt");
+        StorageServerConnections conn = createConnectionWithCredentials("target1");
+        StorageServerConnectionExtension connExt = createConnectionExtension(Guid.newGuid());
         when(connExtDaoMock.getByHostIdAndTarget(Guid.newGuid(), connExt.getIqn())).thenReturn(connExt);
 
         Pair<String, String> credentials = helper.getStorageConnectionCredentialsForhost(connExt.getHostId(), conn);
         assertCredentials(credentials, conn.getUserName(), conn.getPassword());
     }
 
-    private static StorageServerConnections createConnectionWithCredentials(String target, String userName, String password) {
+    private static StorageServerConnections createConnectionWithCredentials(String target) {
         StorageServerConnections conn = new StorageServerConnections();
         conn.setIqn(target);
-        conn.setUserName(userName);
-        conn.setPassword(password);
+        conn.setUserName("userConn");
+        conn.setPassword("pwdConn");
         return conn;
     }
 
-    private static StorageServerConnectionExtension createConnectionExtension(Guid hostId, String target, String userName, String password) {
+    private static StorageServerConnectionExtension createConnectionExtension(Guid hostId) {
         StorageServerConnectionExtension connExt = new StorageServerConnectionExtension();
         connExt.setHostId(hostId);
-        connExt.setIqn(target);
-        connExt.setUserName(userName);
-        connExt.setPassword(password);
+        connExt.setIqn("target1");
+        connExt.setUserName("userConnExt");
+        connExt.setPassword("pwdConnExt");
         return connExt;
     }
 
