@@ -1,24 +1,24 @@
 package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
-import java.util.EnumSet;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Erratum;
 
 public class ErrataFilter implements Serializable {
 
-    private EnumSet<Erratum.ErrataType> errataTypes;
+    private Set<Erratum.ErrataType> errataTypes;
     private Integer pageNumber;
     private Integer pageSize;
 
     public ErrataFilter(){
     }
 
-    public EnumSet<Erratum.ErrataType> getErrataTypes() {
+    public Set<Erratum.ErrataType> getErrataTypes() {
         return errataTypes;
     }
 
-    public void setErrataTypes(EnumSet<Erratum.ErrataType> errataTypes) {
+    public void setErrataTypes(Set<Erratum.ErrataType> errataTypes) {
         this.errataTypes = errataTypes;
     }
 
