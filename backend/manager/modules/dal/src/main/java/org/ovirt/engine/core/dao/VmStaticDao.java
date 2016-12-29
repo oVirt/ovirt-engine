@@ -106,4 +106,23 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
     void updateVmCpuProfileIdForClusterId(Guid clusterId, Guid cpuProfileId);
 
     List<VmStatic> getAllWithoutIcon();
+
+
+    /**
+     * Retrieves all running VMs with a lease on the given storage domain.
+     *
+     * @param storageDomain
+     *            the storage domain's ID
+     * @return the running VMs with a lease on the storage domain
+     */
+    List<VmStatic> getAllRunningWithLeaseOnStorageDomain(Guid storageDomain);
+
+    /**
+     * Retrieves a list of VMs and templates with a lease on the given storage domain.
+     *
+     * @param storageDomain
+     *            the storage domain id
+     * @return the list of VMs with a lease on the storage domain
+     */
+    List<VmStatic> getAllWithLeaseOnStorageDomain(Guid storageDomain);
 }
