@@ -183,6 +183,8 @@ public enum VdcActionType {
     PrepareMerge(247, QuotaDependency.STORAGE),
     ColdMerge(248, QuotaDependency.STORAGE),
     FinalizeMerge(249, QuotaDependency.STORAGE),
+    CreateAllTemplateDisks(250, QuotaDependency.NONE),
+    CreateAllTemplateDisksFromSnapshot(251, QuotaDependency.NONE),
     UpdateVolume(253, QuotaDependency.NONE),
     UpdateAllTemplateDisks(254, QuotaDependency.NONE),
 
