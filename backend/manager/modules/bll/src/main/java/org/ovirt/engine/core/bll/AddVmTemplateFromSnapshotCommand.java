@@ -4,7 +4,6 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTI
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +17,12 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -43,7 +41,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapshotParameters> extends AddVmTemplateCommand<T> {
 
     private Snapshot cachedSnapshot;
-    private List<DiskImage> cachedDisksFromDb;
 
     public AddVmTemplateFromSnapshotCommand(Guid commandId) {
         super(commandId);
@@ -97,13 +94,11 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         return super.validate();
     }
 
-
     @Override
     protected boolean isVmStatusValid(VMStatus status) {
         if (getSnapshot().getType() == Snapshot.SnapshotType.ACTIVE) {
             return status == VMStatus.Down;
         }
-
         return true;
     }
 
@@ -113,23 +108,24 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
 
     @Override
     protected List<DiskImage> getVmDisksFromDB() {
-
-        if (cachedDisksFromDb == null) {
-            cachedDisksFromDb = DisksFilter.filterImageDisks(getVm().getDiskMap().values(),
-                    ONLY_SNAPABLE, ONLY_ACTIVE);
-            cachedDisksFromDb.addAll(DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED));
-        }
-        return cachedDisksFromDb;
+        List<DiskImage> disksFromDb =
+                DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_SNAPABLE, ONLY_ACTIVE);
+        disksFromDb.addAll(DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED));
+        return disksFromDb;
     }
 
     @Override
-    protected void addVmTemplateImages(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
-        List<DiskImage> diskImages = getVmDisksFromDB();
-        if (diskImages.isEmpty()) {
-            return;
+    protected Map<Guid, Guid> addAllTemplateDisks() {
+        processIllegalDisks();
+        Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping = super.addAllTemplateDisks();
+        if (!srcDeviceIdToTargetDeviceIdMapping.isEmpty()) {
+            lockSnapshot();
         }
-        List<CinderDisk> cinderDisks = new ArrayList<>();
-        for (DiskImage diskImage : diskImages) {
+        return srcDeviceIdToTargetDeviceIdMapping;
+    }
+
+    private void processIllegalDisks() {
+        for (DiskImage diskImage : images) {
             if (diskImage.getImageStatus() == ImageStatus.ILLEGAL) {
                 DiskImage snapshotImageInDb =
                         diskImageDao.getSnapshotById(diskImage.getImageId());
@@ -139,19 +135,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
                     // Create a disk to reflect the fact the disk existed during snapshot
                     saveIllegalDisk(diskImage);
                 }
-            } else {
-                if (diskImage.getDiskStorageType() == DiskStorageType.CINDER) {
-                    cinderDisks.add((CinderDisk) diskImage);
-                    continue;
-                }
-                addVmTemplateImage(srcDeviceIdToTargetDeviceIdMapping, diskImage);
             }
-        }
-        if (!getReturnValue().getVdsmTaskIdList().isEmpty() || !cinderDisks.isEmpty()) {
-            lockSnapshot();
-        }
-        if (!cinderDisks.isEmpty()) {
-            addVmTemplateCinderDisks(srcDeviceIdToTargetDeviceIdMapping);
         }
     }
 
@@ -169,6 +153,11 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
             ImagesHandler.addDiskImage(diskImage, getVmId());
             return null;
         });
+    }
+
+    @Override
+    protected VdcActionType getAddAllTemplateDisksActionType() {
+        return VdcActionType.CreateAllTemplateDisksFromSnapshot;
     }
 
     /**
@@ -243,4 +232,5 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         }
         return jobProperties;
     }
+
 }
