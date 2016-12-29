@@ -150,6 +150,17 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
     }
 
+    @Test
+    public void testDeactivateStorageDomainWithRunningVmWithLeaseFails() {
+        VmStatic vm = new VmStatic();
+        vm.setName("myRunningVmWithLease");
+
+        mockDomain();
+        when(vmStaticDao.getAllRunningWithLeaseOnStorageDomain(domain.getId())).thenReturn(Collections.singletonList(vm));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_RUNNING_VMS_WITH_LEASES);
+        assertTrue(cmd.getReturnValue().getValidationMessages().contains(String.format("$vmNames %s", vm.getName())));
+    }
+
     private void mockDomain() {
         domain = new StorageDomain();
         domain.setId(Guid.newGuid());

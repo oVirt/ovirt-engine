@@ -113,6 +113,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                     && !validateMasterDeactivationAllowed()) {
                 return false;
             }
+
+            if (!isNoRunningVmsWithLeasesExist()) {
+                return false;
+            }
         }
 
         if (!isRunningVmsWithIsoAttached()) {
@@ -133,6 +137,16 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                     commandEntityDao.getCommandIdsByEntity(getParameters().getStorageDomainId()).size() > 0)) {
                 return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
             }
+        }
+        return true;
+    }
+
+    private boolean isNoRunningVmsWithLeasesExist() {
+        List<VmStatic> runningVmsWithLeases = vmStaticDao.getAllRunningWithLeaseOnStorageDomain(getStorageDomain().getId());
+        if (!runningVmsWithLeases.isEmpty()) {
+            String vmNames = runningVmsWithLeases.stream().map(VmStatic::getName).collect(Collectors.joining(", "));
+            return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_RUNNING_VMS_WITH_LEASES,
+                    String.format("$vmNames %s", vmNames));
         }
         return true;
     }
