@@ -2077,3 +2077,31 @@ BEGIN
         AND run_on_vds IS NOT NULL;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+
+
+
+Create or replace FUNCTION GetVmsAndTemplatesWithLeaseOnStorageDomain(v_storage_domain_id UUID)
+RETURNS SETOF vm_static STABLE
+   AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM vm_static
+    WHERE lease_sd_id = v_storage_domain_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+Create or replace FUNCTION GetActiveVmsWithLeaseOnStorageDomain(v_storage_domain_id UUID)
+RETURNS SETOF vm_static STABLE
+   AS $procedure$
+BEGIN
+    RETURN QUERY SELECT vs.*
+    FROM vm_static vs
+    JOIN vm_dynamic vd ON vd.vm_guid = vs.vm_guid
+    WHERE lease_sd_id = 'd9ede37f-e6c3-4bf9-a984-19174070aa31'
+        AND vd.status <> 0;
+END; $procedure$
+LANGUAGE plpgsql;

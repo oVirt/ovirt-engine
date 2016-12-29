@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hamcrest.Matchers;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
@@ -538,5 +540,20 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         dao.save(newVmStatic);
         VmStatic loaded = dao.get(newVmStatic.getId());
         assertEquals(ConsoleDisconnectAction.REBOOT, loaded.getConsoleDisconnectAction());
+    }
+
+    @Test
+    public void testGetAllWithLeaseOnStorageDomain() {
+        List<Guid> vmAndTemplatesWithLeasesIds = dao.getAllWithLeaseOnStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS2_1)
+                .stream().map(t -> t.getId()).collect(Collectors.toList());
+        assertThat(vmAndTemplatesWithLeasesIds,
+                Matchers.containsInAnyOrder(FixturesTool.VM_RHEL5_POOL_57, FixturesTool.VM_TEMPLATE_RHEL5_2));
+    }
+
+    @Test
+    public void testGetAllActiveWithLeaseOnForStorageDomain() {
+        List<Guid> runningVmsWithLeasesIds = dao.getAllRunningWithLeaseOnStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS2_1)
+                .stream().map(v -> v.getId()).collect(Collectors.toList());
+        assertThat(runningVmsWithLeasesIds, Matchers.contains(FixturesTool.VM_RHEL5_POOL_57));
     }
 }
