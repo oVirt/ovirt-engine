@@ -82,7 +82,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.RngUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,8 +107,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Inject
     private IsoDomainListSynchronizer isoDomainListSynchronizer;
-    @Inject
-    private ResourceManager resourceManager;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -318,7 +315,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void executeVmCommand() {
-        resourceManager.getVmManager(getVmId()).setPowerOffTimeout(System.nanoTime());
+        getVmManager().setPowerOffTimeout(System.nanoTime());
         setActionReturnValue(VMStatus.Down);
         initVm();
         perform();

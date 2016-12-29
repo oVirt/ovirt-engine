@@ -70,7 +70,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,8 +80,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Inject
     ConvergenceConfigProvider convergenceConfigProvider;
-    @Inject
-    private ResourceManager resourceManager;
 
     @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
@@ -203,7 +200,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     @Override
     protected void executeVmCommand() {
         try {
-            resourceManager.getVmManager(getVmId()).getStatistics().setMigrationProgressPercent(0);
+            getVmManager().getStatistics().setMigrationProgressPercent(0);
             setSucceeded(initVdss() && perform());
         } catch (Exception e) {
             setSucceeded(false);

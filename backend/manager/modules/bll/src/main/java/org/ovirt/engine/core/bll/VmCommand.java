@@ -45,6 +45,8 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VmLeaseVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.GuidUtils;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
@@ -68,6 +70,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     @Inject
     protected VmTemplateHandler vmTemplateHandler;
 
+    @Inject
+    private ResourceManager resourceManager;
+
     protected final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     private Boolean skipCommandExecution;
 
@@ -76,6 +81,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     public VmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVmId(parameters.getVmId());
+    }
+
+    protected VmManager getVmManager() {
+        return resourceManager.getVmManager(getVmId());
     }
 
     protected MacPool getMacPool() {
