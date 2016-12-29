@@ -2219,12 +2219,12 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturn amendVolume(String jobId, Map<String, Object> volInfo, Map<String, Object> volAttr) {
+    public StatusOnlyReturn amendVolume(String jobId, Map<String, Object> volInfo, Map<String, Object> qcow2_attr) {
         JsonRpcRequest request =
                 new RequestBuilder("SDM.amend_volume")
                         .withParameter("job_id", jobId)
                         .withParameter("vol_info", volInfo)
-                        .withParameter("vol_attr", volAttr)
+                        .withParameter("qcow2_attr", qcow2_attr)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
