@@ -387,42 +387,58 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         return result;
     }
 
-    // Currently we cannot guarantee that migrating VM with positive enforcing affinity will
-    // migrate to the same target host, user will have to manually fix it before maintenancing the host.
+    /**
+     * For VM to host affinity, a VM with positive enforcing affinity cannot be migrated from the host it belongs to.
+     * For VM to VM affinity we cannot guarantee that migrating VM with positive enforcing affinity will
+     * migrate to the same target host, user will have to manually fix it before putting the host on maintenance.
+     *
+     * @param vdsId      current host id
+     * @param runningVms current running vms on host
+     * @return true if migration is possible, false - otherwise
+     */
     private boolean handlePositiveEnforcingAffinityGroup(Guid vdsId, List<VM> runningVms) {
-        // less than 2 VMs in host means no positive affinity to worry about
-        if (runningVms.size() > 1) {
-            List<AffinityGroup> affinityGroups =
-                    affinityGroupDao.getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(vdsId);
-            if (!affinityGroups.isEmpty()) {
-                List<Object> items = new ArrayList<>();
-                for (AffinityGroup affinityGroup : affinityGroups) {
-                    // affinity group has less than 2 vms (trivial)
-                    if (affinityGroup.getVmIds().size() < 2) {
-                        continue;
-                    }
-                    int count = 0; // counter for running VMs in affinity group
-                    for (VM vm : runningVms) {
-                        if (affinityGroup.getVmIds().contains(vm.getId())) {
-                            count++;
-                        }
-                    }
-                    if (count > 1) {
+
+        List<AffinityGroup> affinityGroups =
+                affinityGroupDao.getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(vdsId);
+        if (!affinityGroups.isEmpty()) {
+
+            List<Object> items = new ArrayList<>();
+            affinityGroups.stream()
+                    .filter(ag ->
+                            !ag.getVdsIds().isEmpty()
+                                    || affinityGroupContainsRunningVMs(ag, runningVms)
+                    )
+                    .forEach(affinityGroup -> {
                         items.add(String.format("%1$s (%2$s)",
                                 affinityGroup.getName(),
                                 StringUtils.join(affinityGroup.getVmEntityNames(), " ,")));
-                    }
-                }
-                if (!items.isEmpty()) {
-                    addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_HAS_AFFINITY_VMS);
-                    getReturnValue().getValidationMessages()
-                            .addAll(ReplacementUtils.replaceWith("AFFINITY_GROUPS_VMS", items));
-                    return false;
-                }
+                    });
+
+            if (!items.isEmpty()) {
+                addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_HAS_AFFINITY_VMS);
+                getReturnValue().getValidationMessages()
+                        .addAll(ReplacementUtils.replaceWith("AFFINITY_GROUPS_VMS", items));
+                return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * Check vm to vm affinity group with 2 or more running vms
+     *
+     * @return true if affinity group has 2 or more running vms
+     */
+    private boolean affinityGroupContainsRunningVMs(AffinityGroup affinityGroup, List<VM> runningVms) {
+
+        return affinityGroup.getVdsIds().isEmpty()
+                && affinityGroup.isVmAffinityEnabled()
+                && runningVms.size() > 1
+                && affinityGroup.getVmIds().size() > 1
+                && runningVms.stream()
+                .filter(vm -> affinityGroup.getVmIds().contains(vm.getId()))
+                .collect(Collectors.toList()).size() > 1;
     }
 
     private void addSharedLockEntry(VDS vds) {
