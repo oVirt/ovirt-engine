@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -42,11 +43,21 @@ public final class VdsmImagePoller {
             return HostJobStatus.failed;
         }
 
-        if (imageInfo.getStatus() == ImageStatus.OK && imageInfo.getGeneration() == executionGeneration + 1) {
-            log.info("Command {} id: '{}': the volume is in OK status and the generation was incremented - the " +
-                            "job execution has completed successfully",
-                    actionType, cmdId);
-            return HostJobStatus.done;
+        if (imageInfo.getStatus() == ImageStatus.OK) {
+            if (imageInfo.getGeneration() == executionGeneration + 1) {
+                log.info("Command {} id: '{}': the volume is in OK status and the generation was incremented - the " +
+                                "job execution has completed successfully",
+                        actionType, cmdId);
+                return HostJobStatus.done;
+            }
+        }
+
+        if (imageInfo.getGeneration() == executionGeneration + StorageConstants.ENTITY_FENCING_GENERATION_DIFF) {
+            log.info("Command {} id: '{}': the volume generation was incremented by the job fencing diff - the job " +
+                            "was fenced and its status can be considered as failed",
+                    actionType,
+                    cmdId);
+            return HostJobStatus.failed;
         }
 
         log.info("Command {} id: '{}': couldn't determine the status of the job by entity polling", actionType, cmdId);
