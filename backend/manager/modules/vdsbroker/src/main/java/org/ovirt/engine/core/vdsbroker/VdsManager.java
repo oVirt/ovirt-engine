@@ -835,6 +835,7 @@ public class VdsManager {
                 resourceManager.getEventListener().restartVmsWithLease(vms.stream()
                         .map(VmDynamic::getId)
                         .filter(vmId -> resourceManager.getVmManager(vmId).getLeaseStorageDomainId() != null)
+                        .sorted(Injector.injectMembers(new VmsOnHostComparator(getVdsId())))
                         .collect(Collectors.toList()));
             }
         } finally {
