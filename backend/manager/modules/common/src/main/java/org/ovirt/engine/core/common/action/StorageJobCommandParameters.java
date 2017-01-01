@@ -4,6 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class StorageJobCommandParameters extends ImagesActionsParametersBase {
     private Guid storageJobId;
+    private boolean jobStarted;
 
     public StorageJobCommandParameters() {
     }
@@ -18,5 +19,13 @@ public class StorageJobCommandParameters extends ImagesActionsParametersBase {
 
     public void setStorageJobId(Guid storageJobId) {
         this.storageJobId = storageJobId;
+    }
+
+    public boolean getJobStarted() {
+        return jobStarted;
+    }
+
+    public void setJobStarted(boolean jobStarted) {
+        this.jobStarted = jobStarted;
     }
 }
