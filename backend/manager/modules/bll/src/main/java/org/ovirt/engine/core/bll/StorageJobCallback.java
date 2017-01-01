@@ -60,7 +60,7 @@ public class StorageJobCallback extends ChildCommandsCallbackBase {
             }
 
             if (jobInfo != null) {
-                handlePolledJobStatus((StorageJobCommand) getCommand(cmdId), jobInfo);
+                handlePolledJobInfo((StorageJobCommand<?>) getCommand(cmdId), jobInfo);
                 jobStatus = jobInfo.getStatus();
                 updateStepProgress(commandEntity.getCommandContext().getStepId(), jobInfo.getProgress());
             }
@@ -135,8 +135,17 @@ public class StorageJobCallback extends ChildCommandsCallbackBase {
         return null;
     }
 
+    private void handlePolledJobStatus(StorageJobCommand<?> cmd, HostJobStatus status) {
+        if (status != null && status.executionStarted() && !cmd.getParameters().getJobStarted()) {
+            cmd.getParameters().setJobStarted(true);
+            cmd.persistCommand(cmd.getParameters().getParentCommand(), true);
+        }
+    }
 
-    private void handlePolledJobStatus(StorageJobCommand<?> cmd, HostJobInfo jobInfo) {
+
+    private void handlePolledJobInfo(StorageJobCommand<?> cmd, HostJobInfo jobInfo) {
+        handlePolledJobStatus(cmd, jobInfo.getStatus());
+
         if (jobInfo.getStatus() != HostJobStatus.failed) {
             return;
         }
@@ -162,7 +171,9 @@ public class StorageJobCallback extends ChildCommandsCallbackBase {
             log.info("Command {} id: '{}': attempting to determine the job status by polling the entity.",
                     cmd.getActionType(),
                     cmd.getCommandId());
-            return pollEntity(cmd);
+            HostJobStatus jobStatus = pollEntity(cmd);
+            handlePolledJobStatus(cmd, jobStatus);
+            return jobStatus;
         }
 
         if (cmd.failJobWithUndeterminedStatus()) {
