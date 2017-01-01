@@ -164,7 +164,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         vmHandler.updateVmGuestAgentVersion(getVm());
 
-
         if (!vdsToRunOn.isPresent()) {
             return false;
         }
@@ -172,7 +171,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         if (getDestinationVds() == null || getVds() == null) {
             return false;
         }
-
 
         return true;
     }
@@ -202,8 +200,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected void executeVmCommand() {
+        resourceManager.getVmManager(getVmId()).getStatistics().setMigrationProgressPercent(0);
         try {
-            resourceManager.getVmManager(getVmId()).getStatistics().setMigrationProgressPercent(0);
             setSucceeded(initVdss() && perform());
         } catch (Exception e) {
             setSucceeded(false);
@@ -226,19 +224,21 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             allVmPassthroughNics = getAllVmPassthroughNics();
             log.debug("Performing migration with following passthrough nics: {}", allVmPassthroughNics);
 
-            if (unplugNics(allVmPassthroughNics) && connectLunDisks(getDestinationVdsId()) && migrateVm()) {
+            if (unplugPassthroughNics(allVmPassthroughNics) && connectLunDisks(getDestinationVdsId()) && migrateVm()) {
                 ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                 return true;
             }
 
+            // otherwise
+            runningFailed();
+            return false;
         } catch (Exception e) {
-            log.debug("Migration failed.", e);
             //this will clean all VF reservations made in {@link #initVdss}.
             cleanupPassthroughVnics(getDestinationVdsId());
+            runningFailed();
+            throw e;
         }
 
-        runningFailed();
-        return false;
     }
 
     /**
@@ -248,7 +248,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
      * @param vmNics vmNics to unplug.
      * @return false if unplugging failed.
      */
-    private boolean unplugNics(List<VmNetworkInterface> vmNics) {
+    private boolean unplugPassthroughNics(List<VmNetworkInterface> vmNics) {
         List<ActivateDeactivateVmNicParameters> parametersList = createActivateDeactivateVmNicParameters(vmNics,
                 PlugAction.UNPLUG);
 
@@ -258,10 +258,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         for (ActivateDeactivateVmNicParameters parameter : parametersList) {
             VdcReturnValueBase returnValue = runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameter);
-
-
-            boolean succeeded = returnValue.getSucceeded();
-            if (!succeeded) {
+            if (!returnValue.getSucceeded()) {
                 returnValue.getValidationMessages().forEach(this::addValidationMessage);
                 return false;
             }
