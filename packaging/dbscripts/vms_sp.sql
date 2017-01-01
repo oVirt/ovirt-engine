@@ -2110,3 +2110,15 @@ BEGIN
         AND vd.status <> 0;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetVmsStaticRunningOnVds(v_vds_id UUID)
+RETURNS SETOF vm_static STABLE
+   AS $procedure$
+BEGIN
+    RETURN QUERY SELECT vs.*
+    FROM vm_static vs
+    JOIN vm_dynamic vd ON vd.vm_guid = vs.vm_guid
+    WHERE run_on_vds = v_vds_id;
+END; $procedure$
+LANGUAGE plpgsql;

@@ -556,4 +556,13 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
                 .stream().map(v -> v.getId()).collect(Collectors.toList());
         assertThat(runningVmsWithLeasesIds, Matchers.contains(FixturesTool.VM_RHEL5_POOL_57));
     }
+
+    @Test
+    public void testGetAllRunningForVds() {
+        List<VmStatic> vms = dao.getAllRunningForVds(FixturesTool.VDS_RHEL6_NFS_SPM);
+        assertEquals(vms.size(), 3);
+        List<Guid> vmIds = vms.stream().map(VmStatic::getId).collect(Collectors.toList());
+        assertTrue(vmIds.contains(FixturesTool.VM_RHEL5_POOL_57));
+        assertFalse(vmIds.contains(FixturesTool.VM_RHEL5_POOL_52));
+    }
 }
