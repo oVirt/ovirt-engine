@@ -154,25 +154,30 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     protected boolean initVdss() {
-        setVdsIdRef(getVm().getRunOnVds());
-        Optional<Guid> vdsToRunOn = getVdsToRunOn();
-        setDestinationVdsId(vdsToRunOn.orElse(null));
+        try {
+            setVdsIdRef(getVm().getRunOnVds());
+            Optional<Guid> vdsToRunOn = getVdsToRunOn();
+            setDestinationVdsId(vdsToRunOn.orElse(null));
 
-        if (vdsToRunOn.isPresent()) {
-            getRunVdssList().add(vdsToRunOn.get());
+            if (vdsToRunOn.isPresent()) {
+                getRunVdssList().add(vdsToRunOn.get());
+            }
+
+            vmHandler.updateVmGuestAgentVersion(getVm());
+
+            if (!vdsToRunOn.isPresent()) {
+                return false;
+            }
+
+            if (getDestinationVds() == null || getVds() == null) {
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            cleanupPassthroughVnics(getDestinationVdsId());
+            throw e;
         }
-
-        vmHandler.updateVmGuestAgentVersion(getVm());
-
-        if (!vdsToRunOn.isPresent()) {
-            return false;
-        }
-
-        if (getDestinationVds() == null || getVds() == null) {
-            return false;
-        }
-
-        return true;
     }
 
     private Optional<Guid> getVdsToRunOn() {
@@ -201,15 +206,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     @Override
     protected void executeVmCommand() {
         resourceManager.getVmManager(getVmId()).getStatistics().setMigrationProgressPercent(0);
-        try {
-            setSucceeded(initVdss() && perform());
-        } catch (Exception e) {
-            setSucceeded(false);
-        }
-
-        if (!getSucceeded()) {
-            cleanupPassthroughVnics(getDestinationVdsId());
-        }
+        setSucceeded(initVdss() && perform());
     }
 
     private List<VmNetworkInterface> getAllVmPassthroughNics() {
@@ -233,8 +230,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             runningFailed();
             return false;
         } catch (Exception e) {
-            //this will clean all VF reservations made in {@link #initVdss}.
-            cleanupPassthroughVnics(getDestinationVdsId());
             runningFailed();
             throw e;
         }
@@ -476,6 +471,16 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
         finally {
             super.runningSucceded();
+        }
+    }
+
+    @Override
+    protected void runningFailed() {
+        try {
+            //this will clean all VF reservations made in {@link #initVdss}.
+            cleanupPassthroughVnics(getDestinationVdsId());
+        } finally {
+            super.runningFailed();
         }
     }
 
