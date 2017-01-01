@@ -69,7 +69,7 @@ public class StorageJobCallback implements CommandCallback {
 
         // If we couldn't determine job status by polling the host, we can try to determine it using different methods.
         if (jobStatus == null) {
-            jobStatus = handleUndeterminedJobStatus(getCommand(cmdId), jobsReportedByHost);
+            jobStatus = handleUndeterminedJobStatus((StorageJobCommand<?>) getCommand(cmdId), jobsReportedByHost);
         }
 
         if (jobStatus == null) {
@@ -156,13 +156,21 @@ public class StorageJobCallback implements CommandCallback {
         }
     }
 
-    private HostJobStatus handleUndeterminedJobStatus(CommandBase<?> cmd, boolean jobsReportedByHost) {
+    private HostJobStatus handleUndeterminedJobStatus(StorageJobCommand<?> cmd, boolean jobsReportedByHost) {
         // If the command supports entity polling, we can use it in order to determine the status.
         if (isEntityPollingSupported(cmd)) {
             log.info("Command {} id: '{}': attempting to determine the job status by polling the entity.",
                     cmd.getActionType(),
                     cmd.getCommandId());
             return pollEntity(cmd);
+        }
+
+        if (cmd.failJobWithUndeterminedStatus()) {
+            log.error("Command {} id: '{}': failed to determine the actual job status, considering as failed as per" +
+                            " the command implementation",
+                    cmd.getActionType(),
+                    cmd.getCommandId());
+            return HostJobStatus.failed;
         }
 
         // if the job was cleared from the host job report we fail the operation so the command will end
@@ -175,8 +183,8 @@ public class StorageJobCallback implements CommandCallback {
             return HostJobStatus.failed;
         }
 
-        // if the job status couldn't have been determined because of a different reason, we'll retry to poll it.
-        log.error("Command {} id: '{}': entity polling isn't supported, will retry to poll the job soon",
+        // if we couldn't determine the job status, we'll retry to poll it.
+        log.error("Command {} id: '{}': failed to determine the actual job status, will retry to poll the job soon",
                 cmd.getActionType(),
                 cmd.getCommandId());
         return null;
