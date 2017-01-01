@@ -13,6 +13,9 @@ import org.ovirt.engine.core.bll.storage.StorageJobCommand;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CopyDataCommandParameters;
+import org.ovirt.engine.core.common.action.FenceVolumeJobCommandParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -75,6 +78,23 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
         }
 
         return super.getCommandStepSubjectEntities();
+    }
+
+    @Override
+    public void attemptToFenceJob() {
+        if (isDstVdsmImage()) {
+            log.info("Command {} id: '{}': attempting to fence job {}",
+                    getActionType(),
+                    getCommandId(),
+                    getJobId());
+            VdsmImageLocationInfo info = (VdsmImageLocationInfo) getParameters().getDstInfo();
+            FenceVolumeJobCommandParameters p = new FenceVolumeJobCommandParameters(info);
+            p.setParentCommand(getActionType());
+            p.setParentParameters(getParameters());
+            p.setStoragePoolId(getParameters().getStoragePoolId());
+            p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+            runInternalActionWithTasksContext(VdcActionType.FenceVolumeJob, p);
+        }
     }
 
     private boolean isDstVdsmImage() {
