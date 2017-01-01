@@ -102,7 +102,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
                             EngineLocalConfig.getInstance().getExternalProvidersTrustStore().getAbsolutePath())
                     .setTrustStorePassword(EngineLocalConfig.getInstance().getExternalProvidersTrustStorePassword())
                     .setTrustStoreType(EngineLocalConfig.getInstance().getExternalProvidersTrustStoreType())
-                    .setHttpsProtocol(Config.<String> getValue(ConfigValues.ExternalCommunicationProtocol));
+                    .setHttpsProtocol(Config.getValue(ConfigValues.ExternalCommunicationProtocol));
             }
             result = builder.create();
             handleCredentials(result);
