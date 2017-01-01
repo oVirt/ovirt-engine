@@ -197,8 +197,8 @@ BEGIN
     INNER JOIN vm_dynamic
         ON affinity_group_members.vm_id = vm_dynamic.vm_guid
             AND vm_dynamic.run_on_vds = v_vds_id
-    WHERE vms_affinity_enabled AND vm_positive
-        AND vm_enforcing;
+    WHERE (vm_enforcing AND vm_positive AND vms_affinity_enabled)
+        OR (vds_enforcing AND vds_positive);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
