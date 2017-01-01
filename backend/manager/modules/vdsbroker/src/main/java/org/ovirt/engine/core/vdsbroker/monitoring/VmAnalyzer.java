@@ -767,6 +767,7 @@ public class VmAnalyzer {
             clearVm(VmExitStatus.Normal,
                     getPowerOffExitMessage(),
                     VmExitReason.Success);
+            resourceManager.removeAsyncRunningVm(dbVm.getId());
             return;
         }
 
