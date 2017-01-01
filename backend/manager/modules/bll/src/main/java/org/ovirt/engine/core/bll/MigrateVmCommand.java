@@ -92,11 +92,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     private Integer actualDowntime;
 
-    /**
-     * all found passhthrough nics related to VM being migrated. We need to store them, so we can unplug them before
-     * migration and re-plug them back after migration.
-     */
-    private List<VmNetworkInterface> allVmPassthroughNics;
+    private List<VmNetworkInterface> cachedVmPassthroughNics;
+    private boolean passthroughNicsUnplugged;
 
     public MigrateVmCommand(T migrateVmParameters, CommandContext cmdContext) {
         super(migrateVmParameters, cmdContext);
@@ -206,19 +203,25 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         setSucceeded(initVdss() && perform());
     }
 
+    /**
+     * all found passhthrough nics related to VM being migrated. We need to store them, so we can unplug them before
+     * migration and re-plug them back after migration.
+     */
     private List<VmNetworkInterface> getAllVmPassthroughNics() {
-        List<VmNetworkInterface> allForVm = vmNetworkInterfaceDao.getAllForVm(getVmId());
-
-        return allForVm.stream().filter(vnic -> vnic.isPassthrough() && vnic.isPlugged()).collect(Collectors.toList());
+        if (cachedVmPassthroughNics == null) {
+            cachedVmPassthroughNics = vmNetworkInterfaceDao.getAllForVm(getVmId()).stream()
+                    .filter(vnic -> vnic.isPassthrough() && vnic.isPlugged())
+                    .collect(Collectors.toList());
+            log.debug("Performing migration with following passthrough nics: {}", cachedVmPassthroughNics);
+        }
+        return cachedVmPassthroughNics;
     }
 
     private boolean perform() {
         try {
             getParameters().setStartTime(new Date());
-            allVmPassthroughNics = getAllVmPassthroughNics();
-            log.debug("Performing migration with following passthrough nics: {}", allVmPassthroughNics);
 
-            if (unplugPassthroughNics(allVmPassthroughNics) && connectLunDisks(getDestinationVdsId()) && migrateVm()) {
+            if (unplugPassthroughNics() && connectLunDisks(getDestinationVdsId()) && migrateVm()) {
                 ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                 return true;
             }
@@ -230,18 +233,21 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             runningFailed();
             throw e;
         }
-
     }
 
     /**
      * When unplugging fails for any nic, we stop immediately. In that case we won't proceed with migration, and thus
      * it makes sense to stop asap to create minimum problems which needs to be fixed manually.
      *
-     * @param vmNics vmNics to unplug.
      * @return false if unplugging failed.
      */
-    private boolean unplugPassthroughNics(List<VmNetworkInterface> vmNics) {
-        List<ActivateDeactivateVmNicParameters> parametersList = createActivateDeactivateVmNicParameters(vmNics,
+    private boolean unplugPassthroughNics() {
+        if (passthroughNicsUnplugged) {
+            // no need to unplug more than once
+            return true;
+        }
+        List<ActivateDeactivateVmNicParameters> parametersList = createActivateDeactivateVmNicParameters(
+                getAllVmPassthroughNics(),
                 PlugAction.UNPLUG);
 
         log.debug("About to call {} with parameters: {}",
@@ -255,6 +261,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 return false;
             }
         }
+        passthroughNicsUnplugged = true;
         return true;
     }
 
@@ -262,11 +269,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
      * This method is called when migration succeeded, and we're plugging vmnics back. If there some error with plugging
      * any of them back, we will create least problem, if we try to plug back each of them. Also for each such failure,
      * we must release preallocated VF.
-     * @param vmNics vmNics to plug in
      */
-    private void plugPassthroughNics(List<VmNetworkInterface> vmNics) {
+    private void plugPassthroughNics() {
         try {
-            List<ActivateDeactivateVmNicParameters> parametersList = createActivateDeactivateVmNicParameters(vmNics,
+            List<ActivateDeactivateVmNicParameters> parametersList = createActivateDeactivateVmNicParameters(
+                    getAllVmPassthroughNics(),
                     PlugAction.PLUG);
 
             boolean plugOfAllMacsSucceeded = true;
@@ -464,7 +471,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             getDowntime();
             vmDynamicDao.clearMigratingToVds(getVmId());
             updateVmAfterMigrationToDifferentCluster();
-            plugPassthroughNics(allVmPassthroughNics);
+            plugPassthroughNics();
         }
         finally {
             super.runningSucceded();
