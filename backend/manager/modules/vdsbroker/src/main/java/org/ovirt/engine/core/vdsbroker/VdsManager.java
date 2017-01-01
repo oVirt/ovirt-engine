@@ -871,8 +871,9 @@ public class VdsManager {
                     if (cachedVds.getStatus() != VDSStatus.NonResponsive) {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
                         moveVmsToUnknown(vmsRunningOnVds);
-                        // we want to try to restart VMs with lease right after they switch to unknown
-                        autoRestartUnknownVmsIteration = -1;
+                        // we want to try to restart VMs with lease ~20 sec after they switch to unknown
+                        int skippedIterationsBeforeFirstTry = Config.<Integer>getValue(ConfigValues.NumberVdsRefreshesBeforeTryToStartUnknownVms);
+                        autoRestartUnknownVmsIteration = 0 - skippedIterationsBeforeFirstTry;
                         logHostFailToRespond(ex);
                         resourceManager.getEventListener().vdsNotResponding(cachedVds);
                     } else {
@@ -894,10 +895,11 @@ public class VdsManager {
         }
 
         try {
-            int skippedIterations = Config.<Integer>getValue(ConfigValues.NumberVdsRefreshesBeforeRetryToStartUnknownVms);
+            int skippedIterationsBeforeRetry = Config.<Integer>getValue(ConfigValues.NumberVdsRefreshesBeforeRetryToStartUnknownVms);
             autoRestartUnknownVmsIteration++;
             // we don't want to restart VMs with lease too frequently
-            if (autoRestartUnknownVmsIteration % (skippedIterations + 1) == 0) {
+            if (autoRestartUnknownVmsIteration >= 0 &&
+                    autoRestartUnknownVmsIteration % (skippedIterationsBeforeRetry + 1) == 0) {
                 resourceManager.getEventListener().restartVmsWithLease(vms.stream()
                         .map(VmDynamic::getId)
                         .filter(vmId -> resourceManager.getVmManager(vmId).getLeaseStorageDomainId() != null)
