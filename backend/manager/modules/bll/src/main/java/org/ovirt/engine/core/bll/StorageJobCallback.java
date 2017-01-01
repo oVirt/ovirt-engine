@@ -171,9 +171,26 @@ public class StorageJobCallback extends ChildCommandsCallbackBase {
             log.info("Command {} id: '{}': attempting to determine the job status by polling the entity.",
                     cmd.getActionType(),
                     cmd.getCommandId());
+
             HostJobStatus jobStatus = pollEntity(cmd);
             handlePolledJobStatus(cmd, jobStatus);
-            return jobStatus;
+            if (jobStatus != null) {
+                return jobStatus;
+            }
+
+            EntityPollingCommand entityPollingCommand = (EntityPollingCommand) cmd;
+            if (!cmd.getParameters().getJobStarted()) {
+                // If the command job may not have been started and the command supports job fencing, we can attempt
+                // to fence the job - which means that the host will never be able to execute it.
+                // Fencing the operation will usually be performed by executing an asynchronous fencing command on the
+                // entity the job is supposed to be performed on.
+                // If a fencing command was executed, the callback will wait for it to end and then will try to poll the
+                // entity again (it'll be detected as a running child command). On synchronous fencing/no fencing we
+                // will attempt to poll the entity again.
+                entityPollingCommand.attemptToFenceJob();
+            }
+
+            return null;
         }
 
         if (cmd.failJobWithUndeterminedStatus()) {
