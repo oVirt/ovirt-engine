@@ -2101,7 +2101,7 @@ BEGIN
     RETURN QUERY SELECT vs.*
     FROM vm_static vs
     JOIN vm_dynamic vd ON vd.vm_guid = vs.vm_guid
-    WHERE lease_sd_id = 'd9ede37f-e6c3-4bf9-a984-19174070aa31'
+    WHERE lease_sd_id = v_storage_domain_id
         AND vd.status <> 0;
 END; $procedure$
 LANGUAGE plpgsql;
