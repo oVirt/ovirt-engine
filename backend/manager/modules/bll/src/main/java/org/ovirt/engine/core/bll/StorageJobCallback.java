@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.common.job.Step.MAX_PROGRESS;
 
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,6 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo;
@@ -30,11 +28,16 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StorageJobCallback implements CommandCallback {
+public class StorageJobCallback extends ChildCommandsCallbackBase {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
+    protected void childCommandsExecutionEnded(CommandBase<?> command,
+                                               boolean anyFailed,
+                                               List<Guid> childCmdIds,
+                                               CommandExecutionStatus status,
+                                               int completedChildren) {
+        Guid cmdId = command.getCommandId();
         CommandEntity commandEntity = CommandCoordinatorUtil.getCommandEntity(cmdId);
         StorageJobCommandParameters cmdParams = (StorageJobCommandParameters) commandEntity.getCommandParameters();
         Guid job = cmdParams.getStorageJobId();
@@ -87,14 +90,11 @@ public class StorageJobCallback implements CommandCallback {
 
         log.info("Command {} id: '{}': job '{}' execution was completed with VDSM job status '{}'",
                 commandEntity.getCommandType(), cmdId, job, jobStatus);
-        CommandBase<?> command = getCommand(cmdId);
-
 
         if (command.shouldUpdateStepProgress() && jobStatus == HostJobStatus.done) {
             updateStepProgress(commandEntity.getCommandContext().getStepId(), MAX_PROGRESS);
         }
 
-        CommandExecutionStatus status = CommandCoordinatorUtil.getCommandExecutionStatus(cmdId);
         command.getParameters().setTaskGroupSuccess(status == CommandExecutionStatus.EXECUTED
                 && jobStatus == HostJobStatus.done);
         command.setCommandStatus(command.getParameters().getTaskGroupSuccess() ? CommandStatus.SUCCEEDED
