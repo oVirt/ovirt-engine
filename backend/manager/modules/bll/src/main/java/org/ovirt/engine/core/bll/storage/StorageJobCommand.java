@@ -39,6 +39,14 @@ public abstract class StorageJobCommand<T extends StorageJobCommandParameters> e
         return HostJobStatus.failed;
     }
 
+    /**
+     * This method let the command immediately fail when the job status is unknown or couldn't be determined.
+     * Useful in cases in which we don't want to wait and we don't care to fail the operation and let the user to retry.
+     */
+    public boolean failJobWithUndeterminedStatus() {
+        return false;
+    }
+
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.emptyList();
