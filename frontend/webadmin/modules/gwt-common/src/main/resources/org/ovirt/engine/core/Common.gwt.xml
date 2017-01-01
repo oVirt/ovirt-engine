@@ -40,7 +40,7 @@
         <include name="common/businessentities/LeaseStatus.java" />
         <include name="common/businessentities/LocationInfo.java" />
         <include name="common/businessentities/HttpLocationInfo.java" />
-        <include name="common/businessentities/VdsmImageInfo.java" />
+        <include name="common/businessentities/VdsmImageLocationInfo.java" />
         <include name="common/businessentities/ConnectionMethod.java" />
         <include name="common/businessentities/ExternalLocationInfo.java" />
         <include name="common/businessentities/EventSubscriber.java" />
