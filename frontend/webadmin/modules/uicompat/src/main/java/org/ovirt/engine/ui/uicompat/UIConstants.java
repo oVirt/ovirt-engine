@@ -2033,6 +2033,8 @@ public interface UIConstants extends Constants {
 
     String arbiterVolumeShouldBeReplica3();
 
+    String arbiter();
+
     String headlessMode();
 
     String vnicProfilesMapping();

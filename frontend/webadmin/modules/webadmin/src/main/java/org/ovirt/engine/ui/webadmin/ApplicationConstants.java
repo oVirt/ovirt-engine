@@ -3220,5 +3220,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String targetVnicProfile();
 
     String reassignBadMacs();
+
+    String arbiter();
 }
 

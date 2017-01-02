@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.label.VolumeTransportTypeLabel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -159,7 +160,11 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     private void translateVolumeType(GlusterVolumeEntity volumeEntity) {
         EnumTranslator translator = EnumTranslator.getInstance();
         if (translator.containsKey(volumeEntity.getVolumeType())) {
-            getDetailModel().setVolumeTypeSilently(translator.translate(volumeEntity.getVolumeType()));
+            String volumeType = translator.translate(volumeEntity.getVolumeType());
+            if (volumeEntity.getIsArbiter()) {
+                volumeType += " (" + ConstantsManager.getInstance().getConstants().arbiter() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            getDetailModel().setVolumeTypeSilently(volumeType);
         }
     }
 
