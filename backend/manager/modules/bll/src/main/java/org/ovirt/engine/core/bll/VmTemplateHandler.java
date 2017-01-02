@@ -100,8 +100,6 @@ public class VmTemplateHandler implements BackendService {
         for (Disk dit : diskList) {
             DiskImage diskImage = (DiskImage) dit;
             vmt.getDiskTemplateMap().put(dit.getId(), diskImage);
-            // Translation from number of sectors to GB.
-            vmt.setSizeGB(Double.valueOf(dit.getSize()) / Double.valueOf(1024 * 1024 * 1024));
             vmt.getDiskImageMap().put(dit.getId(), diskImage);
 
             DiskVmElement dve = diskVmElementDao.get(new VmDeviceId(dit.getId(), vmt.getId()));

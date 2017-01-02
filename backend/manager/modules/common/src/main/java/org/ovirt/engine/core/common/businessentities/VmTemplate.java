@@ -47,8 +47,6 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private HashMap<Guid, DiskImage> diskTemplateMap;
 
-    private double bootDiskSizeGB;
-
     private double actualDiskSize;
 
     private VmEntityType templateType;
@@ -264,14 +262,6 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     public void setStoragePoolName(String value) {
         storagePoolName = value;
-    }
-
-    public double getSizeGB() {
-        return bootDiskSizeGB;
-    }
-
-    public void setSizeGB(double value) {
-        bootDiskSizeGB = value;
     }
 
     @JsonIgnore

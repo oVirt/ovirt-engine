@@ -412,7 +412,6 @@ public final class Cloner {
         obj.setPriority(instance.getPriority());
         obj.setIsoPath(instance.getIsoPath());
         obj.setOrigin(instance.getOrigin());
-        obj.setSizeGB(instance.getSizeGB());
         // TODO: see comments above on DiskImageMap
         obj.setDiskImageMap(instance.getDiskImageMap());
         obj.setInterfaces(instance.getInterfaces());
