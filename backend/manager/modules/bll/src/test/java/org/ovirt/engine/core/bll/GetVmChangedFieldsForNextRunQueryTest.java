@@ -134,9 +134,9 @@ public class GetVmChangedFieldsForNextRunQueryTest
         // field that should not count
         srcVm.setUseLatestVersion(false);
         dstVm.setUseLatestVersion(true);
-        srcVm.setName("a");
-        dstVm.setName("b");
         // some equal fields
+        srcVm.setName("a");
+        dstVm.setName("a");
         srcVm.setComment("my comment..");
         dstVm.setComment("my comment..");
         srcVm.setOriginalTemplateName("template4");

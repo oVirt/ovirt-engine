@@ -39,7 +39,8 @@ import org.ovirt.engine.core.compat.Version;
 public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Commented, HasSerialNumberPolicy, HasMigrationOptions, Comparable<VmBase> {
     private static final long serialVersionUID = 1078548170257965614L;
 
-    @EditableVmField
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
     private String name;
 
     @EditableVmField
