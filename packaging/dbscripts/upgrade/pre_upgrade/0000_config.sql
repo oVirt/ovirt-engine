@@ -193,6 +193,10 @@ select fn_db_add_config_value('OsRepositoryConfDir','/osinfo.conf.d','general');
 select fn_db_add_config_value('IterationsWithBalloonProblem','3','general');
 select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
 
+-- migration support per ip version
+select fn_db_add_config_value('Ipv6MigrationProperlyHandled', 'true', '4.2');
+select fn_db_add_config_value_for_versions_up_to('Ipv6MigrationProperlyHandled', 'false', '4.2');
+
 select fn_db_add_config_value_for_versions_up_to('DataOperationsByHSM', 'false', '4.1');
 
 -- default requirement for rng sources (comma-separated string of 'RANDOM' and 'HWRNG')

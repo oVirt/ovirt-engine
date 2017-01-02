@@ -1940,5 +1940,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     QemuimgCommitSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    Ipv6MigrationProperlyHandled,
+
     Invalid
 }
