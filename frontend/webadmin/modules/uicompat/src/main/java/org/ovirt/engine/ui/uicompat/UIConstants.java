@@ -2044,5 +2044,7 @@ public interface UIConstants extends Constants {
     String storageDomainDRTitle();
 
     String noManagedGlusterVolumeMessage();
+
+    String vmLeasesSupported();
 }
 

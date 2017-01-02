@@ -3355,6 +3355,11 @@ public class AsyncDataProvider {
                 asyncQuery);
     }
 
+    public boolean isVmLeasesFeatureSupported(Version clusterVersion) {
+        return (Boolean) getConfigValuePreConverted(
+                ConfigurationValues.VmLeasesSupported, clusterVersion.getValue());
+    }
+
     public void getGlusterVolumesForStorageDomain(AsyncQuery<List<GlusterVolumeEntity>> aQuery) {
         aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAllGlusterVolumesForStorageDomain,

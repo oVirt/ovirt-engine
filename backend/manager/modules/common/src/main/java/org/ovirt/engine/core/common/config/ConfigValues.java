@@ -1947,5 +1947,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     QemuimgCommitSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    VmLeasesSupported,
+
     Invalid
 }

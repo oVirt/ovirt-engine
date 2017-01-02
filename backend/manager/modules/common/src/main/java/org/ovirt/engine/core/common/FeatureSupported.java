@@ -165,4 +165,12 @@ public class FeatureSupported {
     public static boolean isQemuimgCommitSupported(Version version) {
         return supportedInConfig(ConfigValues.QemuimgCommitSupported, version);
     }
+
+    /**
+     * @param version Compatibility version to check for.
+     * @return {@code true} if VM leases are supported for this version.
+     */
+    public static boolean isVmLeasesSupported(Version version) {
+        return supportedInConfig(ConfigValues.VmLeasesSupported, version);
+    }
 }

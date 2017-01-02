@@ -174,6 +174,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         postDataCenterWithClusterSelectedItemChanged();
     }
 
+    private void setVmLeasesAvailability() {
+        TModel model = getModel();
+        Version compVer = model.getSelectedCluster().getCompatibilityVersion();
+        if (model.getCustomCompatibilityVersion().getSelectedItem() != null) {
+            compVer = model.getCustomCompatibilityVersion().getSelectedItem();
+        }
+        model.getLease().setIsChangeable(
+                AsyncDataProvider.getInstance().isVmLeasesFeatureSupported(compVer),
+                constants.vmLeasesSupported());
+    }
+
     private void setRngAvailability() {
         TModel model = getModel();
         Set<VmRngDevice.Source> requiredRngSources = model.getSelectedCluster().getRequiredRngSources();
@@ -1275,6 +1286,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateLeaseStorageDomains(final Guid selectedStorageDomainId) {
+        setVmLeasesAvailability();
         AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
                 new AsyncCallback<List<StorageDomain>>() {
                     @Override
@@ -1288,12 +1300,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             }
                         }
                         getModel().getLease().setItems(domains);
-                        if (selectedStorageDomainId != null) {
+                        if (!getModel().getLease().getIsChangable() || selectedStorageDomainId == null) {
+                            getModel().getLease().setSelectedItem(null);
+                        }
+                        else {
                             for (StorageDomain domain : domains) {
-                                if (domain == null) {
-                                    continue;
-                                }
-                                if (selectedStorageDomainId.equals(domain.getId())) {
+                                if (domain != null && selectedStorageDomainId.equals(domain.getId())) {
                                     getModel().getLease().setSelectedItem(domain);
                                     break;
                                 }

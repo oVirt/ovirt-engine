@@ -101,7 +101,8 @@ public enum ConfigurationValues {
     VM32BitMaxMemorySizeInMB(ConfigAuthType.User),
     VM64BitMaxMemorySizeInMB(ConfigAuthType.User),
     VMPpc64BitMaxMemorySizeInMB(ConfigAuthType.User),
-    PassDiscardSupported(ConfigAuthType.User);
+    PassDiscardSupported(ConfigAuthType.User),
+    VmLeasesSupported(ConfigAuthType.User);
 
 
     public static enum ConfigAuthType {
