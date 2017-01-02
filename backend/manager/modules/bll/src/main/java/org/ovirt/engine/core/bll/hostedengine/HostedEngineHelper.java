@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -49,6 +49,9 @@ public class HostedEngineHelper {
 
     @Inject
     private VdsSpmIdMapDao vdsSpmIdMapDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     @Inject
     private ResourceManager resourceManager;
@@ -129,8 +132,7 @@ public class HostedEngineHelper {
             return;
         }
         DiskImage disk = diskList.get(0);
-        List<StorageDomain> allStorageDomainsByImageId = DbFacade.getInstance().getStorageDomainDao().
-                getAllStorageDomainsByImageId(disk.getImageId());
+        List<StorageDomain> allStorageDomainsByImageId = storageDomainDao.getAllStorageDomainsByImageId(disk.getImageId());
         if(allStorageDomainsByImageId == null || allStorageDomainsByImageId.isEmpty()){
             return;
         }
