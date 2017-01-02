@@ -154,6 +154,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
         model.setEntity(getEntity().getId());
         setWindow(model);
         model.startProgress();
+        model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
         model.getCommands().add(UICommand.createDefaultOkUiCommand("OnRestore", this)); //$NON-NLS-1$
         model.getCommands().add(UICommand.createCancelUiCommand(CANCEL_COMMAND, this)); //$NON-NLS-1$);
         model.init(getSelectedItems(), getEntity().getId());
