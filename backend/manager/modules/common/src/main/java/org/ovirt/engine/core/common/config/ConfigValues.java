@@ -1947,5 +1947,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     Ipv6MigrationProperlyHandled,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    VmLeasesSupported,
+
     Invalid
 }

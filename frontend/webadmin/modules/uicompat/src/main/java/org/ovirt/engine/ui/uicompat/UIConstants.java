@@ -2040,5 +2040,7 @@ public interface UIConstants extends Constants {
     String vnicProfilesMapping();
 
     String heHostRemovalWarning();
+
+    String vmLeasesSupported();
 }
 

@@ -169,4 +169,12 @@ public class FeatureSupported {
     public static boolean isIpv6MigrationProperlyHandled(Version version) {
         return supportedInConfig(ConfigValues.Ipv6MigrationProperlyHandled, version);
     }
+
+    /**
+     * @param version Compatibility version to check for.
+     * @return {@code true} if VM leases are supported for this version.
+     */
+    public static boolean isVmLeasesSupported(Version version) {
+        return supportedInConfig(ConfigValues.VmLeasesSupported, version);
+    }
 }
