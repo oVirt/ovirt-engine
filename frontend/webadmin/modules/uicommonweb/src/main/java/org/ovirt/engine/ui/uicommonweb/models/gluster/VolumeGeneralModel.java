@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class VolumeGeneralModel extends EntityModel<GlusterVolumeEntity> {
@@ -138,8 +139,14 @@ public class VolumeGeneralModel extends EntityModel<GlusterVolumeEntity> {
         GlusterVolumeEntity entity = getEntity();
         setName(entity.getName());
         setVolumeId(entity.getId() != null ? entity.getId().toString() : null);
-        setVolumeType(entity.getVolumeType() != null ? entity.getVolumeType().toString() : null);
-        setReplicaCount(entity.getReplicaCount() != null ? Integer.toString(entity.getReplicaCount()) : null);
+        String volumeType =
+                entity.getVolumeType() != null ? EnumTranslator.getInstance().translate(entity.getVolumeType()) : null;
+        if (entity.getIsArbiter()) {
+            volumeType += " " + ConstantsManager.getInstance().getConstants().arbiter(); //$NON-NLS-1$
+        }
+        setVolumeType(volumeType);
+        setReplicaCount(entity.getReplicaCount() != null ? entity.getIsArbiter()
+                ? entity.getReplicaCount() - 1 + " + " + 1 : Integer.toString(entity.getReplicaCount()) : null); //$NON-NLS-1$
         setStripeCount(entity.getStripeCount() != null ? Integer.toString(entity.getStripeCount()) : null);
         setDisperseCount(entity.getDisperseCount() != null ? Integer.toString(entity.getDisperseCount()) : null);
         setRedundancyCount(entity.getRedundancyCount() != null ? Integer.toString(entity.getRedundancyCount()) : null);
