@@ -57,7 +57,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     private Guid id;
 
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private Guid clusterId;
 
@@ -88,7 +88,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableVmField(
             onHostedEngine = true,
             hotsetAllowed = true,
-            onStatuses = { VMStatus.Down })
+            onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private int memSizeMb;
 
@@ -100,7 +100,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @CopyOnNewVersion
     @EditableVmField(
             onHostedEngine = true,
-            onStatuses = { VMStatus.Down })
+            onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @Min(1)
     private int maxMemorySizeMb;
@@ -108,7 +108,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @CopyOnNewVersion
     @EditableVmField(
             onHostedEngine = true,
-            onStatuses = { VMStatus.Down })
+            onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @SizeFromConfigValue(
             maxConfig = ConfigValues.MaxIoThreadsPerVm,
@@ -121,7 +121,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableVmField(
             onHostedEngine = true,
             hotsetAllowed = true,
-            onStatuses = { VMStatus.Down })
+            onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @CopyOnNewVersion
     private int numOfSockets;
@@ -129,7 +129,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @CopyOnNewVersion
     @EditableVmField(
             onHostedEngine = true,
-            onStatuses = { VMStatus.Down })
+            onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private int cpuPerSocket;
 
@@ -141,12 +141,12 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @CopyOnNewVersion
     @EditableVmField(
             onHostedEngine = true,
-            onStatuses = { VMStatus.Down })
+            onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private int threadsPerCpu;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @Size(max = BusinessEntitiesDefinitions.VM_EMULATED_MACHINE_SIZE)
     @ValidI18NExtraName(message = "ACTION_TYPE_FAILED_EMULATED_MACHINE_MAY_NOT_CONTAIN_SPECIAL_CHARS",
@@ -154,7 +154,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private String customEmulatedMachine;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @Size(max = BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE)
     @ValidI18NExtraName(message = "ACTION_TYPE_FAILED_CPU_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS",
@@ -162,19 +162,19 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private String customCpuName; // overrides cluster cpu. (holds the actual vdsVerb)
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors,
             message = "VALIDATION_VM_NUM_OF_MONITORS_EXCEEDED")
     private int numOfMonitors;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private boolean singleQxlPci;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_TIME_ZONE_SIZE)
     private String timeZone;
@@ -184,7 +184,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private VmType vmType;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private UsbPolicy usbPolicy;
 
@@ -192,16 +192,16 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private boolean failBack;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private BootSequence defaultBootSequence;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     private int niceLevel;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private int cpuShares;
 
@@ -213,7 +213,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableVmField
     private boolean autoStartup;
 
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private boolean stateless;
 
@@ -222,7 +222,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private boolean deleteProtected;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private SsoMethod ssoMethod;
 
@@ -242,7 +242,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private OriginType origin;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
@@ -251,7 +251,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private String kernelUrl;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
@@ -260,7 +260,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private String kernelParams;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
@@ -318,21 +318,21 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private List<VmNumaNode> vNumaNodeList;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String userDefinedProperties;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String predefinedProperties;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private String customProperties;
 
@@ -341,12 +341,12 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private ConsoleDisconnectAction consoleDisconnectAction;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private Version customCompatibilityVersion;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private Guid leaseStorageDomainId;
 
@@ -405,12 +405,12 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableVmTemplateField
     private List<Guid> dedicatedVmForVdsList;
 
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private DisplayType defaultDisplayType;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
         groups = { CreateEntity.class, UpdateEntity.class },
@@ -420,12 +420,12 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @CopyOnNewVersion
     @EditableVmField(
             onHostedEngine = true,
-            onStatuses = { VMStatus.Down })
+            onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private int minAllocatedMem;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private boolean runAndPause;
 
@@ -436,7 +436,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private VmInit vmInit;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private SerialNumberPolicy serialNumberPolicy;
 
@@ -444,23 +444,23 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
      * Serial number used when {@link serialNumberPolicy} is set to {@link SerialNumberPolicy.CUSTOM}
      */
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @Size(max = BusinessEntitiesDefinitions.VM_SERIAL_NUMBER_SIZE)
     private String customSerialNumber;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private boolean bootMenuEnabled;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private boolean spiceFileTransferEnabled;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = { VMStatus.Down })
+    @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private boolean spiceCopyPasteEnabled;
 
