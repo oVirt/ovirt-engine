@@ -57,7 +57,7 @@ public class VmHandlerTest {
         VmStatic dest = new VmStatic();
         dest.setName(RandomUtils.instance().nextString(10));
 
-        assertTrue("Update should be valid for different names",
+        assertFalse("Update should not be valid for different names",
                 vmHandler.isUpdateValid(src, dest));
     }
 
