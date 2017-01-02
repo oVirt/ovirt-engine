@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
-import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -37,19 +36,11 @@ public final class VdsmImagePoller {
             return HostJobStatus.running;
         }
 
-        if (imageInfo.getStatus() == ImageStatus.ILLEGAL) {
-            log.info("Command {} id: '{}': the volume is in ILLEGAL status - the job has failed",
+        if (imageInfo.getGeneration() == executionGeneration + 1) {
+            log.info("Command {} id: '{}': the volume lease is free and the generation was incremented - the " +
+                            "job execution has completed successfully",
                     actionType, cmdId);
-            return HostJobStatus.failed;
-        }
-
-        if (imageInfo.getStatus() == ImageStatus.OK) {
-            if (imageInfo.getGeneration() == executionGeneration + 1) {
-                log.info("Command {} id: '{}': the volume is in OK status and the generation was incremented - the " +
-                                "job execution has completed successfully",
-                        actionType, cmdId);
-                return HostJobStatus.done;
-            }
+            return HostJobStatus.done;
         }
 
         if (imageInfo.getGeneration() == executionGeneration + StorageConstants.ENTITY_FENCING_GENERATION_DIFF) {
