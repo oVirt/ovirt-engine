@@ -64,8 +64,7 @@ public class HostedEngineHelper {
 
     @PostConstruct
     private void init() {
-        List<VmStatic> byName = vmStaticDao.getAllByName(
-                Config.<String> getValue(ConfigValues.HostedEngineVmName));
+        List<VmStatic> byName = vmStaticDao.getAllByName(Config.getValue(ConfigValues.HostedEngineVmName));
         if (byName != null && !byName.isEmpty()) {
             VmStatic vmStatic = byName.get(0);
             hostedEngineVm = vmDao.get(vmStatic.getId());
