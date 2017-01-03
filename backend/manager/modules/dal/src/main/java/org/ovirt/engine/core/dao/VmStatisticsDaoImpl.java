@@ -39,6 +39,8 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
                         statistics.getUsageCpuPercent())
                 .addValue("usage_mem_percent",
                         statistics.getUsageMemPercent())
+                .addValue("usage_network_percent",
+                        statistics.getUsageNetworkPercent())
                 .addValue("disks_usage",
                                 statistics.getDisksUsage())
                 .addValue("guest_mem_buffered", statistics.getGuestMemoryBuffered())
@@ -56,6 +58,7 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
         entity.setCpuUser(rs.getDouble("cpu_user"));
         entity.setUsageCpuPercent((Integer) rs.getObject("usage_cpu_percent"));
         entity.setUsageMemPercent((Integer) rs.getObject("usage_mem_percent"));
+        entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
         entity.setDisksUsage((String) rs.getObject("disks_usage"));
         entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
         entity.setGuestMemoryBuffered(getLong(rs, "guest_mem_buffered"));

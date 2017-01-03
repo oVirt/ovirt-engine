@@ -5025,6 +5025,7 @@
         <column>vm_guid</column>
         <column>cpu_user</column>
         <column>cpu_sys</column>
+        <column>usage_network_percent</column>
         <column>usage_mem_percent</column>
         <column>usage_cpu_percent</column>
         <column>_update_date</column>
@@ -5032,6 +5033,7 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
             <value>17</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>17</value>
@@ -5042,12 +5044,14 @@
             <value>17</value>
             <value>0</value>
             <value>0</value>
+            <value>0</value>
             <value>17</value>
             <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <value>17</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>17</value>
@@ -5058,12 +5062,14 @@
             <value>17</value>
             <value>0</value>
             <value>0</value>
+            <value>0</value>
             <value>17</value>
             <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
             <value>17</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>17</value>
@@ -5074,6 +5080,7 @@
             <value>17</value>
             <value>0</value>
             <value>0</value>
+            <value>0</value>
             <value>17</value>
             <null />
         </row>
@@ -5082,12 +5089,14 @@
             <value>17</value>
             <value>0</value>
             <value>0</value>
+            <value>0</value>
             <value>17</value>
             <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
             <value>17</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>17</value>
