@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskStatus;
+import org.ovirt.engine.api.model.DiskStorageType;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
@@ -75,5 +76,21 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         model.setReadOnly(null);
         entity = DiskMapper.map(model, null);
         assertNull(entity.getReadOnly());
+    }
+
+    @Test
+    public void testInitialSize() {
+        Long initalSize = 54321L;
+        Disk model = new Disk();
+        model.setStorageType(DiskStorageType.IMAGE);
+        model.setInitialSize(initalSize);
+
+        DiskImage entity = (DiskImage) DiskMapper.map(model, null);
+        assertEquals("ActualSizeInBytes doesn't match the initial size as expected",
+                initalSize.longValue(),
+                entity.getActualSizeInBytes());
+
+        model = DiskMapper.map(entity, null);
+        assertNull("initial size shouldn't be mapped back to the model", model.getInitialSize());
     }
 }
