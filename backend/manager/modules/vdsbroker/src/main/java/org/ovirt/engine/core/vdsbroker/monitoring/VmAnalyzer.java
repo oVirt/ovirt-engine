@@ -229,6 +229,16 @@ public class VmAnalyzer {
             // otherwise continue with default processing
             break;
 
+        case WaitForLaunch:
+            if (dbVm.getStatus() == VMStatus.Unknown) {
+                // do nothing, better keep the VM as unknown on the previous host
+                // until we are sure that the VM is actually running on this host
+                return;
+            }
+
+            // otherwise continue with default processing
+            break;
+
         default:
         }
 
@@ -545,6 +555,9 @@ public class VmAnalyzer {
 
         if (dbVm.getStatus() == VMStatus.Unknown && vdsmVmDynamic.getStatus() != VMStatus.Unknown) {
             auditVmRestoredFromUnknown();
+            if (!EnumSet.of(VMStatus.WaitForLaunch, VMStatus.MigratingTo).contains(vdsmVmDynamic.getStatus())) {
+                resourceManager.removeAsyncRunningVm(dbVm.getId());
+            }
         }
 
         if (dbVm.getStatus() != VMStatus.Up && vdsmVmDynamic.getStatus() == VMStatus.Up ||

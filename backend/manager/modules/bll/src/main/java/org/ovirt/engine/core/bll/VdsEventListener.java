@@ -635,6 +635,7 @@ public class VdsEventListener implements IVdsEventListener {
         EngineLock engineLock = new EngineLock(Collections.emptyMap(), Collections.emptyMap());
         ThreadPoolUtil.execute(() -> {
             for (Guid vmId : vmIds) {
+                resourceManagerProvider.get().removeAsyncRunningVm(vmId);
                 backend.runInternalAction(
                         VdcActionType.RunVm,
                         buildRunVmParameters(vmId),

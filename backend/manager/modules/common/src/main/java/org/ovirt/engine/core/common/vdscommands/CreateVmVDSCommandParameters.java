@@ -9,6 +9,7 @@ public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     private VM vm;
     private SysPrepParams sysPrepParams;
+    private boolean runInUnknownStatus;
 
     public CreateVmVDSCommandParameters() {
     }
@@ -30,9 +31,18 @@ public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.sysPrepParams = sysPrepParams;
     }
 
+    public boolean isRunInUnknownStatus() {
+        return runInUnknownStatus;
+    }
+
+    public void setRunInUnknownStatus(boolean runUnknown) {
+        this.runInUnknownStatus = runUnknown;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("vm", getVm());
     }
+
 }

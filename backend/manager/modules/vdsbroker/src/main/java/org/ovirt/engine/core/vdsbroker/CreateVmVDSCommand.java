@@ -41,11 +41,13 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
             try {
                 vdsReturnValue = runCreateVDSCommand();
                 if (vdsReturnValue.getSucceeded()) {
-                    vmDao.saveIsInitialized(vm.getId(), true);
-                    vm.setStopReason(null);
-                    vm.setInitialized(true);
-                    vm.setRunOnVds(getParameters().getVdsId());
-                    vmManager.update(vm.getDynamicData());
+                    if (!getParameters().isRunInUnknownStatus()) {
+                        vmDao.saveIsInitialized(vm.getId(), true);
+                        vm.setStopReason(null);
+                        vm.setInitialized(true);
+                        vm.setRunOnVds(getParameters().getVdsId());
+                        vmManager.update(vm.getDynamicData());
+                    }
                 } else {
                     handleCommandResult(vdsReturnValue);
                     resourceManager.removeAsyncRunningVm(getParameters().getVmId());
