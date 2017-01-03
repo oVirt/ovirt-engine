@@ -214,36 +214,39 @@ public class VmAnalyzer {
                         vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
             }
 
-            break;
+            return;
 
         case MigratingFrom:
             // do nothing
-            break;
+            return;
 
         case Paused:
             if (vdsmVm.getVmDynamic().getPauseStatus() == VmPauseStatus.POSTCOPY) {
                 // do nothing
-                break;
+                return;
             }
+
             // otherwise continue with default processing
+            break;
 
         default:
-            if (isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning()) {
-                succeededToRun = true;
-            }
+        }
 
-            if (vdsmVm.getVmDynamic().getStatus() == VMStatus.Up) {
-                succeededToRun = true;
-            }
+        if (isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning()) {
+            succeededToRun = true;
+        }
 
-            dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
-            saveDynamic(dbVm);
+        if (vdsmVm.getVmDynamic().getStatus() == VMStatus.Up) {
+            succeededToRun = true;
+        }
 
-            updateStatistics();
+        dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
+        saveDynamic(dbVm);
 
-            if (!vdsManager.isInitialized()) {
-                resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
-            }
+        updateStatistics();
+
+        if (!vdsManager.isInitialized()) {
+            resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
         }
     }
 
