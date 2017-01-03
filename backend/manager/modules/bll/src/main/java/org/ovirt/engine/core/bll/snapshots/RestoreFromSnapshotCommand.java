@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
+import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -30,6 +31,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters> extends BaseImagesCommand<T> {
 
     @Inject
+    private BlockStorageDiscardFunctionalityHelper discardHelper;
+
+    @Inject
     private PostDeleteActionHandler postDeleteActionHandler;
 
     private final ArrayList<Guid> _imagesToDelete = new ArrayList<>();
@@ -45,6 +49,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
                 getImage().setActive(true);
                 imageDao.update(getImage().getImage());
             }
+            discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
 
             setSucceeded(true);
         }
