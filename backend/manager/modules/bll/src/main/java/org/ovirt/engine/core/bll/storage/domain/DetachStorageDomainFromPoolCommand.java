@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.domain;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -124,7 +126,18 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     protected boolean validate() {
         return canDetachStorageDomainWithVmsAndDisks(getStorageDomain()) &&
                 canDetachDomain(getParameters().getDestroyingPool(),
-                        getParameters().getRemoveLast());
+                        getParameters().getRemoveLast()) &&
+                isNoLeasesOnStorageDomain();
+    }
+
+    private boolean isNoLeasesOnStorageDomain() {
+        List<VmStatic> entitiesWithLeases = vmStaticDao.getAllWithLeaseOnStorageDomain(getStorageDomain().getId());
+        if (!entitiesWithLeases.isEmpty()) {
+            String names = entitiesWithLeases.stream().map(VmStatic::getName).collect(Collectors.joining(", "));
+            return failValidation(EngineMessage.ERROR_CANNOT_DETACH_DOMAIN_WITH_VMS_AND_TEMPLATES_LEASES,
+                    String.format("$entitiesNames %s", names));
+        }
+        return true;
     }
 
     @Override
