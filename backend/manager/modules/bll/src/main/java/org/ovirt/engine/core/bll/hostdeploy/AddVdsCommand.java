@@ -398,8 +398,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private String getInstalledVdsIdIfExists(SSHClient client) {
         try {
             ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(256);
-            client.executeCommand(Config.<String> getValue(ConfigValues.GetVdsmIdByVdsmToolCommand),
-                                  null, out, null);
+            client.executeCommand(Config.getValue(ConfigValues.GetVdsmIdByVdsmToolCommand), null, out, null);
             return new String(out.toByteArray(), StandardCharsets.UTF_8);
         }
         catch (Exception e) {
