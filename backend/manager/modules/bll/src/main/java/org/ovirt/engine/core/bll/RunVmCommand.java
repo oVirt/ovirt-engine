@@ -566,7 +566,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * @return the VDS create VM parameters
      */
     protected CreateVmVDSCommandParameters buildCreateVmParameters() {
-        return new CreateVmVDSCommandParameters(getVdsId(), getVm());
+        CreateVmVDSCommandParameters parameters  = new CreateVmVDSCommandParameters(getVdsId(), getVm());
+        parameters.setRunInUnknownStatus(getParameters().isRunInUnknownStatus());
+        return parameters;
     }
 
     protected void initParametersForExternalNetworks() {
