@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -76,7 +75,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                         new CopyImageVDSCommandParameters(storagePoolId, getParameters().getStorageDomainId(),
                                 getParameters().getVmId(), imageGroupId, snapshotId, destinationImageGroupID,
                                 getDestinationImageId(), getJsonDiskDescription(newImage),
-                                getParameters().getDestinationStorageDomainId(), CopyVolumeType.SharedVol,
+                                getParameters().getDestinationStorageDomainId(), getParameters().getCopyVolumeType(),
                                 targetFormat, newImage.getVolumeType(), getDiskImage().isWipeAfterDelete(),
                                 storageDomainDao.get(getParameters().getDestinationStorageDomainId())
                                         .isDiscardAfterDelete(),

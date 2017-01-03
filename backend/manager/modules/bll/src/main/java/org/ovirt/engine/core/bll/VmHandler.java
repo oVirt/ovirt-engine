@@ -585,6 +585,10 @@ public class VmHandler implements BackendService {
         }
     }
 
+    public boolean isWindowsVm(VM vm) {
+        return osRepository.isWindows(vm.getOs());
+    }
+
     /**
      * Check if the OS type is supported.
      *
