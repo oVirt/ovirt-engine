@@ -265,7 +265,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("10")
     NumberVdsRefreshesBeforeTryToStartUnknownVms,
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("30")
+    @DefaultValueAttribute("100")
     NumberVdsRefreshesBeforeRetryToStartUnknownVms,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
