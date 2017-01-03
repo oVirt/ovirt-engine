@@ -679,8 +679,8 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         log.debug("Removing ImageUpload id {}", getCommandId());
         imageTransferDao.remove(getCommandId());
         endSuccessfully();
-        log.info("Successfully uploaded {} (command id '{}')",
-                getUploadDescription(), getCommandId());
+        log.info("Successfully transferred disk '{}' (command id '{}')",
+                getParameters().getImageId(), getCommandId());
     }
 
     public void onFailed() {
@@ -688,8 +688,8 @@ public abstract class UploadImageCommand<T extends UploadImageParameters> extend
         log.debug("Removing ImageUpload id {}", getCommandId());
         imageTransferDao.remove(getCommandId());
         endWithFailure();
-        log.error("Failed to upload {} (command id '{}')",
-                getUploadDescription(), getCommandId());
+        log.error("Failed to transfer disk '{}' (command id '{}')",
+                getParameters().getImageId(), getCommandId());
     }
 
     @Override
