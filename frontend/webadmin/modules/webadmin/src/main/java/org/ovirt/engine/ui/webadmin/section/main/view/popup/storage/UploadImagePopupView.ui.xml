@@ -41,11 +41,6 @@
             margin: 0 !important;
         }
 
-        .progressPanel {
-            text-align: left;
-            padding: 10px;
-        }
-
         .optionsPanel {
             margin-top: 5px;
         }
@@ -99,7 +94,6 @@
                     </g:FlowPanel>
 
                     <g:FlowPanel ui:field="uploadMessagePanel" visible="false" addStyleNames="{style.messagePanel}" />
-                    <g:FlowPanel ui:field="progressMessagePanel" visible="false" addStyleNames="{style.progressPanel}" />
                 </g:FlowPanel>
 
                 <g:HorizontalPanel addStyleNames="{style.obrand_diskTypePanel}">

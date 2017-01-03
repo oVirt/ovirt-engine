@@ -65,9 +65,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     FlowPanel uploadMessagePanel;
 
     @UiField
-    FlowPanel progressMessagePanel;
-
-    @UiField
     FileUpload imageFileUpload;
 
     @UiField
@@ -138,9 +135,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if ("Message".equals(args.propertyName)) { //$NON-NLS-1$
                     setPanelMessage(uploadMessagePanel, model.getMessage());
-                }
-                else if ("Progress".equals(args.propertyName)) { //$NON-NLS-1$
-                    setPanelMessage(progressMessagePanel, model.getProgressStr());
                 }
                 else if ("IsValid".equals(args.propertyName)) { //$NON-NLS-1$
                     uploadMessagePanel.clear();
