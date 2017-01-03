@@ -540,6 +540,10 @@ public class VmAnalyzer {
 
         logVmStatusTransition();
 
+        if (dbVm.getStatus() == VMStatus.Unknown && vdsmVmDynamic.getStatus() != VMStatus.Unknown) {
+            auditVmRestoredFromUnknown();
+        }
+
         if (dbVm.getStatus() != VMStatus.Up && vdsmVmDynamic.getStatus() == VMStatus.Up ||
                 dbVm.getStatus() != VMStatus.PoweringUp && vdsmVmDynamic.getStatus() == VMStatus.PoweringUp) {
             poweringUp = true;
@@ -558,7 +562,7 @@ public class VmAnalyzer {
             auditVmRecoveredFromError();
         }
 
-        if (isRunSucceeded(vdsmVmDynamic) || isMigrationSucceeded(vdsmVmDynamic)) {
+        if (isRunSucceeded() || isMigrationSucceeded()) {
             // Vm moved to Up status - remove its record from Async
             // reportedAndUnchangedVms handling
             log.debug("removing VM '{}' from successful run VMs list", dbVm.getId());
@@ -647,13 +651,13 @@ public class VmAnalyzer {
         auditLog(logable, AuditLogType.VM_POWER_DOWN_FAILED);
     }
 
-    private boolean isRunSucceeded(VmDynamic vdsmVmDynamic) {
+    private boolean isRunSucceeded() {
         return !EnumSet.of(VMStatus.Up, VMStatus.MigratingFrom).contains(dbVm.getStatus())
-                && vdsmVmDynamic.getStatus() == VMStatus.Up;
+                && vdsmVm.getVmDynamic().getStatus() == VMStatus.Up;
     }
 
-    private boolean isMigrationSucceeded(VmDynamic vdsmVmDynamic) {
-        return dbVm.getStatus() == VMStatus.MigratingTo && vdsmVmDynamic.getStatus().isRunning();
+    private boolean isMigrationSucceeded() {
+        return dbVm.getStatus() == VMStatus.MigratingTo && vdsmVm.getVmDynamic().getStatus().isRunning();
     }
 
     private void updateVmDynamicData() {
@@ -710,10 +714,6 @@ public class VmAnalyzer {
                     getVmManager().getName(),
                     dbVm.getStatus().name(),
                     vdsmVm.getVmDynamic().getStatus().name());
-
-            if (dbVm.getStatus() == VMStatus.Unknown) {
-                logVmStatusTransionFromUnknown();
-            }
         }
     }
 
@@ -824,7 +824,7 @@ public class VmAnalyzer {
         return vdsId != null && vdsDynamicDao.get(vdsId).getStatus() == VDSStatus.NonResponsive;
     }
 
-    private void logVmStatusTransionFromUnknown() {
+    private void auditVmRestoredFromUnknown() {
         final AuditLogableBase auditLogable = Injector.injectMembers(new AuditLogableBase());
         auditLogable.setVmId(dbVm.getId());
         auditLogable.addCustomValue("VmStatus", vdsmVm.getVmDynamic().getStatus().toString());
