@@ -725,7 +725,10 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         createInfo.put(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
 
         if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
-            createInfo.put(VdsProperties.maxMemSize, vm.getMaxMemorySizeMb());
+            // because QEMU fails if memory and maxMemory are the same
+            if (vm.getVmMemSizeMb() != vm.getMaxMemorySizeMb()) {
+                createInfo.put(VdsProperties.maxMemSize, vm.getMaxMemorySizeMb());
+            }
             createInfo.put(VdsProperties.maxMemSlots, Config.getValue(ConfigValues.MaxMemorySlots));
         }
 
