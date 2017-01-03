@@ -48,7 +48,6 @@ public enum OsRepositoryImpl implements OsRepository {
     private Map<Integer, String> idToUnameLookup;
     private Map<String, Integer> backwardCompatibleNamesToIds;
     private static Map<ArchitectureType, Integer> defaultOsMap = new HashMap<>(2);
-    private Map<Integer, UsbControllerModel> osUsbBusType;
 
     static {
         defaultOsMap.put(ArchitectureType.x86_64, DEFAULT_X86_OS);
