@@ -118,6 +118,10 @@ public class DiskMapper {
         if (disk.isSetSparse()) {
             diskImage.setVolumeType(disk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
         }
+        // TODO: relevant when adding disk, needs to be removed when the initial size will be passed in the parameters.
+        if (disk.isSetInitialSize()) {
+            diskImage.setActualSizeInBytes(disk.getInitialSize());
+        }
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
                 && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
             StorageDomain storageDomain = disk.getStorageDomains().getStorageDomains().get(0);
