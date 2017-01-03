@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -13,6 +14,7 @@ public class CreateImageTemplateParameters extends ImagesActionsParametersBase i
     private Guid privateVmTemplateId;
     private VolumeType volumeType;
     private VolumeFormat volumeFormat;
+    private CopyVolumeType copyVolumeType = CopyVolumeType.SharedVol;
 
     public Guid getVmTemplateId() {
         return privateVmTemplateId;
@@ -76,5 +78,13 @@ public class CreateImageTemplateParameters extends ImagesActionsParametersBase i
 
     public void setVolumeType(VolumeType volumeType) {
         this.volumeType = volumeType;
+    }
+
+    public CopyVolumeType getCopyVolumeType() {
+        return copyVolumeType;
+    }
+
+    public void setCopyVolumeType(CopyVolumeType copyVolumeType) {
+        this.copyVolumeType = copyVolumeType;
     }
 }

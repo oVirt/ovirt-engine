@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.action;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -17,6 +18,8 @@ public class CreateAllTemplateDisksParameters extends VdcActionParametersBase {
 
     private Guid vmTemplateId;
     private String vmTemplateName;
+
+    private CopyVolumeType copyVolumeType = CopyVolumeType.SharedVol;
 
     public CreateAllTemplateDisksParameters() {
     }
@@ -63,6 +66,14 @@ public class CreateAllTemplateDisksParameters extends VdcActionParametersBase {
 
     public void setVmTemplateName(String vmTemplateName) {
         this.vmTemplateName = vmTemplateName;
+    }
+
+    public CopyVolumeType getCopyVolumeType() {
+        return copyVolumeType;
+    }
+
+    public void setCopyVolumeType(CopyVolumeType copyVolumeType) {
+        this.copyVolumeType = copyVolumeType;
     }
 
 }

@@ -17,6 +17,13 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmTemplateParameters extends VmTemplateManagementParameters implements HasVmIcon {
 
+    public enum Phase {
+        CREATE_TEMPLATE,
+        ASSIGN_ILLEGAL,
+        SEAL,
+        ASSIGN_LEGAL_SHARED
+    }
+
     private static final long serialVersionUID = 2114985552063499069L;
 
     public AddVmTemplateParameters() {
@@ -42,6 +49,8 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
     private boolean publicUse;
 
     private boolean copyVmPermissions;
+
+    private boolean sealTemplate;
     /*
      * This parameter is used to decide if to create sound device or not if it is null then legacy logic will be used:
      * create device for desktop type
@@ -53,6 +62,8 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
     private String templateVersionName;
 
     private Guid baseTemplateId;
+
+    private Phase phase = Phase.CREATE_TEMPLATE;
 
     public AddVmTemplateParameters(VmStatic masterVm, String name, String description) {
         this();
@@ -152,6 +163,14 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
         this.copyVmPermissions = copyVmPermissions;
     }
 
+    public boolean isSealTemplate() {
+        return sealTemplate;
+    }
+
+    public void setSealTemplate(boolean sealTemplate) {
+        this.sealTemplate = sealTemplate;
+    }
+
     public VmEntityType getTemplateType() {
         return templateType;
     }
@@ -183,4 +202,13 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
     @Override public void setVmLargeIcon(String vmLargeIcon) {
         this.vmLargeIcon = vmLargeIcon;
     }
+
+    public Phase getPhase() {
+        return phase;
+    }
+
+    public void setPhase(Phase phase) {
+        this.phase = phase;
+    }
+
 }

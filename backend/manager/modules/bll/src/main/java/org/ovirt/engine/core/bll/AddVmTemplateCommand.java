@@ -47,10 +47,13 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
+import org.ovirt.engine.core.common.action.AddVmTemplateParameters.Phase;
 import org.ovirt.engine.core.common.action.CreateAllTemplateDisksParameters;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.SealVmTemplateParameters;
+import org.ovirt.engine.core.common.action.UpdateAllTemplateDisksParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -74,6 +77,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -253,19 +257,38 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 if (pendingAsyncTasks) {
                     return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE : AuditLogType.USER_FAILED_ADD_VM_TEMPLATE;
                 } else {
-                    return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS : AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_FAILURE;
+                    return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS : getAuditLogFailureType();
                 }
             } else {
                 return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_SUCCESS : AuditLogType.USER_ADD_VM_TEMPLATE_FAILURE;
             }
 
         case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS
-                    : AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_FAILURE;
+            return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS : getAuditLogFailureType();
 
+        default:
+            return getAuditLogFailureType();
+        }
+    }
+
+    private AuditLogType getAuditLogFailureType() {
+        switch (getParameters().getPhase()) {
+        case CREATE_TEMPLATE:
+            return AuditLogType.USER_ADD_VM_TEMPLATE_CREATE_TEMPLATE_FAILURE;
+        case ASSIGN_ILLEGAL:
+            return AuditLogType.USER_ADD_VM_TEMPLATE_ASSIGN_ILLEGAL_FAILURE;
+        case SEAL:
+            return AuditLogType.USER_ADD_VM_TEMPLATE_SEAL_FAILURE;
+        case ASSIGN_LEGAL_SHARED:
         default:
             return AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_FAILURE;
         }
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        jobProperties.put("phase", getParameters().getPhase().name());
+        return jobProperties;
     }
 
     @Override
@@ -392,6 +415,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         parameters.setVmTemplateName(getVmTemplateName());
         parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
         parameters.setTargetDiskIds(targetDiskIds);
+        if (getParameters().isSealTemplate()) {
+            parameters.setCopyVolumeType(CopyVolumeType.LeafVol);
+        }
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
@@ -423,7 +449,86 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
-        return false;
+        if (!getParameters().isSealTemplate()) {
+            return false;
+        }
+
+        restoreCommandState();
+
+        switch (getParameters().getPhase()) {
+            case CREATE_TEMPLATE:
+                getParameters().setPhase(Phase.ASSIGN_ILLEGAL);
+                break;
+
+            case ASSIGN_ILLEGAL:
+                getParameters().setPhase(Phase.SEAL);
+                break;
+
+            case SEAL:
+                getParameters().setPhase(Phase.ASSIGN_LEGAL_SHARED);
+                break;
+
+            case ASSIGN_LEGAL_SHARED:
+                return false;
+        }
+        persistCommandIfNeeded();
+        executeNextOperation();
+        return true;
+    }
+
+    private void executeNextOperation() {
+        switch (getParameters().getPhase()) {
+            case ASSIGN_ILLEGAL:
+                assignLegalAndShared(false);
+                break;
+
+            case SEAL:
+                sealVmTemplate();
+                break;
+
+            case ASSIGN_LEGAL_SHARED:
+                assignLegalAndShared(true);
+                break;
+        }
+    }
+
+    private void assignLegalAndShared(boolean legalAndShared) {
+        VdcReturnValueBase returnValue = runInternalAction(VdcActionType.UpdateAllTemplateDisks,
+                buildUpdateAllTemplateDisksParameters(legalAndShared),
+                ExecutionHandler.createDefaultContextForTasks(getContext()));
+
+        if (!returnValue.getSucceeded()) {
+            throw new EngineException(returnValue.getFault().getError(), returnValue.getFault().getMessage());
+        }
+    }
+
+    private UpdateAllTemplateDisksParameters buildUpdateAllTemplateDisksParameters(boolean legalAndShared) {
+        UpdateAllTemplateDisksParameters parameters = new UpdateAllTemplateDisksParameters(getVmTemplateId(),
+                legalAndShared,
+                legalAndShared ? true : null);
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        return parameters;
+    }
+
+    private void sealVmTemplate() {
+        VdcReturnValueBase returnValue = runInternalAction(VdcActionType.SealVmTemplate,
+                buildSealVmTemplateParameters(),
+                ExecutionHandler.createDefaultContextForTasks(getContext()));
+
+        if (!returnValue.getSucceeded()) {
+            throw new EngineException(returnValue.getFault().getError(), returnValue.getFault().getMessage());
+        }
+    }
+
+    private SealVmTemplateParameters buildSealVmTemplateParameters() {
+        SealVmTemplateParameters parameters = new SealVmTemplateParameters();
+        parameters.setVmTemplateId(getVmTemplateId());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        return parameters;
     }
 
     private boolean doClusterRelatedChecks() {
@@ -569,6 +674,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
+        if (getParameters().isSealTemplate() && vmHandler.isWindowsVm(getVm())) {
+            return failValidation(EngineMessage.VM_TEMPLATE_CANNOT_SEAL_WINDOWS);
+        }
 
         if (isInstanceType) {
             return true;

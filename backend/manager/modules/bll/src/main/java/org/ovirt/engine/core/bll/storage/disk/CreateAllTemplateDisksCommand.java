@@ -158,6 +158,7 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
         createParams.setDiskProfileId(imageFromParams.getDiskProfileId());
         createParams.setVolumeFormat(imageFromParams.getVolumeFormat());
         createParams.setVolumeType(imageFromParams.getVolumeType());
+        createParams.setCopyVolumeType(getParameters().getCopyVolumeType());
         return createParams;
     }
 
