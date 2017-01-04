@@ -378,14 +378,23 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         switch (getActionState()) {
         case EXECUTE:
             if (getDisk().getDiskStorageType() == DiskStorageType.LUN) {
-                return getSucceeded() ? AuditLogType.USER_FINISHED_REMOVE_DISK_NO_DOMAIN
-                        : AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK_NO_DOMAIN;
+                if (getSucceeded()) {
+                    return AuditLogType.USER_FINISHED_REMOVE_DISK_NO_DOMAIN;
+                } else {
+                    return AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK_NO_DOMAIN;
+                }
             } else if (getDisk().getDiskStorageType() == DiskStorageType.CINDER) {
-                return getSucceeded() ? AuditLogType.USER_REMOVE_DISK_INITIATED
-                        : AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
+                if (getSucceeded()) {
+                    return AuditLogType.USER_REMOVE_DISK_INITIATED;
+                } else {
+                    return AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
+                }
             }
-            return getSucceeded() ? AuditLogType.USER_FINISHED_REMOVE_DISK
-                    : AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
+            if (getSucceeded()) {
+                return AuditLogType.USER_FINISHED_REMOVE_DISK;
+            } else {
+                return AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
+            }
         default:
             return AuditLogType.UNASSIGNED;
         }
