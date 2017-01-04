@@ -1091,11 +1091,21 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         Set<Guid> clusters = new HashSet<>();
         ArrayList<String> list = new ArrayList<>();
+        boolean heOnHosts = false;
         for (VDS item : Linq.<VDS> cast(getSelectedItems())) {
-            list.add(item.getName());
             clusters.add(item.getClusterId());
+            String name = item.getName();
+            if (item.isHostedEngineDeployed()) {
+                name = name + " *"; //$NON-NLS-1$
+                heOnHosts = true;
+            }
+            list.add(name);
         }
         model.setItems(list);
+
+        if (heOnHosts) {
+            model.setNote(ConstantsManager.getInstance().getConstants().heHostRemovalWarning());
+        }
 
         // Remove Force option will be shown only if
         // - All the selected hosts belongs to same cluster

@@ -2036,5 +2036,7 @@ public interface UIConstants extends Constants {
     String headlessMode();
 
     String vnicProfilesMapping();
+
+    String heHostRemovalWarning();
 }
 
