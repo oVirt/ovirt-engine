@@ -64,6 +64,11 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
         super(parameters, cmdContext);
     }
 
+    // This is needed for command resume infrastructure
+    public ImportHostedEngineStorageDomainCommand(Guid commandId) {
+        super(commandId);
+    }
+
     @Override
     protected void init() {
         setVdsId(getParameters().getVdsId());
