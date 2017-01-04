@@ -34,6 +34,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -122,6 +123,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
+
+    @Inject
+    private BlockStorageDiscardFunctionalityHelper discardHelper;
 
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
@@ -913,6 +917,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (getParameters().getPoolId() != null) {
             addVmToPool();
         }
+
+        discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
     }
 
     /**
