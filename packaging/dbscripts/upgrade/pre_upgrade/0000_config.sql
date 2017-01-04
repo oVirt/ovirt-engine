@@ -870,7 +870,7 @@ select fn_db_add_config_value('UseHostNameIdentifier', 'false', 'general');
 -- and from the update version and beyond, the input value.
 ------------------------------------------------------------------------------------
 -- Gluster Tuned profile --
-select fn_db_split_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-virtualization', 'rhgs-sequential-io,rhgs-random-io', '3.6');
+select fn_db_split_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-virtualization', 'virtual-host,rhgs-sequential-io,rhgs-random-io', '3.6');
 
 ------------------------------------------------------------------------------------
 --                  Simple direct updates section
