@@ -23,6 +23,14 @@ public class VmNumaSupportModel extends NumaSupportModel {
 
         if (Guid.isNullOrEmpty(vm.getId())) {
             vmsWithvNumaNodeList.add(vm);
+        } else {
+            for (VM vmFromDb : vmsWithvNumaNodeList) {
+                if (vmFromDb.getId().equals(vm.getId())) {
+                    // maintains NUMA pinning settings in UI prior to save
+                    vmFromDb.setvNumaNodeList(vm.getvNumaNodeList());
+                    break;
+                }
+            }
         }
     }
 
