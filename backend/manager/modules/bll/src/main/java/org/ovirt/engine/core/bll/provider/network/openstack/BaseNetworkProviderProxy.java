@@ -254,7 +254,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
                     List<String> modifiedSecurityGroups = securityGroupsChanged ?
                             securityGroups : port.getSecurityGroups();
                     Port portForUpdate = modifyPortForAllocate(port,
-                            hostId, hostChanged, modifiedSecurityGroups);
+                            hostId, hostChanged, modifiedSecurityGroups, nic.getMacAddress());
                     port = getClient().ports().update(portForUpdate).execute();
                 }
             }
@@ -275,7 +275,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     }
 
     protected Port modifyPortForAllocate(Port port, String hostId, boolean hostChanged,
-            List<String> modifiedSecurityGroups) {
+                                         List<String> modifiedSecurityGroups, String macAddress) {
         Port portForUpdate = new PortForUpdate();
         portForUpdate.setId(port.getId());
         portForUpdate.setSecurityGroups(modifiedSecurityGroups);
@@ -283,6 +283,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         if (hostChanged) {
             portForUpdate.setBinding(new Binding());
             portForUpdate.getBinding().setHostId(hostId);
+            portForUpdate.setMacAddress(macAddress);
         }
         return portForUpdate;
     }
