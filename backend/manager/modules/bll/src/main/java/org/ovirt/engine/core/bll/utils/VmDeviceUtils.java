@@ -1738,9 +1738,10 @@ public class VmDeviceUtils {
      * @param vm the relevant VM
      * @param objectWithEditableDeviceFields object that contains properties which are annotated with
      *                                       EditableDeviceOnVmStatusField (e.g. parameters file)
+     * @param vmVideoDeviceTypeforNextRun VM video device type for next run
      * @return a map of device ID to VmDevice
      */
-    public Map<Guid, VmDevice> getVmDevicesForNextRun(VM vm, Object objectWithEditableDeviceFields) {
+    public Map<Guid, VmDevice> getVmDevicesForNextRun(VM vm, Object objectWithEditableDeviceFields, DisplayType vmVideoDeviceTypeforNextRun) {
         setVmDevices(vm.getStaticData());
         Map<Guid, VmDevice> vmManagedDeviceMap = vm.getManagedVmDeviceMap();
 
@@ -1792,10 +1793,28 @@ public class VmDeviceUtils {
 
         // @TODO - this was added to handle the headless VM since the VIDEO devices were added anyway with the DB value instead of the
         // new configuration value. Should be handled correctly while the task of removing the static.displaytype and handling the VIDEO device
-        // as all other devices
-        VmDevice device = VmDeviceCommonUtils.findVmDeviceByGeneralType(vmManagedDeviceMap, VmDeviceGeneralType.VIDEO);
-        if (device != null) {
-            vmManagedDeviceMap.remove(device.getDeviceId());
+        // as all other devices will be done
+        if (vmVideoDeviceTypeforNextRun == DisplayType.none) {
+            vmManagedDeviceMap = vmManagedDeviceMap.entrySet()
+                    .stream().filter(entry -> !entry.getValue().getType().equals(VmDeviceGeneralType.VIDEO))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        } else if (vm.getDefaultDisplayType() == DisplayType.none) {
+            VmDevice videoDevice = new VmDevice(
+                    new VmDeviceId(Guid.newGuid(), vm.getId()),
+                    VmDeviceGeneralType.VIDEO,
+                    vmVideoDeviceTypeforNextRun.toString(),
+                    "",
+                    0,
+                    Collections.emptyMap(),
+                    true,
+                    true,
+                    false,
+                    "",
+                    null,
+                    null,
+                    null);
+
+            vmManagedDeviceMap.put(videoDevice.getDeviceId(), videoDevice);
         }
 
         return vmManagedDeviceMap;

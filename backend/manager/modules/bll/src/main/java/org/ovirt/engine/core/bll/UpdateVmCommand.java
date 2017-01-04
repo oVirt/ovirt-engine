@@ -383,7 +383,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 true,
                 StringUtils.EMPTY,
                 Collections.emptyList(),
-                getVmDeviceUtils().getVmDevicesForNextRun(getVm(), getParameters()),
+                getVmDeviceUtils().getVmDevicesForNextRun(getVm(),
+                        getParameters(),
+                        getParameters().getVmStaticData().getDefaultDisplayType()),
                 getCompensationContext());
     }
 
