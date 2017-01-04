@@ -61,6 +61,14 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
             migrationInfo.put(VdsProperties.ENABLE_GUEST_EVENTS, parameters.isEnableGuestEvents());
         }
 
+        if (parameters.getMaxIncomingMigrations() != null) {
+            migrationInfo.put(VdsProperties.MIGRATION_INCOMING_LIMIT, parameters.getMaxIncomingMigrations());
+        }
+
+        if (parameters.getMaxOutgoingMigrations() != null) {
+            migrationInfo.put(VdsProperties.MIGRATION_OUTGOING_LIMIT, parameters.getMaxOutgoingMigrations());
+        }
+
         return migrationInfo;
     }
 }
