@@ -43,6 +43,7 @@ public class DiskHandler {
 
     public Map<Disk, DiskVmElement> getDiskToDiskVmElementMap(Guid vmId, Map<Guid, ? extends Disk> disksMap) {
         return diskVmElementDao.getAllForVm(vmId).stream()
+                .filter(dve -> disksMap.keySet().contains(dve.getDiskId()))
                 .collect(Collectors.toMap(diskVmElement ->
                         disksMap.get(diskVmElement.getId().getDeviceId()), Function.identity()));
     }
