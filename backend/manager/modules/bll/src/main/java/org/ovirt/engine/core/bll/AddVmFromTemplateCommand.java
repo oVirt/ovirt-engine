@@ -76,7 +76,6 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         getVm().getStaticData().setQuotaId(getParameters().getVmStaticData().getQuotaId());
         vmStaticDao.update(getVm().getStaticData());
         checkTrustedService();
-        logIfDisksHaveIllegalPassDiscard();
     }
 
     private void checkTrustedService() {
@@ -230,9 +229,5 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         default:
             return AuditLogType.USER_ADD_VM_FINISHED_FAILURE;
         }
-    }
-
-    private void logIfDisksHaveIllegalPassDiscard() {
-        discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
     }
 }
