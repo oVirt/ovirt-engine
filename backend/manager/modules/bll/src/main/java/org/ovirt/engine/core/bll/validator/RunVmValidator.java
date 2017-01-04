@@ -4,7 +4,6 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -150,12 +149,9 @@ public class RunVmValidator {
     }
 
     private List<DiskImage> filterReadOnlyAndPreallocatedDisks(List<DiskImage> vmImageDisks) {
-        List<DiskImage> retVal = new ArrayList<>();
-        for (DiskImage disk : vmImageDisks) {
-            if (!(disk.getVolumeType() == VolumeType.Preallocated || disk.getReadOnly())) {
-                retVal.add(disk);
-            }
-        }
+        List<DiskImage> retVal = vmImageDisks.stream()
+                .filter(disk -> !(disk.getVolumeType() == VolumeType.Preallocated || disk.getReadOnly()))
+                .collect(Collectors.toList());
         return retVal;
     }
 
