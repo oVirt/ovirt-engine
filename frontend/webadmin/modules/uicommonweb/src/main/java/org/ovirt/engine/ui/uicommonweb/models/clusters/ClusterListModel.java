@@ -755,8 +755,9 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
         cluster.setAutoConverge(model.getAutoConverge().getSelectedItem());
         cluster.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
-        cluster.setGlusterTunedProfile(model.getGlusterTunedProfile().getSelectedItem());
-
+        if (model.getEnableGlusterService().getEntity()) {
+            cluster.setGlusterTunedProfile(model.getGlusterTunedProfile().getSelectedItem());
+        }
         cluster.getAdditionalRngSources().clear();
         if (Boolean.TRUE.equals(model.getRngHwrngSourceRequired().getEntity())) {
             cluster.getAdditionalRngSources().add(VmRngDevice.Source.HWRNG);
