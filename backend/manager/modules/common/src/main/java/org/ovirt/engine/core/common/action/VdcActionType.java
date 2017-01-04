@@ -183,6 +183,8 @@ public enum VdcActionType {
     PrepareMerge(247, QuotaDependency.STORAGE),
     ColdMerge(248, QuotaDependency.STORAGE),
     FinalizeMerge(249, QuotaDependency.STORAGE),
+    UpdateVolume(253, QuotaDependency.NONE),
+    UpdateAllTemplateDisks(254, QuotaDependency.NONE),
 
     // VmPoolCommands
     AddVmPool(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
