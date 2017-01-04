@@ -177,4 +177,8 @@ public class FeatureSupported {
     public static boolean isVmLeasesSupported(Version version) {
         return supportedInConfig(ConfigValues.VmLeasesSupported, version);
     }
+
+    public static boolean isAgentChannelNamingSupported(Version version) {
+        return supportedInConfig(ConfigValues.AgentChannelNamingSupported, version);
+    }
 }

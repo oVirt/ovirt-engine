@@ -1979,5 +1979,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     DomainXML,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    AgentChannelNamingSupported,
+
     Invalid
 }

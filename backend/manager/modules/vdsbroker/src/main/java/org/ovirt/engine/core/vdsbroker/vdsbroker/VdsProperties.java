@@ -281,6 +281,8 @@ public final class VdsProperties {
     public static final String GUEST_TIMEZONE_OFFSET = "offset";
     public static final String GUEST_TIMEZONE_ZONE = "zone";
 
+    public static final String agentChannelName = "agentChannelName";
+
     public static final String kvmEnable = "kvmEnable"; // Optional
     public static final String acpiEnable = "acpiEnable"; // Optional
     public static final String BOOT_MENU_ENABLE = "bootMenuEnable";

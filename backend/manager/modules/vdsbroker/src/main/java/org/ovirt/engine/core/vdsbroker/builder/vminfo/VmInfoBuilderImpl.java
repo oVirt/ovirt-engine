@@ -779,6 +779,10 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         if (vm.getLeaseStorageDomainId() != null) {
             buildVmLease();
         }
+
+        if (FeatureSupported.isAgentChannelNamingSupported(vm.getCompatibilityVersion())) {
+            createInfo.put(VdsProperties.agentChannelName, "ovirt-guest-agent.0");
+        }
     }
 
     public void buildVmLease() {
