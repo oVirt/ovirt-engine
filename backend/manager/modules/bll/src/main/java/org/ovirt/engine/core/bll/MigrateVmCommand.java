@@ -352,6 +352,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Boolean autoConverge = getAutoConverge();
         Boolean migrateCompressed = getMigrateCompressed();
         Boolean enableGuestEvents = null;
+        Integer maxIncomingMigrations = null;
+        Integer maxOutgoingMigrations = null;
 
         if (FeatureSupported.migrationPoliciesSupported(getVm().getCompatibilityVersion())) {
             MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(
@@ -365,6 +367,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 migrateCompressed = effectiveMigrationPolicy.isMigrationCompression();
             }
             enableGuestEvents = effectiveMigrationPolicy.isEnableGuestEvents();
+
+            maxIncomingMigrations = maxOutgoingMigrations = effectiveMigrationPolicy.getMaxMigrations();
         }
 
         return new MigrateVDSCommandParameters(getVdsId(),
@@ -382,7 +386,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getDestinationVds().getConsoleAddress(),
                 maxBandwidth,
                 convergenceSchedule,
-                enableGuestEvents);
+                enableGuestEvents,
+                maxIncomingMigrations,
+                maxOutgoingMigrations);
     }
 
     /**

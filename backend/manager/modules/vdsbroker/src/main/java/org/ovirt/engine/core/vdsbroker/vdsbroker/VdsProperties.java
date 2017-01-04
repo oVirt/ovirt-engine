@@ -390,6 +390,8 @@ public final class VdsProperties {
     public static final String MIGRATION_BANDWIDTH = "maxBandwidth";
     public static final String MIGRATION_INIT_STEPS = "init";
     public static final String MIGRATION_STALLING_STEPS = "stalling";
+    public static final String MIGRATION_OUTGOING_LIMIT = "outgoingLimit";
+    public static final String MIGRATION_INCOMING_LIMIT = "incomingLimit";
 
 
     // storage domains

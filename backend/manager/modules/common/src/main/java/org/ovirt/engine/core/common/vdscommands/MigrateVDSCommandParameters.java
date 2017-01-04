@@ -21,6 +21,8 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private String consoleAddress;
     private Integer maxBandwidth;
     private Boolean enableGuestEvents;
+    private Integer maxIncomingMigrations;
+    private Integer maxOutgoingMigrations;
 
     private Map<String, Object> convergenceSchedule;
 
@@ -28,7 +30,8 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                                        String dstHost, MigrationMethod migrationMethod, boolean tunnelMigration,
                                        String dstQemu, Version clusterVersion, int migrationDowntime,
                                        Boolean autoConverge, Boolean migrateCompressed, String consoleAddress,
-                                       Integer maxBandwidth, Map<String, Object> convergenceSchedule, Boolean enableGuestEvents) {
+                                       Integer maxBandwidth, Map<String, Object> convergenceSchedule, Boolean enableGuestEvents,
+                                       Integer maxIncomingMigrations, Integer maxOutgoingMigrations) {
         super(vdsId, vmId);
         this.srcHost = srcHost;
         this.dstVdsId = dstVdsId;
@@ -44,6 +47,8 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.maxBandwidth = maxBandwidth;
         this.convergenceSchedule = convergenceSchedule;
         this.enableGuestEvents = enableGuestEvents;
+        this.maxIncomingMigrations = maxIncomingMigrations;
+        this.maxOutgoingMigrations = maxOutgoingMigrations;
     }
 
     public String getSrcHost() {
@@ -134,6 +139,22 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.enableGuestEvents = enableGuestEvents;
     }
 
+    public Integer getMaxIncomingMigrations() {
+        return maxIncomingMigrations;
+    }
+
+    public void setMaxIncomingMigrations(Integer maxIncomingMigrations) {
+        this.maxIncomingMigrations = maxIncomingMigrations;
+    }
+
+    public Integer getMaxOutgoingMigrations() {
+        return maxOutgoingMigrations;
+    }
+
+    public void setMaxOutgoingMigrations(Integer maxOutgoingMigrations) {
+        this.maxOutgoingMigrations = maxOutgoingMigrations;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
@@ -148,6 +169,8 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                 .append("consoleAddress", getConsoleAddress())
                 .append("maxBandwidth", getMaxBandwidth())
                 .append("enableGuestEvents", isEnableGuestEvents())
+                .append("maxIncomingMigrations", getMaxIncomingMigrations())
+                .append("maxOutgoingMigrations", getMaxOutgoingMigrations())
                 .append("convergenceSchedule", getConvergenceSchedule());
     }
 }
