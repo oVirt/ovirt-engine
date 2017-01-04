@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
@@ -215,6 +216,10 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         return listVms;
     }
 
+    private void addAttachVmNamesCustomValue() {
+        addCustomValue("VmNames", listVms.stream().map(VM::getName).collect(Collectors.joining(", ")));
+    }
+
     private boolean canRemoveTemplateDisk() {
         if (getVmTemplate().getStatus() == VmTemplateStatus.Locked) {
             return failValidation(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
@@ -379,19 +384,34 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         case EXECUTE:
             if (getDisk().getDiskStorageType() == DiskStorageType.LUN) {
                 if (getSucceeded()) {
-                    return AuditLogType.USER_FINISHED_REMOVE_DISK_NO_DOMAIN;
+                    if (getVmsForDiskId().isEmpty()) {
+                        return AuditLogType.USER_FINISHED_REMOVE_DISK_NO_DOMAIN;
+                    } else {
+                        addAttachVmNamesCustomValue();
+                        return AuditLogType.USER_FINISHED_REMOVE_DISK_ATTACHED_TO_VMS_NO_DOMAIN;
+                    }
                 } else {
                     return AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK_NO_DOMAIN;
                 }
             } else if (getDisk().getDiskStorageType() == DiskStorageType.CINDER) {
                 if (getSucceeded()) {
-                    return AuditLogType.USER_REMOVE_DISK_INITIATED;
+                    if (getVmsForDiskId().isEmpty()) {
+                        return AuditLogType.USER_REMOVE_DISK_INITIATED;
+                    } else {
+                        addAttachVmNamesCustomValue();
+                        return AuditLogType.USER_REMOVE_DISK_ATTACHED_TO_VMS_INITIATED;
+                    }
                 } else {
                     return AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
                 }
             }
             if (getSucceeded()) {
-                return AuditLogType.USER_FINISHED_REMOVE_DISK;
+                if (getVmsForDiskId().isEmpty()) {
+                    return AuditLogType.USER_FINISHED_REMOVE_DISK;
+                } else {
+                    addAttachVmNamesCustomValue();
+                    return AuditLogType.USER_FINISHED_REMOVE_DISK_ATTACHED_TO_VMS;
+                }
             } else {
                 return AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
             }
