@@ -75,6 +75,7 @@ enroll() {
 			-extfile cacert.conf \
 			-extensions v3_ca \
 			-in requests/ca.csr \
+			-notext \
 			-out ca.pem \
 			-keyfile private/ca.pem \
 			-selfsign \
