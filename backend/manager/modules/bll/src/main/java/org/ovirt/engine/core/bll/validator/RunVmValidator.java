@@ -4,8 +4,8 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -396,7 +396,7 @@ public class RunVmValidator {
     }
 
     protected ValidationResult validateVmStatusUsingMatrix(VM vm) {
-        if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class,
+        if (!VdcActionUtils.canExecute(Collections.singletonList(vm), VM.class,
                 VdcActionType.RunVm)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
         }
