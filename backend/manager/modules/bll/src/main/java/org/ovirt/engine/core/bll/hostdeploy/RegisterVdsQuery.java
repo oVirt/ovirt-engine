@@ -402,9 +402,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     getParameters().getVdsHostName());
 
             for (VDS vds_byHostName : vdss_byHostName) {
-                /**
-                 * looping foreach VDS found with similar hostnames and change to each one to available hostname
-                 */
+                // looping foreach VDS found with similar hostnames and change to each one to available hostname
                 if (
                     vdsByUniqueId == null ||
                     !vds_byHostName.getId().equals(vdsByUniqueId.getId())
