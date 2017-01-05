@@ -607,7 +607,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         }
         if (retValue.getExecuteFailedMessages().size() > 0) {
             for (String s : retValue.getExecuteFailedMessages()) {
-                log.error("{} - Ececution Fault - {}", prefixToMessage, s);
+                log.error("{} - Execution Fault - {}", prefixToMessage, s);
             }
         }
     }
