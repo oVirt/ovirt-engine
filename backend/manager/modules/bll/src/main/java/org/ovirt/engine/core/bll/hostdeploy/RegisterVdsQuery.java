@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.hostdeploy;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -216,11 +216,11 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             } else {
                 // TODO: always add in pending state, and if auto approve call
                 // approve command action after registration
-                RefObject<Boolean> isPending = new RefObject<>(Boolean.FALSE);
+                AtomicBoolean isPending = new AtomicBoolean(false);
                 getQueryReturnValue().setSucceeded(
                         handleOldVdssWithSameHostName(vdsByUniqueId) && handleOldVdssWithSameName(vdsByUniqueId)
                                 && checkAutoApprovalDefinitions(isPending)
-                                && register(vdsByUniqueId, clusterId, isPending.argvalue.booleanValue()));
+                                && register(vdsByUniqueId, clusterId, isPending.get()));
             }
             log.debug("RegisterVdsQuery::ExecuteCommand - Leaving Succeded value is '{}'",
                     getQueryReturnValue().getSucceeded());
@@ -559,11 +559,11 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return val;
     }
 
-    private boolean checkAutoApprovalDefinitions(RefObject<Boolean> isPending) {
+    private boolean checkAutoApprovalDefinitions(AtomicBoolean isPending) {
         // check auto approval definitions
         log.debug("RegisterVdsQuery::checkAutoApprovalDefinitions - Entering");
 
-        isPending.argvalue = true;
+        isPending.set(true);
         if (!Config.<String> getValue(ConfigValues.AutoApprovePatterns).equals("")) {
             for (String pattern : Config.<String> getValue(ConfigValues.AutoApprovePatterns)
                     .split("[,]", -1)) {
@@ -575,7 +575,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     if (vdsHostnameHelper.startsWith(pattern) || vdsUniqueIdHelper.startsWith(pattern)
                             || patternRegex.matcher(vdsHostnameHelper).find()
                             || patternRegex.matcher(vdsUniqueIdHelper).find()) {
-                        isPending.argvalue = false;
+                        isPending.set(false);
                         break;
                     }
                 } catch (RuntimeException ex) {
@@ -588,8 +588,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 }
             }
         }
-        log.debug("RegisterVdsQuery::checkAutoApprovalDefinitions - Leaving - return value '{}'",
-                    isPending.argvalue);
+        log.debug("RegisterVdsQuery::checkAutoApprovalDefinitions - Leaving - return value '{}'", isPending.get());
         return true;
     }
 
