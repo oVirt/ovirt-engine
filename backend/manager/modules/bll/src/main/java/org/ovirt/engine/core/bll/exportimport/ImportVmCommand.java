@@ -162,6 +162,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
+        // Since methods #validateBeforeCloneVm > #validateAndSetVmFromExportDomain > #setVmFromExportDomain may
+        // change this.vm instance, following code can't be in #init() method and has to follow call of
+        // #validateBeforeCloneVm.
+        VmHandler.updateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion());
+
         if (getParameters().isImportAsNewEntity()) {
             initImportClonedVm();
 

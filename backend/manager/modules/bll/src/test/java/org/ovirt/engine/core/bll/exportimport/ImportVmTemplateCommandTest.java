@@ -21,6 +21,8 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
+import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,15 +48,18 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
@@ -75,6 +80,18 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
     @Mock
     private VmTemplateDao vmTemplateDao;
+
+    @Mock
+    private OsRepository osRepository;
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule();
+
+    @Before
+    public void injectOsRepository() {
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+    }
+
 
     @Spy
     @InjectMocks

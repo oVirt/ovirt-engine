@@ -11,11 +11,9 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
-import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -110,15 +108,4 @@ public class ImportUtils {
         return graphicsDevice;
     }
 
-    /**
-     * OvfReader can't provide proper value of {@link VmBase#maxMemorySizeMb} since it depends on effective
-     * compatibility version of target cluster.
-     */
-    public static void updateMaxMemorySize(VmTemplate template, Version effectiveCompatibilityVersion) {
-        if (template.getMaxMemorySizeMb() == 0) {
-            final int maxMemorySize =
-                    VmCommonUtils.maxMemorySizeWithHotplugInMb(template.getOsId(), effectiveCompatibilityVersion);
-            template.setMaxMemorySizeMb(maxMemorySize);
-        }
-    }
 }

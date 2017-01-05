@@ -1218,4 +1218,16 @@ public class VmHandler implements BackendService {
         }
         return ValidationResult.VALID;
     }
+
+    /**
+     * OvfReader can't provide proper value of {@link VmBase#maxMemorySizeMb} since it depends on effective
+     * compatibility version of target cluster.
+     */
+    public static void updateMaxMemorySize(VmBase vmBase, Version effectiveCompatibilityVersion) {
+        final int maxOfMaxMemorySize =
+                VmCommonUtils.maxMemorySizeWithHotplugInMb(vmBase.getOsId(), effectiveCompatibilityVersion);
+        if (vmBase.getMaxMemorySizeMb() == 0 || vmBase.getMaxMemorySizeMb() > maxOfMaxMemorySize) {
+            vmBase.setMaxMemorySizeMb(maxOfMaxMemorySize);
+        }
+    }
 }
