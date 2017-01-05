@@ -50,7 +50,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     private final AuditLogableBase logable;
     private List<VDS> _vdssByUniqueId;
 
-    private static Object doubleRegistrationLock = new Object();
+    private static final Object doubleRegistrationLock = new Object();
 
     @Inject
     private ClusterDao clusterDao;
