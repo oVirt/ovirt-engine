@@ -28,6 +28,7 @@ import javax.validation.ConstraintViolation;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -69,6 +70,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -97,6 +99,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
     private ImportVmCommand<ImportVmParameters> cmd = new ImportVmCommand<>(createParameters(), null);
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @BeforeClass
     public static void setUpOsRepository() {
