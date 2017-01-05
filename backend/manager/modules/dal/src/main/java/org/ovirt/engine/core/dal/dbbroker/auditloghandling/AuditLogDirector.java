@@ -134,11 +134,15 @@ public class AuditLogDirector {
     }
 
     private static String getMessageToLog(String loggerString, AuditLog auditLog) {
+        String message;
         if (loggerString.isEmpty()) {
-            return auditLog.toStringForLogging();
+            message = auditLog.toStringForLogging();
         } else {
-            return MessageFormat.format(loggerString, auditLog.getMessage());
+            message = MessageFormat.format(loggerString, auditLog.getMessage());
         }
+        return MessageFormat.format("EVENT_ID: {0}({1}), {2}",
+                auditLog.getLogType(),
+                auditLog.getLogType().getValue(), message);
     }
 
     private AuditLog createAuditLog(AuditLogableBase auditLogable, AuditLogType logType, String loggerString, AuditLogSeverity severity) {
