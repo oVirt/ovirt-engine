@@ -327,7 +327,7 @@
                                                 <e:ListModelListBoxEditor ui:field="migrationBandwidthLimitTypeEditor" usePatternFly="true" />
                                             </b:Column>
                                             <b:Column size="SM_6" >
-                                                <ge:IntegerEntityModelLabelEditor ui:field="customMigrationBandwidthLimitEditor" usePatternFly="true" />
+                                                <ge:IntegerEntityModelTextBoxEditor ui:field="customMigrationBandwidthLimitEditor" usePatternFly="true" />
                                             </b:Column>
                                         </b:Row>
                                     </b:Column>
