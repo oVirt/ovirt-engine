@@ -33,7 +33,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -306,7 +306,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @UiField
     @Path(value = "customMigrationNetworkBandwidth.entity")
     @WithElementId
-    IntegerEntityModelLabelEditor customMigrationBandwidthLimitEditor;
+    IntegerEntityModelTextBoxEditor customMigrationBandwidthLimitEditor;
 
     @UiField
     @WithElementId
