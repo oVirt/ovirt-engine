@@ -238,7 +238,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         Guid clusterId = getParameters().getClusterId();
         if (Guid.Empty.equals(getParameters().getClusterId())) {
             clusterId = Guid.createGuidFromStringDefaultEmpty(
-                    Config.<String> getValue(ConfigValues.AutoRegistrationDefaultClusterID));
+                    Config.getValue(ConfigValues.AutoRegistrationDefaultClusterID));
             log.debug(
                     "Cluster id was not provided for registering the host {}, the cluster id {} is taken from the config value {}",
                     getParameters().getVdsName(), clusterId, ConfigValues.AutoRegistrationDefaultClusterID.name());
