@@ -287,7 +287,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     }
 
     private boolean register(VDS vds, Guid clusterId, boolean IsPending) {
-        boolean returnValue = true;
+        boolean returnValue;
         log.debug("RegisterVdsQuery::register - Entering");
         if (vds == null) {
             returnValue = registerNewHost(clusterId, IsPending);
