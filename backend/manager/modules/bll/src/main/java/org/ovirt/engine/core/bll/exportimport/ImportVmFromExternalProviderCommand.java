@@ -159,6 +159,10 @@ implements QuotaStorageDependent {
             return failValidation(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
         }
 
+        if (!validate(VmHandler.validateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion()))) {
+            return false;
+        }
+
         return true;
     }
 

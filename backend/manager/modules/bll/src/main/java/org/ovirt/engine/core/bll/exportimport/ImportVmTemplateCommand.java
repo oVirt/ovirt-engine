@@ -241,6 +241,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             return false;
         }
 
+        if (!validate(VmHandler.validateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion()))) {
+            return false;
+        }
+
         return true;
     }
 

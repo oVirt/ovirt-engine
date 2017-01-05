@@ -183,6 +183,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
+        if (!validate(VmHandler.validateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion()))) {
+            return false;
+        }
+
         return validateAfterCloneVm(domainsMap);
     }
 
