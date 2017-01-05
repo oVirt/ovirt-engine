@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.hostdeploy;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -569,12 +569,12 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     .split("[,]", -1)) {
                 try {
                     String patternHelper = pattern.toLowerCase();
-                    Regex patternRegex = new Regex(patternHelper);
+                    Pattern patternRegex = Pattern.compile(patternHelper);
                     String vdsHostnameHelper = getParameters().getVdsHostName().toLowerCase();
                     String vdsUniqueIdHelper = getParameters().getVdsUniqueId().toLowerCase().replace(":", "-");
                     if (vdsHostnameHelper.startsWith(pattern) || vdsUniqueIdHelper.startsWith(pattern)
-                            || patternRegex.isMatch(vdsHostnameHelper)
-                            || patternRegex.isMatch(vdsUniqueIdHelper)) {
+                            || patternRegex.matcher(vdsHostnameHelper).find()
+                            || patternRegex.matcher(vdsUniqueIdHelper).find()) {
                         isPending.argvalue = false;
                         break;
                     }
