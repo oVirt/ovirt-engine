@@ -11,11 +11,20 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
 public class UserPortalTemplateVmModelBehavior extends TemplateVmModelBehavior {
 
     public UserPortalTemplateVmModelBehavior(VmTemplate template) {
         super(template);
+    }
+
+    @Override
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
+        super.initialize(systemTreeSelectedItem);
+
+        // The custom properties tab should be hidden on the User Portal
+        getModel().setIsCustomPropertiesTabAvailable(false);
     }
 
     /**
