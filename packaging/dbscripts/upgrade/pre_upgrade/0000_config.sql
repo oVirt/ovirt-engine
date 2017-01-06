@@ -197,7 +197,7 @@ select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
 select fn_db_add_config_value('Ipv6MigrationProperlyHandled', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('Ipv6MigrationProperlyHandled', 'false', '4.2');
 
-select fn_db_add_config_value_for_versions_up_to('DataOperationsByHSM', 'false', '4.1');
+select fn_db_add_config_value_for_versions_up_to('DataOperationsByHSM', 'false', '4.0');
 
 -- default requirement for rng sources (comma-separated string of 'RANDOM' and 'HWRNG')
 select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefault', 'RANDOM', '4.1');
