@@ -660,6 +660,14 @@ select fn_db_add_config_value_for_versions_up_to('GetNamesOfVmsFromExternalProvi
 select fn_db_add_config_value('DbJustRestored','0','general');
 
 ------------------------------------------------------------------------------------
+--                  SCALE
+------------------------------------------------------------------------------------
+-- Using host identifier as header when using ovirt-vdsmfake (drive by rhev-scale team)
+select fn_db_add_config_value('UseHostNameIdentifier', 'false', 'general');
+
+
+
+------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
 
@@ -853,12 +861,6 @@ select fn_db_update_default_config_value('ProtocolFallbackRetries','3','25','gen
 
 -- Lower default interval of DWH heartbeat from 30 to 15 seconds
 select fn_db_update_default_config_value('DwhHeartBeatInterval', '30', '15', 'general', false);
-
-------------------------------------------------------------------------------------
---                  SCALE
-------------------------------------------------------------------------------------
--- Using host identifier as header when using ovirt-vdsmfake (drive by rhev-scale team)
-select fn_db_add_config_value('UseHostNameIdentifier', 'false', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Split config section
