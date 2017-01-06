@@ -125,6 +125,7 @@ public final class VdsProperties {
     public static final String NW_FILTER = "filter";
     public static final String MAC_ADDR = "macAddr";
     public static final String NETWORK_CUSTOM_PROPERTIES = "custom";
+    public static final String BOND_XMIT_POLICY = "xmit_hash_policy";
 
     public static final String supported_cluster_levels = "clusterLevels";
     public static final String supported_engines = "supportedENGINEs";
