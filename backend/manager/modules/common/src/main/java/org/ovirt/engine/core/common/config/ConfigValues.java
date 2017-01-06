@@ -128,7 +128,8 @@ public enum ConfigValues {
     CommandEntityAgingThreshold,
     @Reloadable
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("drac5,ilo,ipmilan,rsa,bladecenter,alom,apc,eps,wti,rsb")
+    @DefaultValueAttribute("apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh," +
+            "ipmilan,rsa,rsb,wti")
     VdsFenceType,
     @Reloadable
     @TypeConverterAttribute(String.class)
@@ -136,7 +137,23 @@ public enum ConfigValues {
     CustomVdsFenceType,
     @Reloadable
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port")
+    @DefaultValueAttribute("'apc:secure=secure,port=ipport,slot=port;" +
+            "apc_snmp:port=port,encrypt_options=encrypt_options;" +
+            "bladecenter:secure=secure,port=ipport,slot=port;" +
+            "cisco_ucs:secure=ssl,slot=port;" +
+            "drac5:secure=secure,slot=port;" +
+            "drac7:;" +
+            "eps:slot=port;" +
+            "hpblade:port=port;" +
+            "ilo:secure=ssl,port=ipport;" +
+            "ipmilan:;" +
+            "ilo2:secure=ssl,port=ipport;" +
+            "ilo3:;" +
+            "ilo4:;" +
+            "ilo_ssh:port=port;" +
+            "rsa:secure=secure,port=ipport;" +
+            "rsb:;" +
+            "wti:secure=secure,port=ipport,slot=port")
     VdsFenceOptionMapping,
     @Reloadable
     @TypeConverterAttribute(String.class)
