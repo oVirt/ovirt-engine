@@ -92,7 +92,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksCommand.class);
 
-    private static final String DEFAULT_BOND_OPTIONS = "mode=4 miimon=100";
+    private static final String DEFAULT_BOND_OPTIONS = "mode=4 miimon=100 xmit_hash_policy=2";
     private static final Set<Ipv6BootProtocol> IPV6_AUTO_BOOT_PROTOCOL =
             EnumSet.of(Ipv6BootProtocol.DHCP, Ipv6BootProtocol.AUTOCONF);
 

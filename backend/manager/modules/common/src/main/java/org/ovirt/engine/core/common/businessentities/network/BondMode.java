@@ -12,6 +12,7 @@ public enum BondMode {
 
     public static final String MODE = "mode=";
     private static final String DEFAULT_MIIMON_VALUE = "100";
+    private static final String BOND_XMIT_POLICY_LAYER23 = "2";
 
     private String value;
     private String stringValue;
@@ -42,7 +43,13 @@ public enum BondMode {
     }
 
     public String getConfigurationValue(String miimonValue){
-        return MODE + value + " miimon=" + miimonValue;
+        String extraOption;
+        if (value.equals(BondMode.BOND4.value)) {
+            extraOption = " xmit_hash_policy=" + BOND_XMIT_POLICY_LAYER23;
+        } else {
+            extraOption = "";
+        }
+        return MODE + value + " miimon=" + miimonValue + extraOption;
     }
 
     public boolean isBondModeValidForVmNetwork(){

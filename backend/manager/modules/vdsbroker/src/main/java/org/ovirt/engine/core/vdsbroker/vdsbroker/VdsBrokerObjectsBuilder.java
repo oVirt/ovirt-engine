@@ -1918,6 +1918,15 @@ public class VdsBrokerObjectsBuilder {
                         bondOptionsMap.remove("miimon");
                     }
 
+                    String xmit_hash_policy = (String) bondOptionsMap.get(VdsProperties.BOND_XMIT_POLICY);
+                    if (xmit_hash_policy != null) {
+                        bondOptionsString = String.format("%s %s=%s",
+                                bondOptionsString,
+                                VdsProperties.BOND_XMIT_POLICY,
+                                xmit_hash_policy);
+                        bondOptionsMap.remove(VdsProperties.BOND_XMIT_POLICY);
+                    }
+
                     for (Entry<String, Object> optionEntry : bondOptionsMap.entrySet()) {
                         bondOptionsString =
                                 String.format("%s %s=%s",
