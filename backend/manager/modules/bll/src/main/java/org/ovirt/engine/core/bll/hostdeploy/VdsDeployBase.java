@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 public class VdsDeployBase implements SSHDialog.Sink, Closeable {
 
-    public static enum DeployStatus {Complete, Incomplete, Failed, Reboot};
+    public enum DeployStatus {Complete, Incomplete, Failed, Reboot}
 
     private static final int THREAD_JOIN_TIMEOUT = 20 * 1000; // milliseconds
     private static final String BOOTSTRAP_CUSTOM_ENVIRONMENT_PLACE_HOLDER = "@ENVIRONMENT@";
