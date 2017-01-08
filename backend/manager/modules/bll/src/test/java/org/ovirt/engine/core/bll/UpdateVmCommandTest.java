@@ -53,7 +53,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -69,7 +68,6 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.QuotaDao;
@@ -77,7 +75,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /** A test case for the {@link UpdateVmCommand}. */
@@ -98,8 +95,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         new Guid("33333333-3333-3333-3333-333333333333")
     };
 
-    private static final String vncKeyboardLayoutValues =
-            "ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr";
     private static final String CPU_ID = "0";
     private static final Version version = Version.v3_6;
     private static final Guid clusterId = Guid.newGuid();
@@ -110,13 +105,9 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Mock
     private VdsDao vdsDao;
     @Mock
-    private ClusterDao clusterDao;
-    @Mock
     private DiskDao diskDao;
     @Mock
     private VmDeviceDao vmDeviceDao;
-    @Mock
-    private VmTemplateDao vmTemplateDao;
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
     @Mock
@@ -628,22 +619,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         DiskVmElement dve = new DiskVmElement(Guid.Empty, vm.getId());
         dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
         return dve;
-    }
-
-    private VmDevice createVmDevice() {
-        return new VmDevice(new VmDeviceId(Guid.Empty, vm.getId()),
-                VmDeviceGeneralType.DISK,
-                "device",
-                "address",
-                1,
-                new HashMap<>(),
-                true,
-                true,
-                true,
-                "alias",
-                new HashMap<>(),
-                Guid.newGuid(),
-                "logical");
     }
 
     private void prepareVmToPassValidate() {
