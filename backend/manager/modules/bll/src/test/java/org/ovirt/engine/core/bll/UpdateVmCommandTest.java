@@ -218,8 +218,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Test
     public void testLongName() {
         vmStatic.setName("this_should_be_very_long_vm_name_so_it will_fail_can_do_action_validation");
-        assertFalse("validate should fail for too long vm name.", command.validate());
-        assertValidateMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
     }
 
     @Test
@@ -236,9 +235,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     public void testChangeToExistingName() {
         prepareVmToPassValidate();
         mockSameNameQuery(true);
-
-        assertFalse("validate should have failed with vm name already in use.", command.validate());
-        assertValidateMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
     }
 
     @Test
@@ -282,9 +279,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     public void testInvalidNumberOfMonitors() {
         prepareVmToPassValidate();
         vmStatic.setNumOfMonitors(99);
-
-        assertFalse("validate should have failed with invalid number of monitors.", command.validate());
-        assertValidateMessage(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
     }
 
     @Test
@@ -352,8 +347,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         newGroup.setCompatibilityVersion(Version.v3_6);
         vmStatic.setClusterId(newGroup.getId());
 
-        assertFalse("validate should have failed with can't change cluster.", command.validate());
-        assertValidateMessage(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
     }
 
     @Test
@@ -500,8 +494,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vmStatic.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
         vmStatic.setDedicatedVmForVdsList(Collections.singletonList(GUIDS[2]));
         command.initEffectiveCompatibilityVersion();
-        assertFalse("validate should fail with can't pin VM.", command.validate());
-        assertValidateMessage(EngineMessage.ACTION_TYPE_FAILED_PINNED_VM_NOT_RUNNING_ON_DEDICATED_HOST);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_PINNED_VM_NOT_RUNNING_ON_DEDICATED_HOST);
 
     }
 
@@ -572,12 +566,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vmStatic.setUseHostCpuFlags(true);
         vmStatic.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
 
-        // when
-        boolean validInput = command.validate();
-
-        // then
-        assertFalse("validate should fail with can't use host CPU.", validInput);
-        assertValidateMessage(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
     }
 
     @Test
@@ -666,13 +656,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockValidatePciAndIdeLimit();
         doReturn(true).when(command).setAndValidateCpuProfile();
         mockGraphicsDevice();
-    }
-
-    private void assertValidateMessage(EngineMessage msg) {
-        assertTrue("validate failed for the wrong reason",
-                command.getReturnValue()
-                        .getValidationMessages()
-                        .contains(msg.name()));
     }
 
     private void mockDiskDaoGetAllForVm(List<Disk> disks, boolean onlyPluggedDisks) {
