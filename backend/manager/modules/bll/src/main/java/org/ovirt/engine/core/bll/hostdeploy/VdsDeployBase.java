@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -53,13 +54,14 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
     private static final Logger log = LoggerFactory.getLogger(VdsDeployBase.class);
     private static volatile CachedTar s_deployPackage;
 
-    private static final Map<Event.Log.Severity, Level> SEVERITY_TO_LEVEL = new HashMap<Event.Log.Severity, Level>() {{
-        put(Event.Log.Severity.INFO, Level.INFO);
-        put(Event.Log.Severity.WARNING, Level.WARNING);
-        put(Event.Log.Severity.ERROR, Level.SEVERE);
-        put(Event.Log.Severity.CRITICAL, Level.SEVERE);
-        put(Event.Log.Severity.FATAL, Level.SEVERE);
-    }};
+    private static final Map<Event.Log.Severity, Level> SEVERITY_TO_LEVEL = new HashMap<>();
+    static {
+        SEVERITY_TO_LEVEL.put(Event.Log.Severity.INFO, Level.INFO);
+        SEVERITY_TO_LEVEL.put(Event.Log.Severity.WARNING, Level.WARNING);
+        SEVERITY_TO_LEVEL.put(Event.Log.Severity.ERROR, Level.SEVERE);
+        SEVERITY_TO_LEVEL.put(Event.Log.Severity.CRITICAL, Level.SEVERE);
+        SEVERITY_TO_LEVEL.put(Event.Log.Severity.FATAL, Level.SEVERE);
+    }
 
     /**
      * Customization vector.
@@ -87,12 +89,12 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
             return true;
         }}
     );
-    private final List<Callable<Boolean>> CUSTOMIZATION_DIALOG_EPILOG = new ArrayList() {{ add(
-        new Callable<Boolean>() { public Boolean call() throws Exception {
+    private final List<Callable<Boolean>> CUSTOMIZATION_DIALOG_EPILOG = new ArrayList<>(
+            Collections.singletonList(new Callable<Boolean>() { public Boolean call() throws Exception {
             _parser.cliInstall();
             return true;
         }}
-    );}};
+    ));
 
     /**
      * Termination vector.
