@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -21,7 +20,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -41,8 +39,6 @@ public class HostMonitoringTest {
     private HostMonitoring updater;
 
     @Mock
-    ClusterDao groupDao;
-    @Mock
     InterfaceDao interfaceDao;
     @Mock
     DbFacade dbFacade;
@@ -53,15 +49,12 @@ public class HostMonitoringTest {
     @Mock
     private VdsManager vdsManager;
     @Mock
-    private IVdsEventListener vdsEventlistener;
-    @Mock
     private AuditLogDirector auditLogDirector;
 
     @Before
     public void setup() {
         initVds();
         initConditions();
-        when(vdsManager.isTimeToRefreshStatistics()).thenReturn(false);
         updater =
                 new HostMonitoring(vdsManager,
                         vds,
@@ -72,8 +65,6 @@ public class HostMonitoringTest {
     }
 
     private void initConditions() {
-        when(dbFacade.getClusterDao()).thenReturn(groupDao);
-        when(groupDao.get(any(Guid.class))).thenReturn(cluster);
         when(dbFacade.getInterfaceDao()).thenReturn(interfaceDao);
         when(interfaceDao.getAllInterfacesForVds(any(Guid.class))).thenReturn(Collections.emptyList());
     }
@@ -91,7 +82,6 @@ public class HostMonitoringTest {
         VDSReturnValue value = new VDSReturnValue();
         value.setSucceeded(false);
         value.setExceptionObject(new VDSNetworkException("unknown host"));
-        when(resourceManager.getEventListener()).thenReturn(vdsEventlistener);
         when(resourceManager.runVdsCommand(any(VDSCommandType.class),
                 any(VDSParametersBase.class))).thenReturn(value);
 
