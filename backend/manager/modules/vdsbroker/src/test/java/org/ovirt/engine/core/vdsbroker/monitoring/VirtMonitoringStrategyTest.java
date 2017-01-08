@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -29,7 +30,8 @@ public class VirtMonitoringStrategyTest {
     private VDS vdsFromDb = new VDS();
     private Cluster cluster;
 
-    public VirtMonitoringStrategyTest() {
+    @Before
+    public void setUp() {
         virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao(), null));
         doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class),
                 any(NonOperationalReason.class),
