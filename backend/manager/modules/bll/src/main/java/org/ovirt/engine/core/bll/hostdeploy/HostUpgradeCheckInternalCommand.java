@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute
 public class HostUpgradeCheckInternalCommand<T extends VdsActionParameters> extends VdsCommand<T> {
@@ -22,7 +21,7 @@ public class HostUpgradeCheckInternalCommand<T extends VdsActionParameters> exte
     private VdsDao vdsDao;
 
     @Inject
-    private ResourceManager resourceManager;
+    private HostUpdatesChecker hostUpdatesChecker;
 
     /**
      * C'tor for compensation purposes
@@ -48,8 +47,7 @@ public class HostUpgradeCheckInternalCommand<T extends VdsActionParameters> exte
 
     @Override
     protected void executeCommand() {
-        HostUpgradeManagerResult hostUpgradeManagerResult = resourceManager.getVdsManager(getVdsId())
-                .checkForUpdates(vdsDao.get(getVdsId()));
+        HostUpgradeManagerResult hostUpgradeManagerResult = hostUpdatesChecker.checkForUpdates(vdsDao.get(getVdsId()));
         getReturnValue().setActionReturnValue(hostUpgradeManagerResult);
         setSucceeded(hostUpgradeManagerResult != null);
         setCommandStatus(hostUpgradeManagerResult != null ? CommandStatus.SUCCEEDED : CommandStatus.FAILED);

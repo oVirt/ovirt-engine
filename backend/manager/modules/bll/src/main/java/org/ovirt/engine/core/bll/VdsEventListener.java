@@ -20,7 +20,6 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.bll.host.AvailableUpdatesFinder;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -28,7 +27,6 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.action.AddUnmanagedVmsParameters;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -110,8 +108,6 @@ public class VdsEventListener implements IVdsEventListener {
     EventQueue eventQueue;
     @Inject
     private LockManager lockManager;
-    @Inject
-    private AvailableUpdatesFinder availableUpdatesFinder;
     @Inject
     private HaAutoStartVmsRunner haAutoStartVmsRunner;
     @Inject
@@ -584,11 +580,6 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void refreshHostCapabilities(Guid hostId) {
         backend.runInternalAction(VdcActionType.RefreshHostCapabilities, new VdsActionParameters(hostId));
-    }
-
-    @Override
-    public HostUpgradeManagerResult checkForUpdates(VDS host) {
-        return availableUpdatesFinder.checkForUpdates(host);
     }
 
     // TODO asynch event handler - design infra code to allow async events in segregated thread

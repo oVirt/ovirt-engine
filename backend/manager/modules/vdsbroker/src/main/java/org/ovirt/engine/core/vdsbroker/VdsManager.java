@@ -18,10 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.RandomUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SELinuxMode;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
@@ -216,22 +213,6 @@ public class VdsManager {
                 refreshRate,
                 TimeUnit.MILLISECONDS));
 
-
-        double availableUpdatesRefreshRate = Config.<Double> getValue(ConfigValues.HostPackagesUpdateTimeInHours);
-        if (availableUpdatesRefreshRate > 0) {
-            final int HOURS_TO_MINUTES = 60;
-            long rateInMinutes = Math.round(availableUpdatesRefreshRate * HOURS_TO_MINUTES);
-
-            registeredJobs.add(sched.scheduleAFixedDelayJob(
-                    this,
-                    "availableUpdates",
-                    new Class[0],
-                    new Object[0],
-                    RandomUtils.nextInt(HOURS_TO_MINUTES) + 1,
-                    rateInMinutes,
-                    TimeUnit.MINUTES));
-        }
-
         vmsRefresher = getRefresherFactory().create(this);
         vmsRefresher.startMonitoring();
 
@@ -357,60 +338,6 @@ public class VdsManager {
         setMonitoringNeeded();
     }
 
-    @OnTimerMethodAnnotation("availableUpdates")
-    public void availableUpdates() {
-        if (cachedVds.getStatus() != VDSStatus.Up
-                && cachedVds.getStatus() != VDSStatus.NonOperational) {
-            log.warn("Check for available updates is skipped for host '{}' due to unsupported host status '{}' ",
-                    cachedVds.getName(),
-                    cachedVds.getStatus());
-            return;
-        }
-
-        checkForUpdates(cachedVds);
-    }
-
-    public HostUpgradeManagerResult checkForUpdates(VDS vds) {
-        HostUpgradeManagerResult hostUpgradeManagerResult = null;
-        AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
-        auditLog.setVds(vds);
-        try {
-            hostUpgradeManagerResult = resourceManager.checkForUpdates(vds);
-            if (hostUpgradeManagerResult.isUpdatesAvailable()) {
-                String message = hostUpgradeManagerResult.getAvailablePackages() == null ?
-                        "found updates." :
-                        String.format("found updates for packages %s",
-                                StringUtils.join(hostUpgradeManagerResult.getAvailablePackages(), ", "));
-                auditLog.addCustomValue("Message", message);
-            } else {
-                auditLog.addCustomValue("Message", "no updates found.");
-            }
-            auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FINISHED);
-        } catch (IllegalStateException e) {
-            log.warn(e.getMessage());
-            auditLog.addCustomValue("Message", "Another refresh process is already running");
-            auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FAILED);
-        } catch (Exception e) {
-            log.error("Failed to check if updates are available for host '{}' with error message '{}'",
-                    vds.getName(),
-                    e.getMessage());
-            log.debug("Exception", e);
-            auditLog.addCustomValue("Message",
-            StringUtils.defaultString(e.getMessage(), e.getCause() == null ? null : e.getCause().toString()));
-            auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FAILED);
-        }
-
-        synchronized (this) {
-            if (hostUpgradeManagerResult != null &&
-                    hostUpgradeManagerResult.isUpdatesAvailable() != vds.isUpdateAvailable()) {
-                vds.getDynamicData().setUpdateAvailable(hostUpgradeManagerResult.isUpdatesAvailable());
-                vdsDynamicDao.updateUpdateAvailable(vds.getId(), hostUpgradeManagerResult.isUpdatesAvailable());
-            }
-        }
-
-        return hostUpgradeManagerResult;
-    }
-
     /**
      * @return a safe copy of the internal VDS. mutating it must not affect internal.
      */
@@ -516,6 +443,11 @@ public class VdsManager {
         cachedVds.getDynamicData().setNonOperationalReason(nonOperationalReason);
         cachedVds.getDynamicData().setMaintenanceReason(maintenanceReason);
         vdsDynamicDao.updateStatusAndReasons(cachedVds.getDynamicData());
+    }
+
+    public void updateUpdateAvailable(boolean updatesAvailable) {
+        cachedVds.getDynamicData().setUpdateAvailable(updatesAvailable);
+        vdsDynamicDao.updateUpdateAvailable(cachedVds.getId(), updatesAvailable);
     }
 
     /**
