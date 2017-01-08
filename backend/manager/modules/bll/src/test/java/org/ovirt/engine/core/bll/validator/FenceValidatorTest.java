@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
@@ -18,6 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.pm.FenceProxyLocator;
@@ -35,7 +34,7 @@ public class FenceValidatorTest {
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
 
-    @Mock
+    @Spy
     private FenceValidator validator;
 
     @Mock
@@ -46,9 +45,7 @@ public class FenceValidatorTest {
 
     @Before
     public void setup() {
-        validator = new FenceValidator();
-        validator = spy(validator);
-        stub(validator.getProxyLocator(any(VDS.class))).toReturn(proxyLocator);
+        doReturn(proxyLocator).when(validator).getProxyLocator(any(VDS.class));
         doReturn(backend).when(validator).getBackend();
     }
 
