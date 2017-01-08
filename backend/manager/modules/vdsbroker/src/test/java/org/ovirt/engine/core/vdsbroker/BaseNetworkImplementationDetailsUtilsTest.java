@@ -149,8 +149,6 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     @Test
     public void calculateNetworkImplementationDetailsNetworkQosOutOfSync() throws Exception {
         HostNetworkQos qos = qosB;
-        when(hostNetworkQosDaoMock.get(qos.getId())).thenReturn(qos);
-
 
         Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
 
