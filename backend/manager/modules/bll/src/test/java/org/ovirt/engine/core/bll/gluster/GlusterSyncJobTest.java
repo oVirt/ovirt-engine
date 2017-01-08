@@ -418,12 +418,12 @@ public class GlusterSyncJobTest {
 
             @Override
             public boolean matches(Object argument) {
-                if (!(argument instanceof ArrayList)) {
+                if (!(argument instanceof Collection)) {
                     return false;
                 }
                 @SuppressWarnings("unchecked")
-                ArrayList<Guid> removedVolumeIds = (ArrayList<Guid>) argument;
-                return removedVolumeIds.size() == 1 && removedVolumeIds.get(0).equals(EXISTING_VOL_DIST_ID);
+                Collection<Guid> removedVolumeIds = (Collection<Guid>) argument;
+                return removedVolumeIds.size() == 1 && removedVolumeIds.contains(EXISTING_VOL_DIST_ID);
             }
         };
     }
@@ -433,13 +433,13 @@ public class GlusterSyncJobTest {
 
             @Override
             public boolean matches(Object argument) {
-                if (!(argument instanceof ArrayList)) {
+                if (!(argument instanceof Collection)) {
                     return false;
                 }
                 @SuppressWarnings("unchecked")
-                ArrayList<Guid> optionsToRemove = (ArrayList<Guid>) argument;
-                return optionsToRemove.size() == 1 && optionsToRemove.get(0)
-                        .equals(existingReplVol.getOption(OPTION_AUTH_ALLOW).getId());
+                Collection<Guid> optionsToRemove = (Collection<Guid>) argument;
+                return optionsToRemove.size() == 1 &&
+                        optionsToRemove.contains(existingReplVol.getOption(OPTION_AUTH_ALLOW).getId());
             }
         };
     }
@@ -449,14 +449,15 @@ public class GlusterSyncJobTest {
 
             @Override
             public boolean matches(Object argument) {
-                if (!(argument instanceof ArrayList)) {
+                if (!(argument instanceof Collection)) {
                     return false;
                 }
                 @SuppressWarnings("unchecked")
-                ArrayList<GlusterVolumeOptionEntity> optionsToAdd = (ArrayList<GlusterVolumeOptionEntity>) argument;
+                Collection<GlusterVolumeOptionEntity> optionsToAdd = (Collection<GlusterVolumeOptionEntity>) argument;
                 // set the added option to volume
-                existingReplVol.setOption(optionsToAdd.get(0));
-                return optionsToAdd.size() == 1 && optionsToAdd.get(0).getKey().equals(OPTION_AUTH_REJECT);
+                GlusterVolumeOptionEntity option = optionsToAdd.iterator().next();
+                existingReplVol.setOption(option);
+                return optionsToAdd.size() == 1 && option.getKey().equals(OPTION_AUTH_REJECT);
             }
         };
     }
@@ -466,11 +467,11 @@ public class GlusterSyncJobTest {
 
             @Override
             public boolean matches(Object argument) {
-                if (!(argument instanceof ArrayList)) {
+                if (!(argument instanceof Collection)) {
                     return false;
                 }
                 @SuppressWarnings("unchecked")
-                ArrayList<Guid> ids = (ArrayList<Guid>) argument;
+                Collection<Guid> ids = (Collection<Guid>) argument;
                 return ids.size() == removedBrickIds.size() && removedBrickIds.containsAll(ids);
             }
         };
@@ -655,11 +656,11 @@ public class GlusterSyncJobTest {
 
             @Override
             public boolean matches(Object argument) {
-                if (!(argument instanceof ArrayList)) {
+                if (!(argument instanceof List)) {
                     return false;
                 }
                 @SuppressWarnings("unchecked")
-                ArrayList<GlusterBrickEntity> bricksToUpdate = (ArrayList<GlusterBrickEntity>) argument;
+                List<GlusterBrickEntity> bricksToUpdate = (List<GlusterBrickEntity>) argument;
                 if (bricksToUpdate.size() != 2) {
                     return false;
                 }
