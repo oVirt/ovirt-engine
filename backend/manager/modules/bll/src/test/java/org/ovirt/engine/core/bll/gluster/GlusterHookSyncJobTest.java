@@ -141,7 +141,7 @@ public class GlusterHookSyncJobTest {
         return hook;
     }
 
-    private ArgumentMatcher<VDSParametersBase> vdsServer1() {
+    private ArgumentMatcher<VDSParametersBase> vdsServerWithGuid(int index) {
         return new ArgumentMatcher<VDSParametersBase>() {
 
             @Override
@@ -149,23 +149,11 @@ public class GlusterHookSyncJobTest {
                 if (!(argument instanceof VdsIdVDSCommandParametersBase)) {
                     return false;
                 }
-                return((VdsIdVDSCommandParametersBase) argument).getVdsId().equals(SERVER_GUIDS[0]);
+                return((VdsIdVDSCommandParametersBase) argument).getVdsId().equals(SERVER_GUIDS[index]);
             }
         };
     }
 
-    private ArgumentMatcher<VDSParametersBase> vdsServer2() {
-        return new ArgumentMatcher<VDSParametersBase>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof VdsIdVDSCommandParametersBase)) {
-                    return false;
-                }
-                return((VdsIdVDSCommandParametersBase) argument).getVdsId().equals(SERVER_GUIDS[1]);
-            }
-        };
-    }
     private List<VDS> getServers() {
         List<VDS> vdsList = new ArrayList<>();
         vdsList.add(createServer(SERVER_GUIDS[0], "HOST-0"));
@@ -196,9 +184,9 @@ public class GlusterHookSyncJobTest {
         doReturn(getHooksList(3, true)).when(hooksDao).getByClusterId(CLUSTER_GUIDS[0]);
 
         doReturn(getHooksListVDSReturnVal(3)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer1()));
+                argThat(vdsServerWithGuid(0)));
         doReturn(getHooksListVDSReturnVal(3)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer2()));
+                argThat(vdsServerWithGuid(1)));
 
         hookSyncJob.refreshHooks();
         verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
@@ -212,9 +200,9 @@ public class GlusterHookSyncJobTest {
         doReturn(getHooksList(1, true)).when(hooksDao).getByClusterId(CLUSTER_GUIDS[0]);
 
         doReturn(getHooksListVDSReturnVal(3)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer1()));
+                argThat(vdsServerWithGuid(0)));
         doReturn(getHooksListVDSReturnVal(3)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer2()));
+                argThat(vdsServerWithGuid(1)));
 
         doReturn(getHookContentVDSReturnVal()).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GetGlusterHookContent),
                 any(GlusterHookVDSParameters.class));
@@ -232,9 +220,9 @@ public class GlusterHookSyncJobTest {
         doReturn(getHooksList(3, true)).when(hooksDao).getByClusterId(CLUSTER_GUIDS[0]);
 
         doReturn(getHooksListVDSReturnVal(2)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer1()));
+                argThat(vdsServerWithGuid(0)));
         doReturn(getHooksListVDSReturnVal(2)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer2()));
+                argThat(vdsServerWithGuid(1)));
         doReturn(getHook(2, true)).when(hooksDao).getById(EXISTING_HOOK_IDS[2]);
 
         hookSyncJob.refreshHooks();
@@ -249,9 +237,9 @@ public class GlusterHookSyncJobTest {
         doReturn(getHooksList(3, true)).when(hooksDao).getByClusterId(CLUSTER_GUIDS[0]);
 
         doReturn(getHooksListVDSReturnVal(3)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer1()));
+                argThat(vdsServerWithGuid(0)));
         doReturn(getHooksListVDSReturnVal(2)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer2()));
+                argThat(vdsServerWithGuid(1)));
         doReturn(getHook(2, true)).when(hooksDao).getById(EXISTING_HOOK_IDS[2]);
 
         hookSyncJob.refreshHooks();
@@ -266,11 +254,11 @@ public class GlusterHookSyncJobTest {
         doReturn(getHooksList(3, true)).when(hooksDao).getByClusterId(CLUSTER_GUIDS[0]);
 
         doReturn(getHooksListVDSReturnVal(3)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer1()));
+                argThat(vdsServerWithGuid(0)));
         List<GlusterHookEntity> listHooks = getHooksList(3, false);
         listHooks.get(1).setChecksum("NEWCHECKSUM");
         doReturn(getHooksListVDSReturnVal(listHooks)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer2()));
+                argThat(vdsServerWithGuid(1)));
 
         hookSyncJob.refreshHooks();
         verify(hooksDao, times(0)).save(any(GlusterHookEntity.class));
@@ -284,11 +272,11 @@ public class GlusterHookSyncJobTest {
         doReturn(getHooksList(3, true)).when(hooksDao).getByClusterId(CLUSTER_GUIDS[0]);
 
         doReturn(getHooksListVDSReturnVal(2)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer1()));
+                argThat(vdsServerWithGuid(0)));
         List<GlusterHookEntity> listHooks = getHooksList(3, false);
         listHooks.get(1).setChecksum("NEWCHECKSUM");
         doReturn(getHooksListVDSReturnVal(listHooks)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
-                argThat(vdsServer2()));
+                argThat(vdsServerWithGuid(1)));
         doReturn(getHook(2, true)).when(hooksDao).getById(EXISTING_HOOK_IDS[2]);
 
         hookSyncJob.refreshHooks();
