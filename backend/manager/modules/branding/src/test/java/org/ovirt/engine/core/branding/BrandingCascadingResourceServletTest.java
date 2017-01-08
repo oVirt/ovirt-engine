@@ -33,9 +33,6 @@ public class BrandingCascadingResourceServletTest {
     BrandingManager mockBrandingManager;
 
     @Mock
-    File mockFile;
-
-    @Mock
     ServletOutputStream mockResponseOutputStream;
 
     @Mock
@@ -47,8 +44,6 @@ public class BrandingCascadingResourceServletTest {
     public void setUp() throws Exception {
         testServlet = new BrandingCascadingResourceServlet();
         testServlet.init(mockBrandingManager);
-        when(mockBrandingManager.getBrandingRootPath()).thenReturn(mockFile);
-        when(mockFile.getAbsolutePath()).thenReturn("/abs/test"); //$NON-NLS-1$
         // simulate a request for "/theme-resource/favicon"
         when(mockRequest.getPathInfo()).thenReturn("favicon"); //$NON-NLS-1$
         when(mockResponse.getOutputStream()).thenReturn(mockResponseOutputStream);
@@ -59,11 +54,6 @@ public class BrandingCascadingResourceServletTest {
      */
     @Test
     public void testDoGetServeFavicon() throws IOException, ServletException, URISyntaxException {
-        when(mockBrandingManager.getBrandingRootPath()).thenReturn(
-                new File(this.getClass().getClassLoader().
-                getResource("./org/ovirt/engine/core/branding") //$NON-NLS-1$
-                .toURI().getPath()));
-
         when(mockBrandingManager.getCascadingResource("favicon")).thenReturn(mockCascadingResource); //$NON-NLS-1$
         when(mockCascadingResource.getFile()).thenReturn(
                 new File(this.getClass().getClassLoader().
@@ -80,10 +70,6 @@ public class BrandingCascadingResourceServletTest {
      */
     @Test
     public void testDoGetServeFaviconNotFound() throws IOException, ServletException, URISyntaxException {
-        when(mockBrandingManager.getBrandingRootPath()).thenReturn(
-                new File(this.getClass().getClassLoader().
-                getResource("./org/ovirt/engine/core/branding") //$NON-NLS-1$
-                .toURI().getPath()));
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
