@@ -24,7 +24,6 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 public class NetworkAttachmentValidator {
 
     public static final String VAR_ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY = "ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY";
-    public static final String VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST = "ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST";
     public static final String VAR_NETWORK_ATTACHMENT_ID = "networkAttachmentID";
     public static final String VAR_NETWORK_NAME = "networkName";
 
