@@ -25,7 +25,6 @@ public class NetworkImplementationDetailsUtilsUsingVlanNicTest extends BaseNetwo
         setTestIface(vlanIface);
 
         when(calculateBaseNic.getBaseNic(vlanIface)).thenReturn(baseIface);
-        when(calculateBaseNic.getBaseNic(baseIface)).thenReturn(baseIface);
     }
 
     /**
