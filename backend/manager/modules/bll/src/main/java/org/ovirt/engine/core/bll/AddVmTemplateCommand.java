@@ -785,7 +785,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getConsoleDisconnectAction(),
                         getParameters().getMasterVm().getCustomCompatibilityVersion(),
                         getParameters().getMasterVm().getMigrationPolicyId(),
-                        getParameters().getMasterVm().getLeaseStorageDomainId()));
+                        null));
         updateVmIcons();
         vmTemplateDao.save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
