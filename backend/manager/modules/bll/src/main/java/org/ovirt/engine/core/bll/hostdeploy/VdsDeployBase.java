@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -440,14 +439,6 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
      */
     public void setUser(String user) {
         _dialog.setUser(user);
-    }
-
-    /**
-     * Set key pair.
-     * @param keyPair key pair.
-     */
-    public void setKeyPair(KeyPair keyPair) {
-        _dialog.setKeyPair(keyPair);
     }
 
     /**
