@@ -25,12 +25,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>common</artifactId>
       <version>${engine.version}</version>
