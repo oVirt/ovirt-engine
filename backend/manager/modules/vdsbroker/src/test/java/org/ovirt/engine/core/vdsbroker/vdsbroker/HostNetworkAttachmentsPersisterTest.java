@@ -116,8 +116,8 @@ public class HostNetworkAttachmentsPersisterTest {
         return createVdsNetworkInterface(Guid.newGuid(), name);
     }
 
-    private VdsNetworkInterface createVdsNetworkInterface(String name) {
-        return createVdsNetworkInterface(null, name);
+    private VdsNetworkInterface createVdsNetworkInterface() {
+        return createVdsNetworkInterface(null, "interfaceWithUnreportedNetwork");
     }
 
     private NetworkAttachment createNetworkAttachment(Network network) {
@@ -404,7 +404,7 @@ public class HostNetworkAttachmentsPersisterTest {
     public void testPersistNetworkAttachmentsForNotReportedNetworkAttachmentIsNotPersisted() {
         when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
 
-        VdsNetworkInterface interfaceWithUnreportedNetwork = createVdsNetworkInterface("interfaceWithUnreportedNetwork");
+        VdsNetworkInterface interfaceWithUnreportedNetwork = createVdsNetworkInterface();
         interfaceWithUnreportedNetwork.setNetworkName("unreportedNetwork");
 
         HostNetworkAttachmentsPersister persister = createPersister(
