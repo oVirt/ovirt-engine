@@ -47,10 +47,6 @@ public class FenceVdsVDSCommandTest {
             }
 
             @Override
-            protected void alertPowerManagementStatusFailed(String reason) {
-            }
-
-            @Override
             protected void alertActionSkippedAlreadyInStatus() {
             }
         };
