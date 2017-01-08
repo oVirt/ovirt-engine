@@ -5,7 +5,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -25,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -39,15 +39,12 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
-import org.ovirt.engine.core.vdsbroker.VdsManager;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmDevicesMonitoringTest {
 
     @ClassRule
     public static InjectorRule injectorRule = new InjectorRule();
-
-    private VmDevicesMonitoring vmDevicesMonitoring;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private TransactionManager transactionManager;
@@ -57,8 +54,9 @@ public class VmDevicesMonitoringTest {
     private VmDeviceDao vmDeviceDao;
     @Mock
     private ResourceManager resourceManager;
-    @Mock
-    private VdsManager vdsManager;
+
+    @InjectMocks
+    private VmDevicesMonitoring vmDevicesMonitoring;
 
     private static final Guid VDS_ID = new Guid("b7dfe5e6-5667-4e40-8ecb-6d97c8df504d");
     private static final Guid VM_ID = new Guid("7cfc3666-5185-4438-8381-646de77ca9a7");
@@ -72,17 +70,9 @@ public class VmDevicesMonitoringTest {
 
     @Before
     public void init() {
-        vmDevicesMonitoring = spy(new VmDevicesMonitoring());
-
         List<Pair<Guid, String>> initialHashes = new ArrayList<>();
         initialHashes.add(new Pair<>(VM_ID, INITIAL_HASH));
         doReturn(initialHashes).when(vmDynamicDao).getAllDevicesHashes();
-
-        doReturn(vdsManager).when(resourceManager).getVdsManager(VDS_ID);
-
-        doReturn(vmDynamicDao).when(vmDevicesMonitoring).getVmDynamicDao();
-        doReturn(vmDeviceDao).when(vmDevicesMonitoring).getVmDeviceDao();
-        doReturn(resourceManager).when(vmDevicesMonitoring).getResourceManager();
 
         injectorRule.bind(TransactionManager.class, transactionManager);
     }
@@ -420,7 +410,6 @@ public class VmDevicesMonitoringTest {
         change.flush();
 
         initDevices();
-        doReturn(Collections.emptyList()).when(vmDeviceDao).getVmDeviceByVmId(VM_ID);
         doReturn(Collections.emptyList()).when(vmDeviceDao).getVmDevicesByDeviceId(controllerId, VM_ID);
 
         change = vmDevicesMonitoring.createChange(3L);
