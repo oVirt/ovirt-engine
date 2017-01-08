@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -37,7 +36,6 @@ import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
@@ -130,19 +128,16 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                         0);
                         detachParams.setForce(true);
                         detachParams.setDetachFromOldStoragePool(true);
-                        VDSReturnValue returnValue =
-                                runVdsCommand(VDSCommandType.DetachStorageDomain, detachParams);
-                        if (!returnValue.getSucceeded()) {
+                        try {
+                            runVdsCommand(VDSCommandType.DetachStorageDomain, detachParams);
+                        } catch (EngineException e) {
                             log.warn("Detaching Storage Domain '{}' from it's previous storage pool '{}'"
-                                            + " has failed. The meta data of the Storage Domain might still"
-                                            + " indicate that it is attached to a different Storage Pool.",
+                                    + " has failed. The meta data of the Storage Domain might still"
+                                    + " indicate that it is attached to a different Storage Pool.",
                                     getParameters().getStorageDomainId(),
                                     Guid.Empty,
                                     0);
-                            throw new EngineException(
-                                    returnValue.getVdsError() != null ? returnValue.getVdsError().getCode()
-                                            : EngineError.ENGINE,
-                                    returnValue.getExceptionString());
+                            throw e;
                         }
                     }
                     if (diskProfileDao.getAllForStorageDomain(getStorageDomain().getId()).isEmpty()) {
