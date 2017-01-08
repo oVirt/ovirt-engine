@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.ImageTransfer;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ImageTransferResource;
@@ -25,6 +26,18 @@ public class BackendImageTransferResource extends
     public
     ImageTransfer get() {
         return performGet(VdcQueryType.GetImageTransferById, new IdQueryParameters(guid));
+    }
+
+    @Override
+    protected ImageTransfer addLinks(ImageTransfer model,
+            Class<? extends BaseResource> suggestedParent,
+            String... subCollectionMembersToExclude) {
+        super.addLinks(model, suggestedParent, subCollectionMembersToExclude);
+        if (model.isSetImage()) {
+            model.getImage().setHref(null);
+        }
+
+        return model;
     }
 
     @Override

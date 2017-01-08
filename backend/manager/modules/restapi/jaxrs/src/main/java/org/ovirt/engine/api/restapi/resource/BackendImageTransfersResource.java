@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.ImageTransfer;
 import org.ovirt.engine.api.model.ImageTransfers;
 import org.ovirt.engine.api.resource.ImageTransferResource;
@@ -51,5 +52,17 @@ public class BackendImageTransfersResource
         }
 
         return mappedImageTransfers;
+    }
+
+    @Override
+    protected ImageTransfer addLinks(ImageTransfer model,
+            Class<? extends BaseResource> suggestedParent,
+            String... subCollectionMembersToExclude) {
+        super.addLinks(model, suggestedParent, subCollectionMembersToExclude);
+        if (model.isSetImage()) {
+            model.getImage().setHref(null);
+        }
+
+        return model;
     }
 }
