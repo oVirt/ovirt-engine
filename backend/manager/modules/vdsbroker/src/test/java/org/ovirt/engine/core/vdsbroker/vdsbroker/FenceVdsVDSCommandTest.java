@@ -2,18 +2,15 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
@@ -22,47 +19,19 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Sta
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FenceVdsVDSCommandTest {
     private static Guid TARGET_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
     private static Guid PROXY_HOST_ID = new Guid("44444444-4444-4444-4444-444444444444");
-    private static Guid DC_ID = new Guid("22222222-2222-2222-2222-222222222222");
 
     private FenceVdsVDSCommand<FenceVdsVDSCommandParameters> command;
-
-    @Mock
-    private DbFacade dbFacade;
-
-    @Mock
-    private VdsDao vdsDao;
-
-    @Mock
-    private VDS targetHost;
 
     @Mock
     private VdsStatic targetVdsStatic;
 
     @Mock
-    private VDS proxyHost;
-
-    @Mock
     private IVdsServer broker;
-
-    @Before
-    public void setupMocks() {
-        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-
-        when(vdsDao.get(eq(TARGET_HOST_ID))).thenReturn(targetHost);
-        when(targetHost.getId()).thenReturn(TARGET_HOST_ID);
-
-        when(vdsDao.get(eq(PROXY_HOST_ID))).thenReturn(proxyHost);
-        when(proxyHost.getId()).thenReturn(PROXY_HOST_ID);
-        when(proxyHost.getClusterCompatibilityVersion()).thenReturn(Version.getLast());
-    }
 
     private void setupCommand(FenceVdsVDSCommandParameters params) {
         command = new FenceVdsVDSCommand<FenceVdsVDSCommandParameters>(params) {
@@ -70,11 +39,6 @@ public class FenceVdsVDSCommandTest {
             @Override
             protected IVdsServer initializeVdsBroker(Guid vdsId) {
                 return broker;
-            }
-
-            @Override
-            protected DbFacade getDbFacade() {
-                return dbFacade;
             }
 
             @Override
