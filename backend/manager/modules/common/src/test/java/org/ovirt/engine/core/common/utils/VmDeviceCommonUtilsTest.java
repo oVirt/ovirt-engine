@@ -51,7 +51,6 @@ public class VmDeviceCommonUtilsTest {
 
         doReturn(idToDisk).when(vm).getDiskMap();
         doReturn(interfaces).when(vm).getInterfaces();
-        doReturn(false).when(vm).isRunOnce();
         doReturn(BootSequence.DNC).when(vm).getDefaultBootSequence();
 
         // it is important that nic2 will be before nic1 to ensure their boot order is
