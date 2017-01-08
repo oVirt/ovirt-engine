@@ -382,7 +382,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
         _dialog = new EngineSSHDialog();
         _parser = new MachineDialogParser();
         _thread = new Thread(
-                () -> threadMain(),
+                this::threadMain,
                 "VdsDeploy"
         );
 
