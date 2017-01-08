@@ -26,12 +26,18 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 public class VirtMonitoringStrategyTest {
+    private Guid vdsId = Guid.newGuid();
+    private Guid clusterId = Guid.newGuid();
 
-    private VDS vdsFromDb = new VDS();
+    private VDS vdsFromDb;
     private Cluster cluster;
 
     @Before
     public void setUp() {
+        vdsFromDb = new VDS();
+        vdsFromDb.setId(vdsId);
+        vdsFromDb.setClusterId(clusterId);
+
         virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao(), null));
         doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class),
                 any(NonOperationalReason.class),
@@ -45,11 +51,13 @@ public class VirtMonitoringStrategyTest {
         VDS vds = new VDS();
         vds.setStatus(VDSStatus.PreparingForMaintenance);
         vds.setVmCount(1);
+        vds.setId(vdsId);
+        vds.setClusterId(clusterId);
         assertFalse(virtStrategy.canMoveToMaintenance(vds));
         vds.setVmCount(0);
-        doReturn(false).when(virtStrategy).isAnyVmRunOnVdsInDb(any(Guid.class));
+        doReturn(false).when(virtStrategy).isAnyVmRunOnVdsInDb(vdsId);
         assertTrue(virtStrategy.canMoveToMaintenance(vds));
-        doReturn(true).when(virtStrategy).isAnyVmRunOnVdsInDb(any(Guid.class));
+        doReturn(true).when(virtStrategy).isAnyVmRunOnVdsInDb(vdsId);
         assertFalse(virtStrategy.canMoveToMaintenance(vds));
     }
 
@@ -66,6 +74,8 @@ public class VirtMonitoringStrategyTest {
     public void testProcessSpecialSoftwareCapabilities() {
         VDS vds = createBaseVds();
         vds.setHostOs("Fedora - 20 - 3");
+        vds.setId(vdsId);
+        vds.setClusterId(clusterId);
         virtStrategy.processSoftwareCapabilities(vds);
         assertEquals(VDSStatus.Up, vds.getStatus());
         vds.setKvmEnabled(Boolean.TRUE);
@@ -126,6 +136,8 @@ public class VirtMonitoringStrategyTest {
         vds.setSupportedEmulatedMachines("pc-1.0");
         vds.getSupportedRngSources().add(VmRngDevice.Source.URANDOM);
         vds.setStatus(VDSStatus.Up);
+        vds.setId(vdsId);
+        vds.setClusterId(clusterId);
         return vds;
     }
 
@@ -155,13 +167,14 @@ public class VirtMonitoringStrategyTest {
         cluster = new Cluster();
         cluster.setEmulatedMachine("pc-1.0");
         cluster.setCompatibilityVersion(Version.getLast());
-        when(mock.get(any(Guid.class))).thenReturn(cluster);
+        cluster.setClusterId(clusterId);
+        when(mock.get(clusterId)).thenReturn(cluster);
         return mock;
     }
 
     private VdsDao mockVdsDao() {
         VdsDao mock = mock(VdsDao.class);
-        when(mock.getFirstUpRhelForCluster(any(Guid.class))).thenReturn(vdsFromDb);
+        when(mock.getFirstUpRhelForCluster(clusterId)).thenReturn(vdsFromDb);
         return mock;
     }
 }
