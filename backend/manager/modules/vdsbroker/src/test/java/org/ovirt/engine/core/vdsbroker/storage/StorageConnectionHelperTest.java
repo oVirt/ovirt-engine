@@ -45,7 +45,6 @@ public class StorageConnectionHelperTest {
     public void testCredentialsWithConnectionExtensionSameHostDifferentTarget() {
         StorageServerConnections conn = createConnectionWithCredentials("target2");
         StorageServerConnectionExtension connExt = createConnectionExtension(Guid.newGuid());
-        when(connExtDaoMock.getByHostIdAndTarget(connExt.getHostId(), connExt.getIqn())).thenReturn(connExt);
 
         Pair<String, String> credentials = helper.getStorageConnectionCredentialsForhost(connExt.getHostId(), conn);
         assertCredentials(credentials, conn.getUserName(), conn.getPassword());
@@ -55,7 +54,6 @@ public class StorageConnectionHelperTest {
     public void testCredentialsWithConnectionExtensionDifferentHostSameTarget() {
         StorageServerConnections conn = createConnectionWithCredentials("target1");
         StorageServerConnectionExtension connExt = createConnectionExtension(Guid.newGuid());
-        when(connExtDaoMock.getByHostIdAndTarget(Guid.newGuid(), connExt.getIqn())).thenReturn(connExt);
 
         Pair<String, String> credentials = helper.getStorageConnectionCredentialsForhost(connExt.getHostId(), conn);
         assertCredentials(credentials, conn.getUserName(), conn.getPassword());
