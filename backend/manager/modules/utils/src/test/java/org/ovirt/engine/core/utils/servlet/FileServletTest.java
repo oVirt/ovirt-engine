@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -48,8 +47,6 @@ public class FileServletTest {
     public void setUp() throws Exception {
         file = new File(this.getClass().getResource("small_file.txt").toURI());
         testServlet = new FileServlet();
-        ServletContext mockContext = mock(ServletContext.class);
-        when(mockConfig.getServletContext()).thenReturn(mockContext);
     }
 
     /**
