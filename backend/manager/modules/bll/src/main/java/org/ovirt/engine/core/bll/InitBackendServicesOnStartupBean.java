@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
+import org.ovirt.engine.core.bll.hostdeploy.HostUpdatesCheckerService;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
 import org.ovirt.engine.core.bll.scheduling.AffinityRulesEnforcementManager;
@@ -95,6 +96,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             }
 
             serviceLoader.load(CertificationValidityChecker.class);
+            serviceLoader.load(HostUpdatesCheckerService.class);
         } catch (Exception ex) {
             log.error("Failed to initialize backend", ex);
             throw ex;

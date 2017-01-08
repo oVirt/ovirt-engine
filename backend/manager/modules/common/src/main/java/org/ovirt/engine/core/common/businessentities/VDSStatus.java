@@ -41,4 +41,12 @@ public enum VDSStatus implements Identifiable {
     public static VDSStatus forValue(int value) {
         return mappings.get(value);
     }
+
+    public boolean isEligibleForCheckUpdates() {
+        return this == Up || this == NonOperational;
+    }
+
+    public boolean isEligibleForOnDemandCheckUpdates() {
+        return this == Up || this == NonOperational || this == Maintenance;
+    }
 }

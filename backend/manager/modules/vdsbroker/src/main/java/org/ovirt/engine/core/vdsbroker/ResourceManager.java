@@ -20,7 +20,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
-import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -464,9 +463,5 @@ public class ResourceManager implements BackendService {
     public void subscribe(EventSubscriber subscriber) {
         log.debug("subscribe called with subscription id: {}", subscriber.getSubscriptionId());
         ReactorFactory.getWorker(this.parallelism).getPublisher().subscribe(subscriber);
-    }
-
-    public HostUpgradeManagerResult checkForUpdates(VDS host) {
-        return getEventListener().checkForUpdates(host);
     }
 }

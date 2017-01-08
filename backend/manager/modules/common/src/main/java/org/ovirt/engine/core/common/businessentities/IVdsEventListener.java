@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.compat.Guid;
@@ -77,8 +76,6 @@ public interface IVdsEventListener {
     void refreshHostIfAnyVmHasHostDevices(List<Guid> vmIds, Guid hostId);
 
     void refreshHostCapabilities(Guid hostId);
-
-    HostUpgradeManagerResult checkForUpdates(VDS host);
 
     void importHostedEngineVm(VM vm);
 
