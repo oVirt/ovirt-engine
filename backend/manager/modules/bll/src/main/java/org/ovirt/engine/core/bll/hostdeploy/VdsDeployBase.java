@@ -388,7 +388,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
             s_deployPackage = new CachedTar(
                 new File(
                     EngineLocalConfig.getInstance().getCacheDir(),
-                    Config.<String> getValue(ConfigValues.BootstrapPackageName)
+                    Config.getValue(ConfigValues.BootstrapPackageName)
                 ),
                 new File(Config.<String> getValue(ConfigValues.BootstrapPackageDirectory))
             );
