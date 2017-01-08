@@ -17,22 +17,13 @@ public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSComma
     @Override
     protected void executeIrsBrokerCommand() {
         if (getParameters().getForce()) {
-            try {
-                Guid storagePoolId = getParameters().getStoragePoolId();
-                if (getParameters().isDetachFromOldStoragePool()) {
-                    storagePoolId = Guid.Empty;
-                }
-                status = getIrsProxy().forcedDetachStorageDomain(getParameters().getStorageDomainId().toString(),
-                        storagePoolId.toString());
-                proceedProxyReturnValue();
-            } catch (RuntimeException ex) {
-                printReturnValue();
-                log.error("Could not force detach domain '{}' on pool '{}'. error: {}",
-                        getParameters().getStorageDomainId(), getParameters().getStoragePoolId(),
-                        ex.getMessage());
-                log.debug("Exception", ex);
-                getVDSReturnValue().setSucceeded(false);
+            Guid storagePoolId = getParameters().getStoragePoolId();
+            if (getParameters().isDetachFromOldStoragePool()) {
+                storagePoolId = Guid.Empty;
             }
+            status = getIrsProxy().forcedDetachStorageDomain(getParameters().getStorageDomainId().toString(),
+                    storagePoolId.toString());
+            proceedProxyReturnValue();
         } else {
             status = getIrsProxy().detachStorageDomain(getParameters().getStorageDomainId().toString(),
                     getParameters().getStoragePoolId().toString(),
