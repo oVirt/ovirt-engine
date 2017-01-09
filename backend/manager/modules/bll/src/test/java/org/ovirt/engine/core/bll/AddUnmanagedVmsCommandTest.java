@@ -6,15 +6,12 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import javax.enterprise.inject.Instance;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -45,12 +42,6 @@ public class AddUnmanagedVmsCommandTest {
     public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
-    Instance<HostedEngineImporter> hostedEngineImporterProvider;
-
-    @Mock
-    HostedEngineImporter hostedEngineImporter;
-
-    @Mock
     VmStaticDao vmStaticDao;
 
     @Spy
@@ -73,7 +64,6 @@ public class AddUnmanagedVmsCommandTest {
         doNothing().when(addUnamangedVmsCommand).addExternallyManagedVm(any(VmStatic.class));
         doNothing().when(addUnamangedVmsCommand).addDevices(any(Map.class), anyLong());
         doNothing().when(addUnamangedVmsCommand).importHostedEngineVm(any(VM.class));
-        doReturn(hostedEngineImporter).when(hostedEngineImporterProvider).get();
     }
 
     private static Map<String, Object> loadVm(String resourcePath) throws IOException {
