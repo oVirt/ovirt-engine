@@ -168,7 +168,7 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult validateFloppy() {
+    private ValidationResult validateFloppy() {
 
         if (StringUtils.isNotEmpty(runVmParam.getFloppyPath())
                 && !VmValidationUtils.isFloppySupported(vm.getOs(), vm.getCompatibilityVersion())) {
@@ -195,7 +195,7 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    protected ValidationResult validateDisplayType() {
+    private ValidationResult validateDisplayType() {
         if (!VmValidationUtils.isGraphicsAndDisplaySupported(vm.getOs(),
                 vm.getCompatibilityVersion(),
                 getVmActiveGraphics(),
@@ -271,7 +271,7 @@ public class RunVmValidator {
      *            The VM's image disks
      * @return <code>true</code> if the VM can be run, <code>false</code> if not
      */
-    protected ValidationResult validateStorageDomains(VM vm, boolean isInternalExecution,
+    private ValidationResult validateStorageDomains(VM vm, boolean isInternalExecution,
             List<DiskImage> vmImages) {
         if (vmImages.isEmpty()) {
             return ValidationResult.VALID;
@@ -300,7 +300,7 @@ public class RunVmValidator {
     /**
      * Check isValid only if VM is not HA VM
      */
-    protected ValidationResult validateImagesForRunVm(VM vm, List<DiskImage> vmDisks) {
+    private ValidationResult validateImagesForRunVm(VM vm, List<DiskImage> vmDisks) {
         if (vmDisks.isEmpty()) {
             return ValidationResult.VALID;
         }
@@ -328,7 +328,7 @@ public class RunVmValidator {
         return new MultipleDiskVmElementValidator(diskToDiskVmElement);
     }
 
-    protected ValidationResult validateIsoPath(VM vm, String diskPath, String floppyPath, Guid activeIsoDomainId) {
+    private ValidationResult validateIsoPath(VM vm, String diskPath, String floppyPath, Guid activeIsoDomainId) {
         if (vm.isAutoStartup()) {
             return ValidationResult.VALID;
         }
@@ -361,7 +361,7 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    protected ValidationResult validateVdsStatus(VM vm) {
+    private ValidationResult validateVdsStatus(VM vm) {
         if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null &&
                 getVdsDynamic(vm.getRunOnVds()).getStatus() != VDSStatus.Up) {
             return new ValidationResult(
@@ -395,7 +395,7 @@ public class RunVmValidator {
         return isImagesExceededVolumesInImageChain();
     }
 
-    protected ValidationResult validateVmStatusUsingMatrix(VM vm) {
+    private ValidationResult validateVmStatusUsingMatrix(VM vm) {
         if (!VdcActionUtils.canExecute(Collections.singletonList(vm), VM.class,
                 VdcActionType.RunVm)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
@@ -408,7 +408,7 @@ public class RunVmValidator {
     /**
      * Validates the number of volumes have not exceeded the maximum limit of volumes in an image chain.
      */
-    protected ValidationResult isImagesExceededVolumesInImageChain() {
+    private ValidationResult isImagesExceededVolumesInImageChain() {
         List<DiskImage> allImageDisks =
                 DisksFilter.filterImageDisks(getDiskDao().getAllForVm(vm.getId()), ONLY_SNAPABLE);
 
@@ -435,16 +435,16 @@ public class RunVmValidator {
         return retVal;
     }
 
-    protected MultipleStorageDomainsValidator getStorageDomainsValidator(Collection<Guid> sdIds) {
+    private MultipleStorageDomainsValidator getStorageDomainsValidator(Collection<Guid> sdIds) {
         Guid spId = vm.getStoragePoolId();
         return new MultipleStorageDomainsValidator(spId, sdIds);
     }
 
-    protected DiskImagesValidator createDiskImageValidator(List<DiskImage> disksList) {
+    private DiskImagesValidator createDiskImageValidator(List<DiskImage> disksList) {
         return new DiskImagesValidator(disksList);
     }
 
-    protected ValidationResult validateStoragePoolUp(VM vm, StoragePool storagePool, List<DiskImage> vmImages) {
+    private ValidationResult validateStoragePoolUp(VM vm, StoragePool storagePool, List<DiskImage> vmImages) {
         if (vmImages.isEmpty() || vm.isAutoStartup()) {
             return ValidationResult.VALID;
         }
@@ -457,7 +457,7 @@ public class RunVmValidator {
      * @param interfaceNetworkNames VM interface network names
      * @return true if all VM network interfaces are attached to existing cluster networks
      */
-    protected ValidationResult validateInterfacesAttachedToClusterNetworks(
+    private ValidationResult validateInterfacesAttachedToClusterNetworks(
             final Set<String> clusterNetworkNames, final Set<String> interfaceNetworkNames) {
 
         Set<String> result = new HashSet<>(interfaceNetworkNames);
@@ -480,7 +480,7 @@ public class RunVmValidator {
      *            VM interface network names
      * @return true if all VM network interfaces are attached to VM networks
      */
-    protected ValidationResult validateInterfacesAttachedToVmNetworks(final List<Network> clusterNetworks,
+    private ValidationResult validateInterfacesAttachedToVmNetworks(final List<Network> clusterNetworks,
             Set<String> interfaceNetworkNames) {
         List<String> nonVmNetworkNames =
                 NetworkUtils.filterNonVmNetworkNames(clusterNetworks, interfaceNetworkNames);
@@ -496,7 +496,7 @@ public class RunVmValidator {
     /// Utility methods ///
     ///////////////////////
 
-    protected boolean validate(ValidationResult validationResult, List<String> message) {
+    private boolean validate(ValidationResult validationResult, List<String> message) {
         if (!validationResult.isValid()) {
             message.addAll(validationResult.getMessagesAsStrings());
             message.addAll(validationResult.getVariableReplacements());
@@ -504,15 +504,15 @@ public class RunVmValidator {
         return validationResult.isValid();
     }
 
-    protected NetworkDao getNetworkDao() {
+    private NetworkDao getNetworkDao() {
         return DbFacade.getInstance().getNetworkDao();
     }
 
-    protected VdsDynamicDao getVdsDynamicDao() {
+    private VdsDynamicDao getVdsDynamicDao() {
         return DbFacade.getInstance().getVdsDynamicDao();
     }
 
-    protected BackendInternal getBackend() {
+    private BackendInternal getBackend() {
         return Backend.getInstance();
     }
 
@@ -524,7 +524,7 @@ public class RunVmValidator {
         return VmPropertiesUtils.getInstance();
     }
 
-    protected DiskDao getDiskDao() {
+    private DiskDao getDiskDao() {
         return DbFacade.getInstance().getDiskDao();
     }
 
