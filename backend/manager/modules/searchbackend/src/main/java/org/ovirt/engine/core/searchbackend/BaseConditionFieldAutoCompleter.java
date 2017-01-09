@@ -403,7 +403,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                         getDbFieldName(fieldName));
             }
             return StringFormat.format(" %1$s.%2$s %3$s %4$s ", tableName, getDbFieldName(fieldName),
-                    pair.getFirst(), pair.getSecond());
+                    pair.getFirst(), SyntaxChecker.escapeUnderScore(pair.getSecond(), customizedRelation));
         }
     }
 
