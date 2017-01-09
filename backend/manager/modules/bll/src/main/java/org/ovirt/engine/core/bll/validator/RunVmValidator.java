@@ -149,10 +149,9 @@ public class RunVmValidator {
     }
 
     private List<DiskImage> filterReadOnlyAndPreallocatedDisks(List<DiskImage> vmImageDisks) {
-        List<DiskImage> retVal = vmImageDisks.stream()
+        return vmImageDisks.stream()
                 .filter(disk -> !(disk.getVolumeType() == VolumeType.Preallocated || disk.getReadOnly()))
                 .collect(Collectors.toList());
-        return retVal;
     }
 
     private SchedulingManager getSchedulingManager() {
