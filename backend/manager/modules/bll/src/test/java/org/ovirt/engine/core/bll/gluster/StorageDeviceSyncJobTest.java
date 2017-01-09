@@ -21,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -33,7 +32,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -54,16 +52,10 @@ public class StorageDeviceSyncJobTest {
     private StorageDeviceDao storageDeviceDao;
 
     @Mock
-    private ClusterUtils clusterUtils;
-
-    @Mock
     private GlusterUtil glusterUtil;
 
     @Mock
     private ClusterDao clusterDao;
-
-    @Mock
-    private VdsDao vdsDao;
 
     @Spy
     private StorageDeviceSyncJob syncJob;
@@ -82,7 +74,6 @@ public class StorageDeviceSyncJobTest {
         doReturn(clusterDao).when(syncJob).getClusterDao();
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
         doReturn(getClusters()).when(clusterDao).getAll();
-        doReturn(vdsDao).when(syncJob).getVdsDao();
         doReturn(getAllUpServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUID_3_6);
         doReturn(getStorageDevices(HOST_ID_WITH_NEW_DEVICES)).when(storageDeviceDao)
                 .getStorageDevicesInHost(HOST_ID_WITH_NEW_DEVICES);
