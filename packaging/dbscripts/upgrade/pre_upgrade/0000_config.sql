@@ -552,8 +552,6 @@ select fn_db_add_config_value_for_versions_up_to('CustomDeviceProperties', '{typ
 select fn_db_add_config_value_for_versions_up_to('PreDefinedNetworkCustomProperties', $q$bridge_opts=^[^\s=]+=[^\s=]+(\s+[^\s=]+=[^\s=]+)*$$q$, '4.1'); -- tag prevents psql from escaping backslashes ('q' is arbitrary)
 select fn_db_add_config_value_for_versions_up_to('UserDefinedNetworkCustomProperties', '', '4.1');
 
-select fn_db_add_config_value_for_versions_up_to('SshSoftFencingCommand', '/usr/bin/vdsm-tool service-restart vdsmd', '4.1');
-
 --attestation configuration
 select fn_db_add_config_value('SecureConnectionWithOATServers','true','general');
 select fn_db_add_config_value('PollUri','AttestationService/resources/PollHosts','general');
