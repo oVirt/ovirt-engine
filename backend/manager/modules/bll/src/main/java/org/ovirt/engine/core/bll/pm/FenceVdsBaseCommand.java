@@ -101,7 +101,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         } finally {
             if (!getSucceeded()) {
                 setStatus(lastStatus);
-                if (result.getStatus() != Status.SKIPPED_DUE_TO_POLICY) {
+                if (result != null && result.getStatus() != Status.SKIPPED_DUE_TO_POLICY) {
                     // show alert only if command was not skipped due to fencing policy
                     alertIfPowerManagementOperationFailed();
                 }
