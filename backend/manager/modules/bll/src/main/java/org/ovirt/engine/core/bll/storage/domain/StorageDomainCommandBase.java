@@ -357,7 +357,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List permissionCheckSubjects = new ArrayList<>();
+        List<PermissionSubject> permissionCheckSubjects = new ArrayList<>();
         permissionCheckSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
                 VdcObjectType.Storage,
                 getActionType().getActionGroup()));
