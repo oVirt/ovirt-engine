@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -23,7 +22,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -43,12 +41,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StartVdsCommandTest extends DbDependentTestBase {
@@ -56,10 +52,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     private static final String HOST_NAME = "HostName";
     private static final Guid FENCECD_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
     private static final Guid FENCECD_HOST_CLUSTER_ID = new Guid("22222222-2222-2222-2222-222222222222");
-
-
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private HostFenceActionExecutor executor;
@@ -72,11 +64,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     @Mock
     private VmDao vmDao;
     @Mock
-    private AuditLogDao auditLogDao;
-    @Mock
     private ClusterDao clusterDao;
-    @Mock
-    private BackendInternal backend;
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
 
