@@ -146,7 +146,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                     ArrayList<Guid> storageIds = null;
                     for (DiskImage disk : pool.getDiskList()) {
                         if (diskModel.getDisk() instanceof DiskImage &&
-                                ((DiskImage) diskModel.getDisk()).getImageId().equals(disk.getParentId())) {
+                                ((DiskImage) diskModel.getDisk()).getImageId().equals(disk.getImageTemplateId())) {
                             storageIds = new ArrayList<>(disk.getStorageIds());
                             break;
                         }
