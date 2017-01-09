@@ -232,7 +232,7 @@
 		}
 
 		.vmTablePanel {
-			height: 230px;
+			height: 350px;
 			width: 98%;
 			visibility: visible;
 		}
