@@ -14,7 +14,6 @@ import javax.naming.AuthenticationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -542,27 +541,5 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 fenceAgentDao.save(agent);
             }
         }
-    }
-
-    @Override
-    protected VdcReturnValueBase createReturnValue() {
-        return super.createReturnValue();
-    }
-
-    @Override
-    protected boolean isPowerManagementLegal(boolean pmEnabled,
-                                             List<FenceAgent> fenceAgents,
-                                             String clusterCompatibilityVersion) {
-        return super.isPowerManagementLegal(pmEnabled, fenceAgents, clusterCompatibilityVersion);
-    }
-
-    @Override
-    protected void addValidationMessages(List<EngineMessage> messages) {
-        super.addValidationMessages(messages);
-    }
-
-    @Override
-    protected boolean validate(ValidationResult validationResult) {
-        return super.validate(validationResult);
     }
 }
