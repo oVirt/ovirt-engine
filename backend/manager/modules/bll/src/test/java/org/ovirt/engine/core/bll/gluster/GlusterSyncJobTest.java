@@ -6,7 +6,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
@@ -31,15 +30,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
-import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -63,7 +56,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
@@ -73,7 +65,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -143,14 +134,9 @@ public class GlusterSyncJobTest {
     @Mock
     private ClusterDao clusterDao;
     @Mock
-    private InterfaceDao interfaceDao;
-    @Mock
     private GlusterServerDao glusterServerDao;
     @Mock
     private NetworkDao networkDao;
-
-    @Mock
-    private Backend backend;
 
     private Cluster existingCluster;
     private VDS existingServer1;
@@ -167,8 +153,6 @@ public class GlusterSyncJobTest {
     @Before
     public void before() {
         injectorRule.bind(TransactionManager.class, transactionManager);
-        injectorRule.bind(BackendInternal.class, mock(BackendInternal.class));
-        injectorRule.bind(AuditLogDirector.class, mock(AuditLogDirector.class));
         glusterManager = spy(GlusterSyncJob.getInstance());
     }
 
@@ -285,20 +269,9 @@ public class GlusterSyncJobTest {
                 .getVolumeAdvancedDetails(existingServer1, CLUSTER_ID, existingReplVol.getName());
         doReturn(new VDSReturnValue()).when(glusterManager).runVdsCommand(eq(VDSCommandType.RemoveVds),
                 argThat(isRemovedServer()));
-        doReturn(mockVdcReturn()).when(backend).runInternalAction(any(VdcActionType.class),
-                any(VdcActionParametersBase.class),
-                any(CommandContext.class));
 
         doNothing().when(glusterManager).acquireLock(CLUSTER_ID);
         doNothing().when(glusterManager).releaseLock(CLUSTER_ID);
-        doReturn(glusterUtil).when(glusterManager).getGlusterUtil();
-    }
-
-    private VdcReturnValueBase mockVdcReturn() {
-        VdcReturnValueBase retValue = new VdcReturnValueBase();
-        retValue.setSucceeded(true);
-        retValue.setActionReturnValue(true);
-        return retValue;
     }
 
     private ArgumentMatcher<VDSParametersBase> isRemovedServer() {
@@ -401,7 +374,6 @@ public class GlusterSyncJobTest {
         doReturn(vdsStaticDao).when(glusterManager).getVdsStaticDao();
         doReturn(vdsDynamicDao).when(glusterManager).getVdsDynamicDao();
         doReturn(clusterDao).when(glusterManager).getClusterDao();
-        doReturn(interfaceDao).when(glusterManager).getInterfaceDao();
         doReturn(glusterServerDao).when(glusterManager).getGlusterServerDao();
         doReturn(networkDao).when(glusterManager).getNetworkDao();
 
