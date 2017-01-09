@@ -74,11 +74,8 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AddDiskCommandTest extends BaseCommandTest {
-    private static final Logger log = LoggerFactory.getLogger(AddDiskCommandTest.class);
     private static final int MAX_PCI_SLOTS = 26;
     private static final Guid vmId = Guid.newGuid();
 
@@ -141,7 +138,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         mockEntities(storageId);
         mockVm();
-        runAndAssertValidateSuccess();
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -158,10 +155,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         when(diskVmElementValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(command.getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class))).thenReturn(diskVmElementValidator);
 
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
 
     @Test
@@ -175,7 +169,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
         mockMaxPciSlots();
 
-        runAndAssertValidateSuccess();
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -189,7 +183,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
         mockMaxPciSlots();
 
-        runAndAssertValidateSuccess();
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -203,7 +197,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
         mockMaxPciSlots();
 
-        assertTrue(command.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -216,7 +210,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         command.getParameters().setStorageDomainId(storageId);
         command.getParameters().getDiskVmElement().setDiskInterface(null);
         assertFalse(command.validateInputs());
-        assertTrue(command.getReturnValue().getValidationMessages().contains("VALIDATION_DISK_INTERFACE_NOT_NULL"));
+        ValidateTestUtils.assertValidationMessages
+                ("Wrong validation method", command, EngineMessage.VALIDATION_DISK_INTERFACE_NOT_NULL);
     }
 
     @Test
@@ -228,7 +223,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
 
-        assertTrue(command.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -242,10 +237,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
         doReturn(mockStorageDomainValidatorWithoutSpace()).when(command).createStorageDomainValidator();
 
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure
+                (command, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     /**
@@ -265,7 +258,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
         mockVm();
 
-        runAndAssertValidateSuccess();
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     /**
@@ -284,10 +277,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
         mockVm();
 
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED);
     }
 
     /**
@@ -308,7 +298,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
         mockVm();
 
-        runAndAssertValidateSuccess();
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     /**
@@ -328,10 +318,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
         mockVm();
 
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure
+                (command, EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
     }
 
     @Test
@@ -348,10 +336,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
 
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue().
-                getValidationMessages().
-                contains(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure
+                (command, EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
     }
 
     /**
@@ -528,15 +514,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     /**
-     * Run the validate and assert that it succeeds
-     */
-    private void runAndAssertValidateSuccess() {
-        boolean validate = command.validate();
-        log.info("{}", command.getReturnValue().getValidationMessages());
-        assertTrue(validate);
-    }
-
-    /**
      * @return Valid parameters for the command.
      */
     private static AddDiskParameters createParameters() {
@@ -587,7 +564,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
         assertFalse("Lun disk added successfully WHILE sgio is filtered and scsi reservation is enabled",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
-        verifyValidationMessagesContainMessage(EngineMessage.ACTION_TYPE_FAILED_SGIO_IS_FILTERED);
+        ValidateTestUtils.assertValidationMessages("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",
+                command, EngineMessage.ACTION_TYPE_FAILED_SGIO_IS_FILTERED);
     }
 
     @Test
@@ -608,8 +586,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         disk.getLun().setLunType(StorageType.UNKNOWN);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for LUN with UNKNOWN type",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyValidationMessagesContainMessage(
-                EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_HAS_NO_VALID_TYPE));
+        ValidateTestUtils.assertValidationMessages("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",
+                command, EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_HAS_NO_VALID_TYPE);
     }
 
     @Test
@@ -619,16 +597,16 @@ public class AddDiskCommandTest extends BaseCommandTest {
         disk.getLun().getLunConnections().get(0).setIqn(null);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null iqn",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyValidationMessagesContainMessage(
-                EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        ValidateTestUtils.assertValidationMessages("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",
+                command, EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
 
         clearValidationMessages();
 
         disk.getLun().getLunConnections().get(0).setIqn("");
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with an empty iqn",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyValidationMessagesContainMessage(
-                EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        ValidateTestUtils.assertValidationMessages("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",
+                command, EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
     }
 
     @Test
@@ -638,16 +616,16 @@ public class AddDiskCommandTest extends BaseCommandTest {
         disk.getLun().getLunConnections().get(0).setConnection(null);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null address",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyValidationMessagesContainMessage(
-                EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        ValidateTestUtils.assertValidationMessages("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",
+                command, EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
 
         clearValidationMessages();
 
         disk.getLun().getLunConnections().get(0).setConnection("");
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty address",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyValidationMessagesContainMessage(
-                EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        ValidateTestUtils.assertValidationMessages("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",
+                command, EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
     }
 
     @Test
@@ -657,16 +635,16 @@ public class AddDiskCommandTest extends BaseCommandTest {
         disk.getLun().getLunConnections().get(0).setPort(null);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null port",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyValidationMessagesContainMessage(
-                EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        ValidateTestUtils.assertValidationMessages("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",
+                command, EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
 
         clearValidationMessages();
 
         disk.getLun().getLunConnections().get(0).setPort("");
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty port",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyValidationMessagesContainMessage(
-                EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        ValidateTestUtils.assertValidationMessages("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",
+                command, EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
     }
 
     @Test
@@ -985,12 +963,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         ValidateTestUtils.runAndAssertValidateFailure(
                 command, EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
-    }
-
-    private boolean verifyValidationMessagesContainMessage(EngineMessage message) {
-        return command.getReturnValue()
-                .getValidationMessages()
-                .contains(message.toString());
     }
 
     private void clearValidationMessages(){
