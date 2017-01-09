@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -32,16 +31,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.network.NetworkQoSDao;
-import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmNicValidatorTest {
 
     private static final Guid VNIC_PROFILE_ID = Guid.newGuid();
-    private static final String CLUSTER_VERSION = "7";
     private static final ArrayList<String> NETWORK_DEVICES = new ArrayList<>(
             Arrays.asList("rtl8139", "pv"));
 
@@ -56,30 +51,16 @@ public class VmNicValidatorTest {
     private VmNicValidator validator;
 
     @Mock
-    private DbFacade dbFacade;
-
-    @Mock
-    private VnicProfileDao vnicProfileDao;
-
-    @Mock
-    private NetworkQoSDao networkQosDao;
-
-    @Mock
     private VnicProfile vnicProfile;
 
     @Mock
     private Network network;
 
-    @Mock
-    private NetworkQoS networkQos;
-
     private VM vm;
 
     @Before
     public void setup() {
-        when(version.getValue()).thenReturn(CLUSTER_VERSION);
         validator = spy(new VmNicValidator(nic, version));
-        doReturn(dbFacade).when(validator).getDbFacade();
         vm = new VM();
     }
 
