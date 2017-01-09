@@ -948,9 +948,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     public void testNonExistingQuota() {
         DiskImage img = new DiskImage();
         img.setQuotaId(Guid.newGuid());
-
-        AddDiskParameters params = createParameters();
-        params.setDiskInfo(img);
         command.getParameters().setDiskInfo(img);
 
         Guid storageId = Guid.newGuid();
