@@ -1,1 +1,1 @@
-See http://www.ovirt.org/index.php?title=CI/Build_and_test_standards
+See http://ovirt-infra-docs.readthedocs.io/en/latest/CI/Build_and_test_standards.html
