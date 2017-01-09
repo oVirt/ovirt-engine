@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.IscsiBondDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -94,10 +93,6 @@ public class NetworkValidatorTest {
         // mock their getters
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(networks);
-
-        // mock version checking
-        Version version = mock(Version.class);
-        when(dataCenter.getCompatibilityVersion()).thenReturn(version);
     }
 
     @Test
