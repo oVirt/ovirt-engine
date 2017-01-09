@@ -47,7 +47,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
-import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -65,14 +64,10 @@ public class GlusterServiceSyncJobTest {
     private List<GlusterClusterService> existingClusterServices;
     private Map<String, GlusterService> serviceNameMap;
     private GlusterServiceSyncJob syncJob;
-    private List<VDS> upServers;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GlusterServicesEnabled, Version.getLast(), true));
-
-    @Mock
-    private GlusterServiceDao serviceDao;
 
     @Mock
     private GlusterServerServiceDao serverServiceDao;
@@ -96,7 +91,6 @@ public class GlusterServiceSyncJobTest {
     }
 
     private void createObjects() {
-        upServers = createUpServers();
         serviceNameMap = createServiceNameMap();
         existingClusterServices = createClusterServices();
     }
@@ -105,14 +99,12 @@ public class GlusterServiceSyncJobTest {
         syncJob = spy(GlusterServiceSyncJob.getInstance());
         syncJob.setLogUtil(logUtil);
 
-        doReturn(serviceDao).when(syncJob).getGlusterServiceDao();
         doReturn(serverServiceDao).when(syncJob).getGlusterServerServiceDao();
         doReturn(clusterServiceDao).when(syncJob).getGlusterClusterServiceDao();
         doReturn(clusterDao).when(syncJob).getClusterDao();
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
         doReturn(serviceNameMap).when(syncJob).getServiceNameMap();
 
-        doReturn(upServers).when(glusterUtil).getAllUpServers(CLUSTER_ID);
         doReturn(Collections.singletonList(createCluster())).when(clusterDao).getAll();
         doReturn(createServerServices(SERVER1_ID, GlusterServiceStatus.RUNNING)).when(serverServiceDao)
                 .getByServerId(SERVER1_ID);
@@ -220,14 +212,6 @@ public class GlusterServiceSyncJobTest {
         service.setStatus(status);
         service.setServiceName(serviceName);
         return service;
-    }
-
-    private List<VDS> createUpServers() {
-        List<VDS> servers = new ArrayList<>();
-        servers.add(createUpServer(SERVER1_ID));
-        servers.add(createUpServer(SERVER2_ID));
-        servers.add(createUpServer(SERVER3_ID));
-        return servers;
     }
 
     private VDS createUpServer(Guid serverId) {
