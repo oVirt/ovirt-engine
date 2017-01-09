@@ -406,14 +406,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     protected void mockInterfaceList() {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-
-        ArrayList<String> diskInterfaces = new ArrayList<>(
-                Arrays.asList(new String[]{
-                        "IDE",
-                        "VirtIO",
-                        "VirtIO_SCSI"
-                }));
-
+        List<String> diskInterfaces = Arrays.asList("IDE", "VirtIO", "VirtIO_SCSI");
         when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(diskInterfaces);
     }
 
@@ -784,7 +777,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
 
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
-                new ArrayList<>(Collections.singletonList("VirtIO")));
+                Collections.singletonList("VirtIO"));
 
         doReturn(true).when(vmDeviceUtils).hasVirtioScsiController(any(Guid.class));
 
@@ -839,7 +832,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
 
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
-                new ArrayList<>(Collections.singletonList("VirtIO_SCSI")));
+                Collections.singletonList("VirtIO_SCSI"));
 
         doReturn(true).when(vmDeviceUtils).hasVirtioScsiController(any(Guid.class));
 
