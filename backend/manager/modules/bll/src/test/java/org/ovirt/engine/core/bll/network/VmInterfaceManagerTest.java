@@ -22,14 +22,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -37,8 +33,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class VmInterfaceManagerTest {
 
-    private static final String NETWORK_NAME = "networkName";
-    private static final String VM_NAME = "vmName";
     private static final int OS_ID = 0;
 
     @Mock
@@ -48,16 +42,7 @@ public class VmInterfaceManagerTest {
     private VmNetworkStatisticsDao vmNetworkStatisticsDao;
 
     @Mock
-    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
-
-    @Mock
     private VmNicDao vmNicDao;
-
-    @Mock
-    private VmDao vmDao;
-
-    @Mock
-    private ExternalNetworkManager externalNetworkManager;
 
     private VmInterfaceManager vmInterfaceManager;
 
@@ -69,13 +54,8 @@ public class VmInterfaceManagerTest {
     public void setupMocks() {
         vmInterfaceManager = spy(new VmInterfaceManager(macPool));
         doReturn(vmNetworkStatisticsDao).when(vmInterfaceManager).getVmNetworkStatisticsDao();
-        doReturn(vmNetworkInterfaceDao).when(vmInterfaceManager).getVmNetworkInterfaceDao();
         doReturn(vmNicDao).when(vmInterfaceManager).getVmNicDao();
-        doReturn(vmDao).when(vmInterfaceManager).getVmDao();
-        doNothing().when(vmInterfaceManager).auditLogMacInUseUnplug(any(VmNic.class));
         doNothing().when(vmInterfaceManager).removeFromExternalNetworks(anyList());
-
-        doNothing().when(vmInterfaceManager).log(any(AuditLogableBase.class), any(AuditLogType.class));
     }
 
     @Test
