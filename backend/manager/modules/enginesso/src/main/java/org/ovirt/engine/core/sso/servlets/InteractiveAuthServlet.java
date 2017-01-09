@@ -17,6 +17,7 @@ import org.ovirt.engine.core.sso.utils.AuthenticationUtils;
 import org.ovirt.engine.core.sso.utils.Credentials;
 import org.ovirt.engine.core.sso.utils.SsoConstants;
 import org.ovirt.engine.core.sso.utils.SsoContext;
+import org.ovirt.engine.core.sso.utils.SsoSession;
 import org.ovirt.engine.core.sso.utils.SsoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,10 @@ public class InteractiveAuthServlet extends HttpServlet {
         log.debug("Entered InteractiveAuthServlet");
         try {
             String redirectUrl;
-            if (StringUtils.isEmpty(SsoUtils.getSsoSession(request).getClientId())) {
+            SsoSession ssoSession = SsoUtils.getSsoSession(request);
+            // clean up the sso session id token
+            ssoContext.removeSsoSessionById(ssoSession);
+            if (StringUtils.isEmpty(ssoSession.getClientId())) {
                 redirectUrl = ssoContext.getEngineUrl();
             } else {
                 Credentials userCredentials = getUserCredentials(request);
@@ -65,7 +69,8 @@ public class InteractiveAuthServlet extends HttpServlet {
                         SsoUtils.getSsoSession(request).setLoginMessage(ex.getMessage());
                     }
                     log.debug("Redirecting to LoginPage");
-                    SsoUtils.getSsoSession(request).setReauthenticate(false);
+                    ssoSession.setReauthenticate(false);
+                    ssoContext.registerSsoSessionById(SsoUtils.generateIdToken(), ssoSession);
                     if (StringUtils.isNotEmpty(ssoContext.getSsoDefaultProfile()) &&
                             Arrays.stream(request.getCookies()).noneMatch(c -> c.getName().equals("profile"))) {
                         response.addCookie(new Cookie("profile", ssoContext.getSsoDefaultProfile()));

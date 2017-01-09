@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
@@ -29,6 +30,7 @@ public class SsoContext implements Serializable{
     private List<String> ssoProfilesSupportingPasswdChange;
     private Map<String, ClientInfo> ssoClientRegistry;
     private Map<String, SsoSession> ssoSessions = new ConcurrentHashMap<>();
+    private Map<String, SsoSession> ssoSessionsById = new ConcurrentHashMap<>();
     private Map<String, AuthenticationProfile> profiles = null;
     private Map<String, List<String>> scopeDependenciesMap = new HashMap<>();
     private String engineUrl;
@@ -148,6 +150,23 @@ public class SsoContext implements Serializable{
 
     public void removeSsoSession(String token) {
         ssoSessions.remove(token);
+    }
+
+    public SsoSession getSsoSessionById(String id) {
+        return ssoSessionsById.get(id);
+    }
+
+    public void registerSsoSessionById(String ssoSessionId, SsoSession ssoSession) {
+        ssoSession.setSessionIdToken(ssoSessionId);
+        ssoSessionsById.put(ssoSessionId, ssoSession);
+    }
+
+    public void removeSsoSessionById(SsoSession ssoSession) {
+        String id =  ssoSession.getSessionIdToken();
+        if (StringUtils.isNotEmpty(id)) {
+            ssoSessionsById.remove(id);
+            ssoSession.setSessionIdToken(null);
+        }
     }
 
     public ClientInfo getClienInfo(String clientId) {

@@ -27,6 +27,7 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -52,6 +53,16 @@ import org.slf4j.LoggerFactory;
 
 public class SsoUtils {
     private static Logger log = LoggerFactory.getLogger(SsoUtils.class);
+
+    private static SecureRandom secureRandom;
+
+    static {
+        try {
+            secureRandom = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     // We need to create an HTTP client for each SSO client, as they may have different SSL configuration
     // parameters. They will be stored in this map, indexed by client id.
@@ -317,10 +328,29 @@ public class SsoUtils {
     public static SsoSession getSsoSession(HttpServletRequest request) {
         SsoSession ssoSession = request.getSession(false) == null ?
                 null : (SsoSession) request.getSession().getAttribute(SsoConstants.OVIRT_SSO_SESSION);
+        // If the session has expired, attempt to extract the session from SsoContext persisted session
         if (ssoSession == null) {
-            throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT, "Session expired please try again.");
+            try {
+                ssoSession = getSsoContext(request).getSsoSessionById(
+                        SsoUtils.getFormParameter(request, "sessionIdToken"));
+                // If the server is restarted the session will be missing from SsoContext
+                if (ssoSession == null) {
+                    throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT, "Session expired please try again.");
+                }
+                HttpSession session = request.getSession(true);
+                session.setAttribute(SsoConstants.OVIRT_SSO_SESSION, ssoSession);
+                ssoSession.setHttpSession(session);
+            } catch (UnsupportedEncodingException ex) {
+                throw new OAuthException(SsoConstants.ERR_CODE_SERVER_ERROR, "Unable to decode sessionIdToken.");
+            }
         }
         return ssoSession;
+    }
+
+    public static String generateIdToken() throws NoSuchAlgorithmException {
+        byte[] s = new byte[8];
+        secureRandom.nextBytes(s);
+        return new Base64(0, new byte[0], true).encodeToString(s);
     }
 
     public static SsoSession getSsoSession(HttpServletRequest request, boolean mustExist)

@@ -55,6 +55,7 @@
                 <div style="vertical-align:top;display: table;">
                     <span style="vertical-align:top;display:table-cell;width:630px;">
                         <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/interactive-login">
+                            <input type="hidden" class="form-control" id="sessionIdToken" placeholder="sessionIdToken" name="sessionIdToken" value="${ssoSession.sessionIdToken}">
                             <div class="form-group">
                                 <label class="col-sm-2 col-md-2 control-label" for="username">
                                     <fmt:message key="loginpage.username" bundle="${loginpage}" />
