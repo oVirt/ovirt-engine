@@ -140,6 +140,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         initializeCommand(storageId);
 
         mockEntities(storageId);
+        mockVm();
         runAndAssertValidateSuccess();
     }
 
@@ -151,6 +152,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
+        mockVm();
         when(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
         when(diskVmElementValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(diskVmElementValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
@@ -223,6 +225,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         initializeCommand(storageId, VolumeType.Preallocated);
 
         mockEntities(storageId);
+        mockVm();
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
 
         assertTrue(command.validate());
@@ -236,6 +239,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
+        mockVm();
         doReturn(mockStorageDomainValidatorWithoutSpace()).when(command).createStorageDomainValidator();
 
         assertFalse(command.validate());
@@ -259,6 +263,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStoragePoolIsoMap();
         mockInterfaceList();
         mockMaxPciSlots();
+        mockVm();
 
         runAndAssertValidateSuccess();
     }
@@ -277,6 +282,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStorageDomain(storageId, StorageType.ISCSI);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
+        mockVm();
 
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
@@ -300,6 +306,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStoragePoolIsoMap();
         mockInterfaceList();
         mockMaxPciSlots();
+        mockVm();
 
         runAndAssertValidateSuccess();
     }
@@ -319,6 +326,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
+        mockVm();
 
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
@@ -703,6 +711,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         mockMaxPciSlots();
         mockInterfaceList();
+        mockVm();
 
         List<LUNs> luns = Collections.emptyList();
         doReturn(luns).when(command).executeGetDeviceList(any(Guid.class),
@@ -834,8 +843,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
-
         mockMaxPciSlots();
+        mockVm();
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK);
@@ -954,6 +963,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         command.getParameters().setStorageDomainId(storageId);
 
         mockEntities(storageId);
+        mockVm();
 
         doCallRealMethod().when(command).validateQuota();
 

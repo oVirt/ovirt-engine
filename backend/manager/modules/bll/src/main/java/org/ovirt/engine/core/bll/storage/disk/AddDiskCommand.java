@@ -112,7 +112,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected boolean validate() {
-        if (!isFloatingDisk() && !validate(new VmValidator(getVm()).isVmExists()) && !validateDiskVmData()) {
+        if (!isFloatingDisk() && (!validate(new VmValidator(getVm()).isVmExists()) || !validateDiskVmData())) {
             return false;
         }
 
