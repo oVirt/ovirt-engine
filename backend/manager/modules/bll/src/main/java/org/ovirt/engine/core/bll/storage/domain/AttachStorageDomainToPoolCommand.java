@@ -104,7 +104,13 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     getCompensationContext().stateChanged();
                     return null;
                 });
-                connectHostsInUpToDomainStorageServer();
+
+                List<Pair<Guid, Boolean>> hostsConnectionResults = connectHostsInUpToDomainStorageServer();
+                if (isAllHostConnectionFailed(hostsConnectionResults)) {
+                    log.error("Cannot connect storage connection server, aborting attach storage domain operation.");
+                    setSucceeded(false);
+                    return;
+                }
 
                 // Forcibly detach only data storage domains.
                 if (getStorageDomain().getStorageDomainType() == StorageDomainType.Data) {
@@ -188,6 +194,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 setSucceeded(true);
             }
         }
+    }
+
+    private boolean isAllHostConnectionFailed(List<Pair<Guid, Boolean>> hostsConnectionResults) {
+        return hostsConnectionResults.stream().map(Pair::getSecond).noneMatch(Boolean.TRUE::equals);
     }
 
     private void handleCinderDomain() {
