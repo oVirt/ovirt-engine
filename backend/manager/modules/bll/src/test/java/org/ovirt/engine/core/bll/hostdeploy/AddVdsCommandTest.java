@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.hostdeploy;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -35,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -96,7 +94,6 @@ public class AddVdsCommandTest {
         doReturn(clusterUtils).when(command).getClusterUtils();
 
         doReturn(true).when(command).validateCluster();
-        doReturn(true).when(command).isPowerManagementLegal(any(Boolean.class), anyListOf(FenceAgent.class), any(String.class));
         doReturn(sshClient).when(command).getSSHClient();
         Version version = new Version("1.2.3");
         Cluster cluster = new Cluster();
