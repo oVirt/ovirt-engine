@@ -83,8 +83,10 @@ public class MigrationPolicyUnit extends PolicyUnitImpl {
 
             for (VDS host : hosts) {
                 if (host.getId().equals(vm.getRunOnVds())) {
-                    log.debug("Vm '{}' already runs on host '{}', filtering host", vm.getName(), host.getName());
-                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__SAME_HOST.toString());
+                    log.debug("Vm '{}' already runs on host '{}',"
+                                    + " the host is not filtered out for balancing purposes",
+                            vm.getName(), host.getName());
+                    hostsToRunOn.add(host);
                     continue;
                 }
 
