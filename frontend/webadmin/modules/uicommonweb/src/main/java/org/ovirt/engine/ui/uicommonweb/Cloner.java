@@ -203,6 +203,8 @@ public final class Cloner {
         vm.setGuestOsVersion(instance.getGuestOsVersion());
         vm.setGuestOsTimezoneName(instance.getGuestOsTimezoneName());
         vm.setGuestOsTimezoneOffset(instance.getGuestOsTimezoneOffset());
+        vm.setQuotaId(instance.getQuotaId());
+        vm.setQuotaName(instance.getQuotaName());
         return vm;
     }
 
