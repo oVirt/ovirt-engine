@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -182,12 +181,10 @@ public class VfSchedulerImplTest {
         VmNetworkInterface vnic4 = mockVnic(false);
 
         HostNicVfsConfig hostNicVfsConfig1 = new HostNicVfsConfig();
-        HostDevice vf = updateVfsConfig(hostNicVfsConfig1, vnic1, true, false, true);
+        updateVfsConfig(hostNicVfsConfig1, vnic1, true, false, true);
 
         HostNicVfsConfig hostNicVfsConfig2 = new HostNicVfsConfig();
         updateVfsConfig(hostNicVfsConfig2, vnic2, false, allNicsValid, allNicsValid);
-
-        when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig1)), isNull(List.class))).thenReturn(vf);
 
         mockVfsConfigsOnHost(Arrays.asList(hostNicVfsConfig1, hostNicVfsConfig2));
 
@@ -249,9 +246,7 @@ public class VfSchedulerImplTest {
         VmNetworkInterface vnic = mockVnic(true, "net1");
 
         HostNicVfsConfig hostNicVfsConfig = new HostNicVfsConfig();
-        HostDevice vf = updateVfsConfig(hostNicVfsConfig, vnic, true, false, existFreeVf);
-
-        when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig)), isNull(List.class))).thenReturn(vf);
+        updateVfsConfig(hostNicVfsConfig, vnic, true, false, existFreeVf);
 
         mockVfsConfigsOnHost(Collections.singletonList(hostNicVfsConfig));
 
@@ -379,12 +374,12 @@ public class VfSchedulerImplTest {
                 .thenReturn(vfDirectlyAttached ? Collections.singletonList(new VmDevice()) : Collections.emptyList());
     }
 
-    private HostDevice updateVfsConfig(HostNicVfsConfig hostNicVfsConfig,
+    private void updateVfsConfig(HostNicVfsConfig hostNicVfsConfig,
             VmNetworkInterface vnic,
             boolean allNetworksAllowed,
             boolean vnicNetworkInSriovConfig,
             boolean hasFreeVf) {
-        return updateVfsConfig(hostNicVfsConfig,
+        updateVfsConfig(hostNicVfsConfig,
                 vnic,
                 1,
                 allNetworksAllowed,
