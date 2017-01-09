@@ -59,7 +59,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -85,9 +84,6 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Mock
     private SnapshotDao snapshotDAO;
-
-    @Mock
-    private StoragePoolDao spDao;
 
     @Mock
     private VmDeviceDao deviceDao;
