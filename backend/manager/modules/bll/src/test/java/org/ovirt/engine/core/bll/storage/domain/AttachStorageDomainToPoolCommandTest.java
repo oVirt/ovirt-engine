@@ -83,7 +83,8 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         Guid poolId = cmd.getStoragePoolId();
 
         doNothing().when(cmd).attemptToActivateDomain();
-        doReturn(Collections.emptyList()).when(cmd).connectHostsInUpToDomainStorageServer();
+        doReturn(Collections.singletonList(new Pair<>(Guid.newGuid(), true))).when(cmd)
+                .connectHostsInUpToDomainStorageServer();
 
         StoragePool pool = new StoragePool();
         pool.setId(poolId);
