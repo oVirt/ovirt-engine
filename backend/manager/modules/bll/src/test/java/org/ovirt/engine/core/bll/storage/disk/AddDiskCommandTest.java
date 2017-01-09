@@ -79,8 +79,8 @@ import org.slf4j.LoggerFactory;
 
 public class AddDiskCommandTest extends BaseCommandTest {
     private static final Logger log = LoggerFactory.getLogger(AddDiskCommandTest.class);
-    private static int MAX_PCI_SLOTS = 26;
-    private static Guid vmId = Guid.newGuid();
+    private static final int MAX_PCI_SLOTS = 26;
+    private static final Guid vmId = Guid.newGuid();
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
