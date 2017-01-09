@@ -53,7 +53,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         StorageHandlingCommandBase<T> {
 
     @Inject
-    protected EventQueue eventQueue;
+    private EventQueue eventQueue;
 
     @Inject
     private VmDeviceUtils vmDeviceUtils;
@@ -369,7 +369,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         changeStorageDomainStatusInTransaction(map, status, getCompensationContext());
     }
 
-    protected void changeStorageDomainStatusInTransaction(final StoragePoolIsoMap map,
+    private void changeStorageDomainStatusInTransaction(final StoragePoolIsoMap map,
             final StorageDomainStatus status, final CompensationContext context) {
         executeInNewTransaction(() -> {
             context.snapshotEntityStatus(map);
