@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -94,12 +95,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     public static final int VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT = 40;
     public static final int DESCRIPTION_MAX_LIMIT = 255;
-    /**
-     * Default ratio {@link #maxMemorySize}/{@link #privateMemSize}
-     *
-     * <p>Value suggested by QEMU team.</p>
-     */
-    public static final int DEFAULT_MAX_MEMORY_RATIO = 4;
 
     final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
@@ -1877,7 +1872,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         getMemSize().setEntity(256);
         getMinAllocatedMemory().setEntity(256);
-        getMaxMemorySize().setEntity(256 * DEFAULT_MAX_MEMORY_RATIO);
+        getMaxMemorySize().setEntity(VmCommonUtils.getMaxMemorySizeDefault(getMemSize().getEntity()));
         getIsStateless().setEntity(false);
         getIsRunAndPause().setEntity(false);
         getIsHeadlessModeEnabled().setEntity(false);
@@ -2572,7 +2567,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         behavior.updateMinAllocatedMemory();
         if (getMemSize().getEntity() != null) {
             setNumaChanged(true);
-            maxMemorySize.setEntity(getMemSize().getEntity() * DEFAULT_MAX_MEMORY_RATIO);
+            maxMemorySize.setEntity(VmCommonUtils.getMaxMemorySizeDefault(getMemSize().getEntity()));
         }
     }
 

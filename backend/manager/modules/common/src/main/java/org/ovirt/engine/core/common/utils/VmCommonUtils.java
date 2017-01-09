@@ -75,4 +75,8 @@ public class VmCommonUtils {
                  : ConfigValues.VM32BitMaxMemorySizeInMB;
      }
 
+     public static int getMaxMemorySizeDefault(int memorySize) {
+        final int maxMemoryDefaultRatio = 4;
+        return maxMemoryDefaultRatio * memorySize;
+     }
 }
