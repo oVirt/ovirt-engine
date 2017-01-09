@@ -134,6 +134,10 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
             networkClusterDao.setNetworkExclusivelyAsMigration(clusterId, network.getId());
         }
 
+        if (network.getCluster().isGluster()) {
+            networkClusterDao.setNetworkExclusivelyAsGluster(clusterId, network.getId());
+        }
+
         NetworkClusterHelper.setStatus(clusterId, network);
     }
 
