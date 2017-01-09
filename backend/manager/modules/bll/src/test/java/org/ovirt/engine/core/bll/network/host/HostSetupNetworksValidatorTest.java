@@ -76,7 +76,6 @@ import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HostSetupNetworksValidatorTest {
@@ -95,9 +94,6 @@ public class HostSetupNetworksValidatorTest {
     private FindActiveVmsUsingNetwork findActiveVmsUsingNetwork;
 
     @Mock
-    private BusinessEntityMap<Network> mockBusinessEntityMap;
-
-    @Mock
     private NetworkClusterDao networkClusterDaoMock;
 
     @Mock
@@ -105,9 +101,6 @@ public class HostSetupNetworksValidatorTest {
 
     @Mock
     private VmDao vmDao;
-
-    @Mock
-    private EffectiveHostNetworkQos effectiveHostNetworkQos;
 
     @Rule
     public ErrorCollector collector= new ErrorCollector();
@@ -577,7 +570,6 @@ public class HostSetupNetworksValidatorTest {
         Network network = addNewNetworkToDaoMock();
         VdsNetworkInterface vdsNetworkInterface = createNic(HostSetupNetworksValidator.VAR_INTERFACE_NAME);
         NetworkAttachment networkAttachment = createNetworkAttachment(network, vdsNetworkInterface, null);
-        when(networkAttachmentDaoMock.get(networkAttachment.getId())).thenReturn(networkAttachment);
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
                 .setParams(new ParametersBuilder().addNetworkAttachments(networkAttachment))
                 .addNetworks(network)
@@ -1046,7 +1038,6 @@ public class HostSetupNetworksValidatorTest {
 
         HostInterfaceValidator hostInterfaceValidatorMock = mock(HostInterfaceValidator.class);
         when(hostInterfaceValidatorMock.interfaceExists(anyString())).thenReturn(interfaceExistValidationResult);
-        when(hostInterfaceValidatorMock.interfaceHasNameSet()).thenReturn(interfaceExistValidationResult);
         when(hostInterfaceValidatorMock.interfaceIsValidSlave()).thenReturn(interfaceIsValidSlaveValidationResult);
         when(hostInterfaceValidatorMock.interfaceIsBondOrNull()).thenReturn(ValidationResult.VALID);        //TODO MM: test for this.
 
