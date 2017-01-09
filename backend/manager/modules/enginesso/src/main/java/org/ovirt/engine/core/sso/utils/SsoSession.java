@@ -42,6 +42,7 @@ public class SsoSession implements Serializable {
     private Credentials autheticatedCredentials;
     private Set<String> associateClientIds = new TreeSet<>();
     private Stack<InteractiveAuth> authStack;
+    private String sessionIdToken;
 
     public SsoSession() {
         this(null);
@@ -70,6 +71,10 @@ public class SsoSession implements Serializable {
 
     public HttpSession getHttpSession() {
         return httpSession;
+    }
+
+    public void setHttpSession(HttpSession httpSession) {
+        this.httpSession = httpSession;
     }
 
     public String getClientId() {
@@ -252,6 +257,14 @@ public class SsoSession implements Serializable {
 
     public void setEngineUrl(String engineUrl) {
         this.engineUrl = engineUrl;
+    }
+
+    public String getSessionIdToken() {
+        return sessionIdToken;
+    }
+
+    public void setSessionIdToken(String sessionIdToken) {
+        this.sessionIdToken = sessionIdToken;
     }
 
     public void cleanup() {
