@@ -45,11 +45,12 @@ public class MultipleStorageDomainsValidatorTest {
 
     private StorageDomain domain1;
     private StorageDomain domain2;
+    private StorageDomain domain3;
 
     private MultipleStorageDomainsValidator validator;
 
     private static final int NUM_DISKS = 3;
-    private static final int NUM_DOMAINS = 2;
+    private static final int NUM_DOMAINS = 3;
 
     @Before
     public void setUp() {
@@ -61,14 +62,21 @@ public class MultipleStorageDomainsValidatorTest {
 
         domain1 = new StorageDomain();
         domain1.setId(sdId1);
+        domain1.setStoragePoolId(spId);
 
         domain2 = new StorageDomain();
         domain2.setId(sdId2);
+        domain2.setStoragePoolId(spId);
+
+        domain3 = new StorageDomain();
+        domain3.setId(sdId3);
+        domain3.setStoragePoolId(spId);
 
         when(dao.getForStoragePool(sdId1, spId)).thenReturn(domain1);
         when(dao.getForStoragePool(sdId2, spId)).thenReturn(domain2);
+        when(dao.getForStoragePool(sdId3, spId)).thenReturn(domain3);
 
-        validator = spy(new MultipleStorageDomainsValidator(spId, Arrays.asList(sdId1, sdId2)));
+        validator = spy(new MultipleStorageDomainsValidator(spId, Arrays.asList(sdId1, sdId2, sdId3)));
         doReturn(dao).when(validator).getStorageDomainDao();
     }
 
@@ -76,6 +84,7 @@ public class MultipleStorageDomainsValidatorTest {
     public void testAllDomainsExistAndActiveAllActive() {
         domain1.setStatus(StorageDomainStatus.Active);
         domain2.setStatus(StorageDomainStatus.Active);
+        domain3.setStatus(StorageDomainStatus.Active);
         assertTrue("Both domains should be active", validator.allDomainsExistAndActive().isValid());
     }
 
@@ -83,6 +92,7 @@ public class MultipleStorageDomainsValidatorTest {
     public void testAllDomainsExistAndActiveOneInactive() {
         domain1.setStatus(StorageDomainStatus.Active);
         domain2.setStatus(StorageDomainStatus.Inactive);
+        domain3.setStatus(StorageDomainStatus.Active);
         ValidationResult result = validator.allDomainsExistAndActive();
         assertThat("One domain should not be active", result, failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
     }
@@ -197,6 +207,7 @@ public class MultipleStorageDomainsValidatorTest {
         for (int i = 0; i < size; ++i) {
             DiskImage diskImage = new DiskImage();
             diskImage.setImageId(Guid.newGuid());
+            diskImage.setId(Guid.newGuid());
             diskImage.setStorageIds(_sdIds);
             disksList.add(diskImage);
         }
