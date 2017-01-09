@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -35,9 +34,6 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     @Spy
     @InjectMocks
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
-
-    @Mock
-    private SnapshotsManager snapshotsManager;
 
     private static final String EXISTING_VM_NAME = "Dummy configuration";
 
