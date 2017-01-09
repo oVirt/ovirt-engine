@@ -41,8 +41,6 @@ public class HostFenceActionExecutorTest {
 
     @Before
     public void setup() {
-        doReturn("host1").when(fencedHost).getHostName();
-
         executor = spy(new HostFenceActionExecutor(fencedHost, new FencingPolicy()));
         doReturn(agentExecutor1)
                 .doReturn(agentExecutor2)
