@@ -103,14 +103,11 @@ public class GetErrataCountsForHostQueryTest
         ErrataData errataData = mock(ErrataData.class);
         ErrataCounts errataCounts = mock(ErrataCounts.class);
         when(errataData.getErrataCounts()).thenReturn(errataCounts);
-        when(errataCounts.getTotalErrata()).thenReturn(errata.size());
-        when(errataCounts.getSubTotalErrata()).thenReturn(errata.size());
         Stream.of(ErrataType.values()).forEach(type ->
             when(errataCounts.getCountByType(type)).thenReturn((int) errata.stream()
                     .filter(erratum -> erratum.getType() == type)
                     .count())
         );
-        when(errataData.getErrata()).thenReturn(errata);
         doReturn(errataData).when(providerProxy).getErrataForHost(any(String.class), any(ErrataFilter.class));
     }
 
