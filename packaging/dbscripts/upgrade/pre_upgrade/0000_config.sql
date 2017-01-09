@@ -403,7 +403,6 @@ select fn_db_add_config_value('PostgresLikeSyntax','ILIKE','general');
 select fn_db_add_config_value('PostgresPagingSyntax',E' OFFSET (%1$s -1) LIMIT %2$s','general');
 select fn_db_add_config_value('PostgresPagingType','Offset','general');
 select fn_db_add_config_value('PostgresSearchTemplate',E'SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
-select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$', '4.1');
 select fn_db_add_config_value('ProductRPMVersion','3.0.0.0','general');
 select fn_db_add_config_value('QuotaGraceStorage','20','general');
 select fn_db_add_config_value('QuotaGraceCluster','20','general');
