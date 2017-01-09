@@ -1229,8 +1229,15 @@ public class VmHandler implements BackendService {
         }
         final int maxOfMaxMemorySize =
                 VmCommonUtils.maxMemorySizeWithHotplugInMb(vmBase.getOsId(), effectiveCompatibilityVersion);
-        if (vmBase.getMaxMemorySizeMb() == 0 || vmBase.getMaxMemorySizeMb() > maxOfMaxMemorySize) {
+        if (vmBase.getMaxMemorySizeMb() > maxOfMaxMemorySize) {
             vmBase.setMaxMemorySizeMb(maxOfMaxMemorySize);
+            return;
+        }
+        if (vmBase.getMaxMemorySizeMb() == 0) {
+            final int maxMemorySize = Math.min(
+                    VmCommonUtils.getMaxMemorySizeDefault(vmBase.getMemSizeMb()),
+                    maxOfMaxMemorySize);
+            vmBase.setMaxMemorySizeMb(maxMemorySize);
         }
     }
 }
