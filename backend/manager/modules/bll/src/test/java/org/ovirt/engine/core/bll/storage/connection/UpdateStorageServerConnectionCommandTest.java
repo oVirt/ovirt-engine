@@ -195,8 +195,6 @@ public class UpdateStorageServerConnectionCommandTest extends
         StorageServerConnections conn2 = new StorageServerConnections();
         conn2.setConnection(newNFSConnection.getConnection());
         conn2.setId(Guid.newGuid().toString());
-        List<StorageServerConnections> connections = Arrays.asList(conn1, conn2);
-        when(storageConnDao.getAllForStorage(newNFSConnection.getConnection())).thenReturn(connections);
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
         doReturn(true).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -506,7 +504,6 @@ public class UpdateStorageServerConnectionCommandTest extends
         List<StorageDomain> domains = Collections.singletonList(domain);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getId());
         doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
-        doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Maintenance);
         doNothing().when(command).disconnectFromStorage();
         doNothing().when(command).updateStorageDomain(domains);
         command.executeCommand();
@@ -524,7 +521,6 @@ public class UpdateStorageServerConnectionCommandTest extends
         parameters.setStorageServerConnection(newNFSConnection);
         VDSReturnValue returnValueConnectSuccess = new VDSReturnValue();
         doReturn(false).when(command).doDomainsUseConnection(newNFSConnection);
-        doReturn(false).when(command).doLunsUseConnection();
         returnValueConnectSuccess.setSucceeded(true);
         command.executeCommand();
         CommandAssertUtils.checkSucceeded(command, true);
@@ -555,7 +551,6 @@ public class UpdateStorageServerConnectionCommandTest extends
         doReturn(returnValueUpdate).when(command).getStatsForDomain(domain);
         doReturn(true).when(command).connectToStorage();
         doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
-        doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Maintenance);
         doNothing().when(command).disconnectFromStorage();
         command.executeCommand();
         CommandAssertUtils.checkSucceeded(command, true);
@@ -581,9 +576,6 @@ public class UpdateStorageServerConnectionCommandTest extends
 
         StoragePoolIsoMap map = new StoragePoolIsoMap();
         doReturn(Collections.singletonList(map)).when(command).getStoragePoolIsoMap(domain);
-        doReturn(returnValueUpdate).when(command).getStatsForDomain(domain);
-        doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
-        doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Maintenance);
         command.executeCommand();
         CommandAssertUtils.checkSucceeded(command, true);
         verify(storageDomainDynamicDao, never()).update(domainDynamic);
@@ -685,7 +677,6 @@ public class UpdateStorageServerConnectionCommandTest extends
         StorageDomain domain = new StorageDomain();
         domain.setStatus(StorageDomainStatus.Active);
         domain.setStorageDomainSharedStatus(StorageDomainSharedStatus.Active);
-        doReturn(domain).when(storageDomainDao).get(any(Guid.class));
 
         initDomainListForConnection(NFSConnection.getId(), domain);
         ValidateTestUtils.runAndAssertValidateFailure(command,
