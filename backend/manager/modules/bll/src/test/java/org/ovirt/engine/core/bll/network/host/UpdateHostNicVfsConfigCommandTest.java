@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.network.host;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -12,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.VfsConfigValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -46,25 +46,28 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
     @Test
     public void nicNotExist() {
         nicExists(false);
-        assertValidateFailure(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST.toString());
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST);
     }
 
     @Test
     public void nicNotSriovEnabled() {
         nicSriovEnabled(false);
-        assertValidateFailure(EngineMessage.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED.toString());
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED);
     }
 
     @Test
     public void notAllVfsAreFree() {
         allVfsAreFree(false);
-        assertValidateFailure(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED.toString());
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED);
     }
 
     @Test
     public void numOfVfsIsNotInRange() {
         numOfVfsInValidRange(false);
-        assertValidateFailure(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE.toString());
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE);
     }
 
     @Test
@@ -72,12 +75,12 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
         doReturn(false).when(command).wasNumOfVfsChanged();
         allVfsAreFree(false);
         numOfVfsInValidRange(false);
-        assertValidateSuccess();
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
     public void validateSuccessNumOfVfsChanged() {
-        assertValidateSuccess();
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -113,16 +116,6 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
     private void numOfVfsInValidRange(boolean isValid) {
         when(validator.numOfVfsInValidRange(param.getNumOfVfs())).thenReturn(isValid ? ValidationResult.VALID
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE));
-    }
-
-    private void assertValidateFailure(final String messageToVerify) {
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue().getValidationMessages().contains(messageToVerify));
-    }
-
-    private void assertValidateSuccess() {
-        assertTrue(command.validate());
-        assertTrue(command.getReturnValue().getValidationMessages().isEmpty());
     }
 
     private void assertExecuteActionFailure() {
