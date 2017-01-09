@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -211,19 +212,17 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
         if (!lunsUsedBySDs.isEmpty()) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS);
-            Set<String> formattedIds = new HashSet<>();
-            for (LUNs lun : lunsUsedBySDs) {
-                formattedIds.add(getFormattedLunId(lun, lun.getStorageDomainName()));
-            }
+            Set<String> formattedIds = lunsUsedBySDs.stream()
+                    .map(lun -> getFormattedLunId(lun, lun.getStorageDomainName()))
+                    .collect(Collectors.toSet());
             addValidationMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
         }
 
         if (!lunsUsedByDisks.isEmpty()) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_USED_BY_DISKS);
-            Set<String> formattedIds = new HashSet<>();
-            for (LUNs lun : lunsUsedByDisks) {
-                formattedIds.add(getFormattedLunId(lun, lun.getDiskAlias()));
-            }
+            Set<String> formattedIds = lunsUsedByDisks.stream()
+                    .map(lun -> getFormattedLunId(lun, lun.getDiskAlias()))
+                    .collect(Collectors.toSet());
             addValidationMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
         }
 
