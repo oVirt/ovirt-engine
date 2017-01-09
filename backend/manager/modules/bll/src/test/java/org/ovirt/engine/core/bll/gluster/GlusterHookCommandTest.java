@@ -84,7 +84,6 @@ public abstract class GlusterHookCommandTest<T extends GlusterHookCommandBase<? 
         }
         when(clusterDao.get(CLUSTER_ID)).thenReturn(getCluster());
         doReturn(getGlusterServers().get(0)).when(cmd).getUpServer();
-        doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
     }
 
     protected void mockBackendStatusChange(boolean succeeded) {
@@ -92,8 +91,6 @@ public abstract class GlusterHookCommandTest<T extends GlusterHookCommandBase<? 
     }
 
     protected void mockBackendStatusChange(boolean succeeded, EngineError errorCode) {
-        doReturn(backend).when(cmd).getBackend();
-
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setReturnValue(succeeded);
         vdsReturnValue.setSucceeded(succeeded);
