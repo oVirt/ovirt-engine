@@ -16,11 +16,8 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.VfsConfigValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
-import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
 
@@ -29,15 +26,6 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
 
     private static final Guid NIC_ID = Guid.newGuid();
     private static final int NUM_OF_VFS = 5;
-
-    @Mock
-    InterfaceDao interfaceDao;
-
-    @Mock
-    HostNicVfsConfigDao vfsConfigDao;
-
-    @Mock
-    HostNicVfsConfig oldVfsConfig;
 
     @Mock
     VfsConfigValidator validator;
@@ -53,7 +41,6 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
 
         command = spy(new UpdateHostNicVfsConfigCommand(param, null));
         doReturn(validator).when(command).getVfsConfigValidator();
-        doReturn(vfsConfigDao).when(command).getVfsConfigDao();
     }
 
     @Test
