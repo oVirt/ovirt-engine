@@ -19,7 +19,7 @@ public class AmendVolumeVDSCommand<P extends AmendVolumeVDSCommandParameters> ex
         volume.put("sd_id", getParameters().getStorageDomainId().toString());
         volume.put("img_id", getParameters().getImageId().toString());
         volume.put("vol_id", getParameters().getVolumeId().toString());
-
+        volume.put("generation", getParameters().getGeneration());
         Map<String, Object> volumeAttributes = new HashMap<>();
         volumeAttributes.put("compat", getParameters().getQcowCompat().getCompatValue());
         result = getBroker().amendVolume(getParameters().getJobId().toString(), volume, volumeAttributes);
