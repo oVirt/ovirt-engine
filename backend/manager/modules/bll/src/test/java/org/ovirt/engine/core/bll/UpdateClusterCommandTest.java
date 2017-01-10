@@ -532,7 +532,7 @@ public class UpdateClusterCommandTest {
     }
 
     private void createCommandWithOlderVersion() {
-        createCommand(createClusterWithOlderVersion(true, false));
+        createCommand(createClusterWithOlderVersion());
     }
 
     private void createCommandWithInvalidVersion() {
@@ -666,12 +666,12 @@ public class UpdateClusterCommandTest {
         return group;
     }
 
-    private static Cluster createClusterWithOlderVersion(boolean supportsVirtService, boolean supportsGlusterService) {
+    private static Cluster createClusterWithOlderVersion() {
         Cluster group = createNewCluster();
         group.setCompatibilityVersion(VERSION_1_0);
         group.setStoragePoolId(DC_ID1);
-        group.setVirtService(supportsVirtService);
-        group.setGlusterService(supportsGlusterService);
+        group.setVirtService(true);
+        group.setGlusterService(false);
         return group;
     }
 
