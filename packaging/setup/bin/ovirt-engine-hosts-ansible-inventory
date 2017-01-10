@@ -151,9 +151,19 @@ def row_to_dict(row):
     }
 
 
+UP_HOSTS_GROUP_NAME = 'ovirt_up_hosts'
+METRICS_HOSTS_GROUP_NAME = 'ovirt_metrics_hosts'
+UP_METRICS_HOSTS_GROUP_NAME = 'ovirt_up_metrics_hosts'
+
+
 def get_groups(rows):
     groups = defaultdict(list)
     groups['_meta'] = {"hostvars": {}}
+
+    # Always have these groups, even if empty:
+    groups[UP_HOSTS_GROUP_NAME] = []
+    groups[METRICS_HOSTS_GROUP_NAME] = []
+    groups[UP_METRICS_HOSTS_GROUP_NAME] = []
 
     for row in rows:
         host_name = row['host_name']
@@ -169,11 +179,11 @@ def get_groups(rows):
             # '3' is Up. See also:
             # backend/manager/modules/common/src/main/java/org/ovirt/engine/
             # core/common/businessentities/VDSStatus.java
-            groups['ovirt_up_hosts'].append(host_name)
+            groups[UP_HOSTS_GROUP_NAME].append(host_name)
 
         if row['cluster_compatibility_version'] >= '4.1':
             # We want to collect metrics only from 4.1 or later hosts
-            groups['ovirt_metrics_hosts'].append(host_name)
+            groups[METRICS_HOSTS_GROUP_NAME].append(host_name)
 
         if (
             (row['status'] == 3) and
@@ -183,7 +193,7 @@ def get_groups(rows):
             # it here for now. See also:
             # https://github.com/ansible/ansible/issues/10131
             # Add Dynamic group intersections to inventory file
-            groups['ovirt_up_metrics_hosts'].append(host_name)
+            groups[UP_METRICS_HOSTS_GROUP_NAME].append(host_name)
 
     return groups
 
