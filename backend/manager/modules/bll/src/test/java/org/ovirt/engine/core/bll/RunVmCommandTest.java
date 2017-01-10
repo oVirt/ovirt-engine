@@ -15,8 +15,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -45,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -453,6 +456,40 @@ public class RunVmCommandTest extends BaseCommandTest {
     private void mockSuccessfulSnapshotValidator() {
         when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
         when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(ValidationResult.VALID);
+    }
+
+    @Test
+    public void testEffectiveEmulatedMachineWithCustomSet() {
+        final VM vm = new VM();
+        final Cluster cluster = new Cluster();
+        cluster.setEmulatedMachine("cluster-pc-i440fx-rhel7.3.0");
+        vm.setCustomEmulatedMachine("testpc-i440fx-rhel7.3.0");
+        command.setCluster(cluster);
+        command.setVm(vm);
+        assertEquals("testpc-i440fx-rhel7.3.0", command.getEffectiveEmulatedMachine());
+    }
+
+    @Test
+    public void testEffectiveEmulatedMachineWithoutCustomSet() {
+        final VM vm = new VM();
+        final Cluster cluster = new Cluster();
+        cluster.setEmulatedMachine("cluster-pc-i440fx-rhel7.3.0");
+        command.setCluster(cluster);
+        command.setVm(vm);
+        assertEquals("cluster-pc-i440fx-rhel7.3.0", command.getEffectiveEmulatedMachine());
+    }
+
+    @Test
+    public void testEffectiveEmulatedMachineCCV() {
+        final VM vm = new VM();
+        final Cluster cluster = new Cluster();
+        cluster.setEmulatedMachine("pc-i440fx-rhel7.3.0");
+        vm.setCustomCompatibilityVersion(Version.v4_0);
+        command.setCluster(cluster);
+        command.setVm(vm);
+        List<String> supported = Arrays.asList("pc-i440fx-rhel7.2.0", "pc-i440fx-2.1", "pseries-rhel7.2.0");
+        mcr.mockConfigValue(ConfigValues.ClusterEmulatedMachines, Version.v4_0, supported);
+        assertEquals("pc-i440fx-rhel7.2.0", command.getEffectiveEmulatedMachine());
     }
 
     private RunVmValidator mockSuccessfulRunVmValidator() {
