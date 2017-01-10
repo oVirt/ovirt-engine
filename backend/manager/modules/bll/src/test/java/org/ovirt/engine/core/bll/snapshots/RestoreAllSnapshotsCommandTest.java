@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.snapshots;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -16,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -94,10 +93,8 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     @Test
     public void validateFailsOnSnapshotNotExists() {
         when(snapshotDao.exists(any(Guid.class), any(Guid.class))).thenReturn(false);
-        assertFalse(spyCommand.validate());
-        assertTrue(spyCommand.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure
+                (spyCommand, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 
     @Test
@@ -108,10 +105,8 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
         mockSnapshotFromDb();
         mockSnapshot.setType(SnapshotType.REGULAR);
         mockSnapshot.setStatus(SnapshotStatus.OK);
-        assertFalse(spyCommand.validate());
-        assertTrue(spyCommand.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure
+                (spyCommand, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
     }
 
     private List<DiskImage> createDiskImageList() {
