@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.network.cluster;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -11,6 +10,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -48,18 +48,18 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
         simulateClusterExists();
         when(mockNetworkDao.get(any(Guid.class))).thenReturn(getNetwork());
         when(mockNetworkClusterDao.get(param.getNetworkCluster().getId())).thenReturn(param.getNetworkCluster());
-        assertValidateFailure(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_CLUSTER.toString());
+        ValidateTestUtils.runAndAssertValidateFailure(underTest, EngineMessage.NETWORK_ALREADY_ATTACHED_TO_CLUSTER);
     }
 
     @Test
     public void networkDoesntExist() {
         simulateClusterExists();
-        assertValidateFailure(EngineMessage.NETWORK_NOT_EXISTS.toString());
+        ValidateTestUtils.runAndAssertValidateFailure(underTest, EngineMessage.NETWORK_NOT_EXISTS);
     }
 
     @Test
     public void noCluster() {
-        assertValidateFailure(EngineMessage.VDS_CLUSTER_IS_NOT_VALID.toString());
+        ValidateTestUtils.runAndAssertValidateFailure(underTest, EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
     }
 
     @Test
@@ -98,11 +98,6 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
 
     private Cluster getExistingCluster() {
         return existingGroup;
-    }
-
-    private void assertValidateFailure(final String messageToVerify) {
-        assertFalse(underTest.validate());
-        assertTrue(underTest.getReturnValue().getValidationMessages().contains(messageToVerify));
     }
 
     private void assertExecuteActionFailure() {
