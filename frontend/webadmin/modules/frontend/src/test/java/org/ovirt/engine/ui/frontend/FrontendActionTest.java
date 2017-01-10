@@ -101,7 +101,7 @@ public class FrontendActionTest {
     @Captor
     ArgumentCaptor<FrontendActionAsyncResult> callbackParam;
 
-    private static String NO_MESSAGE = "No Message"; //$NON-NLS-1$
+    private static final String NO_MESSAGE = "No Message"; //$NON-NLS-1$
 
     private Object testState = new Object();
 
