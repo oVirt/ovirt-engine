@@ -1437,10 +1437,6 @@ public interface UIConstants extends Constants {
 
     String lunsAlreadyPartOfSD();
 
-    String nullOperationUnmanagedNetwork();
-
-    String nullOperationOutOfSyncNetwork();
-
     String syncAllHostNetworkConfirmationDialogTitle();
 
     String areYouSureYouWantToSyncAllHostNetworksMsg();

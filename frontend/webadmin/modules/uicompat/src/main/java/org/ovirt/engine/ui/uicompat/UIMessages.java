@@ -398,5 +398,9 @@ public interface UIMessages extends Messages {
     String thereAreActiveVMsRequiringRestart(int count);
 
     String uploadImageQemuCompatUnsupported(String compat, String storageFormatType);
+
+    String nullOperationUnmanagedNetwork(String networkName);
+
+    String nullOperationOutOfSyncNetwork(String networkName);
 }
 

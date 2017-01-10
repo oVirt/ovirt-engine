@@ -508,7 +508,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().nullOperationUnmanagedNetwork();
+            return ConstantsManager.getInstance().getMessages().nullOperationUnmanagedNetwork(op1.getName());
         }
 
         @Override
@@ -531,7 +531,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().nullOperationUnmanagedNetwork();
+            return ConstantsManager.getInstance().getMessages().nullOperationUnmanagedNetwork(op1.getName());
         }
 
         @Override
@@ -549,7 +549,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().nullOperationOutOfSyncNetwork();
+            return ConstantsManager.getInstance().getMessages().nullOperationOutOfSyncNetwork(op1.getName());
         }
 
         @Override
@@ -567,7 +567,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().nullOperationOutOfSyncNetwork();
+            return ConstantsManager.getInstance().getMessages().nullOperationOutOfSyncNetwork(op1.getName());
         }
 
         @Override
