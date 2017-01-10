@@ -6,7 +6,6 @@ import java.util.List;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
@@ -31,16 +30,12 @@ public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseC
     @Mock
     protected VDSBrokerFrontend vdsBrokerFrontend;
 
-    @Mock
-    protected Cluster cluster;
-
     protected final Guid volumeWithRemoveBricksTask = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     protected final Guid volumeWithoutAsyncTask = new Guid("000000000000-0000-0000-0000-00000003");
     protected final Guid volumeWithoutRemoveBricksTask = new Guid("000000000000-0000-0000-0000-00000004");
     protected final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     protected final Guid SERVER_ID = new Guid("da9e2f09-2835-4530-9bf5-576c52b11941");
     protected static final Guid BRICK_UUID1 = new Guid("6ccdc294-d77b-4929-809d-8afe7634b47d");
-    protected static final Guid BRICK_UUID2 = new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a754");
 
     protected List<GlusterBrickEntity> getInvalidNoOfBricks(Guid volumeId) {
         List<GlusterBrickEntity> bricks = new ArrayList<>();
