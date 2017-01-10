@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -43,6 +44,7 @@ public class EvenGuestDistributionWeightPolicyUnit extends PolicyUnitImpl {
         if (vds.isSpm()) {
             occupiedSlots += SPMVMCountGrace;
         }
+        occupiedSlots += PendingVM.collectForHost(getPendingResourceManager(), vds.getId()).size();
 
         return occupiedSlots;
     }
