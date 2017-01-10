@@ -1,21 +1,38 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum StorageDomainType {
 
-    Master,
-    Data,
-    ISO,
-    ImportExport,
-    Image,
-    Volume,
-    Unknown;
+    Master(0),
+    Data(1),
+    ISO(2),
+    ImportExport(3),
+    Image(4),
+    Volume(5),
+    Unknown(6);
+
+    private static final Map<Integer, StorageDomainType> mappings = new HashMap<>();
+
+    static {
+        for (StorageDomainType storageDomainType : values()) {
+            mappings.put(storageDomainType.getValue(), storageDomainType);
+        }
+    }
+
+    private int value;
+
+    StorageDomainType(int value) {
+        this.value = value;
+    }
 
     public int getValue() {
-        return this.ordinal();
+        return value;
     }
 
     public static StorageDomainType forValue(int value) {
-        return values()[value];
+        return mappings.get(value);
     }
 
     public boolean isDataDomain() {
