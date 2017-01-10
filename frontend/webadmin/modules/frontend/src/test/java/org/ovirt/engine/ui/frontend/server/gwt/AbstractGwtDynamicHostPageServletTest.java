@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +36,6 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.ovirt.engine.core.branding.BrandingManager;
-import org.ovirt.engine.core.branding.BrandingTheme;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -96,11 +94,9 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
                 thenReturn(SELECTOR_SCRIPT);
         when(mockRequest.getSession()).thenReturn(mockSession);
         when(mockRequest.getSession().getServletContext()).thenReturn(mockServletContext);
-        when(mockSession.getId()).thenReturn("sessionId"); //$NON-NLS-1$
         when(mockUser.getId()).thenReturn(Guid.newGuid());
         when(mockUser.getLoginName()).thenReturn("admin"); //$NON-NLS-1$
         when(mockUser.getDomain()).thenReturn("internal"); //$NON-NLS-1$
-        when(mockBrandingManager.getBrandingThemes()).thenReturn(new ArrayList<BrandingTheme>()); //$NON-NLS-1$
         stubGetUserBySessionIdQuery();
         stubGetConfigurationValuePublicQuery();
         setUpTestServlet();
@@ -130,10 +126,6 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
 
     @Test
     public void testDoGet_WithUserInfoObject() throws IOException, ServletException, NoSuchAlgorithmException {
-        String userInfo = "{ \"foo\": \"bar\" }"; //$NON-NLS-1$
-        when(mockUserInfoObject.toString()).thenReturn(userInfo);
-        when(mockRequest.getAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_USER_INFO.getKey())).
-            thenReturn(mockUserInfoObject);
         doReturn(mockDigest).when(testServlet).getMd5Digest(any(HttpServletRequest.class));
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey()),
@@ -242,16 +234,6 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     }
 
     void stubGetConfigurationValuePublicQuery() {
-        when(mockBackend.runPublicQuery(
-                eq(VdcQueryType.GetConfigurationValue),
-                argThat(configValueParams(ConfigurationValues.ApplicationMode))
-        )).thenReturn(new VdcQueryReturnValue() {
-            {
-                setSucceeded(true);
-                setReturnValue(Integer.valueOf(255));
-            }
-        });
-
         when(mockBackend.runPublicQuery(
                 eq(VdcQueryType.GetConfigurationValue),
                 argThat(configValueParams(ConfigurationValues.ProductRPMVersion))
