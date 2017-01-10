@@ -209,6 +209,10 @@ public class NumaSupportModel extends Model {
         parentModel.setWindow(null);
     }
 
+    public Model getParentModel() {
+        return parentModel;
+    }
+
     public List<VdsNumaNode> getNumaNodeList() {
         return numaNodeList;
     }
