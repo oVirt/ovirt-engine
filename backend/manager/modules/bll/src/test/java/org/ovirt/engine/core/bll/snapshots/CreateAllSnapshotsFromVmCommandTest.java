@@ -39,18 +39,10 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VmDao;
 
 /** A test case for the {@link CreateAllSnapshotsFromVmCommand} class. */
 public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     private CreateAllSnapshotsFromVmCommand<CreateAllSnapshotsFromVmParameters> cmd;
-
-    @Mock
-    private SnapshotDao snapshotDao;
-
-    @Mock
-    private VmDao vmDao;
 
     @Mock
     private VmValidator vmValidator;
