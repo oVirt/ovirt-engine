@@ -1722,11 +1722,6 @@ public class HostSetupNetworksValidatorTest {
         private List<NetworkAttachment> existingAttachments = new ArrayList<>();
         private List<Network> networks = new ArrayList<>();
 
-        public HostSetupNetworksValidatorBuilder setEmptyParams() {
-            setParams(new ParametersBuilder().build());
-            return this;
-        }
-
         public HostSetupNetworksValidatorBuilder setParams(HostSetupNetworksParameters params) {
             this.params = params;
             return this;
