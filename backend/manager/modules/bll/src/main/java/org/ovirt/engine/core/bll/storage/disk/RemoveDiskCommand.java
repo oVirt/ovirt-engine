@@ -12,6 +12,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
@@ -67,6 +69,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T>
         implements QuotaStorageDependent {
+
+    @Inject
+    private SnapshotsValidator snapshotsValidator;
 
     private Disk disk;
     private List<PermissionSubject> permsList = null;
@@ -291,7 +296,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             }
         }
 
-        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         for (VM vm : listVms) {
             if (!validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId())) ||
                     !validate(snapshotsValidator.vmNotInPreview(vm.getId()))) {

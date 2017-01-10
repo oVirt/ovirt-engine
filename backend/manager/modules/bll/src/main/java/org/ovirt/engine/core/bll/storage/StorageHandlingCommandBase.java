@@ -84,6 +84,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     @Inject
     protected MacPoolPerCluster macPoolPerCluster;
 
+    @Inject
+    protected SnapshotsValidator snapshotsValidator;
+
     protected StorageHandlingCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
 
@@ -164,7 +167,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             return true;
         }
 
-        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         List<VM> vmRelatedToDomain = vmDao.getAllForStorageDomain(storageDomain.getId());
         List<String> vmsInPreview = vmRelatedToDomain.stream().filter(vm -> !snapshotsValidator.vmNotInPreview(vm.getId()).isValid()).map(VM::getName).collect(Collectors.toList());
 

@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -74,6 +75,7 @@ public class RunVmValidatorTest {
     public static InjectorRule injectorRule = new InjectorRule();
 
     @Spy
+    @InjectMocks
     private RunVmValidator runVmValidator = new RunVmValidator();
     @Mock
     private SnapshotsValidator snapshotValidator;
@@ -84,7 +86,6 @@ public class RunVmValidatorTest {
     public void setup() throws InitializationException {
         mockVmPropertiesUtils();
         mockOsRepository();
-        doReturn(snapshotValidator).when(runVmValidator).getSnapshotValidator();
     }
 
     @After

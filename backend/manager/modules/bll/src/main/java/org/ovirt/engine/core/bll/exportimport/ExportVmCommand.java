@@ -21,7 +21,6 @@ import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfUpdateProcessHelper;
@@ -180,11 +179,10 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             return false;
         }
 
-        SnapshotsValidator snapshotValidator = new SnapshotsValidator();
         if (!(checkVmInStorageDomain()
                 && validate(new StoragePoolValidator(getStoragePool()).isUp())
-                && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
-                && validate(snapshotValidator.vmNotInPreview(getVmId()))
+                && validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
+                && validate(snapshotsValidator.vmNotInPreview(getVmId()))
                 && validate(new VmValidator(getVm()).vmDown())
                 && validate(new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
                 ImagesHandler.getAllStorageIdsForImageIds(disksForExport)).allDomainsExistAndActive()))) {

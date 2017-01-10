@@ -62,7 +62,6 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
     private static final Logger log = LoggerFactory.getLogger(RemoveDiskSnapshotsCommand.class);
     private List<DiskImage> images;
-    private SnapshotsValidator snapshotsValidator;
     private StorageDomainValidator storageDomainValidator;
 
     public RemoveDiskSnapshotsCommand(T parameters, CommandContext cmdContext) {
@@ -129,13 +128,6 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
      */
     protected List<DiskImage> getAllImagesForDisk() {
         return diskImageDao.getAllSnapshotsForImageGroup(getImageGroupId());
-    }
-
-    protected SnapshotsValidator getSnapshotsValidator() {
-        if (snapshotsValidator == null) {
-            snapshotsValidator = new SnapshotsValidator();
-        }
-        return snapshotsValidator;
     }
 
     protected StorageDomainValidator getStorageDomainValidator() {
@@ -467,15 +459,15 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     protected boolean validateVmNotDuringSnapshot() {
-        return validate(getSnapshotsValidator().vmNotDuringSnapshot(getVmId()));
+        return validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()));
     }
 
     protected boolean validateVmNotInPreview() {
-        return validate(getSnapshotsValidator().vmNotInPreview(getVmId()));
+        return validate(snapshotsValidator.vmNotInPreview(getVmId()));
     }
 
     protected boolean validateSnapshotExists() {
-        return validate(getSnapshotsValidator().snapshotExists(getVmId(), getSnapshotId()));
+        return validate(snapshotsValidator.snapshotExists(getVmId(), getSnapshotId()));
     }
 
     protected boolean validateAllDiskImages() {

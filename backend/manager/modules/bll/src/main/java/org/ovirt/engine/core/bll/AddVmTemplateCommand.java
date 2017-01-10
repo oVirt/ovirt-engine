@@ -114,6 +114,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Inject
     private DiskProfileHelper diskProfileHelper;
 
+    @Inject
+    protected SnapshotsValidator snapshotsValidator;
+
     private final List<DiskImage> images = new ArrayList<>();
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
@@ -692,7 +695,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     protected boolean validateVmNotDuringSnapshot() {
-        return validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
+        return validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()));
     }
 
     private Set<Guid> getStorageGuidSet() {

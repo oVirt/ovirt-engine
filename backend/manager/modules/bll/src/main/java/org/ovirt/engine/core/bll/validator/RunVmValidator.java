@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -78,6 +80,9 @@ public class RunVmValidator {
     private List<Network> cachedClusterNetworks;
     private Set<String> cachedClusterNetworksNames;
 
+    @Inject
+    private SnapshotsValidator snapshotsValidator;
+
     public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution, Guid activeIsoDomainId) {
         this.vm = vm;
         this.runVmParam = rumVmParam;
@@ -111,7 +116,7 @@ public class RunVmValidator {
             return validate(validateVdsStatus(vm), messages);
         } else if (vm.getStatus() == VMStatus.Suspended) {
             return validate(new VmValidator(vm).vmNotLocked(), messages) &&
-                   validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) &&
+                   validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId()), messages) &&
                    validate(validateVmStatusUsingMatrix(vm), messages) &&
                    validate(validateStoragePoolUp(vm, storagePool, getVmImageDisks()), messages) &&
                    validate(vmDuringInitialization(vm), messages) &&
@@ -130,7 +135,7 @@ public class RunVmValidator {
                 validate(validateBootSequence(vm, runVmParam.getBootSequence(), getVmDisks(), activeIsoDomainId), messages) &&
                 validate(validateDisplayType(), messages) &&
                 validate(new VmValidator(vm).vmNotLocked(), messages) &&
-                validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) &&
+                validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId()), messages) &&
                 ((runInUnknownStatus && vm.getStatus() == VMStatus.Unknown) || validate(validateVmStatusUsingMatrix(vm), messages)) &&
                 validate(validateStoragePoolUp(vm, storagePool, getVmImageDisks()), messages) &&
                 validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath(), activeIsoDomainId), messages)  &&
@@ -377,7 +382,7 @@ public class RunVmValidator {
             return ValidationResult.VALID;
         }
 
-        ValidationResult previewValidation = getSnapshotValidator().vmNotInPreview(vm.getId());
+        ValidationResult previewValidation = snapshotsValidator.vmNotInPreview(vm.getId());
         if (!previewValidation.isValid()) {
             return previewValidation;
         }
@@ -548,10 +553,6 @@ public class RunVmValidator {
                 .runVdsCommand(VDSCommandType.IsVmDuringInitiating,
                         new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
                 .getReturnValue();
-    }
-
-    protected SnapshotsValidator getSnapshotValidator() {
-        return new SnapshotsValidator();
     }
 
     private VdsDynamic getVdsDynamic(Guid vdsId) {

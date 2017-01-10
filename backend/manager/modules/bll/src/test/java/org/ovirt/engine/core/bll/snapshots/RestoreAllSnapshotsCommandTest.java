@@ -60,6 +60,10 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     @Mock
     private MultipleStorageDomainsValidator storageValidator;
 
+    @Spy
+    @InjectMocks
+    private SnapshotsValidator snapshotsValidator;
+
     @Mock
     private VmValidator vmValidator;
 
@@ -84,7 +88,6 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     public void setupCommand() {
         initSpyCommand();
         mockDaos();
-        mockSnapshotValidator();
         mockVm();
     }
 
@@ -178,17 +181,6 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
         sp.setId(spId);
         sp.setStatus(StoragePoolStatus.Up);
         when(storagePoolDao.get(spId)).thenReturn(sp);
-    }
-
-    private void mockSnapshotValidator() {
-        SnapshotsValidator validator = new SnapshotsValidator() {
-            @Override
-            protected SnapshotDao getSnapshotDao() {
-                return snapshotDao;
-            }
-
-        };
-        doReturn(validator).when(spyCommand).createSnapshotValidator();
     }
 
     /**

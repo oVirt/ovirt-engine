@@ -124,6 +124,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Mock
     private QuotaManager quotaManager;
 
+    @Mock
+    private SnapshotsValidator snapshotsValidator;
+
     /**
      * The command under test.
      */
@@ -365,7 +368,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     public void initializeMocks() {
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();
-        doReturn(mockSnapshotValidator()).when(command).getSnapshotsValidator();
         doReturn(false).when(command).isVirtioScsiControllerAttached(any(Guid.class));
         doReturn(false).when(command).hasWatchdog(any(Guid.class));
         doReturn(false).when(command).isBalloonEnabled(any(Guid.class));
@@ -373,6 +375,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(new ArrayList<>()).when(diskVmElementDao).getAllForVm(vmId);
         doReturn(true).when(command).validateQuota();
+        mockSnapshotsValidator();
 
         doAnswer(invocation -> invocation.getArguments()[0] != null ?
                     invocation.getArguments()[0] : Guid.newGuid())
@@ -433,11 +436,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
         return vm;
     }
 
-    private SnapshotsValidator mockSnapshotValidator() {
-        SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
+    private void mockSnapshotsValidator() {
         when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
         when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(ValidationResult.VALID);
-        return snapshotsValidator;
     }
 
     private static StorageDomainValidator mockStorageDomainValidatorWithoutSpace() {

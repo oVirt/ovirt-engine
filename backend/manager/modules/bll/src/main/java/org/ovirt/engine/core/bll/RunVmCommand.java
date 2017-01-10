@@ -80,6 +80,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.RngUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.slf4j.Logger;
@@ -1047,7 +1048,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected RunVmValidator getRunVmValidator() {
-        return new RunVmValidator(getVm(), getParameters(), isInternalExecution(), getActiveIsoDomainId());
+        return Injector.injectMembers(new RunVmValidator(getVm(), getParameters(), isInternalExecution(), getActiveIsoDomainId()));
     }
 
     protected Guid getActiveIsoDomainId() {

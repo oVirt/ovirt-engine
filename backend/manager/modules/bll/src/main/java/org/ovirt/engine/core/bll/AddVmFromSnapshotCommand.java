@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -145,8 +144,6 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected boolean validate() {
-        SnapshotsValidator snapshotsValidator = createSnapshotsValidator();
-
         // If snapshot does not exist, there is not point in checking any of the VM related checks
         if (!validate(snapshotsValidator.snapshotExists(getSnapshot()))
                 || !validate(snapshotsValidator.vmNotDuringSnapshot(getSnapshot().getVmId()))
@@ -182,10 +179,6 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         } else {
             return true;
         }
-    }
-
-    protected SnapshotsValidator createSnapshotsValidator() {
-        return new SnapshotsValidator();
     }
 
     @Override

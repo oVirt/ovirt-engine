@@ -21,7 +21,6 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.CopyImageGroupCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -205,7 +204,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     private boolean validateVmSnapshotStatus() {
-        SnapshotsValidator snapshotsValidator = getSnapshotsValidator();
         for (Pair<VM, VmDevice> pair : getVmsWithVmDeviceInfoForDiskId()) {
             VmDevice vmDevice = pair.getSecond();
             if (vmDevice.getSnapshotId() == null) { // Skip check for VMs with connected snapshot
@@ -216,10 +214,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             }
         }
         return true;
-    }
-
-    protected SnapshotsValidator getSnapshotsValidator() {
-        return new SnapshotsValidator();
     }
 
     protected boolean checkIfNeedToBeOverride() {

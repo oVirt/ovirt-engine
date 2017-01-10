@@ -21,7 +21,6 @@ import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -61,7 +60,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     private static final Logger log = LoggerFactory.getLogger(RunVmCommandBase.class);
     protected boolean _isRerun;
-    private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
     private final List<Guid> runVdsList = new ArrayList<>();
 
     @Inject
@@ -85,11 +83,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     public RunVmCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-    }
-
-
-    public SnapshotsValidator getSnapshotsValidator() {
-        return snapshotsValidator;
     }
 
     /**

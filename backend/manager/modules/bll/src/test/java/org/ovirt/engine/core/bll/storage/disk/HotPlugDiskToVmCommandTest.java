@@ -114,7 +114,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         mockVds();
         mockVmDevice(false);
 
-        doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
 

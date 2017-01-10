@@ -360,7 +360,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
     private void mockValidators() {
         doReturn(vmValidator).when(command).createVmValidator();
-        doReturn(snapshotsValidator).when(command).createSnapshotsValidator();
         doReturn(diskValidator).when(command).createDiskValidator(any(Disk.class));
         doReturn(diskVmElementValidator).when(command).createDiskVmElementValidator(any(Guid.class), any(Guid.class));
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotRunningStateless();

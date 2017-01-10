@@ -400,20 +400,20 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     protected boolean validateVmNotDuringSnapshot() {
-        return validate(createSnapshotValidator().vmNotDuringSnapshot(getVmId()));
+        return validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()));
     }
 
     protected boolean validateVmNotInPreview() {
-        return validate(createSnapshotValidator().vmNotInPreview(getVmId()));
+        return validate(snapshotsValidator.vmNotInPreview(getVmId()));
     }
 
     protected boolean validateSnapshotExists() {
-        return validate(createSnapshotValidator().snapshotExists(getVmId(), getParameters().getSnapshotId()));
+        return validate(snapshotsValidator.snapshotExists(getVmId(), getParameters().getSnapshotId()));
     }
 
     protected boolean validateSnapshotType() {
         Snapshot snapshot = snapshotDao.get(getParameters().getSnapshotId());
-        return validate(createSnapshotValidator().isRegularSnapshot(snapshot));
+        return validate(snapshotsValidator.isRegularSnapshot(snapshot));
     }
 
     protected boolean validateImages() {
@@ -447,10 +447,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     private Guid getRepresentativeSourceImageId() {
         return getSourceImages().get(0).getImageId();
-    }
-
-    protected SnapshotsValidator createSnapshotValidator() {
-        return new SnapshotsValidator();
     }
 
     protected VmValidator createVmValidator(VM vm) {

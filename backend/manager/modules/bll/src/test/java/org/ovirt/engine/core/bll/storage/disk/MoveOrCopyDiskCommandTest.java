@@ -391,7 +391,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private void initSnapshotValidator() {
         when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(ValidationResult.VALID);
         when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
-        when(command.getSnapshotsValidator()).thenReturn(snapshotsValidator);
     }
 
     private void initTemplateDiskImage() {

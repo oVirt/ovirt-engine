@@ -63,6 +63,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     @Mock
     private SnapshotDao snapshotDao;
 
+    @Spy
     private SnapshotsValidator snapshotValidator;
 
     private MultipleStorageDomainsValidator storageDomainsValidator;
@@ -78,8 +79,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         doReturn(vmValidator).when(cmd).createVmValidator(any(VM.class));
         doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
         mockSnapshot(SnapshotType.REGULAR);
-        snapshotValidator = spy(new SnapshotsValidator());
-        doReturn(snapshotValidator).when(cmd).createSnapshotValidator();
         spySdValidator();
     }
 

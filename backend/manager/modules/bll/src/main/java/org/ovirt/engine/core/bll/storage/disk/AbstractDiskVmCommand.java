@@ -12,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
@@ -204,10 +203,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return jobProperties;
     }
 
-    protected SnapshotsValidator getSnapshotsValidator() {
-        return new SnapshotsValidator();
-    }
-
     protected DiskValidator getDiskValidator(Disk disk) {
         return new DiskValidator(disk);
     }
@@ -217,7 +212,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected boolean isVmNotInPreviewSnapshot() {
-        final SnapshotsValidator snapshotsValidator = getSnapshotsValidator();
         return
                 getVmId() != null &&
                 validate(snapshotsValidator.vmNotDuringSnapshot(getVmId())) &&

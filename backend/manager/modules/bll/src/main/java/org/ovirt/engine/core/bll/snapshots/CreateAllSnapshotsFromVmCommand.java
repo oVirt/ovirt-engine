@@ -641,7 +641,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         // Initialize validators.
         VmValidator vmValidator = createVmValidator();
-        SnapshotsValidator snapshotValidator = createSnapshotValidator();
         StoragePoolValidator spValidator = createStoragePoolValidator();
         DiskImagesValidator diskImagesValidatorForChain =
                 createDiskImageValidator(DisksFilter.filterImageDisks(getDisksList(), ONLY_NOT_SHAREABLE,
@@ -649,8 +648,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         if (!(validateVM(vmValidator) && validate(spValidator.isUp())
                 && validate(vmValidator.vmNotIlegal())
                 && validate(vmValidator.vmNotLocked())
-                && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
-                && validate(snapshotValidator.vmNotInPreview(getVmId()))
+                && validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
+                && validate(snapshotsValidator.vmNotInPreview(getVmId()))
                 && validate(vmValidator.vmNotDuringMigration())
                 && validate(vmValidator.vmNotRunningStateless())
                 && validate(diskImagesValidatorForChain.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain())
@@ -672,10 +671,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     protected StoragePoolValidator createStoragePoolValidator() {
         return new StoragePoolValidator(getStoragePool());
-    }
-
-    protected SnapshotsValidator createSnapshotValidator() {
-        return new SnapshotsValidator();
     }
 
     protected DiskImagesValidator createDiskImageValidator(List<DiskImage> disksList) {

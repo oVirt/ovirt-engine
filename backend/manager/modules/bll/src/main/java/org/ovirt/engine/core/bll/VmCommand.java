@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
@@ -63,6 +64,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Inject
     private SnapshotsManager snapshotsManager;
+
+    @Inject
+    protected SnapshotsValidator snapshotsValidator;
 
     @Inject
     protected VmHandler vmHandler;

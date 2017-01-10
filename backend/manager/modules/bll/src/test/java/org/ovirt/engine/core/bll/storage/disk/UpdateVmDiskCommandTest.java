@@ -12,7 +12,6 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -113,6 +112,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     private QuotaDao quotaDao;
     @Mock
     private DiskValidator diskValidator;
+    @Mock
+    private SnapshotsValidator snapshotsValidator;
 
     @Mock
     private DiskVmElementValidator diskVmElementValidator;
@@ -489,8 +490,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
                     invocation.getArguments()[0] : Guid.newGuid())
                 .when(quotaManager).getDefaultQuotaIfNull(any(Guid.class), any(Guid.class));
 
-        SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
-        doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
         when(diskVmElementValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);

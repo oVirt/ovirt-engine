@@ -53,7 +53,6 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
         super.setUp();
         generateStorageToDisksMap();
         initDestSDs();
-        doReturn(snapshotsValidator).when(cmd).createSnapshotsValidator();
     }
 
     @Test

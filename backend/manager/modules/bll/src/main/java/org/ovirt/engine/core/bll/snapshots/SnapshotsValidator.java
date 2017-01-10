@@ -1,18 +1,24 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import javax.ejb.Singleton;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
  * Validator that is used to test if there are snapshots in progress, etc.
  */
+@Singleton
 public class SnapshotsValidator {
+
+    @Inject
+    private SnapshotDao snapshotDao;
 
     /**
      * Return whether the VM is during a snapshot operation (running currently on the VM).
@@ -49,7 +55,7 @@ public class SnapshotsValidator {
      * @return <code>true</code> if the VM dons't habe a snapshot in the given status.
      */
     private ValidationResult vmNotInStatus(Guid vmId, SnapshotStatus status, EngineMessage msg) {
-        if (getSnapshotDao().exists(vmId, status)) {
+        if (snapshotDao.exists(vmId, status)) {
             return new ValidationResult(msg);
         }
 
@@ -66,7 +72,7 @@ public class SnapshotsValidator {
      * @return Snapshot exists or not.
      */
     public ValidationResult snapshotExists(Guid vmId, Guid snapshotId) {
-        return createSnapshotExistsResult(getSnapshotDao().exists(vmId, snapshotId));
+        return createSnapshotExistsResult(snapshotDao.exists(vmId, snapshotId));
     }
 
     /**
@@ -109,13 +115,9 @@ public class SnapshotsValidator {
      *            Does the snapshot exist?
      * @return Result that either contains the suitable error or not.
      */
-    private static ValidationResult createSnapshotExistsResult(boolean snapshotExists) {
+    private ValidationResult createSnapshotExistsResult(boolean snapshotExists) {
         return snapshotExists
                 ? ValidationResult.VALID
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
     }
 }

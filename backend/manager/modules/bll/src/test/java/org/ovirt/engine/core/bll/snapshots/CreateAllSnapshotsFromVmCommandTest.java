@@ -83,7 +83,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(vmStatic).when(vm).getStaticData();
         doReturn(vm).when(cmd).getVm();
         doReturn(vmValidator).when(cmd).createVmValidator();
-        doReturn(snapshotsValidator).when(cmd).createSnapshotValidator();
         doReturn(storagePoolValidator).when(cmd).createStoragePoolValidator();
         doReturn(diskImagesValidator).when(cmd).createDiskImageValidator(any(List.class));
         doReturn(multipleStorageDomainsValidator).when(cmd).createMultipleStorageDomainsValidator(any(List.class));

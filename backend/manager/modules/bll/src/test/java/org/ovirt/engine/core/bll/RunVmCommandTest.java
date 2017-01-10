@@ -98,6 +98,9 @@ public class RunVmCommandTest extends BaseCommandTest {
     @Mock
     CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
+    @Mock
+    private SnapshotsValidator snapshotsValidator;
+
     @Spy
     @InjectMocks
     VmHandler vmHandler;
@@ -447,12 +450,9 @@ public class RunVmCommandTest extends BaseCommandTest {
         assertEquals(RunVmFlow.RUN, command.getFlow());
     }
 
-    private SnapshotsValidator mockSuccessfulSnapshotValidator() {
-        SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
+    private void mockSuccessfulSnapshotValidator() {
         when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
         when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(ValidationResult.VALID);
-        doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
-        return snapshotsValidator;
     }
 
     private RunVmValidator mockSuccessfulRunVmValidator() {

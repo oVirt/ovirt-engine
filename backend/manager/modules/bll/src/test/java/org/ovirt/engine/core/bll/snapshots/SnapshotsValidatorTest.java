@@ -2,15 +2,14 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -26,7 +25,7 @@ public class SnapshotsValidatorTest {
     /**
      * The class being tested.
      */
-    @Spy
+    @InjectMocks
     private SnapshotsValidator validator = new SnapshotsValidator();
 
     @Mock
@@ -40,7 +39,6 @@ public class SnapshotsValidatorTest {
         snapshot = new Snapshot();
         snapshot.setId(Guid.newGuid());
         snapshot.setType(Snapshot.SnapshotType.REGULAR);
-        doReturn(snapshotDao).when(validator).getSnapshotDao();
     }
 
     @Test

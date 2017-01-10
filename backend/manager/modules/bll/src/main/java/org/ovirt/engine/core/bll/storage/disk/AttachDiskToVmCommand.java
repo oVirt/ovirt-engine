@@ -87,7 +87,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         }
 
         if (isOperationPerformedOnDiskSnapshot()
-                && (!validate(getSnapshotsValidator().snapshotExists(getSnapshot())) || !validate(getSnapshotsValidator().isRegularSnapshot(getSnapshot())))) {
+                && (!validate(snapshotsValidator.snapshotExists(getSnapshot())) || !validate(snapshotsValidator.isRegularSnapshot(getSnapshot())))) {
             return false;
         }
 

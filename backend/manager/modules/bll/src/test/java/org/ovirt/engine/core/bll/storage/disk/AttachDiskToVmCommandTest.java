@@ -163,7 +163,6 @@ public class AttachDiskToVmCommandTest {
     }
 
     private void mockSnapshotsValidator() {
-        doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
     }

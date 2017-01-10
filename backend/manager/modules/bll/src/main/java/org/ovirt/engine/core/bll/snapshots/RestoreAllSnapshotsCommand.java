@@ -609,9 +609,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             return false;
         }
 
-        SnapshotsValidator snapshotValidator = createSnapshotValidator();
-        if (!validate(snapshotValidator.snapshotExists(getSnapshot()))
-                || !validate(snapshotValidator.snapshotExists(getVmId(), getSnapshot().getId())) ||
+        if (!validate(snapshotsValidator.snapshotExists(getSnapshot()))
+                || !validate(snapshotsValidator.snapshotExists(getVmId(), getSnapshot().getId())) ||
                 !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
         }
@@ -641,10 +640,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__REVERT_TO);
         addValidationMessage(EngineMessage.VAR__TYPE__SNAPSHOT);
-    }
-
-    protected SnapshotsValidator createSnapshotValidator() {
-        return new SnapshotsValidator();
     }
 
     protected VmValidator createVmValidator(VM vm) {

@@ -388,7 +388,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         if (Guid.Empty.equals(getParameters().getDstSnapshotId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
         }
-        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         VmValidator vmValidator = new VmValidator(getVm());
         if (!validate(vmValidator.vmDown())
                 || !validate(snapshotsValidator.snapshotExists(getVmId(), getParameters().getDstSnapshotId()))

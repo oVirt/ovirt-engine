@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -77,7 +76,6 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
 
     @Override
     protected boolean validate() {
-        SnapshotsValidator snapshotsValidator = createSnapshotsValidator();
         if (!validate(snapshotsValidator.snapshotExists(getSnapshot()))
                 || !validate(snapshotsValidator.vmNotDuringSnapshot(getSnapshot().getVmId()))
                 || !validate(snapshotsValidator.snapshotVmConfigurationBroken(getSnapshot(), getVmName()))) {
@@ -105,10 +103,6 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         }
 
         return true;
-    }
-
-    protected SnapshotsValidator createSnapshotsValidator() {
-        return new SnapshotsValidator();
     }
 
     @Override

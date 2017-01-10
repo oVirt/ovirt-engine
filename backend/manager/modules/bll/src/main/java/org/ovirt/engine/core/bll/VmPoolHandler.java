@@ -41,6 +41,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.slf4j.Logger;
@@ -82,6 +83,8 @@ public class VmPoolHandler implements BackendService {
     private IsoDomainListSynchronizer isoDomainListSynchronizer;
     @Inject
     private VmHandler vmHandler;
+    @Inject
+    private SnapshotsValidator snapshotsValidator;
 
     public EngineLock createLock(Guid vmId) {
         return new EngineLock(
@@ -186,7 +189,6 @@ public class VmPoolHandler implements BackendService {
         }
 
         // check VM images
-        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         ValidationResult vmDuringSnapshotResult = snapshotsValidator.vmNotDuringSnapshot(vmId);
         if (!vmDuringSnapshotResult.isValid()) {
             return failVmFree(errorProcessor, vmId, vmDuringSnapshotResult.getMessagesAsStrings());
@@ -274,7 +276,7 @@ public class VmPoolHandler implements BackendService {
 
         RunVmParams runVmParams = new RunVmParams(vmId);
 
-        return new RunVmValidator(vm, runVmParams, false, findActiveISODomain(vm.getStoragePoolId()))
+        return Injector.injectMembers(new RunVmValidator(vm, runVmParams, false, findActiveISODomain(vm.getStoragePoolId())))
                 .canRunVm(
                         messages,
                         fetchStoragePool(vm.getStoragePoolId()),
