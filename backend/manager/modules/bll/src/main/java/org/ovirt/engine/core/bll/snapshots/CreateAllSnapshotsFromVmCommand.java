@@ -763,9 +763,4 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     public CommandCallback getCallback() {
         return new ConcurrentChildCommandsExecutionCallback();
     }
-
-    /* Test only */
-    public void setVmOverheadCalculator(VmOverheadCalculator vmOverheadCalculator) {
-        this.vmOverheadCalculator = vmOverheadCalculator;
-    }
 }

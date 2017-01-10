@@ -10,7 +10,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -42,7 +42,11 @@ import org.ovirt.engine.core.compat.Guid;
 
 /** A test case for the {@link CreateAllSnapshotsFromVmCommand} class. */
 public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
-    private CreateAllSnapshotsFromVmCommand<CreateAllSnapshotsFromVmParameters> cmd;
+    @Spy
+    @InjectMocks
+    private CreateAllSnapshotsFromVmCommand<CreateAllSnapshotsFromVmParameters> cmd =
+            new CreateAllSnapshotsFromVmCommand<>
+                    (new CreateAllSnapshotsFromVmParameters(Guid.newGuid(), "", false), null);
 
     @Mock
     private VmValidator vmValidator;
@@ -74,9 +78,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
-        CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(Guid.newGuid(), "", false);
-        cmd = spy(new CreateAllSnapshotsFromVmCommand<>(params, null));
-        cmd.setVmOverheadCalculator(vmOverheadCalculator);
         doReturn(true).when(vm).isManagedVm();
         doReturn(DisplayType.vga).when(vmStatic).getDefaultDisplayType();
         doReturn(vmStatic).when(vm).getStaticData();
