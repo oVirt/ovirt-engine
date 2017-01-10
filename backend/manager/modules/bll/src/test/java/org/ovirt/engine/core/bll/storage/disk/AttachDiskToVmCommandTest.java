@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,9 +52,6 @@ public class AttachDiskToVmCommandTest {
 
     @Mock
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
-
-    @Mock
-    private VmDao vmDao;
 
     @Mock
     private DiskValidator diskValidator;
@@ -143,7 +139,6 @@ public class AttachDiskToVmCommandTest {
         vm.setStatus(VMStatus.Down);
         vm.setStoragePoolId(Guid.newGuid());
         vm.setId(vmId);
-        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
 
         return vm;
     }
