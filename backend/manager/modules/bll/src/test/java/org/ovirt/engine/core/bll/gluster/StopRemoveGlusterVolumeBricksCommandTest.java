@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -21,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
@@ -30,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -107,7 +107,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     public void testExecuteCommand() {
         setVolumeId(volumeWithRemoveBricksTask);
         mockBackend(true, null);
-        assertTrue(cmd.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
         cmd.executeCommand();
 
         verify(cmd, times(1)).endStepJobAborted(any(String.class));
@@ -119,7 +119,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     public void executeCommandWhenFailed() {
         setVolumeId(volumeWithRemoveBricksTask);
         mockBackend(false, EngineError.GlusterVolumeRemoveBricksStopFailed);
-        assertTrue(cmd.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
         cmd.executeCommand();
 
         verify(cmd, never()).endStepJobAborted(any(String.class));
@@ -130,51 +130,51 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     @Test
     public void validateSucceedsOnVolumeWithRemoveBricksTask() {
         setVolumeId(volumeWithRemoveBricksTask);
-        assertTrue(cmd.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     // This happens in retain bricks scenario, where user can call stop remove brick after migrating the data
     @Test
     public void validateSucceedsOnVolumeWithRemoveBricksTaskCompleted() {
         setVolumeId(volumeWithRemoveBricksTaskCompleted);
-        assertTrue(cmd.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
     public void validateFailsOnVolumeWithoutAsyncTask() {
         setVolumeId(volumeWithoutAsyncTask);
-        assertFalse(cmd.validate());
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID_TASK_TYPE);
     }
 
     @Test
     public void validateFailsOnVolumeWithoutRemoveBricksTask() {
         setVolumeId(volumeWithoutRemoveBricksTask);
-        assertFalse(cmd.validate());
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID_TASK_TYPE);
     }
 
     @Test
     public void validateFailsOnNull() {
         cmd.getParameters().setBricks(getBricks(volumeWithRemoveBricksTaskCompleted));
-        assertFalse(cmd.validate());
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
     }
 
     @Test
     public void validateFailsWithEmptyBricksList() {
         cmd.getParameters().setBricks(Collections.emptyList());
-        assertFalse(cmd.validate());
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
     }
 
     @Test
     public void validateFailsWithInvalidNoOfBricks() {
         cmd.setGlusterVolumeId(volumeWithRemoveBricksTask);
         cmd.getParameters().setBricks(getInvalidNoOfBricks(volumeWithRemoveBricksTask));
-        assertFalse(cmd.validate());
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_PARAMS_INVALID);
     }
 
     @Test
     public void validateFailsWithInvalidBricks() {
         cmd.setGlusterVolumeId(volumeWithRemoveBricksTask);
         cmd.getParameters().setBricks(getInvalidBricks(volumeWithRemoveBricksTask));
-        assertFalse(cmd.validate());
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_PARAMS_INVALID);
     }
 }
