@@ -175,6 +175,16 @@ def get_groups(rows):
             # We want to collect metrics only from 4.1 or later hosts
             groups['ovirt_metrics_hosts'].append(host_name)
 
+        if (
+            (row['status'] == 3) and
+            (row['cluster_compatibility_version'] >= '4.1')
+        ):
+            # Can't easily do this intersection in ansible itself, so doing
+            # it here for now. See also:
+            # https://github.com/ansible/ansible/issues/10131
+            # Add Dynamic group intersections to inventory file
+            groups['ovirt_up_metrics_hosts'].append(host_name)
+
     return groups
 
 
