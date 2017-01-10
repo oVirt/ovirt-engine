@@ -340,6 +340,7 @@ public enum VdcQueryType implements Serializable {
     GetFileStorageDomainsWithAttachedStoragePoolGuid,
     GetBlockStorageDomainsWithAttachedStoragePoolGuid,
     GetStorageDomainDefaultWipeAfterDelete,
+    GetStorageDomainDR,
 
     // Cinder
     GetCinderVolumeTypesByStorageDomainId(VdcQueryAuthType.User),
@@ -399,6 +400,7 @@ public enum VdcQueryType implements Serializable {
     GetGlusterClusterServiceByClusterId,
     GetGlusterVolumeRebalanceStatus,
     GetGlusterVolumeGeoRepSessions,
+    GetGlusterVolumeGeoRepSessionById,
     GetGlusterHostPublicKeys,
     GetGlusterVolumeRemoveBricksStatus,
     GetGlusterVolumeByTaskId,
