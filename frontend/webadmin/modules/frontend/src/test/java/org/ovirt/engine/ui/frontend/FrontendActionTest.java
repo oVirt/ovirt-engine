@@ -89,10 +89,6 @@ public class FrontendActionTest {
     @Mock
     UIConstants mockConstants;
     @Mock
-    AsyncQuery mockAsyncQuery;
-    @Mock
-    AsyncCallback mockAsyncCallback;
-    @Mock
     EventBus mockEventBus;
     @Mock
     XsrfRpcRequestBuilder mockXsrfRpcRequestBuilder;
@@ -124,7 +120,6 @@ public class FrontendActionTest {
         frontend.setEventsHandler(mockEventsHandler);
         frontend.setConstants(mockConstants);
         frontend.frontendFailureEvent = mockFrontendFailureEvent;
-        when(mockAsyncQuery.getAsyncCallback()).thenReturn(mockAsyncCallback);
         when(mockConstants.noValidateMessage()).thenReturn(NO_MESSAGE);
     }
 
