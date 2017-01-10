@@ -64,6 +64,8 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -748,12 +750,31 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             }
         }
         if (getVm().getEmulatedMachine() == null) {
-            getVm().setEmulatedMachine(getVm().getCustomEmulatedMachine() != null ?
-                    getVm().getCustomEmulatedMachine() :
-                    getCluster().getEmulatedMachine());
+            getVm().setEmulatedMachine(getEffectiveEmulatedMachine());
         }
 
         getVm().setHibernationVolHandle(getMemoryFromActiveSnapshot());
+    }
+
+    protected String getEffectiveEmulatedMachine() {
+        if (getVm().getCustomEmulatedMachine() != null) {
+            return getVm().getCustomEmulatedMachine();
+        }
+
+        // The 'default' to be set
+        String recentClusterDefault = getCluster().getEmulatedMachine();
+        if (getVm().getCustomCompatibilityVersion() == null) {
+            return recentClusterDefault;
+        }
+
+        // previous cluster version default is expected
+        // example: recentDefault: pc-i440fx-rhel7.3.0  ; oldSupported: [pc-i440fx-rhel7.2.0, pc-i440fx-2.1, pseries-rhel7.2.0]
+        List<String> oldSupported = Config.getValue(ConfigValues.ClusterEmulatedMachines,
+                getVm().getCustomCompatibilityVersion().getValue());
+        Optional<String> best = oldSupported.stream().max(
+                (s1, s2) -> StringUtils.indexOfDifference(recentClusterDefault, s1) - StringUtils.indexOfDifference(recentClusterDefault, s2));
+        log.info("Emulated machine '{}' selected since Custom Compatibility Version is set for '{}'", best.orElse(recentClusterDefault), getVm());
+        return best.orElse(recentClusterDefault);
     }
 
     /**
