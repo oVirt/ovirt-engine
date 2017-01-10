@@ -315,10 +315,16 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
 
                 Map<String, Pair<String, String>> exclusiveLocks = new HashMap<>();
                 Map<String, Pair<String, String>> sharedLocks = new HashMap<>();
-                exclusiveLocks.putAll(getContext().getLock().getExclusiveLocks());
+                if (getContext().getLock().getExclusiveLocks() != null) {
+                    exclusiveLocks.putAll(getContext().getLock().getExclusiveLocks());
+                }
                 exclusiveLocks.putAll(runLock.getExclusiveLocks());
-                sharedLocks.putAll(getContext().getLock().getSharedLocks());
-                sharedLocks.putAll(runLock.getSharedLocks());
+                if (getContext().getLock().getSharedLocks() != null) {
+                    sharedLocks.putAll(getContext().getLock().getSharedLocks());
+                }
+                if (runLock.getSharedLocks() != null) {
+                    sharedLocks.putAll(runLock.getSharedLocks());
+                }
                 setLock(new EngineLock(exclusiveLocks, sharedLocks));
             }
         }
