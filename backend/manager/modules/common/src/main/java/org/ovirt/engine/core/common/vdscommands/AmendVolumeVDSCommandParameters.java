@@ -9,6 +9,7 @@ public class AmendVolumeVDSCommandParameters extends StorageJobVdsCommandParamet
     private Guid imageId;
     private Guid volumeId;
     private QcowCompat qcowCompat;
+    private Integer generation;
 
     public AmendVolumeVDSCommandParameters() {
     }
@@ -17,10 +18,12 @@ public class AmendVolumeVDSCommandParameters extends StorageJobVdsCommandParamet
                                            Guid storageId,
                                            Guid imageId,
                                            Guid volumeId,
+                                           Integer generation,
                                            QcowCompat qcowCompat) {
         super(storageId, jobId);
         this.imageId = imageId;
         this.volumeId = volumeId;
+        this.generation = generation;
         this.qcowCompat = qcowCompat;
     }
 
@@ -40,6 +43,14 @@ public class AmendVolumeVDSCommandParameters extends StorageJobVdsCommandParamet
         this.volumeId = volumeId;
     }
 
+    public Integer getGeneration() {
+        return generation;
+    }
+
+    public void setGeneration(Integer generation) {
+        this.generation = generation;
+    }
+
     public QcowCompat getQcowCompat() {
         return qcowCompat;
     }
@@ -53,6 +64,7 @@ public class AmendVolumeVDSCommandParameters extends StorageJobVdsCommandParamet
         return super.appendAttributes(tsb)
                 .append("imageId", imageId)
                 .append("volumeId", volumeId)
+                .append("generation", generation)
                 .append("qcowCompat", qcowCompat);
     }
 }

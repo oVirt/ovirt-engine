@@ -63,6 +63,7 @@ public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
                         info.getStorageDomainId(),
                         info.getImageGroupId(),
                         info.getImageId(),
+                        info.getGeneration(),
                         getParameters().getQcowCompat()),
                 getParameters().getStoragePoolId(), this);
         if (!vdsReturnValue.getSucceeded()) {
