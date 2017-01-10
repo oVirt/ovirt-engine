@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyList;
@@ -821,6 +820,6 @@ public class UpdateClusterCommandTest {
 
     private void validateFailedWithReason(final EngineMessage message) {
         initAndAssertValidation(false);
-        assertTrue(cmd.getReturnValue().getValidationMessages().contains(message.toString()));
+        ValidateTestUtils.assertValidationMessages("Wrong validation message", cmd, message);
     }
 }
