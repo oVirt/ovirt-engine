@@ -42,6 +42,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.AlignmentScanReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DevicesVisibilityMapReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.DomainXmlListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FenceStatusReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostDevListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostJobsReturn;
@@ -2266,6 +2267,15 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
+    }
+
+    public DomainXmlListReturn dumpxmls(List<String> vmIds) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.dumpxmls").withOptionalParameterAsList("vmList", vmIds).build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("domxmls")
+                        .withResponseType(Object[].class);
+        return new DomainXmlListReturn(response);
     }
 
 }

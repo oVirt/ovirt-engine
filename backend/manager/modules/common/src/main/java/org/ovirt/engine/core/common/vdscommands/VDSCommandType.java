@@ -218,6 +218,7 @@ public enum VDSCommandType {
     GetVmsFullInfoFromExternalProvider("org.ovirt.engine.core.vdsbroker.vdsbroker"),     // get a list of VMs from external provider with full data
     GetVmsNamesFromExternalProvider("org.ovirt.engine.core.vdsbroker.vdsbroker"),        // get a list of VMs from external provider with name only
     GetOvaInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    DumpXmls("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     List("org.ovirt.engine.core.vdsbroker.vdsbroker"),           // get a list of VMs with status only
     FullList("org.ovirt.engine.core.vdsbroker.vdsbroker"),       // get a list of VMs with full data and statistics and devices
     GetVmStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),     // get a VM with full data and statistics
