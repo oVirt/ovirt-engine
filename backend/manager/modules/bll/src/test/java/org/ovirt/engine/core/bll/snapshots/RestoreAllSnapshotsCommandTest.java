@@ -118,9 +118,7 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
         DiskImage disk = new DiskImage();
         disk.setImageId(diskImageId);
         disk.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomainId)));
-        List<DiskImage> diskImageList = new ArrayList<>();
-        diskImageList.add(disk);
-        return diskImageList;
+        return Collections.singletonList(disk);
     }
 
     private void mockSnapshotExists() {
