@@ -14,29 +14,16 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -95,11 +82,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     @Test
     public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
         mockStorageDomainDaoGetForStoragePool();
-        mockVerifyAddVM();
         mockMaxPciSlots();
-
-        mockOsRepositoryGraphics(0, Version.v4_0, new Pair<>(GraphicsType.SPICE, DisplayType.qxl));
-        mockGraphicsDevices(vm.getId());
 
         mockStorageDomainDaoGetAllForStoragePool();
         mockUninterestingMethods();
@@ -116,12 +99,9 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     @Test
     public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
         mockStorageDomainDaoGetForStoragePool();
-        mockVerifyAddVM();
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllForStoragePool();
         mockUninterestingMethods();
-        mockDisplayTypes(vm.getOs());
-        mockGraphicsDevices(vm.getId());
 
         cmd.getParameters().setVirtioScsiEnabled(true);
         when(osRepository.isSoundDeviceEnabled(any(Integer.class), any(Version.class))).thenReturn(true);
@@ -142,23 +122,14 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         vm.setVmOs(OsRepository.DEFAULT_X86_OS);
 
         mockStorageDomainDaoGetForStoragePool();
-        mockVerifyAddVM();
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllForStoragePool();
-        mockDisplayTypes(vm.getOs());
         mockUninterestingMethods();
         mockGetAllSnapshots();
         when(osRepository.getArchitectureFromOS(0)).thenReturn(ArchitectureType.x86_64);
         doReturn(storagePool).when(cmd).getStoragePool();
 
-        // prepare the mock values
-        Map<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
-        Set<String> value = new HashSet<>();
-        value.add(CPU_ID);
-        unsupported.put(new Pair<>(vm.getVmOsId(), cluster.getCompatibilityVersion()), value);
-
         when(osRepository.isCpuSupported(vm.getVmOsId(), cluster.getCompatibilityVersion(), CPU_ID)).thenReturn(false);
-        when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
 
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
@@ -166,36 +137,8 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
     }
 
-    private void mockVerifyAddVM() {
-        doReturn(true).when(cmd).verifyAddVM(anyListOf(String.class), anyInt());
-    }
-
     private void mockMaxPciSlots() {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any(Version.class));
-    }
-
-    private void mockOsRepositoryGraphics(int osId, Version ver, Pair<GraphicsType, DisplayType> supportedGraphicsAndDisplay) {
-        Map<Version, List<Pair<GraphicsType, DisplayType>>> value = new HashMap<>();
-        value.put(ver, Collections.singletonList(supportedGraphicsAndDisplay));
-
-        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> g = new HashMap<>();
-        g.put(osId, value);
-        when(osRepository.getGraphicsAndDisplays()).thenReturn(g);
-    }
-
-    private void mockGraphicsDevices(Guid vmId) {
-        VmDevice graphicsDevice = new GraphicsDevice(VmDeviceType.SPICE);
-        graphicsDevice.setDeviceId(Guid.Empty);
-        graphicsDevice.setVmId(vmId);
-
-        when(vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.GRAPHICS)).thenReturn(Collections.singletonList(graphicsDevice));
-    }
-
-    private void mockDisplayTypes(int osId) {
-        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
-        displayTypeMap.put(osId, new HashMap<>());
-        displayTypeMap.get(osId).put(null, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
-        when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }
 }
