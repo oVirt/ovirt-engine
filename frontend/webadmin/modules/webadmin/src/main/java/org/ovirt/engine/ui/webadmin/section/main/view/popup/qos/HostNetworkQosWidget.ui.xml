@@ -8,21 +8,27 @@
 
     <ui:with field="constants" type="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
 
-    <g:FlowPanel ui:field="mainPanel" >
+    <ui:style>
+        .container {
+            width: 100%;
+        }
+    </ui:style>
+
+    <b:Container ui:field="mainContainer" addStyleNames="{style.container}">
         <b:Row>
             <b:Column size="LG_12">
                 <l:EnableableFormLabel text="{constants.hostNetworkQosOutLabel}" ui:field="qosOutLabel" />
             </b:Column>
         </b:Row>
         <b:Row>
-            <e:StringEntityModelTextBoxEditor ui:field="outAverageLinkshare" label="{constants.hostNetworkQosPopupOutAverageLinkshare}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <e:StringEntityModelTextBoxEditor ui:field="outAverageLinkshare" label="{constants.hostNetworkQosPopupOutAverageLinkshare}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
         </b:Row>
         <b:Row>
-            <e:StringEntityModelTextBoxEditor ui:field="outAverageUpperlimit" label="{constants.hostNetworkQosPopupOutAverageUpperlimit}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <e:StringEntityModelTextBoxEditor ui:field="outAverageUpperlimit" label="{constants.hostNetworkQosPopupOutAverageUpperlimit}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
         </b:Row>
         <b:Row>
-            <e:StringEntityModelTextBoxEditor ui:field="outAverageRealtime" label="{constants.hostNetworkQosPopupOutAverageRealtime}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <e:StringEntityModelTextBoxEditor ui:field="outAverageRealtime" label="{constants.hostNetworkQosPopupOutAverageRealtime}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
         </b:Row>
-    </g:FlowPanel>
+    </b:Container>
 
 </ui:UiBinder>

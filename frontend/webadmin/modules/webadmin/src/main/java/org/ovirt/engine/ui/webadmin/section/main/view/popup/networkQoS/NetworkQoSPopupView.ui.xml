@@ -1,27 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:n="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:n="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style>
-		.topDecorator {
-			background-color: #D3D3D3;
-			margin: 5px;
-		}
-	</ui:style>
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<d:SimpleDialogPanel width="400px" height="400px">
-		<d:content>
-			<g:FlowPanel>
-				<g:FlowPanel addStyleNames="{style.topDecorator}">
-					<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
-					<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
-				</g:FlowPanel>
-				<n:NetworkQosWidget ui:field="qosWidget" />
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <ui:style>
+        .topDecorator {
+            background-color: #D3D3D3;
+            padding-top: 15px;
+        }
+
+        .container {
+            width: 100%;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="600px" height="400px">
+        <d:content>
+            <g:FlowPanel>
+                <b:Container addStyleNames="{style.topDecorator} {style.container}">
+                    <b:Row>
+                        <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.dataCenterNetworkQoSPopup}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                    </b:Row>
+                    <b:Row>
+                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.networkQoSName}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                    </b:Row>
+                </b:Container>
+                <g:FlowPanel>
+                    <n:NetworkQosWidget ui:field="qosWidget" />
+                </g:FlowPanel>
+            </g:FlowPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>
