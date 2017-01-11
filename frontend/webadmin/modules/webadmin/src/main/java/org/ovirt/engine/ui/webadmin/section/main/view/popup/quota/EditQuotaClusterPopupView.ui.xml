@@ -1,55 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView.WidgetStyle">
-		.textBoxWidth {
-			width: 60px;
-		}
-		.radioButtonWidth {
-			width: 120px;
-		}
-		.labelVisible {
-			display: none;
-		}
-		.labelStyle {
-			font-weight: bold;
-			padding-left: 5px;
-		}
-		.measureLabel {
-		 	line-height: 35px;
-			vertical-align: bottom;
-		}
-	</ui:style>
+    <ui:style>
+        .labelStyle {
+            font-weight: bold;
+        }
 
-	<d:SimpleDialogPanel width="450px" height="300px">
-	<d:content>
-		<g:VerticalPanel height="200px">
-			<g:Label ui:field="memLabel" addStyleNames="{style.labelStyle}"/>
-			<g:HorizontalPanel>
-				<ge:EntityModelRadioButtonEditor
-					ui:field="unlimitedMemRadioButtonEditor" addStyleNames="{style.radioButtonWidth}"/>
-				<ge:EntityModelRadioButtonEditor
-					ui:field="specificMemRadioButtonEditor" addStyleNames="{style.radioButtonWidth}"/>
-				<ge:LongEntityModelTextBoxEditor ui:field="memValueEditor" addStyleNames="{style.textBoxWidth}" />
-				<g:Label addStyleNames="{style.measureLabel}">MB</g:Label>
-			</g:HorizontalPanel>
-			<g:Label ui:field="cpuLabel" addStyleNames="{style.labelStyle}"/>
-			<g:HorizontalPanel>
-				<ge:EntityModelRadioButtonEditor
-					ui:field="unlimitedCpuRadioButtonEditor" addStyleNames="{style.radioButtonWidth}"/>
-				<ge:EntityModelRadioButtonEditor
-					ui:field="specificCpuRadioButtonEditor" addStyleNames="{style.radioButtonWidth}"/>
-				<ge:IntegerEntityModelTextBoxEditor ui:field="cpuValueEditor" addStyleNames="{style.textBoxWidth}" />
-				<g:Label addStyleNames="{style.measureLabel}" text="{constants.vcpus}"/>
-			</g:HorizontalPanel>
-		</g:VerticalPanel>
-	</d:content>
-</d:SimpleDialogPanel>
+        .container {
+            width: 100%;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="450px" height="300px">
+        <d:content>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:Label ui:field="memLabel" text="{constants.memQuotaPopup}" addStyleNames="{style.labelStyle}"/>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_4">
+                        <ge:EntityModelRadioButtonEditor ui:field="unlimitedMemRadioButtonEditor" label="{constants.ultQuotaPopup}" usePatternFly="true" />
+                    </b:Column>
+                    <b:Column size="SM_3">
+                        <ge:EntityModelRadioButtonEditor ui:field="specificMemRadioButtonEditor" label="{constants.useQuotaPopup}" usePatternFly="true" />
+                    </b:Column>
+                    <b:Column size="SM_5">
+                        <ge:LongEntityModelTextBoxEditor ui:field="memValueEditor" usePatternFly="true" unitString="MB" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:Label ui:field="cpuLabel" text="{constants.cpuQuotaPopup}" addStyleNames="{style.labelStyle}"/>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_4">
+                        <ge:EntityModelRadioButtonEditor ui:field="unlimitedCpuRadioButtonEditor" label="{constants.ultQuotaPopup}" usePatternFly="true" />
+                    </b:Column>
+                    <b:Column size="SM_3">
+                        <ge:EntityModelRadioButtonEditor ui:field="specificCpuRadioButtonEditor" label="{constants.useQuotaPopup}" usePatternFly="true" />
+                    </b:Column>
+                    <b:Column size="SM_5">
+                        <ge:IntegerEntityModelTextBoxEditor ui:field="cpuValueEditor" usePatternFly="true" unitString="{constants.vcpus}" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

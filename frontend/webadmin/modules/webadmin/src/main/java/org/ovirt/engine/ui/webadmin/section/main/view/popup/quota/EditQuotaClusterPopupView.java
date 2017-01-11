@@ -9,21 +9,15 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEd
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.LongEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.quota.EditQuotaClusterModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaClusterPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQuotaClusterModel> implements EditQuotaClusterPopupPresenterWidget.ViewDef {
-
-    @UiField
-    WidgetStyle style;
 
     @UiField(provided = true)
     @Path(value = "unlimitedMem.entity")
@@ -76,24 +70,15 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @Inject
     public EditQuotaClusterPopupView(EventBus eventBus) {
         super(eventBus);
         initRadioButtonEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
-        addStyles();
-        driver.initialize(this);
-    }
-
-    private void addStyles() {
-        memValueEditor.addContentWidgetContainerStyleName(style.textBoxWidth());
         memValueEditor.hideLabel();
-        cpuValueEditor.addContentWidgetContainerStyleName(style.textBoxWidth());
         cpuValueEditor.hideLabel();
+        driver.initialize(this);
     }
 
     private void initRadioButtonEditors() {
@@ -101,15 +86,6 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
         specificMemRadioButtonEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
         unlimitedCpuRadioButtonEditor = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
         specificCpuRadioButtonEditor = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
-    }
-
-    void localize() {
-        unlimitedMemRadioButtonEditor.setLabel(constants.ultQuotaPopup());
-        specificMemRadioButtonEditor.setLabel(constants.useQuotaPopup());
-        unlimitedCpuRadioButtonEditor.setLabel(constants.ultQuotaPopup());
-        specificCpuRadioButtonEditor.setLabel(constants.useQuotaPopup());
-        memLabel.setText(constants.memQuotaPopup());
-        cpuLabel.setText(constants.cpuQuotaPopup());
     }
 
     @Override
@@ -125,14 +101,6 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
     @Override
     public void cleanup() {
         driver.cleanup();
-    }
-
-    interface WidgetStyle extends CssResource {
-        String textBoxWidth();
-
-        String radioButtonWidth();
-
-        String labelVisible();
     }
 
 }

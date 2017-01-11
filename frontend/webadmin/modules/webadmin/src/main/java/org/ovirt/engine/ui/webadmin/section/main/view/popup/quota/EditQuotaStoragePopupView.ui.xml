@@ -1,43 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaStoragePopupView.WidgetStyle">
-		.textBoxWidth {
-			width: 60px;
-		}
-		.radioButtonWidth {
-			width: 120px;
-		}
-		.labelVisible {
-			display: none;
-		}
-		.labelStyle {
-			font-weight: bold;
-			padding-left: 5px;
-		}
-		.measureLabel {
-		 	line-height: 35px;
-			vertical-align: bottom;
-		}
-	</ui:style>
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<d:SimpleDialogPanel width="450px" height="300px">
-	<d:content>
-		<g:VerticalPanel height="100px">
-			<g:Label ui:field="storageLabel" addStyleNames="{style.labelStyle}"/>
-			<g:HorizontalPanel>
-				<ge:EntityModelRadioButtonEditor
-					ui:field="unlimitedStorageRadioButtonEditor" addStyleNames="{style.radioButtonWidth}" />
-				<ge:EntityModelRadioButtonEditor
-					ui:field="specificStorageRadioButtonEditor" addStyleNames="{style.radioButtonWidth}" />
-				<ge:LongEntityModelTextBoxEditor ui:field="storageValueEditor" addStyleNames="{style.textBoxWidth}" />
-				<g:Label addStyleNames="{style.measureLabel}">GB</g:Label>
-			</g:HorizontalPanel>
-		</g:VerticalPanel>
-	</d:content>
-</d:SimpleDialogPanel>
+    <ui:style>
+        .labelStyle {
+            font-weight: bold;
+        }
+
+        .container {
+            width: 100%;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="450px" height="150px">
+        <d:content>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:Label ui:field="storageLabel" text="{constants.storageQuotaQuotaPopup}" addStyleNames="{style.labelStyle}"/>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_4">
+                        <ge:EntityModelRadioButtonEditor ui:field="unlimitedStorageRadioButtonEditor" label="{constants.ultQuotaPopup}" usePatternFly="true" />
+                    </b:Column>
+                    <b:Column size="SM_3">
+                        <ge:EntityModelRadioButtonEditor ui:field="specificStorageRadioButtonEditor" label="{constants.useQuotaPopup}" usePatternFly="true" />
+                    </b:Column>
+                    <b:Column size="SM_5">
+                        <ge:LongEntityModelTextBoxEditor ui:field="storageValueEditor" usePatternFly="true" unitString="GB" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>
