@@ -173,7 +173,6 @@ public class RunVmValidatorTest {
     public void canRunVmFailVmRunning() {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Up);
-        doReturn(false).when(runVmValidator).isVmDuringInitiating(any(VM.class));
         validateResult(runVmValidator.vmDuringInitialization(vm),
                 false,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
@@ -192,7 +191,6 @@ public class RunVmValidatorTest {
     public void canRunVmNotResponding() {
         final VM vm = new VM();
         vm.setStatus(VMStatus.NotResponding);
-        doReturn(false).when(runVmValidator).isVmDuringInitiating(any(VM.class));
         validateResult(runVmValidator.vmDuringInitialization(vm),
                 false,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
@@ -326,7 +324,6 @@ public class RunVmValidatorTest {
             boolean shouldPass,
             EngineMessage message) {
         Guid vmId = Guid.newGuid();
-        doReturn(ValidationResult.VALID).when(runVmValidator).hasSpaceForSnapshots();
         when(snapshotValidator.vmNotInPreview(vmId)).thenReturn(vmInPreview ?
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW) : ValidationResult.VALID);
         VM vm = new VM();
