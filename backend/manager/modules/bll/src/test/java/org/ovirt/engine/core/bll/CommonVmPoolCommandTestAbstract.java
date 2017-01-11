@@ -141,7 +141,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     @Before
     public void setupMocks() {
         setUpCommand();
-        mockVds();
+        mockGetStorageDomainList();
         mockDbDao();
         command.init();
     }
@@ -154,16 +154,9 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         doReturn(true).when(command).setAndValidateCpuProfile();
     }
 
-    private void mockVds() {
-        mockGetStorageDomainList(100, 100);
-    }
-
-
-    protected void mockGetStorageDomainList
-            (int availableDiskSizeFirstDomain, int availableDiskSizeSecondDomain) {
+    protected void mockGetStorageDomainList() {
         // Mock Dao
-        storageDomainsList =
-                getStorageDomainList(availableDiskSizeFirstDomain, availableDiskSizeSecondDomain);
+        storageDomainsList = getStorageDomainList();
         mockDiskImageDao();
         mockStorageDomainDao(storageDomainsList);
     }
@@ -207,29 +200,26 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         return vm;
     }
 
-    private StorageDomain mockFirstStorageDomain(int availabeDiskSize) {
+    private StorageDomain mockFirstStorageDomain() {
         StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setAvailableDiskSize(availabeDiskSize);
         storageDomain.setStatus(StorageDomainStatus.Active);
         storageDomain.setId(firstStorageDomainId);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
         return storageDomain;
     }
 
-    private StorageDomain mockSecondStorageDomain(int availabeDiskSize) {
+    private StorageDomain mockSecondStorageDomain() {
         StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setAvailableDiskSize(availabeDiskSize);
         storageDomain.setStatus(StorageDomainStatus.Active);
         storageDomain.setId(secondStorageDomainId);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
         return storageDomain;
     }
 
-    protected List<StorageDomain> getStorageDomainList(int availableDiskSizeFirstDomain,
-            int availableDiskSizeSecondDomain) {
+    protected List<StorageDomain> getStorageDomainList() {
         List<StorageDomain> storageDomainList = new ArrayList<>();
-        storageDomainList.add(mockFirstStorageDomain(availableDiskSizeFirstDomain));
-        storageDomainList.add(mockSecondStorageDomain(availableDiskSizeSecondDomain));
+        storageDomainList.add(mockFirstStorageDomain());
+        storageDomainList.add(mockSecondStorageDomain());
         return storageDomainList;
     }
 
