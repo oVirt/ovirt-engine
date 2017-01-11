@@ -197,12 +197,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     }
 
     private boolean isAllHostConnectionFailed(List<Pair<Guid, Boolean>> hostsConnectionResults) {
-        for (Pair<Guid, Boolean> hostsConnectionResult : hostsConnectionResults) {
-            if (hostsConnectionResult.getSecond()) {
-                return false;
-            }
-        }
-        return true;
+        return hostsConnectionResults.stream().map(Pair::getSecond).noneMatch(Boolean.TRUE::equals);
     }
 
     private void handleCinderDomain() {

@@ -134,12 +134,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     }
 
     private boolean isAllHostConnectionFailed(List<Pair<Guid, Boolean>> hostsConnectionResults) {
-        for (Pair<Guid, Boolean> hostsConnectionResult : hostsConnectionResults) {
-            if (hostsConnectionResult.getSecond()) {
-                return false;
-            }
-        }
-        return true;
+        return hostsConnectionResults.stream().map(Pair::getSecond).noneMatch(Boolean.TRUE::equals);
     }
 
     private void activateCinderStorageDomain() {
