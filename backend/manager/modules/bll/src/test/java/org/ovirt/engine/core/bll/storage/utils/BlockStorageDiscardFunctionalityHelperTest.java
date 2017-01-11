@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.storage.utils;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyCollectionOf;
+import static org.mockito.ArgumentMatchers.anyCollectionOf;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;

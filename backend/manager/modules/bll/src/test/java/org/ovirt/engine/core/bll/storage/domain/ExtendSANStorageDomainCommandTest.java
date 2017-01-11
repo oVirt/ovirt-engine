@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.doReturn;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateFailure;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateSuccess;

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.memory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;

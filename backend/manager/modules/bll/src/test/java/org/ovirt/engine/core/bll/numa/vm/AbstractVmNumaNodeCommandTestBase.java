@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.numa.vm;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVdsNumaNodeDao;

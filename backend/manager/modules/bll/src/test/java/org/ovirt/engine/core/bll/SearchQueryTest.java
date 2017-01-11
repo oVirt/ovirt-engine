@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.matches;
+import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 

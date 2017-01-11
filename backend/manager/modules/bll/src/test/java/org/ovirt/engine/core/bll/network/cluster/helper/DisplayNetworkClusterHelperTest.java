@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster.helper;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.same;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;

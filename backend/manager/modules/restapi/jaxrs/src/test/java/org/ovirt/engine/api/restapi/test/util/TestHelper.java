@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.test.util;
 
-import static org.mockito.Matchers.argThat;
+import static org.mockito.ArgumentMatchers.argThat;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

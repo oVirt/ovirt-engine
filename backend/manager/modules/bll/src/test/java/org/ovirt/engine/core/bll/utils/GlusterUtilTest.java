@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anySetOf;
+import static org.mockito.ArgumentMatchers.anySetOf;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;

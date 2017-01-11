@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyList;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;

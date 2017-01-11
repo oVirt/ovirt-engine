@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.aaa;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anySetOf;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anySetOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
