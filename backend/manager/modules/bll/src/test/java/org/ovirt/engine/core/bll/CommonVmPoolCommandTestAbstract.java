@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -200,27 +202,17 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         return vm;
     }
 
-    private StorageDomain mockFirstStorageDomain() {
+    private StorageDomain mockDomain(Guid id) {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setStatus(StorageDomainStatus.Active);
-        storageDomain.setId(firstStorageDomainId);
+        storageDomain.setId(id);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
         return storageDomain;
     }
 
-    private StorageDomain mockSecondStorageDomain() {
-        StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setStatus(StorageDomainStatus.Active);
-        storageDomain.setId(secondStorageDomainId);
-        storageDomain.setStorageDomainType(StorageDomainType.Data);
-        return storageDomain;
-    }
 
     protected List<StorageDomain> getStorageDomainList() {
-        List<StorageDomain> storageDomainList = new ArrayList<>();
-        storageDomainList.add(mockFirstStorageDomain());
-        storageDomainList.add(mockSecondStorageDomain());
-        return storageDomainList;
+        return Stream.of(firstStorageDomainId, secondStorageDomainId).map(this::mockDomain).collect(Collectors.toList());
     }
 
     /**
