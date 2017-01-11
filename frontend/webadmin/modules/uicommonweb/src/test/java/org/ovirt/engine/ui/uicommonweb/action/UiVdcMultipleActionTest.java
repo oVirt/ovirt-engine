@@ -38,7 +38,7 @@ public class UiVdcMultipleActionTest extends AsyncUiActionTest<IFrontendMultiple
         action1.then(action2);
         action1.runAction();
 
-        verifyRunActionAndExecuteCallbacksRandomly(false, action1.getActionFlowState(), 1, waitFoResult);
+        verifyRunActionAndExecuteCallbacksRandomly(action1.getActionFlowState(), waitFoResult);
         verifyRunActionAndExecuteCallbacksRandomly(true, action1.getActionFlowState(), 2, 1, waitFoResult);
 
         assertFinishedWithErrors(Arrays.asList(action1, action2), 1);
@@ -76,7 +76,7 @@ public class UiVdcMultipleActionTest extends AsyncUiActionTest<IFrontendMultiple
 
         ActionFlowState flowState = action1.getActionFlowState();
 
-        verifyRunActionAndExecuteCallbacksRandomly(false, flowState, 1, waitForResult);
+        verifyRunActionAndExecuteCallbacksRandomly(flowState, waitForResult);
         verifyRunAction(1, waitForResult);
 
         assertFinishedWithErrors(Collections.singletonList(action1), 1);
@@ -131,14 +131,8 @@ public class UiVdcMultipleActionTest extends AsyncUiActionTest<IFrontendMultiple
                 waitForResult);
     }
 
-    private void verifyRunActionAndExecuteCallbacksRandomly(boolean success,
-            ActionFlowState flowState,
-            int exepectedNumOfRunActionExecutions, boolean waitForResult) {
-        verifyRunActionAndExecuteCallbacksRandomly(success,
-                flowState,
-                exepectedNumOfRunActionExecutions,
-                exepectedNumOfRunActionExecutions,
-                waitForResult);
+    private void verifyRunActionAndExecuteCallbacksRandomly(ActionFlowState flowState, boolean waitForResult) {
+        verifyRunActionAndExecuteCallbacksRandomly(false, flowState, 1, 1, waitForResult);
     }
 
     private void executeCallbacks(boolean success,
@@ -149,8 +143,8 @@ public class UiVdcMultipleActionTest extends AsyncUiActionTest<IFrontendMultiple
         for (IFrontendMultipleActionAsyncCallback callback : callbacks) {
             assertNotAllDone(flowState);
             VdcReturnValueBase result = new VdcReturnValueBase();
-            result.setValid(waitForResult ? true : success);
-            result.setSucceeded(waitForResult ? success : false);
+            result.setValid(waitForResult || success);
+            result.setSucceeded(waitForResult && success);
             callback.executed(new FrontendMultipleActionAsyncResult(ACTION_TYPE,
                     null,
                     Collections.singletonList(result)));
