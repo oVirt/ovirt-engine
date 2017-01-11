@@ -205,7 +205,7 @@ public class GlusterSnapshotSyncJobTest {
         return snapsList;
     }
 
-    private Object getSnapshotConfigVDSReturnValue() {
+    private VDSReturnValue getSnapshotConfigVDSReturnValue() {
         VDSReturnValue vdsRetValue = new VDSReturnValue();
         vdsRetValue.setSucceeded(true);
         vdsRetValue.setReturnValue(getSnapshotConfigInfo());
@@ -235,7 +235,7 @@ public class GlusterSnapshotSyncJobTest {
         return config;
     }
 
-    private Object getSnapshotVDSReturnVal() {
+    private VDSReturnValue getSnapshotVDSReturnVal() {
         VDSReturnValue vdsRetValue = new VDSReturnValue();
         vdsRetValue.setSucceeded(true);
         vdsRetValue.setReturnValue(getSnapshotDetails());
