@@ -1,89 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
-	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.StorageQosWidget.WidgetStyle">
-		.labelStyle {
-			font-weight: bold;
-			width: 90%;
-			padding-left: 5px;
-		}
-		.mbpsLabel {
-			text-align: right;
-			font-size: smaller;
-			color: gray;
-		}
-		.valueWidth {
-			width: 60px;
-			padding-left: 5px;
-		}
-		.valuePanelStyle {
-			padding-left: 30px;
-			width: 120px;
-		}
-		.textBoxLabelStyle {
-			padding-left: 5px;
-		}
-	</ui:style>
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<g:FlowPanel ui:field="mainPanel" >
-	    <g:Label text="{constants.throughputLabelQosPopup}" addStyleNames="{style.textBoxLabelStyle}" />
-		<g:HorizontalPanel>
-            <g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-                <e:EntityModelRadioButtonEditor label="{constants.noneStorageQosPopup}" ui:field="throughputNoneRadioButton" />
-            </g:VerticalPanel>
-			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-                <g:VerticalPanel>
-                    <e:EntityModelRadioButtonEditor label="{constants.totalStorageQosPopup}" ui:field="throughputTotalRadioButton" />
-					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputTotalEditor" />
-					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelStorageQosPopup}"/>
-				</g:VerticalPanel>
-			</g:VerticalPanel>
-			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-                <e:EntityModelRadioButtonEditor label="{constants.readWriteStorageQosPopup}" ui:field="throughputReadWriteRadioButton" />
-                <g:HorizontalPanel>
-                    <g:VerticalPanel>
-                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputReadEditor" />
-                        <g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelStorageQosPopup}"/>
-                    </g:VerticalPanel>
-                    <g:Label addStyleNames="{style.textBoxLabelStyle}" text="/"/>
-                    <g:VerticalPanel>
-                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputWriteEditor" />
-                        <g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelStorageQosPopup}"/>
-                    </g:VerticalPanel>
-                </g:HorizontalPanel>
-			</g:VerticalPanel>
-		</g:HorizontalPanel>
-		<g:Label text="{constants.iopsLabelQosPopup}" addStyleNames="{style.textBoxLabelStyle}"/>
-		<g:HorizontalPanel>
-            <g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-                <e:EntityModelRadioButtonEditor label="{constants.noneStorageQosPopup}" ui:field="iopsNoneRadioButton" />
-            </g:VerticalPanel>
-            <g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-                <g:VerticalPanel>
-                    <e:EntityModelRadioButtonEditor label="{constants.totalStorageQosPopup}" ui:field="iopsTotalRadioButton" />
-                    <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsTotalEditor" />
-                    <g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
-                </g:VerticalPanel>
-            </g:VerticalPanel>
-            <g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-                <e:EntityModelRadioButtonEditor label="{constants.readWriteStorageQosPopup}" ui:field="iopsReadWriteRadioButton" />
-                <g:HorizontalPanel>
-                    <g:VerticalPanel>
-                    <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsReadEditor" />
-                        <g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
-                    </g:VerticalPanel>
-                    <g:Label addStyleNames="{style.textBoxLabelStyle}" text="/"/>
-                    <g:VerticalPanel>
-                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsWriteEditor" />
-                        <g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
-                    </g:VerticalPanel>
-                </g:HorizontalPanel>
-            </g:VerticalPanel>
-		</g:HorizontalPanel>
-	</g:FlowPanel>
+    <b:Container ui:field="mainContainer" fluid="true">
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:Label text="{constants.throughputLabelQosPopup}" />
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_2">
+                <e:EntityModelRadioButtonEditor label="{constants.noneStorageQosPopup}" removeFormGroup="true" usePatternFly="true" ui:field="throughputNoneRadioButton" />
+            </b:Column>
+            <b:Column size="SM_3">
+                <e:EntityModelRadioButtonEditor label="{constants.totalStorageQosPopup}" removeFormGroup="true" usePatternFly="true" ui:field="throughputTotalRadioButton" />
+            </b:Column>
+            <b:Column size="SM_7">
+                <e:EntityModelRadioButtonEditor label="{constants.readWriteStorageQosPopup}" removeFormGroup="true" usePatternFly="true" ui:field="throughputReadWriteRadioButton" />
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_3" offset="SM_2">
+                <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputTotalEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
+            </b:Column>
+            <b:Column size="SM_7">
+                <b:Row>
+                    <b:Column size="SM_6">
+                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputReadEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
+                    </b:Column>
+                    <b:Column size="SM_6">
+                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputWriteEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
+                    </b:Column>
+                </b:Row>
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:Label text="{constants.iopsLabelQosPopup}" />
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_2">
+                <e:EntityModelRadioButtonEditor label="{constants.noneStorageQosPopup}" removeFormGroup="true" usePatternFly="true" ui:field="iopsNoneRadioButton" />
+            </b:Column>
+            <b:Column size="SM_3">
+                <e:EntityModelRadioButtonEditor label="{constants.totalStorageQosPopup}" removeFormGroup="true" usePatternFly="true" ui:field="iopsTotalRadioButton" />
+            </b:Column>
+            <b:Column size="SM_7">
+                <e:EntityModelRadioButtonEditor label="{constants.readWriteStorageQosPopup}" removeFormGroup="true" usePatternFly="true" ui:field="iopsReadWriteRadioButton" />
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_3" offset="SM_2">
+                <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsTotalEditor" usePatternFly="true" unitString="{constants.iopsCountLabelQosPopup}" />
+            </b:Column>
+            <b:Column size="SM_7">
+                <b:Row>
+                    <b:Column size="SM_6">
+                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsReadEditor" usePatternFly="true" unitString="{constants.iopsCountLabelQosPopup}" />
+                    </b:Column>
+                    <b:Column size="SM_6">
+                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsWriteEditor" usePatternFly="true" unitString="{constants.iopsCountLabelQosPopup}" />
+                    </b:Column>
+                </b:Row>
+            </b:Column>
+        </b:Row>
+    </b:Container>
 
 </ui:UiBinder>

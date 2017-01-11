@@ -189,6 +189,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         SimplePanel unitAddOn = new SimplePanel();
         unitAddOn.getElement().setInnerHTML(unitString);
         unitAddOn.addStyleName(Styles.INPUT_GROUP_ADDON);
+        contentWidgetContainer.addStyleName(Styles.INPUT_GROUP);
         contentWidgetContainer.add(unitAddOn);
     }
 

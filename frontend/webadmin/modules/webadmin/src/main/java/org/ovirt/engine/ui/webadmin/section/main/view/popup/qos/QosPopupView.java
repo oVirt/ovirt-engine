@@ -12,8 +12,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosParametersModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -51,8 +49,6 @@ public abstract class QosPopupView<T extends QosBase, P extends QosParametersMod
 
     private final UiCommonEditorDriver<QosModel<T, P>, QosPopupView<T, P>> driver;
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     public QosPopupView(EventBus eventBus) {
         super(eventBus);
 
@@ -62,20 +58,12 @@ public abstract class QosPopupView<T extends QosBase, P extends QosParametersMod
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
-        localize();
-
         driver = createDriver();
         driver.initialize(this);
     }
 
     private void initListBoxEditors() {
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
-    }
-
-    private void localize() {
-        nameEditor.setLabel(constants.qosName());
-        descriptionEditor.setLabel(constants.qosDescription());
-        dataCenterEditor.setLabel(constants.dataCenterQosPopup());
     }
 
     @Override

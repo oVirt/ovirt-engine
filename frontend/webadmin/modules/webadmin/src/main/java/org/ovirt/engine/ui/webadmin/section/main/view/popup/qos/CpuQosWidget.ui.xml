@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
     <ui:style>
-        .decorator {
-            margin: 5px;
-	    }
+        .topDecorator {
+            margin-top: 15px;
+        }
     </ui:style>
 
-    <g:FlowPanel ui:field="mainPanel" >
-        <e:IntegerEntityModelTextBoxEditor ui:field="cpuLimitEditor" addStyleNames="{style.decorator}" />
-    </g:FlowPanel>
+    <b:Container ui:field="mainContainer" fluid="true">
+        <b:Row>
+            <e:IntegerEntityModelTextBoxEditor ui:field="cpuLimitEditor" addStyleNames="{style.topDecorator}" usePatternFly="true" label="{constants.cpuQosCpuLimit}" labelColSize="SM_5" widgetColSize="SM_7" />
+        </b:Row>
+    </b:Container>
 </ui:UiBinder>

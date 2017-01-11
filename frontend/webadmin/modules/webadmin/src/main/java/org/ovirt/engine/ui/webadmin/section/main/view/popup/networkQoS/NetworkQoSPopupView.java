@@ -10,8 +10,6 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -50,8 +48,6 @@ public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSM
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @Inject
     public NetworkQoSPopupView(EventBus eventBus) {
         super(eventBus);
@@ -60,17 +56,11 @@ public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSM
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
-        localize();
         driver.initialize(this);
     }
 
     private void initListBoxEditors() {
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
-    }
-
-    private void localize() {
-        nameEditor.setLabel(constants.networkQoSName());
-        dataCenterEditor.setLabel(constants.dataCenterNetworkQoSPopup());
     }
 
     @Override
