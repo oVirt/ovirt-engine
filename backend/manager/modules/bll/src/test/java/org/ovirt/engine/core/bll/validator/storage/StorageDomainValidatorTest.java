@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyCollectionOf;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -23,7 +23,6 @@ import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityH
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -193,8 +192,7 @@ public class StorageDomainValidatorTest {
 
     private void assertGetDiscardAfterDeleteLegalForNewBlockStorageDomainPredicate(boolean allLunsSupportDiscard) {
         injectorRule.bind(BlockStorageDiscardFunctionalityHelper.class, discardFunctionalityHelper);
-        when(discardFunctionalityHelper.allLunsSupportDiscard(anyCollectionOf(LUNs.class)))
-                .thenReturn(allLunsSupportDiscard);
+        when(discardFunctionalityHelper.allLunsSupportDiscard(anyCollection())).thenReturn(allLunsSupportDiscard);
         assertEquals(
                 validator.getDiscardAfterDeleteLegalForNewBlockStorageDomainPredicate(Collections.emptyList()).get(),
                 allLunsSupportDiscard);

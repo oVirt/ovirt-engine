@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyCollectionOf;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMapOf;
 import static org.mockito.ArgumentMatchers.eq;
@@ -116,7 +116,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void insufficientDiskSpaceWithCollapse() {
         setupDiskSpaceTest();
         doReturn(true).when(cmd).validateImages(anyMapOf(Guid.class, StorageDomain.class));
-        when(cmd.getImportValidator().validateSpaceRequirements(anyCollectionOf(DiskImage.class))).thenReturn(
+        when(cmd.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
@@ -126,7 +126,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void insufficientDiskSpaceWithSnapshots() {
         setupDiskSpaceTest();
         doReturn(true).when(cmd).validateImages(anyMapOf(Guid.class, StorageDomain.class));
-        when(cmd.getImportValidator().validateSpaceRequirements(anyCollectionOf(DiskImage.class))).thenReturn(
+        when(cmd.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
@@ -215,7 +215,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void lowThresholdStorageSpace() {
         setupDiskSpaceTest();
         doReturn(true).when(cmd).validateImages(anyMapOf(Guid.class, StorageDomain.class));
-        when(cmd.getImportValidator().validateSpaceRequirements(anyCollectionOf(DiskImage.class)))
+        when(cmd.getImportValidator().validateSpaceRequirements(anyCollection()))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
@@ -233,7 +233,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).checkImagesGUIDsLegal();
         doReturn(true).when(cmd).setAndValidateDiskProfiles();
         doReturn(true).when(cmd).setAndValidateCpuProfile();
-        doReturn(true).when(cmd).validateNoDuplicateDiskImages(anyCollectionOf(DiskImage.class));
+        doReturn(true).when(cmd).validateNoDuplicateDiskImages(anyCollection());
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any());
         doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any());
@@ -446,7 +446,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).checkTemplateInStorageDomain();
         doReturn(true).when(cmd).checkImagesGUIDsLegal();
         doReturn(true).when(cmd).setAndValidateDiskProfiles();
-        doReturn(true).when(cmd).validateNoDuplicateDiskImages(anyCollectionOf(DiskImage.class));
+        doReturn(true).when(cmd).validateNoDuplicateDiskImages(anyCollection());
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any());
         doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any());

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.storage.utils;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyCollectionOf;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -54,8 +54,7 @@ public class BlockStorageDiscardFunctionalityHelperTest {
         when(diskImageDao.getAllForStorageDomain(storageDomain.getId())).thenReturn(storageDomainDisks);
 
         storageDomainVmDisks = new LinkedList<>();
-        when(diskVmElementDao.getAllDiskVmElementsByDisksIds(anyCollectionOf(Guid.class)))
-                .thenReturn(storageDomainVmDisks);
+        when(diskVmElementDao.getAllDiskVmElementsByDisksIds(anyCollection())).thenReturn(storageDomainVmDisks);
 
         when(storageDomainDao.get(storageDomain.getId())).thenReturn(storageDomain);
     }
