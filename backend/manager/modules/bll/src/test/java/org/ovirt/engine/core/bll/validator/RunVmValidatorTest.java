@@ -17,7 +17,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -261,9 +260,8 @@ public class RunVmValidatorTest {
     private void mockOsRepository() {
         OsRepository osRepository = mock(OsRepository.class);
         when(osRepository.get64bitOss()).thenReturn(Collections.singletonList(_64_BIT_OS));
-        final Map<Integer, ArchitectureType> osArchitectures = new HashMap<Integer, ArchitectureType>() {{
-            put(_64_BIT_OS, ArchitectureType.x86_64);
-        }};
+        final Map<Integer, ArchitectureType> osArchitectures =
+                Collections.singletonMap(_64_BIT_OS, ArchitectureType.x86_64);
         when(osRepository.getOsArchitectures()).thenReturn(Collections.unmodifiableMap(osArchitectures));
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
