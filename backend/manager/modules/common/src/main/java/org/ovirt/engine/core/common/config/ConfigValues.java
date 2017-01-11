@@ -345,7 +345,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     EncryptHostCommunication,
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("TLSv1")
+    @DefaultValueAttribute("TLS")
     VdsmSSLProtocol,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("TLSv1")

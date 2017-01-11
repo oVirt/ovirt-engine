@@ -463,7 +463,7 @@ select fn_db_add_config_value('DelayResetForSpmInSeconds','20','general');
 select fn_db_add_config_value('DelayResetPerVmInSeconds','0.5','general');
 --Handling Use Secure Connection with Hosts
 select fn_db_add_config_value('EncryptHostCommunication','true','general');
-select fn_db_add_config_value('VdsmSSLProtocol','TLSv1','general');
+select fn_db_add_config_value('VdsmSSLProtocol','TLS','general');
 select fn_db_add_config_value('ExternalCommunicationProtocol','TLSv1','general');
 select fn_db_add_config_value('VdsRequestQueueName','jms.topic.vdsm_requests','general');
 select fn_db_add_config_value('VdsResponseQueueName','jms.topic.vdsm_responses','general');
@@ -833,6 +833,7 @@ select fn_db_update_default_config_value('vdsRetries', '3', '0', 'general', fals
 
 -- Override existing configuration to TLSv1 if it is SSLv3
 select fn_db_update_default_config_value('VdsmSSLProtocol','SSLv3','TLSv1','general', false);
+select fn_db_update_default_config_value('VdsmSSLProtocol','TLSv1','TLS','general',false);
 select fn_db_update_default_config_value('ExternalCommunicationProtocol','SSLv3','TLSv1','general', false);
 
 -- Adding no-TSX Intel processors in 3.6
