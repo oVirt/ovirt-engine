@@ -131,7 +131,7 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
             return;
         }
 
-        ImportRepoImageModel model = new ImportRepoImageModel();
+        ImportRepoImageModel model = new ImportRepoImageModel(this);
         setWindow(model);
 
         model.setTitle(ConstantsManager.getInstance().getConstants().importImagesTitle());
@@ -178,6 +178,9 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
         }
         else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
+        }
+        else if (command.getName().equals("CancelConfirm")) { //$NON-NLS-1$
+            setConfirmWindow(null);
         }
     }
 }
