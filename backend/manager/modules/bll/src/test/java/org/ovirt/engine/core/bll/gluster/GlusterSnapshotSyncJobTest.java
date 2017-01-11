@@ -61,8 +61,6 @@ public class GlusterSnapshotSyncJobTest {
     private static final Guid newSnapshotId = Guid.newGuid();
     private static final String newSnapshotName = "new-snap";
     private static final String PARAM_SNAP_MAX_LIMIT = "snap-max-hard-limit";
-    private static final String PARAM_SNAP_MAX_SOFT_LIMIT = "snap-max-soft-limit";
-    private static final String PARAM_AUTO_DELETE = "auto-delete";
 
     @Mock
     private GlusterVolumeDao volumeDao;
