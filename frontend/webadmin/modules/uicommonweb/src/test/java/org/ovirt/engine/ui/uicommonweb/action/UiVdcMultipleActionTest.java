@@ -166,8 +166,7 @@ public class UiVdcMultipleActionTest extends AsyncUiActionTest<IFrontendMultiple
                 eq(false),
                 eq(waitForResult));
 
-        List<IFrontendMultipleActionAsyncCallback> callbacks = callbackCaptor.getAllValues();
-        return callbacks;
+        return callbackCaptor.getAllValues();
     }
 
     @Override
