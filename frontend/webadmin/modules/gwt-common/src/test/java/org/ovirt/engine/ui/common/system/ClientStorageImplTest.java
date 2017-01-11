@@ -31,10 +31,7 @@ public class ClientStorageImplTest {
         });
 
         // Stub un-testable methods, specific tests should re-stub these as needed
-        doReturn(true).when(tested).isWebStorageAvailable();
-        doReturn(null).when(tested).getLocalItemImpl(any(String.class));
         doNothing().when(tested).setLocalItemImpl(any(String.class), any(String.class));
-        doReturn(null).when(tested).getSessionItemImpl(any(String.class));
         doNothing().when(tested).setSessionItemImpl(any(String.class), any(String.class));
     }
 
