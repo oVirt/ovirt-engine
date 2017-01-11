@@ -103,8 +103,6 @@ public class GlusterSnapshotSyncJobTest {
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getValidCluster()).when(clusterDao).get(any(Guid.class));
         doReturn(getVolumes()).when(volumeDao).getByClusterId(CLUSTER_ID_1);
-        doReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1)).when(volumeDao)
-                .getByName(CLUSTER_ID_1, VOLUME_NAME_1);
         doReturn(getServer()).when(glusterUtil).getRandomUpServer(any(Guid.class));
         doReturn(engineLock).when(syncJob).acquireVolumeSnapshotLock(any(Guid.class));
         doNothing().when(glusterUtil).alertVolumeSnapshotLimitsReached(any(GlusterVolumeEntity.class));
@@ -113,7 +111,6 @@ public class GlusterSnapshotSyncJobTest {
 
     @Test
     public void testSyncSnapshotsList() {
-        doReturn(getExistingSnapshots()).when(snapshotDao).getAllByVolumeId(VOLUME_ID_1);
         doReturn(getSnapshotVDSReturnVal()).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeSnapshotInfo),
                         argThat(snapshotInfoParam()));
@@ -177,32 +174,6 @@ public class GlusterSnapshotSyncJobTest {
                 return ((GlusterVolumeSnapshotVDSParameters) argument).getClusterId().equals(CLUSTER_ID_1);
             }
         };
-    }
-
-    private List<GlusterVolumeSnapshotEntity> getExistingSnapshots() {
-        List<GlusterVolumeSnapshotEntity> snapsList = new ArrayList<>();
-
-        GlusterVolumeSnapshotEntity snap1 = new GlusterVolumeSnapshotEntity();
-        snap1.setId(existingSnapshotIds[0]);
-        snap1.setClusterId(CLUSTER_ID_1);
-        snap1.setCreatedAt(existingSnapsCreateDate);
-        snap1.setDescription("");
-        snap1.setSnapshotName(existingSnapshotNames[0]);
-        snap1.setStatus(GlusterSnapshotStatus.ACTIVATED);
-        snap1.setVolumeId(VOLUME_ID_1);
-        snapsList.add(snap1);
-
-        GlusterVolumeSnapshotEntity snap2 = new GlusterVolumeSnapshotEntity();
-        snap2.setId(existingSnapshotIds[1]);
-        snap2.setClusterId(CLUSTER_ID_1);
-        snap2.setCreatedAt(existingSnapsCreateDate);
-        snap2.setDescription("");
-        snap2.setSnapshotName(existingSnapshotNames[1]);
-        snap2.setStatus(GlusterSnapshotStatus.ACTIVATED);
-        snap2.setVolumeId(VOLUME_ID_1);
-        snapsList.add(snap2);
-
-        return snapsList;
     }
 
     private VDSReturnValue getSnapshotConfigVDSReturnValue() {
