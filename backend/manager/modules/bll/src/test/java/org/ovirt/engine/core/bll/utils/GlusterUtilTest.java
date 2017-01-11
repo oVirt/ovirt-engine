@@ -46,10 +46,6 @@ public class GlusterUtilTest {
 
     @Before
     public void setUp() throws Exception {
-        setupMock();
-    }
-
-    private void setupMock() throws AuthenticationException, Exception {
         doReturn(client).when(glusterUtil).getSSHClient();
         doNothing().when(glusterUtil).connect(client, SERVER_NAME1, USER, WRONG_PASSWORD);
         doReturn(FINGER_PRINT1).when(client).getHostFingerprint();
