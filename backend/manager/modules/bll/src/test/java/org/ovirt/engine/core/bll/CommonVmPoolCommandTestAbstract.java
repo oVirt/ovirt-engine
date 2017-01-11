@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anySetOf;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -318,7 +318,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
 
 
     protected void setupForStorageTests() {
-        doReturn(multipleSdValidator).when(command).getStorageDomainsValidator(any(Guid.class), anySetOf(Guid.class));
+        doReturn(multipleSdValidator).when(command).getStorageDomainsValidator(any(Guid.class), anySet());
         doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
         doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
     }

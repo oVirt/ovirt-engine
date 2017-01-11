@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anySetOf;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -58,7 +58,7 @@ public class GlusterUtilTest {
         doReturn(client).when(glusterUtil).getSSHClient();
         doNothing().when(glusterUtil).connect(client, SERVER_NAME1, USER, PASSWORD);
         doNothing().when(glusterUtil).authenticate(client);
-        doReturn(expectedMap).when(glusterUtil).getFingerprints(anySetOf(String.class));
+        doReturn(expectedMap).when(glusterUtil).getFingerprints(anySet());
         Map<String, String> peers = glusterUtil.getPeers(SERVER_NAME1, USER, PASSWORD, FINGER_PRINT1);
         assertNotNull(peers);
         peers.containsKey(SERVER_NAME1);

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anySetOf;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -54,8 +54,7 @@ public class SessionDataContainerTest {
     @Before
     public void setUpContainer() {
         when(engineSessionDao.remove(anyLong())).thenReturn(1);
-        when(ssoSessionValidator.getSessionStatuses(anySetOf(String.class))).thenReturn(
-                Collections.singletonMap(TEST_SSO_TOKEN, true));
+        when(ssoSessionValidator.getSessionStatuses(anySet())).thenReturn(Collections.singletonMap(TEST_SSO_TOKEN, true));
         when(ssoSessionUtils.isSessionInUse(anyLong())).thenReturn(false);
 
         DbUser user = mock(DbUser.class);
