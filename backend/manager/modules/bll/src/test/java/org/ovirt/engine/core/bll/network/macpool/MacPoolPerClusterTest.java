@@ -32,7 +32,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
-import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -47,9 +46,6 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
 
     @Mock
     private ClusterDao clusterDao;
-
-    @Mock
-    private VmNicDao vmNicDao;
 
     @Mock
     private MacPoolDao macPoolDao;
