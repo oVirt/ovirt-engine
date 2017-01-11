@@ -13,11 +13,11 @@ public interface BusinessEntity<T extends Serializable> extends Serializable {
      * Returns the unique ID of the business entity.
      * @return The unique ID of the business entity.
      */
-    public T getId();
+    T getId();
 
     /**
      * Sets the unique ID of the business entity
      * @param id The unique ID of the business entity.
      */
-    public void setId(T id);
+    void setId(T id);
 }
