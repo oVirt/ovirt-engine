@@ -148,7 +148,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     }
 
     protected void mockOtherDependencies() {
-        doReturn(vmDeviceUtils).when(cmd).getVmDeviceUtils();
         doReturn(storageDomainValidator).when(cmd).createStorageDomainValidator(any(StorageDomain.class));
     }
 
