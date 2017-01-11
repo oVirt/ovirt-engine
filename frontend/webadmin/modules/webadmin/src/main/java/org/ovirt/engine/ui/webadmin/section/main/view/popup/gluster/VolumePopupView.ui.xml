@@ -35,7 +35,7 @@
             padding: 0 5px;
             font-family: Arial,sans-serif;
             line-height: 30px;
-            width: 190px;
+            width: 196px;
         }
 
 		.bricksCountLabel {
@@ -48,7 +48,7 @@
             font-size: 13px;
             padding: 0 5px;
             font-family: Arial,sans-serif;
-            width: 175px;
+            width: 186px;
             padding-top: 5px;
         }
 

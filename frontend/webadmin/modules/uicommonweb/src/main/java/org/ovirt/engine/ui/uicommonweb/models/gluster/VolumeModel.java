@@ -139,7 +139,7 @@ public class VolumeModel extends Model {
         getRdmaTransportType().setEntity(false);
 
         getTypeList().setSelectedItem(GlusterVolumeType.REPLICATE);
-        getReplicaCount().setIsAvailable(false);
+        getReplicaCount().setIsAvailable(true);
         getStripeCount().setIsAvailable(false);
 
         setBricks(new ListModel<EntityModel<GlusterBrickEntity>>());
@@ -160,7 +160,6 @@ public class VolumeModel extends Model {
                 updateArbiterAvailability();
             }
         });
-
         setGluster_accecssProtocol(new EntityModel<Boolean>());
         getGluster_accecssProtocol().setEntity(true);
         getGluster_accecssProtocol().setIsChangeable(false);
