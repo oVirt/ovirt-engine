@@ -125,7 +125,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             setStoragePoolId(getCluster().getStoragePoolId());
         }
 
-        if (isVmExist()) {
+        if (isVmExist() && isCompatibilityVersionSupportedByCluster(getEffectiveCompatibilityVersion())) {
             Version compatibilityVersion = getEffectiveCompatibilityVersion();
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(
                     compatibilityVersion, getParameters().getVmStaticData());
@@ -719,6 +719,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             if (exists) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
+        }
+
+        Version customCompatibilityVersionFromParams = vmFromParams.getStaticData().getCustomCompatibilityVersion();
+        if (customCompatibilityVersionFromParams != null && !isCompatibilityVersionSupportedByCluster(customCompatibilityVersionFromParams)) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CUSTOM_COMPATIBILITY_VERSION_NOT_SUPPORTED,
+                    String.format("$Ccv %s", customCompatibilityVersionFromParams));
         }
 
         if (!validateCustomProperties(vmFromParams.getStaticData(), getReturnValue().getValidationMessages())) {
