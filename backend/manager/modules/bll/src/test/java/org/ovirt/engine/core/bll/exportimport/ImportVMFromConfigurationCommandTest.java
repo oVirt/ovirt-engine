@@ -31,10 +31,8 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -82,16 +80,10 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
 
     @Mock
-    private MacPoolPerCluster macPoolPerCluster;
-
-    @Mock
     private ExternalVmMacsFinder externalVmMacsFinder;
 
     @Mock
     private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
-
-    @InjectMocks
-    private VmDeviceUtils vmDeviceUtils;
 
     @Spy
     private OvfHelper ovfHelper;
