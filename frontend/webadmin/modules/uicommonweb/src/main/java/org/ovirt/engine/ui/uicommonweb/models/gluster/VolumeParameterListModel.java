@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -116,20 +117,16 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
             @Override
             public void onSuccess(VdcQueryReturnValue returnValue) {
                 VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
-
-                ArrayList<GlusterVolumeOptionInfo> optionInfoList = new ArrayList<>();
-
                 if (!returnValue.getSucceeded()) {
+                    innerParameterModel.setOptionsMap(new HashMap<String, GlusterVolumeOptionInfo>());
                     innerParameterModel.setMessage(ConstantsManager.getInstance()
                             .getConstants()
                             .errorInFetchingVolumeOptionList());
                 } else {
-                    optionInfoList =
-                            new ArrayList<>((Set<GlusterVolumeOptionInfo>) returnValue.getReturnValue());
-                    optionInfoList.add(getCifsVolumeOption());
+                    innerParameterModel
+                            .setOptionsMap(getOptionsMap((Set<GlusterVolumeOptionInfo>) returnValue.getReturnValue()));
                 }
 
-                innerParameterModel.getKeyList().setItems(optionInfoList);
                 innerParameterModel.stopProgress();
 
                 UICommand command = UICommand.createDefaultOkUiCommand("OnSetParameter", VolumeParameterListModel.this); //$NON-NLS-1$
@@ -139,6 +136,16 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         });
         asyncQuery.setHandleFailure(true);
         AsyncDataProvider.getInstance().getGlusterVolumeOptionInfoList(asyncQuery, volume.getClusterId());
+    }
+
+    private HashMap<String, GlusterVolumeOptionInfo> getOptionsMap(Set<GlusterVolumeOptionInfo> optionList) {
+        HashMap<String, GlusterVolumeOptionInfo> optionsMap = new HashMap<>();
+        for (GlusterVolumeOptionInfo volumeOption : optionList) {
+            optionsMap.put(volumeOption.getKey(), volumeOption);
+        }
+        GlusterVolumeOptionInfo cifsVolumeOption = getCifsVolumeOption();
+        optionsMap.put(cifsVolumeOption.getKey(), cifsVolumeOption);
+        return optionsMap;
     }
 
     private void onSetParameter() {
@@ -156,7 +163,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
 
         GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity();
         option.setVolumeId(volume.getId());
-        option.setKey(model.getSelectedKey().getEntity());
+        option.setKey(model.getKeyList().getSelectedItem());
         option.setValue(model.getValue().getEntity());
 
         model.startProgress();
@@ -205,7 +212,6 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         setWindow(volumeParameterModel);
 
         volumeParameterModel.getKeyList().setIsChangeable(false);
-        volumeParameterModel.getSelectedKey().setIsChangeable(false);
         volumeParameterModel.startProgress();
 
         AsyncQuery asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
@@ -213,23 +219,19 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
             public void onSuccess(VdcQueryReturnValue returnValue) {
                 VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
 
-                ArrayList<GlusterVolumeOptionInfo> optionInfoList = new ArrayList<>();
-
                 if (!returnValue.getSucceeded()) {
+                    innerParameterModel.setOptionsMap(new HashMap<String, GlusterVolumeOptionInfo>());
                     innerParameterModel.setMessage(ConstantsManager.getInstance()
                             .getConstants()
                             .errorInFetchingVolumeOptionList());
                 } else {
-                    optionInfoList =
-                            new ArrayList<>((Set<GlusterVolumeOptionInfo>) returnValue.getReturnValue());
-                    optionInfoList.add(getCifsVolumeOption());
+                    innerParameterModel
+                            .setOptionsMap(getOptionsMap((Set<GlusterVolumeOptionInfo>) returnValue.getReturnValue()));
                 }
-
-                innerParameterModel.getKeyList().setItems(optionInfoList);
 
                 GlusterVolumeOptionEntity selectedOption = getSelectedItem();
                 innerParameterModel.getDescription().setEntity(""); //$NON-NLS-1$
-                innerParameterModel.getSelectedKey().setEntity(selectedOption.getKey());
+                innerParameterModel.getKeyList().setSelectedItem(selectedOption.getKey());
                 innerParameterModel.getValue().setEntity(selectedOption.getValue());
 
                 innerParameterModel.stopProgress();

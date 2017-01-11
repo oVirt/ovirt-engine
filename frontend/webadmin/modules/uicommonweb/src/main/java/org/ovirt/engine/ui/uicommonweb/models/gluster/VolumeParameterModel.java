@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -14,29 +15,19 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 public class VolumeParameterModel extends EntityModel {
 
     private static final String NULL_CONST = "(null)"; //$NON-NLS-1$
-    private ListModel<GlusterVolumeOptionInfo> keyList;
-    private EntityModel<String> selectedKey;
+    private HashMap<String, GlusterVolumeOptionInfo> optionsMap;
+    private ListModel<String> keyList;
+    private Boolean isNew;
     private EntityModel<String> value;
     private EntityModel<String> description;
-    private Boolean isNew;
 
     public VolumeParameterModel() {
-        setKeyList(new ListModel<GlusterVolumeOptionInfo>());
-        setSelectedKey(new EntityModel<String>());
+        setKeyList(new ListModel<String>());
         setValue(new EntityModel<String>());
         setDescription(new EntityModel<String>());
-
         setIsNew(true);
 
         getKeyList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                keyItemChanged();
-            }
-        });
-
-        getSelectedKey().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
@@ -45,20 +36,12 @@ public class VolumeParameterModel extends EntityModel {
         });
     }
 
-    public ListModel<GlusterVolumeOptionInfo> getKeyList() {
+    public ListModel<String> getKeyList() {
         return keyList;
     }
 
-    public void setKeyList(ListModel<GlusterVolumeOptionInfo> keyList) {
+    public void setKeyList(ListModel<String> keyList) {
         this.keyList = keyList;
-    }
-
-    public EntityModel<String> getSelectedKey() {
-        return selectedKey;
-    }
-
-    public void setSelectedKey(EntityModel<String> value) {
-        this.selectedKey = value;
     }
 
     public EntityModel<String> getValue() {
@@ -85,22 +68,9 @@ public class VolumeParameterModel extends EntityModel {
         this.isNew = isNew;
     }
 
-    private void keyItemChanged() {
-        if (getIsNew() && getKeyList().getSelectedItem() != null) {
-            getSelectedKey().setEntity(getKeyList().getSelectedItem().getKey());
-        }
-    }
-
     private void selectedKeyChanged() {
-        String key = getSelectedKey().getEntity();
-        List<GlusterVolumeOptionInfo> options = (List<GlusterVolumeOptionInfo>) getKeyList().getItems();
-        GlusterVolumeOptionInfo selectedOption = null;
-        for (GlusterVolumeOptionInfo option : options) {
-            if (option.getKey().equals(key.trim())) {
-                selectedOption = option;
-                break;
-            }
-        }
+        String key = getKeyList().getSelectedItem();
+        GlusterVolumeOptionInfo selectedOption = optionsMap.get(key);
 
         if (selectedOption != null) {
             if (selectedOption.getDescription() == null || selectedOption.getDescription().equals(NULL_CONST)) {
@@ -127,10 +97,18 @@ public class VolumeParameterModel extends EntityModel {
 
     public boolean validate() {
         NotEmptyValidation valueValidation = new NotEmptyValidation();
-        getSelectedKey().validateEntity(new IValidation[] { valueValidation });
         getValue().validateEntity(new IValidation[] { valueValidation });
+        getKeyList().validateSelectedItem(new IValidation[] { valueValidation });
+        return getKeyList().getIsValid() && getValue().getIsValid();
+    }
 
-        return getSelectedKey().getIsValid() && getValue().getIsValid();
+    public HashMap<String, GlusterVolumeOptionInfo> getOptionsMap() {
+        return optionsMap;
+    }
+
+    public void setOptionsMap(HashMap<String, GlusterVolumeOptionInfo> optionsMap) {
+        this.optionsMap = optionsMap;
+        getKeyList().setItems(new ArrayList<String>(getOptionsMap().keySet()), getKeyList().getSelectedItem());
     }
 
 }
