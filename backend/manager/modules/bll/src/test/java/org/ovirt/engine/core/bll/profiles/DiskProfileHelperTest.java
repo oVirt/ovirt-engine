@@ -101,10 +101,10 @@ public class DiskProfileHelperTest {
 
     @Test
     public void setAndValidateMultipleStorageDomainsAndDiskProfilesTest() {
-        diskImage.setDiskProfileIds(new ArrayList<Guid>(Arrays.asList(diskProfile_a.getId(), diskProfile_b.getId())));
+        diskImage.setDiskProfileIds(new ArrayList<>(Arrays.asList(diskProfile_a.getId(), diskProfile_b.getId())));
         map.put(diskImage, STORAGE_DOMAIN_1);
         assertEquals(ValidationResult.VALID, diskProfileHelper.setAndValidateDiskProfiles(map, dbUser));
-        diskImage.setDiskProfileIds(new ArrayList<Guid>(Arrays.asList(diskProfile_a.getId(), diskProfile_b.getId())));
+        diskImage.setDiskProfileIds(new ArrayList<>(Arrays.asList(diskProfile_a.getId(), diskProfile_b.getId())));
         map.clear();
         map.put(diskImage, STORAGE_DOMAIN_2);
         assertEquals(ValidationResult.VALID, diskProfileHelper.setAndValidateDiskProfiles(map, dbUser));
