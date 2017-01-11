@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -55,7 +55,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         initCommandMethods();
         cmd.init();
 
-        doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyListOf(String.class));
+        doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyList());
         doReturn(true).when(cmd).validateSpaceRequirements();
         assertTrue("vm could not be added", cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain())));
     }
@@ -72,20 +72,20 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     @Test
     public void validateSpaceAndThreshold() {
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForNewDisks(anyListOf(DiskImage.class));
+        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForNewDisks(anyList());
         assertTrue(cmd.validateSpaceRequirements());
-        verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForNewDisks(anyListOf(DiskImage.class));
-        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(anyListOf(DiskImage.class));
+        verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForNewDisks(anyList());
+        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(anyList());
     }
 
     @Test
     public void validateSpaceNotEnough() throws Exception {
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(storageDomainValidator).hasSpaceForNewDisks(anyListOf(DiskImage.class));
+                when(storageDomainValidator).hasSpaceForNewDisks(anyList());
         assertFalse(cmd.validateSpaceRequirements());
-        verify(storageDomainValidator).hasSpaceForNewDisks(anyListOf(DiskImage.class));
-        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(anyListOf(DiskImage.class));
+        verify(storageDomainValidator).hasSpaceForNewDisks(anyList());
+        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(anyList());
     }
 
     @Test

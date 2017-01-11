@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateFailure;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateSuccess;
@@ -21,7 +21,6 @@ import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityH
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -59,7 +58,7 @@ public class ExtendSANStorageDomainCommandTest {
         EngineMessage lunsBreakStorageDomainDiscardSupportMessage =
                 EngineMessage.ACTION_TYPE_FAILED_LUN_BREAKS_STORAGE_DOMAIN_PASS_DISCARD_SUPPORT;
         doReturn(new ValidationResult(lunsBreakStorageDomainDiscardSupportMessage)).when(discardHelper)
-                .isExistingDiscardFunctionalityPreserved(anyListOf(LUNs.class), any(StorageDomain.class));
+                .isExistingDiscardFunctionalityPreserved(anyList(), any(StorageDomain.class));
         runAndAssertValidateFailure(command, lunsBreakStorageDomainDiscardSupportMessage);
     }
 
@@ -70,7 +69,7 @@ public class ExtendSANStorageDomainCommandTest {
     }
 
     private void passAllValidations() {
-        doReturn(false).when(command).isLunsAlreadyInUse(anyListOf(String.class));
+        doReturn(false).when(command).isLunsAlreadyInUse(anyList());
         doReturn(true).when(command).checkStorageDomain();
         doReturn(true).when(command).checkStorageDomainStatus(StorageDomainStatus.Active);
         storageDomain.setStorageType(StorageType.ISCSI);
@@ -81,6 +80,6 @@ public class ExtendSANStorageDomainCommandTest {
         doReturn(connectResult).when(command).connectAllHostsToLun();
 
         doReturn(ValidationResult.VALID).when(discardHelper).isExistingDiscardFunctionalityPreserved(
-                anyListOf(LUNs.class), any(StorageDomain.class));
+                anyList(), any(StorageDomain.class));
     }
 }

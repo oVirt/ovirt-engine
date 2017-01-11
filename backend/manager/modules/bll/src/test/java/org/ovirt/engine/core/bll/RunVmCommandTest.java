@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -490,12 +490,8 @@ public class RunVmCommandTest extends BaseCommandTest {
     private RunVmValidator mockSuccessfulRunVmValidator() {
         RunVmValidator runVmValidator = mock(RunVmValidator.class);
         when(runVmValidator.canRunVm(
-                anyListOf(String.class),
-                any(StoragePool.class),
-                anyListOf(Guid.class),
-                anyListOf(Guid.class),
-                any(Cluster.class),
-                any(boolean.class))).thenReturn(true);
+                anyList(), any(StoragePool.class), anyList(), anyList(), any(Cluster.class), any(boolean.class)))
+                .thenReturn(true);
         when(runVmValidator.validateNetworkInterfaces()).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;

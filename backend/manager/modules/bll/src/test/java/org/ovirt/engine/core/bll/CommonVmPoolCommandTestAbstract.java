@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anySetOf;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -111,20 +111,20 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         command.ensureDestinationImageMap();
         assertTrue(command.checkDestDomains());
         verify(multipleSdValidator).allDomainsWithinThresholds();
-        verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));
+        verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
     }
 
     @Test
     public void validateInsufficientSpaceOnDomains() {
         setupForStorageTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));
+                when(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
         verify(multipleSdValidator).allDomainsWithinThresholds();
-        verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));
+        verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
     }
 
     @Test
@@ -137,7 +137,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
                 .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
         verify(multipleSdValidator).allDomainsWithinThresholds();
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
     }
 
     @Before
@@ -320,7 +320,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     protected void setupForStorageTests() {
         doReturn(multipleSdValidator).when(command).getStorageDomainsValidator(any(Guid.class), anySetOf(Guid.class));
         doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
-        doReturn(ValidationResult.VALID).when(multipleSdValidator)
-                .allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
     }
 }

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.memory.sdfilters;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -65,7 +65,7 @@ public class StorageDomainSpaceRequirementsFilterTest {
 
     private void initFilter() {
         filter = spy(new StorageDomainSpaceRequirementsFilter(memoryDisks));
-        doNothing().when(filter).updateDisksStorage(any(StorageDomain.class), anyListOf(DiskImage.class));
+        doNothing().when(filter).updateDisksStorage(any(StorageDomain.class), anyList());
         doReturn(storageDomainValidator).when(filter).getStorageDomainValidator(storageDomain);
     }
 

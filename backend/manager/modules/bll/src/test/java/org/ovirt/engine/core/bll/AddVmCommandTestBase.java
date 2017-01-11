@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
@@ -154,7 +154,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     protected void mockUninterestingMethods() {
         doReturn(true).when(cmd).isVmNameValidLength(any(VM.class));
         doReturn(false).when(cmd).isVmWithSameNameExists(anyString(), any(Guid.class));
-        doReturn(true).when(cmd).areParametersLegal(anyListOf(String.class));
+        doReturn(true).when(cmd).areParametersLegal(anyList());
         doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
         doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
         doReturn(false).when(cmd).isVirtioScsiControllerAttached(any(Guid.class));
@@ -255,7 +255,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     }
 
     protected void initCommandMethods() {
-        doReturn(true).when(cmd).canAddVm(anyListOf(String.class), anyString(), any(Guid.class), anyInt());
+        doReturn(true).when(cmd).canAddVm(anyList(), anyString(), any(Guid.class), anyInt());
     }
 
     protected void initializeMock() {

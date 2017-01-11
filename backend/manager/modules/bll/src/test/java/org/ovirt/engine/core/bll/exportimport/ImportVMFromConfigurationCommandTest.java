@@ -4,7 +4,7 @@ import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
@@ -127,11 +126,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         when(externalVmMacsFinder.findExternalMacAddresses(eq(expectedVm)))
                 .thenReturn(Collections.emptySet());
         when(validator.validateUnregisteredEntity(any(), any())) .thenReturn(ValidationResult.VALID);
-        when(validator.validateStorageExistForUnregisteredEntity(
-                anyListOf(DiskImage.class),
-                anyBoolean(),
-                any(),
-                any()))
+        when(validator.validateStorageExistForUnregisteredEntity(anyList(), anyBoolean(), any(), any()))
                 .thenReturn(ValidationResult.VALID);
 
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
@@ -145,11 +140,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
         doReturn(storageDomain).when(cmd).getStorageDomain();
         when(validator.validateUnregisteredEntity(any(), any())).thenReturn(ValidationResult.VALID);
-        when(validator.validateStorageExistForUnregisteredEntity(
-                anyListOf(DiskImage.class),
-                anyBoolean(),
-                any(),
-                any())).
+        when(validator.validateStorageExistForUnregisteredEntity(anyList(), anyBoolean(), any(), any())).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
@@ -163,11 +154,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         storageDomain.setStatus(StorageDomainStatus.Inactive);
 
         when(validator.validateUnregisteredEntity(any(), any())).thenReturn(ValidationResult.VALID);
-        when(validator.validateStorageExistForUnregisteredEntity(
-                anyListOf(DiskImage.class),
-                anyBoolean(),
-                any(),
-                any())).
+        when(validator.validateStorageExistForUnregisteredEntity(anyList(), anyBoolean(), any(), any())).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd,

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
@@ -175,22 +175,22 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doAnswer(invocation -> {
             VM vm = (VM) invocation.getArguments()[0];
             return vm.getId().toString();
-        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(VM.class), anyListOf(DiskImage.class));
+        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(VM.class), anyList());
 
         doAnswer(invocation -> {
             VmTemplate template = (VmTemplate) invocation.getArguments()[0];
             return template.getId().toString();
-        }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any(VmTemplate.class), anyListOf(DiskImage.class));
+        }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any(VmTemplate.class), anyList());
 
         doAnswer(invocation -> {
             List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
             return neededIds.stream().map(id -> vms.get(id)).collect(Collectors.toList());
-        }).when(vmDao).getVmsByIds(anyListOf(Guid.class));
+        }).when(vmDao).getVmsByIds(anyList());
 
         doAnswer(invocation -> {
             List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
             return neededIds.stream().map(id -> templates.get(id)).collect(Collectors.toList());
-        }).when(vmTemplateDao).getVmTemplatesByIds(anyListOf(Guid.class));
+        }).when(vmTemplateDao).getVmTemplatesByIds(anyList());
 
         doAnswer(invocation -> {
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> updateMap =
@@ -217,8 +217,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                         values_array[i]);
             }
             return null;
-        }).when(vmAndTemplatesGenerationsDao).updateOvfGenerations
-                (anyListOf(Guid.class), anyListOf(Long.class), anyListOf(String.class));
+        }).when(vmAndTemplatesGenerationsDao).updateOvfGenerations(anyList(), anyList(), anyList());
 
         doAnswer(invocation -> {
             StoragePoolStatus desiredStatus = (StoragePoolStatus) invocation.getArguments()[0];

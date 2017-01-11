@@ -5,7 +5,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -75,8 +75,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         vmNic = createVmNic();
 
         when(decoratedMacPoolFactory.createDecoratedPool(any(Guid.class),
-                any(org.ovirt.engine.core.bll.network.macpool.MacPool.class),
-                anyListOf(MacPoolDecorator.class)))
+                any(org.ovirt.engine.core.bll.network.macpool.MacPool.class), anyList()))
                 .thenAnswer(invocation -> invocation.getArguments()[1]);
 
         macPoolPerCluster = new MacPoolPerCluster(macPoolDao,
