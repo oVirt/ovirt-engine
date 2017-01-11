@@ -226,6 +226,7 @@
   "display" : "vnc",
   "displaySecurePort" : "-1",
   "memSize" : 7052,
+  "maxMemSize" : 7052,
   "displayPort" : "5900",
   "cpuType" : "SandyBridge",
   "spiceSecureChannels" : "smain,sdisplay,sinputs,scursor,splayback,srecord,ssmartcard,susbredir",

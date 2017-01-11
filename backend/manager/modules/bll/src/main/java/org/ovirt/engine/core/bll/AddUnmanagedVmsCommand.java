@@ -117,6 +117,12 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
         vmStatic.setOrigin(OriginType.EXTERNAL);
         vmStatic.setNumOfSockets(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
         vmStatic.setMemSizeMb(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
+
+        // VMs started before engine 3.6 may not have 'maxMemory' set
+        final int maxMemorySize = vmInfo.get(VdsProperties.maxMemSize) != null
+                ? VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.maxMemSize))
+                : vmStatic.getMemSizeMb();
+        vmStatic.setMaxMemorySizeMb(maxMemorySize);
         vmStatic.setSingleQxlPci(false);
 
         setOsId(vmStatic, (String) vmInfo.get(VdsProperties.guest_os), defaultOsId);
