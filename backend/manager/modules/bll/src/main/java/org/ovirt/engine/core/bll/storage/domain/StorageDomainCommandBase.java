@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -234,42 +235,25 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected List<Pair<Guid, Boolean>> connectHostsInUpToDomainStorageServer() {
-        List<VDS> hostsInStatusUp = getAllRunningVdssInPool();
-        List<Callable<Pair<Guid, Boolean>>> callables = new LinkedList<>();
-        for (final VDS vds : hostsInStatusUp) {
-            callables.add(() -> {
-                Pair<Guid, Boolean> toReturn = new Pair<>(vds.getId(), Boolean.FALSE);
-                try {
-                    boolean connectResult = StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
-                            .connectStorageToDomainByVdsId(getStorageDomain(), vds.getId());
-                    toReturn.setSecond(connectResult);
-                } catch (RuntimeException e) {
-                    log.error("Failed to connect host '{}' to storage domain (name '{}', id '{}'): {}",
-                            vds.getName(),
-                            getStorageDomain().getName(),
-                            getStorageDomain().getId(),
-                            e.getMessage());
-                    log.debug("Exception", e);
-                }
-                return toReturn;
-            });
-        }
-
-        return ThreadPoolUtil.invokeAll(callables);
+        return performConnectionOpOnAllUpHosts(vds -> StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
+                .connectStorageToDomainByVdsId(getStorageDomain(), vds.getId()));
     }
 
     protected List<Pair<Guid, Boolean>> disconnectHostsInUpToDomainStorageServer() {
+        return performConnectionOpOnAllUpHosts(vds -> StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
+                .disconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId()));
+    }
+
+    private List<Pair<Guid, Boolean>> performConnectionOpOnAllUpHosts(Function<VDS, Boolean> connectionMethod) {
         List<VDS> hostsInStatusUp = getAllRunningVdssInPool();
         List<Callable<Pair<Guid, Boolean>>> callables = new LinkedList<>();
         for (final VDS vds : hostsInStatusUp) {
             callables.add(() -> {
                 Pair<Guid, Boolean> toReturn = new Pair<>(vds.getId(), Boolean.FALSE);
                 try {
-                    boolean connectResult = StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
-                            .disconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
-                    toReturn.setSecond(connectResult);
+                    toReturn.setSecond(connectionMethod.apply(vds));
                 } catch (RuntimeException e) {
-                    log.error("Failed to disconnect host '{}' to storage domain (name '{}', id '{}'): {}",
+                    log.error("Failed to connect/disconnect host '{}' to storage domain (name '{}', id '{}'): {}",
                             vds.getName(),
                             getStorageDomain().getName(),
                             getStorageDomain().getId(),
