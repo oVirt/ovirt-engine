@@ -83,7 +83,7 @@ public class FenceVdsVDSCommandTest {
                         any(String.class),
                         any(String.class),
                         any(String.class),
-                        any(Map.class)))
+                        any()))
                 .thenReturn(new FenceStatusReturn(first))
                 .thenReturn(second == null ? null : new FenceStatusReturn(second));
     }

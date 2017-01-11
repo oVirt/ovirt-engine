@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -292,76 +291,44 @@ public class GlusterServiceSyncJobTest {
         verify(clusterServiceDao, times(2)).update(argThat(isClusterServiceWithMixedStatus()));
     }
 
-    private Matcher<GlusterClusterService> isClusterServiceWithMixedStatus() {
-        return new ArgumentMatcher<GlusterClusterService>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof GlusterClusterService)) {
-                    return false;
-                }
-
-                return ((GlusterClusterService) argument).getStatus() == GlusterServiceStatus.MIXED;
-            }
-        };
+    private ArgumentMatcher<GlusterClusterService> isClusterServiceWithMixedStatus() {
+        return argument -> argument.getStatus() == GlusterServiceStatus.MIXED;
     }
 
-    private Matcher<Collection<GlusterServerService>> isCollectionOfServicesOfServer1WithStatusUnknown() {
-        return new ArgumentMatcher<Collection<GlusterServerService>>() {
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof Collection)) {
+    private ArgumentMatcher<Collection<GlusterServerService>> isCollectionOfServicesOfServer1WithStatusUnknown() {
+        return serverServices -> {
+            for (GlusterServerService service : serverServices) {
+                // Status of all services from server1 should change to UNKNOWN.
+                // Nothing else should change
+                if (!(service.getServerId().equals(SERVER1_ID) && service.getStatus() == GlusterServiceStatus.UNKNOWN)) {
                     return false;
                 }
-
-                Collection<GlusterServerService> serverServices = (Collection<GlusterServerService>) argument;
-
-                for (GlusterServerService service : serverServices) {
-                    // Status of all services from server1 should change to UNKNOWN.
-                    // Nothing else should change
-                    if (!(service.getServerId().equals(SERVER1_ID) && service.getStatus() == GlusterServiceStatus.UNKNOWN)) {
-                        return false;
-                    }
-                }
-
-                return true;
             }
+
+            return true;
         };
 
     }
 
-    private Matcher<List<GlusterServerService>> isListOfServersWithChangedStatus() {
-        return new ArgumentMatcher<List<GlusterServerService>>() {
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof List)) {
+    private ArgumentMatcher<List<GlusterServerService>> isListOfServersWithChangedStatus() {
+        return serverServices -> {
+            for (GlusterServerService service : serverServices) {
+                // server1 has no services with changed status
+                if (service.getServerId().equals(SERVER1_ID)) {
                     return false;
                 }
 
-                List<GlusterServerService> serverServices = (List<GlusterServerService>) argument;
-
-                for (GlusterServerService service : serverServices) {
-                    // server1 has no services with changed status
-                    if (service.getServerId().equals(SERVER1_ID)) {
+                // on server2, only service2 and service3 have changed status.
+                if (service.getServerId().equals(SERVER2_ID)) {
+                    if (!(service.getServiceId().equals(SERVICE2_ID) || service.getServiceId().equals(SERVICE3_ID))) {
                         return false;
                     }
-
-                    // on server2, only service2 and service3 have changed status.
-                    if (service.getServerId().equals(SERVER2_ID)) {
-                        if (!(service.getServiceId().equals(SERVICE2_ID) || service.getServiceId().equals(SERVICE3_ID))) {
-                            return false;
-                        }
-                    }
-
-                    // on server3, all services have different status. so no checks required.
                 }
 
-                return true;
+                // on server3, all services have different status. so no checks required.
             }
+
+            return true;
         };
     }
 
@@ -399,18 +366,8 @@ public class GlusterServiceSyncJobTest {
                         argThat(isServer(serverId)));
     }
 
-    private Matcher<GlusterServicesListVDSParameters> isServer(final Guid serverId) {
-        return new ArgumentMatcher<GlusterServicesListVDSParameters>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof GlusterServicesListVDSParameters)) {
-                    return false;
-                }
-
-                return ((GlusterServicesListVDSParameters) argument).getVdsId().equals(serverId);
-            }
-        };
+    private ArgumentMatcher<GlusterServicesListVDSParameters> isServer(final Guid serverId) {
+        return argument -> argument.getVdsId().equals(serverId);
     }
 
     private VDSReturnValue createVDSReturnValue(List<GlusterServerService> serverServices) {

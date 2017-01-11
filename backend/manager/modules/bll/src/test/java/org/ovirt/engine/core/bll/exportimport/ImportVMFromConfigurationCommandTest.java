@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import static java.util.Collections.emptyList;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -18,7 +18,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,7 +36,6 @@ import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -50,7 +48,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
@@ -96,8 +93,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
         final int osId = 0;
-        when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(true);
-        when(osRepository.isSoundDeviceEnabled(anyInt(), any(Version.class))).thenReturn(true);
+        when(osRepository.isBalloonEnabled(anyInt(), any())).thenReturn(true);
+        when(osRepository.isSoundDeviceEnabled(anyInt(), any())).thenReturn(true);
         when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(Collections.singletonMap(osId, new VmIconIdSizePair(
                 Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"),
                 Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b"))
@@ -124,20 +121,17 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     public void testPositiveImportVmFromConfiguration() {
         initCommand(getOvfEntityData());
         doReturn(storagePool).when(cmd).getStoragePool();
-        doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(anyMapOf(Guid.class, StorageDomain.class));
-        doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(anyMapOf(Guid.class, StorageDomain.class));
+        doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(any());
+        doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(any());
         final VM expectedVm = cmd.getVm();
         when(externalVmMacsFinder.findExternalMacAddresses(eq(expectedVm)))
                 .thenReturn(Collections.emptySet());
-        when(validator.validateUnregisteredEntity(
-                any(IVdcQueryable.class),
-                any(OvfEntityData.class)))
-                .thenReturn(ValidationResult.VALID);
+        when(validator.validateUnregisteredEntity(any(), any())) .thenReturn(ValidationResult.VALID);
         when(validator.validateStorageExistForUnregisteredEntity(
                 anyListOf(DiskImage.class),
-                any(Boolean.class),
-                any(Map.class),
-                any(Map.class)))
+                anyBoolean(),
+                any(),
+                any()))
                 .thenReturn(ValidationResult.VALID);
 
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
@@ -150,15 +144,12 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         storageDomain.setStatus(StorageDomainStatus.Maintenance);
 
         doReturn(storageDomain).when(cmd).getStorageDomain();
-        when(validator.validateUnregisteredEntity(
-                any(IVdcQueryable.class),
-                any(OvfEntityData.class))).
-                thenReturn(ValidationResult.VALID);
+        when(validator.validateUnregisteredEntity(any(), any())).thenReturn(ValidationResult.VALID);
         when(validator.validateStorageExistForUnregisteredEntity(
                 anyListOf(DiskImage.class),
-                any(Boolean.class),
-                any(Map.class),
-                any(Map.class))).
+                anyBoolean(),
+                any(),
+                any())).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
@@ -171,15 +162,12 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         StorageDomain storageDomain = createStorageDomain();
         storageDomain.setStatus(StorageDomainStatus.Inactive);
 
-        when(validator.validateUnregisteredEntity(
-                any(IVdcQueryable.class),
-                any(OvfEntityData.class))).
-                thenReturn(ValidationResult.VALID);
+        when(validator.validateUnregisteredEntity(any(), any())).thenReturn(ValidationResult.VALID);
         when(validator.validateStorageExistForUnregisteredEntity(
                 anyListOf(DiskImage.class),
-                any(Boolean.class),
-                any(Map.class),
-                any(Map.class))).
+                anyBoolean(),
+                any(),
+                any())).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
@@ -201,8 +189,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         ovfEntityDataList.add(ovfEntity);
         when(unregisteredOVFDataDao.getByEntityIdAndStorageDomain(vmId, storageDomainId)).thenReturn(ovfEntityDataList);
         when(validator.validateUnregisteredEntity(
-                any(IVdcQueryable.class),
-                any(OvfEntityData.class))).
+                any(),
+                any())).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);

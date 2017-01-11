@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -32,7 +32,7 @@ public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmI
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        doReturn("config").when(getQuery()).generateOvfConfig(any(VM.class));
+        doReturn("config").when(getQuery()).generateOvfConfig(any());
     }
 
     private VM createVm(Guid existingVmId, long dbGeneration) {
@@ -48,11 +48,11 @@ public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmI
         Guid id = Guid.newGuid();
         long dbGeneration = 5;
         VM vm = createVm(id, dbGeneration);
-        doReturn(vm).when(vmDao).get(any(Guid.class), any(Guid.class), anyBoolean());
+        doReturn(vm).when(vmDao).get(any(), any(), anyBoolean());
         when(getQueryParameters().getRequiredGeneration()).thenReturn(dbGeneration - 1);
         GetVmOvfByVmIdQuery query = getQuery();
         query.execute();
-        verify(query, never()).generateOvfConfig(any(VM.class));
+        verify(query, never()).generateOvfConfig(any());
         assertFalse(query.getQueryReturnValue().getSucceeded());
         assertNull(query.getQueryReturnValue().getReturnValue());
     }
@@ -62,11 +62,11 @@ public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmI
         Guid id = Guid.newGuid();
         long dbGeneration = 5;
         VM vm = createVm(id, dbGeneration);
-        doReturn(vm).when(vmDao).get(any(Guid.class), any(Guid.class), anyBoolean());
+        doReturn(vm).when(vmDao).get(any(), any(), anyBoolean());
         when(getQueryParameters().getRequiredGeneration()).thenReturn(dbGeneration);
         GetVmOvfByVmIdQuery query = getQuery();
         query.execute();
-        verify(query, times(1)).generateOvfConfig(any(VM.class));
+        verify(query, times(1)).generateOvfConfig(any());
         assertTrue(query.getQueryReturnValue().getSucceeded());
         assertNotNull(query.getQueryReturnValue().getReturnValue());
     }

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -78,8 +78,7 @@ public class GetAllVmSnapshotsFromConfigurationByVmIdQueryTest extends AbstractU
         vm.setId(vmId);
         vm.setImages(new ArrayList<>(Arrays.asList(disk1, disk2)));
 
-        doReturn(vm).when(snapshotVmConfigurationHelper).getVmFromConfiguration(
-                any(String.class), any(Guid.class), any(Guid.class));
+        doReturn(vm).when(snapshotVmConfigurationHelper).getVmFromConfiguration(any(), any(), any());
         getQuery().executeQueryCommand();
         List<Snapshot> snapshots = getQuery().getQueryReturnValue().getReturnValue();
 

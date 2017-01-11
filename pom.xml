@@ -74,7 +74,7 @@
     <vdsm-jsonrpc-java.version>1.4.1</vdsm-jsonrpc-java.version>
     <slf4j.version>1.7.5</slf4j.version>
     <gwt.version>2.6.1</gwt.version>
-    <mockito.version>1.9.0</mockito.version>
+    <mockito.version>2.6.5</mockito.version>
     <javassist.version>3.12.0.GA</javassist.version>
     <javax.mail.version>1.4.4</javax.mail.version>
     <hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
@@ -387,7 +387,7 @@
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
+      <artifactId>mockito-core</artifactId>
       <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>

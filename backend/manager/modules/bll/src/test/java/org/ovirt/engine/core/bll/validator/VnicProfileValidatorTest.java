@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -19,7 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -40,7 +40,7 @@ import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class VnicProfileValidatorTest {
 
     private static final String NAMEABLE_NAME = "nameable";
@@ -103,8 +103,8 @@ public class VnicProfileValidatorTest {
         initNetworkFilterDao();
 
         // mock their getters
-        when(vnicProfileDao.get(any(Guid.class))).thenReturn(vnicProfile);
-        when(vnicProfileDao.getAllForNetwork(any(Guid.class))).thenReturn(vnicProfiles);
+        when(vnicProfileDao.get(any())).thenReturn(vnicProfile);
+        when(vnicProfileDao.getAllForNetwork(any())).thenReturn(vnicProfiles);
     }
 
     private void initNetworkFilterDao() {
@@ -131,19 +131,19 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void vnicProfileDoesNotExist() throws Exception {
-        when(vnicProfileDao.get(any(Guid.class))).thenReturn(null);
+        when(vnicProfileDao.get(any())).thenReturn(null);
         assertThat(validator.vnicProfileExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
     }
 
     @Test
     public void networkExists() throws Exception {
-        when(networkDao.get(any(Guid.class))).thenReturn(network);
+        when(networkDao.get(any())).thenReturn(network);
         assertThat(validator.networkExists(), isValid());
     }
 
     @Test
     public void networkDoesntExist() throws Exception {
-        when(networkDao.get(any(Guid.class))).thenReturn(null);
+        when(networkDao.get(any())).thenReturn(null);
         assertThat(validator.networkExists(), failsWith(EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS));
     }
 
@@ -163,7 +163,7 @@ public class VnicProfileValidatorTest {
     @Test
     public void networkQosDoesntExist() throws Exception {
         when(vnicProfile.getNetworkQosId()).thenReturn(DEFAULT_GUID);
-        when(networkQosDao.get(any(Guid.class))).thenReturn(null);
+        when(networkQosDao.get(any())).thenReturn(null);
         assertThat(validator.networkQosExistsOrNull(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS));
     }
 
@@ -250,7 +250,7 @@ public class VnicProfileValidatorTest {
         VnicProfile vnicProfile = mock(VnicProfile.class);
         when(this.vnicProfile.getNetworkId()).thenReturn(vnicProfileId);
         when(vnicProfile.getNetworkId()).thenReturn(oldVnicProfileId);
-        when(vnicProfileDao.get(any(Guid.class))).thenReturn(vnicProfile);
+        when(vnicProfileDao.get(any())).thenReturn(vnicProfile);
     }
 
     private void vnicProfileNotUsedByVmsTest(Matcher<ValidationResult> matcher, List<VM> vms) {
@@ -259,14 +259,14 @@ public class VnicProfileValidatorTest {
     }
 
     private void mockVmsUsingVnicProfile(List<VM> vms) {
-        when(vmDao.getAllForVnicProfile(any(Guid.class))).thenReturn(vms);
+        when(vmDao.getAllForVnicProfile(any())).thenReturn(vms);
     }
 
     private void mockVnicProfilePortMirroringChange(boolean portMirroring) {
         VnicProfile vnicProfile = mock(VnicProfile.class);
         when(this.vnicProfile.isPortMirroring()).thenReturn(portMirroring);
         when(vnicProfile.isPortMirroring()).thenReturn(!portMirroring);
-        when(vnicProfileDao.get(any(Guid.class))).thenReturn(vnicProfile);
+        when(vnicProfileDao.get(any())).thenReturn(vnicProfile);
     }
 
     @Test
@@ -283,7 +283,7 @@ public class VnicProfileValidatorTest {
 
     private void vnicProfileNotUsedByTemplatesTest(Matcher<ValidationResult> matcher, List<VmTemplate> templates) {
         VmTemplateDao templateDao = mock(VmTemplateDao.class);
-        when(templateDao.getAllForVnicProfile(any(Guid.class))).thenReturn(templates);
+        when(templateDao.getAllForVnicProfile(any())).thenReturn(templates);
         when(dbFacade.getVmTemplateDao()).thenReturn(templateDao);
         assertThat(validator.vnicProfileNotUsedByTemplates(), matcher);
     }
@@ -314,7 +314,7 @@ public class VnicProfileValidatorTest {
 
     private void vnicProfileForVmNetworkTest(boolean vmNetwork, Matcher<ValidationResult> matcher) {
         when(network.isVmNetwork()).thenReturn(vmNetwork);
-        when(networkDao.get(any(Guid.class))).thenReturn(network);
+        when(networkDao.get(any())).thenReturn(network);
         assertThat(validator.vnicProfileForVmNetworkOnly(), matcher);
     }
 
@@ -343,7 +343,7 @@ public class VnicProfileValidatorTest {
     private void externalNetworkPortMirroringTest(boolean externalNetwork,
             boolean portMirroring,
             Matcher<ValidationResult> matcher) {
-        when(networkDao.get(any(Guid.class))).thenReturn(network);
+        when(networkDao.get(any())).thenReturn(network);
         when(network.isExternal()).thenReturn(externalNetwork);
         when(vnicProfile.isPortMirroring()).thenReturn(portMirroring);
         assertThat(validator.portMirroringNotSetIfExternalNetwork(), matcher);
@@ -379,7 +379,7 @@ public class VnicProfileValidatorTest {
         VnicProfile updatedVnicProfile = mock(VnicProfile.class);
         when(vnicProfile.isPassthrough()).thenReturn(passthoughOld);
         when(updatedVnicProfile.isPassthrough()).thenReturn(pasthroughNew);
-        when(vnicProfileDao.get(any(Guid.class))).thenReturn(updatedVnicProfile);
+        when(vnicProfileDao.get(any())).thenReturn(updatedVnicProfile);
 
         mockVmsUsingVnicProfile(profileUsedByVms ? Collections.singletonList(mock(VM.class))
                 : Collections.emptyList());

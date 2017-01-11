@@ -158,7 +158,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
 
-        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
+        when(cpuFlagsManagerHandler.getCpuId(any(), any())).thenReturn(CPU_ID);
 
         when(osRepository.getMinimumRam(osId, version)).thenReturn(0);
         when(osRepository.getMinimumRam(osId, null)).thenReturn(0);
@@ -166,7 +166,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         when(osRepository.getMaximumRam(osId, null)).thenReturn(256);
         when(osRepository.isWindows(osId)).thenReturn(false);
         when(osRepository.getArchitectureFromOS(osId)).thenReturn(ArchitectureType.x86_64);
-        when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
+        when(osRepository.isCpuSupported(anyInt(), any(), any())).thenReturn(true);
 
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
         displayTypeMap.put(osId, new HashMap<>());

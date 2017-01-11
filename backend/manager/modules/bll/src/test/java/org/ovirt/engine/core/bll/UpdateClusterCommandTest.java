@@ -3,10 +3,9 @@ package org.ovirt.engine.core.bll;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -151,7 +150,7 @@ public class UpdateClusterCommandTest {
     @Test
     public void invalidCluster() {
         createSimpleCommand();
-        when(clusterDao.get(any(Guid.class))).thenReturn(null);
+        when(clusterDao.get(any())).thenReturn(null);
         validateFailedWithReason(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
     }
 
@@ -198,7 +197,7 @@ public class UpdateClusterCommandTest {
     }
 
     private void cpuIsNotUpdatable() {
-        doReturn(false).when(cmd).isCpuUpdatable(any(Cluster.class));
+        doReturn(false).when(cmd).isCpuUpdatable(any());
     }
 
     @Test
@@ -235,14 +234,14 @@ public class UpdateClusterCommandTest {
     public void versionDecreaseNoHostsOrNetwork() {
         createCommandWithOlderVersion();
         setupCpu();
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(createStoragePoolLocalFS());
+        when(storagePoolDao.get(any())).thenReturn(createStoragePoolLocalFS());
         initAndAssertValidation(true);
     }
 
     @Test
     public void versionDecreaseLowerVersionThanDC() {
         createCommandWithOlderVersion();
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(createStoragePoolLocalFSOldVersion());
+        when(storagePoolDao.get(any())).thenReturn(createStoragePoolLocalFSOldVersion());
         setupCpu();
         validateFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
     }
@@ -380,8 +379,8 @@ public class UpdateClusterCommandTest {
     @Test
     public void clusterWithNoCpu() {
         createCommandWithNoCpuName();
-        when(clusterDao.get(any(Guid.class))).thenReturn(createClusterWithNoCpuName());
-        when(glusterVolumeDao.getByClusterId(any(Guid.class))).thenReturn(new ArrayList<>());
+        when(clusterDao.get(any())).thenReturn(createClusterWithNoCpuName());
+        when(glusterVolumeDao.getByClusterId(any())).thenReturn(new ArrayList<>());
         allQueriesForVms();
         initAndAssertValidation(true);
     }
@@ -389,7 +388,7 @@ public class UpdateClusterCommandTest {
     @Test
     public void clusterWithNoServiceEnabled() {
         createCommandWithNoService();
-        when(clusterDao.get(any(Guid.class))).thenReturn(createClusterWithNoCpuName());
+        when(clusterDao.get(any())).thenReturn(createClusterWithNoCpuName());
         cpuExists();
         allQueriesForVms();
         validateFailedWithReason(EngineMessage.CLUSTER_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
@@ -398,7 +397,7 @@ public class UpdateClusterCommandTest {
     @Test
     public void clusterWithVirtGlusterServicesNotAllowed() {
         createCommandWithVirtGlusterEnabled();
-        when(clusterDao.get(any(Guid.class))).thenReturn(createClusterWithNoCpuName());
+        when(clusterDao.get(any())).thenReturn(createClusterWithNoCpuName());
         mcr.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, Boolean.FALSE);
         cpuExists();
         allQueriesForVms();
@@ -408,7 +407,7 @@ public class UpdateClusterCommandTest {
     @Test
     public void disableVirtWhenVmsExist() {
         createCommandWithGlusterEnabled();
-        when(clusterDao.get(any(Guid.class))).thenReturn(createDefaultCluster());
+        when(clusterDao.get(any())).thenReturn(createDefaultCluster());
         cpuExists();
         cpuFlagsNotMissing();
         clusterHasVds();
@@ -420,7 +419,7 @@ public class UpdateClusterCommandTest {
     @Test
     public void disableGlusterWhenVolumesExist() {
         createCommandWithVirtEnabled();
-        when(clusterDao.get(any(Guid.class))).thenReturn(createClusterWithNoCpuName());
+        when(clusterDao.get(any())).thenReturn(createClusterWithNoCpuName());
         cpuExists();
         cpuFlagsNotMissing();
         allQueriesForVms();
@@ -432,25 +431,25 @@ public class UpdateClusterCommandTest {
     @Test
     public void enableNewAddtionalFeatureWhenHostDoesnotSupport() {
         createCommandWithAddtionalFeature();
-        when(clusterDao.get(any(Guid.class))).thenReturn(createClusterWithNoCpuName());
+        when(clusterDao.get(any())).thenReturn(createClusterWithNoCpuName());
         cpuExists();
         cpuFlagsNotMissing();
         allQueriesForVms();
         clusterHasVds();
-        when(clusterFeatureDao.getSupportedFeaturesByClusterId(any(Guid.class))).thenReturn(Collections.emptySet());
-        when(hostFeatureDao.getSupportedHostFeaturesByHostId(any(Guid.class))).thenReturn(Collections.emptySet());
+        when(clusterFeatureDao.getSupportedFeaturesByClusterId(any())).thenReturn(Collections.emptySet());
+        when(hostFeatureDao.getSupportedHostFeaturesByHostId(any())).thenReturn(Collections.emptySet());
         validateFailedWithReason(EngineMessage.CLUSTER_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS);
     }
 
     @Test
     public void enableNewAddtionalFeatureWhenHostSupports() {
         createCommandWithAddtionalFeature();
-        when(clusterDao.get(any(Guid.class))).thenReturn(createClusterWithNoCpuName());
+        when(clusterDao.get(any())).thenReturn(createClusterWithNoCpuName());
         cpuExists();
         cpuFlagsNotMissing();
         allQueriesForVms();
         clusterHasVds();
-        when(hostFeatureDao.getSupportedHostFeaturesByHostId(any(Guid.class))).thenReturn(Collections.singleton("TEST_FEATURE"));
+        when(hostFeatureDao.getSupportedHostFeaturesByHostId(any())).thenReturn(Collections.singleton("TEST_FEATURE"));
         initAndAssertValidation(true);
     }
 
@@ -583,7 +582,7 @@ public class UpdateClusterCommandTest {
         doReturn(clusterDao).when(dbFacadeMock).getClusterDao();
         doReturn(storagePoolDao).when(dbFacadeMock).getStoragePoolDao();
         doReturn(networkClusterValidator).when(cmd).createManagementNetworkClusterValidator();
-        doReturn(true).when(cmd).isSupportedEmulatedMachinesMatchClusterLevel(any(VDS.class));
+        doReturn(true).when(cmd).isSupportedEmulatedMachinesMatchClusterLevel(any());
 
         // cluster upgrade
         doReturn(new ClusterPolicy()).when(schedulingManager).getClusterPolicy(any(Guid.class));
@@ -592,8 +591,7 @@ public class UpdateClusterCommandTest {
         doReturn(clusterPolicy).when(schedulingManager).getClusterPolicy(eq(ClusterPolicy.UPGRADE_POLICY_GUID));
         doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isUpgradeDone(anyList());
         doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isUpgradePossible(anyList(), anyList());
-        doReturn(new HashMap<Guid, List<VmNumaNode>>()).when(vmNumaNodeDao)
-                .getVmNumaNodeInfoByClusterId(any(Guid.class));
+        doReturn(new HashMap<Guid, List<VmNumaNode>>()).when(vmNumaNodeDao).getVmNumaNodeInfoByClusterId(any());
 
         if (StringUtils.isEmpty(group.getCpuName())) {
             doReturn(ArchitectureType.undefined).when(cmd).getArchitecture();
@@ -601,11 +599,11 @@ public class UpdateClusterCommandTest {
             doReturn(ArchitectureType.x86_64).when(cmd).getArchitecture();
         }
 
-        when(clusterDao.get(any(Guid.class))).thenReturn(createDefaultCluster());
-        when(clusterDao.getByName(anyString())).thenReturn(createDefaultCluster());
+        when(clusterDao.get(any())).thenReturn(createDefaultCluster());
+        when(clusterDao.getByName(any())).thenReturn(createDefaultCluster());
         List<Cluster> clusterList = new ArrayList<>();
         clusterList.add(createDefaultCluster());
-        when(clusterDao.getByName(anyString(), anyBoolean())).thenReturn(clusterList);
+        when(clusterDao.getByName(any(), anyBoolean())).thenReturn(clusterList);
     }
 
     private void createCommandWithDifferentName() {
@@ -740,7 +738,7 @@ public class UpdateClusterCommandTest {
         Cluster group = new Cluster();
         List<Cluster> groupList = new ArrayList<>();
         groupList.add(group);
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(groupList);
+        when(clusterDao.getAllForStoragePool(any())).thenReturn(groupList);
     }
 
     private void vdsExist() {
@@ -748,7 +746,7 @@ public class UpdateClusterCommandTest {
         vds.setStatus(VDSStatus.Up);
         List<VDS> vdsList = new ArrayList<>();
         vdsList.add(vds);
-        when(vdsDao.getAllForCluster(any(Guid.class))).thenReturn(vdsList);
+        when(vdsDao.getAllForCluster(any())).thenReturn(vdsList);
     }
 
     private void vdsExistWithHigherVersion() {
@@ -757,11 +755,11 @@ public class UpdateClusterCommandTest {
         vds.setClusterCompatibilityVersion(VERSION_1_2);
         List<VDS> vdsList = new ArrayList<>();
         vdsList.add(vds);
-        when(vdsDao.getAllForCluster(any(Guid.class))).thenReturn(vdsList);
+        when(vdsDao.getAllForCluster(any())).thenReturn(vdsList);
     }
 
     private void allQueriesForVms() {
-        when(vmDao.getAllForCluster(any(Guid.class))).thenReturn(Collections.emptyList());
+        when(vmDao.getAllForCluster(any())).thenReturn(Collections.emptyList());
     }
 
     private void clusterHasVds() {
@@ -770,13 +768,13 @@ public class UpdateClusterCommandTest {
         vds.setSupportedClusterLevels(VERSION_1_1.toString());
         List<VDS> vdsList = new ArrayList<>();
         vdsList.add(vds);
-        when(vdsDao.getAllForCluster(any(Guid.class))).thenReturn(vdsList);
+        when(vdsDao.getAllForCluster(any())).thenReturn(vdsList);
     }
 
     private void clusterHasGlusterVolumes() {
         List<GlusterVolumeEntity> volumes = new ArrayList<>();
         volumes.add(new GlusterVolumeEntity());
-        when(glusterVolumeDao.getByClusterId(any(Guid.class))).thenReturn(volumes);
+        when(glusterVolumeDao.getByClusterId(any())).thenReturn(volumes);
     }
 
     private void clusterHasVMs() {
@@ -785,25 +783,25 @@ public class UpdateClusterCommandTest {
         List<VM> vmList = new ArrayList<>();
         vmList.add(vm);
 
-        when(vmDao.getAllForCluster(any(Guid.class))).thenReturn(vmList);
+        when(vmDao.getAllForCluster(any())).thenReturn(vmList);
     }
 
     private void cpuFlagsMissing() {
         List<String> strings = new ArrayList<>();
         strings.add("foo");
-        doReturn(strings).when(cmd).missingServerCpuFlags(any(VDS.class));
+        doReturn(strings).when(cmd).missingServerCpuFlags(any());
     }
 
     private void cpuFlagsNotMissing() {
-        doReturn(null).when(cmd).missingServerCpuFlags(any(VDS.class));
+        doReturn(null).when(cmd).missingServerCpuFlags(any());
     }
 
     private void cpuManufacturersDontMatch() {
-        doReturn(false).when(cmd).checkIfCpusSameManufacture(any(Cluster.class));
+        doReturn(false).when(cmd).checkIfCpusSameManufacture(any());
     }
 
     private void cpuManufacturersMatch() {
-        doReturn(true).when(cmd).checkIfCpusSameManufacture(any(Cluster.class));
+        doReturn(true).when(cmd).checkIfCpusSameManufacture(any());
     }
 
     private void cpuExists() {

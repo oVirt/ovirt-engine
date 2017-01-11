@@ -126,8 +126,8 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(vm);
 
-        when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
-                any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
+        when(osRepository.getDiskHotpluggableInterfaces(anyInt(), any()))
+                .thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
         SimpleDependencyInjector.getInstance().bind(VmDeviceUtils.class, vmDeviceUtils);
 
     }
@@ -169,7 +169,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         createVirtIODisk();
         when(osRepository.getOsName(15)).thenReturn("RHEL3x64");
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
-                any(Version.class))).thenReturn(Collections.emptySet());
+                any())).thenReturn(Collections.emptySet());
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
     }
 
@@ -249,7 +249,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
                         "VirtIO_SCSI"
                 }));
 
-        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(diskInterfaces);
+        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(diskInterfaces);
     }
 
     /**

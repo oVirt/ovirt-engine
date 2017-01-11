@@ -53,7 +53,7 @@ public abstract class AbstractGetStorageDomainsWithAttachedStoragePoolGuidQueryT
         vds.setId(Guid.newGuid());
         List<VDS> listVds = new ArrayList<>();
         listVds.add(vds);
-        when(vdsDaoMock.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(listVds);
+        when(vdsDaoMock.getAllForStoragePoolAndStatus(any(), eq(VDSStatus.Up))).thenReturn(listVds);
     }
 
     protected abstract StorageType getStorageType();

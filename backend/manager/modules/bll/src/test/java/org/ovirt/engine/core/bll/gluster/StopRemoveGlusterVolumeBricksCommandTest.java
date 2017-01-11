@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -63,7 +62,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         doReturn(getVolumeWithRemoveBricksTask(volumeWithRemoveBricksTask)).when(volumeDao)
                 .getById(volumeWithRemoveBricksTask);
         doReturn(getBricks(volumeWithoutRemoveBricksTask)).when(brickDao)
-                .getGlusterVolumeBricksByTaskId(any(Guid.class));
+                .getGlusterVolumeBricksByTaskId(any());
         doReturn(getVolumeWithRemoveBricksTaskCompleted(volumeWithRemoveBricksTaskCompleted)).when(volumeDao)
                 .getById(volumeWithRemoveBricksTaskCompleted);
         doReturn(getVolume(volumeWithoutAsyncTask)).when(volumeDao).getById(volumeWithoutAsyncTask);
@@ -88,7 +87,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     }
 
     private void mockBackend(boolean succeeded, EngineError errorCode) {
-        doNothing().when(cmd).endStepJobAborted(any(String.class));
+        doNothing().when(cmd).endStepJobAborted(any());
         doNothing().when(cmd).releaseVolumeLock();
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
@@ -100,7 +99,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         }
 
         when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.StopRemoveGlusterVolumeBricks),
-                any(GlusterVolumeVDSParameters.class))).thenReturn(vdsReturnValue);
+                any())).thenReturn(vdsReturnValue);
     }
 
     @Test
@@ -110,7 +109,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
         cmd.executeCommand();
 
-        verify(cmd, times(1)).endStepJobAborted(any(String.class));
+        verify(cmd, times(1)).endStepJobAborted(any());
         verify(cmd, times(1)).releaseVolumeLock();
         assertEquals(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_STOP, cmd.getAuditLogTypeValue());
     }
@@ -122,7 +121,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
         cmd.executeCommand();
 
-        verify(cmd, never()).endStepJobAborted(any(String.class));
+        verify(cmd, never()).endStepJobAborted(any());
         verify(cmd, never()).releaseVolumeLock();
         assertEquals(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_STOP_FAILED, cmd.getAuditLogTypeValue());
     }

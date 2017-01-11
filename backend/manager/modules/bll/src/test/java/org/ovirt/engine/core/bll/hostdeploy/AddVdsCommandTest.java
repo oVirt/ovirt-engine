@@ -29,9 +29,6 @@ import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
-import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
-import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -113,11 +110,9 @@ public class AddVdsCommandTest {
         when(validator.sshUserNameNotEmpty()).thenReturn(ValidationResult.VALID);
         doReturn(ValidationResult.VALID).when(validator).validateSingleHostAttachedToLocalStorage();
         doReturn(ValidationResult.VALID).when(validator).securityKeysExists();
-        doReturn(ValidationResult.VALID).when(validator).provisioningComputeResourceValid(any(Boolean.class),
-                any(ExternalComputeResource.class));
-        doReturn(ValidationResult.VALID).when(validator).provisioningHostGroupValid(any(Boolean.class),
-                any(ExternalHostGroup.class));
-        doReturn(ValidationResult.VALID).when(validator).supportsDeployingHostedEngine(any(HostedEngineDeployConfiguration.class));
+        doReturn(ValidationResult.VALID).when(validator).provisioningComputeResourceValid(any(Boolean.class), any());
+        doReturn(ValidationResult.VALID).when(validator).provisioningHostGroupValid(any(Boolean.class), any());
+        doReturn(ValidationResult.VALID).when(validator).supportsDeployingHostedEngine(any());
         when(validator.passwordNotEmpty(any(Boolean.class),
                 any(AuthenticationMethod.class),
                 any(String.class))).thenReturn(ValidationResult.VALID);
@@ -215,8 +210,8 @@ public class AddVdsCommandTest {
         setupVirtMock();
         assertTrue(command.validate());
         verify(validator, times(1)).provisioningComputeResourceValid(any(Boolean.class),
-                any(ExternalComputeResource.class));
-        verify(validator, times(1)).provisioningHostGroupValid(any(Boolean.class), any(ExternalHostGroup.class));
+                any());
+        verify(validator, times(1)).provisioningHostGroupValid(any(Boolean.class), any());
     }
 
 }

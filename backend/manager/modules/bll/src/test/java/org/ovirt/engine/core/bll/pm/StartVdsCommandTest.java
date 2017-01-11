@@ -20,12 +20,11 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -46,7 +45,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class StartVdsCommandTest extends DbDependentTestBase {
 
     private static final String HOST_NAME = "HostName";
@@ -120,7 +119,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     }
 
     private void initCommand() {
-        doReturn(executor).when(command).createHostFenceActionExecutor(any(VDS.class), any(FencingPolicy.class));
+        doReturn(executor).when(command).createHostFenceActionExecutor(any(), any());
         command.setClusterId(FENCECD_HOST_CLUSTER_ID);
     }
 

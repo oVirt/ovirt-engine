@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -270,7 +268,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN)).when(diskValidator)
-                .isDiskPluggedToVmsThatAreNotDown(anyBoolean(), anyList());
+                .isDiskPluggedToVmsThatAreNotDown(anyBoolean(), any());
 
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
@@ -354,12 +352,12 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
     private void mockValidators() {
         doReturn(vmValidator).when(command).createVmValidator();
-        doReturn(diskValidator).when(command).createDiskValidator(any(Disk.class));
-        doReturn(diskVmElementValidator).when(command).createDiskVmElementValidator(any(Guid.class), any(Guid.class));
+        doReturn(diskValidator).when(command).createDiskValidator(any());
+        doReturn(diskVmElementValidator).when(command).createDiskVmElementValidator(any(), any());
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotRunningStateless();
-        doReturn(ValidationResult.VALID).when(diskValidator).isDiskPluggedToVmsThatAreNotDown(anyBoolean(), anyList());
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
+        doReturn(ValidationResult.VALID).when(diskValidator).isDiskPluggedToVmsThatAreNotDown(anyBoolean(), any());
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any());
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any());
         when(diskVmElementValidator.isPassDiscardSupported(dstStorageId)).thenReturn(ValidationResult.VALID);
     }
 }

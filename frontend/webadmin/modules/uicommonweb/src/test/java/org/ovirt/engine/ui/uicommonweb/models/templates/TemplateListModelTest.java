@@ -8,12 +8,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BaseVmListModelTest;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class TemplateListModelTest extends BaseVmListModelTest {
     protected static final String VERSION_NAME = "version_name"; //$NON-NLS-1$
 

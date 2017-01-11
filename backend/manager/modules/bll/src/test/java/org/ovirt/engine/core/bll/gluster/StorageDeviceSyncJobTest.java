@@ -140,17 +140,7 @@ public class StorageDeviceSyncJobTest {
     }
 
     private ArgumentMatcher<VdsIdVDSCommandParametersBase> isHostMathces(final Guid hostId) {
-        return new ArgumentMatcher<VdsIdVDSCommandParametersBase>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (argument instanceof VdsIdVDSCommandParametersBase) {
-                    return hostId.equals(((VdsIdVDSCommandParametersBase) argument).getVdsId());
-                }
-
-                return false;
-            }
-        };
+        return argument -> hostId.equals(argument.getVdsId());
     }
 
     @Test

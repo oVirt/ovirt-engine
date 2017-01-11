@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -19,7 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
@@ -40,7 +40,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class NetworkValidatorTest {
 
     private static final String NAMEABLE_NAME = "nameable";
@@ -91,8 +91,8 @@ public class NetworkValidatorTest {
         when(dbFacade.getNetworkDao()).thenReturn(networkDao);
 
         // mock their getters
-        when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
-        when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(networks);
+        when(dataCenterDao.get(any())).thenReturn(dataCenter);
+        when(networkDao.getAllForDataCenter(any())).thenReturn(networks);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void dataCenterDoesntExist() throws Exception {
-        when(dataCenterDao.get(any(Guid.class))).thenReturn(null);
+        when(dataCenterDao.get(any())).thenReturn(null);
         assertThat(validator.dataCenterExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST));
     }
 
@@ -211,7 +211,7 @@ public class NetworkValidatorTest {
 
     private void notIscsiBondNetworkTest(Matcher<ValidationResult> matcher, List<IscsiBond> iscsiBonds) {
         IscsiBondDao iscsiBondDao = mock(IscsiBondDao.class);
-        when(iscsiBondDao.getIscsiBondsByNetworkId(any(Guid.class))).thenReturn(iscsiBonds);
+        when(iscsiBondDao.getIscsiBondsByNetworkId(any())).thenReturn(iscsiBonds);
         when(dbFacade.getIscsiBondDao()).thenReturn(iscsiBondDao);
         assertThat(validator.notIscsiBondNetwork(), matcher);
     }
@@ -275,7 +275,7 @@ public class NetworkValidatorTest {
     }
 
     private void networkNotUsedByVmsTest(Matcher<ValidationResult> matcher, List<VM> vms) {
-        when(vmDao.getAllForNetwork(any(Guid.class))).thenReturn(vms);
+        when(vmDao.getAllForNetwork(any())).thenReturn(vms);
         assertThat(validator.networkNotUsedByVms(), matcher);
     }
 
@@ -294,7 +294,7 @@ public class NetworkValidatorTest {
 
     private void networkNotUsedByHostsTest(Matcher<ValidationResult> matcher, List<VDS> hosts) {
         VdsDao hostDao = mock(VdsDao.class);
-        when(hostDao.getAllForNetwork(any(Guid.class))).thenReturn(hosts);
+        when(hostDao.getAllForNetwork(any())).thenReturn(hosts);
         when(dbFacade.getVdsDao()).thenReturn(hostDao);
         assertThat(validator.networkNotUsedByHosts(), matcher);
     }
@@ -314,7 +314,7 @@ public class NetworkValidatorTest {
 
     private void networkNotUsedByTemplatesTest(Matcher<ValidationResult> matcher, List<VmTemplate> templates) {
         VmTemplateDao templateDao = mock(VmTemplateDao.class);
-        when(templateDao.getAllForNetwork(any(Guid.class))).thenReturn(templates);
+        when(templateDao.getAllForNetwork(any())).thenReturn(templates);
         when(dbFacade.getVmTemplateDao()).thenReturn(templateDao);
         assertThat(validator.networkNotUsedByTemplates(), matcher);
     }

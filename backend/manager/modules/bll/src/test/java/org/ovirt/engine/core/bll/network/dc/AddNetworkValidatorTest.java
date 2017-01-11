@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network.dc;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -21,7 +21,6 @@ import org.ovirt.engine.core.bll.network.dc.AddNetworkCommand.AddNetworkValidato
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -56,7 +55,7 @@ public class AddNetworkValidatorTest {
         when(dbFacade.getNetworkDao()).thenReturn(networkDao);
 
         // mock their getters
-        when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(networks);
+        when(networkDao.getAllForDataCenter(any())).thenReturn(networks);
     }
 
     private void externalNetworkNewInDataCenterTestSetup(boolean equalToNetwork) {

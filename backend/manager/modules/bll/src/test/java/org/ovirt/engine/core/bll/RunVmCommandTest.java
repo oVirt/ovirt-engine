@@ -305,7 +305,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void setUp() {
         mockCpuFlagsManagerHandler();
         when(osRepository.isWindows(anyInt())).thenReturn(false);
-        when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
+        when(osRepository.isCpuSupported(anyInt(), any(), any())).thenReturn(true);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         vmHandler.init();
@@ -318,7 +318,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     }
 
     private void mockCpuFlagsManagerHandler() {
-        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
+        when(cpuFlagsManagerHandler.getCpuId(any(), any())).thenReturn(CPU_ID);
     }
 
     @Test
@@ -355,6 +355,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void testValidateUnsupportedRng(VmRngDevice.Source vmRngSource, Set<VmRngDevice.Source> clusterReqSources) {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
+        vm.setId(command.getVmId());
         command.setVm(vm);
 
         Cluster cluster = mock(Cluster.class);

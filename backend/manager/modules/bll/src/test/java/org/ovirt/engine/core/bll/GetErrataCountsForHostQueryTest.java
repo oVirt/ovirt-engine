@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.queries.ErrataFilter;
 import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -61,7 +60,7 @@ public class GetErrataCountsForHostQueryTest
 
     @Test
     public void hostHasNoProvider() {
-        when(vdsStaticDao.get(any(Guid.class))).thenReturn(host);
+        when(vdsStaticDao.get(any())).thenReturn(host);
         getQuery().executeQueryCommand();
 
         assertFalse(getQuery().getQueryReturnValue().getSucceeded());
@@ -97,7 +96,7 @@ public class GetErrataCountsForHostQueryTest
     @SuppressWarnings("unchecked")
     private void setupToReportErrata(List<Erratum> errata) {
         when(host.getHostProviderId()).thenReturn(mock(Guid.class));
-        when(vdsStaticDao.get(any(Guid.class))).thenReturn(host);
+        when(vdsStaticDao.get(any())).thenReturn(host);
         when(providerDao.get(any(Guid.class))).thenReturn(mock(Provider.class));
         doReturn(providerProxy).when(getQuery()).getHostProviderProxy(any(Provider.class));
         ErrataData errataData = mock(ErrataData.class);
@@ -108,7 +107,7 @@ public class GetErrataCountsForHostQueryTest
                     .filter(erratum -> erratum.getType() == type)
                     .count())
         );
-        doReturn(errataData).when(providerProxy).getErrataForHost(any(String.class), any(ErrataFilter.class));
+        doReturn(errataData).when(providerProxy).getErrataForHost(any(), any());
     }
 
     private List<Erratum> expectedErrata() {

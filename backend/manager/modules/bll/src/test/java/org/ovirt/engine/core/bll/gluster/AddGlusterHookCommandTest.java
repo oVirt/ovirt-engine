@@ -17,7 +17,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -34,7 +34,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGlusterHookCommand<GlusterHookManageParameters>> {
     @Mock
     private VdsDao vdsDao;
@@ -94,8 +94,8 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         setUpMocksForAdd();
         mockBackend(true, null);
         cmd.executeCommand();
-        verify(hooksDao, times(1)).updateGlusterHook(any(GlusterHookEntity.class));
-        verify(hooksDao, times(3)).removeGlusterServerHook(any(Guid.class), any(Guid.class));
+        verify(hooksDao, times(1)).updateGlusterHook(any());
+        verify(hooksDao, times(3)).removeGlusterServerHook(any(), any());
         assertEquals(AuditLogType.GLUSTER_HOOK_ADDED, cmd.getAuditLogTypeValue());
     }
 

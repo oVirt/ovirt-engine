@@ -10,8 +10,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -39,9 +37,7 @@ public class VirtMonitoringStrategyTest {
         vdsFromDb.setClusterId(clusterId);
 
         virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao(), null));
-        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class),
-                any(NonOperationalReason.class),
-                any(Map.class));
+        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any());
     }
 
     private VirtMonitoringStrategy virtStrategy;

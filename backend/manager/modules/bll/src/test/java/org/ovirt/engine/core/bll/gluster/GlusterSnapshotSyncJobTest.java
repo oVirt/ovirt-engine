@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -48,7 +48,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class GlusterSnapshotSyncJobTest {
     private static final Guid CLUSTER_ID_1 = Guid.newGuid();
     private static final Guid VOLUME_ID_1 = Guid.newGuid();
@@ -164,16 +164,7 @@ public class GlusterSnapshotSyncJobTest {
     }
 
     private ArgumentMatcher<GlusterVolumeSnapshotVDSParameters> snapshotInfoParam() {
-        return new ArgumentMatcher<GlusterVolumeSnapshotVDSParameters>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof GlusterVolumeSnapshotVDSParameters)) {
-                    return false;
-                }
-                return ((GlusterVolumeSnapshotVDSParameters) argument).getClusterId().equals(CLUSTER_ID_1);
-            }
-        };
+        return argument -> argument.getClusterId().equals(CLUSTER_ID_1);
     }
 
     private VDSReturnValue getSnapshotConfigVDSReturnValue() {

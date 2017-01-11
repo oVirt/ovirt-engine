@@ -6,8 +6,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
@@ -113,25 +112,25 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
 
     @Test
     public void testDoGet_WithoutUserInfoObject() throws IOException, ServletException, NoSuchAlgorithmException {
-        doReturn(null).when(testServlet).getLoggedInUser(anyString());
-        doReturn(mockDigest).when(testServlet).getMd5Digest(any(HttpServletRequest.class));
+        doReturn(null).when(testServlet).getLoggedInUser(nullable(String.class));
+        doReturn(mockDigest).when(testServlet).getMd5Digest(nullable(HttpServletRequest.class));
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey()),
-                anyString());
+                nullable(String.class));
         verify(mockRequest, never()).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_USER_INFO.getKey()),
-                any(ObjectNode.class));
+                nullable(ObjectNode.class));
         verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_MESSAGES.getKey(),
                 null); //$NON-NLS-1$
     }
 
     @Test
     public void testDoGet_WithUserInfoObject() throws IOException, ServletException, NoSuchAlgorithmException {
-        doReturn(mockDigest).when(testServlet).getMd5Digest(any(HttpServletRequest.class));
+        doReturn(mockDigest).when(testServlet).getMd5Digest(nullable(HttpServletRequest.class));
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey()),
-                anyString());
+                nullable(String.class));
         verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_USER_INFO.getKey()),
-                any(ObjectNode.class));
+                nullable(ObjectNode.class));
         verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_MESSAGES.getKey(),
                 null); //$NON-NLS-1$
     }
@@ -248,9 +247,8 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     ArgumentMatcher<GetConfigurationValueParameters> configValueParams(final ConfigurationValues configValue) {
         return new ArgumentMatcher<GetConfigurationValueParameters>() {
             @Override
-            public boolean matches(Object argument) {
-                return argument instanceof GetConfigurationValueParameters
-                        && ((GetConfigurationValueParameters) argument).getConfigValue() == configValue;
+            public boolean matches(GetConfigurationValueParameters argument) {
+                return argument.getConfigValue() == configValue;
             }
         };
     }

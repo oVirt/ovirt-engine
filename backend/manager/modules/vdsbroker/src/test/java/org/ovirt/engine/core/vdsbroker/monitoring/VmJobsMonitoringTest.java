@@ -25,12 +25,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmJobDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class VmJobsMonitoringTest {
 
     @Spy

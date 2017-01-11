@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -17,7 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -33,7 +34,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class ClusterValidatorTest {
 
     private static final Version SUPPORTED_VERSION = new Version(1, 1);
@@ -66,7 +67,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void nameNotUsed() {
-        when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.emptyList());
+        when(clusterDao.getByName(any(String.class), anyBoolean())).thenReturn(Collections.emptyList());
         when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
@@ -75,7 +76,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void nameIsAlreadyUsed() {
-        when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.singletonList(mock(Cluster.class)));
+        when(clusterDao.getByName(any(), anyBoolean())).thenReturn(Collections.singletonList(mock(Cluster.class)));
         when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 

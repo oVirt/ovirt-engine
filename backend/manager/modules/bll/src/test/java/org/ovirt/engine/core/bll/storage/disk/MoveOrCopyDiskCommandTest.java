@@ -241,7 +241,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initVmDiskImage(false);
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
-        when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW));
+        when(snapshotsValidator.vmNotInPreview(any())).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW));
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
     }
 
@@ -321,9 +321,9 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         vm.setStatus(VMStatus.Down);
 
         // Re-mock the vmDao to return this specific VM for it to be correlated with the vm list mocked by getVmsWithPlugInfo(..).
-        when(vmDao.get(any(Guid.class))).thenReturn(vm);
+        when(vmDao.get(any())).thenReturn(vm);
         List<Pair<VM, VmDevice>> vmList = Collections.singletonList(new Pair<>(vm, vmDevice));
-        when(vmDao.getVmsWithPlugInfo(any(Guid.class))).thenReturn(vmList);
+        when(vmDao.getVmsWithPlugInfo(any())).thenReturn(vmList);
     }
 
     private void mockGetVmsListForDisk() {
@@ -339,7 +339,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         vmList.add(new Pair<>(vm1, device1));
         vmList.add(new Pair<>(vm2, device2));
 
-        when(vmDao.getVmsWithPlugInfo(any(Guid.class))).thenReturn(vmList);
+        when(vmDao.getVmsWithPlugInfo(any())).thenReturn(vmList);
     }
 
     private static StorageDomainValidator mockStorageDomainValidatorWithoutSpace() {
@@ -365,7 +365,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private void initSrcStorageDomain() {
         StorageDomain stDomain = new StorageDomain();
         stDomain.setStatus(StorageDomainStatus.Active);
-        when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(stDomain);
+        when(storageDomainDao.getForStoragePool(any(), any())).thenReturn(stDomain);
     }
 
     private void initDestStorageDomain(StorageType storageType) {
@@ -376,21 +376,21 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     protected void initializeCommand(Disk disk) {
-        when(diskDao.get(any(Guid.class))).thenReturn(disk);
+        when(diskDao.get(any())).thenReturn(disk);
 
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
-        when(vmDao.get(any(Guid.class))).thenReturn(vm);
+        when(vmDao.get(any())).thenReturn(vm);
 
-        when(vmDao.getVmsWithPlugInfo(any(Guid.class))).thenReturn(new ArrayList<>());
+        when(vmDao.getVmsWithPlugInfo(any())).thenReturn(new ArrayList<>());
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(disk.getId()).when(command).getImageGroupId();
     }
 
     private void initSnapshotValidator() {
-        when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(ValidationResult.VALID);
-        when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
+        when(snapshotsValidator.vmNotInPreview(any())).thenReturn(ValidationResult.VALID);
+        when(snapshotsValidator.vmNotDuringSnapshot(any())).thenReturn(ValidationResult.VALID);
     }
 
     private void initTemplateDiskImage() {

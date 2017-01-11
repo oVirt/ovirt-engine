@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -27,7 +27,6 @@ import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
@@ -52,7 +51,7 @@ public class RemoveProviderValidatorTest {
     @Before
     public void setUp() throws Exception {
         validator = spy(new RemoveProviderValidator(vmDao, networkDao, provider));
-        when(networkDao.getAllForProvider(any(Guid.class))).thenReturn(networks);
+        when(networkDao.getAllForProvider(any())).thenReturn(networks);
     }
 
     @Test

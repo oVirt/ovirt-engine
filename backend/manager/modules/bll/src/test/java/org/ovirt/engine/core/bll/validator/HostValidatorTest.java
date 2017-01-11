@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -42,7 +42,7 @@ import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class HostValidatorTest {
 
     private static final int HOST_NAME_SIZE = 20;
@@ -125,7 +125,7 @@ public class HostValidatorTest {
 
     @Test
     public void nameIsUsed() {
-        when(hostDao.getByName(any(String.class))).thenReturn(mock(VDS.class));
+        when(hostDao.getByName(any())).thenReturn(mock(VDS.class));
 
         assertThat(validator.nameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
@@ -139,7 +139,7 @@ public class HostValidatorTest {
 
     @Test
     public void hostNameIsUsed() {
-        when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.singletonList(mock(VDS.class)));
+        when(hostDao.getAllForHostname(any())).thenReturn(Collections.singletonList(mock(VDS.class)));
 
         assertThat(validator.hostNameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST));
     }
@@ -186,8 +186,8 @@ public class HostValidatorTest {
     public void validateSingleHostAttachedToFewStorages() {
         StoragePool dataCenter = mock(StoragePool.class);
         when(dataCenter.isLocal()).thenReturn(true);
-        when(storagePoolDao.getForCluster(any(Guid.class))).thenReturn(dataCenter);
-        when(hostStaticDao.getAllForCluster(any(Guid.class)))
+        when(storagePoolDao.getForCluster(any())).thenReturn(dataCenter);
+        when(hostStaticDao.getAllForCluster(any()))
                 .thenReturn(Collections.singletonList(mock(VdsStatic.class)));
 
         assertThat(validator.validateSingleHostAttachedToLocalStorage(),
@@ -348,6 +348,6 @@ public class HostValidatorTest {
     public void mockCluster(Version version) {
         Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(version);
-        when(clusterDao.get(any(Guid.class))).thenReturn(cluster);
+        when(clusterDao.get(any())).thenReturn(cluster);
     }
 }

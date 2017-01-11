@@ -84,7 +84,7 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
     }
 
     private void dbFacadeReturnCluster() {
-        when(mockClusterDao.get(any(Guid.class))).thenReturn(existingGroup);
+        when(mockClusterDao.get(any())).thenReturn(existingGroup);
     }
 
     private void dbFacadeThrowOnNetworkClusterSave() {

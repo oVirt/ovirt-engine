@@ -128,7 +128,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
         initializeMock();
         cmd.getVm().setName("vm1");
         mockUninterestingMethods();
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any());
         when(snapshotDao.get(SOURCE_SNAPSHOT_ID)).thenReturn(new Snapshot());
         ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);

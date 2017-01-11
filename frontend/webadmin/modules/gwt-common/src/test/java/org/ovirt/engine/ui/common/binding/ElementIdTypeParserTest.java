@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.binding;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.TreeLogger.HelpInfo;
@@ -28,7 +28,7 @@ import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.core.ext.typeinfo.JClassType;
 import com.google.gwt.core.ext.typeinfo.JField;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class ElementIdTypeParserTest {
 
     @Mock
@@ -65,8 +65,8 @@ public class ElementIdTypeParserTest {
 
     @Before
     public void setUp() throws UnableToCompleteException {
-        when(logger.branch(any(TreeLogger.Type.class), anyString(),
-                any(Throwable.class), any(HelpInfo.class))).thenReturn(logger);
+        when(logger.branch(nullable(TreeLogger.Type.class), anyString(),
+                nullable(Throwable.class), nullable(HelpInfo.class))).thenReturn(logger);
 
         tested = new ElementIdTypeParser(logger, interfaceType) {
             @Override

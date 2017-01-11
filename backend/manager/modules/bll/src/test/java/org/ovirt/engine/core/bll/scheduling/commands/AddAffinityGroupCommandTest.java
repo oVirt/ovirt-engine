@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.scheduling.commands;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
 
     @Test
     public void validate_vmNameExists_Test() {
-        doReturn(new AffinityGroup()).when(affinityGroupDao).getByName(anyString());
+        doReturn(new AffinityGroup()).when(affinityGroupDao).getByName(any());
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
     }

@@ -2,8 +2,8 @@ package org.ovirt.engine.core.vdsbroker;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -52,7 +52,7 @@ public class CalculateBaseNicTest {
         CalculateBaseNic spy = spy(calculateBaseNic);
 
         spy.getBaseNic(baseNic);
-        verify(spy).getBaseNic(any(VdsNetworkInterface.class), anyMapOf(String.class, VdsNetworkInterface.class));
+        verify(spy).getBaseNic(any(VdsNetworkInterface.class), isNull());
     }
 
     @Test()

@@ -452,13 +452,7 @@ public class VfSchedulerImplTest {
 
     private HostDevice createFreeVf(HostNicVfsConfig hostNicVfsConfig) {
         HostDevice vf = createVf();
-        ArgumentMatcher<List<String>> matchNotContainVf = new ArgumentMatcher<List<String>>() {
-
-            @Override
-            public boolean matches(Object argVf) {
-                return argVf == null || !((List<String>) argVf).contains(vf.getName());
-            }
-        };
+        ArgumentMatcher<List<String>> matchNotContainVf = argVf -> argVf == null || !argVf.contains(vf.getName());
         when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig)), argThat(matchNotContainVf))).thenReturn(vf);
         return vf;
     }

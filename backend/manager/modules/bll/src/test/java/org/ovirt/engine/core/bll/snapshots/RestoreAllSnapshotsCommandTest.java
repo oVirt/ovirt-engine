@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -101,7 +102,7 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     public void validateFailsOnSnapshotTypeRegularNotInPreview() {
         mockSnapshotExists();
         mockSnapshot = new Snapshot();
-        when(snapshotDao.exists(any(Guid.class), any(Guid.class))).thenReturn(true);
+        when(snapshotDao.exists(nullable(Guid.class), nullable(Guid.class))).thenReturn(true);
         mockSnapshotFromDb();
         mockSnapshot.setType(SnapshotType.REGULAR);
         mockSnapshot.setStatus(SnapshotStatus.OK);

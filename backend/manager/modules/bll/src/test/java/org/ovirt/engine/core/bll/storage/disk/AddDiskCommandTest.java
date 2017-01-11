@@ -151,8 +151,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
         mockVm();
         when(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
-        when(diskVmElementValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
-        when(diskVmElementValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
+        when(diskVmElementValidator.isDiskInterfaceSupported(any())).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        when(diskVmElementValidator.isVirtIoScsiValid(any())).thenReturn(ValidationResult.VALID);
         when(command.getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class))).thenReturn(diskVmElementValidator);
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
@@ -407,7 +407,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     protected void mockInterfaceList() {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         List<String> diskInterfaces = Arrays.asList("IDE", "VirtIO", "VirtIO_SCSI");
-        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(diskInterfaces);
+        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(diskInterfaces);
     }
 
     /**
@@ -456,7 +456,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     private void mockMaxPciSlots() {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any(Version.class));
+        doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any());
     }
 
     private VDS mockVds() {
@@ -890,7 +890,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockEntities(storageId);
 
         doReturn(true).when(command).isDiskPassPciAndIdeLimit();
-        doReturn(true).when(command).checkIfImageDiskCanBeAdded(any(VM.class), any(DiskVmElementValidator.class));
+        doReturn(true).when(command).checkIfImageDiskCanBeAdded(any(), any());
         doReturn(ValidationResult.VALID).when(diskVmElementValidator).isReadOnlyPropertyCompatibleWithInterface();
         doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class));
 

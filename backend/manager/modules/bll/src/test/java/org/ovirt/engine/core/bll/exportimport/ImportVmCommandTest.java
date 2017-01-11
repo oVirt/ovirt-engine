@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyMapOf;
@@ -37,7 +37,6 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
@@ -59,7 +58,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -237,8 +235,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).setAndValidateCpuProfile();
         doReturn(true).when(cmd).validateNoDuplicateDiskImages(anyCollectionOf(DiskImage.class));
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
-        doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
-        doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
+        doReturn(createStorageDomain()).when(cmd).getStorageDomain(any());
+        doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any());
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
         Cluster cluster = new Cluster();
@@ -246,7 +244,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(cluster).when(cmd).getCluster();
         doReturn(macPool).when(cmd).getMacPool();
 
-        when(poolPerCluster.getMacPoolForCluster(any(Guid.class), any(CommandContext.class))).thenReturn(macPool);
+        when(poolPerCluster.getMacPoolForCluster(any())).thenReturn(macPool);
 
         ArrayList<Guid> sdIds = new ArrayList<>(Collections.singletonList(Guid.newGuid()));
         for (DiskImage image : cmd.getParameters().getVm().getImages()) {
@@ -427,8 +425,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doNothing().when(cmd).saveImage(collapsedDisk);
         doNothing().when(cmd).saveBaseDisk(collapsedDisk);
         doNothing().when(cmd).saveDiskImageDynamic(collapsedDisk);
-        doNothing().when(cmd).saveDiskVmElement(any(Guid.class), any(Guid.class), any(DiskVmElement.class));
-        doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any(Guid.class));
+        doNothing().when(cmd).saveDiskVmElement(any(), any(), any());
+        doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any());
         cmd.addVmImagesAndSnapshots();
         assertEquals("Disk alias not generated", "testVm_Disk1", collapsedDisk.getDiskAlias());
     }
@@ -450,8 +448,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).setAndValidateDiskProfiles();
         doReturn(true).when(cmd).validateNoDuplicateDiskImages(anyCollectionOf(DiskImage.class));
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
-        doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
-        doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
+        doReturn(createStorageDomain()).when(cmd).getStorageDomain(any());
+        doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any());
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
         Cluster cluster = new Cluster();
@@ -471,15 +469,15 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
         for (DiskImage image : cmd.getParameters().getVm().getImages()) {
             doNothing().when(cmd).saveImage(image);
-            doNothing().when(cmd).saveSnapshotIfNotExists(any(Guid.class), eq(image));
+            doNothing().when(cmd).saveSnapshotIfNotExists(any(), eq(image));
             doNothing().when(cmd).saveDiskImageDynamic(image);
         }
         DiskImage activeDisk = cmd.getParameters().getVm().getImages().get(1);
 
         doNothing().when(cmd).updateImage(activeDisk);
         doNothing().when(cmd).saveBaseDisk(activeDisk);
-        doNothing().when(cmd).updateActiveSnapshot(any(Guid.class));
-        doNothing().when(cmd).saveDiskVmElement(any(Guid.class), any(Guid.class), any(DiskVmElement.class));
+        doNothing().when(cmd).updateActiveSnapshot(any());
+        doNothing().when(cmd).saveDiskVmElement(any(), any(), any());
 
         cmd.addVmImagesAndSnapshots();
         assertEquals("Disk alias not generated", "testVm_Disk1", activeDisk.getDiskAlias());
@@ -498,8 +496,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doNothing().when(cmd).saveImage(activeDisk);
         doNothing().when(cmd).saveDiskImageDynamic(activeDisk);
         doNothing().when(cmd).saveBaseDisk(activeDisk);
-        doNothing().when(cmd).saveDiskVmElement(any(Guid.class), any(Guid.class), any(DiskVmElement.class));
-        doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any(Guid.class));
+        doNothing().when(cmd).saveDiskVmElement(any(), any(), any());
+        doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any());
 
         cmd.addVmImagesAndSnapshots();
         assertEquals("Disk alias not generated", "testVm_Disk1", activeDisk.getDiskAlias());

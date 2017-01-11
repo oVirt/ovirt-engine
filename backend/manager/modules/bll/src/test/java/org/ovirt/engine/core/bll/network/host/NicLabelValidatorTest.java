@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
@@ -34,12 +34,7 @@ public class NicLabelValidatorTest {
     public void validateCoherentNicIdentificationTest() {
         NicLabelValidator validator = spy(createNicLabelValidator());
         ValidationResult validationReuslt = new ValidationResult(EngineMessage.Unassigned);
-        doReturn(validationReuslt).when(validator)
-                .validateCoherentIdentification(any(String.class),
-                        any(Guid.class),
-                        any(String.class),
-                        any(EngineMessage.class),
-                        any(BusinessEntityMap.class));
+        doReturn(validationReuslt).when(validator).validateCoherentIdentification(any(), any(), any(), any(), any());
 
         assertEquals(validationReuslt, validator.validateCoherentNicIdentification(new NicLabel()));
     }
@@ -98,8 +93,7 @@ public class NicLabelValidatorTest {
     }
 
     private void mockIsNicActuallyExistsOrReferencesNewBond(NicLabelValidator validator, boolean returnValue) {
-        doReturn(returnValue).when(validator)
-                .isNicActuallyExistsOrReferencesNewBond(any(String.class), any(Guid.class));
+        doReturn(returnValue).when(validator).isNicActuallyExistsOrReferencesNewBond(any(), any());
     }
 
     @Test

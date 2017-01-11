@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
@@ -14,13 +14,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTestBase<UpdateNetworkClusterValidator> {
     @Mock
     GlusterBrickDao brickDao;
@@ -148,7 +147,7 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
         when(networkCluster.isGluster()).thenReturn(glusterNetworkAfter);
         when(cluster.supportsGlusterService()).thenReturn(glusterService);
         doReturn(brickDao).when(validator).getGlusterBrickDao();
-        when(brickDao.getAllByClusterAndNetworkId(any(Guid.class), any(Guid.class))).thenReturn(hasBricks ?
+        when(brickDao.getAllByClusterAndNetworkId(any(), any())).thenReturn(hasBricks ?
                 Collections.singletonList(null) : Collections.emptyList());
         assertThat(validator.glusterNetworkInUseAndUnset(cluster), expectedResult);
     }

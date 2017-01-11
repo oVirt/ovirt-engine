@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -109,7 +109,7 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
     }
 
     private void allVfsAreFree(boolean isValid) {
-        when(validator.allVfsAreFree(any(NetworkDeviceHelper.class))).thenReturn(isValid ? ValidationResult.VALID
+        when(validator.allVfsAreFree(any())).thenReturn(isValid ? ValidationResult.VALID
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED));
     }
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -18,7 +19,6 @@ import java.util.Map;
 
 import javax.transaction.TransactionManager;
 
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -28,11 +28,10 @@ import org.mockito.Answers;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -53,7 +52,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -69,7 +67,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class GlusterSyncJobTest {
 
     private static final String REPL_VOL_NAME = "repl-vol";
@@ -245,24 +243,15 @@ public class GlusterSyncJobTest {
         mockDaos();
 
         doReturn(glusterUtil).when(glusterManager).getGlusterUtil();
-        doReturn(existingServer1).when(glusterUtil).getUpServer(any(Guid.class));
-        doReturn(existingServer1).when(glusterUtil).getRandomUpServer(any(Guid.class));
+        doReturn(existingServer1).when(glusterUtil).getUpServer(any());
+        doReturn(existingServer1).when(glusterUtil).getRandomUpServer(any());
 
-        doNothing().when(logUtil).logServerMessage(any(VDS.class), any(AuditLogType.class));
-        doNothing().when(logUtil).logVolumeMessage(any(GlusterVolumeEntity.class), any(AuditLogType.class));
-        doNothing().when(logUtil).logAuditMessage(any(Guid.class),
-                any(GlusterVolumeEntity.class),
-                any(VDS.class),
-                any(AuditLogType.class),
-                any(HashMap.class));
-        doNothing().when(logUtil).logAuditMessage(any(Guid.class),
-                any(GlusterVolumeEntity.class),
-                any(VDS.class),
-                any(AuditLogType.class),
-                any(Guid.class),
-                any(String.class));
-        doReturn(getFetchedServersList()).when(glusterManager).fetchServers(any(VDS.class));
-        doReturn(getFetchedVolumesList()).when(glusterManager).fetchVolumes(any(VDS.class));
+        doNothing().when(logUtil).logServerMessage(any(), any());
+        doNothing().when(logUtil).logVolumeMessage(any(), any());
+        doNothing().when(logUtil).logAuditMessage(any(), any(), any(), any(), any());
+        doNothing().when(logUtil).logAuditMessage(any(), any(), any(), any(), any(), any());
+        doReturn(getFetchedServersList()).when(glusterManager).fetchServers(any());
+        doReturn(getFetchedVolumesList()).when(glusterManager).fetchVolumes(any());
         doReturn(getVolumeAdvancedDetails(existingDistVol)).when(glusterManager)
                 .getVolumeAdvancedDetails(existingServer1, CLUSTER_ID, existingDistVol.getName());
         doReturn(getVolumeAdvancedDetails(existingReplVol)).when(glusterManager)
@@ -274,18 +263,8 @@ public class GlusterSyncJobTest {
         doNothing().when(glusterManager).releaseLock(CLUSTER_ID);
     }
 
-    private ArgumentMatcher<VDSParametersBase> isRemovedServer() {
-        return new ArgumentMatcher<VDSParametersBase>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof RemoveVdsVDSCommandParameters)) {
-                    return false;
-                }
-
-                return ((RemoveVdsVDSCommandParameters) argument).getVdsId().equals(SERVER_ID_3);
-            }
-        };
+    private ArgumentMatcher<RemoveVdsVDSCommandParameters> isRemovedServer() {
+        return argument -> argument.getVdsId().equals(SERVER_ID_3);
     }
 
     private void verifyMocksForLightWeight() {
@@ -323,7 +302,7 @@ public class GlusterSyncJobTest {
 
         // detached server SERVER_ID_3 is removed from resource manager
         inOrder.verify(glusterManager, times(1)).runVdsCommand(eq(VDSCommandType.RemoveVds),
-                any(RemoveVdsVDSCommandParameters.class));
+                any());
 
         // release lock on the cluster
         inOrder.verify(glusterManager, times(1)).releaseLock(CLUSTER_ID);
@@ -332,7 +311,7 @@ public class GlusterSyncJobTest {
         inOrder.verify(glusterManager, times(1)).acquireLock(CLUSTER_ID);
 
         // volumes are fetched from glusterfs
-        inOrder.verify(glusterManager, times(1)).fetchVolumes(any(VDS.class));
+        inOrder.verify(glusterManager, times(1)).fetchVolumes(any());
 
         // get volumes by cluster id to identify those that need to be removed
         inOrder.verify(volumeDao, times(1)).getByClusterId(CLUSTER_ID);
@@ -378,7 +357,7 @@ public class GlusterSyncJobTest {
         doReturn(networkDao).when(glusterManager).getNetworkDao();
 
         doReturn(Collections.singletonList(existingCluster)).when(clusterDao).getAll();
-        doReturn(existingCluster).when(clusterDao).get(any(Guid.class));
+        doReturn(existingCluster).when(clusterDao).get(any());
         doReturn(existingServers).when(vdsDao).getAllForCluster(CLUSTER_ID);
         doReturn(existingDistVol).when(volumeDao).getById(EXISTING_VOL_DIST_ID);
         doReturn(existingReplVol).when(volumeDao).getById(EXISTING_VOL_REPL_ID);
@@ -386,80 +365,29 @@ public class GlusterSyncJobTest {
     }
 
     private ArgumentMatcher<Collection<Guid>> areRemovedVolumes() {
-        return new ArgumentMatcher<Collection<Guid>>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof Collection)) {
-                    return false;
-                }
-                @SuppressWarnings("unchecked")
-                Collection<Guid> removedVolumeIds = (Collection<Guid>) argument;
-                return removedVolumeIds.size() == 1 && removedVolumeIds.contains(EXISTING_VOL_DIST_ID);
-            }
-        };
+        return removedVolumeIds -> removedVolumeIds.size() == 1 && removedVolumeIds.contains(EXISTING_VOL_DIST_ID);
     }
 
     private ArgumentMatcher<Collection<Guid>> areRemovedOptions() {
-        return new ArgumentMatcher<Collection<Guid>>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof Collection)) {
-                    return false;
-                }
-                @SuppressWarnings("unchecked")
-                Collection<Guid> optionsToRemove = (Collection<Guid>) argument;
-                return optionsToRemove.size() == 1 &&
-                        optionsToRemove.contains(existingReplVol.getOption(OPTION_AUTH_ALLOW).getId());
-            }
-        };
+        return optionsToRemove -> optionsToRemove.size() == 1 &&
+                optionsToRemove.contains(existingReplVol.getOption(OPTION_AUTH_ALLOW).getId());
     }
 
     private ArgumentMatcher<Collection<GlusterVolumeOptionEntity>> areAddedOptions() {
-        return new ArgumentMatcher<Collection<GlusterVolumeOptionEntity>>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof Collection)) {
-                    return false;
-                }
-                @SuppressWarnings("unchecked")
-                Collection<GlusterVolumeOptionEntity> optionsToAdd = (Collection<GlusterVolumeOptionEntity>) argument;
-                // set the added option to volume
-                GlusterVolumeOptionEntity option = optionsToAdd.iterator().next();
-                existingReplVol.setOption(option);
-                return optionsToAdd.size() == 1 && option.getKey().equals(OPTION_AUTH_REJECT);
-            }
+        return optionsToAdd -> {
+            // set the added option to volume
+            GlusterVolumeOptionEntity option = optionsToAdd.iterator().next();
+            existingReplVol.setOption(option);
+            return optionsToAdd.size() == 1 && option.getKey().equals(OPTION_AUTH_REJECT);
         };
     }
 
     private ArgumentMatcher<Collection<Guid>> containsRemovedBricks() {
-        return new ArgumentMatcher<Collection<Guid>>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof Collection)) {
-                    return false;
-                }
-                @SuppressWarnings("unchecked")
-                Collection<Guid> ids = (Collection<Guid>) argument;
-                return ids.size() == removedBrickIds.size() && removedBrickIds.containsAll(ids);
-            }
-        };
+        return ids -> ids.size() == removedBrickIds.size() && removedBrickIds.containsAll(ids);
     }
 
-    private Matcher<GlusterBrickEntity> isAddedBrick() {
-        return new ArgumentMatcher<GlusterBrickEntity>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof GlusterBrickEntity)) {
-                    return false;
-                }
-                return addedBrickIds.contains(((GlusterBrickEntity) argument).getId());
-            }
-        };
+    private ArgumentMatcher<GlusterBrickEntity> isAddedBrick() {
+        return argument -> addedBrickIds.contains(argument.getId());
     }
 
     private GlusterVolumeAdvancedDetails getVolumeAdvancedDetails(GlusterVolumeEntity volume) {
@@ -552,7 +480,7 @@ public class GlusterSyncJobTest {
     public void testRefreshLightWeight() throws Exception {
         createCluster();
         setupMocks();
-        doReturn(getGlusterServer()).when(glusterServerDao).getByServerId(any(Guid.class));
+        doReturn(getGlusterServer()).when(glusterServerDao).getByServerId(any());
 
         glusterManager.refreshLightWeightData();
         verifyMocksForLightWeight();
@@ -607,7 +535,7 @@ public class GlusterSyncJobTest {
                 .addVolumeCapacityInfo(getVolumeAdvancedDetails(existingReplVol).getCapacityInfo());
 
         // Add Capacity Info
-        inOrder.verify(brickDao, mode).addBrickProperties(any(List.class));
+        inOrder.verify(brickDao, mode).addBrickProperties(anyList());
 
         // update brick status
         inOrder.verify(brickDao, mode).updateBrickStatuses(argThat(hasBricksWithChangedStatus()));
@@ -624,29 +552,20 @@ public class GlusterSyncJobTest {
      * - these are the same whose status was changed <br>
      */
     private ArgumentMatcher<List<GlusterBrickEntity>> hasBricksWithChangedStatus() {
-        return new ArgumentMatcher<List<GlusterBrickEntity>>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof List)) {
-                    return false;
-                }
-                @SuppressWarnings("unchecked")
-                List<GlusterBrickEntity> bricksToUpdate = (List<GlusterBrickEntity>) argument;
-                if (bricksToUpdate.size() != 2) {
-                    return false;
-                }
-
-                for (GlusterBrickEntity brick : bricksToUpdate) {
-                    if (brick.isOnline()) {
-                        return false;
-                    }
-                    if (!GlusterCoreUtil.containsBrick(bricksWithChangedStatus, brick)) {
-                        return false;
-                    }
-                }
-                return true;
+        return bricksToUpdate -> {
+            if (bricksToUpdate.size() != 2) {
+                return false;
             }
+
+            for (GlusterBrickEntity brick : bricksToUpdate) {
+                if (brick.isOnline()) {
+                    return false;
+                }
+                if (!GlusterCoreUtil.containsBrick(bricksWithChangedStatus, brick)) {
+                    return false;
+                }
+            }
+            return true;
         };
     }
 

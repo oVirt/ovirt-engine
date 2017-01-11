@@ -77,14 +77,10 @@ public class AddUnmanagedVmsCommandTest {
     @Test
     public void shouldConvertExternalVm() throws IOException {
         addUnamangedVmsCommand.convertVm(1, DisplayType.qxl, System.nanoTime(), external_vm);
-        verify(addUnamangedVmsCommand).addExternallyManagedVm(argThat(new ArgumentMatcher<VmStatic>() {
-            @Override
-            public boolean matches(Object argument) {
-                VmStatic vmStatic = (VmStatic) argument;
-                assertThat(vmStatic.getNumOfSockets(), is(4));
-                assertThat(vmStatic.getMemSizeMb(), is(7052));
-                return true;
-            }
+        verify(addUnamangedVmsCommand).addExternallyManagedVm(argThat(vmStatic -> {
+            assertThat(vmStatic.getNumOfSockets(), is(4));
+            assertThat(vmStatic.getMemSizeMb(), is(7052));
+            return true;
         }));
     }
 
@@ -95,11 +91,11 @@ public class AddUnmanagedVmsCommandTest {
         verify(addUnamangedVmsCommand).importHostedEngineVm(argThat(new HEVmMatcher()));
     }
 
-    private class HEVmMatcher extends ArgumentMatcher<VM> {
+    private class HEVmMatcher implements ArgumentMatcher<VM> {
 
         @Override
-        public boolean matches(Object argument) {
-            VmStatic vmStatic = ((VM) argument).getStaticData();
+        public boolean matches(VM argument) {
+            VmStatic vmStatic = argument.getStaticData();
             assertThat(vmStatic.getNumOfSockets(), is(4));
             assertThat(vmStatic.getMemSizeMb(), is(7052));
             assertThat(vmStatic.getManagedDeviceMap().size(), is(1));

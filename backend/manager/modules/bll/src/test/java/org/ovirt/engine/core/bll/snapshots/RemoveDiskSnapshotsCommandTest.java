@@ -97,7 +97,7 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         cmd.setSnapshotName("someSnapshot");
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).snapshotExists(any(Guid.class), any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).snapshotExists(any(), any());
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainExistAndActive();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForClonedDisks(any(Collection.class));
         doReturn(true).when(cmd).validateAllDiskImages();

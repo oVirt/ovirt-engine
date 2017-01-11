@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -88,9 +88,9 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        when(spDao.get(any(Guid.class))).thenReturn(createStoragePool());
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
+        when(spDao.get(any())).thenReturn(createStoragePool());
+        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.emptyList());
+        when(clusterDao.getAllForStoragePool(any())).thenReturn(createClusterList());
 
         // Spy the StoragePoolValidator:
         poolValidator = spy(new StoragePoolValidator(cmd.getStoragePool()));
@@ -115,8 +115,8 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         sdc.setStorageType(StorageType.LOCALFS);
         StoragePool existingSp = createStoragePool();
         existingSp.setIsLocal(true);
-        when(spDao.get(any(Guid.class))).thenReturn(existingSp);
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(sdc));
+        when(spDao.get(any())).thenReturn(existingSp);
+        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.singletonList(sdc));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_LOCAL);
     }
@@ -125,21 +125,21 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     public void hasSharedDomain() {
         StorageDomainStatic sdc = new StorageDomainStatic();
         sdc.setStorageType(StorageType.NFS);
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(sdc));
+        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.singletonList(sdc));
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
     public void hasNoStorageDomains() {
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
+        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.emptyList());
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
     public void hasMultipleClustersForLocalDC() {
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
+        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.emptyList());
         List<Cluster> clusters = Arrays.asList(new Cluster(), new Cluster());
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
+        when(clusterDao.getAllForStoragePool(any())).thenReturn(clusters);
         cmd.getStoragePool().setIsLocal(true);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
@@ -147,9 +147,9 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void hasMultipleHostsForLocalDC() {
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
+        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.emptyList());
         List<VDS> hosts = Arrays.asList(new VDS(), new VDS());
-        when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(hosts);
+        when(vdsDao.getAllForStoragePool(any())).thenReturn(hosts);
         cmd.getStoragePool().setIsLocal(true);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
@@ -244,7 +244,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         clusterList.add(thirdCluster);
 
         // Test upgrade
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusterList);
+        when(clusterDao.getAllForStoragePool(any())).thenReturn(clusterList);
         assertFalse(cmd.checkAllClustersLevel());
         List<String> messages = cmd.getReturnValue().getValidationMessages();
         assertTrue(messages.contains(EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS.toString()));
@@ -264,7 +264,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     }
 
     private void newPoolNameIsAlreadyTaken() {
-        when(spDao.get(any(Guid.class))).thenReturn(new StoragePool());
+        when(spDao.get(any())).thenReturn(new StoragePool());
         List<StoragePool> storagePoolList = new ArrayList<>();
         storagePoolList.add(createStoragePool());
         when(spDao.getByName(anyString(), anyBoolean())).thenReturn(new ArrayList<>(storagePoolList));
@@ -293,7 +293,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         defaultCluster.setId(DEFAULT_CLUSTER_ID);
         List<Cluster> clusters = new ArrayList<>();
         clusters.add(defaultCluster);
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
+        when(clusterDao.getAllForStoragePool(any())).thenReturn(clusters);
     }
 
     private void addNonDefaultClusterToPool() {
@@ -302,14 +302,14 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         defaultCluster.setId(NON_DEFAULT_CLUSTER_ID);
         List<Cluster> clusters = new ArrayList<>();
         clusters.add(defaultCluster);
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
+        when(clusterDao.getAllForStoragePool(any())).thenReturn(clusters);
     }
 
     private void addHostsToCluster() {
         VDS host = new VDS();
         List<VDS> hosts = new ArrayList<>();
         hosts.add(host);
-        when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(hosts);
+        when(vdsDao.getAllForStoragePool(any())).thenReturn(hosts);
     }
 
     private void addManagementNetworkToPool() {
@@ -329,7 +329,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     private void setupNetworkValidator(boolean valid) {
         NetworkValidator validator = mock(NetworkValidator.class);
         when(validator.canNetworkCompatabilityBeDecreased()).thenReturn(valid);
-        when(cmd.getNetworkValidator(any(Network.class))).thenReturn(validator);
+        when(cmd.getNetworkValidator(any())).thenReturn(validator);
     }
 
     private void addNonManagementNetworkToPool() {
@@ -349,6 +349,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
             allDcNetworks.add(network);
             when(managementNetworkUtil.isManagementNetwork(networkId)).thenReturn(isManagement);
         }
-        when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(allDcNetworks);
+        when(networkDao.getAllForDataCenter(any())).thenReturn(allDcNetworks);
     }
 }

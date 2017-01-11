@@ -27,10 +27,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -231,25 +230,17 @@ public class HostNetworkAttachmentsPersisterTest {
 
         persister.persistNetworkAttachments();
         verify(networkAttachmentDao).getAllForHost(any(Guid.class));
-        verify(networkAttachmentDao).update(argThat(new ArgumentMatcher<NetworkAttachment>() {
-            @Override
-            public boolean matches(Object o) {
-                if (!(o instanceof NetworkAttachment)) {
-                    return false;
-                }
+        verify(networkAttachmentDao).update(argThat(networkAttachment -> {
+            IpConfiguration ipConfiguration =
+                    NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
 
-                IpConfiguration ipConfiguration =
-                        NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
-
-                NetworkAttachment networkAttachment = (NetworkAttachment) o;
-                return networkAttachment.getId() != null
-                    && networkAttachment.getId().equals(attachment.getId())
-                    && networkAttachment.getNicId() != null
-                    && networkAttachment.getNicId().equals(interfaceWithAttachedClusterNetworkA.getId())
-                    && Objects.equals(networkAttachment.getIpConfiguration(), ipConfiguration)
-                    && Objects.equals(networkAttachment.getProperties(),
-                        customPropertiesForNics.getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
-            }
+            return networkAttachment.getId() != null
+                && networkAttachment.getId().equals(attachment.getId())
+                && networkAttachment.getNicId() != null
+                && networkAttachment.getNicId().equals(interfaceWithAttachedClusterNetworkA.getId())
+                && Objects.equals(networkAttachment.getIpConfiguration(), ipConfiguration)
+                && Objects.equals(networkAttachment.getProperties(),
+                    customPropertiesForNics.getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
         }));
 
         verifyNoMoreInteractions(networkAttachmentDao);

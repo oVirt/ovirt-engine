@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -33,7 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkParameters;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class ExecuteNetworkCommandInNetworkOperationTest {
 
     @Mock

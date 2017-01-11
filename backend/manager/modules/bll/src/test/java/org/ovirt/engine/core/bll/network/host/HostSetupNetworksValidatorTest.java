@@ -6,7 +6,8 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -58,7 +59,6 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
-import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -68,7 +68,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
-import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -648,8 +647,7 @@ public class HostSetupNetworksValidatorTest {
                         .build();
 
         List<String> vmNames = Arrays.asList("vmName1", "vmName2");
-        when(findActiveVmsUsingNetwork.findNamesOfActiveVmsUsingNetworks(any(Guid.class), any(Collection.class)))
-                .thenReturn(vmNames);
+        when(findActiveVmsUsingNetwork.findNamesOfActiveVmsUsingNetworks(any(), anyCollection())).thenReturn(vmNames);
 
         final List<String> removedNetworkNames = Collections.singletonList(nameOfNetworkA);
         assertThat(underTest.validateNotRemovingUsedNetworkByVms(nameOfNetworkA),
@@ -701,8 +699,8 @@ public class HostSetupNetworksValidatorTest {
             .build());
 
 
-        when(findActiveVmsUsingNetwork.findNamesOfActiveVmsUsingNetworks(any(Guid.class), any(Collection.class)))
-                .thenReturn(Collections.<String>emptyList());
+        when(findActiveVmsUsingNetwork.findNamesOfActiveVmsUsingNetworks(any(), anyCollection()))
+                .thenReturn(Collections.emptyList());
 
         assertThat(validator.validateNotRemovingUsedNetworkByVms("removedNet"), isValid());
     }
@@ -828,8 +826,8 @@ public class HostSetupNetworksValidatorTest {
         HostInterfaceValidator hostInterfaceValidatorMock = mock(HostInterfaceValidator.class);
         when(hostInterfaceValidatorMock.interfaceIsBondOrNull()).thenReturn(interfaceIsBondValidationResult);
 
-        doReturn(hostInterfaceValidatorMock).when(validator).createHostInterfaceValidator(any(VdsNetworkInterface.class));
-        doReturn(slavesValidationValidationResult).when(validator).validateModifiedBondSlaves(any(CreateOrUpdateBond.class));
+        doReturn(hostInterfaceValidatorMock).when(validator).createHostInterfaceValidator(any());
+        doReturn(slavesValidationValidationResult).when(validator).validateModifiedBondSlaves(any());
 
         if (expectedValidationResult.isValid()) {
             assertThat(validator.validNewOrModifiedBonds(), isValid());
@@ -1041,11 +1039,10 @@ public class HostSetupNetworksValidatorTest {
         when(hostInterfaceValidatorMock.interfaceIsValidSlave()).thenReturn(interfaceIsValidSlaveValidationResult);
         when(hostInterfaceValidatorMock.interfaceIsBondOrNull()).thenReturn(ValidationResult.VALID);        //TODO MM: test for this.
 
-        doReturn(hostInterfaceValidatorMock).when(validator).createHostInterfaceValidator(any(VdsNetworkInterface.class));
+        doReturn(hostInterfaceValidatorMock).when(validator).createHostInterfaceValidator(any());
 
         assertThat(validator.validNewOrModifiedBonds(), matcher);
     }
-
 
     @Test
     public void testValidateCustomPropertiesWhenAttachmentDoesNotHaveCustomProperties() throws Exception {
@@ -1085,7 +1082,7 @@ public class HostSetupNetworksValidatorTest {
 
         //this was added just because of DI issues with 'Backend.getInstance().getErrorsTranslator()' is 'spyed' method
         //noinspection unchecked
-        doReturn(Collections.emptyList()).when(validator).translateErrorMessages(any(List.class));
+        doReturn(Collections.emptyList()).when(validator).translateErrorMessages(any());
 
         EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT;
         assertThat(validator.validateCustomProperties(SimpleCustomPropertiesUtil.getInstance(),
@@ -1115,8 +1112,7 @@ public class HostSetupNetworksValidatorTest {
         //we do not test SimpleCustomPropertiesUtil here, we just state what happens if it does not find ValidationError
         SimpleCustomPropertiesUtil simpleCustomPropertiesUtilMock = mock(SimpleCustomPropertiesUtil.class);
 
-        when(simpleCustomPropertiesUtilMock.validateProperties(any(Map.class), any(Map.class)))
-            .thenReturn(Collections.<ValidationError>emptyList());
+        when(simpleCustomPropertiesUtilMock.validateProperties(any(), any())).thenReturn(Collections.emptyList());
 
         assertThat(validator.validateCustomProperties(simpleCustomPropertiesUtilMock,
                 Collections.emptyMap(),
@@ -1299,7 +1295,7 @@ public class HostSetupNetworksValidatorTest {
             thenReturn(new ValidationResult(hostNetworkQosValidatorFailure));
 
         doReturn(hostNetworkQosValidatorMock).when(validatorSpy)
-            .createHostNetworkQosValidator(any(HostNetworkQos.class));
+            .createHostNetworkQosValidator(any());
 
         assertThat(validatorSpy.validateQosOverriddenInterfaces(),
                 ValidationResultMatchers.failsWith(hostNetworkQosValidatorFailure));
@@ -1326,7 +1322,7 @@ public class HostSetupNetworksValidatorTest {
             thenReturn(new ValidationResult(hostNetworkQosValidatorFailure));
 
         doReturn(hostNetworkQosValidatorMock).when(validatorSpy)
-            .createHostNetworkQosValidator(any(HostNetworkQos.class));
+            .createHostNetworkQosValidator(any());
 
         assertThat(validatorSpy.validateQosOverriddenInterfaces(),
             ValidationResultMatchers.failsWith(hostNetworkQosValidatorFailure));
