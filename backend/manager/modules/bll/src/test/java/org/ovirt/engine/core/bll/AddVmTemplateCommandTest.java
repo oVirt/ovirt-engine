@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyMapOf;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -43,9 +43,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -344,12 +342,9 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
     private void mockPassDiscardSupportedForDestSds(ValidationResult validationResult) {
         cmd.diskInfoDestinationMap = Collections.emptyMap();
-        when(diskHandler.getDiskToDiskVmElementMap(any(Guid.class), anyMapOf(Guid.class, DiskImage.class)))
-                .thenReturn(Collections.emptyMap());
+        when(diskHandler.getDiskToDiskVmElementMap(any(Guid.class), anyMap())).thenReturn(Collections.emptyMap());
         MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
-        doReturn(multipleDiskVmElementValidator).when(cmd)
-                .createMultipleDiskVmElementValidator(anyMapOf(Disk.class, DiskVmElement.class));
-        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(anyMapOf(Guid.class, Guid.class)))
-                .thenReturn(validationResult);
+        doReturn(multipleDiskVmElementValidator).when(cmd).createMultipleDiskVmElementValidator(anyMap());
+        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(anyMap())).thenReturn(validationResult);
     }
 }

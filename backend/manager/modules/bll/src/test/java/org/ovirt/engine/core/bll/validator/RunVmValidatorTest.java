@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMapOf;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -305,14 +304,11 @@ public class RunVmValidatorTest {
         doReturn(Collections.emptyList()).when(runVmValidator).getVmDisks();
 
         injectorRule.bind(DiskHandler.class, diskHandler);
-        when(diskHandler.getDiskToDiskVmElementMap(any(Guid.class), anyMapOf(Guid.class, Disk.class)))
-                .thenReturn(Collections.emptyMap());
+        when(diskHandler.getDiskToDiskVmElementMap(any(Guid.class), anyMap())).thenReturn(Collections.emptyMap());
 
         MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
-        doReturn(multipleDiskVmElementValidator).when(runVmValidator)
-                .createMultipleDiskVmElementValidator(anyMapOf(Disk.class, DiskVmElement.class));
-        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(anyMapOf(Guid.class, Guid.class)))
-                .thenReturn(validationResult);
+        doReturn(multipleDiskVmElementValidator).when(runVmValidator).createMultipleDiskVmElementValidator(anyMap());
+        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(anyMap())).thenReturn(validationResult);
     }
 
     private void canRunVmAsStateless(boolean autoStartUp,

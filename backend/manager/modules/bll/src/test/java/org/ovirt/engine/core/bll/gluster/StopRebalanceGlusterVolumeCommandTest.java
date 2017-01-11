@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyMapOf;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -148,8 +148,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(backend).when(cmd).getBackend();
         doReturn("TestVDS").when(cmd).getClusterName();
         doReturn("TestVolume").when(cmd).getGlusterVolumeName();
-        doNothing().when(cmd).endStepJob(
-                eq(rebalanceStopStatus), anyMapOf(String.class, String.class), eq(isRebalancegTaskCompleted));
+        doNothing().when(cmd).endStepJob(eq(rebalanceStopStatus), anyMap(), eq(isRebalancegTaskCompleted));
 
         doNothing().when(cmd).releaseVolumeLock();
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
@@ -170,7 +169,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         assertTrue(cmd.validate());
         cmd.executeCommand();
 
-        verify(cmd).endStepJob(eq(JobExecutionStatus.ABORTED), anyMapOf(String.class, String.class), eq(false));
+        verify(cmd).endStepJob(eq(JobExecutionStatus.ABORTED), anyMap(), eq(false));
         verify(cmd).releaseVolumeLock();
         assertEquals(AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP, cmd.getAuditLogTypeValue());
     }
@@ -182,7 +181,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         assertTrue(cmd.validate());
         cmd.executeCommand();
 
-        verify(cmd).endStepJob(eq(JobExecutionStatus.FINISHED), anyMapOf(String.class, String.class), eq(true));
+        verify(cmd).endStepJob(eq(JobExecutionStatus.FINISHED), anyMap(), eq(true));
         verify(cmd).releaseVolumeLock();
         assertEquals(AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP, cmd.getAuditLogTypeValue());
     }
@@ -194,9 +193,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         assertTrue(cmd.validate());
         cmd.executeCommand();
 
-        verify(cmd, never()).endStepJob(any(JobExecutionStatus.class),
-                anyMapOf(String.class, String.class),
-                anyBoolean());
+        verify(cmd, never()).endStepJob(any(JobExecutionStatus.class), anyMap(), anyBoolean());
         verify(cmd, never()).releaseVolumeLock();
         assertEquals(AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP_FAILED, cmd.getAuditLogTypeValue());
     }

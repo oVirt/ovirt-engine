@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMapOf;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -84,7 +84,7 @@ public class GlusterHookSyncJobTest {
         doReturn(glusterUtil).when(hookSyncJob).getGlusterUtil();
         doReturn(getServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[0]);
         doReturn(Collections.emptyList()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[1]);
-        doNothing().when(logUtil).logAuditMessage(any(), any(), any(), any(), anyMapOf(String.class, String.class));
+        doNothing().when(logUtil).logAuditMessage(any(), any(), any(), any(), anyMap());
         mockDaos();
     }
 
