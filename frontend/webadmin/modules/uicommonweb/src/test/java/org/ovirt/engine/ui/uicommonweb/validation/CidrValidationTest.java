@@ -15,8 +15,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.validation.CidrValidator;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CidrValidationTest {
@@ -28,12 +26,6 @@ public class CidrValidationTest {
     private CidrValidation underTest;
 
     @Mock
-    private ConstantsManager mockedConstantsManager;
-
-    @Mock
-    private UIConstants mockedUiConstants;
-
-    @Mock
     private CidrValidator mockedCidrValidator;
 
     @Rule
@@ -43,8 +35,6 @@ public class CidrValidationTest {
     public void setup() {
         underTest = spy(new CidrValidation());
         doReturn(mockedCidrValidator).when(underTest).getCidrValidator();
-        doReturn(mockedConstantsManager).when(underTest).getConstantsManager();
-        doReturn(mockedUiConstants).when(mockedConstantsManager).getConstants();
         doReturn(BAD_CIDR_FORMAT).when(underTest).getThisFieldMustContainCidrInFormatMsg();
         doReturn(CIDR_IS_NOT_A_NETWORK_ADDRESS).when(underTest).getCidrNotNetworkAddress();
     }
