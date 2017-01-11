@@ -44,5 +44,4 @@ public class CompatibilityVersionUtils extends  CommonCompatibilityVersionUtils 
     public static Version getEffective(VM vm, Supplier<Cluster> clusterSupplier) {
         return getEffective(vm != null ? vm.getStaticData() : null, clusterSupplier);
     }
-
 }

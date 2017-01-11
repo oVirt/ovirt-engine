@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -189,5 +190,9 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     protected NumaValidator getNumaValidator() {
         return numaValidator;
+    }
+
+    protected static boolean isCompatibilityVersionSupportedByCluster(Version customCompatibilityVersion) {
+        return Config.<Set<Version>> getValue(ConfigValues.SupportedClusterLevels).contains(customCompatibilityVersion);
     }
 }

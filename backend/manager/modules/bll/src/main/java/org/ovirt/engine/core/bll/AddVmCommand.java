@@ -109,6 +109,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -205,7 +206,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
 
         // override values here for validate to run with correct values, has to come before init-disks
-        updateVmObject();
+        if (isCompatibilityVersionSupportedByCluster(getEffectiveCompatibilityVersion())) {
+            updateVmObject();
+        }
 
         if (getParameters().getVmStaticData().getDefaultDisplayType() == DisplayType.none && !parameters.isConsoleEnabled()) {
             parameters.getVmStaticData().setUsbPolicy(UsbPolicy.DISABLED);
@@ -481,6 +484,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (!isDisksVolumeFormatValid()) {
             return false;
+        }
+
+        Version customCompatibilityVersionFromParams = getParameters().getVmStaticData().getCustomCompatibilityVersion();
+        if (customCompatibilityVersionFromParams != null && !isCompatibilityVersionSupportedByCluster(customCompatibilityVersionFromParams)) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CUSTOM_COMPATIBILITY_VERSION_NOT_SUPPORTED,
+                    String.format("$Ccv %s", customCompatibilityVersionFromParams));
         }
 
         // A VM cannot be added in a cluster without a defined architecture
