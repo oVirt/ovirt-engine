@@ -81,6 +81,8 @@ public interface UIMessages extends Messages {
 
     String importProcessHasBegunForVms(String importedVms);
 
+    String importProcessHasBegunForImages(String images);
+
     String storageDomainIsNotActive(String storageName);
 
     String importProcessHasBegunForTemplates(String importedTemplates);

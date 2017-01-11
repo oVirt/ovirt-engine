@@ -15,10 +15,13 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -29,6 +32,12 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
 
     protected StorageDomain sourceStorageDomain;
+
+    private final StorageIsoListModel storageIsoListModel;
+
+    public ImportRepoImageModel(StorageIsoListModel storageIsoListModel) {
+        this.storageIsoListModel = storageIsoListModel;
+    }
 
     public void init(StorageDomain sourceStorageDomain, List<RepoImage> repoImages) {
         this.sourceStorageDomain = sourceStorageDomain;
@@ -89,8 +98,12 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
 
         ArrayList<VdcActionParametersBase> actionParameters = new ArrayList<>();
 
+        final StringBuilder imageNames = new StringBuilder();
+
         for (EntityModel entity : getEntities()) {
             RepoImage repoImage = (RepoImage) entity.getEntity();
+            imageNames.append("\n -"); //$NON-NLS-1$
+            imageNames.append(repoImage.getRepoImageName());
             ImportRepoImageParameters importParameters = new ImportRepoImageParameters();
 
             // source
@@ -130,6 +143,20 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
                         ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) result.getState();
                         model.stopProgress();
                         model.cancel();
+
+                        ConfirmationModel confirmModel = new ConfirmationModel();
+                        storageIsoListModel.setConfirmWindow(confirmModel);
+                        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().importImagesTitle());
+                        confirmModel.setHelpTag(HelpTag.import_images);
+                        confirmModel.setHashName("import_images"); //$NON-NLS-1$
+                        confirmModel.setMessage(ConstantsManager.getInstance()
+                                .getMessages()
+                                .importProcessHasBegunForImages(imageNames.toString()));
+                        confirmModel.getCommands().add(new UICommand("CancelConfirm", storageIsoListModel) //$NON-NLS-1$
+                                .setTitle(ConstantsManager.getInstance().getConstants().close())
+                                .setIsDefault(true)
+                                .setIsCancel(true)
+                        );
                     }
                 }, this);
     }
