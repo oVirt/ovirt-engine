@@ -116,8 +116,22 @@ public class StorageDomainValidator {
      * Returns the required space in the storage domain for creating cloned DiskImages with collapse.
      * */
     private double getTotalSizeForClonedDisks(Collection<DiskImage> diskImages) {
-        return getTotalSizeForDisksByMethod(diskImages, diskImage ->
-                ImagesHandler.getTotalSizeForClonedDisk(diskImage, storageDomain.getStorageStaticData()));
+        return getTotalSizeForDisksByMethod(diskImages, this::getTotalSizeForClonedDisk);
+    }
+
+    /**
+     * Calculates the required space in the storage domain for creating cloned DiskImages with collapse.
+     * When creating COW volume the actual used space will be the needed space * QCOW_OVERHEAD_FACTOR as implemented
+     * currently in the VDSM code.
+     *
+     * */
+    private double getTotalSizeForClonedDisk(DiskImage diskImage) {
+        double sizeForDisk = ImagesHandler.getTotalActualSizeOfDisk(diskImage, storageDomain.getStorageStaticData());
+
+        if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
+            sizeForDisk = Math.ceil(StorageConstants.QCOW_OVERHEAD_FACTOR * sizeForDisk);
+        }
+        return sizeForDisk;
     }
 
     /**

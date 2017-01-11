@@ -245,20 +245,19 @@ public final class ImagesHandler {
     }
 
     /**
-     * Calculates the required space in the storage domain for creating cloned DiskImages with collapse.
-     * Space should be calculated according to the volumes type and format, and allocation policy,
-     * according to the following table:
+     * Calculates the max size of required for cloned DiskImages with collapse.
+     * The space should be calculated according to the volumes type and format.
      *
      *      | File Domain                             | Block Domain
      * -----|-----------------------------------------|-------------
-     * qcow | preallocated : 1.1 * disk capacity      |1.1 * min(used ,capacity)
-     *      | sparse: 1.1 * min(used ,capacity)       |
+     * qcow | preallocated : disk capacity            | min(used ,capacity)
+     *      | sparse: min(used ,capacity)             |
      * -----|-----------------------------------------|-------------
-     * raw  | preallocated: disk capacity             |disk capacity
+     * raw  | preallocated: disk capacity             | disk capacity
      *      | sparse: min(used,capacity)              |
      *
      * */
-    public static double getTotalSizeForClonedDisk(DiskImage diskImage, StorageDomainStatic storageDomain) {
+    public static double getTotalActualSizeOfDisk(DiskImage diskImage, StorageDomainStatic storageDomain) {
         double sizeForDisk = diskImage.getSize();
         if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse) ||
                 storageDomain.getStorageType().isBlockDomain() && diskImage.getVolumeFormat() == VolumeFormat.COW) {
@@ -266,9 +265,6 @@ public final class ImagesHandler {
             sizeForDisk = Math.min(diskImage.getSize(), usedSpace);
         }
 
-        if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
-            sizeForDisk = Math.ceil(StorageConstants.QCOW_OVERHEAD_FACTOR * sizeForDisk);
-        }
         return sizeForDisk;
     }
 
@@ -973,7 +969,7 @@ public final class ImagesHandler {
 
         if (isInitialSizeSupportedForFormat(destFormat, dstDomain)) {
 
-            double totalSizeForClonedDisk = getTotalSizeForClonedDisk(sourceImage,
+            double totalSizeForClonedDisk = getTotalActualSizeOfDisk(sourceImage,
                     DbFacade.getInstance().getStorageDomainDao().get(dstDomain).getStorageStaticData());
 
             return computeCowImageNeededSize(Double.valueOf(totalSizeForClonedDisk).longValue());
