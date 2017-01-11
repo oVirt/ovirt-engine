@@ -41,7 +41,7 @@ public class UiVdcMultipleActionTest extends AsyncUiActionTest<IFrontendMultiple
         verifyRunActionAndExecuteCallbacksRandomly(false, action1.getActionFlowState(), 1, waitFoResult);
         verifyRunActionAndExecuteCallbacksRandomly(true, action1.getActionFlowState(), 2, 1, waitFoResult);
 
-        assertFinishedWithErrors(new ArrayList<UiAction>(Arrays.asList(action1, action2)), 1);
+        assertFinishedWithErrors(Arrays.asList(action1, action2), 1);
     }
 
     @Test
