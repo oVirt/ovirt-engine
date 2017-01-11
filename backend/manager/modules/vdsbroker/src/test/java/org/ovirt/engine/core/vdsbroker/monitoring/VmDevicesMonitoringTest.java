@@ -20,6 +20,7 @@ import javax.transaction.TransactionManager;
 
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,6 +47,9 @@ public class VmDevicesMonitoringTest {
 
     @ClassRule
     public static InjectorRule injectorRule = new InjectorRule();
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule();
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private TransactionManager transactionManager;

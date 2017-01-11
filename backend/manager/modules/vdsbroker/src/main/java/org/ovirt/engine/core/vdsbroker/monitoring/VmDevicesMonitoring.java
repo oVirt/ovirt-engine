@@ -28,6 +28,8 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -43,6 +45,7 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.DumpXmlsVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -450,9 +453,9 @@ public class VmDevicesMonitoring {
             return null;
         }
 
-        VDSReturnValue vdsReturnValue = runVdsCommand(
-                VDSCommandType.FullList,
-                new FullListVDSCommandParameters(vdsId, vmIds));
+        VDSReturnValue vdsReturnValue = (boolean) Config.getValue(ConfigValues.DomainXML) ?
+                runVdsCommand(VDSCommandType.DumpXmls, new DumpXmlsVDSCommand.Params(vdsId, vmIds))
+                : runVdsCommand(VDSCommandType.FullList, new FullListVDSCommandParameters(vdsId, vmIds));
 
         return vdsReturnValue.getSucceeded() ?
             (Map<String, Object>[]) vdsReturnValue.getReturnValue()
