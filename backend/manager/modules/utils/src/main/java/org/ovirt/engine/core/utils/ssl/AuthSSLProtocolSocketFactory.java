@@ -41,10 +41,10 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
-import javax.net.SocketFactory;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
@@ -189,7 +189,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
     /** Log object for this class. */
     private static final Logger log = LoggerFactory.getLogger(AuthSSLProtocolSocketFactory.class);
 
-    private final SSLContext sslcontext;
+    private final SSLSocketFactory socketFactory;
 
     private String protocol;
 
@@ -200,7 +200,8 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
     public AuthSSLProtocolSocketFactory(KeyManager[] keymanagers, TrustManager[] trustmanagers, String protocol) {
         super();
         this.protocol = protocol;
-        this.sslcontext = createSSLContext(keymanagers, trustmanagers);
+        SSLContext sslcontext = createSSLContext(keymanagers, trustmanagers);
+        this.socketFactory = sslcontext.getSocketFactory();
     }
 
     /**
@@ -213,7 +214,8 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
             this.protocol = protocol;
             TrustManagerFactory tmfactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmfactory.init(truststore);
-            this.sslcontext = createSSLContext(null, tmfactory.getTrustManagers());
+            SSLContext sslcontext = createSSLContext(null, tmfactory.getTrustManagers());
+            this.socketFactory = sslcontext.getSocketFactory();
         }
         catch (Exception e) {
             throw new RuntimeException("Cannot load truststore", e);
@@ -280,18 +282,14 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
             throw new IllegalArgumentException("Parameters may not be null");
         }
         int timeout = params.getConnectionTimeout();
-        SocketFactory socketfactory = sslcontext.getSocketFactory();
         if (timeout == 0) {
-            SSLSocket socket = (SSLSocket) socketfactory.createSocket(host, port, localAddress, localPort);
-            socket.setEnabledProtocols(new String[] { this.protocol });
-            return socket;
+            return socketFactory.createSocket(host, port, localAddress, localPort);
         } else {
-            SSLSocket socket = (SSLSocket) socketfactory.createSocket();
+            SSLSocket socket = (SSLSocket) socketFactory.createSocket();
             SocketAddress localaddr = new InetSocketAddress(localAddress, localPort);
             SocketAddress remoteaddr = new InetSocketAddress(host, port);
             socket.bind(localaddr);
             socket.connect(remoteaddr, timeout);
-            socket.setEnabledProtocols(new String[] { this.protocol });
             return socket;
         }
     }
@@ -301,19 +299,14 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
      */
     public Socket createSocket(String host, int port, InetAddress clientHost, int clientPort) throws IOException,
             UnknownHostException {
-        SSLSocket socket = (SSLSocket) sslcontext.getSocketFactory().createSocket(host, port, clientHost,
-                clientPort);
-        socket.setEnabledProtocols(new String[] { this.protocol });
-        return socket;
+        return socketFactory.createSocket(host, port, clientHost, clientPort);
     }
 
     /**
      * @see SecureProtocolSocketFactory#createSocket(java.lang.String,int)
      */
     public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
-        SSLSocket socket = (SSLSocket) sslcontext.getSocketFactory().createSocket(host, port);
-        socket.setEnabledProtocols(new String[] { this.protocol });
-        return socket;
+        return socketFactory.createSocket(host, port);
     }
 
     /**
@@ -321,9 +314,6 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
      */
     public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException,
             UnknownHostException {
-        SSLSocket sslSocket = (SSLSocket) sslcontext.getSocketFactory()
-                .createSocket(socket, host, port, autoClose);
-        sslSocket.setEnabledProtocols(new String[] { this.protocol });
-        return sslSocket;
+        return socketFactory.createSocket(socket, host, port, autoClose);
     }
 }
