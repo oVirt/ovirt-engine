@@ -114,7 +114,7 @@ public class GlusterSnapshotSyncJobTest {
     @Test
     public void testSyncSnapshotsList() {
         doReturn(getExistingSnapshots()).when(snapshotDao).getAllByVolumeId(VOLUME_ID_1);
-        doReturn(getSnapshotVDSReturnVal(true)).when(syncJob)
+        doReturn(getSnapshotVDSReturnVal()).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeSnapshotInfo),
                         argThat(snapshotInfoParam()));
         when(volumeDao.getById(any(Guid.class))).thenReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1));
@@ -235,14 +235,10 @@ public class GlusterSnapshotSyncJobTest {
         return config;
     }
 
-    private Object getSnapshotVDSReturnVal(boolean ret) {
+    private Object getSnapshotVDSReturnVal() {
         VDSReturnValue vdsRetValue = new VDSReturnValue();
-        vdsRetValue.setSucceeded(ret);
-        if (ret) {
-            vdsRetValue.setReturnValue(getSnapshotDetails());
-        } else {
-            vdsRetValue.setReturnValue(null);
-        }
+        vdsRetValue.setSucceeded(true);
+        vdsRetValue.setReturnValue(getSnapshotDetails());
         return vdsRetValue;
     }
 
