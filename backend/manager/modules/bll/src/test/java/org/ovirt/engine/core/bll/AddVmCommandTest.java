@@ -28,13 +28,9 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.QuotaDao;
 
 public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmParameters>> {
-    @Mock
-    private DiskDao diskDao;
-
     @Mock
     private QuotaDao quotaDao;
 
