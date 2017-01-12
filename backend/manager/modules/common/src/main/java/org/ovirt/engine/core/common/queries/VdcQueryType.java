@@ -377,7 +377,7 @@ public enum VdcQueryType implements Serializable {
     GetJobsByOffset,
     GetAllJobs,
     GetStepWithSubjectEntitiesByStepId,
-    GetStepsByJobId,
+    GetStepsWithSubjectEntitiesByJobId,
 
     // Disks
     GetNextAvailableDiskAliasNameByVMId(VdcQueryAuthType.User),
