@@ -15,6 +15,7 @@
 
 
 import contextlib
+import datetime
 import gettext
 import logging
 import logging.handlers
@@ -30,6 +31,8 @@ import tempfile
 import time
 
 import daemon
+
+from dateutil import tz
 
 from . import base
 from . import util
@@ -53,6 +56,24 @@ def setupLogger():
 
         def format(self, record):
             return logging.Formatter.format(self, record).replace('\n', ' | ')
+
+        def converter(self, timestamp):
+            return datetime.datetime.fromtimestamp(
+                timestamp,
+                tz.tzlocal()
+            )
+
+        def formatTime(self, record, datefmt=None):
+            ct = self.converter(record.created)
+            if datefmt:
+                s = ct.strftime(datefmt, ct)
+            else:
+                s = "%s,%03d%s" % (
+                    ct.strftime('%Y-%m-%d %H:%M:%S'),
+                    record.msecs,
+                    ct.strftime('%z')
+                )
+            return s
 
     logger = logging.getLogger('ovirt')
     logger.propagate = False
