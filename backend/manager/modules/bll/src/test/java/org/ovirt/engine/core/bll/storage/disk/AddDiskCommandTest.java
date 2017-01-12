@@ -776,7 +776,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
         mockMaxPciSlots();
 
-        when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
+        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(
                 Collections.singletonList("VirtIO"));
 
         doReturn(true).when(vmDeviceUtils).hasVirtioScsiController(any(Guid.class));
@@ -831,7 +831,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
         mockMaxPciSlots();
 
-        when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
+        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(
                 Collections.singletonList("VirtIO_SCSI"));
 
         doReturn(true).when(vmDeviceUtils).hasVirtioScsiController(any(Guid.class));

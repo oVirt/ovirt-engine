@@ -397,7 +397,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         group.setCompatibilityVersion(Version.v3_6);
 
         doReturn(true).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
-        when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
+        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(
                 Collections.singletonList("VirtIO"));
 
         command.initEffectiveCompatibilityVersion();

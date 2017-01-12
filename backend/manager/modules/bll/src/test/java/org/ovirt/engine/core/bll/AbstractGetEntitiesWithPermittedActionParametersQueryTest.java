@@ -35,7 +35,7 @@ public abstract class AbstractGetEntitiesWithPermittedActionParametersQueryTest<
         when(getQueryParameters().getSessionId()).thenReturn(sessionID);
 
         when(engineSessionDao.save(any(EngineSession.class))).thenReturn(RandomUtils.instance().nextLong());
-        when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
+        when(engineSessionDao.remove(anyLong())).thenReturn(1);
 
         when(ssoSessionUtils.isSessionInUse(anyLong())).thenReturn(false);
 

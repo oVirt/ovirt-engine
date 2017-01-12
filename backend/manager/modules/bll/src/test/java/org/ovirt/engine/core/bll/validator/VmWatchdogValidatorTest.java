@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -38,7 +39,7 @@ public class VmWatchdogValidatorTest {
         OsRepository osRepository = mock(OsRepository.class);
 
         when(validator.getOsRepository()).thenReturn(osRepository);
-        when(osRepository.getVmWatchdogTypes(any(Integer.class), any(Version.class))).thenReturn(WATCHDOG_MODELS);
+        when(osRepository.getVmWatchdogTypes(anyInt(), any(Version.class))).thenReturn(WATCHDOG_MODELS);
 
         assertThat(validator.isValid(), matcher);
     }

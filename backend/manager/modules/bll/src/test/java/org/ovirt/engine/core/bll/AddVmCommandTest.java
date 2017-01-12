@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -64,7 +65,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     public void isVirtioScsiEnabledDefaultedToTrue() {
         cmd.getParameters().getVm().setClusterId(cluster.getId());
         cmd.initEffectiveCompatibilityVersion();
-        when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
+        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(
                 new ArrayList<>(Collections.singletonList("VirtIO_SCSI")));
         assertTrue("isVirtioScsiEnabled hasn't been defaulted to true on cluster >= 3.3.", cmd.isVirtioScsiEnabled());
     }
@@ -172,7 +173,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         doReturn(true).when(cmd).areParametersLegal(Collections.emptyList());
         doReturn(true).when(cmd).validateAddVmCommand();
         doReturn(true).when(cmd).isVmNameValidLength(any(VM.class));
-        when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.ppc64);
+        when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.ppc64);
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         cmd.getParameters().getVm().setUseHostCpuFlags(true);
         cmd.getParameters().getVm().setMigrationSupport(MigrationSupport.PINNED_TO_HOST);

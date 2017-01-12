@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.aaa;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +26,7 @@ public class GetUserBySessionIdQueryTest extends AbstractUserQueryTest<VdcQueryP
         CorrelationIdTracker.clean();
         DbUser user = mock(DbUser.class);
 
-        when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
+        when(engineSessionDao.remove(anyLong())).thenReturn(1);
 
         sessionDataContainer.setUser(sessionID, user);
     }

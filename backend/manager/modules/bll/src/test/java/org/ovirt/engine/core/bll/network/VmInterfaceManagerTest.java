@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -75,7 +76,7 @@ public class VmInterfaceManagerTest {
             int osId) {
         OsRepository osRepository = mock(OsRepository.class);
         when(vmInterfaceManager.getOsRepository()).thenReturn(osRepository);
-        when(osRepository.hasNicHotplugSupport(any(Integer.class), any(Version.class))).thenReturn(true);
+        when(osRepository.hasNicHotplugSupport(anyInt(), any(Version.class))).thenReturn(true);
         vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), reserveExistingMac, false, osId, version);
         if (reserveExistingMac) {
             verify(macPool, times(1)).forceAddMac(iface.getMacAddress());

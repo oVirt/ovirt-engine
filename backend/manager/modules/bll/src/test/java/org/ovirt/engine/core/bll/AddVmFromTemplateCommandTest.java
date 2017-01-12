@@ -103,9 +103,9 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         mockUninterestingMethods();
 
         cmd.getParameters().setVirtioScsiEnabled(true);
-        when(osRepository.isSoundDeviceEnabled(any(Integer.class), any(Version.class))).thenReturn(true);
-        when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
-        when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
+        when(osRepository.isSoundDeviceEnabled(anyInt(), any(Version.class))).thenReturn(true);
+        when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
+        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(
                 new ArrayList<>(Collections.singletonList("VirtIO")));
         mockGetAllSnapshots();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();

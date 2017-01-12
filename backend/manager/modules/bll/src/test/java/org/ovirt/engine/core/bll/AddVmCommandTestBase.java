@@ -121,7 +121,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         when(osRepository.isWindows(0)).thenReturn(true);
         when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
-        when(osRepository.isSoundDeviceEnabled(any(Integer.class), any(Version.class))).thenReturn(false);
+        when(osRepository.isSoundDeviceEnabled(anyInt(), any(Version.class))).thenReturn(false);
     }
 
     @Before

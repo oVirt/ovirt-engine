@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -84,7 +85,7 @@ public class VmNicValidatorTest {
         VmNicValidator validator = spy(new VmNicValidator(nic, version, 0));
         OsRepository osRepository = mock(OsRepository.class);
         when(validator.getOsRepository()).thenReturn(osRepository);
-        when(osRepository.getNetworkDevices(any(Integer.class), any(Version.class))).thenReturn(NETWORK_DEVICES);
+        when(osRepository.getNetworkDevices(anyInt(), any(Version.class))).thenReturn(NETWORK_DEVICES);
         when(nic.getType()).thenReturn(vmInterfaceType);
 
         assertThat(validator.isCompatibleWithOs(), matcher);

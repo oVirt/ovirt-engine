@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -104,7 +105,7 @@ public class OvfManagerTest {
         final List<Pair<GraphicsType, DisplayType>> gndExistingOs = new ArrayList<>();
         gndExistingOs.add(new Pair<>(GraphicsType.SPICE, DisplayType.cirrus));
 
-        when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
+        when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
         when(osRepository.getOsIdByUniqueName(anyString())).thenAnswer(invocation-> {
             for (Map.Entry<Integer, String> entry : osIdsToNames.entrySet()) {
