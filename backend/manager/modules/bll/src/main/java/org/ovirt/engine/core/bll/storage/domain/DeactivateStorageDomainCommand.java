@@ -155,7 +155,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         List<StorageDomain> domains =
                 storageDomainDao.getAllForStoragePool(getStorageDomain().getStoragePoolId());
 
-        List<StorageDomain> activeDomains = filterDomainsByStatus(domains, StorageDomainStatus.Active);
+        List<StorageDomain> activeDomains = filterActiveDomains(domains);
 
         List<StorageDomain> dataDomains = activeDomains.stream()
                 .filter(d -> d.getStorageDomainType() == StorageDomainType.Data).collect(Collectors.toList());
@@ -197,19 +197,16 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     /**
-     * Filter out the domains with the requested status from the given domains list, excluding the domain which the
-     * command is run for.
+     * Filter the active domains excluding the domain which is the parameter for this command from the given domains list.
      *
      * @param domains
      *            The domains to filter.
-     * @param domainStatus
-     *            The status to filter by.
-     * @return Just the domains that match the given status, excluding the current domain of the command.
+     *
+     * @return The active domains in the list excluding the current domain of the command.
      */
-    private List<StorageDomain> filterDomainsByStatus(List<StorageDomain> domains,
-            final StorageDomainStatus domainStatus) {
+    private List<StorageDomain> filterActiveDomains(List<StorageDomain> domains) {
         return domains.stream()
-                .filter(d -> d.getStatus() == domainStatus && !d.getId().equals(getStorageDomain().getId()))
+                .filter(d -> d.getStatus() == StorageDomainStatus.Active && !d.getId().equals(getStorageDomain().getId()))
                 .collect(Collectors.toList());
     }
 
