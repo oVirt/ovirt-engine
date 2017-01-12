@@ -493,6 +493,19 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+
+CREATE OR REPLACE FUNCTION DeleteStepSubjectEntity (
+    v_step_id UUID,
+    v_entity_id UUID
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE FROM step_subject_entity sse
+    WHERE sse.step_id = v_step_id
+    AND sse.entity_id = v_entity_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 -----------------------------------------------------
 -- Get Step Subject Entities of a step by the step id
 -----------------------------------------------------
