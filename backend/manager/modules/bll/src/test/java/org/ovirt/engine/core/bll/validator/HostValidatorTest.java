@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.validator;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -132,7 +133,7 @@ public class HostValidatorTest {
 
     @Test
     public void hostNameNotUsed() {
-        when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.emptyList());
+        when(hostDao.getAllForHostname(anyString())).thenReturn(Collections.emptyList());
 
         assertThat(validator.hostNameNotUsed(), isValid());
     }

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
@@ -654,9 +655,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
 
         List<LUNs> luns = Collections.singletonList(disk.getLun());
-        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class),
-                any(StorageType.class),
-                any(String.class));
+        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), anyString());
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
@@ -667,7 +666,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         List<LUNs> luns = Collections.singletonList(disk.getLun());
         initializeCommand(Guid.newGuid());
 
-        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), any(String.class));
+        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), anyString());
         assertEquals(disk.getLun(), command.getLunDisk(disk.getLun(), vds));
     }
 
@@ -685,9 +684,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
 
         List<LUNs> luns = Collections.emptyList();
-        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class),
-                any(StorageType.class),
-                any(String.class));
+        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), anyString());
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
     }
@@ -699,7 +696,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         List<LUNs> luns = Collections.emptyList();
         initializeCommand(Guid.newGuid());
 
-        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), any(String.class));
+        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), anyString());
         assertNull(command.getLunDisk(disk.getLun(), vds));
     }
 

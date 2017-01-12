@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -129,7 +130,7 @@ public class UpdateHostValidatorTest {
     public void nameInUse() {
         when(oldHost.getName()).thenReturn(generateRandomName());
         when(host.getName()).thenReturn(generateRandomName());
-        when(hostDao.getByName(any(String.class))).thenReturn(mock(VDS.class));
+        when(hostDao.getByName(anyString())).thenReturn(mock(VDS.class));
 
         assertThat(validator.nameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
@@ -147,7 +148,7 @@ public class UpdateHostValidatorTest {
     public void hostNNotUsed() {
         when(oldHost.getHostName()).thenReturn(generateRandomName());
         when(host.getHostName()).thenReturn(generateRandomName());
-        when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.emptyList());
+        when(hostDao.getAllForHostname(anyString())).thenReturn(Collections.emptyList());
 
         assertThat(validator.hostNameNotUsed(), isValid());
     }
@@ -156,7 +157,7 @@ public class UpdateHostValidatorTest {
     public void hostNInUse() {
         when(oldHost.getHostName()).thenReturn(generateRandomName());
         when(host.getHostName()).thenReturn(generateRandomName());
-        when(hostDao.getAllForHostname(any(String.class))).thenReturn(Collections.singletonList(mock(VDS.class)));
+        when(hostDao.getAllForHostname(anyString())).thenReturn(Collections.singletonList(mock(VDS.class)));
 
         assertThat(validator.hostNameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST));
     }

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -136,13 +137,10 @@ public class GlusterSnapshotSyncJobTest {
                         argThat(snapshotInfoParam()));
         syncJob.refreshSnapshotConfig();
         verify(snapshotConfigDao, times(3)).save(any(GlusterVolumeSnapshotConfig.class));
-        verify(snapshotConfigDao, times(1)).updateConfigByClusterIdAndName(any(Guid.class),
-                any(String.class),
-                any(String.class));
-        verify(snapshotConfigDao, times(1)).updateConfigByVolumeIdAndName(any(Guid.class),
-                any(Guid.class),
-                any(String.class),
-                any(String.class));
+        verify(snapshotConfigDao, times(1)).updateConfigByClusterIdAndName(
+                any(Guid.class), anyString(), anyString());
+        verify(snapshotConfigDao, times(1)).updateConfigByVolumeIdAndName(
+                any(Guid.class), any(Guid.class), anyString(), anyString());
     }
 
     private GlusterVolumeSnapshotConfig getClusterSnapMaxLimit() {

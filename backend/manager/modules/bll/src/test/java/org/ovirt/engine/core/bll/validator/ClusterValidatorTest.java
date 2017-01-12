@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.validator;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -67,7 +68,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void nameNotUsed() {
-        when(clusterDao.getByName(any(String.class), anyBoolean())).thenReturn(Collections.emptyList());
+        when(clusterDao.getByName(anyString(), anyBoolean())).thenReturn(Collections.emptyList());
         when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 

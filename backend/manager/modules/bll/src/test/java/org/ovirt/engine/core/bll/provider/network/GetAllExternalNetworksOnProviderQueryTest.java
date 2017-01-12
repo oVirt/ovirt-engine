@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.provider.network;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +60,7 @@ public class GetAllExternalNetworksOnProviderQueryTest
         when(providerNetwork.getExternalId()).thenReturn("");
 
         Guid id = mock(Guid.class);
-        when(dcDao.getDcIdByExternalNetworkId(any(String.class))).thenReturn(Collections.singletonList(id));
+        when(dcDao.getDcIdByExternalNetworkId(anyString())).thenReturn(Collections.singletonList(id));
 
         Map<Network, Set<Guid>> expected = new HashMap<>();
         expected.put(network, Collections.singleton(id));

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -65,7 +66,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
                 setupQueryBySnapshotId(existingSnapshotId);
         VM vm = new VM();
         doReturn(vm).when(snapshotVmConfigurationHelper).getVmFromConfiguration(
-                any(String.class), any(Guid.class), any(Guid.class));
+                anyString(), any(Guid.class), any(Guid.class));
         query.execute();
         VdcQueryReturnValue returnValue = query.getQueryReturnValue();
         assertNotNull("Return value from query cannot be null", returnValue);

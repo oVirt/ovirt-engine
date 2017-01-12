@@ -297,7 +297,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
         command.setCluster(new Cluster());
         // Avoid referencing the unmockable static VmHandler.updateCurrentCd
-        doNothing().when(command).updateCurrentCd(any(String.class));
+        doNothing().when(command).updateCurrentCd(anyString());
         when(snapshotDAO.exists(any(Guid.class), any(SnapshotStatus.class))).thenReturn(false);
         return vm;
     }

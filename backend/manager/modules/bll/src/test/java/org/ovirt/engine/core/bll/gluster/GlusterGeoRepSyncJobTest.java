@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -88,7 +89,7 @@ public class GlusterGeoRepSyncJobTest {
         doReturn(geoRepDao).when(syncJob).getGeoRepDao();
         doReturn(volumeDao).when(syncJob).getVolumeDao();
         doReturn(getClusters()).when(clusterDao).getAll();
-        doReturn(getVolume()).when(volumeDao).getByName(any(Guid.class), any(String.class));
+        doReturn(getVolume()).when(volumeDao).getByName(any(Guid.class), anyString());
         doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));
         doReturn(getServer()).when(glusterUtil).getRandomUpServer(any(Guid.class));
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();

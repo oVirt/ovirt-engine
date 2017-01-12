@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -114,7 +115,7 @@ public class AddVdsCommandTest {
         doReturn(ValidationResult.VALID).when(validator).provisioningComputeResourceValid(anyBoolean(), any());
         doReturn(ValidationResult.VALID).when(validator).provisioningHostGroupValid(anyBoolean(), any());
         doReturn(ValidationResult.VALID).when(validator).supportsDeployingHostedEngine(any());
-        when(validator.passwordNotEmpty(anyBoolean(), any(AuthenticationMethod.class), any(String.class)))
+        when(validator.passwordNotEmpty(anyBoolean(), any(AuthenticationMethod.class), anyString()))
                 .thenReturn(ValidationResult.VALID);
         doReturn(validator).when(command).getHostValidator();
     }
