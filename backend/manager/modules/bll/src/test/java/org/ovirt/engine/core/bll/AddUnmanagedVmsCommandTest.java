@@ -55,7 +55,8 @@ public class AddUnmanagedVmsCommandTest {
 
     @Spy
     @InjectMocks
-    AddUnmanagedVmsCommand addUnamangedVmsCommand =  new AddUnmanagedVmsCommand(new AddUnmanagedVmsParameters(), null);
+    AddUnmanagedVmsCommand<AddUnmanagedVmsParameters> addUnamangedVmsCommand =
+            new AddUnmanagedVmsCommand<>(new AddUnmanagedVmsParameters(), null);
 
     private static Map<String, Object> external_vm;
 
