@@ -1951,5 +1951,21 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     VmLeasesSupported,
 
+    /**
+     * Timeout in seconds for the completion of calls to external network providers.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    ExternalNetworkProviderTimeout,
+
+    /**
+     * Timeout in seconds for establishment of connections with external network providers. This
+     * should be quite small, a few seconds at most, as it the TCP handshake with
+     * network providers should be very quick in most networks.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("20")
+    ExternalNetworkProviderConnectionTimeout,
+
     Invalid
 }

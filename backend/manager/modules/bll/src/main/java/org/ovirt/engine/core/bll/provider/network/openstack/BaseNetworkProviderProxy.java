@@ -10,7 +10,12 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.jboss.resteasy.client.ClientExecutor;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
@@ -22,6 +27,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -31,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.connector.RESTEasyConnector;
 import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.Networks;
@@ -65,9 +73,24 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         this.provider = provider;
     }
 
+    class CustomizedRESTEasyConnector extends RESTEasyConnector {
+
+        @Override
+        protected ClientExecutor createClientExecutor() {
+            int socketTimeOut = Config.<Integer> getValue(ConfigValues.ExternalNetworkProviderTimeout) * 1000;
+            int connectionTimeOut = Config.<Integer> getValue(ConfigValues.ExternalNetworkProviderConnectionTimeout) * 1000;
+
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpParams params = httpClient.getParams();
+            HttpConnectionParams.setConnectionTimeout(params, connectionTimeOut);
+            HttpConnectionParams.setSoTimeout(params, socketTimeOut);
+            return new ApacheHttpClient4Executor(httpClient);
+        }
+    }
+
     private Quantum getClient() {
         if (client == null) {
-            client = new Quantum(provider.getUrl() + API_VERSION);
+            client = new Quantum(provider.getUrl() + API_VERSION, new CustomizedRESTEasyConnector());
             if (provider.isRequiringAuthentication()) {
                 setClientTokenProvider(client);
             }
