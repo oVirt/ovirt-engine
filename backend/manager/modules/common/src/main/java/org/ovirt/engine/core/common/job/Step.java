@@ -90,6 +90,11 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
      */
     private ExternalSystem externalSystem;
 
+    /**
+     * A collection which holds the entities associated with the Step
+     */
+    private List<StepSubjectEntity> subjectEntities;
+
     private Integer progress;
 
     /**
@@ -276,6 +281,14 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
 
     public List<Step> getSteps() {
         return steps;
+    }
+
+    public List<StepSubjectEntity> getSubjectEntities() {
+        return subjectEntities;
+    }
+
+    public void setSubjectEntities(List<StepSubjectEntity> subjectEntities) {
+        this.subjectEntities = subjectEntities;
     }
 
     public Integer getProgress() {
