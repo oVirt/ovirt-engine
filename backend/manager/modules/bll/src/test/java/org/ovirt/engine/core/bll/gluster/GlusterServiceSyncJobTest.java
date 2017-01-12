@@ -377,7 +377,7 @@ public class GlusterServiceSyncJobTest {
 
         // mixed status on server2
         List<GlusterServerService> server2Services = createServerServicesWithMixedStatus(SERVER2_ID);
-        doReturn(createVDSReturnValue(SERVER2_ID, server2Services)).when(syncJob)
+        doReturn(createVDSReturnValue(server2Services)).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GlusterServicesList),
                         argThat(isServer(SERVER2_ID)));
 
@@ -413,7 +413,7 @@ public class GlusterServiceSyncJobTest {
         };
     }
 
-    private VDSReturnValue createVDSReturnValue(Guid serverId, List<GlusterServerService> serverServices) {
+    private VDSReturnValue createVDSReturnValue(List<GlusterServerService> serverServices) {
         VDSReturnValue ret = new VDSReturnValue();
         ret.setSucceeded(true);
         ret.setReturnValue(serverServices);
@@ -421,7 +421,7 @@ public class GlusterServiceSyncJobTest {
     }
 
     private VDSReturnValue createVDSReturnValue(Guid serverId, GlusterServiceStatus status) {
-        return createVDSReturnValue(serverId, createServerServices(serverId, status));
+        return createVDSReturnValue(createServerServices(serverId, status));
     }
 
     private VDSReturnValue createVDSReturnValueForFailure() {
