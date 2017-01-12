@@ -5,6 +5,8 @@ import java.util.Map;
 
 public enum VdcObjectType {
     Unknown(-1, "Unknown"),
+    // For internal use only. Used to mark the host used for execution of a Step.
+    EXECUTION_HOST(-100, "Execution Host"),
     // bottom is an object which all the objects in the system are its parents
     // useful to denote we want all objects when checking for permissions
     Bottom(0, "Bottom"),
@@ -43,6 +45,7 @@ public enum VdcObjectType {
     private int value;
     private String vdcObjectTranslationVal;
     private static final Map<Integer, VdcObjectType> map = new HashMap<>(values().length);
+    private static final int INTERNAL_ENTITY_VALUE = -100;
 
     static {
         for (VdcObjectType type : values()) {
