@@ -28,6 +28,14 @@ public class StepSubjectEntityDaoImpl extends BaseDao implements StepSubjectEnti
                         parameterSource);
     }
 
+    @Override
+    public void remove(Guid entityId, Guid stepId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("entity_id", entityId)
+                .addValue("step_id", stepId);
+        getCallsHandler().executeModification("DeleteStepSubjectEntity", parameterSource);
+    }
+
     public void saveAll(Collection<StepSubjectEntity> entities) {
         if (entities.isEmpty()) {
             return;

@@ -16,6 +16,16 @@ public interface StepSubjectEntityDao extends Dao {
     void saveAll(Collection<StepSubjectEntity> entities);
 
     /**
+     * Removes the provided StepSubjectEntity.
+     *
+     * @param entityId
+     *            the entity id
+     * @param stepId
+     *            the step id
+     */
+    void remove(Guid entityId, Guid stepId);
+
+    /**
      * Retrieves a collection of the entities for a specific step.
      *
      * @param stepId
