@@ -50,7 +50,7 @@ public class CommandContextsCacheImpl implements CommandContextsCache {
         if (!Guid.isNullOrEmpty(persistedCommandContext.getJobId())) {
             executionContext.setJob(jobRepository.getJobWithSteps(persistedCommandContext.getJobId()));
         } else if (!Guid.isNullOrEmpty(persistedCommandContext.getStepId())) {
-            executionContext.setStep(jobRepository.getStep(persistedCommandContext.getStepId()));
+            executionContext.setStep(jobRepository.getStep(persistedCommandContext.getStepId(), false));
         }
         executionContext.setExecutionMethod(persistedCommandContext.getExecutionMethod());
         executionContext.setCompleted(persistedCommandContext.isCompleted());

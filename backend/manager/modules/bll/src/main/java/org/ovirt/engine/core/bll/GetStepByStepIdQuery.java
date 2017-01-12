@@ -19,6 +19,6 @@ public class GetStepByStepIdQuery<P extends IdQueryParameters> extends QueriesCo
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(jobRepository.getStep(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(jobRepository.getStep(getParameters().getId(), false));
     }
 }
