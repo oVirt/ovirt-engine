@@ -1,8 +1,15 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.util.Arrays;
+
+import org.junit.Test;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.StepEnum;
 import org.ovirt.engine.api.model.StepStatus;
+import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.job.StepSubjectEntity;
+import org.ovirt.engine.core.compat.DateTime;
+import org.ovirt.engine.core.compat.Guid;
 
 public class StepMapperTest extends AbstractInvertibleMappingTest<Step, org.ovirt.engine.core.common.job.Step, org.ovirt.engine.core.common.job.Step> {
 
@@ -31,5 +38,30 @@ public class StepMapperTest extends AbstractInvertibleMappingTest<Step, org.ovir
         return super.postPopulate(model);
     }
 
+    @Test
+    public void testSubjectEntities() {
+        org.ovirt.engine.core.common.job.Step bllStep = createBLLStep();
+        Guid executionHostId = Guid.newGuid();
+        bllStep.setSubjectEntities(
+                Arrays.asList(new StepSubjectEntity(bllStep.getId(), VdcObjectType.EXECUTION_HOST, executionHostId),
+                        new StepSubjectEntity(bllStep.getId(), VdcObjectType.Disk, Guid.Empty)));
+
+        Step model = StepMapper.map(bllStep, null);
+        assertNotNull(model.getExecutionHost());
+        assertEquals(executionHostId.toString(), model.getExecutionHost().getId());
+
+        bllStep = StepMapper.map(model, null);
+        assertNull("subject entities shouldn't be mapped back to the model", bllStep.getSubjectEntities());
+    }
+
+    private org.ovirt.engine.core.common.job.Step createBLLStep() {
+        org.ovirt.engine.core.common.job.Step bllStep = new org.ovirt.engine.core.common.job.Step();
+        bllStep.setId(Guid.Empty);
+        bllStep.setJobId(Guid.Empty);
+        bllStep.setStartTime(DateTime.getNow());
+        bllStep.setEndTime(DateTime.getNow());
+        bllStep.setStepType(org.ovirt.engine.core.common.job.StepEnum.EXECUTING);
+        return bllStep;
+    }
 }
 

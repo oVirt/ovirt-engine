@@ -4,12 +4,15 @@ import java.sql.Date;
 import java.util.Calendar;
 
 import org.ovirt.engine.api.model.ExternalSystemType;
+import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.StepEnum;
 import org.ovirt.engine.api.model.StepStatus;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.TypeConversionHelper;
+import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 
 public class StepMapper {
@@ -42,7 +45,22 @@ public class StepMapper {
             model.setExternalType(map(entity.getExternalSystem().getType()));
         }
 
+        mapStepSubjectEntities(entity, model);
+
         return model;
+    }
+
+    private static void mapStepSubjectEntities(org.ovirt.engine.core.common.job.Step entity,
+                                        Step model) {
+        if (entity.getSubjectEntities() != null) {
+            for (SubjectEntity subjectEntity : entity.getSubjectEntities()) {
+                if (subjectEntity.getEntityType() == VdcObjectType.EXECUTION_HOST) {
+                    model.setExecutionHost(new Host());
+                    model.getExecutionHost().setId(subjectEntity.getEntityId().toString());
+                    break;
+                }
+            }
+        }
     }
 
     @Mapping(from = Step.class, to = org.ovirt.engine.core.common.job.Step.class)
