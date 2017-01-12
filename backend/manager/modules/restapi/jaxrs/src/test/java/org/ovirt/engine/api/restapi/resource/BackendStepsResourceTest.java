@@ -13,7 +13,7 @@ import org.ovirt.engine.api.model.StepEnum;
 import org.ovirt.engine.api.model.StepStatus;
 import org.ovirt.engine.core.common.action.AddExternalStepParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.queries.GetStepsByJobIdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetStepsWithSubjectEntitiesByJobIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -37,8 +37,8 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetStepsByJobId,
-                GetStepsByJobIdQueryParameters.class,
+        setUpEntityQueryExpectations(VdcQueryType.GetStepsWithSubjectEntitiesByJobId,
+                GetStepsWithSubjectEntitiesByJobIdQueryParameters.class,
                                      new String[] {"JobId" },
                                      new Object[] {GUIDS[1] },
                                      setUpSteps(),

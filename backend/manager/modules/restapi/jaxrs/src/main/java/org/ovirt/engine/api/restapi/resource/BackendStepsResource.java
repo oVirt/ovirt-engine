@@ -13,7 +13,7 @@ import org.ovirt.engine.api.resource.StepsResource;
 import org.ovirt.engine.api.restapi.types.StepMapper;
 import org.ovirt.engine.core.common.action.AddExternalStepParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.queries.GetStepsByJobIdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetStepsWithSubjectEntitiesByJobIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,8 +29,8 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
 
     @Override
     public Steps list() {
-        GetStepsByJobIdQueryParameters params = new GetStepsByJobIdQueryParameters(jobId);
-        List<org.ovirt.engine.core.common.job.Step> steps = getBackendCollection(VdcQueryType.GetStepsByJobId, params);
+        GetStepsWithSubjectEntitiesByJobIdQueryParameters params = new GetStepsWithSubjectEntitiesByJobIdQueryParameters(jobId);
+        List<org.ovirt.engine.core.common.job.Step> steps = getBackendCollection(VdcQueryType.GetStepsWithSubjectEntitiesByJobId, params);
         return mapCollection(steps);
     }
 
