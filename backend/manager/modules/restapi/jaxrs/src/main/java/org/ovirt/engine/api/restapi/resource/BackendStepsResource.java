@@ -48,7 +48,7 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
 
         return performCreate(VdcActionType.AddExternalStep,
                 new AddExternalStepParameters(asGuid(id), step.getDescription(), StepMapper.map(step.getType())),
-                new QueryIdResolver<Guid>(VdcQueryType.GetStepByStepId, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(VdcQueryType.GetStepWithSubjectEntitiesByStepId, IdQueryParameters.class));
     }
 
     @Override

@@ -376,7 +376,7 @@ public enum VdcQueryType implements Serializable {
     GetJobsByCorrelationId,
     GetJobsByOffset,
     GetAllJobs,
-    GetStepByStepId,
+    GetStepWithSubjectEntitiesByStepId,
     GetStepsByJobId,
 
     // Disks

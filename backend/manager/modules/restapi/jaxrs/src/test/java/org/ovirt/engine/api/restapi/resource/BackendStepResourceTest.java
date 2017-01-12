@@ -56,7 +56,7 @@ public class BackendStepResourceTest
     }
 
     protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetStepByStepId,
+        setUpGetEntityExpectations(VdcQueryType.GetStepWithSubjectEntitiesByStepId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
