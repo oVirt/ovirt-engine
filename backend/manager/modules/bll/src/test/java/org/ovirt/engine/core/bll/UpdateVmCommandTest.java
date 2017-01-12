@@ -351,7 +351,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         DiskVmElement dve = new DiskVmElement(disk.getId(), vm.getId());
         dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
         disk.setDiskVmElements(Collections.singletonList(dve));
-        mockDiskDaoGetAllForVm(Collections.singletonList(disk), true);
+        mockDiskDaoGetAllForVm(Collections.singletonList(disk));
         mockVmValidator();
 
         command.initEffectiveCompatibilityVersion();
@@ -363,7 +363,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     public void testCanEditARunningVM() {
         prepareVmToPassValidate();
         vm.setStatus(VMStatus.Up);
-        mockDiskDaoGetAllForVm(Collections.emptyList(), true);
+        mockDiskDaoGetAllForVm(Collections.emptyList());
         mockVmValidator();
 
         doReturn(true).when(command).areUpdatedFieldsLegal();
@@ -633,8 +633,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockGraphicsDevice();
     }
 
-    private void mockDiskDaoGetAllForVm(List<Disk> disks, boolean onlyPluggedDisks) {
-        doReturn(disks).when(diskDao).getAllForVm(vm.getId(), onlyPluggedDisks);
+    private void mockDiskDaoGetAllForVm(List<Disk> disks) {
+        doReturn(disks).when(diskDao).getAllForVm(vm.getId(), true);
     }
 
     private void mockVmDaoGetVm() {
