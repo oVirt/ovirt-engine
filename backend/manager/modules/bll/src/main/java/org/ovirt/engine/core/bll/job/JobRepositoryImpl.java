@@ -172,8 +172,12 @@ public class JobRepositoryImpl implements JobRepository {
     }
 
     @Override
-    public Step getStep(Guid stepId) {
-        return stepDao.get(stepId);
+    public Step getStep(Guid stepId, boolean loadSubjectEntities) {
+        Step step = stepDao.get(stepId);
+        if (step != null && loadSubjectEntities) {
+            step.setSubjectEntities(stepSubjectEntityDao.getStepSubjectEntitiesByStepId(stepId));
+        }
+        return step;
     }
 
     @Override

@@ -65,9 +65,11 @@ public interface JobRepository {
      *
      * @param id
      *            The id to look by (can't be <code>null</code>).
+     * @param loadSubjectEntities
+     *            boolean indicating whether to load the step's {@link StepSubjectEntity} list
      * @return The entity instance, or <code>null</code> if not found.
      */
-    Step getStep(Guid stepId);
+    Step getStep(Guid stepId, boolean loadSubjectEntities);
 
     /**
      * Retrieves a list of {@link Job} entities with the given characteristics.
