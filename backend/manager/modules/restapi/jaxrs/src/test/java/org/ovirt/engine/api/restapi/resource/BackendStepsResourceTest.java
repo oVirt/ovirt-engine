@@ -85,7 +85,7 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetStepByStepId,
+                                  VdcQueryType.GetStepWithSubjectEntitiesByStepId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },

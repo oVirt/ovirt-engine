@@ -58,7 +58,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
 
     private Step getStepById(Guid id) {
         IdQueryParameters params =  new IdQueryParameters(id);
-        Step step = performGet(VdcQueryType.GetStepByStepId, params);
+        Step step = performGet(VdcQueryType.GetStepWithSubjectEntitiesByStepId, params);
         return step;
     }
 
@@ -76,7 +76,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
         @Override
         public GlusterVolumeTaskStatusEntity resolve(Guid id) throws BackendFailureException {
             org.ovirt.engine.core.common.job.Step stepEntity =  getEntity(org.ovirt.engine.core.common.job.Step.class,
-                    VdcQueryType.GetStepByStepId,
+                    VdcQueryType.GetStepWithSubjectEntitiesByStepId,
                     new IdQueryParameters(id),
                     null,
                     true);
