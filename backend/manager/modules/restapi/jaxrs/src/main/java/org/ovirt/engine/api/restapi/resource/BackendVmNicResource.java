@@ -27,6 +27,7 @@ import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.CreationResource;
+import org.ovirt.engine.api.resource.NetworkFilterParametersResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
@@ -117,6 +118,12 @@ public class BackendVmNicResource
     @Override
     public VmReportedDevicesResource getReportedDevicesResource() {
         return inject(new BackendVmReportedDevicesResource(guid));
+    }
+
+    @Override
+    public NetworkFilterParametersResource getNetworkFilterParametersResource() {
+        // TODO: Implement this.
+        return null;
     }
 
     @Override
