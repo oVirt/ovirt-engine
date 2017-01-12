@@ -3,13 +3,12 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-
-import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,7 +31,7 @@ public class MultipleServicesMonitoringStrategyTest {
         virtStrategy = spy(new VirtMonitoringStrategy(mock(ClusterDao.class), mock(VdsDao.class), null));
         doReturn(false).when(virtStrategy).isAnyVmRunOnVdsInDb(any());
         glusterStrategy = spy(new GlusterMonitoringStrategy());
-        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any(Map.class));
+        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), anyMap());
         strategy = spy(new MultipleServicesMonitoringStrategy());
         strategy.addMonitoringStrategy(virtStrategy);
         strategy.addMonitoringStrategy(glusterStrategy);
