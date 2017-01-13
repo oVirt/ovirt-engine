@@ -36,7 +36,7 @@ public class IPAddressPatternTest {
                 { "192.168.1.1", true },
                 { "10.10.1.1", true },
                 { "127.0.0.1", true },
-                { "", true },
+                { "", false },
                 { null, true },
                 { "10.10.10", false },
                 { "10.10", false },

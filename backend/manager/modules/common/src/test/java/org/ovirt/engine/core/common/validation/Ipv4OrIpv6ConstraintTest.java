@@ -29,7 +29,7 @@ public class Ipv4OrIpv6ConstraintTest {
 
     @Test
     public void testEmptyStringIsValid() {
-        doTest("", true);
+        doTest("", false);
     }
 
     @Test

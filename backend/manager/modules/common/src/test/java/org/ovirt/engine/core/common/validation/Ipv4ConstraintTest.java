@@ -28,8 +28,8 @@ public class Ipv4ConstraintTest {
     }
 
     @Test
-    public void testEmptyStringIsValid() {
-        doTest("", true);
+    public void testEmptyStringIsInvalid() {
+        doTest("", false);
     }
 
     @Test
