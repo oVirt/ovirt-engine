@@ -6,8 +6,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqActionParams;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqParams;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
 
 import java.net.URI;
@@ -257,13 +256,13 @@ public abstract class AbstractBackendBaseTest extends Assert {
             throws Exception {
         VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
         OngoingStubbing<VdcQueryReturnValue> stubbing =
-                when(backend.runQuery(eq(query), eqQueryParams(clz, addSession(names), addSession(values))))
+                when(backend.runQuery(eq(query), eqParams(clz, addSession(names), addSession(values))))
                         .thenReturn(queryResult);
         if (onceOnly) {
             stubbing.thenReturn(null);
         }
         enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(query),
-                eqQueryParams(clz, addSession(names), addSession(values))));
+                eqParams(clz, addSession(names), addSession(values))));
         when(queryResult.getSucceeded()).thenReturn(true);
         when(queryResult.getReturnValue()).thenReturn(entity);
     }
@@ -310,18 +309,12 @@ public abstract class AbstractBackendBaseTest extends Assert {
         }
         if (queryClass == GetPermissionsForObjectParameters.class) {
             when(backend.runQuery(eq(query),
-                    eqQueryParams(queryClass,
-                            addSession(queryNames),
-                            addSession(queryValues)))).thenReturn(queryResult);
+                    eqParams(queryClass, addSession(queryNames), addSession(queryValues)))).thenReturn(queryResult);
         } else {
             when(backend.runQuery(eq(query),
-                    eqQueryParams(queryClass,
-                            addSession(queryNames),
-                            addSession(queryValues)))).thenReturn(queryResult);
+                    eqParams(queryClass, addSession(queryNames), addSession(queryValues)))).thenReturn(queryResult);
             enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(query),
-                    eqQueryParams(queryClass,
-                            addSession(queryNames),
-                            addSession(queryValues))));
+                    eqParams(queryClass, addSession(queryNames), addSession(queryValues))));
         }
     }
 
@@ -518,10 +511,9 @@ public abstract class AbstractBackendBaseTest extends Assert {
             when(result.getValidationMessages()).thenReturn(asList(errorMessage));
             setUpL10nExpectations(asList(errorMessage));
         }
-        when(backend.runAction(eq(task), eqActionParams(clz, addSession(names), addSession(values))))
-                .thenReturn(result);
+        when(backend.runAction(eq(task), eqParams(clz, addSession(names), addSession(values)))).thenReturn(result);
         enqueueInteraction(() -> verify(backend, atLeastOnce()).runAction(eq(task),
-                eqActionParams(clz, addSession(names), addSession(values))));
+                eqParams(clz, addSession(names), addSession(values))));
 
         VdcQueryReturnValue monitorResult = mock(VdcQueryReturnValue.class);
         when(monitorResult.getSucceeded()).thenReturn(success);
@@ -658,7 +650,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             when(result.getVdsmTaskIdList()).thenReturn(asyncTasks);
             when(monitorResult.getReturnValue()).thenReturn(asyncStatuses);
             when(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
-                    eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
+                    eqParams(GetTasksStatusesByTasksIDsParameters.class,
                             addSession(),
                             addSession(new Object[] {})))).thenReturn(monitorResult);
         }
@@ -674,11 +666,11 @@ public abstract class AbstractBackendBaseTest extends Assert {
             when(jobMock.getStatus()).thenReturn(jobStatus);
             when(monitorResult.getReturnValue()).thenReturn(jobMock);
             when(backend.runQuery(eq(VdcQueryType.GetJobByJobId),
-                    eqQueryParams(IdQueryParameters.class,
+                    eqParams(IdQueryParameters.class,
                             addSession("Id"),
                             addSession(jobId)))).thenReturn(monitorResult);
             enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.GetJobByJobId),
-                    eqQueryParams(IdQueryParameters.class,
+                    eqParams(IdQueryParameters.class,
                             addSession("Id"),
                             addSession(jobId))));
         }

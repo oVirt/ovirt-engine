@@ -9,15 +9,12 @@ import java.util.List;
 import java.util.Objects;
 
 import org.mockito.ArgumentMatcher;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class TestHelper {
 
-    public static VdcActionParametersBase eqActionParams(
-            Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values) {
-        return argThat(new ActionParametersEquals(clz, names, values));
+    public static <T> T eqParams(Class<T> clz, String[] names, Object[] values) {
+        return argThat(new ParametersEquals<>(clz, names, values));
     }
 
     protected static Method getMethod(Class<?> clz, String name) throws NoSuchMethodException {
@@ -95,23 +92,22 @@ public class TestHelper {
     }
 
     /**
-     * This generic matcher for ActionParameters is required because this types
+     * This generic matcher for parameter objects is required because these types
      * don't override Object.equals() with a deep comparison
      */
-    protected static class ActionParametersEquals implements ArgumentMatcher<VdcActionParametersBase> {
-        Class<? extends VdcActionParametersBase> clz;
+    protected static class ParametersEquals<T> implements ArgumentMatcher<T> {
+        Class<T> clz;
         String[] names;
         Object[] values;
 
-        public ActionParametersEquals(Class<? extends VdcActionParametersBase> clz, String[] names,
-                Object[] values) {
+        public ParametersEquals(Class<T> clz, String[] names, Object[] values) {
             this.clz = clz;
             this.names = names;
             this.values = values;
         }
 
         @Override
-        public boolean matches(VdcActionParametersBase actual) {
+        public boolean matches(T actual) {
             if (clz.isInstance(actual)) {
                 for (int i = 0; i < names.length; i++) {
                     if (!TestHelper.matches(clz, actual, names[i], values[i])) {
@@ -143,41 +139,6 @@ public class TestHelper {
         public boolean matches(SearchParameters actual) {
             return expected.getSearchPattern().equals(actual.getSearchPattern())
                     && expected.getSearchTypeValue().equals(actual.getSearchTypeValue());
-        }
-    }
-
-    public static VdcQueryParametersBase eqQueryParams(Class<? extends VdcQueryParametersBase> clz,
-            String[] names, Object[] values) {
-        return argThat(new QueryParametersEquals(clz, names, values));
-    }
-
-    /**
-     * This generic matcher for QueryParameters is required because this types
-     * don't override Object.equals() with a deep comparison
-     */
-    protected static class QueryParametersEquals implements ArgumentMatcher<VdcQueryParametersBase> {
-        Class<? extends VdcQueryParametersBase> clz;
-        String[] names;
-        Object[] values;
-
-        public QueryParametersEquals(Class<? extends VdcQueryParametersBase> clz, String[] names,
-                Object[] values) {
-            this.clz = clz;
-            this.names = names;
-            this.values = values;
-        }
-
-        @Override
-        public boolean matches(VdcQueryParametersBase actual) {
-            if (clz.isInstance(actual)) {
-                for (int i = 0; i < names.length; i++) {
-                    if (!TestHelper.matches(clz, actual, names[i], values[i])) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            return false;
         }
     }
 }

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqParams;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -434,7 +434,7 @@ public class BackendApiResourceTest {
     }
 
     private VdcQueryParametersBase getProductVersionParams() {
-        return eqQueryParams(VdcQueryParametersBase.class, new String[0], new Object[0]);
+        return eqParams(VdcQueryParametersBase.class, new String[0], new Object[0]);
     }
 
     protected void setUpGetSystemStatisticsExpectations() {
@@ -447,13 +447,13 @@ public class BackendApiResourceTest {
     }
 
     protected VdcQueryParametersBase getProductRPMVersionParams() {
-        return eqQueryParams(GetConfigurationValueParameters.class,
+        return eqParams(GetConfigurationValueParameters.class,
                 new String[] { "SessionId", "ConfigValue" },
                 new Object[] { SESSION_ID, ConfigurationValues.ProductRPMVersion });
     }
 
     protected VdcQueryParametersBase queryParams() {
-        return eqQueryParams(GetSystemStatisticsQueryParameters.class,
+        return eqParams(GetSystemStatisticsQueryParameters.class,
                              new String[] { "SessionId" },
                 new Object[] { SESSION_ID });
     }

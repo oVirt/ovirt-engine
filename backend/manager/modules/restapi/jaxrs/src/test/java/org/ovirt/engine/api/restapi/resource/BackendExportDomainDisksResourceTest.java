@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStorageDomain;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqParams;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -186,7 +186,7 @@ public class BackendExportDomainDisksResourceTest
             }
         }
         when(backend.runQuery(eq(query),
-            eqQueryParams(queryClass,
+            eqParams(queryClass,
                     addSession(queryNames),
                     addSession(queryValues)))).thenReturn(queryResult);
     }

@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqParams;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,7 +171,7 @@ public class BackendAttachedStorageDomainsResourceTest
         String[] paramNames = new String[] { "ServerConnectionId" };
         Object[] paramValues = new Object[] { GUIDS[0].toString() };
         VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
-        when(backend.runQuery(eq(VdcQueryType.GetStorageServerConnectionById), eqQueryParams(StorageServerConnectionQueryParametersBase.class, addSession(paramNames), addSession(paramValues))))
+        when(backend.runQuery(eq(VdcQueryType.GetStorageServerConnectionById), eqParams(StorageServerConnectionQueryParametersBase.class, addSession(paramNames), addSession(paramValues))))
         .thenReturn(queryResult);
         when(queryResult.getSucceeded()).thenReturn(true);
         when(queryResult.getReturnValue()).thenReturn(setUpStorageServerConnection());

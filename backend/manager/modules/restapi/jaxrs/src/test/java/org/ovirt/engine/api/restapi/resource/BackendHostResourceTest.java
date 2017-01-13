@@ -10,7 +10,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.get
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpStatisticalEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.verifyModelSpecific;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqParams;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -400,12 +400,12 @@ public class BackendHostResourceTest
         queryResult.setSucceeded(true);
 
         when(backend.runQuery(eq(VdcQueryType.DiscoverSendTargets),
-                                eqQueryParams(DiscoverSendTargetsQueryParameters.class,
+                                eqParams(DiscoverSendTargetsQueryParameters.class,
                                               addSession("VdsId", "Connection.Connection", "Connection.Port", "Connection.UserName", "Connection.Password"),
                                               addSession(GUIDS[0], ISCSI_SERVER_ADDRESS, ISCSI_PORT_STRING, ISCSI_USER_NAME, ISCSI_USER_PASS)
                                               ))).thenReturn(queryResult);
         enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.DiscoverSendTargets),
-                eqQueryParams(DiscoverSendTargetsQueryParameters.class,
+                eqParams(DiscoverSendTargetsQueryParameters.class,
                         addSession("VdsId", "Connection.Connection", "Connection.Port", "Connection.UserName", "Connection.Password"),
                         addSession(GUIDS[0], ISCSI_SERVER_ADDRESS, ISCSI_PORT_STRING, ISCSI_USER_NAME, ISCSI_USER_PASS)
                 )));

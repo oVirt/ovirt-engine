@@ -5,8 +5,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqActionParams;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqParams;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
 
 import java.lang.reflect.Method;
@@ -263,18 +262,18 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
             when(monitorResult.getSucceeded()).thenReturn(success);
             when(monitorResult.getReturnValue()).thenReturn(asyncStatuses);
             when(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
-                                    eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
+                                    eqParams(GetTasksStatusesByTasksIDsParameters.class,
                                                   addSession(),
                                                   addSession(new Object[]{})))).thenReturn(monitorResult);
             enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
-                    eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
+                    eqParams(GetTasksStatusesByTasksIDsParameters.class,
                             addSession(),
                             addSession(new Object[]{}))));
         }
-        when(backend.runAction(eq(task), eqActionParams(taskClass, addSession(taskNames), addSession(taskValues))))
+        when(backend.runAction(eq(task), eqParams(taskClass, addSession(taskNames), addSession(taskValues))))
                 .thenReturn(taskResult);
         enqueueInteraction(() ->
-                verify(backend, atLeastOnce()).runAction(eq(task), eqActionParams(taskClass, addSession(taskNames), addSession(taskValues))));
+                verify(backend, atLeastOnce()).runAction(eq(task), eqParams(taskClass, addSession(taskNames), addSession(taskValues))));
 
         if (valid && success && query != null) {
             setUpEntityQueryExpectations(query, queryClass, queryNames, queryValues, queryReturn);
