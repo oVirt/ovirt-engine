@@ -182,10 +182,10 @@ public class VfSchedulerImplTest {
         VmNetworkInterface vnic4 = mockVnic(false);
 
         HostNicVfsConfig hostNicVfsConfig1 = new HostNicVfsConfig();
-        HostDevice vf = updateVfsConfig(hostNicVfsConfig1, vnic1, 1, true, false, false, true);
+        HostDevice vf = updateVfsConfig(hostNicVfsConfig1, vnic1, true, false, true);
 
         HostNicVfsConfig hostNicVfsConfig2 = new HostNicVfsConfig();
-        updateVfsConfig(hostNicVfsConfig2, vnic2, 1, false, allNicsValid, false, allNicsValid);
+        updateVfsConfig(hostNicVfsConfig2, vnic2, false, allNicsValid, allNicsValid);
 
         when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig1)), isNull(List.class))).thenReturn(vf);
 
@@ -214,10 +214,10 @@ public class VfSchedulerImplTest {
         VmNetworkInterface vnic = mockVnic(true);
 
         HostNicVfsConfig hostNicVfsConfig1 = new HostNicVfsConfig();
-        updateVfsConfig(hostNicVfsConfig1, vnic, 1, firstValid, false, false, firstValid);
+        updateVfsConfig(hostNicVfsConfig1, vnic, firstValid, false, firstValid);
 
         HostNicVfsConfig hostNicVfsConfig2 = new HostNicVfsConfig();
-        updateVfsConfig(hostNicVfsConfig2, vnic, 1, !firstValid, false, false, !firstValid);
+        updateVfsConfig(hostNicVfsConfig2, vnic, !firstValid, false, !firstValid);
 
         mockVfsConfigsOnHost(Arrays.asList(hostNicVfsConfig1, hostNicVfsConfig2));
 
@@ -249,7 +249,7 @@ public class VfSchedulerImplTest {
         VmNetworkInterface vnic = mockVnic(true, "net1");
 
         HostNicVfsConfig hostNicVfsConfig = new HostNicVfsConfig();
-        HostDevice vf = updateVfsConfig(hostNicVfsConfig, vnic, 1, true, false, false, existFreeVf);
+        HostDevice vf = updateVfsConfig(hostNicVfsConfig, vnic, true, false, existFreeVf);
 
         when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig)), isNull(List.class))).thenReturn(vf);
 
@@ -381,36 +381,17 @@ public class VfSchedulerImplTest {
 
     private HostDevice updateVfsConfig(HostNicVfsConfig hostNicVfsConfig,
             VmNetworkInterface vnic,
-            int numOfVfs,
             boolean allNetworksAllowed,
             boolean vnicNetworkInSriovConfig,
-            boolean vnicLabelInSriovConfig,
-            boolean hasFreeVf,
-            boolean freeVfShareIommuGroup) {
-        return updateVfsConfig(hostNicVfsConfig,
-                vnic,
-                numOfVfs,
-                allNetworksAllowed,
-                vnicNetworkInSriovConfig,
-                vnicLabelInSriovConfig,
-                hasFreeVf,
-                freeVfShareIommuGroup,
-                false);
-    }
-
-    private HostDevice updateVfsConfig(HostNicVfsConfig hostNicVfsConfig, VmNetworkInterface vnic,
-            int numOfVfs,
-            boolean allNetworksAllowed,
-            boolean vnicNetworkInSriovConfig,
-            boolean vnicLabelInSriovConfig,
             boolean hasFreeVf) {
         return updateVfsConfig(hostNicVfsConfig,
                 vnic,
-                numOfVfs,
+                1,
                 allNetworksAllowed,
                 vnicNetworkInSriovConfig,
-                vnicLabelInSriovConfig,
+                false,
                 hasFreeVf,
+                false,
                 false);
     }
 
