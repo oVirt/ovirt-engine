@@ -97,7 +97,7 @@ public class GlusterGeoRepSyncJobTest {
     @Test
     public void testDiscoverGeoRepData() {
 
-        doReturn(getSessionsVDSReturnVal(true, 2)).when(syncJob)
+        doReturn(getSessionsVDSReturnVal(2)).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList),
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.discoverGeoRepData();
@@ -107,10 +107,10 @@ public class GlusterGeoRepSyncJobTest {
     @Test
     public void testDiscoverGeoRepDataWithConfig() {
 
-        doReturn(getSessionsVDSReturnVal(true, 2)).when(syncJob)
+        doReturn(getSessionsVDSReturnVal(2)).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList),
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
-        doReturn(getSessionsConfigListVDSReturnVal(true)).when(syncJob)
+        doReturn(getSessionsConfigListVDSReturnVal()).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepConfigList),
                 any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.discoverGeoRepData();
@@ -121,7 +121,7 @@ public class GlusterGeoRepSyncJobTest {
     @Test
     public void testDiscoverGeoRepDataWhenNoSessions() {
 
-        doReturn(getSessionsVDSReturnVal(true, 0)).when(syncJob)
+        doReturn(getSessionsVDSReturnVal(0)).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList),
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.discoverGeoRepData();
@@ -146,14 +146,10 @@ public class GlusterGeoRepSyncJobTest {
         verify(geoRepDao, times(0)).saveOrUpdateDetailsInBatch(any(List.class));
     }
 
-    private Object getSessionsVDSReturnVal(boolean ret, int count) {
+    private Object getSessionsVDSReturnVal(int count) {
         VDSReturnValue vdsRetValue = new VDSReturnValue();
-        vdsRetValue.setSucceeded(ret);
-        if (ret) {
-            vdsRetValue.setReturnValue(getSessions(count, false));
-        } else {
-            vdsRetValue.setReturnValue(null);
-        }
+        vdsRetValue.setSucceeded(true);
+        vdsRetValue.setReturnValue(getSessions(count, false));
         return vdsRetValue;
     }
 
@@ -168,14 +164,10 @@ public class GlusterGeoRepSyncJobTest {
         return vdsRetValue;
     }
 
-    private Object getSessionsConfigListVDSReturnVal(boolean ret) {
+    private Object getSessionsConfigListVDSReturnVal() {
         VDSReturnValue vdsRetValue = new VDSReturnValue();
-        vdsRetValue.setSucceeded(ret);
-        if (ret) {
-            vdsRetValue.setReturnValue(getSessionConfigList());
-        } else {
-            vdsRetValue.setReturnValue(null);
-        }
+        vdsRetValue.setSucceeded(true);
+        vdsRetValue.setReturnValue(getSessionConfigList());
         return vdsRetValue;
     }
 
