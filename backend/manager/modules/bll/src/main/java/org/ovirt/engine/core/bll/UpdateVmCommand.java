@@ -1058,12 +1058,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (vmList.size() != paramList.size()){
             return true;
         }
-        for (Guid origGuid : vmList) {
-            if (paramList.contains(origGuid) == false){
-                return true;
-            }
-        }
-        return false;
+        return !paramList.containsAll(vmList);
     }
 
     private boolean isCpuPinningChanged() {
