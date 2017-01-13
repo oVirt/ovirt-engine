@@ -71,7 +71,7 @@ public class GlusterAuditLogUtil {
             final Guid brickId,
             final String brickPath) {
 
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
         logable.setVds(server);
         logable.setGlusterVolume(volume);
         logable.setClusterId(clusterId);
