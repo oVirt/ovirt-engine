@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.scheduling;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -138,7 +137,7 @@ public class AffinityRulesEnforcementManagerTest {
 
     @Test
     public void shouldScheduleRegularInterval() {
-        verify(scheduler).scheduleAFixedDelayJob(anyObject(),
+        verify(scheduler).scheduleAFixedDelayJob(any(),
                 eq("refresh"),
                 eq(new Class[] {}),
                 eq(new Object[] {}),

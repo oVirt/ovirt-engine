@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.profiles;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
@@ -63,10 +63,8 @@ public class DiskProfileHelperTest {
         diskImage = createDisk();
         map.clear();
 
-        when(diskProfileHelper.isDiskProfileParentEntityValid(anyObject(), anyObject()))
-                .thenReturn(ValidationResult.VALID);
-        doReturn(Guid.newGuid()).when(permissionDao)
-                .getEntityPermissions(anyObject(), anyObject(), anyObject(), anyObject());
+        when(diskProfileHelper.isDiskProfileParentEntityValid(any(), any())).thenReturn(ValidationResult.VALID);
+        doReturn(Guid.newGuid()).when(permissionDao).getEntityPermissions(any(), any(), any(), any());
         doReturn(Collections.singletonList(diskProfile_a)).when(diskProfileDao).getAllForStorageDomain
                 (STORAGE_DOMAIN_1);
         doReturn(Collections.singletonList(diskProfile_b)).when(diskProfileDao).getAllForStorageDomain

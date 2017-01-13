@@ -5,8 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -102,7 +102,7 @@ public class DocsServletTest {
         when(mockRequest.getPathInfo()).thenReturn("/fr/index.html");
         when(mockRequest.getServletPath()).thenReturn("/docs");
         testServlet.doGet(mockRequest, mockResponse);
-        verify(responseOut).write(anyObject(), eq(0), anyInt());
+        verify(responseOut).write(any(), eq(0), anyInt());
     }
 
     /**

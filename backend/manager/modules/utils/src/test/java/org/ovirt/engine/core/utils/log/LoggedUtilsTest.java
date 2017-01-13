@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -256,7 +255,7 @@ public class LoggedUtilsTest {
         when(log.isDebugEnabled()).thenReturn(true);
 
         LoggedUtils.logEntry(log, id, new LoggedOverridingSubclass());
-        verify(log).debug(eq(LoggedUtils.ENTRY_LOG), new Object[] {anyObject(), eq(id)});
+        verify(log).debug(eq(LoggedUtils.ENTRY_LOG), new Object[] {any(), eq(id)});
     }
 
     /* --- Tests for the method "logReturn" --- */
@@ -282,7 +281,7 @@ public class LoggedUtilsTest {
         when(log.isInfoEnabled()).thenReturn(true);
 
         LoggedUtils.logReturn(log, id, new LoggedOverridingSubclassNoReturn(), new Object());
-        verify(log).info(eq(LoggedUtils.EXIT_LOG_VOID), new Object[] {anyObject(), eq(id)});
+        verify(log).info(eq(LoggedUtils.EXIT_LOG_VOID), new Object[] {any(), eq(id)});
     }
 
     @Test
@@ -292,7 +291,7 @@ public class LoggedUtilsTest {
         when(log.isDebugEnabled()).thenReturn(true);
 
         LoggedUtils.logReturn(log, id, new LoggedOverridingSubclass(), new Object());
-        verify(log).debug(eq(LoggedUtils.EXIT_LOG_RETURN_VALUE), new Object[] {anyObject(), anyObject(), eq(id)});
+        verify(log).debug(eq(LoggedUtils.EXIT_LOG_RETURN_VALUE), any(), any(), eq(id));
     }
 
     @Test
@@ -302,7 +301,7 @@ public class LoggedUtilsTest {
         when(log.isDebugEnabled()).thenReturn(true);
 
         LoggedUtils.logReturn(log, id, new LoggedOverridingSubclass(), null);
-        verify(log).debug(eq(LoggedUtils.EXIT_LOG_VOID), new Object[] {anyObject(), eq("")});
+        verify(log).debug(eq(LoggedUtils.EXIT_LOG_VOID), new Object[] {any(), eq("")});
     }
 
     /* --- Tests for the method "logError" --- */
@@ -332,7 +331,7 @@ public class LoggedUtilsTest {
 
         Exception e = new Exception();
         LoggedUtils.logError(log, id, new LoggedOverridingSubclass(), e);
-        verify(log).warn(eq(LoggedUtils.ERROR_LOG), new Object[] {anyObject(), anyObject(), eq(id)});
+        verify(log).warn(eq(LoggedUtils.ERROR_LOG), any(), any(), eq(id));
         verify(log).error(eq("Exception"), eq(e));
     }
 

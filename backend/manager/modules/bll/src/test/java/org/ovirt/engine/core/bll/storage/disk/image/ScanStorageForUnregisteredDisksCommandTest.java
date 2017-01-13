@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -65,6 +65,6 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
         doNothing().when(cmd).setVmsForUnregisteredDisks(allEntities);
         when(unregisteredOVFDataDaoMock.getAllForStorageDomainByEntityType(storageId, null)).thenReturn(allEntities);
         doNothing().when(cmd).removeUnregisteredDisks();
-        doNothing().when(cmd).saveUnregisterDisk(anyObject());
+        doNothing().when(cmd).saveUnregisterDisk(any());
     }
 }
