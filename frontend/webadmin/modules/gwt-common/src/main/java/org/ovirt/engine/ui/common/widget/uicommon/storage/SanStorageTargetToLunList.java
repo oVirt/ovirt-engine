@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractScrollableTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
@@ -43,6 +44,8 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
     private static final CommonApplicationResources resources = AssetProvider.getResources();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+
+    private LunModel selectedLunModel;
 
     public SanStorageTargetToLunList(SanStorageModelBase model) {
         super(model);
@@ -190,65 +193,79 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             return item;
         }
 
+        final SortedListModel sortedLeafModel = new SortedListModel();
+        sortedLeafModel.setItems(items);
         final EntityModelCellTable<ListModel<LunModel>> table =
                 new EntityModelCellTable<>(multiSelection, (Resources) GWT.create(SanStorageListLunTableResources.class));
 
+        table.initModelSortHandler(sortedLeafModel);
         AbstractLunSelectionColumn lunSelectionColumn = new AbstractLunSelectionColumn(multiSelection) {
             @Override
             public LunModel getValue(LunModel object) {
                 return object;
             }
         };
-
         table.setCustomSelectionColumn(lunSelectionColumn, "30px"); //$NON-NLS-1$
 
-        table.addColumn(new AbstractLunTextColumn() {
+        AbstractLunTextColumn lunIdColumn = new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getLunId();
             }
-        }, constants.lunIdSanStorage());
+        };
+        lunIdColumn.makeSortable();
+        table.addColumn(lunIdColumn, constants.lunIdSanStorage());
 
-        table.addColumn(new AbstractLunTextColumn() {
+        AbstractLunTextColumn devSizeColumn = new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return String.valueOf(model.getSize()) + "GB"; //$NON-NLS-1$
             }
-        }, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
+        };
+        devSizeColumn.makeSortable();
+        table.addColumn(devSizeColumn, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
 
-        table.addColumn(new AbstractLunTextColumn() {
+        AbstractLunTextColumn path = new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return String.valueOf(model.getMultipathing());
             }
-        }, constants.pathSanStorage(), "55px"); //$NON-NLS-1$
+        };
+        path.makeSortable();
+        table.addColumn(path, constants.pathSanStorage(), "55px"); //$NON-NLS-1$
 
-        table.addColumn(new AbstractLunTextColumn() {
+        AbstractLunTextColumn vendorIdColumn = new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getVendorId();
             }
-        }, constants.vendorIdSanStorage(), "100px"); //$NON-NLS-1$
+        };
+        vendorIdColumn.makeSortable();
+        table.addColumn(vendorIdColumn, constants.vendorIdSanStorage(), "100px"); //$NON-NLS-1$
 
-        table.addColumn(new AbstractLunTextColumn() {
+        AbstractLunTextColumn productIdColumn = new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getProductId();
             }
-        }, constants.productIdSanStorage(), "100px"); //$NON-NLS-1$
+        };
+        productIdColumn.makeSortable();
+        table.addColumn(productIdColumn, constants.productIdSanStorage(), "100px"); //$NON-NLS-1$
 
-        table.addColumn(new AbstractLunTextColumn() {
+        AbstractLunTextColumn serialNumColumn = new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getSerial();
             }
-        }, constants.serialSanStorage(), "120px"); //$NON-NLS-1$
+        };
+        serialNumColumn.makeSortable();
+        table.addColumn(serialNumColumn, constants.serialSanStorage(), "120px"); //$NON-NLS-1$
 
         table.setRowData(items);
-        Object selectedItem = leafModel.getSelectedItem();
-        leafModel.setSelectedItem(null);
-        table.asEditor().edit(leafModel);
-        leafModel.setSelectedItem(selectedItem);
+        final Object selectedItem = sortedLeafModel.getSelectedItem();
+        sortedLeafModel.setSelectedItem(null);
+        table.asEditor().edit(sortedLeafModel);
+        sortedLeafModel.setSelectedItem(selectedItem);
 
         table.setWidth("100%", true); //$NON-NLS-1$
 
@@ -263,10 +280,12 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 @Override
                 public void onSelectionChange(SelectionChangeEvent event) {
                     SingleSelectionModel SingleSelectionModel = (SingleSelectionModel) event.getSource();
-                    LunModel selectedLunModel = (LunModel) SingleSelectionModel.getSelectedObject();
+                    selectedLunModel = SingleSelectionModel.getSelectedObject() == null ? selectedLunModel :
+                            (LunModel) SingleSelectionModel.getSelectedObject();
 
                     if (selectedLunModel != null) {
                         updateSelectedLunWarning(selectedLunModel);
+                        sortedLeafModel.setSelectedItem(selectedLunModel);
                     }
                 }
             });
