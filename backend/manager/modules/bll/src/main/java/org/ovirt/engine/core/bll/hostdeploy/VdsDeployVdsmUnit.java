@@ -85,7 +85,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
         }},
         new Callable<Boolean>() {
             public Boolean call() throws Exception {
-                String minimal = Config.<String> getValue(ConfigValues.BootstrapMinimalVdsmVersion);
+                String minimal = Config.getValue(ConfigValues.BootstrapMinimalVdsmVersion);
                 if (minimal.trim().length() == 0) {
                     _deploy.getParser().cliNoop();
             }
