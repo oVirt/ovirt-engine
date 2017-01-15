@@ -12,12 +12,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.otopi.dialog.Event;
 import org.ovirt.ovirt_host_deploy.constants.KdumpEnv;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class VdsDeployKdumpUnit implements VdsDeployUnit {
-
-    private static final Logger log = LoggerFactory.getLogger(VdsDeployKdumpUnit.class);
 
     private static final String COND_KDUMP = "KDUMP";
 
