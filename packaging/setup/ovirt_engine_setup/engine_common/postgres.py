@@ -269,8 +269,6 @@ class Provisioning(base.Base):
     def _updatePostgresConf(
         self,
         transaction,
-        maxconn,
-        listenaddr,
     ):
         with open(
             self.environment[
@@ -390,7 +388,7 @@ class Provisioning(base.Base):
             ]
         )
 
-    def _restart(self):
+    def restartPG(self):
             for state in (False, True):
                 self.services.state(
                     name=self.environment[
@@ -495,7 +493,7 @@ class Provisioning(base.Base):
                 transaction=localtransaction,
             )
 
-            self._restart()
+            self.restartPG()
 
             with AlternateUser(
                 user=self.environment[
@@ -532,12 +530,6 @@ class Provisioning(base.Base):
         with transaction.Transaction() as localtransaction:
             self._updatePostgresConf(
                 transaction=localtransaction,
-                maxconn=self.environment[
-                    oengcommcons.ProvisioningEnv.POSTGRES_MAX_CONN
-                ],
-                listenaddr=self.environment[
-                    oengcommcons.ProvisioningEnv.POSTGRES_LISTEN_ADDRESS
-                ],
             )
             self._addPgHbaDatabaseAccess(
                 transaction=localtransaction,
@@ -550,7 +542,7 @@ class Provisioning(base.Base):
             state=True,
         )
 
-        self._restart()
+        self.restartPG()
         self._waitForDatabase()
 
     def createUser(self):
@@ -572,7 +564,7 @@ class Provisioning(base.Base):
                 transaction=localtransaction,
             )
 
-            self._restart()
+            self.restartPG()
 
             with AlternateUser(
                 user=self.environment[
@@ -605,7 +597,7 @@ class Provisioning(base.Base):
             # restore everything
             localtransaction.abort()
 
-        self._restart()
+        self.restartPG()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

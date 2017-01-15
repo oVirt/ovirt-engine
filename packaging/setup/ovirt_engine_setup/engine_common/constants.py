@@ -206,6 +206,7 @@ class DBEnvKeysConst(object):
     DUMPER = 'dumper'
     FILTER = 'filter'
     RESTORE_JOBS = 'restoreJobs'
+    INVALID_CONFIG_ITEMS = 'invalidConfigKeys'
 
     REQUIRED_KEYS = (
         HOST,
@@ -288,6 +289,8 @@ class ProvisioningEnv(object):
     POSTGRES_PG_HBA = 'OVESETUP_PROVISIONING/postgresPgHba'
     POSTGRES_PG_VERSION = 'OVESETUP_PROVISIONING/postgresPgVersion'
     POSTGRES_SERVICE = 'OVESETUP_PROVISIONING/postgresService'
+    POSTGRES_EXTRA_CONFIG_ITEMS =\
+        'OVESETUP_PROVISIONING/postgresExtraConfigItems'
     POSTGRES_MAX_CONN = 'OVESETUP_PROVISIONING/postgresMaxConn'
     POSTGRES_LISTEN_ADDRESS = 'OVESETUP_PROVISIONING/postgresListenAddress'
     POSTGRES_LC_MESSAGES = 'OVESETUP_PROVISIONING/postgresLCMessages'

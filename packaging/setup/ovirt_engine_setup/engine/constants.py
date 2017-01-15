@@ -424,6 +424,7 @@ class Const(object):
             DEK.DUMPER: EngineDBEnv.DUMPER,
             DEK.FILTER: EngineDBEnv.FILTER,
             DEK.RESTORE_JOBS: EngineDBEnv.RESTORE_JOBS,
+            DEK.INVALID_CONFIG_ITEMS: EngineDBEnv.INVALID_CONFIG_ITEMS,
         }
 
     @classproperty
@@ -539,6 +540,18 @@ class EngineDBEnv(object):
     )
     def ENGINE_VACUUM_FULL(self):
         return 'OVESETUP_DB/engineVacuumFull'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def FIX_DB_CONFIGURATION(self):
+        return 'OVESETUP_DB/fixDbConfiguration'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def INVALID_CONFIG_ITEMS(self):
+        return 'OVESETUP_DB/invalidConfigItems'
 
 
 @util.export

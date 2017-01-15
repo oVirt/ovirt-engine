@@ -21,6 +21,7 @@
 
 from otopi import util
 
+from . import configuration_updater
 from . import connection
 from . import schema
 from . import vacuum
@@ -29,6 +30,7 @@ from . import vacuum
 @util.export
 def createPlugins(context):
     connection.Plugin(context=context)
+    configuration_updater.Plugin(context=context)
     schema.Plugin(context=context)
     vacuum.Plugin(context=context)
 
