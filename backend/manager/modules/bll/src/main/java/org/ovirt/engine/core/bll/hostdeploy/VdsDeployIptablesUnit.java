@@ -11,12 +11,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.otopi.constants.NetEnv;
 import org.ovirt.otopi.dialog.Event;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class VdsDeployIptablesUnit implements VdsDeployUnit {
-
-    private static final Logger log = LoggerFactory.getLogger(VdsDeployIptablesUnit.class);
 
     private static final String IPTABLES_CUSTOM_RULES_PLACE_HOLDER = "@CUSTOM_RULES@";
     private static final String IPTABLES_VDSM_PORT_PLACE_HOLDER = "@VDSM_PORT@";
