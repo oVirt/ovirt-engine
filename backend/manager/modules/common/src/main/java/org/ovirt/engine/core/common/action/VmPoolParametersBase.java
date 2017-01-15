@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmPoolParametersBase extends VdcActionParametersBase implements Serializable {
     private static final long serialVersionUID = -4244908570752388901L;
     private Guid vmPoolId;
+    private String vmPoolName;
     private Guid storageDomainId;
 
     public VmPoolParametersBase() {
@@ -24,6 +25,14 @@ public class VmPoolParametersBase extends VdcActionParametersBase implements Ser
 
     public void setVmPoolId(Guid vmPoolId) {
         this.vmPoolId = vmPoolId;
+    }
+
+    public String getVmPoolName() {
+        return vmPoolName;
+    }
+
+    public void setVmPoolName(String vmPoolName) {
+        this.vmPoolName = vmPoolName;
     }
 
     public Guid getStorageDomainId() {
