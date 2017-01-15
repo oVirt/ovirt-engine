@@ -51,7 +51,7 @@ public class VdsDeployKdumpUnit implements VdsDeployUnit {
         }},
         new Callable<Boolean>() {@VdsDeployUnit.CallWhen(COND_KDUMP)
         public Boolean call() throws Exception {
-            String destinationAddress = Config.<String>getValue(ConfigValues.FenceKdumpDestinationAddress);
+            String destinationAddress = Config.getValue(ConfigValues.FenceKdumpDestinationAddress);
             if (StringUtils.isBlank(destinationAddress)) {
                 // destination address not entered, use engine FQDN
                 destinationAddress = EngineLocalConfig.getInstance().getHost();
