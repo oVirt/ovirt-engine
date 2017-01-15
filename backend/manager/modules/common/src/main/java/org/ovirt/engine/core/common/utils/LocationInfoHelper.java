@@ -33,6 +33,9 @@ public class LocationInfoHelper {
             infoMap.put("sd_id", info.getStorageDomainId().toString());
             infoMap.put("img_id", info.getImageGroupId().toString());
             infoMap.put("vol_id", info.getImageId().toString());
+            if (info.getGeneration() != null) {
+                infoMap.put("generation", info.getGeneration());
+            }
             return infoMap;
         }
 
