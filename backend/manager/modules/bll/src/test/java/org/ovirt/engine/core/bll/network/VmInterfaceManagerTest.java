@@ -76,7 +76,7 @@ public class VmInterfaceManagerTest {
         OsRepository osRepository = mock(OsRepository.class);
         when(vmInterfaceManager.getOsRepository()).thenReturn(osRepository);
         when(osRepository.hasNicHotplugSupport(any(Integer.class), any(Version.class))).thenReturn(true);
-        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), reserveExistingMac, osId, version);
+        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), reserveExistingMac, false, osId, version);
         if (reserveExistingMac) {
             verify(macPool, times(1)).forceAddMac(iface.getMacAddress());
         } else {

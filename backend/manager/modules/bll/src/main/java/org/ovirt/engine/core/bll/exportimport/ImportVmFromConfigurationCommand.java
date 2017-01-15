@@ -134,13 +134,10 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     }
 
     @Override
-    protected void reassignBadMacs(List<VmNetworkInterface> vnics) {
+    protected boolean vnicHasBadMac(VmNetworkInterface vnic) {
         final MacPool macPool = getMacPool();
         final Predicate<VmNetworkInterface> vnicWithBadMacPredicate = new VnicWithBadMacPredicate(macPool);
-        vnics
-                .stream()
-                .filter(vnicWithBadMacPredicate)
-                .forEach(vnic -> vnic.setMacAddress(macPool.allocateNewMac()));
+        return vnicWithBadMacPredicate.test(vnic);
     }
 
     @Override
