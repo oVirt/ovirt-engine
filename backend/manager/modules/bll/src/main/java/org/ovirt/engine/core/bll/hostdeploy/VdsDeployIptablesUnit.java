@@ -48,16 +48,16 @@ public class VdsDeployIptablesUnit implements VdsDeployUnit {
             _deploy.getVds().getClusterId()
         );
 
-        String ipTablesConfig = Config.<String> getValue(ConfigValues.IPTablesConfig);
+        String ipTablesConfig = Config.getValue(ConfigValues.IPTablesConfig);
 
         String serviceIPTablesConfig = "";
         if (cluster.supportsVirtService()) {
-            serviceIPTablesConfig += Config.<String> getValue(ConfigValues.IPTablesConfigForVirt);
+            serviceIPTablesConfig += Config.getValue(ConfigValues.IPTablesConfigForVirt);
         }
         if (cluster.supportsGlusterService()) {
-            serviceIPTablesConfig += Config.<String> getValue(ConfigValues.IPTablesConfigForGluster);
+            serviceIPTablesConfig += Config.getValue(ConfigValues.IPTablesConfigForGluster);
         }
-        serviceIPTablesConfig += Config.<String> getValue(ConfigValues.IPTablesConfigSiteCustom);
+        serviceIPTablesConfig += Config.getValue(ConfigValues.IPTablesConfigSiteCustom);
 
         ipTablesConfig = ipTablesConfig.replace(
             IPTABLES_CUSTOM_RULES_PLACE_HOLDER,
