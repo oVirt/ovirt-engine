@@ -105,7 +105,7 @@ public class RemoveDeviceFromSANStorageDomainCommand<T extends RemoveDeviceFromS
     }
 
     @Override
-    protected StepEnum getCommandStep() {
+    public StepEnum getCommandStep() {
         return StepEnum.REMOVE_DEVICE_FROM_DOMAIN;
     }
 

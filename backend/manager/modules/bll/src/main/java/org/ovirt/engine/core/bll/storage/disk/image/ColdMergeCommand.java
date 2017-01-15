@@ -51,7 +51,7 @@ public class ColdMergeCommand<T extends ColdMergeCommandParameters> extends Stor
     }
 
     @Override
-    protected StepEnum getCommandStep() {
+    public StepEnum getCommandStep() {
         return StepEnum.MERGE_SNAPSHOTS;
     }
 

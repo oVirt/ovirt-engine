@@ -57,7 +57,7 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
     }
 
     @Override
-    protected StepEnum getCommandStep() {
+    public StepEnum getCommandStep() {
         return StepEnum.COPY_VOLUME;
     }
 
