@@ -73,7 +73,7 @@ public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
     }
 
     @Override
-    protected StepEnum getCommandStep() {
+    public StepEnum getCommandStep() {
         return StepEnum.AMEND_VOLUME;
     }
 

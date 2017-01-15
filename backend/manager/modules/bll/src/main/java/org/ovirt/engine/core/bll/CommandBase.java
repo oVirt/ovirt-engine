@@ -1792,7 +1792,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return CommandCoordinatorUtil.concreteCreateTask(taskId, this, asyncTaskCreationInfo, parentCommand);
     }
 
-    protected StepEnum getCommandStep() {
+    public StepEnum getCommandStep() {
         return null;
     }
 

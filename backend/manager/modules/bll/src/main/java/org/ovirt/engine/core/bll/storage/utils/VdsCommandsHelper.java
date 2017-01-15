@@ -12,16 +12,19 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StepSubjectEntityDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 public class VdsCommandsHelper {
@@ -89,6 +92,18 @@ public class VdsCommandsHelper {
         parametersBase.setVdsId(vdsForExecution);
 
         if (cmd != null) {
+            if (cmd.getCommandStep() != null && cmd.getExecutionContext().getStep() != null) {
+                Guid stepId = cmd.getExecutionContext().getStep().getId();
+                if (cmd.getParameters().getVdsRunningOn() != null) {
+                    getStepSubjectEntityDao().remove(cmd.getParameters().getVdsRunningOn(), stepId);
+                }
+
+                if (vdsForExecution != null) {
+                    getStepSubjectEntityDao().saveAll(Collections.singletonList(
+                            new StepSubjectEntity(stepId, VdcObjectType.EXECUTION_HOST, vdsForExecution)));
+                }
+            }
+
             cmd.getParameters().setVdsRunningOn(vdsForExecution);
             cmd.persistCommand(cmd.getParameters().getParentCommand(), cmd
                     .getCallback() != null);
@@ -115,4 +130,7 @@ public class VdsCommandsHelper {
         return DbFacade.getInstance().getVdsDao();
     }
 
+    protected static StepSubjectEntityDao getStepSubjectEntityDao() {
+        return DbFacade.getInstance().getStepSubjectEntityDao();
+    }
 }
