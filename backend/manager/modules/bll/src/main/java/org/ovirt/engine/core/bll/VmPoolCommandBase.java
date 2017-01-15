@@ -38,8 +38,13 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         getParameters().setVmPoolId(value);
     }
 
-    protected String getVmPoolName() {
-        return getVmPool() != null ? getVmPool().getName() : null;
+    public String getVmPoolName() {
+        String vmPoolName = getParameters().getVmPoolName();
+        if (vmPoolName != null) {
+            return vmPoolName;
+        } else {
+            return getVmPool() != null ? getVmPool().getName() : null;
+        }
     }
 
     @Override

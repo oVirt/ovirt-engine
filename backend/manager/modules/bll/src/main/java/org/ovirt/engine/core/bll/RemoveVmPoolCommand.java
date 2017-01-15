@@ -56,6 +56,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
         if (getVmPool() != null) {
             setClusterId(getVmPool().getClusterId());
         }
+        getParameters().setVmPoolName(getVmPoolName());
     }
 
     private List<VM> getCachedVmsInPool() {
