@@ -524,17 +524,16 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             }
         }
 
-        if (getParameters().isReassignBadMacs()) {
-            reassignBadMacs(nics);
-        }
-
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
             vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser());
 
+            final boolean badMac = vnicHasBadMac(iface);
+            final boolean reserveExistingMac = !(badMac || getParameters().isImportAsNewEntity());
             vmInterfaceManager.add(iface,
                                    getCompensationContext(),
-                                   !getParameters().isImportAsNewEntity(),
+                                   reserveExistingMac,
+                                   badMac,
                                    getVm().getOs(),
                                    getEffectiveCompatibilityVersion());
             macsAdded.add(iface.getMacAddress());
@@ -543,8 +542,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         vnicProfileHelper.auditInvalidInterfaces(getVmName());
     }
 
-    protected void reassignBadMacs(List<VmNetworkInterface> nics) {
-        // do nothing
+    protected boolean vnicHasBadMac(VmNetworkInterface vnic) {
+        return false;
     }
 
     protected boolean isExternalMacsToBeReported() {
