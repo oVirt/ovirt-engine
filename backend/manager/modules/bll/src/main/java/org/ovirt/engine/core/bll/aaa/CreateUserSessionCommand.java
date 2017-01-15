@@ -109,7 +109,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
     private static void flatGroups(Collection<ExtMap> groupIds, List<String> accumulator) {
         for (ExtMap group : groupIds) {
             if (!accumulator.contains(group.<String>get(Authz.GroupRecord.ID))) {
-                accumulator.add(group.<String>get(Authz.GroupRecord.ID));
+                accumulator.add(group.get(Authz.GroupRecord.ID));
                 flatGroups(group, Authz.GroupRecord.GROUPS, accumulator);
             }
         }
@@ -118,7 +118,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
     private static void flatGroups(ExtMap entity, ExtKey key, List<String> accumulator) {
         for (ExtMap group : entity.<Collection<ExtMap>>get(key, Collections.<ExtMap>emptyList())) {
             if (!accumulator.contains(group.<String>get(Authz.GroupRecord.ID))) {
-                accumulator.add(group.<String>get(Authz.GroupRecord.ID));
+                accumulator.add(group.get(Authz.GroupRecord.ID));
                 flatGroups(group, Authz.GroupRecord.GROUPS, accumulator);
             }
         }
