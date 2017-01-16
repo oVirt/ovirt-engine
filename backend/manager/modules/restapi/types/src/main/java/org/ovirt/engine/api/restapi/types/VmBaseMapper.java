@@ -112,6 +112,10 @@ public class VmBaseMapper {
         if (model.isSetCustomCompatibilityVersion()) {
             entity.setCustomCompatibilityVersion(VersionMapper.map(model.getCustomCompatibilityVersion()));
         }
+
+        if (model.isSetLease()) {
+            entity.setLeaseStorageDomainId(StorageDomainLeaseMapper.map(model.getLease()));
+        }
     }
 
     /**
@@ -226,6 +230,10 @@ public class VmBaseMapper {
         if (model.isSetQuota() && model.getQuota().isSetId()) {
             entity.setQuotaId(GuidUtils.asGuid(model.getQuota().getId()));
         }
+
+        if (model.isSetLease()) {
+            entity.setLeaseStorageDomainId(StorageDomainLeaseMapper.map(model.getLease()));
+        }
     }
 
     /**
@@ -288,6 +296,8 @@ public class VmBaseMapper {
         if (entity.getCustomCompatibilityVersion() != null) {
             model.setCustomCompatibilityVersion(VersionMapper.map(entity.getCustomCompatibilityVersion()));
         }
+
+        model.setLease(StorageDomainLeaseMapper.map(entity.getLeaseStorageDomainId()));
     }
 
     /**
@@ -369,6 +379,8 @@ public class VmBaseMapper {
             quota.setId(entity.getQuotaId().toString());
             model.setQuota(quota);
         }
+
+        model.setLease(StorageDomainLeaseMapper.map(entity.getLeaseStorageDomainId()));
     }
 
     @Mapping(from = DisplayDisconnectAction.class, to = ConsoleDisconnectAction.class)
