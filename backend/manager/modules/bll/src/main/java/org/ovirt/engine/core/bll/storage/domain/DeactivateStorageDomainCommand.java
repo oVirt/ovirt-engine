@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.pool.AfterDeactivateSingleAsyncOperationFactory;
 import org.ovirt.engine.core.bll.storage.pool.DisconnectStoragePoolAsyncOperationFactory;
@@ -56,9 +55,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Inject
     private CommandEntityDao commandEntityDao;
-
-    @Inject
-    private HostedEngineHelper hostedEngineHelper;
 
     private boolean isLastMaster;
 
