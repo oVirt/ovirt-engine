@@ -271,6 +271,198 @@ public class AffinityRulesEnforcerTest {
                 anyList());
     }
 
+    @Test
+    /**
+     * Test conflicts for vm to host affinity including combinations
+     * with vm to vm affinity.
+     *
+     * The following scenarios are tested:
+     * - Hosts with positive and negative affinity to vm:
+     *   {vm1 + host1} , {vm1 - host1}     enforcing
+     *   {vm1 [+] host1} , {vm1 - host1}   non enforcing/enforcing
+     *
+     * - Hosts with positive vm to vm conflict:
+     *   {vm1 + host1},{vm1+vm2},{vm2 - host1}
+     *
+     * - Hosts with negative vm to vm conflict:
+     *   {vm1 + host1},{vm1 - vm2},{vm2 + host1}
+     *
+     * - Non intersecting positive hosts conflict:
+     *   {vm1 + host1,host2} , {vm1 + host1,host3}
+     *
+     * (  + is enforcing positive affinity)
+     * ( [+] is non enforcing positive affinity)
+     * (  - is enforcing negative affinity)
+     * ( [-] is non enforcing negative affinity)
+     * ( {} is an affinity group)
+     *
+     */
+    public void testVmToHostsExpectedConflictingAffinityGroupsConflicts() {
+
+        //{vm1 + host1}
+        AffinityGroup groupA = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .POSITIVE, true,
+                Arrays.asList(host1), vm1);
+        //{vm1 - host1}
+        AffinityGroup groupB = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .NEGATIVE, true,
+                Arrays.asList(host1), vm1);
+
+        affinityGroups.add(groupA);
+        affinityGroups.add(groupB);
+
+        Set<Guid> expectedConflictingVMs = new HashSet<>();
+        Set<AffinityGroup> expectedConflictingAffinityGroups = new HashSet<>();
+        expectedConflictingAffinityGroups.addAll(Arrays.asList(groupA, groupB));
+
+        AffinityRulesUtils.AffinityGroupConflicts conflicts =
+                AffinityRulesUtils.checkForAffinityGroupHostsConflict(affinityGroups).get(0);
+
+        assertThat(conflicts.getType())
+                .isEqualTo(AffinityRulesConflicts.VM_TO_HOST_CONFLICT_IN_ENFORCING_POSITIVE_AND_NEGATIVE_AFFINITY);
+
+        assertThat(conflicts.getAffinityGroups())
+                .isEqualTo(expectedConflictingAffinityGroups);
+
+        assertThat(conflicts.getHosts())
+                .isEqualTo(new HashSet<>(Arrays.asList(host1.getId())));
+
+        assertThat(conflicts.getVms())
+                .isEqualTo(new HashSet<>(Arrays.asList(vm1.getId())));
+
+        //{vm1 [+] host1}
+        groupA = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .POSITIVE, false,
+                Arrays.asList(host1), vm1);
+        //{vm1 - host1}
+        groupB = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .NEGATIVE, true,
+                Arrays.asList(host1), vm1);
+
+        affinityGroups.clear();
+        affinityGroups.add(groupA);
+        affinityGroups.add(groupB);
+
+        expectedConflictingAffinityGroups.clear();
+        expectedConflictingAffinityGroups.addAll(Arrays.asList(groupA, groupB));
+
+        conflicts = AffinityRulesUtils
+                .checkForAffinityGroupHostsConflict(affinityGroups).get(0);
+
+        assertThat(conflicts.getType())
+                .isEqualTo(AffinityRulesConflicts.VM_TO_HOST_CONFLICT_IN_POSITIVE_AND_NEGATIVE_AFFINITY);
+
+        assertThat(conflicts.getAffinityGroups())
+                .isEqualTo(expectedConflictingAffinityGroups);
+
+        assertThat(conflicts.getHosts())
+                .isEqualTo(new HashSet<>(Arrays.asList(host1.getId())));
+
+        assertThat(conflicts.getVms())
+                .isEqualTo(new HashSet<>(Arrays.asList(vm1.getId())));
+
+        //{vm1 + host1}
+        groupA = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .POSITIVE, true,
+                Arrays.asList(host1), vm1);
+        //{vm2 - host1}
+        groupB = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .NEGATIVE, true,
+                Arrays.asList(host1), vm2);
+        //{vm1+vm2}
+        AffinityGroup groupC = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2);
+
+        affinityGroups.clear();
+        affinityGroups.add(groupA);
+        affinityGroups.add(groupB);
+        affinityGroups.add(groupC);
+
+        expectedConflictingAffinityGroups.clear();
+        expectedConflictingAffinityGroups.addAll(Arrays.asList(groupA, groupB));
+        expectedConflictingVMs.addAll(Arrays.asList(vm1.getId(), vm2.getId()));
+
+        conflicts = AffinityRulesUtils
+                .checkForAffinityGroupHostsConflict(affinityGroups).get(0);
+
+        assertThat(conflicts.getType())
+                .isEqualTo(AffinityRulesConflicts.VM_TO_HOST_CONFLICTS_POSITIVE_VM_TO_VM_AFFINITY);
+
+        assertThat(conflicts.getAffinityGroups())
+                .isEqualTo(expectedConflictingAffinityGroups);
+
+        assertThat(conflicts.getHosts())
+                .isEqualTo(new HashSet<>(Arrays.asList(host1.getId())));
+
+        assertThat(conflicts.getVms())
+                .isEqualTo(new HashSet<>(Arrays.asList(vm1.getId(), vm2.getId())));
+
+        //{vm1 + host1}
+        groupA = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .POSITIVE, true,
+                Arrays.asList(host1), vm1);
+        //{vm2 + host1}
+        groupB = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .POSITIVE, true,
+                Arrays.asList(host1), vm2);
+        //{vm1 - vm2}
+        groupC = createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, vm1, vm2);
+
+        affinityGroups.clear();
+        affinityGroups.add(groupA);
+        affinityGroups.add(groupB);
+        affinityGroups.add(groupC);
+
+        expectedConflictingAffinityGroups.clear();
+        expectedConflictingAffinityGroups.addAll(Arrays.asList(groupA, groupB, groupC));
+
+        conflicts = AffinityRulesUtils
+                .checkForAffinityGroupHostsConflict(affinityGroups).get(0);
+
+        assertThat(conflicts.getType())
+                .isEqualTo(AffinityRulesConflicts.VM_TO_HOST_CONFLICTS_NEGATIVE_VM_TO_VM_AFFINITY);
+
+        assertThat(conflicts.getAffinityGroups())
+                .isEqualTo(expectedConflictingAffinityGroups);
+
+        assertThat(conflicts.getHosts())
+                .isEqualTo(new HashSet<>(Arrays.asList(host1.getId())));
+
+        assertThat(conflicts.getVms())
+                .isEqualTo(new HashSet<>(Arrays.asList(vm1.getId(), vm2.getId())));
+
+        //{vm1 + host1,host2}
+        groupA = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .POSITIVE, true,
+                Arrays.asList(host1, host2), vm1);
+        //{vm1 + host1,host3}
+        groupB = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
+                        .POSITIVE, true,
+                Arrays.asList(host1, host3), vm1);
+
+        affinityGroups.clear();
+        affinityGroups.add(groupA);
+        affinityGroups.add(groupB);
+
+        expectedConflictingAffinityGroups.clear();
+        expectedConflictingAffinityGroups.addAll(Arrays.asList(groupA, groupB));
+
+        conflicts = AffinityRulesUtils
+                .checkForAffinityGroupHostsConflict(affinityGroups).get(0);
+
+        assertThat(conflicts.getType())
+                .isEqualTo(AffinityRulesConflicts.NON_INTERSECTING_POSITIVE_HOSTS_AFFINITY_CONFLICTS);
+
+        assertThat(conflicts.getAffinityGroups())
+                .isEqualTo(expectedConflictingAffinityGroups);
+
+        assertThat(conflicts.getHosts())
+                .isEqualTo(new HashSet<>(Arrays.asList(host2.getId(), host3.getId())));
+
+        assertThat(conflicts.getVms())
+                .isEqualTo(new HashSet<>(Arrays.asList(vm1.getId())));
+
+    }
+
     private Cluster createCluster() {
         Guid id = Guid.newGuid();
         Cluster cluster = new Cluster();
