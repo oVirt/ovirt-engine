@@ -33,6 +33,8 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -111,10 +113,19 @@ public class AddUnmanagedVmsCommandTest {
             VmStatic vmStatic = ((VM) argument).getStaticData();
             assertThat(vmStatic.getNumOfSockets(), is(4));
             assertThat(vmStatic.getMemSizeMb(), is(7052));
-            assertThat(vmStatic.getManagedDeviceMap().size(), is(1));
-            GraphicsDevice device = (GraphicsDevice) vmStatic.getManagedDeviceMap().values().iterator().next();
-            assertThat(device.getGraphicsType(), is(GraphicsType.VNC));
-            assertThat(vmStatic.getDefaultDisplayType(), is(DisplayType.vga));
+            assertThat(vmStatic.getManagedDeviceMap().size(), is(2));
+            for(VmDevice vmDevice : vmStatic.getManagedDeviceMap().values()){
+                if(vmDevice instanceof GraphicsDevice){
+                   GraphicsDevice device = (GraphicsDevice) vmDevice;
+                   assertThat(device.getGraphicsType(), is(GraphicsType.VNC));
+                   assertThat(vmStatic.getDefaultDisplayType(), is(DisplayType.vga));
+                }
+                else{
+                    assertThat(vmDevice.getType(), is(VmDeviceGeneralType.CONSOLE));
+                }
+
+            }
+
             return true;
         }
     }

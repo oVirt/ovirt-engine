@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
@@ -195,6 +196,10 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
             vm.setSingleQxlPci(false);
             for (GraphicsDevice graphicsDevice : graphicsDevices) {
                 vm.getManagedVmDeviceMap().put(graphicsDevice.getDeviceId(), graphicsDevice);
+            }
+            VmDevice consoleDevice = VdsBrokerObjectsBuilder.buildConsoleDevice(vmStruct, vm.getId());
+            if(consoleDevice != null){
+                vm.getManagedVmDeviceMap().put(consoleDevice.getDeviceId(), consoleDevice);
             }
             importHostedEngineVm(vm);
         }

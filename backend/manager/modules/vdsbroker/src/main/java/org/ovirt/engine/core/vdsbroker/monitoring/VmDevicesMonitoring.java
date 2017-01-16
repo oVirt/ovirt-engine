@@ -619,7 +619,7 @@ public class VmDevicesMonitoring implements BackendService {
      * Libvirt gives no address to some special devices, and we know it.
      */
     private static boolean deviceWithoutAddress(VmDevice device) {
-        return VmDeviceCommonUtils.isGraphics(device);
+        return VmDeviceCommonUtils.isGraphics(device) || VmDeviceGeneralType.CONSOLE.equals(device.getType());
     }
 
     /**
