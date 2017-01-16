@@ -93,9 +93,33 @@ public class AffinityRulesEnforcer {
         List<Guid> candidateVMs =
                 getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, vmsMap, true);
 
-        //TODO check intersections between candidate groups and warn user if needed.
         if (candidateVMs.isEmpty()) {
             log.debug("No vm to hosts hard-affinity group violation detected");
+        } else {
+            List<AffinityRulesUtils.AffinityGroupConflicts> conflicts = AffinityRulesUtils
+                    .checkForAffinityGroupHostsConflict(allVmToHostsAffinityGroups);
+            for (AffinityRulesUtils.AffinityGroupConflicts conflict : conflicts) {
+                if (conflict.isVmToVmAffinity()) {
+                    log.warn(conflict.getType().getMessage(),
+                            conflict.getVms().stream()
+                                    .map(id -> id.toString())
+                                    .collect(Collectors.joining(",")),
+                            AffinityRulesUtils.getAffinityGroupsNames(conflict.getAffinityGroups()),
+                            conflict.getNegativeVms().stream()
+                                    .map(id -> id.toString())
+                                    .collect(Collectors.joining(","))
+                    );
+                } else {
+                    log.warn(conflict.getType().getMessage(),
+                            AffinityRulesUtils.getAffinityGroupsNames(conflict.getAffinityGroups()),
+                            conflict.getHosts().stream()
+                                    .map(id -> id.toString())
+                                    .collect(Collectors.joining(",")),
+                            conflict.getVms().stream()
+                                    .map(id -> id.toString())
+                                    .collect(Collectors.joining(",")));
+                }
+            }
         }
 
         for (Guid id : candidateVMs) {
