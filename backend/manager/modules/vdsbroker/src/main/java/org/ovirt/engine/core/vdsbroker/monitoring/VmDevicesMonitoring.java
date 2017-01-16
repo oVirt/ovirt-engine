@@ -477,7 +477,6 @@ public class VmDevicesMonitoring implements BackendService {
 
         for (Object o: (Object[]) vmInfo.get(VdsProperties.Devices)) {
             Map<String, Object> vdsmDevice = (Map<String, Object>) o;
-
             if (vdsmDevice.get(VdsProperties.Address) == null) {
                 logDeviceInformation(vmId, vdsmDevice);
                 continue;
@@ -623,7 +622,7 @@ public class VmDevicesMonitoring implements BackendService {
      * Libvirt gives no address to some special devices, and we know it.
      */
     private static boolean deviceWithoutAddress(VmDevice device) {
-        return VmDeviceCommonUtils.isGraphics(device);
+        return VmDeviceCommonUtils.isGraphics(device) || VmDeviceGeneralType.CONSOLE.equals(device.getType());
     }
 
     /**
@@ -638,7 +637,6 @@ public class VmDevicesMonitoring implements BackendService {
             log.error("Empty or NULL values were passed for a VM '{}' device, Device is skipped", vmId);
             return null;
         }
-
         String address = device.get(VdsProperties.Address).toString();
         String alias = StringUtils.defaultString((String) device.get(VdsProperties.Alias));
         Map<String, Object> specParams = (Map<String, Object>) device.get(VdsProperties.SpecParams);

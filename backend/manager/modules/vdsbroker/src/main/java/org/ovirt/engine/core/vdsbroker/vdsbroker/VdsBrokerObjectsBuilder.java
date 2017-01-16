@@ -53,6 +53,9 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
 import org.ovirt.engine.core.common.businessentities.VmBlockJob;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
@@ -94,6 +97,7 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
@@ -234,6 +238,36 @@ public class VdsBrokerObjectsBuilder {
             }
         }
         return nics;
+    }
+
+    public static VmDevice buildConsoleDevice(Map<String, Object> vmStruct, Guid vmId){
+        Object[] devices = (Object[]) vmStruct.get(VdsProperties.Devices);
+        if (devices != null) {
+            for (Object device : devices) {
+                Map<String, Object> vdsmDevice = (Map<String, Object>) device;
+                String deviceName = (String) vdsmDevice.get(VdsProperties.Device);
+                if (VmDeviceType.CONSOLE.getName().equals(deviceName)) {
+                    String typeName = (String) vdsmDevice.get(VdsProperties.Type);
+                    String alias = StringUtils.defaultString((String) vdsmDevice.get(VdsProperties.Alias));
+                    Guid newDeviceId = Guid.createGuidFromString((String) vdsmDevice.get(VdsProperties.DeviceId));
+                    VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
+                    VmDevice consoleDevice = new VmDevice(id,
+                            VmDeviceGeneralType.forValue(typeName),
+                            deviceName,
+                            "",
+                            new HashMap<>(),
+                            false,
+                            true,
+                            false,
+                            alias,
+                            null,
+                            null,
+                            null);
+                    return consoleDevice;
+                }
+            }
+        }
+        return null;
     }
 
     private static VmStatic buildVmStaticDataFromExternalProvider(Map<String, Object> struct) {
