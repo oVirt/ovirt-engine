@@ -11,11 +11,10 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
  * </ul>
  */
 public enum VmStatusMap {
-    UP(VMStatus.Up, VMStatus.SavingState, VMStatus.RestoringState),
-    WARNING(VMStatus.PoweringUp, VMStatus.Paused, VMStatus.MigratingFrom, VMStatus.MigratingTo, VMStatus.Unknown,
-            VMStatus.WaitForLaunch, VMStatus.Suspended, VMStatus.PoweringDown),
-    DOWN(VMStatus.Down, VMStatus.NotResponding, VMStatus.RebootInProgress, VMStatus.ImageIllegal,
-            VMStatus.ImageLocked);
+    UP(VMStatus.PoweringUp, VMStatus.Up, VMStatus.SavingState, VMStatus.RestoringState, VMStatus.PoweringDown),
+    WARNING(VMStatus.Paused, VMStatus.MigratingFrom, VMStatus.MigratingTo, VMStatus.Unknown,
+            VMStatus.WaitForLaunch, VMStatus.Suspended, VMStatus.ImageIllegal),
+    DOWN(VMStatus.Down, VMStatus.NotResponding, VMStatus.RebootInProgress, VMStatus.ImageLocked);
 
     private VMStatus[] values;
 
