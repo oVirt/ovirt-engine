@@ -116,8 +116,8 @@ public class V3StorageDomainServer extends V3Server<StorageDomainResource> {
     }
 
     @Path("disks")
-    public V3DisksServer getDisksResource() {
-        return new V3DisksServer(getDelegate().getDisksResource());
+    public V3StorageDomainDisksServer getDisksResource() {
+        return new V3StorageDomainDisksServer(getDelegate().getDisksResource());
     }
 
     @Path("files")

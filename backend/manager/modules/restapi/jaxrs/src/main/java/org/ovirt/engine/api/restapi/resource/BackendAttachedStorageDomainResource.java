@@ -7,8 +7,8 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.api.resource.AttachedStorageDomainDisksResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
-import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -74,8 +74,8 @@ public class BackendAttachedStorageDomainResource
     }
 
     @Override
-    public DisksResource getDisksResource() {
-        return inject(new BackendStorageDomainDisksResource(asGuid(id), subCollections));
+    public AttachedStorageDomainDisksResource getDisksResource() {
+        return inject(new BackendAttachedStorageDomainDisksResource(guid));
     }
 
     @Override

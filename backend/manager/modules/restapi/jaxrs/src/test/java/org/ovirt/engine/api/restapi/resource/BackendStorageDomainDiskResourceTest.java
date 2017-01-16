@@ -2,8 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -24,13 +22,13 @@ import org.ovirt.engine.core.compat.Guid;
 
 
 public class BackendStorageDomainDiskResourceTest
-        extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendDiskResource> {
+        extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendStorageDomainDiskResource> {
 
     protected static final Guid DISK_ID = GUIDS[1];
     protected static final Guid STORAGE_DOMAIN_ID = GUIDS[0];
 
     public BackendStorageDomainDiskResourceTest() {
-        super(new BackendStorageDomainDiskResource(DISK_ID.toString(), new BackendStorageDomainDisksResource(STORAGE_DOMAIN_ID)));
+        super(new BackendStorageDomainDiskResource(STORAGE_DOMAIN_ID, DISK_ID.toString()));
     }
 
     @Test
@@ -42,12 +40,6 @@ public class BackendStorageDomainDiskResourceTest
                 new String[]{"Id"},
                 new Object[]{DISK_ID},
                 getEntity(1));
-        setUpEntityQueryExpectations(
-                VdcQueryType.GetVmsByDiskGuid,
-                IdQueryParameters.class,
-                new String[]{"Id"},
-                new Object[]{DISK_ID},
-                Collections.emptyMap());
 
         Disk disk = resource.get();
         verifyModelSpecific(disk, 1);
@@ -63,12 +55,6 @@ public class BackendStorageDomainDiskResourceTest
                 new String[] { "Id" },
                 new Object[] { DISK_ID },
                 getEntity(1, true));
-        setUpEntityQueryExpectations(
-                VdcQueryType.GetVmsByDiskGuid,
-                IdQueryParameters.class,
-                new String[]{"Id"},
-                new Object[]{DISK_ID},
-                Collections.emptyMap());
 
         try {
             resource.get();
@@ -157,6 +143,6 @@ public class BackendStorageDomainDiskResourceTest
         assertFalse(model.isSetVm());
         assertTrue(model.isSparse());
         assertTrue(model.isPropagateErrors());
-        assertEquals(model.getStorageDomain().getId(), STORAGE_DOMAIN_ID.toString());
+        assertEquals(model.getStorageDomains().getStorageDomains().get(0).getId(), STORAGE_DOMAIN_ID.toString());
     }
 }

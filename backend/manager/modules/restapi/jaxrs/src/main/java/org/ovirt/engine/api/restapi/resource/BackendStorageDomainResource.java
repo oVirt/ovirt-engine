@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -24,9 +23,9 @@ import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.resource.AssignedDiskProfilesResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.DiskSnapshotsResource;
-import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.ImagesResource;
+import org.ovirt.engine.api.resource.StorageDomainDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionsResource;
 import org.ovirt.engine.api.resource.StorageDomainTemplatesResource;
@@ -382,7 +381,7 @@ public class BackendStorageDomainResource
     }
 
     @Override
-    public DisksResource getDisksResource() {
+    public StorageDomainDisksResource getDisksResource() {
         return inject(new BackendStorageDomainDisksResource(guid));
     }
 

@@ -97,7 +97,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
 
     @Test
     public void testAddUnregistered() throws Exception {
-        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendStorageDomainDisksResource.UNREGISTERED_CONSTRAINT_PARAMETER));
+        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendStorageDomainDisksResource.UNREGISTERED));
         setUpHttpHeaderExpectations("Expect", "201-created");
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
@@ -193,7 +193,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
 
     @Test
     public void testListUnregistered() throws Exception {
-        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendStorageDomainDisksResource.UNREGISTERED_CONSTRAINT_PARAMETER));
+        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendStorageDomainDisksResource.UNREGISTERED));
 
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);

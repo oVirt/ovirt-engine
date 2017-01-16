@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016 Red Hat, Inc.
+Copyright (c) 2017 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,36 +26,44 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Actionable;
-import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
+import org.ovirt.engine.api.resource.StorageDomainDiskResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Action;
-import org.ovirt.engine.api.v3.types.V3StorageDomain;
+import org.ovirt.engine.api.v3.types.V3Disk;
 
 @Produces({"application/xml", "application/json"})
-public class V3AttachedStorageDomainServer extends V3Server<AttachedStorageDomainResource> {
-    public V3AttachedStorageDomainServer(AttachedStorageDomainResource delegate) {
+public class V3StorageDomainDiskServer extends V3Server<StorageDomainDiskResource> {
+    public V3StorageDomainDiskServer(StorageDomainDiskResource delegate) {
         super(delegate);
     }
 
     @POST
     @Consumes({"application/xml", "application/json"})
     @Actionable
-    @Path("activate")
-    public Response activate(V3Action action) {
-        return adaptAction(getDelegate()::activate, action);
+    @Path("copy")
+    public Response copy(V3Action action) {
+        return adaptAction(getDelegate()::copy, action);
     }
 
     @POST
     @Consumes({"application/xml", "application/json"})
     @Actionable
-    @Path("deactivate")
-    public Response deactivate(V3Action action) {
-        return adaptAction(getDelegate()::deactivate, action);
+    @Path("export")
+    public Response export(V3Action action) {
+        return adaptAction(getDelegate()::export, action);
     }
 
     @GET
-    public V3StorageDomain get() {
+    public V3Disk get() {
         return adaptGet(getDelegate()::get);
+    }
+
+    @POST
+    @Consumes({"application/xml", "application/json"})
+    @Actionable
+    @Path("move")
+    public Response move(V3Action action) {
+        return adaptAction(getDelegate()::move, action);
     }
 
     @DELETE
@@ -63,12 +71,17 @@ public class V3AttachedStorageDomainServer extends V3Server<AttachedStorageDomai
         return adaptRemove(getDelegate()::remove);
     }
 
-    @Path("disks")
-    public V3AttachedStorageDomainDisksServer getDisksResource() {
-        return new V3AttachedStorageDomainDisksServer(getDelegate().getDisksResource());
+    @Path("permissions")
+    public V3AssignedPermissionsServer getPermissionsResource() {
+        return new V3AssignedPermissionsServer(getDelegate().getPermissionsResource());
     }
 
-    @Path("{action: (?:activate|deactivate)}/{oid}")
+    @Path("statistics")
+    public V3StatisticsServer getStatisticsResource() {
+        return new V3StatisticsServer(getDelegate().getStatisticsResource());
+    }
+
+    @Path("{action: (copy|export|move)}/{oid}")
     public V3ActionServer getActionResource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return new V3ActionServer(getDelegate().getActionResource(action, oid));
     }

@@ -9,7 +9,6 @@ import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
-import org.ovirt.engine.api.resource.StorageDomainDiskResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -17,23 +16,21 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendStorageDomainDiskResource
-        extends AbstractBackendActionableResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
-        implements StorageDomainDiskResource {
+public class AbstractBackendStorageDomainDiskResource
+        extends AbstractBackendActionableResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
 
-    private final Guid storageDomainId;
+    private static final String UNREGISTERED = "unregistered";
 
-    private static final String UNREGISTERED_CONSTRAINT_PARAMETER = "unregistered";
+    protected final Guid storageDomainId;
 
-    public BackendStorageDomainDiskResource(Guid storageDomainId, String diskId) {
+    public AbstractBackendStorageDomainDiskResource(Guid storageDomainId, String diskId) {
         super(diskId, Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
         this.storageDomainId = storageDomainId;
     }
 
-    @Override
     public Disk get() {
         Disk disk;
-        boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED_CONSTRAINT_PARAMETER, true, false);
+        boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED, true, false);
         if (unregistered) {
             VdcQueryReturnValue result = runQuery(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(guid));
             if (!result.getSucceeded() || result.getReturnValue() == null) {
@@ -44,8 +41,8 @@ public class BackendStorageDomainDiskResource
                 );
             }
             else {
-                // The disk was found in the first get which means it is already registered. We must return nothing since the unregistered
-                // parameter was passed.
+                // The disk was found in the first get which means it is already registered. We must return nothing
+                // since the unregistered parameter was passed.
                 return notFound();
             }
         }
@@ -73,42 +70,34 @@ public class BackendStorageDomainDiskResource
         return disk;
     }
 
-    @Override
     public Disk update(Disk disk) {
         return getDelegate().update(disk);
     }
 
-    @Override
     public Response remove() {
         return getDelegate().remove();
     }
 
-    @Override
     public StatisticsResource getStatisticsResource() {
         return getDelegate().getStatisticsResource();
     }
 
-    @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return getDelegate().getPermissionsResource();
     }
 
-    @Override
     public Response copy(Action action) {
         return getDelegate().copy(action);
     }
 
-    @Override
     public Response export(Action action) {
         return getDelegate().export(action);
     }
 
-    @Override
     public Response move(Action action) {
         return getDelegate().move(action);
     }
 
-    @Override
     public Response sparsify(Action action) {
         return getDelegate().sparsify(action);
     }
