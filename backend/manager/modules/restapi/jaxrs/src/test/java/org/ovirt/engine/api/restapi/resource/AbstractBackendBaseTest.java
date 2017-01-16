@@ -701,8 +701,14 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected void initBackendResource(BackendResource resource) {
+        // Set the references to the objects that JAX-RS injects via the @Context annotation:
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);
+
+        // Set them in the root of the API, as in some cases calls are delegated via this root:
+        BackendApiResource root = BackendApiResource.getInstance();
+        root.setMessageBundle(messageBundle);
+        root.setHttpHeaders(httpHeaders);
     }
 
     public static class SimpleMultivaluedMap<K, V> extends HashMap<K, List<V>> implements MultivaluedMap<K, V> {
