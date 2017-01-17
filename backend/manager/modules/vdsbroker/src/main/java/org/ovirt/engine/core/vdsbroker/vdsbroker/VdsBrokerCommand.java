@@ -173,6 +173,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         }
         AuditLogableBase auditLogableBase = Injector.injectMembers(new AuditLogableBase(vds.getId()));
         auditLogableBase.setVds(vds);
+        auditLogableBase.addCustomValue("CommandName", getCommandName());
         auditLogableBase.addCustomValue("message", getReturnStatus().message);
 
         auditLogDirector.log(auditLogableBase, AuditLogType.VDS_BROKER_COMMAND_FAILURE);

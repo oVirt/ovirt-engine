@@ -244,6 +244,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     @Override
     protected void logToAudit(){
         AuditLogableBase auditLogableBase = Injector.injectMembers(new AuditLogableBase());
+        auditLogableBase.addCustomValue("CommandName", getCommandName());
         auditLogableBase.addCustomValue("message", getReturnStatus().message);
 
         auditLogDirector.log(auditLogableBase, AuditLogType.IRS_BROKER_COMMAND_FAILURE);
