@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
@@ -22,8 +23,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -78,10 +77,6 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @WithElementId
     IntegerEntityModelLabelEditor stripeCountEditor;
 
-    @UiField
-    @Ignore
-    Label transportTypesLabel;
-
     @UiField(provided = true)
     @Path(value = "tcpTransportType.entity")
     @WithElementId
@@ -93,10 +88,6 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     EntityModelCheckBoxEditor rdmaTransportTypeEditor;
 
     @UiField
-    @Ignore
-    Label bricksLabel;
-
-    @UiField
     @WithElementId
     UiCommandButton addBricksButton;
 
@@ -105,24 +96,20 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @WithElementId
     Label bricksCountEditor;
 
-    @UiField
-    @Ignore
-    Label accessProtocolsLabel;
-
-    @UiField
+    @UiField (provided = true)
     @Path(value = "gluster_accecssProtocol.entity")
     @WithElementId
-    EntityModelCheckBoxEditor gluster_accecssProtocolEditor;
+    EntityModelCheckBoxEditor glusterAccessProtocolEditor;
 
-    @UiField
+    @UiField (provided = true)
     @Path(value = "nfs_accecssProtocol.entity")
     @WithElementId
-    EntityModelCheckBoxEditor nfs_accecssProtocolEditor;
+    EntityModelCheckBoxEditor nfsAccessProtocolEditor;
 
-    @UiField
+    @UiField (provided = true)
     @Path(value = "cifs_accecssProtocol.entity")
     @WithElementId
-    EntityModelCheckBoxEditor cifs_accecssProtocolEditor;
+    EntityModelCheckBoxEditor cifsAccessProtocolEditor;
 
     @UiField
     @Path(value = "allowAccess.entity")
@@ -131,29 +118,23 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
 
     @UiField
     @Ignore
-    Label allowAccessLabel;
+    Alert message;
 
     @UiField
     @Ignore
-    Label messageLabel;
+    Alert virtStoreOptimiseWarning;
 
-    @UiField
-    @Ignore
-    Label virtStoreOptimiseWarningLabel;
-
-    @UiField
+    @UiField (provided = true)
     @Path(value = "optimizeForVirtStore.entity")
     @WithElementId
     EntityModelCheckBoxEditor optimizeForVirtStoreEditor;
 
-    @UiField
+    @UiField (provided = true)
     @Path(value = "arbiterVolume.entity")
     @WithElementId
     EntityModelCheckBoxEditor arbiterVolumeEditor;
 
     private final Driver driver = GWT.create(Driver.class);
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public VolumePopupView(EventBus eventBus) {
@@ -162,20 +143,19 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         initCheckboxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
-        setVisibilities();
         initAddBricksButton();
-        initBricksCountLabele();
+        initBricksCountLabel();
         driver.initialize(this);
-    }
-
-    private void setVisibilities() {
-        virtStoreOptimiseWarningLabel.setVisible(false);
     }
 
     private void initCheckboxEditors() {
         tcpTransportTypeEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         rdmaTransportTypeEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        arbiterVolumeEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        glusterAccessProtocolEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        nfsAccessProtocolEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        cifsAccessProtocolEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        optimizeForVirtStoreEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     private void initListBoxEditors() {
@@ -196,31 +176,8 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         });
     }
 
-    private void initBricksCountLabele() {
+    private void initBricksCountLabel() {
         bricksCountEditor.setText(ConstantsManager.getInstance().getMessages().noOfBricksSelected(0));
-    }
-
-    private void localize() {
-        dataCenterEditor.setLabel(constants.dataCenterVolume());
-        clusterEditor.setLabel(constants.volumeClusterVolume());
-        nameEditor.setLabel(constants.clusterPopupNameLabel());
-        typeListEditor.setLabel(constants.typeVolume());
-        replicaCountEditor.setLabel(constants.replicaCountVolume());
-        stripeCountEditor.setLabel(constants.stripeCountVolume());
-        transportTypesLabel.setText(constants.transportTypeVolume());
-        tcpTransportTypeEditor.setLabel(constants.tcpVolume());
-        rdmaTransportTypeEditor.setLabel(constants.rdmaVolume());
-        bricksLabel.setText(constants.bricksVolume());
-        addBricksButton.setLabel(constants.addBricksVolume());
-        accessProtocolsLabel.setText(constants.accessProtocolsVolume());
-        gluster_accecssProtocolEditor.setLabel(constants.glusterVolume());
-        nfs_accecssProtocolEditor.setLabel(constants.nfsVolume());
-        cifs_accecssProtocolEditor.setLabel(constants.cifsVolume());
-        allowAccessEditor.setLabel(constants.allowAccessFromVolume());
-        allowAccessLabel.setText(constants.allowAccessFromLabelVolume());
-        optimizeForVirtStoreEditor.setLabel(constants.optimizeForVirtStoreVolume());
-        virtStoreOptimiseWarningLabel.setText(constants.newVolumeOptimiseForVirtStoreWarning());
-        arbiterVolumeEditor.setLabel(constants.arbiterVolume());
     }
 
     @Override
@@ -250,13 +207,13 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         object.getOptimizeForVirtStore().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                virtStoreOptimiseWarningLabel.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3);
+                virtStoreOptimiseWarning.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3);
             }
         });
         object.getReplicaCount().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                virtStoreOptimiseWarningLabel.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3);
+                virtStoreOptimiseWarning.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3);
             }
         });
     }
@@ -274,7 +231,8 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @Override
     public void setMessage(String message) {
         super.setMessage(message);
-        messageLabel.setText(message);
+        this.message.setText(message);
+        this.message.setVisible(message != null);
     }
 
 }

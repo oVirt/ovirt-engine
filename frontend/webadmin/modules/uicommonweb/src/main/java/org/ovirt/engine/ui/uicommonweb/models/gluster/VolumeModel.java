@@ -305,6 +305,7 @@ public class VolumeModel extends Model {
 
     private void updateArbiterAvailability() {
         getArbiterVolume().setIsAvailable(getTypeList().getSelectedItem().isReplicatedType()
+                && getCluster().getSelectedItem() != null
                 && Version.v4_1.compareTo(getCluster().getSelectedItem().getCompatibilityVersion()) >= 0);
     }
 
