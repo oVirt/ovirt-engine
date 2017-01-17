@@ -118,7 +118,7 @@ public class OAuthTokenServlet extends HttpServlet {
             String scope) throws Exception {
         log.debug("Entered issueTokenForLoginOnBehalf");
         String[] clientIdAndSecret = SsoUtils.getClientIdClientSecret(request);
-        String username = SsoUtils.getRequestParameter(request, "username", null);
+        String username = SsoUtils.getRequestParameter(request, "username");
         log.debug("Attempting to issueTokenForLoginOnBehalf for client: {}, user: {}", clientIdAndSecret[0], username);
         AuthenticationUtils.loginOnBehalf(ssoContext, request, username);
         String token = (String) request.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
