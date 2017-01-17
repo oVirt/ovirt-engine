@@ -561,6 +561,12 @@ public class VmDeviceUtils {
         }
     }
 
+    public void addVideoDevicesOnlyIfNoVideoDeviceExists(VmBase vmBase) {
+        if (getVideoDevices(vmBase.getId()).isEmpty()) {
+            addVideoDevices(vmBase, getNeededNumberOfVideoDevices(vmBase));
+        }
+    }
+
     /**
      * Returns video device spec params.
      *

@@ -15,6 +15,8 @@ import org.ovirt.engine.core.compat.Guid;
 @ValidateSupportsTransaction
 public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<GraphicsParameters> {
 
+    private List<GraphicsDevice> prevDevices;
+
     public AddGraphicsDeviceCommand(GraphicsParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -36,10 +38,11 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
             return false;
         }
 
-        VdcQueryReturnValue res = runInternalQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(getParameters().getDev().getVmId()));
+        VdcQueryReturnValue res = runInternalQuery(VdcQueryType.GetGraphicsDevices,
+                new IdQueryParameters(getVmBaseId()));
         if (res.getSucceeded()) {
-            List<GraphicsDevice> devices = res.getReturnValue();
-            for (GraphicsDevice device : devices) {
+            prevDevices = res.getReturnValue();
+            for (GraphicsDevice device : prevDevices) {
                 if (device.getGraphicsType().equals(getParameters().getDev().getGraphicsType())) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_ONLY_ONE_DEVICE_WITH_THIS_GRAPHICS_ALLOWED);
                 }
@@ -49,5 +52,9 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
         }
 
         return false;
+    }
+
+    protected List<GraphicsDevice> getPrevDevices() {
+        return prevDevices;
     }
 }
