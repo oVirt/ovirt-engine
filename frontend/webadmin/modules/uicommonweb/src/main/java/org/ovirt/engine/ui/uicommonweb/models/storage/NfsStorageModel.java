@@ -157,12 +157,12 @@ public class NfsStorageModel extends FileStorageModel {
         setVersion(new ListModel<EntityModel<NfsVersion>>());
 
         List<EntityModel<NfsVersion>> versionItems = new ArrayList<>();
-        // Items are shown in the UI in the order added; v3 is the default
+        // Items are shown in the UI in the order added; Auto negotiate is the default
 
+        versionItems.add(new EntityModel<>(constants.nfsVersionAutoNegotiate(), NfsVersion.AUTO));
         versionItems.add(new EntityModel<>(constants.nfsVersion3(), NfsVersion.V3));
         versionItems.add(new EntityModel<>(constants.nfsVersion4(), NfsVersion.V4));
         versionItems.add(new EntityModel<>(constants.nfsVersion41(), NfsVersion.V4_1));
-        versionItems.add(new EntityModel<>(constants.nfsVersionAutoNegotiate(), NfsVersion.AUTO));
         getVersion().setItems(versionItems);
 
         setRetransmissions(new EntityModel<Short>());
