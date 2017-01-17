@@ -74,7 +74,7 @@ public class HostJobInfo {
     }
 
     public enum HostJobType {
-        storage, v2v
+        storage, v2v, virt
     }
 
     public enum HostJobStatus {

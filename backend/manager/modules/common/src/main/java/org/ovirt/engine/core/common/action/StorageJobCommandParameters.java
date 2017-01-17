@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.action;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StorageJobCommandParameters extends ImagesActionsParametersBase {
+public class StorageJobCommandParameters extends ImagesActionsParametersBase implements HostJobCommandParameters {
     private Guid storageJobId;
-    private boolean jobStarted;
 
     public StorageJobCommandParameters() {
     }
@@ -19,5 +19,11 @@ public class StorageJobCommandParameters extends ImagesActionsParametersBase {
 
     public void setStorageJobId(Guid storageJobId) {
         this.storageJobId = storageJobId;
+    }
+
+    @JsonIgnore
+    @Override
+    public Guid getHostJobId() {
+        return getStorageJobId();
     }
 }

@@ -2,11 +2,11 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobType;
 
-public class StorageJobCallback extends HostJobCallback {
+public class VirtJobCallback extends HostJobCallback {
 
     @Override
     protected HostJobType getHostJobType() {
-        return HostJobType.storage;
+        return HostJobType.virt;
     }
 
 }
