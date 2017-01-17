@@ -113,10 +113,6 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     @Ignore
     FlowPanel messagePanel;
 
-    @UiField
-    @Ignore
-    Label disksAllocationLabel;
-
     interface WidgetStyle extends CssResource {
         String editorLabel();
     }
@@ -214,7 +210,6 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         quotaEditor.setLabel(constants.makeTemplateQuotaLabel());
         isTemplatePublicEditor.setLabel(constants.makeTemplateIsTemplatePublicEditorLabel());
         copyVmPermissions.setLabel(constants.copyVmPermissions());
-        disksAllocationLabel.setText(constants.disksAllocation());
         isSubTemplateEditor.setLabel(constants.createAsSubTemplate());
         baseTemplateEditor.setLabel(constants.rootTemplate());
         templateVersionNameEditor.setLabel(constants.templateVersionName());
@@ -252,8 +247,10 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     }
 
     private void addDiskAllocation(UnitVmModel model) {
-        disksAllocationView.edit(model.getDisksAllocationModel());
-        model.getDisksAllocationModel().setDisks(model.getDisks());
+        if (model.getDisks().size() > 0) {
+            disksAllocationView.edit(model.getDisksAllocationModel());
+            model.getDisksAllocationModel().setDisks(model.getDisks());
+        }
     }
 
     @Override
