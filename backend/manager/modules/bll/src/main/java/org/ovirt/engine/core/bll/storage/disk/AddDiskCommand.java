@@ -530,9 +530,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setStoragePoolId(getStorageDomain().getStoragePoolId());
-        if (getVm() != null) {
-            setVmSnapshotIdForDisk(parameters);
-        }
+        setVmSnapshotIdForDisk(parameters);
         VdcReturnValueBase tmpRetValue =
                 runInternalActionWithTasksContext(VdcActionType.AddImageFromScratch,
                         parameters,
@@ -597,7 +595,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
      * If disk is not allow to have snapshot no VM snapshot Id should be updated.
      */
     private void setVmSnapshotIdForDisk(AddImageFromScratchParameters parameters) {
-        if (getParameters().getDiskInfo().isAllowSnapshot()) {
+        if (getVm() == null) {
+            parameters.setVmSnapshotId(getParameters().getVmSnapshotId());
+        } else if (getParameters().getDiskInfo().isAllowSnapshot()) {
             parameters.setVmSnapshotId(snapshotDao.getId(getVmId(), SnapshotType.ACTIVE));
         }
     }

@@ -93,6 +93,9 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     private void setupParameters() {
         getParameters().setImageGroupID(Guid.newGuid());
         getParameters().setDestinationImageId(Guid.newGuid());
+        if (getParameters().getImportAsTemplate()) {
+            getParameters().setVmSnapshotId(Guid.newGuid());
+        }
         getParameters().setEntityInfo(
                 new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroupID()));
     }
@@ -122,6 +125,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setUsePassedDiskId(true);
         parameters.setUsePassedImageId(true);
+        parameters.setVmSnapshotId(getParameters().getVmSnapshotId());
         return parameters;
     }
 
