@@ -469,6 +469,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 ).getSucceeded();
     }
 
+    protected boolean shouldAddLease(VM vm) {
+        return vm.getLeaseStorageDomainId() != null;
+    }
+
     protected boolean addVmLease(Guid leaseStorageDomainId, Guid vmId) {
         if (leaseStorageDomainId == null) {
             return true;

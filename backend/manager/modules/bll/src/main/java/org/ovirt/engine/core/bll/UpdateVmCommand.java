@@ -956,6 +956,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        if (shouldAddLease(getVm()) && !FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED);
+        }
+
         return true;
     }
 
