@@ -1,0 +1,8 @@
+# This is an example file for oVirt metrics configuration.
+# To use this file, copy it to /etc/ovirt-engine/metrics/config.yml and edit.
+
+# Address of the central fluentd machine
+fluentd_fluentd_host: my.fluentd.host
+
+# Shared secret on the central fluentd machine
+fluentd_shared_key: my_shared_key

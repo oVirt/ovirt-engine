@@ -1,0 +1,6 @@
+#!/bin/sh
+
+script="$(readlink -f "$0")"
+scriptdir="$(dirname "${script}")"
+
+exec "${scriptdir}"/../../bin/ovirt-engine-hosts-ansible-inventory "$@"

@@ -1,0 +1,10 @@
+LoadPlugin statsd
+
+<Plugin statsd>
+  Host {{ collectd_read_statsd_bind_host }}
+  Port {{ collectd_read_statsd_port }}
+  DeleteCounters false
+  DeleteTimers   false
+  DeleteGauges   false
+  DeleteSets     false
+</Plugin>

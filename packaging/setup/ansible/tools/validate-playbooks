@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# This performs generic YAML validation, and catches things like indentation
+# errors that are ignored by ansible-lint.  We explicitly skip 'templates'
+# directories because yaml files there may contain jinja2 markup that would
+# confuse the linter.
+find * -name templates -prune -o \
+	\( -name '*.yml' -o -name '*.yaml' \)  -print0 |
+	xargs -0 yamllint || exit 1
+
+# This performs some additional ansible-specific tests.
+ansible-lint -x ANSIBLE0006 playbook.yml

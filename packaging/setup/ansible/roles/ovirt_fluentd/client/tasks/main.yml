@@ -1,0 +1,30 @@
+---
+- name: Set fluentd_port fact (non-ssl)
+  set_fact:
+    fluentd_port: 24224
+  when: not fluentd_use_ssl and not fluentd_port is defined
+
+- name: Set fluentd_port fact (ssl)
+  set_fact:
+    fluentd_port: 24284
+  when: fluentd_use_ssl and not fluentd_port is defined
+
+- name: Install non-ssl client
+  template:
+    src: forward_no_ssl.conf
+    dest: '{{ fluentd_config_parts_dir }}/100-source-forward.conf'
+    owner: '{{ fluentd_owner }}'
+    group: '{{ fluentd_group }}'
+    mode: '{{ fluentd_config_mode }}'
+  when: not fluentd_use_ssl
+  notify: restart fluentd
+
+- name: Install ssl client
+  template:
+    src: forward_ssl.conf
+    dest: '{{ fluentd_config_parts_dir }}/100-source-forward.conf'
+    owner: '{{ fluentd_owner }}'
+    group: '{{ fluentd_group }}'
+    mode: '{{ fluentd_config_mode }}'
+  when: fluentd_use_ssl
+  notify: restart fluentd

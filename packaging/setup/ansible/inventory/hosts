@@ -1,0 +1,10 @@
+[ovirt_nodes]
+
+[ovirt_nodes:children]
+# This one is populated by ./dynamic_ovirt_hosts
+ovirt_up_metrics_hosts
+
+[ovirt_nodes:vars]
+fluentd_use_ssl=True
+collectd_write_http_path=ovirt_collectd
+

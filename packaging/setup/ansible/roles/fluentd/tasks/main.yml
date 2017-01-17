@@ -1,0 +1,41 @@
+---
+- name: Ensure fluentd configuration directory exists
+  file:
+    path: '{{ fluentd_config_dir }}'
+    state: directory
+    owner: '{{ fluentd_owner }}'
+    group: '{{ fluentd_group }}'
+    mode: '{{ fluentd_config_dir_mode }}'
+
+- name: Ensure fluentd config.d directory exists
+  file:
+    path: '{{ fluentd_config_parts_dir }}'
+    state: directory
+    owner: '{{ fluentd_owner }}'
+    group: '{{ fluentd_group }}'
+    mode: '{{ fluentd_config_dir_mode }}'
+
+- name: Create fluentd.conf
+  template:
+    src: fluentd.conf
+    dest: '{{ fluentd_config_file }}'
+    owner: '{{ fluentd_owner }}'
+    group: '{{ fluentd_group }}'
+    mode: '{{ fluentd_config_mode }}'
+  notify: restart fluentd
+
+- name: Install fluentd certificate
+  copy:
+    content: '{{ fluentd_ca_cert }}'
+    dest: '{{ fluentd_ca_cert_path }}'
+    owner: '{{ fluentd_owner }}'
+    group: '{{ fluentd_group }}'
+    mode: '{{ fluentd_config_mode }}'
+  when: fluentd_use_ssl
+
+- name: Activate fluentd service
+  service:
+    name: '{{ fluentd_service_name }}'
+    state: running
+    enabled: true
+  when: manage_services|default(false)

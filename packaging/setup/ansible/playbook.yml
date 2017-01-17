@@ -1,0 +1,30 @@
+---
+- name: Get ca cert from local file
+  hosts: ovirt_nodes
+  roles:
+    - ovirt_fluentd/read_local_ca_cert
+
+- name: Configure Fluentd for oVirt
+  hosts: ovirt_nodes
+  roles:
+    - ovirt_fluentd/ovirt_host
+    - ovirt_fluentd/client
+    - ovirt_fluentd/http_input
+
+- name: Configure CollectD
+  hosts: ovirt_nodes
+  roles:
+    - collectd
+
+- name: Configure CollectD for oVirt
+  hosts: ovirt_nodes
+  roles:
+    - ovirt_collectd/ovirt_host
+    - ovirt_collectd/read_statsd
+    - ovirt_collectd/write_http
+
+- name: Create firewall rules
+  hosts: ovirt_nodes
+  roles:
+    - firewall/commit
+

@@ -1,0 +1,14 @@
+---
+- name: Enable collectd
+  service:
+    name: '{{ collectd_service_name }}'
+    state: started
+    enabled: yes
+  when: manage_services|default(false)
+
+- name: Set collectd_tcp_network_connect
+  seboolean:
+    name: collectd_tcp_network_connect
+    state: yes
+    persistent: yes
+  when: '"{{ ansible_selinux.mode }}" in ["enforcing", "permissive"]'

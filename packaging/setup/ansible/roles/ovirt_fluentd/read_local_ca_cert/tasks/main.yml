@@ -1,0 +1,11 @@
+---
+- name: Check if local fluentd certificate exists
+  delegate_to: localhost
+  stat:
+    path: "{{ local_fluentd_ca_cert_path }}"
+  register: local_fluentd_ca_cert_path_exists
+
+- name: Read fluentd certificate
+  set_fact:
+    fluentd_ca_cert: "{{ lookup('file', local_fluentd_ca_cert_path) }}"
+  when: local_fluentd_ca_cert_path_exists.stat.exists

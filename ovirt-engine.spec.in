@@ -1117,6 +1117,7 @@ fi
 %files hosts-ansible-inventory
 %license LICENSE
 %{engine_data}/setup/bin/ovirt-engine-hosts-ansible-inventory
+%{engine_data}/setup/ansible
 
 %changelog
 * Wed May 25 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 4.1.0
