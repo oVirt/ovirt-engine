@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -469,7 +470,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 ).getSucceeded();
     }
 
-    protected boolean shouldAddLease(VM vm) {
+    protected boolean shouldAddLease(VmStatic vm) {
         return vm.getLeaseStorageDomainId() != null;
     }
 
