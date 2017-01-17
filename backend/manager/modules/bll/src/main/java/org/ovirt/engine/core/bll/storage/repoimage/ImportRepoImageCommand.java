@@ -86,6 +86,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
         getParameters().setNextPhase(ImportRepoImageParameters.Phase.DOWNLOAD);
         persistCommand(getParameters().getParentCommand(), true);
+        setActionReturnValue(getParameters().getDiskImage().getId());
         setSucceeded(true);
     }
 
