@@ -701,7 +701,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (shouldAddLease(getVm()) && !FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
+        if (shouldAddLease(getParameters().getVmStaticData()) && !FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED);
         }
 
