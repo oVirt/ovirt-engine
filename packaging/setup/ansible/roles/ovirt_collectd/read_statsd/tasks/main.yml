@@ -1,0 +1,6 @@
+---
+- name: Place read_statsd-config
+  template:
+    src: 10-read-statsd.conf.j2
+    dest: /etc/collectd.d/10-read-statsd.conf
+  notify: restart collectd

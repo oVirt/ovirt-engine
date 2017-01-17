@@ -1,0 +1,7 @@
+---
+
+# The port that collectd will listen on for incoming statsd data
+collectd_read_statsd_port: 8125
+
+# The address that collectd will listen on for incoming statsd data
+collectd_read_statsd_bind_host: localhost

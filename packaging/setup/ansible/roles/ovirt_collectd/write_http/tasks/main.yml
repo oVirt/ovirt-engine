@@ -1,0 +1,14 @@
+---
+- name: Install collectd write_http plugins
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items: '{{ collectd_plugins_write_http }}'
+  when: manage_packages|default(false)
+  notify: restart collectd
+
+- name: Place write_http-config
+  template:
+    src: 10-write-http.conf.j2
+    dest: /etc/collectd.d/10-write_http.conf
+  notify: restart collectd

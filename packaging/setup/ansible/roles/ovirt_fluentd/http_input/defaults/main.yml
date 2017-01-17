@@ -1,0 +1,5 @@
+---
+# Address of the fluentd server host. Keep the default of fluentd's code.
+# The default conf file sets it to 8888.
+fluentd_http_input_port: 9880
+fluentd_http_input_bind_address: localhost

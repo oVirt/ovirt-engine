@@ -1,0 +1,9 @@
+---
+# A list of ports that should be exposed in the system firewall.
+# Roles register ports by appending them to this list using the
+# `set_fact` module.
+firewall_data: []
+
+# Set this to False if you do not want the playbooks to make changes
+# to the system firewall.
+firewall_manage_rules: true

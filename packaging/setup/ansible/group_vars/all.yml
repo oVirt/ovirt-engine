@@ -1,0 +1,9 @@
+---
+manage_packages: false
+manage_services: true
+manage_repos: false
+yum_repos_d: /etc/yum.repos.d
+
+fluentd_use_ssl: True
+
+collectd_write_http_path: 'ovirt_collectd'

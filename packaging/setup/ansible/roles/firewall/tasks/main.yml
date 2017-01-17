@@ -1,0 +1,24 @@
+---
+- name: Determine if firewalld should be used
+  command: >
+    systemctl is-enabled firewalld
+  register: firewall_use_firewalld_cmd
+  changed_when: false
+  failed_when: false
+
+- name: Determine if iptables should be used
+  command: >
+    systemctl is-enabled iptables
+  register: firewall_use_iptables_cmd
+  changed_when: false
+  failed_when: false
+
+- name: Set use_firewalld fact
+  set_fact:
+    firewall_use_firewalld: >-
+      {{ firewall_use_firewalld_cmd.rc == 0 }}
+
+- name: Set use_iptables fact
+  set_fact:
+    firewall_use_iptables: >-
+      {{ firewall_use_iptables_cmd.rc == 0 }}
