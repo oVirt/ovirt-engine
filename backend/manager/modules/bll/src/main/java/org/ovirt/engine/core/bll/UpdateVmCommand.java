@@ -956,11 +956,21 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (shouldAddLease(getParameters().getVmStaticData()) && !FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED);
+        if (shouldAddLease(getParameters().getVmStaticData())) {
+            if (!FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED);
+            }
+            if (!validateLeaseStorageDomain(getParameters().getVmStaticData().getLeaseStorageDomainId())) {
+                return false;
+            }
         }
 
         return true;
+    }
+
+    @Override
+    protected boolean shouldAddLease(VmStatic newVm) {
+        return super.shouldAddLease(newVm) && !newVm.getLeaseStorageDomainId().equals(getVm().getLeaseStorageDomainId());
     }
 
     protected boolean isDedicatedVdsExistOnSameCluster(VmBase vm,

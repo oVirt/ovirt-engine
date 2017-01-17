@@ -701,8 +701,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (shouldAddLease(getParameters().getVmStaticData()) && !FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED);
+        if (shouldAddLease(getParameters().getVmStaticData())) {
+            if (!FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED);
+            }
+            if (!validateLeaseStorageDomain(getParameters().getVmStaticData().getLeaseStorageDomainId())) {
+                return false;
+            }
         }
 
         return true;
