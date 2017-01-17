@@ -99,7 +99,7 @@ class Plugin(plugin.PluginBase):
                 ],
             ),
             prompt=True,
-            default=True
+            default=False
         )
 
     @plugin.event(
