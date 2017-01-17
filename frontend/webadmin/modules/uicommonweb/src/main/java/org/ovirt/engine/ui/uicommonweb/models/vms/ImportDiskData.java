@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -66,7 +68,12 @@ public class ImportDiskData {
 
     public StorageDomain getSelectedStorageDomain() {
         if (selectedStorageDomain == null && !storageDomains.isEmpty()) {
-            selectedStorageDomain = storageDomains.get(0);
+            selectedStorageDomain = Collections.max(storageDomains, new Comparator<StorageDomain>() {
+                @Override
+                public int compare(StorageDomain storageDomain1, StorageDomain storageDomain2) {
+                    return storageDomain1.getAvailableDiskSize().compareTo(storageDomain2.getAvailableDiskSize());
+                }
+            });
         }
 
         return selectedStorageDomain;
