@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -472,6 +474,12 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected boolean shouldAddLease(VmStatic vm) {
         return vm.getLeaseStorageDomainId() != null;
+    }
+
+    protected boolean validateLeaseStorageDomain(Guid leaseStorageDomainId) {
+        StorageDomain domain = storageDomainDao.getForStoragePool(leaseStorageDomainId, getStoragePoolId());
+        StorageDomainValidator validator = new StorageDomainValidator(domain);
+        return validate(validator.isDomainExistAndActive()) && validate(validator.isDataDomain());
     }
 
     protected boolean addVmLease(Guid leaseStorageDomainId, Guid vmId) {

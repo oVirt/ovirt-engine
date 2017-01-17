@@ -250,8 +250,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected void executeVmCommand() {
         if (shouldAddLease(getVm().getStaticData())) {
             if (FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
-                if (!addVmLease(getVm().getLeaseStorageDomainId(), getVm().getId())) {
+                if (validateLeaseStorageDomain(getVm().getLeaseStorageDomainId())) {
+                    if (!addVmLease(getVm().getLeaseStorageDomainId(), getVm().getId())) {
+                        getVm().setLeaseStorageDomainId(null);
+                    }
+                } else {
                     getVm().setLeaseStorageDomainId(null);
+                    auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_WITH_LEASE_STORAGE_DOMAIN);
                 }
             }
             else {
