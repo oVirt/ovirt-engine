@@ -68,7 +68,7 @@ public class BackendGraphicsConsoleHelper {
         return devices.stream()
             .filter(device -> device.getGraphicsType().equals(graphicsType))
             .findFirst()
-            .map(device -> resource.performAction(VdcActionType.RemoveGraphicsDevice, new GraphicsParameters(device)))
+            .map(device -> resource.performAction(VdcActionType.RemoveGraphicsAndVideoDevices, new GraphicsParameters(device)))
             .orElseThrow(() -> new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 

@@ -69,7 +69,7 @@ public class BackendVmGraphicsConsolesResource
     public Response add(GraphicsConsole console) {
         GraphicsDevice device = getMapper(GraphicsConsole.class, GraphicsDevice.class).map(console, null);
         device.setVmId(guid);
-        VdcReturnValueBase res = doCreateEntity(VdcActionType.AddGraphicsDevice, createAddGraphicsDeviceParams(device));
+        VdcReturnValueBase res = doCreateEntity(VdcActionType.AddGraphicsAndVideoDevices, createAddGraphicsDeviceParams(device));
 
         if (res != null && res.getSucceeded()) {
             return BackendGraphicsConsoleHelper.find(console, this::list);

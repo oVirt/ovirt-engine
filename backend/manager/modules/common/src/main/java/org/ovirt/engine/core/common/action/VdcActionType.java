@@ -474,6 +474,8 @@ public enum VdcActionType {
     AddGraphicsDevice(2250, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
     UpdateGraphicsDevice(2251, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
     RemoveGraphicsDevice(2252, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    AddGraphicsAndVideoDevices(2253, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    RemoveGraphicsAndVideoDevices(2254, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
 
     // Vm Host Device CRUD
     AddVmHostDevices(2350, ActionGroup.EDIT_ADMIN_VM_PROPERTIES, false, QuotaDependency.NONE),
