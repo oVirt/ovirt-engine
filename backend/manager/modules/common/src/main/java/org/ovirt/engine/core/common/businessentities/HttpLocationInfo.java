@@ -9,8 +9,12 @@ public class HttpLocationInfo extends ExternalLocationInfo {
     String url;
     Map<String, String> headers;
 
-    public HttpLocationInfo(String url, Map<String, String> headers) {
+    public HttpLocationInfo() {
         super(ConnectionMethod.HTTP);
+    }
+
+    public HttpLocationInfo(String url, Map<String, String> headers) {
+        this();
         this.url = url;
         this.headers = headers;
     }
