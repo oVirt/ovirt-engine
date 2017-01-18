@@ -83,11 +83,11 @@ public class Label implements Serializable, BusinessEntity<Guid>, Nameable, IVdc
     }
 
     public boolean addHost(VDS entity) {
-        return vms.add(entity.getId());
+        return hosts.add(entity.getId());
     }
 
     public boolean removeHost(VDS entity) {
-        return vms.remove(entity.getId());
+        return hosts.remove(entity.getId());
     }
 
     public boolean isReadOnly() {
