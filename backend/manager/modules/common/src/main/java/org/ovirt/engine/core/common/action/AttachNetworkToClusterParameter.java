@@ -36,7 +36,8 @@ public class AttachNetworkToClusterParameter extends NetworkClusterParameters {
                 networkCluster.isRequired(),
                 networkCluster.isMigration(),
                 networkCluster.isManagement(),
-                networkCluster.isGluster()
+                networkCluster.isGluster(),
+                networkCluster.isDefaultRoute()
         );
     }
 
@@ -47,6 +48,7 @@ public class AttachNetworkToClusterParameter extends NetworkClusterParameters {
                 NetworkStatus.NON_OPERATIONAL,
                 false,
                 true,
+                false,
                 false,
                 false,
                 false

@@ -207,7 +207,8 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
                 true,
                 true,
                 true,
-                false);
+                false,
+                true);
     }
 
     protected Network getManagementNetwork() {

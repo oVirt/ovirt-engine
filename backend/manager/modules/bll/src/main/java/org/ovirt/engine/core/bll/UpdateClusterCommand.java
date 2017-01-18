@@ -392,7 +392,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 true,
                 true,
                 true,
-                false);
+                false,
+                true);
         return networkCluster;
     }
 

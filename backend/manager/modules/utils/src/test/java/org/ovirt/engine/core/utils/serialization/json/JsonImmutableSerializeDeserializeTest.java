@@ -34,6 +34,7 @@ public class JsonImmutableSerializeDeserializeTest {
                         false,
                         false,
                         false,
+                        false,
                         false)));
 
         JsonObjectSerializer serializer = new JsonObjectSerializer();
@@ -54,6 +55,7 @@ public class JsonImmutableSerializeDeserializeTest {
                         Guid.newGuid(),
                         Guid.newGuid(),
                         NetworkStatus.NON_OPERATIONAL,
+                        false,
                         false,
                         false,
                         false,

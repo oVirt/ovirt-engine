@@ -103,6 +103,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
                 networkCluster.isRequired(),
                 false,
                 false,
+                false,
                 false));
 
         List<VDS> hosts = vdsDao.getAllForCluster(clusterId);

@@ -21,10 +21,11 @@ public class NetworkCluster implements IVdcQueryable, BusinessEntityWithStatus<N
     private boolean required;
     private boolean migration;
     private boolean management;
+    private boolean defaultRoute;
     private boolean gluster;
 
     public NetworkCluster() {
-        this(null, null, NetworkStatus.NON_OPERATIONAL, false, true, false, false, false);
+        this(null, null, NetworkStatus.NON_OPERATIONAL, false, true, false, false, false, false);
     }
 
     public NetworkCluster(boolean required) {
@@ -38,7 +39,8 @@ public class NetworkCluster implements IVdcQueryable, BusinessEntityWithStatus<N
             boolean required,
             boolean migration,
             boolean management,
-            boolean gluster) {
+            boolean gluster,
+            boolean defaultRoute) {
         this(required);
         id = new NetworkClusterId();
         id.setClusterId(clusterId);
@@ -48,6 +50,7 @@ public class NetworkCluster implements IVdcQueryable, BusinessEntityWithStatus<N
         this.migration = migration;
         this.management = management;
         this.gluster = gluster;
+        this.defaultRoute = defaultRoute;
     }
 
     @Override
@@ -126,6 +129,14 @@ public class NetworkCluster implements IVdcQueryable, BusinessEntityWithStatus<N
         this.gluster = gluster;
     }
 
+    public boolean isDefaultRoute() {
+        return defaultRoute;
+    }
+
+    public void setDefaultRoute(boolean defaultRoute) {
+        this.defaultRoute = defaultRoute;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();
@@ -141,6 +152,7 @@ public class NetworkCluster implements IVdcQueryable, BusinessEntityWithStatus<N
                 .append("migration", isMigration())
                 .append("management", isManagement())
                 .append("gluster", isGluster())
+                .append("defaultRoute", isDefaultRoute())
                 .build();
     }
 
@@ -153,7 +165,8 @@ public class NetworkCluster implements IVdcQueryable, BusinessEntityWithStatus<N
                 required,
                 migration,
                 management,
-                gluster
+                gluster,
+                defaultRoute
         );
     }
 
@@ -173,7 +186,8 @@ public class NetworkCluster implements IVdcQueryable, BusinessEntityWithStatus<N
                 && required == other.required
                 && migration == other.migration
                 && management == other.management
-                && gluster == other.gluster;
+                && gluster == other.gluster
+                && defaultRoute == other.defaultRoute;
     }
 
 }
