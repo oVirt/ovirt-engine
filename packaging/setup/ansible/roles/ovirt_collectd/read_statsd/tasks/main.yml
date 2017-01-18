@@ -4,3 +4,12 @@
     src: 10-read-statsd.conf.j2
     dest: /etc/collectd.d/10-read-statsd.conf
   notify: restart collectd
+
+- name: Allow collectd to listen on statsd port
+  seport:
+    ports: "{{ collectd_read_statsd_port }}"
+    proto: udp
+    setype: collectd_port_t
+    state: present
+  when: '"{{ ansible_selinux.mode }}" in ["enforcing", "permissive"]'
+  notify: restart collectd
