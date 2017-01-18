@@ -324,6 +324,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                     enableWidget(getWidget());
                     disk.getDefaultCommand().setIsExecutionAllowed(true);
                     disk.setIsChangeable(true);
+                    driver.edit(disk);
                 }
             }
         });

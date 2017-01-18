@@ -2046,5 +2046,9 @@ public interface UIConstants extends Constants {
     String noManagedGlusterVolumeMessage();
 
     String vmLeasesSupported();
+
+    String discardIsNotSupportedByUnderlyingStorage();
+
+    String theUnderlyingStorageDoesNotSupportDiscardWhenWipeAfterDeleteIsEnabled();
 }
 

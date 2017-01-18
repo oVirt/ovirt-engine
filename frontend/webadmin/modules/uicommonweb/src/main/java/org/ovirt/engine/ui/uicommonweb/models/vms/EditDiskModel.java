@@ -74,6 +74,7 @@ public class EditDiskModel extends AbstractDiskModel {
         }
 
         updateReadOnlyChangeability();
+        updatePassDiscardChangeability();
         updateWipeAfterDeleteChangeability();
     }
 
