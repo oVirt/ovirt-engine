@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
@@ -250,6 +251,9 @@ public abstract class AbstractDiskModel extends DiskModel {
 
         setIsWipeAfterDelete(new EntityModel<Boolean>());
         getIsWipeAfterDelete().setEntity(false);
+        getIsWipeAfterDelete().getEntityChangedEvent().addListener(this);
+
+        getPassDiscard().getEntityChangedEvent().addListener(this);
 
         setIsShareable(new EntityModel<Boolean>());
         getIsShareable().setEntity(false);
@@ -698,6 +702,8 @@ public abstract class AbstractDiskModel extends DiskModel {
         getStorageDomain().setIsAvailable(isDiskImage || isCinderDisk);
         getVolumeType().setIsAvailable(isDiskImage);
         getIsWipeAfterDelete().setIsAvailable(isDiskImage);
+        updatePassDiscardChangeability();
+        updateWipeAfterDeleteChangeability();
         getHost().setIsAvailable(isLunDisk);
         getStorageType().setIsAvailable(isLunDisk);
         getDataCenter().setIsAvailable(!isInVm);
@@ -740,6 +746,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         updateReadOnlyChangeability();
         updatePlugChangeability();
         updatePassDiscardChangeability();
+        updateWipeAfterDeleteChangeability();
     }
 
     private void updatePassDiscardAvailability() {
@@ -774,8 +781,60 @@ public abstract class AbstractDiskModel extends DiskModel {
         }
     }
 
-    private void updatePassDiscardChangeability() {
-        getPassDiscard().setIsChangeable(isEditEnabled());
+    protected void updatePassDiscardChangeability() {
+        if (isEditEnabled() && getPassDiscard().getIsAvailable()) {
+            if (getDiskStorageType().getEntity() == DiskStorageType.LUN) {
+                updatePassDiscardChangeabilityForDirectLun();
+            } else if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
+                updatePassDiscardChangeabilityForDiskImage();
+            }
+        }
+    }
+
+    private void updatePassDiscardChangeabilityForDirectLun() {
+        // New direct lun.
+        if (getSanStorageModelBase() != null && getSanStorageModelBase().getAddedLuns() != null) {
+            if (getSanStorageModelBase().getAddedLuns().isEmpty()) {
+                getPassDiscard().setIsChangeable(false);
+            } else {
+                getPassDiscard().setIsChangeable(
+                        isLunSupportDiscard(getSanStorageModelBase().getAddedLuns().get(0).getEntity()),
+                        constants.discardIsNotSupportedByUnderlyingStorage());
+                if (!getPassDiscard().getIsChangable()) {
+                    getPassDiscard().setEntity(false);
+                }
+            }
+        } else if (getLunDisk() != null) {
+            // Edit an existing direct lun.
+            getPassDiscard().setIsChangeable(isLunSupportDiscard(getLunDisk().getLun()),
+                    constants.discardIsNotSupportedByUnderlyingStorage());
+        }
+    }
+
+    private boolean isLunSupportDiscard(LUNs lun) {
+        Long discardMaxSize = lun.getDiscardMaxSize();
+        return discardMaxSize != null && discardMaxSize > 0;
+    }
+
+    private void updatePassDiscardChangeabilityForDiskImage() {
+        if (getStorageDomain().getSelectedItem() == null) {
+            return;
+        }
+        if (getStorageDomain().getSelectedItem().getStorageType().isFileDomain()) {
+            getPassDiscard().setIsChangeable(true);
+        } else if (getStorageDomain().getSelectedItem().getStorageType().isBlockDomain()) {
+            if (!getStorageDomain().getSelectedItem().getSupportsDiscard()) {
+                getPassDiscard().setIsChangeable(false, constants.discardIsNotSupportedByUnderlyingStorage());
+                getPassDiscard().setEntity(false);
+            } else {
+                getPassDiscard().setIsChangeable(!getIsWipeAfterDelete().getEntity() ||
+                        getStorageDomain().getSelectedItem().getSupportsDiscardZeroesData(),
+                        constants.theUnderlyingStorageDoesNotSupportDiscardWhenWipeAfterDeleteIsEnabled());
+                if (!getPassDiscard().getIsChangable()) {
+                    getPassDiscard().setEntity(false);
+                }
+            }
+        }
     }
 
     protected void updateScsiPassthroughChangeability() {
@@ -846,7 +905,18 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     protected void updateWipeAfterDeleteChangeability() {
-        getIsWipeAfterDelete().setIsChangeable(!isVmAttachedToPool());
+        if (!isVmAttachedToPool()) {
+            getIsWipeAfterDelete().setIsChangeable(
+                    !(getDiskStorageType().getEntity() == DiskStorageType.IMAGE &&
+                            getStorageDomain().getSelectedItem() != null &&
+                            getStorageDomain().getSelectedItem().getStorageType().isBlockDomain() &&
+                            getPassDiscard().getIsChangable() &&
+                            getPassDiscard().getEntity() &&
+                            !getStorageDomain().getSelectedItem().getSupportsDiscardZeroesData()),
+                    constants.theUnderlyingStorageDoesNotSupportDiscardWhenWipeAfterDeleteIsEnabled());
+        } else {
+            getIsWipeAfterDelete().setIsChangeable(false);
+        }
     }
 
     private void updatePlugChangeability() {
@@ -927,6 +997,8 @@ public abstract class AbstractDiskModel extends DiskModel {
         updateDiskProfiles(getDataCenter().getSelectedItem());
         updateCinderVolumeTypes();
         updatePassDiscardAvailability();
+        updatePassDiscardChangeability();
+        updateWipeAfterDeleteChangeability();
     }
 
     public boolean validate() {
@@ -1100,6 +1172,10 @@ public abstract class AbstractDiskModel extends DiskModel {
                 updateScsiReservationChangeability();
             } else if (sender == getDiskStorageType()) {
                 diskStorageType_EntityChanged();
+            } else if (sender == getIsWipeAfterDelete()) {
+                updatePassDiscardChangeability();
+            } else if (sender == getPassDiscard()) {
+                updateWipeAfterDeleteChangeability();
             }
         }
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {

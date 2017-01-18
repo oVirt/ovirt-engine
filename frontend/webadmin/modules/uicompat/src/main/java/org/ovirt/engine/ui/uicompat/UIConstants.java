@@ -2046,5 +2046,9 @@ public interface UIConstants extends Constants {
     String storageDomainDRTitle();
 
     String noManagedGlusterVolumeMessage();
+
+    String discardIsNotSupportedByUnderlyingStorage();
+
+    String theUnderlyingStorageDoesNotSupportDiscardWhenWipeAfterDeleteIsEnabled();
 }
 
