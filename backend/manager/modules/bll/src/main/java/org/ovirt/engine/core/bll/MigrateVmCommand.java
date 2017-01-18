@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -120,6 +121,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     /**
      * @return Migration error text which is used in audit log message, if the migration status was queried from VDSM.
      */
+    @SuppressWarnings("unused") // used by AuditLogger via reflection
     public String getDueToMigrationError() {
         if (migrationErrorCode == null) {
             return " ";
@@ -146,7 +148,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
     }
 
-    protected boolean initVdss() {
+    private boolean initVdss() {
         try {
             setVdsIdRef(getVm().getRunOnVds());
             Optional<Guid> vdsToRunOn = getVdsToRunOn();
@@ -493,6 +495,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
     }
 
+    @SuppressWarnings({ "unused", "WeakerAccess" }) // used by AuditLogger via reflection
     protected void getDowntime() {
         try {
             VDSReturnValue retVal = runVdsCommand(VDSCommandType.MigrateStatus,
@@ -627,7 +630,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return null;
     }
 
-    protected boolean migrationInterfaceUp(VdsNetworkInterface nic, List<VdsNetworkInterface> nics) {
+    private boolean migrationInterfaceUp(VdsNetworkInterface nic, List<VdsNetworkInterface> nics) {
         if (NetworkCommonUtils.isVlan(nic)) {
             String physicalNic = nic.getBaseInterface();
             for (VdsNetworkInterface iface : nics) {
@@ -758,15 +761,19 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId()))
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
-                && validate(new DiskImagesValidator(
-                        DisksFilter.filterImageDisks(diskDao.getAllForVm(vm.getId(), true),
-                                ONLY_NOT_SHAREABLE,
-                                ONLY_ACTIVE)).diskImagesNotLocked())
+                && validate(new DiskImagesValidator(callFilterImageDisks(vm)).diskImagesNotLocked())
                 && schedulingManager.canSchedule(getCluster(),
                         getVm(),
                         getVdsBlackList(),
                         getVdsWhiteList(),
                         getReturnValue().getValidationMessages());
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<DiskImage> callFilterImageDisks(VM vm) {
+        return DisksFilter.filterImageDisks(diskDao.getAllForVm(vm.getId(), true),
+                ONLY_NOT_SHAREABLE,
+                ONLY_ACTIVE);
     }
 
     @Override
@@ -821,16 +828,19 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return destinationVdsId != null ? destinationVdsId : super.getCurrentVdsId();
     }
 
+    @SuppressWarnings("unused") // used by AuditLogger via reflection
     // Duration: time that took for the actual migration
     public String getDuration() {
         return DurationFormatUtils.formatDurationWords(new Date().getTime() - getParameters().getStartTime().getTime(), true, true);
     }
 
+    @SuppressWarnings("unused") // used by AuditLogger via reflection
     // TotalDuration: time that took migration including retries (can be identical to Duration)
     public String getTotalDuration() {
         return DurationFormatUtils.formatDurationWords(new Date().getTime() - getParameters().getTotalMigrationTime().getTime(), true, true);
     }
 
+    @SuppressWarnings("unused") // used by AuditLogger via reflection
     // ActualDowntime: returns the actual time that the vm was offline (not available for access)
     public String getActualDowntime() {
         return (actualDowntime == null) ? "(N/A)" : actualDowntime + "ms";
@@ -838,9 +848,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected String getLockMessage() {
-        StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_MIGRATED.name());
-        builder.append(String.format("$VmName %1$s", getVmName()));
-        return builder.toString();
+        return String.format("%1$s$VmName %2$s",
+                EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_MIGRATED.name(),
+                getVmName());
     }
 
     // hosts that cannot be selected for scheduling (failed hosts + VM source host)
