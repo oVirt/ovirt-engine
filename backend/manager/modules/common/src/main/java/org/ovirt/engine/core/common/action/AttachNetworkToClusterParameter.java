@@ -19,17 +19,38 @@ public class AttachNetworkToClusterParameter extends NetworkClusterParameters {
     }
 
     public AttachNetworkToClusterParameter(Guid clusterId, Network net) {
-        super(new NetworkCluster(clusterId,
+        super(createNetworkCluster(clusterId, net));
+        _network = net;
+    }
+
+    private static NetworkCluster createNetworkCluster(Guid clusterId, Network net) {
+        NetworkCluster networkCluster = net.getCluster();
+        if (networkCluster == null) {
+            return createNetworkClusterWithDefaultValues(clusterId, net);
+        }
+
+        return new NetworkCluster(clusterId,
                 net.getId(),
                 NetworkStatus.NON_OPERATIONAL,
+                networkCluster.isDisplay(),
+                networkCluster.isRequired(),
+                networkCluster.isMigration(),
+                networkCluster.isManagement(),
+                networkCluster.isGluster()
+        );
+    }
 
-                // Cluster attachment data can sometimes be missing, so use defaults in that case.
-                net.getCluster() == null ? false : net.getCluster().isDisplay(),
-                net.getCluster() == null ? true : net.getCluster().isRequired(),
-                net.getCluster() == null ? false : net.getCluster().isMigration(),
-                net.getCluster() == null ? false : net.getCluster().isManagement(),
-                net.getCluster() == null ? false : net.getCluster().isGluster()));
-        _network = net;
+    // Cluster attachment data can sometimes be missing, so use defaults in that case.
+    private static NetworkCluster createNetworkClusterWithDefaultValues(Guid clusterId, Network net) {
+        return new NetworkCluster(clusterId,
+                net.getId(),
+                NetworkStatus.NON_OPERATIONAL,
+                false,
+                true,
+                false,
+                false,
+                false
+        );
     }
 
     public Network getNetwork() {
