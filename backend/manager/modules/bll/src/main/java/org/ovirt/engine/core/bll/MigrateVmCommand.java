@@ -277,24 +277,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                     getAllVmPassthroughNics(),
                     PlugAction.PLUG);
 
-            boolean plugOfAllMacsSucceeded = true;
-            log.debug("About to call {} with parameters: {}",
-                    VdcActionType.ActivateDeactivateVmNic,
-                    Arrays.toString(parametersList.toArray()));
-            Map<Guid, String> vnicToVfMap = getVnicToVfMap(getDestinationVdsId());
-            List<VmNic> notRepluggedNics = new ArrayList<>();
-
-            for (ActivateDeactivateVmNicParameters parameter : parametersList) {
-                VdcReturnValueBase returnValue = runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameter);
-
-                boolean nicPlugSucceeded = returnValue.getSucceeded();
-                plugOfAllMacsSucceeded &= nicPlugSucceeded;
-                if (!nicPlugSucceeded) {
-                    notRepluggedNics.add(parameter.getNic());
-                }
-            }
-
-            if (!plugOfAllMacsSucceeded) {
+            List<VmNic> notRepluggedNics = replugNics(parametersList);
+            if (!notRepluggedNics.isEmpty()) {
+                Map<Guid, String> vnicToVfMap = getVnicToVfMap(getDestinationVdsId());
                 Set<String> vfsToUnregister = notRepluggedNics.stream()
                         .map(VmNic::getId)
                         .map(vnicToVfMap::get)
@@ -311,6 +296,24 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             log.error("Failed to plug nics back after migration of vm {}: {}", getVmName(), e.getMessage());
             log.debug("Exception: ", e);
         }
+    }
+
+    private List<VmNic> replugNics(List<ActivateDeactivateVmNicParameters> parametersList) {
+        log.debug("About to call {} with parameters: {}",
+                VdcActionType.ActivateDeactivateVmNic,
+                Arrays.toString(parametersList.toArray()));
+
+        List<VmNic> notRepluggedNics = new ArrayList<>();
+
+        for (ActivateDeactivateVmNicParameters parameter : parametersList) {
+            VdcReturnValueBase returnValue = runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameter);
+
+            boolean nicPlugSucceeded = returnValue.getSucceeded();
+            if (!nicPlugSucceeded) {
+                notRepluggedNics.add(parameter.getNic());
+            }
+        }
+        return notRepluggedNics;
     }
 
     private List<ActivateDeactivateVmNicParameters> createActivateDeactivateVmNicParameters(List<VmNetworkInterface> vmNics,
