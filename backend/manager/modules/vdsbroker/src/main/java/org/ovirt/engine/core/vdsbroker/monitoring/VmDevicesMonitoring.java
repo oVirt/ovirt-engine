@@ -231,6 +231,9 @@ public class VmDevicesMonitoring implements BackendService {
                 }
                 getDevicesToProcess().forEach(device -> processDevice(this, device));
                 saveDevicesToDb(this);
+            } catch (RuntimeException ex) {
+                log.error("Failed during vm devices monitoring on host {} error is: {}", vdsId, ex);
+                log.error("Exception:", ex);
             } finally {
                 unlockTouchedVms();
             }
