@@ -3,5 +3,4 @@
   template:
     src: 20-builtins-conf-for-ovirt.conf.j2
     dest: /etc/collectd.d/20-builtins-conf-for-ovirt.conf
-  when: collectd_configure_builtins_for_ovirt|default(false)
   notify: restart collectd
