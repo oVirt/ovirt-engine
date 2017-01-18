@@ -41,58 +41,65 @@ public class StorageJobCallback extends ChildCommandsCallbackBase {
         CommandEntity commandEntity = CommandCoordinatorUtil.getCommandEntity(cmdId);
         StorageJobCommandParameters cmdParams = (StorageJobCommandParameters) commandEntity.getCommandParameters();
         Guid job = cmdParams.getStorageJobId();
-        Guid vdsId = cmdParams.getVdsRunningOn();
         HostJobStatus jobStatus = null;
+        Guid vdsId = cmdParams.getVdsRunningOn();
         VDS vds = getVdsDao().get(vdsId);
-        boolean jobsReportedByHost = false;
+        if (vds != null) {
+            boolean jobsReportedByHost = false;
 
-        if (vds.getStatus() == VDSStatus.Up) {
-            HostJobInfo jobInfo;
-            try {
-                jobInfo = pollStorageJob(job, vdsId);
-            } catch (Exception e) {
-                // We shouldn't get an error when polling the host job (as it access the local storage only).
-                // If we got an error, it will usually be a network error - so the host will either move
-                // to Non Responsive or the polling will succeed on the next attempt.
-                log.warn("Command {} id: '{}': Failed to poll the job '{}' on host '{}' (id: '{}'), will retry soon",
+            if (vds.getStatus() == VDSStatus.Up) {
+                HostJobInfo jobInfo;
+                try {
+                    jobInfo = pollStorageJob(job, vdsId);
+                } catch (Exception e) {
+                    // We shouldn't get an error when polling the host job (as it access the local storage only).
+                    // If we got an error, it will usually be a network error - so the host will either move
+                    // to Non Responsive or the polling will succeed on the next attempt.
+                    log.warn("Command {} id: '{}': Failed to poll the job '{}' on host '{}' (id: '{}'), will retry soon",
+                            commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
+                    return;
+                }
+
+                if (jobInfo != null) {
+                    handlePolledJobInfo((StorageJobCommand<?>) getCommand(cmdId), jobInfo);
+                    jobStatus = jobInfo.getStatus();
+                    updateStepProgress(commandEntity.getCommandContext().getStepId(), jobInfo.getProgress());
+                }
+                jobsReportedByHost = true;
+            } else {
+                log.warn("Command {} id: '{}': can't poll the job '{}' as host '{}' (id: '{}') isn't in status UP",
+                        commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
+            }
+
+            // If we couldn't determine job status by polling the host, we can try to determine it using different methods.
+            if (jobStatus == null) {
+                jobStatus = handleUndeterminedJobStatus((StorageJobCommand<?>) getCommand(cmdId), jobsReportedByHost);
+            }
+
+            if (jobStatus == null) {
+                log.info("Command {} id: '{}': couldn't get the status of job '{}' on host '{}' (id: '{}'), assuming it's " +
+                                "still running",
                         commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
                 return;
             }
 
-            if (jobInfo != null) {
-                handlePolledJobInfo((StorageJobCommand<?>) getCommand(cmdId), jobInfo);
-                jobStatus = jobInfo.getStatus();
-                updateStepProgress(commandEntity.getCommandContext().getStepId(), jobInfo.getProgress());
+            if (jobStatus.isAlive()) {
+                log.info("Command {} id: '{}': waiting for job '{}' on host '{}' (id: '{}') to complete",
+                        commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
+                return;
             }
-            jobsReportedByHost = true;
+
+
+            log.info("Command {} id: '{}': job '{}' execution was completed with VDSM job status '{}'",
+                    commandEntity.getCommandType(), cmdId, job, jobStatus);
+
+            if (command.shouldUpdateStepProgress() && jobStatus == HostJobStatus.done) {
+                updateStepProgress(commandEntity.getCommandContext().getStepId(), MAX_PROGRESS);
+            }
         } else {
-            log.warn("Command {} id: '{}': can't poll the job '{}' as host '{}' (id: '{}') isn't in status UP",
-                    commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
-        }
-
-        // If we couldn't determine job status by polling the host, we can try to determine it using different methods.
-        if (jobStatus == null) {
-            jobStatus = handleUndeterminedJobStatus((StorageJobCommand<?>) getCommand(cmdId), jobsReportedByHost);
-        }
-
-        if (jobStatus == null) {
-            log.info("Command {} id: '{}': couldn't get the status of job '{}' on host '{}' (id: '{}'), assuming it's " +
-                    "still running",
-                    commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
-            return;
-        }
-
-        if (jobStatus.isAlive()) {
-            log.info("Command {} id: '{}': waiting for job '{}' on host '{}' (id: '{}') to complete",
-                    commandEntity.getCommandType(), cmdId, job, vds.getName(), vdsId);
-            return;
-        }
-
-        log.info("Command {} id: '{}': job '{}' execution was completed with VDSM job status '{}'",
-                commandEntity.getCommandType(), cmdId, job, jobStatus);
-
-        if (command.shouldUpdateStepProgress() && jobStatus == HostJobStatus.done) {
-            updateStepProgress(commandEntity.getCommandContext().getStepId(), MAX_PROGRESS);
+            jobStatus = HostJobStatus.failed;
+            log.info("Command {} id: '{}': job '{}' wasn't executed on any host, considering the job status as failed",
+                    commandEntity.getCommandType(), cmdId, job);
         }
 
         command.getParameters().setTaskGroupSuccess(status == CommandExecutionStatus.EXECUTED
