@@ -117,10 +117,6 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
-        if (!isInstanceType && !isBlankTemplate) {
-            vmTemplateHandler.updateDisksFromDb(oldTemplate);
-        }
-
         if (!StringUtils.equals(oldTemplate.getName(), getVmTemplate().getName())) {
             if (!getVmTemplate().isBaseTemplate()) {
                 // template version should always have the name of the base template
