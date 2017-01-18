@@ -493,8 +493,10 @@ public class VmDevicesMonitoring implements BackendService {
 
             if (deviceId == null || dbDevice == null) {
                 VmDevice newDevice = buildNewVmDevice(vmId, vdsmDevice, logicalName);
-                change.addDeviceToAdd(newDevice);
-                deviceId = newDevice.getDeviceId();
+                if (newDevice != null) {
+                    change.addDeviceToAdd(newDevice);
+                    processedDeviceIds.add(newDevice.getDeviceId());
+                }
             } else {
                 dbDevice.setIsPlugged(Boolean.TRUE);
                 dbDevice.setAddress(vdsmDevice.get(VdsProperties.Address).toString());
@@ -502,9 +504,8 @@ public class VmDevicesMonitoring implements BackendService {
                 dbDevice.setLogicalName(logicalName);
                 dbDevice.setHostDevice(StringUtils.defaultString((String) vdsmDevice.get(VdsProperties.HostDev)));
                 change.addDeviceToUpdate(dbDevice);
+                processedDeviceIds.add(deviceId);
             }
-
-            processedDeviceIds.add(deviceId);
         }
 
         handleRemovedDevices(change, vmId, processedDeviceIds, dbDevices);
