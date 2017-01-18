@@ -631,32 +631,36 @@ public class VmDevicesMonitoring implements BackendService {
     private VmDevice buildNewVmDevice(Guid vmId, Map device, String logicalName) {
         String typeName = (String) device.get(VdsProperties.Type);
         String deviceName = (String) device.get(VdsProperties.Device);
-        VmDevice newDevice = null;
 
         // do not allow null or empty device or type values
         if (StringUtils.isEmpty(typeName) || StringUtils.isEmpty(deviceName)) {
             log.error("Empty or NULL values were passed for a VM '{}' device, Device is skipped", vmId);
-        } else {
-            String address = device.get(VdsProperties.Address).toString();
-            String alias = StringUtils.defaultString((String) device.get(VdsProperties.Alias));
-            Object specParams = device.get(VdsProperties.SpecParams);
-            Guid newDeviceId = Guid.newGuid();
-            VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
-            Object deviceReadonlyValue = device.get(VdsProperties.ReadOnly);
-            boolean isReadOnly = deviceReadonlyValue != null && Boolean.getBoolean((String) deviceReadonlyValue);
-            newDevice = new VmDevice(id, VmDeviceGeneralType.forValue(typeName), deviceName, address,
-                    0,
-                    specParams == null ? new HashMap<>() : (Map<String, Object>) specParams,
-                    false,
-                    true,
-                    isReadOnly,
-                    alias,
-                    null,
-                    null,
-                    logicalName);
-            log.debug("New device was marked for adding to VM '{}' Devices : '{}'", vmId, newDevice);
+            return null;
         }
 
+        String address = device.get(VdsProperties.Address).toString();
+        String alias = StringUtils.defaultString((String) device.get(VdsProperties.Alias));
+        Map<String, Object> specParams = (Map<String, Object>) device.get(VdsProperties.SpecParams);
+        specParams = specParams != null ? specParams : new HashMap<>();
+        Guid newDeviceId = Guid.newGuid();
+        VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
+        Object deviceReadonlyValue = device.get(VdsProperties.ReadOnly);
+        boolean isReadOnly = deviceReadonlyValue != null && Boolean.getBoolean((String) deviceReadonlyValue);
+        VmDevice newDevice = new VmDevice(
+                id,
+                VmDeviceGeneralType.forValue(typeName),
+                deviceName,
+                address,
+                0,
+                specParams,
+                false,
+                true,
+                isReadOnly,
+                alias,
+                null,
+                null,
+                logicalName);
+        log.debug("New device was marked for adding to VM '{}' Device : '{}'", vmId, newDevice);
         return newDevice;
     }
 
