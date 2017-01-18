@@ -12,10 +12,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -48,6 +51,9 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute
 public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
 
+    @Inject
+    private PreviousHostedEngineHost previousHostedEngineHost;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -76,7 +82,8 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         boolean valid =
                 fenceValidator.isHostExists(getVds(), messages)
                         && fenceValidator.isPowerManagementEnabledAndLegal(getVds(), getCluster(), messages)
-                        && fenceValidator.isStartupTimeoutPassed(messages)
+                        && (previousHostedEngineHost.isPreviousHostId(getVds().getId())
+                                || fenceValidator.isStartupTimeoutPassed(messages))
                         && isQuietTimeFromLastActionPassed()
                         && fenceValidator.isProxyHostAvailable(getVds(), messages);
         if (!valid) {
