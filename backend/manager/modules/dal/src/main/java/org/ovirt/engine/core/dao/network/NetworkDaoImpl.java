@@ -203,6 +203,7 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
             entity.getCluster().setMigration(rs.getBoolean("migration"));
             entity.getCluster().setManagement(rs.getBoolean("management"));
             entity.getCluster().setGluster(rs.getBoolean("is_gluster"));
+            entity.getCluster().setDefaultRoute(rs.getBoolean("default_route"));
 
             return entity;
         }

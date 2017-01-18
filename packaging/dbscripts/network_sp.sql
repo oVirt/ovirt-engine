@@ -290,7 +290,8 @@ CREATE TYPE networkViewClusterType AS (
         required BOOLEAN,
         migration BOOLEAN,
         management BOOLEAN,
-        is_gluster BOOLEAN
+        is_gluster BOOLEAN,
+        default_route BOOLEAN
         );
 
 CREATE OR REPLACE FUNCTION GetAllNetworkByClusterId (
@@ -326,7 +327,8 @@ BEGIN
         network_cluster.required,
         network_cluster.migration,
         network_cluster.management,
-        network_cluster.is_gluster
+        network_cluster.is_gluster,
+        network_cluster.default_route
     FROM network
     INNER JOIN network_cluster
         ON network.id = network_cluster.network_id
@@ -1349,7 +1351,8 @@ CREATE OR REPLACE FUNCTION Insertnetwork_cluster (
     v_required BOOLEAN,
     v_migration BOOLEAN,
     v_management BOOLEAN,
-    v_is_gluster BOOLEAN
+    v_is_gluster BOOLEAN,
+    v_default_route BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -1361,7 +1364,8 @@ BEGIN
         required,
         migration,
         management,
-        is_gluster
+        is_gluster,
+        default_route
         )
     VALUES (
         v_cluster_id,
@@ -1371,7 +1375,8 @@ BEGIN
         v_required,
         v_migration,
         v_management,
-        v_is_gluster
+        v_is_gluster,
+        v_default_route
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -1384,7 +1389,8 @@ CREATE OR REPLACE FUNCTION Updatenetwork_cluster (
     v_required BOOLEAN,
     v_migration BOOLEAN,
     v_management BOOLEAN,
-    v_is_gluster BOOLEAN
+    v_is_gluster BOOLEAN,
+    v_default_route BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -1394,7 +1400,8 @@ BEGIN
         required = v_required,
         migration = v_migration,
         management = v_management,
-        is_gluster = v_is_gluster
+        is_gluster = v_is_gluster,
+        default_route = v_default_route
     WHERE cluster_id = v_cluster_id
         AND network_id = v_network_id;
 END;$PROCEDURE$

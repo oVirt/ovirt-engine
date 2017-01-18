@@ -27,6 +27,7 @@ public class NetworkClusterDaoImpl extends BaseDao implements NetworkClusterDao 
         entity.setMigration(rs.getBoolean("migration"));
         entity.setManagement(rs.getBoolean("management"));
         entity.setGluster(rs.getBoolean("is_gluster"));
+        entity.setDefaultRoute(rs.getBoolean("default_route"));
         return entity;
     };
 
@@ -78,16 +79,17 @@ public class NetworkClusterDaoImpl extends BaseDao implements NetworkClusterDao 
         getCallsHandler().executeModification("Updatenetwork_cluster", parameterSource);
     }
 
-    private MapSqlParameterSource createAllFieldsParameterSource(NetworkCluster cluster) {
+    private MapSqlParameterSource createAllFieldsParameterSource(NetworkCluster networkCluster) {
         return getCustomMapSqlParameterSource()
-                .addValue("cluster_id", cluster.getClusterId())
-                .addValue("network_id", cluster.getNetworkId())
-                .addValue("status", cluster.getStatus())
-                .addValue("is_display", cluster.isDisplay())
-                .addValue("required", cluster.isRequired())
-                .addValue("migration", cluster.isMigration())
-                .addValue("management", cluster.isManagement())
-                .addValue("is_gluster", cluster.isGluster());
+                .addValue("cluster_id", networkCluster.getClusterId())
+                .addValue("network_id", networkCluster.getNetworkId())
+                .addValue("status", networkCluster.getStatus())
+                .addValue("is_display", networkCluster.isDisplay())
+                .addValue("required", networkCluster.isRequired())
+                .addValue("migration", networkCluster.isMigration())
+                .addValue("management", networkCluster.isManagement())
+                .addValue("is_gluster", networkCluster.isGluster())
+                .addValue("default_route", networkCluster.isDefaultRoute());
 
     }
 
