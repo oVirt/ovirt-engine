@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -390,12 +391,12 @@ public class VmInfoBuildUtils {
         return getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.SPAPR_VSCSI, true);
     }
 
-    private Map<VmDevice, Integer> getVmDeviceUnitMapForScsiDisks(VM vm,
+    protected Map<VmDevice, Integer> getVmDeviceUnitMapForScsiDisks(VM vm,
             DiskInterface scsiInterface,
             boolean reserveFirstTwoLuns) {
-        List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
+        List<Disk> disks = getSortedDisks(vm);
         Map<VmDevice, Integer> vmDeviceUnitMap = new HashMap<>();
-        Map<VmDevice, Disk> vmDeviceDiskMap = new HashMap<>();
+        LinkedList<VmDevice> vmDeviceList = new LinkedList<>();
 
         for (Disk disk : disks) {
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
@@ -405,20 +406,20 @@ public class VmInfoBuildUtils {
                 String unitStr = address.get(VdsProperties.Unit);
 
                 // If unit property is available adding to 'vmDeviceUnitMap';
-                // Otherwise, adding to 'vmDeviceDiskMap' for setting the unit property later.
+                // Otherwise, adding to 'vmDeviceList' for setting the unit property later.
                 if (StringUtils.isNotEmpty(unitStr)) {
                     vmDeviceUnitMap.put(vmDevice, Integer.valueOf(unitStr));
                 } else {
-                    vmDeviceDiskMap.put(vmDevice, disk);
+                    vmDeviceList.add(vmDevice);
                 }
             }
         }
 
         // Find available unit (disk's index in VirtIO-SCSI controller) for disks with empty address
-        for (Entry<VmDevice, Disk> entry : vmDeviceDiskMap.entrySet()) {
+        vmDeviceList.forEach(vmDevice -> {
             int unit = getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstTwoLuns);
-            vmDeviceUnitMap.put(entry.getKey(), unit);
-        }
+            vmDeviceUnitMap.put(vmDevice, unit);
+        });
 
         return vmDeviceUnitMap;
     }
