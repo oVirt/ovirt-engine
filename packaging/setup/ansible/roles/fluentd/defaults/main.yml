@@ -35,6 +35,3 @@ fluentd_ca_cert_path: '{{ fluentd_config_dir }}/ca_cert.pem'
 # Content of an x509 certificate that will be used to identify the
 # server to clients.
 fluentd_ca_cert:
-
-# The key corresponding to the certificate in `fluentd_ca_cert`.
-fluentd_private_key:
