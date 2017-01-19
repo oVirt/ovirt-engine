@@ -779,7 +779,7 @@ select fn_db_update_config_value('IPTablesConfigForVirt',
 -A INPUT -p tcp -m multiport --dports 49152:49216 -j ACCEPT
 ', 'general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
-select fn_db_update_config_value('MinimalETLVersion','4.1.0','general');
+select fn_db_update_config_value('MinimalETLVersion','4.2.0','general');
 select fn_db_update_config_value('OvirtInitialSupportedIsoVersion','2.5.5:5.8','general');
 select fn_db_update_config_value('OvirtIsoPrefix','^ovirt-node-iso-([0-9].*)\.iso$:^rhevh-([0-9].*)\.iso$','general');
 select fn_db_update_config_value('OvirtNodeOS','^ovirt.*$:^rhev.*$','general');
