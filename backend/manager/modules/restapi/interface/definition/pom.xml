@@ -62,6 +62,17 @@
       <version>${metamodel.version}</version>
     </dependency>
 
+    <!-- The metamodel tool isn't really a dependency of this project, but
+         it is required in order to generate the code. To use it without
+         interfering with the build class path, we set the scope to 'runtime',
+         and later we will tell the Maven exec plugin to use only that scope. -->
+    <dependency>
+      <groupId>org.ovirt.engine.api</groupId>
+      <artifactId>metamodel-tool</artifactId>
+      <version>${metamodel.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -125,11 +136,15 @@
             <id>generate-code</id>
             <phase>generate-sources</phase>
             <goals>
-              <goal>java</goal>
+              <goal>exec</goal>
             </goals>
             <configuration>
-              <mainClass>org.ovirt.api.metamodel.tool.Main</mainClass>
+              <executable>java</executable>
+              <classpathScope>runtime</classpathScope>
               <arguments>
+                <argument>-classpath</argument>
+                <classpath/>
+                <argument>org.ovirt.api.metamodel.tool.Main</argument>
                 <argument>org.ovirt.api.metamodel.tool.Tool</argument>
                 <argument>--model=${project.basedir}/target/generated-resources/model.jar</argument>
                 <argument>--xml-description=${project.basedir}/target/generated-resources/model.xml</argument>
@@ -143,8 +158,6 @@
                 <argument>--adoc-attribute=product-name:${product.name}</argument>
                 <argument>--adoc-attribute=engine-name:${engine.name}</argument>
               </arguments>
-              <includePluginDependencies>true</includePluginDependencies>
-              <includeProjectDependencies>false</includeProjectDependencies>
             </configuration>
           </execution>
 
@@ -153,28 +166,23 @@
             <id>generate-enums-jaxb</id>
             <phase>process-sources</phase> <!-- TODO: REVISIT phase -->
             <goals>
-              <goal>java</goal>
+              <goal>exec</goal>
             </goals>
             <configuration>
-              <mainClass>org.ovirt.api.metamodel.tool.Main</mainClass>
+              <executable>java</executable>
+              <classpathScope>runtime</classpathScope>
               <arguments>
+                <argument>-classpath</argument>
+                <classpath/>
+                <argument>org.ovirt.api.metamodel.tool.Main</argument>
                 <argument>org.ovirt.api.metamodel.tool.EnumGenerationToolJaxb</argument>
                 <argument>--model=${project.basedir}/target/generated-resources/model.jar</argument>
                 <argument>--xjc=${project.basedir}/target/generated-sources/xjc-v4</argument>
               </arguments>
-              <includePluginDependencies>true</includePluginDependencies>
-              <includeProjectDependencies>false</includeProjectDependencies>
             </configuration>
           </execution>
 
         </executions>
-        <dependencies>
-          <dependency>
-            <groupId>org.ovirt.engine.api</groupId>
-            <artifactId>metamodel-tool</artifactId>
-            <version>${metamodel.version}</version>
-          </dependency>
-        </dependencies>
       </plugin>
 
       <plugin>
