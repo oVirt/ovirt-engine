@@ -8,13 +8,14 @@
     xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
+
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderPopupView.Style">
         .contentStyle {
         }
 
-        .generalTabTopDecorator {
-            background-color: #D3D3D3;
+        .headerSeparator {
+            border-bottom: 1px solid #D1D1D1;
         }
 
         .topElement {
@@ -43,63 +44,63 @@
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>
-                    <t:DialogTab ui:field="generalTab">
+                    <t:DialogTab ui:field="generalTab" label="{constants.providerPopupGeneralTabLabel}">
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
-                                <b:Row addStyleNames="{style.generalTabTopDecorator} {style.topElement}">
-                                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                <b:Row addStyleNames="{style.topElement}">
+                                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.nameProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
-                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
-                                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.descriptionProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
-                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
-                                    <e:ListModelListBoxEditor ui:field="typeEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                <b:Row ui:field="typeEditorRow" addStyleNames="{style.headerSeparator}">
+                                    <e:ListModelListBoxEditor ui:field="typeEditor" label="{constants.typeProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
-                                <b:Row addStyleNames="{style.generalTabTopDecorator}">
-                                    <e:ListModelListBoxEditor ui:field="datacenterEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                <b:Row ui:field="datacenterEditorRow">
+                                    <e:ListModelListBoxEditor ui:field="datacenterEditor" label="{constants.dataCenter}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row addStyleNames="{style.topElement}">
-                                    <ge:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" label="{constants.pluginType}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="urlEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:StringEntityModelTextBoxEditor ui:field="urlEditor" label="{constants.urlProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:EntityModelCheckBoxEditor ui:field="readOnlyEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="readOnlyEditor" label="{constants.readOnly}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
-                                <p:VmwarePropertiesWidget addStyleNames="{style.topElement}" ui:field="vmwarePropertiesWidget" />
-                                <p:KVMPropertiesWidget addStyleNames="{style.topElement}" ui:field="kvmPropertiesWidget" />
-                                <p:XENPropertiesWidget addStyleNames="{style.topElement}" ui:field="xenPropertiesWidget" />
+                                <p:VmwarePropertiesWidget addStyleNames="{style.topElement}" ui:field="vmwarePropertiesWidget" visible="false" />
+                                <p:KVMPropertiesWidget addStyleNames="{style.topElement}" ui:field="kvmPropertiesWidget" visible="false" />
+                                <p:XENPropertiesWidget addStyleNames="{style.topElement}" ui:field="xenPropertiesWidget" visible="false" />
                                 <b:Row>
-                                    <ge:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" label="{constants.requiresAuthenticationProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" label="{constants.usernameProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="tenantNameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" label="{constants.passwordProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="authUrlEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:StringEntityModelTextBoxEditor ui:field="tenantNameEditor" label="{constants.tenantName}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="LG_10">
+                                    <ge:StringEntityModelTextBoxEditor ui:field="authUrlEditor" label="{constants.authUrlProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_10">
                                         <g:Image ui:field="testResultImage" addStyleNames="{style.testResultImage}" />
                                         <g:Label ui:field="testResultMessage" addStyleNames="{style.testResultMessage}" />
                                     </b:Column>
-                                    <b:Column size="LG_2">
-                                        <w:UiCommandButton ui:field="testButton" addStyleNames="{style.testButton}" />
+                                    <b:Column size="SM_2">
+                                        <w:UiCommandButton ui:field="testButton" label="{constants.testProvider}" addStyleNames="{style.testButton}" />
                                     </b:Column>
                                 </b:Row>
                             </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
-                <t:tab>
-                    <t:DialogTab ui:field="agentConfigurationTab">
+                <t:tab >
+                    <t:DialogTab ui:field="agentConfigurationTab" label="{constants.providerPopupAgentConfigurationTabLabel}">
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
                                 <g:FlowPanel addStyleNames="{style.topElement}">

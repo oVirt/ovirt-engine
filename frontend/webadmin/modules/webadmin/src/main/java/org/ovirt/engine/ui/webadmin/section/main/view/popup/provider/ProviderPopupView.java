@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.provider;
 
+import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -51,6 +52,9 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     interface ViewIdHandler extends ElementIdHandler<ProviderPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    private static final ApplicationResources resources = AssetProvider.getResources();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
     @Path(value = "name.entity")
@@ -126,6 +130,12 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     DialogTab agentConfigurationTab;
 
     @UiField
+    Row typeEditorRow;
+
+    @UiField
+    Row datacenterEditorRow;
+
+    @UiField
     @Ignore
     NeutronAgentWidget neutronAgentWidget;
 
@@ -149,8 +159,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @UiField
     Style style;
 
-    private static final ApplicationResources resources = AssetProvider.getResources();
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private ProviderModel providerModel;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Inject
@@ -170,34 +179,12 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
-        addContentStyleName(style.contentStyle());
         driver.initialize(this);
-    }
-
-    void localize() {
-        // General tab
-        generalTab.setLabel(constants.providerPopupGeneralTabLabel());
-        nameEditor.setLabel(constants.nameProvider());
-        descriptionEditor.setLabel(constants.descriptionProvider());
-        typeEditor.setLabel(constants.typeProvider());
-        urlEditor.setLabel(constants.urlProvider());
-        testButton.setLabel(constants.testProvider());
-        requiresAuthenticationEditor.setLabel(constants.requiresAuthenticationProvider());
-        usernameEditor.setLabel(constants.usernameProvider());
-        passwordEditor.setLabel(constants.passwordProvider());
-        tenantNameEditor.setLabel(constants.tenantName());
-        pluginTypeEditor.setLabel(constants.pluginType());
-        datacenterEditor.setLabel(constants.dataCenter());
-        authUrlEditor.setLabel(constants.authUrlProvider());
-        readOnlyEditor.setLabel(constants.readOnly());
-
-        // Agent configuration tab
-        agentConfigurationTab.setLabel(constants.providerPopupAgentConfigurationTabLabel());
     }
 
     @Override
     public void edit(ProviderModel model) {
+        providerModel = model;
         setAgentTabVisibility(model.getNeutronAgentModel().isPluginConfigurationAvailable().getEntity());
         driver.edit(model);
         neutronAgentWidget.edit(model.getNeutronAgentModel());
@@ -225,13 +212,10 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         nameEditor.setFocus(true);
     }
 
-    public void addContentStyleName(String styleName) {
-        this.asWidget().addContentStyleName(styleName);
-    }
-
     interface Style extends CssResource {
         String contentStyle();
         String testResultImage();
+        String headerSeparator();
     }
 
     @Override
@@ -249,6 +233,22 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Override
     public void setAgentTabVisibility(boolean visible) {
         agentConfigurationTab.setVisible(visible);
+    }
+
+    @Override
+    public void setCurrentActiveProviderWidget() {
+        if (providerModel != null) {
+            if (providerModel.getDataCenter().getIsAvailable()) {
+                typeEditorRow.removeStyleName(style.headerSeparator());
+                datacenterEditorRow.addStyleName(style.headerSeparator());
+            } else {
+                typeEditorRow.addStyleName(style.headerSeparator());
+                datacenterEditorRow.removeStyleName(style.headerSeparator());
+            }
+            kvmPropertiesWidget.setVisible(providerModel.getKvmPropertiesModel().getIsAvailable());
+            vmwarePropertiesWidget.setVisible(providerModel.getVmwarePropertiesModel().getIsAvailable());
+            xenPropertiesWidget.setVisible(providerModel.getXenPropertiesModel().getIsAvailable());
+        }
     }
 
     @Override
