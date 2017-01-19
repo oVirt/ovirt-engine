@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -74,7 +75,13 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         columnNameDict.put(VMT_ID, "vmt_guid");
         columnNameDict.put(DESCRIPTION, "description");
         columnNameDict.put(ARCHITECTURE, "architecture");
-        columnNameDict.put(VERSION_NAME, "template_version_name,template_version_number");
+        columnNameDict.put(VERSION_NAME, "template_version_name");
+
+        sortableFieldDict.put(NAME, Arrays.asList(
+                new SyntaxChecker.SortByElement("name"),
+                // sort by template_version_name column, treat 'base version' as NULL
+                new SyntaxChecker.SortByElement("(NULLIF(template_version_name, 'base version'))"),
+                new SyntaxChecker.SortByElement("template_version_number")));
 
         notFreeTextSearchableFieldsList.add(OS);
         // Building the validation dict
