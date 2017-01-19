@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.utils.Pair;
 
 /**
@@ -10,7 +12,11 @@ public interface IConditionFieldAutoCompleter extends IAutoCompleter {
 
     String getDbFieldName(String fieldName);
 
-    String getSortableDbField(String fieldName);
+    /**
+     * @param fieldName UI column identifier
+     * @return list of 'ORDER BY' elements
+     */
+    List<SyntaxChecker.SortByElement> getSortByElements(String fieldName);
 
     Class<?> getDbFieldType(String fieldName);
 

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.searchbackend;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,7 +37,11 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     protected final Map<String, List<ValueValidationFunction>> validationDict = new HashMap<>();
     private final Map<String, Class<?>> typeDict = new HashMap<>();
     protected final Map<String, String> columnNameDict = new HashMap<>();
-    protected final Map<String, String> sortableFieldDict = new HashMap<>();
+    /**
+     * key: UI column identifier
+     * value: list of 'ORDER BY' elements
+     */
+    protected final Map<String, List<SyntaxChecker.SortByElement>> sortableFieldDict = new HashMap<>();
     protected final List<String> notFreeTextSearchableFieldsList = new ArrayList<>();
     protected Set<String> verbsWithMultipleValues = new HashSet<>();
 
@@ -129,12 +134,12 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     }
 
     @Override
-    public String getSortableDbField(String fieldName) {
+    public List<SyntaxChecker.SortByElement> getSortByElements(String fieldName) {
         if (sortableFieldDict.containsKey(fieldName)) {
             return sortableFieldDict.get(fieldName);
-        } else {
-            return getDbFieldName(fieldName);
         }
+        return Collections.singletonList(
+                new SyntaxChecker.SortByElement(getDbFieldName(fieldName), true));
     }
 
     @Override
