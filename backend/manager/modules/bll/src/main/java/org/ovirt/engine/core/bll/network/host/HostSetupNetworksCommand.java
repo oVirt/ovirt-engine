@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
@@ -113,9 +114,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     @Inject
     private FindActiveVmsUsingNetwork findActiveVmsUsingNetwork;
 
-    @Inject
-    private ManagementNetworkUtil managementNetworkUtil;
-
     private List<Network> modifiedNetworks;
 
     @Inject
@@ -144,6 +142,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Inject
     private UnmanagedNetworkValidator unmanagedNetworkValidator;
+
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
 
     @Inject
     private HostLocking hostLocking;
@@ -452,8 +453,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             : Config.<Integer> getValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds);
     }
 
-    private boolean defaultRouteRequired(Network network, IpConfiguration ipConfiguration) {
-        return managementNetworkUtil.isManagementNetwork(network.getId(), getVds().getClusterId())
+    private boolean shouldSetDefaultRouteFlag(NetworkCluster networkCluster, NetworkAttachment networkAttachment) {
+        IpConfiguration ipConfiguration = networkAttachment.getIpConfiguration();
+        return networkCluster.isDefaultRoute()
                 && ipConfiguration != null
                 && (isIpv4GatewaySet(ipConfiguration) || isIpv6GatewaySet(ipConfiguration));
     }
@@ -559,10 +561,11 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
         for (NetworkAttachment attachment : getParameters().getNetworkAttachments()) {
             Network network = existingNetworkRelatedToAttachment(attachment);
+            NetworkCluster networkCluster = network.getCluster();
             HostNetwork networkToConfigure = new HostNetwork(network, attachment);
             networkToConfigure.setBonding(isBonding(attachment, nics));
 
-            if (defaultRouteSupported() && defaultRouteRequired(network, attachment.getIpConfiguration())) {
+            if (defaultRouteSupported() && shouldSetDefaultRouteFlag(networkCluster, attachment)) {
                 // TODO: YZ - should default route be set separately for IPv4 and IPv6
                 networkToConfigure.setDefaultRoute(true);
             }
