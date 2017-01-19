@@ -310,7 +310,7 @@ public class SyntaxCheckerTest {
         // "SELECT * FROM (SELECT * FROM storage_pool WHERE ( id IN (SELECT storage_pool_with_storage_domain.id FROM  storage_pool_with_storage_domain  ))  ORDER BY name,name ASC ) as T1 OFFSET (1 -1) LIMIT 0"
         // Current: 1ms
         testValidSql("DataCenter: sortby name",
-                "SELECT * FROM ((SELECT distinct storage_pool.* FROM  storage_pool  )  ORDER BY name,name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM ((SELECT distinct storage_pool.* FROM  storage_pool  )  ORDER BY name ASC NULLS FIRST) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("DataCenter: Clusters.name =Default",
                 "SELECT * FROM ((SELECT distinct storage_pool.* FROM  storage_pool   LEFT OUTER JOIN cluster_storage_domain ON storage_pool.id=cluster_storage_domain.storage_pool_id    WHERE  (cluster_storage_domain.name IS NULL OR cluster_storage_domain.name LIKE Default) )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }

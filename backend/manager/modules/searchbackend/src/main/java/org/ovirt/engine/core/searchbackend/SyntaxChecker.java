@@ -804,6 +804,8 @@ public class SyntaxChecker implements ISyntaxChecker {
             String fromStatement = "";
             String pageNumber = "";
             boolean useTags = syntax.isSearchUsingTags();
+            List<SortByElement> sortByElements = null;
+            boolean sortAscending = true;
 
             while (objIter.hasNext()) {
                 SyntaxObject obj = objIter.next();
@@ -836,17 +838,26 @@ public class SyntaxChecker implements ISyntaxChecker {
                     break;
                 case SORT_FIELD:
                     conditionFieldAC = searchObjectAC.getFieldAutoCompleter(searchObjStr);
-                    sortByPhrase =
-                            StringFormat.format(" ORDER BY %1$s", conditionFieldAC.getSortableDbField(obj.getBody()));
+                    sortByElements = conditionFieldAC.getSortByElements(obj.getBody());
                     break;
                 case SORT_DIRECTION:
-                    // Forcing any sorting using DESC to show NULL values last and ASC to show NULL values first
-                    String direction = obj.getBody().equalsIgnoreCase("desc") ? "DESC NULLS LAST" : "ASC NULLS FIRST";
-                    sortByPhrase = StringFormat.format("%1$s %2$s", sortByPhrase, direction);
+                    sortAscending = !obj.getBody().equalsIgnoreCase("desc");
                     break;
                 default:
                     break;
                 }
+            }
+
+            if (sortByElements != null) {
+                StringBuilder builder = new StringBuilder();
+                builder.append(" ORDER BY ");
+                for(SortByElement sortByElement: sortByElements) {
+                    builder.append(sortByElement.getExpression()).append(" ");
+                    final boolean ascending = sortAscending == sortByElement.isAscending();
+                    builder.append(ascending ? "ASC NULLS FIRST" : "DESC NULLS LAST").append(",");
+                }
+                builder.deleteCharAt(builder.length() - 1);
+                sortByPhrase = builder.toString();
             }
 
             // implying precedence rules
@@ -990,6 +1001,43 @@ public class SyntaxChecker implements ISyntaxChecker {
         }
 
         return type;
+    }
+
+    /**
+     * It describes one element of SQL 'ORDER BY' clause
+     */
+    public static class SortByElement {
+
+        /**
+         * DB value expression, usually column just column name
+         *
+         * <p>Example of non-trivial value:
+         * <pre>"COALESCE(nullable_column_name, 'string replacing NULL')"</pre>
+         * </p>
+         */
+        private final String expression;
+        /**
+         * asc/desc
+         */
+        private final boolean ascending;
+
+        public SortByElement(String expression) {
+            this.expression = expression;
+            this.ascending = true;
+        }
+
+        public SortByElement(String expression, boolean ascending) {
+            this.expression = expression;
+            this.ascending = ascending;
+        }
+
+        public String getExpression() {
+            return expression;
+        }
+
+        public boolean isAscending() {
+            return ascending;
+        }
     }
 
     private enum ConditionType {

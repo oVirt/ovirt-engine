@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
 
@@ -145,7 +146,8 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(CREATED_BY_USER_ID, "created_by_user_id");
 
         // Override field names for purpose of sorting, if needed
-        sortableFieldDict.put(IP, "vm_ip_inet_array");
+        sortableFieldDict.put(IP, Collections.singletonList(
+                new SyntaxChecker.SortByElement("vm_ip_inet_array")));
 
         /**
          */
