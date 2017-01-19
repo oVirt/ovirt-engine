@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -64,4 +65,25 @@ final class ManagementNetworkUtilImpl implements ManagementNetworkUtil {
     public String getDefaultManagementNetworkName() {
         return Config.getValue(ConfigValues.DefaultManagementNetwork);
     }
+
+    @Override
+    public Network getManagementNetwork(List<Network> networks, Guid clusterId) {
+        return networks
+                .stream()
+                    .filter(e -> e.getCluster().isManagement())
+                    .collect(Collectors.collectingAndThen(Collectors.toList(),
+                            list -> {
+                                if (list.size() != 1) {
+                                    throw new IllegalStateException(createFailureMessage(clusterId, networks));
+                                }
+                                return list.get(0);
+                            }));
+    }
+
+    String createFailureMessage(Guid clusterId, List<Network> networks) {
+        return String.format("There isn't unique management network for cluster %s among networks (%s).",
+                clusterId,
+                networks.stream().map(Network::getName).collect(Collectors.joining(",")));
+    }
+
 }

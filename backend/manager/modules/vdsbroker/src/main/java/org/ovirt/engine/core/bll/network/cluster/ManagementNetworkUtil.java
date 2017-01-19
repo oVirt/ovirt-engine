@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -58,4 +60,12 @@ public interface ManagementNetworkUtil {
      * @return the default management network name.
      */
     String getDefaultManagementNetworkName();
+
+    /**
+     *
+     * @param networks all networks related to clusterId
+     * @param clusterId id of cluster
+     * @return management network found among passed networks
+     */
+    Network getManagementNetwork(List<Network> networks, Guid clusterId);
 }

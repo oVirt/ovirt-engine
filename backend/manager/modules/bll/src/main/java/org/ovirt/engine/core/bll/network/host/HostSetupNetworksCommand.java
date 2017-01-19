@@ -104,7 +104,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private Set<String> removedUnmanagedNetworks;
     private List<VdsNetworkInterface> existingNics;
     private List<NetworkAttachment> existingAttachments;
-    private List<HostNetwork> networksToConfigure;
     private BusinessEntityMap<VdsNetworkInterface> existingNicsBusinessEntityMap;
     private List<Network> clusterNetworks;
 
@@ -334,7 +333,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
      * @return true if passed in {@link NetworkAttachment networkAttachment} is deeply equal to {@code this}
      * {@link NetworkAttachment}
      */
-    public boolean attachmentFromRequestIsEqualToAlreadyExistingOne(NetworkAttachment networkAttachmentFromRequest, NetworkAttachment existingNetworkAttachment) {
+    private boolean attachmentFromRequestIsEqualToAlreadyExistingOne(NetworkAttachment networkAttachmentFromRequest, NetworkAttachment existingNetworkAttachment) {
         return existingNetworkAttachment != null
                 && Objects.equals(networkAttachmentFromRequest.getId(), existingNetworkAttachment.getId())
                 && Objects.equals(networkAttachmentFromRequest.getNetworkId(), existingNetworkAttachment.getNetworkId())
@@ -372,13 +371,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 createOrUpdateBond.setBondOptions(DEFAULT_BOND_OPTIONS);
             }
         }
-    }
-
-    private void fillInUnsetIpConfigs() {
-        getParameters().getNetworkAttachments()
-                .stream()
-                .filter(attachment -> attachment.getIpConfiguration() == null)
-                .forEach(attachment -> attachment.setIpConfiguration(NetworkCommonUtils.createDefaultIpConfiguration()));
     }
 
     private ValidationResult checkForOutOfSyncNetworks() {
@@ -432,16 +424,19 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private HostSetupNetworksVdsCommandParameters createSetupNetworksParameters(int timeout) {
         SwitchType clusterSwitchType = getCluster().getRequiredSwitchTypeForCluster();
+
+        List<HostNetwork> networksToConfigure = calculateNetworksToConfigure();
+
         final HostSetupNetworksVdsCommandParameters hostCmdParams = new HostSetupNetworksVdsCommandParameters(
             getVds(),
-            getNetworksToConfigure(),
+            networksToConfigure,
             getAllNetworksToRemove(),
             getParameters().getCreateOrUpdateBonds(),
             getRemovedBondNames(),
             clusterSwitchType);
         hostCmdParams.setRollbackOnFailure(getParameters().rollbackOnFailure());
         hostCmdParams.setConnectivityTimeout(timeout);
-        hostCmdParams.setManagementNetworkChanged(isManagementNetworkChanged());
+        hostCmdParams.setManagementNetworkChanged(isManagementNetworkChanged(networksToConfigure));
         return hostCmdParams;
     }
 
@@ -452,7 +447,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         return result;
     }
 
-    protected Integer getSetupNetworksTimeout() {
+    private Integer getSetupNetworksTimeout() {
         return getParameters().getConectivityTimeout() != null ? getParameters().getConectivityTimeout()
             : Config.<Integer> getValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds);
     }
@@ -558,30 +553,28 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         return removedUnmanagedNetworks;
     }
 
-    private List<HostNetwork> getNetworksToConfigure() {
-        if (networksToConfigure == null) {
-            networksToConfigure = new ArrayList<>(getParameters().getNetworkAttachments().size());
-            BusinessEntityMap<VdsNetworkInterface> nics = getExistingNicsBusinessEntityMap();
+    private List<HostNetwork> calculateNetworksToConfigure() {
+        List<HostNetwork> networksToConfigure = new ArrayList<>(getParameters().getNetworkAttachments().size());
+        BusinessEntityMap<VdsNetworkInterface> nics = getExistingNicsBusinessEntityMap();
 
-            for (NetworkAttachment attachment : getParameters().getNetworkAttachments()) {
-                Network network = existingNetworkRelatedToAttachment(attachment);
-                HostNetwork networkToConfigure = new HostNetwork(network, attachment);
-                networkToConfigure.setBonding(isBonding(attachment, nics));
+        for (NetworkAttachment attachment : getParameters().getNetworkAttachments()) {
+            Network network = existingNetworkRelatedToAttachment(attachment);
+            HostNetwork networkToConfigure = new HostNetwork(network, attachment);
+            networkToConfigure.setBonding(isBonding(attachment, nics));
 
-                if (defaultRouteSupported() && defaultRouteRequired(network, attachment.getIpConfiguration())) {
-                    // TODO: YZ - should default route be set separately for IPv4 and IPv6
-                    networkToConfigure.setDefaultRoute(true);
-                }
-
-                if (NetworkUtils.qosConfiguredOnInterface(attachment, network)) {
-                    networkToConfigure.setQosConfiguredOnInterface(true);
-
-                    HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(attachment, network);
-                    networkToConfigure.setQos(hostNetworkQos);
-                }
-
-                networksToConfigure.add(networkToConfigure);
+            if (defaultRouteSupported() && defaultRouteRequired(network, attachment.getIpConfiguration())) {
+                // TODO: YZ - should default route be set separately for IPv4 and IPv6
+                networkToConfigure.setDefaultRoute(true);
             }
+
+            if (NetworkUtils.qosConfiguredOnInterface(attachment, network)) {
+                networkToConfigure.setQosConfiguredOnInterface(true);
+
+                HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(attachment, network);
+                networkToConfigure.setQos(hostNetworkQos);
+            }
+
+            networksToConfigure.add(networkToConfigure);
         }
 
         return networksToConfigure;
@@ -596,18 +589,16 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private boolean defaultRouteSupported() {
-        boolean defaultRouteSupported = false;
         Set<Version> supportedClusterVersionsSet = getVds().getSupportedClusterVersionsSet();
         if (supportedClusterVersionsSet == null || supportedClusterVersionsSet.isEmpty()) {
             log.warn("Host '{}' ('{}') doesn't contain Supported Cluster Versions, "
                     + "therefore 'defaultRoute' will not be sent via the SetupNetworks",
                 getVdsName(),
                 getVdsId());
-        } else {
-            defaultRouteSupported = true;
+            return false;
         }
 
-        return defaultRouteSupported;
+        return true;
     }
 
     private boolean isBonding(NetworkAttachment attachment, BusinessEntityMap<VdsNetworkInterface> nics) {
@@ -775,19 +766,22 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         return clusterNetworks;
     }
 
-    private boolean isManagementNetworkChanged(){
-        String mgmtNetworkName = managementNetworkUtil.getManagementNetwork(getVds().getClusterId()).getName();
-        for (HostNetwork network : getNetworksToConfigure()) {
-            if (mgmtNetworkName.equals(network.getNetworkName())){
+    private boolean isManagementNetworkChanged(List<HostNetwork> networksToConfigure){
+        Network managementNetwork = managementNetworkUtil.getManagementNetwork(getClusterNetworks(), getClusterId());
+
+        String managementNetworkName = managementNetwork.getName();
+        for (HostNetwork network : networksToConfigure) {
+            if (managementNetworkName.equals(network.getNetworkName())){
                 return true;
             }
         }
+
         for (CreateOrUpdateBond createOrUpdateBond : getParameters().getCreateOrUpdateBonds()) {
             // We are only interested in existing bonds, whose bonding options/slave have changed, so it
             // enough to check existing bonds. New bonds which have the management network
             // are covered by network attachments
             VdsNetworkInterface bondNic = getExistingNicsBusinessEntityMap().get(createOrUpdateBond.getId());
-            if (bondNic != null && mgmtNetworkName.equals(bondNic.getNetworkName())) {
+            if (bondNic != null && managementNetworkName.equals(bondNic.getNetworkName())) {
                 return true;
             }
         }

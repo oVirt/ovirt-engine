@@ -1,15 +1,20 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -46,6 +51,9 @@ public class ManagementNetworkUtilImplTest {
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
             MockConfigRule.mockConfig(ConfigValues.DefaultManagementNetwork, TEST_NETWORK_NAME));
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -171,4 +179,39 @@ public class ManagementNetworkUtilImplTest {
         assertEquals(TEST_NETWORK_NAME, underTest.getDefaultManagementNetworkName());
     }
 
+    @Test
+    public void testGetManagementNetworkWhenInstancesDoesNotContainOne() throws Exception {
+        List<Network> networks = Arrays.asList(createNetwork(false, "a"), createNetwork(false, "b"));
+        Guid clusterId = Guid.newGuid();
+
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage(underTest.createFailureMessage(clusterId, networks));
+        underTest.getManagementNetwork(networks, clusterId);
+    }
+
+    @Test
+    public void testGetManagementNetworkWhenInstancesContainMultipleOnes() throws Exception {
+        List<Network> networks = Arrays.asList(createNetwork(true, "a"), createNetwork(true, "b"));
+
+        Guid clusterId = Guid.newGuid();
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage(underTest.createFailureMessage(clusterId, networks));
+        underTest.getManagementNetwork(networks, clusterId);
+    }
+
+    @Test
+    public void testGetManagementNetworkWhenInstancesContainOne() throws Exception {
+        Network network = createNetwork(true, "a");
+        List<Network> networks = Arrays.asList(network, createNetwork(false, "b"));
+        assertThat(underTest.getManagementNetwork(networks, Guid.newGuid()), is(network));
+    }
+
+    private Network createNetwork(boolean isManagementNetwork, String name) {
+        NetworkCluster networkCluster = new NetworkCluster();
+        networkCluster.setManagement(isManagementNetwork);
+        Network network = new Network();
+        network.setName(name);
+        network.setCluster(networkCluster);
+        return network;
+    }
 }
