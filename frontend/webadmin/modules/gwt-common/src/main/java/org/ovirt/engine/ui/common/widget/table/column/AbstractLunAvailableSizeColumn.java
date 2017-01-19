@@ -1,14 +1,16 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import java.util.Comparator;
+
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractToggleButtonCell;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.cellview.client.Column;
 
-public abstract class AbstractLunAvailableSizeColumn extends Column<LunModel, LunModel> {
+public abstract class AbstractLunAvailableSizeColumn extends AbstractColumn<LunModel, LunModel> {
 
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
@@ -48,4 +50,16 @@ public abstract class AbstractLunAvailableSizeColumn extends Column<LunModel, Lu
             }
         });
     }
+
+    public void makeSortable() {
+        makeSortable(new Comparator<LunModel>() {
+            @Override
+            public int compare(LunModel o1, LunModel o2) {
+                int val1 = o1.getAdditionalAvailableSize();
+                int val2 = o2.getAdditionalAvailableSize();
+                return Integer.compare(val1, val2);
+            }
+        });
+    }
+
 }

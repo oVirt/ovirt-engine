@@ -1,7 +1,11 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import java.util.Comparator;
+
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.ui.common.widget.table.cell.ScrollableTextCell;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.DOM;
@@ -29,5 +33,14 @@ public abstract class AbstractLunTextColumn extends AbstractSafeHtmlColumn<LunMo
     }
 
     public abstract String getRawValue(LunModel object);
+
+    public void makeSortable() {
+        makeSortable(new Comparator<LunModel>() {
+            @Override
+            public int compare(LunModel o1, LunModel o2) {
+                return LexoNumericComparator.comp(getRawValue(o1), getRawValue(o2));
+            }
+        });
+    }
 
 }
