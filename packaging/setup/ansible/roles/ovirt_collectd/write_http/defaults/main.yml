@@ -14,7 +14,3 @@ collectd_write_http_path: ""
 # The full URL that collectd will write to. Normally should not be changed.
 # yamllint disable-line rule:line-length
 collectd_write_http_url: "http://{{ collectd_write_http_host }}:{{ collectd_write_http_port }}/{{ collectd_write_http_path }}"
-
-# List of packages we need to install for write_http to work
-collectd_plugins_write_http:
-  - collectd-write_http

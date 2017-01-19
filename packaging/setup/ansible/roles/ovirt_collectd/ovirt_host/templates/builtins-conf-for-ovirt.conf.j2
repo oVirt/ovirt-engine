@@ -40,14 +40,7 @@ LoadPlugin df
         ValuesPercentage true
 </Plugin>
 
-LoadPlugin netlink
-
-<Plugin netlink>
-        Interface "All"
-        # By default off. Can be turned on for better debug of nic errors.
-        # VerboseInterface "All"
-        IgnoreSelected false
-</Plugin>
+LoadPlugin interface
 
 LoadPlugin aggregation
 

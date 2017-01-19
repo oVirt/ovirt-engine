@@ -7,7 +7,7 @@
 - name: Configure oVirt processing
   template:
     src: ovirt-processing.conf
-    dest: '{{ fluentd_config_parts_dir }}/100-ovirt-processing.conf'
+    dest: '{{ fluentd_config_parts_dir }}/20-ovirt-processing.conf'
     owner: '{{ fluentd_owner }}'
     group: '{{ fluentd_group }}'
     mode: '{{ fluentd_config_mode }}'
