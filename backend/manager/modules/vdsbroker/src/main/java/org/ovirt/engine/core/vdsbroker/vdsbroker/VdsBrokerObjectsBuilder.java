@@ -12,10 +12,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -1894,51 +1896,52 @@ public class VdsBrokerObjectsBuilder {
                         addBondDeviceToHost(vds, bond, (Object[]) bondProperties.get("slaves"));
                     }
 
-                    Object bondOptions = null;
-                    Map<String, Object> bondOptionsMap = new HashMap<>();
-
-                    Map<String, Object> bondOpts = (Map<String, Object>) bondProperties.get("opts");
-                    if (bondOpts != null) {
-                        bondOptionsMap.putAll(bondOpts);
-                    }
-
-                    String bondOptionsString = "";
-                    String mode = (String) bondOptionsMap.get("mode");
-                    String miimon = (String) bondOptionsMap.get("miimon");
-
-                    if (mode != null && miimon != null) {
-                        bondOptionsString = String.format("mode=%s miimon=%s", mode, miimon);
-                        bondOptionsMap.remove("mode");
-                        bondOptionsMap.remove("miimon");
-                    }
-
-                    String xmit_hash_policy = (String) bondOptionsMap.get(VdsProperties.BOND_XMIT_POLICY);
-                    if (xmit_hash_policy != null) {
-                        bondOptionsString = String.format("%s %s=%s",
-                                bondOptionsString,
-                                VdsProperties.BOND_XMIT_POLICY,
-                                xmit_hash_policy);
-                        bondOptionsMap.remove(VdsProperties.BOND_XMIT_POLICY);
-                    }
-
-                    for (Entry<String, Object> optionEntry : bondOptionsMap.entrySet()) {
-                        bondOptionsString =
-                                String.format("%s %s=%s",
-                                        bondOptionsString,
-                                        optionEntry.getKey(),
-                                        optionEntry.getValue());
-                    }
-                    bondOptions = bondOptionsString.isEmpty() ? null : bondOptionsString;
-                    if (bondOptions != null) {
-                        bondOptions = normalizeBondOptions(bondOptions.toString());
-                        bond.setBondOptions(bondOptions.toString());
-                    }
+                    bond.setBondOptions(parseBondOptions((Map<String, Object>) bondProperties.get("opts")));
 
                     bond.setAdPartnerMac((String) bondProperties.get("ad_partner_mac"));
                     bond.setActiveSlave((String) bondProperties.get("active_slave"));
                 }
             }
         }
+    }
+
+    /**
+     * Retrieves bonding options string from the structure that describes the bond options as reported by VDSM
+     * @param struct
+     *   a map contains pairs of option name and value
+     * @return
+     *  - null is returned for null valued `struct`
+     *  - else bonding options string
+     */
+    private static String parseBondOptions(Map<String, Object> struct) {
+
+        if (struct == null) {
+            return null;
+        }
+
+        Set<String> reservedPositionKeys = new LinkedHashSet<>();
+        reservedPositionKeys.add("mode");
+        reservedPositionKeys.add("miimon");
+        reservedPositionKeys.add(VdsProperties.BOND_XMIT_POLICY);
+
+        List<String> bondOptions = new ArrayList<>();
+
+        for(String key : reservedPositionKeys) {
+            String value = (String) struct.get(key);
+            if (value != null) {
+                bondOptions.add(
+                        String.format("%s=%s", key, value));
+            }
+        }
+
+        for (Entry<String, Object> entry : struct.entrySet()) {
+            if (!reservedPositionKeys.contains(entry.getKey())) {
+                bondOptions.add(
+                        String.format("%s=%s", entry.getKey(), entry.getValue()));
+            }
+        }
+
+        return normalizeBondOptions(StringUtils.join(bondOptions, ' '));
     }
 
     private static String normalizeBondOptions(String bondOptions){
