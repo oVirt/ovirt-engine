@@ -352,6 +352,7 @@ public final class Cloner {
         obj.setRequired(instance.isRequired());
         obj.setMigration(instance.isMigration());
         obj.setManagement(instance.isManagement());
+        obj.setDefaultRoute(instance.isDefaultRoute());
         obj.setGluster(instance.isGluster());
         return obj;
     }

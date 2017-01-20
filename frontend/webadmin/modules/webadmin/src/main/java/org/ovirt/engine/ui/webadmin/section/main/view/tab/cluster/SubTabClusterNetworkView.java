@@ -44,6 +44,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
     private final SafeHtml glusterNwImage;
     private final SafeHtml emptyImage;
     private final SafeHtml managementImage;
+    private final SafeHtml defaultRouteImage;
 
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -56,6 +57,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
         glusterNwImage = safeHtmlFromTrustedString(resources.glusterNetwork());
         emptyImage = safeHtmlFromTrustedString(resources.networkEmpty());
         managementImage = safeHtmlFromTrustedString(resources.mgmtNetwork());
+        defaultRouteImage = safeHtmlFromTrustedString(resources.defaultRouteNetwork());
 
         initTable();
         initWidget(getTable());
@@ -146,6 +148,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
                     images.add(thisOrEmptyImage(networkCluster.isDisplay(), displayImage));
                     images.add(thisOrEmptyImage(networkCluster.isMigration(), migrationImage));
                     images.add(thisOrEmptyImage(network.getCluster().isGluster(), glusterNwImage));
+                    images.add(thisOrEmptyImage(networkCluster.isDefaultRoute(), defaultRouteImage));
                 }
 
                 return MultiImageColumnHelper.getValue(images);
@@ -169,6 +172,10 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
 
                     if (network.getCluster().isGluster()) {
                         imagesToText.put(glusterNwImage, constants.glusterNwItemInfo());
+                    }
+
+                    if (networkCluster.isDefaultRoute()) {
+                        imagesToText.put(defaultRouteImage, constants.defaultRouteItemInfo());
                     }
                 }
                 return MultiImageColumnHelper.getTooltip(imagesToText);

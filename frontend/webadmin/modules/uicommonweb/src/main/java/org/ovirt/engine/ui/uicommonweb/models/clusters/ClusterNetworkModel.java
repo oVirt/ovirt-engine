@@ -69,6 +69,10 @@ public class ClusterNetworkModel extends EntityModel<Network> {
         return getEntity().getCluster().isGluster();
     }
 
+    public boolean isDefaultRouteNetwork() {
+        return getEntity().getCluster().isDefaultRoute();
+    }
+
     public boolean isExternal() {
         return getEntity().isExternal();
     }
@@ -99,6 +103,10 @@ public class ClusterNetworkModel extends EntityModel<Network> {
 
     public void setGlusterNetwork(boolean glusterNetwork) {
         getEntity().getCluster().setGluster(glusterNetwork);
+    }
+
+    public void setDefaultRouteNetwork(boolean defaultRouteNetwork) {
+        getEntity().getCluster().setDefaultRoute(defaultRouteNetwork);
     }
 
     public NetworkCluster getOriginalNetworkCluster() {

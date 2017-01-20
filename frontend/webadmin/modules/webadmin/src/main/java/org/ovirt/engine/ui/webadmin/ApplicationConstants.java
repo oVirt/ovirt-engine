@@ -1606,6 +1606,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String glusterNetwork();
 
+    String defaultRouteNetwork();
+
     String roleNetwork();
 
     String descriptionNetwork();
@@ -2018,6 +2020,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String displayItemInfo();
 
     String migrationItemInfo();
+
+    String defaultRouteItemInfo();
 
     String glusterNwItemInfo();
 

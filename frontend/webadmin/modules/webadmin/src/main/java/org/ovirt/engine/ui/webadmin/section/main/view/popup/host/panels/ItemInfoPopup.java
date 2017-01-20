@@ -51,6 +51,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private SafeHtml unknownImage = safeHtmlFromTrustedString(resources.questionMarkImage());
     private SafeHtml notInSyncImage = safeHtmlFromTrustedString(resources.networkNotSyncImage());
     private SafeHtml alertImage = safeHtmlFromTrustedString(resources.alertImage());
+    private SafeHtml defaultRouteImage = safeHtmlFromTrustedString(resources.defaultRouteNetwork());
+
 
     private SafeHtml safeHtmlFromTrustedString(ImageResource resource) {
         return SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resource).getHTML());
@@ -125,16 +127,18 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         boolean isDisplay = false;
         boolean isMigration = false;
-        boolean isGlusterNw = false;
+        boolean isGluster = false;
+        boolean isDefaultRoute = false;
 
         if (entity.getCluster() != null) {
             isDisplay = entity.getCluster().isDisplay();
             isMigration = entity.getCluster().isMigration();
-            isGlusterNw = entity.getCluster().isGluster();
+            isGluster = entity.getCluster().isGluster();
+            isDefaultRoute = entity.getCluster().isDefaultRoute();
         }
 
         // Usages
-        if (networkModel.isManagement() || isDisplay || entity.isVmNetwork() || isMigration || isGlusterNw) {
+        if (networkModel.isManagement() || isDisplay || entity.isVmNetwork() || isMigration || isGluster || isDefaultRoute) {
 
             addRow(templates.strongTextWithColor(constants.usageItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
 
@@ -154,8 +158,12 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
                 addRow(templates.imageTextSetupNetworkUsage(migrationImage, constants.migrationItemInfo(), TEXT_COLOR));
             }
 
-            if (isGlusterNw) {
+            if (isGluster) {
                 addRow(templates.imageTextSetupNetworkUsage(glusterNwImage, constants.glusterNwItemInfo(), TEXT_COLOR));
+            }
+
+            if (isDefaultRoute) {
+                addRow(templates.imageTextSetupNetworkUsage(defaultRouteImage, constants.defaultRouteItemInfo(), TEXT_COLOR));
             }
 
             insertHorizontalLine();

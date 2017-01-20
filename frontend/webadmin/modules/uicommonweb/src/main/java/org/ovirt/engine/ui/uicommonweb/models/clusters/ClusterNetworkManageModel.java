@@ -23,6 +23,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
     private final UICommand cancelCommand;
     private ClusterNetworkModel managementNetwork;
     private ClusterNetworkModel glusterNetwork;
+    private ClusterNetworkModel defaultRouteNetwork;
     private boolean needsAnyChange;
 
     public ClusterNetworkManageModel(SearchableListModel<?, ?> sourceListModel) {
@@ -44,6 +45,9 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
                     }
                     if (model.isGlusterNetwork()) {
                         glusterNetwork = model;
+                    }
+                    if (model.isDefaultRouteNetwork()) {
+                        defaultRouteNetwork = model;
                     }
                 }
             }
@@ -140,6 +144,24 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
         model.setGlusterNetwork(value);
     }
 
+    public ClusterNetworkModel getDefaultRouteNetwork() {
+        return defaultRouteNetwork;
+    }
+
+    public void setDefaultRouteNetwork(ClusterNetworkModel model, boolean value) {
+        if (!isMultiCluster()) {
+            if (value) {
+                // Reset the old default route network
+                ClusterNetworkModel defaultRouteNetwork = getDefaultRouteNetwork();
+                if (defaultRouteNetwork != null) {
+                    defaultRouteNetwork.setDefaultRouteNetwork(false);
+                }
+                this.defaultRouteNetwork = model;
+            }
+        }
+        model.setDefaultRouteNetwork(value);
+    }
+
     private void onManage() {
         Iterable<ClusterNetworkModel> manageList = getItems();
         final List<NetworkCluster> toAttach = new ArrayList<>();
@@ -160,6 +182,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
                         || manageModel.isDisplayNetwork() != networkCluster.isDisplay()
                         || manageModel.isMigrationNetwork() != networkCluster.isMigration()
                         || manageModel.isManagement() != networkCluster.isManagement()
+                        || manageModel.isDefaultRouteNetwork() != networkCluster.isDefaultRoute()
                         || manageModel.isGlusterNetwork() != networkCluster.isGluster()) {
                     needsUpdate = true;
                     copyRoles(manageModel, networkCluster);
@@ -202,6 +225,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
         networkCluster.setDisplay(manageModel.isDisplayNetwork());
         networkCluster.setMigration(manageModel.isMigrationNetwork());
         networkCluster.setManagement(manageModel.isManagement());
+        networkCluster.setDefaultRoute(manageModel.isDefaultRouteNetwork());
         networkCluster.setGluster(manageModel.isGlusterNetwork());
     }
 

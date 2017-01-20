@@ -108,6 +108,11 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 new GlusterNetworkIndicatorCheckboxColumn(multiCluster,
                         new GlusterNetworkIndicatorFieldUpdater()),
                 constants.glusterNetwork(), "100px"); //$NON-NLS-1$
+
+        networks.addColumn(
+                new DefaultRouteNetworkIndicatorCheckboxColumn(
+                        multiCluster, new DefaultRouteNetworkIndicatorFieldUpdater()),
+                constants.defaultRouteNetwork(), "100px"); //$NON-NLS-1$
     }
 
     @Override
@@ -140,6 +145,9 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
             }
             if (clusterNetworkModel.isRequired()) {
                 clusterNetworkModel.setRequired(false);
+            }
+            if (clusterNetworkModel.isDefaultRouteNetwork()) {
+                updateDefaultRouteNetwork(clusterNetworkModel, false);
             }
         }
     }
@@ -429,6 +437,35 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     private void updateGlusterNetwork(ClusterNetworkModel clusterNetworkModel, boolean value) {
         networks.asEditor().flush().setGlusterNetwork(clusterNetworkModel, value);
+    }
+
+    private static final class DefaultRouteNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
+        private DefaultRouteNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
+                DefaultRouteNetworkIndicatorFieldUpdater defaultRouteNetworkIndicatorFieldUpdater) {
+            super(multipleSelectionAllowed, defaultRouteNetworkIndicatorFieldUpdater);
+        }
+
+        @Override
+        public Boolean getValue(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.isDefaultRouteNetwork();
+        }
+
+        @Override
+        protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
+        }
+    }
+
+    private final class DefaultRouteNetworkIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {
+        @Override
+        public void update(int index, ClusterNetworkModel clusterNetworkModel, Boolean value) {
+            updateDefaultRouteNetwork(clusterNetworkModel, value);
+            refreshNetworksTable();
+        }
+    }
+
+    private void updateDefaultRouteNetwork(ClusterNetworkModel clusterNetworkModel, boolean value) {
+        networks.asEditor().flush().setDefaultRouteNetwork(clusterNetworkModel, value);
     }
 
     private final class DisplayNetworkIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {

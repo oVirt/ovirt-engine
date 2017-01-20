@@ -94,6 +94,10 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         descriptionColumn.makeSortable(NetworkConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descriptionColumn, constants.descriptionNetwork(), "300px"); //$NON-NLS-1$
 
+        /* Here are only listed those roles,
+         * which applies for given network in all clusters. Meaning, management network role need not to be set for
+         * given network on all clusters, and because of that it's missing here.
+         */
         AbstractSafeHtmlColumn<NetworkView> roleColumn =
                 new AbstractSafeHtmlColumn<NetworkView>() {
                     @Override

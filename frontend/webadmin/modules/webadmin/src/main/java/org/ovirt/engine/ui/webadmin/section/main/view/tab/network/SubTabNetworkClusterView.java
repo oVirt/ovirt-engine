@@ -46,6 +46,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
     private final SafeHtml glusterNwImage;
     private final SafeHtml emptyImage;
     private final SafeHtml managementImage;
+    private final SafeHtml defaultRouteImage;
 
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -58,6 +59,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         glusterNwImage = safeHtmlFromTrustedString(resources.glusterNetwork());
         emptyImage = safeHtmlFromTrustedString(resources.networkEmpty());
         managementImage = safeHtmlFromTrustedString(resources.mgmtNetwork());
+        defaultRouteImage = safeHtmlFromTrustedString(resources.defaultRouteNetwork());
 
         initTable();
         initWidget(getTable());
@@ -168,6 +170,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                     images.add(thisOrEmptyImage(networkCluster.isDisplay(), displayImage));
                     images.add(thisOrEmptyImage(networkCluster.isMigration(), migrationImage));
                     images.add(thisOrEmptyImage(networkCluster.isGluster(), glusterNwImage));
+                    images.add(thisOrEmptyImage(networkCluster.isDefaultRoute(), defaultRouteImage));
                 }
                 return MultiImageColumnHelper.getValue(images);
             }
@@ -192,6 +195,10 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                     if (networkCluster.isGluster()) {
                         imagesToText.put(glusterNwImage, constants.glusterNwItemInfo());
                     }
+
+                    if (networkCluster.isDefaultRoute()) {
+                        imagesToText.put(defaultRouteImage, constants.defaultRouteItemInfo());
+                    }
                 }
 
                 return MultiImageColumnHelper.getTooltip(imagesToText);
@@ -205,7 +212,10 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
             int res = 0;
             if (networkCluster != null) {
                 if (networkCluster.isManagement()) {
-                    res += 10;
+                    res += 16;
+                }
+                if (networkCluster.isDefaultRoute()) {
+                    res += 8;
                 }
                 if (networkCluster.isDisplay()) {
                     res += 4;
