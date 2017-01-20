@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -42,23 +43,19 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private static final String WHITE_TEXT_COLOR = "white";//$NON-NLS-1$
     private static final String TEXT_COLOR = "#c4c4c4";//$NON-NLS-1$
 
-    SafeHtml mgmtNetworkImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork())
-            .getHTML());
-    SafeHtml vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
-    SafeHtml monitorImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor())
-            .getHTML());
-    SafeHtml migrationImage =
-            SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.migrationNetwork())
-                    .getHTML());
-    SafeHtml glusterNwImage =
-            SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.glusterNetwork())
-                    .getHTML());
-    SafeHtml unknownImage =
-            SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.questionMarkImage()).getHTML());
-    SafeHtml notInSyncImage =
-            SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkNotSyncImage()).getHTML());
-    SafeHtml alertImage =
-            SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.alertImage()).getHTML());
+    private SafeHtml mgmtNetworkImage = safeHtmlFromTrustedString(resources.mgmtNetwork());
+    private SafeHtml vmImage = safeHtmlFromTrustedString(resources.networkVm());
+    private SafeHtml monitorImage = safeHtmlFromTrustedString(resources.networkMonitor());
+    private SafeHtml migrationImage = safeHtmlFromTrustedString(resources.migrationNetwork());
+    private SafeHtml glusterNwImage = safeHtmlFromTrustedString(resources.glusterNetwork());
+    private SafeHtml unknownImage = safeHtmlFromTrustedString(resources.questionMarkImage());
+    private SafeHtml notInSyncImage = safeHtmlFromTrustedString(resources.networkNotSyncImage());
+    private SafeHtml alertImage = safeHtmlFromTrustedString(resources.alertImage());
+
+    private SafeHtml safeHtmlFromTrustedString(ImageResource resource) {
+        return SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resource).getHTML());
+    }
+
     private static int defaultMtu = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(
             ConfigurationValues.DefaultMTU);
 

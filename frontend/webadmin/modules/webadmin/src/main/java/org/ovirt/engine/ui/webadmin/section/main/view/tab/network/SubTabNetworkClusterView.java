@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkClusterStatusColumn;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -52,16 +53,18 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
     @Inject
     public SubTabNetworkClusterView(SearchableDetailModelProvider<PairQueryable<Cluster, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider) {
         super(modelProvider);
-        displayImage =
-                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
-        migrationImage =
-                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.migrationNetwork()).getHTML());
-        glusterNwImage =
-                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.glusterNetwork()).getHTML());
-        emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
-        managementImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork()).getHTML());
+        displayImage = safeHtmlFromTrustedString(resources.networkMonitor());
+        migrationImage = safeHtmlFromTrustedString(resources.migrationNetwork());
+        glusterNwImage = safeHtmlFromTrustedString(resources.glusterNetwork());
+        emptyImage = safeHtmlFromTrustedString(resources.networkEmpty());
+        managementImage = safeHtmlFromTrustedString(resources.mgmtNetwork());
+
         initTable();
         initWidget(getTable());
+    }
+
+    private SafeHtml safeHtmlFromTrustedString(ImageResource resource) {
+        return SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resource).getHTML());
     }
 
     @Override
@@ -69,7 +72,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable() {
+    private void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>> nameColumn = new AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>>() {
@@ -127,89 +130,8 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         netRequiredColumn.makeSortable();
         getTable().addColumn(netRequiredColumn, constants.requiredNetCluster(), "120px"); //$NON-NLS-1$
 
-        AbstractSafeHtmlColumn<PairQueryable<Cluster, NetworkCluster>> netRoleColumn =
-                new AbstractSafeHtmlColumn<PairQueryable<Cluster, NetworkCluster>>() {
-
-                    @Override
-                    public SafeHtml getValue(PairQueryable<Cluster, NetworkCluster> object) {
-                        List<SafeHtml> images = new LinkedList<>();
-
-                        if (object.getSecond() != null) {
-                            if (object.getSecond().isManagement()) {
-                                images.add(managementImage);
-                            } else {
-                                images.add(emptyImage);
-                            }
-                            if (object.getSecond().isDisplay()) {
-                                images.add(displayImage);
-                            } else {
-                                images.add(emptyImage);
-                            }
-                            if (object.getSecond().isMigration()) {
-                                images.add(migrationImage);
-                            } else {
-                                images.add(emptyImage);
-                            }
-                            if (object.getSecond().isGluster()) {
-                                images.add(glusterNwImage);
-                            } else {
-                                images.add(emptyImage);
-
-                            }
-                        }
-                        return MultiImageColumnHelper.getValue(images);
-                    }
-
-                    @Override
-                    public SafeHtml getTooltip(PairQueryable<Cluster, NetworkCluster> object) {
-                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
-                        if (object.getSecond() != null) {
-                            if (object.getSecond().isManagement()) {
-                                imagesToText.put(managementImage, constants.managementItemInfo());
-                            }
-
-                            if (object.getSecond().isDisplay()) {
-                                imagesToText.put(displayImage, constants.displayItemInfo());
-                            }
-
-                            if (object.getSecond().isMigration()) {
-                                imagesToText.put(migrationImage, constants.migrationItemInfo());
-                            }
-
-                            if (object.getSecond().isGluster()) {
-                                imagesToText.put(glusterNwImage, constants.glusterNwItemInfo());
-                            }
-                        }
-
-                        return MultiImageColumnHelper.getTooltip(imagesToText);
-                    }
-                };
-        netRoleColumn.makeSortable(new Comparator<PairQueryable<Cluster, NetworkCluster>>() {
-
-            private int calculateValue(NetworkCluster networkCluster) {
-                int res = 0;
-                if (networkCluster != null) {
-                    if (networkCluster.isManagement()) {
-                        res += 10;
-                    }
-                    if (networkCluster.isDisplay()) {
-                        res += 4;
-                    }
-                    if (networkCluster.isMigration()) {
-                        res += 2;
-                    }
-                    if (networkCluster.isGluster()) {
-                        res += 1;
-                    }
-                }
-                return res;
-            }
-
-            @Override
-            public int compare(PairQueryable<Cluster, NetworkCluster> o1, PairQueryable<Cluster, NetworkCluster> o2) {
-                return calculateValue(o1.getSecond()) - calculateValue(o2.getSecond());
-            }
-        });
+        AbstractSafeHtmlColumn<PairQueryable<Cluster, NetworkCluster>> netRoleColumn = createNetRoleColumn();
+        netRoleColumn.makeSortable(new NetRoleColumnComparator());
         getTable().addColumn(netRoleColumn, constants.roleNetCluster(), "120px"); //$NON-NLS-1$
 
         AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>> descriptionColumn = new AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>>() {
@@ -229,4 +151,78 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         });
     }
 
+    private SafeHtml thisOrEmptyImage(boolean useFollowingImage, SafeHtml givenImage) {
+        return useFollowingImage ? givenImage : emptyImage;
+    }
+
+    private AbstractSafeHtmlColumn<PairQueryable<Cluster, NetworkCluster>> createNetRoleColumn() {
+        return new AbstractSafeHtmlColumn<PairQueryable<Cluster, NetworkCluster>>() {
+
+            @Override
+            public SafeHtml getValue(PairQueryable<Cluster, NetworkCluster> object) {
+                List<SafeHtml> images = new LinkedList<>();
+
+                NetworkCluster networkCluster = object.getSecond();
+                if (networkCluster != null) {
+                    images.add(thisOrEmptyImage(networkCluster.isManagement(), managementImage));
+                    images.add(thisOrEmptyImage(networkCluster.isDisplay(), displayImage));
+                    images.add(thisOrEmptyImage(networkCluster.isMigration(), migrationImage));
+                    images.add(thisOrEmptyImage(networkCluster.isGluster(), glusterNwImage));
+                }
+                return MultiImageColumnHelper.getValue(images);
+            }
+
+            @Override
+            public SafeHtml getTooltip(PairQueryable<Cluster, NetworkCluster> object) {
+                Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
+                NetworkCluster networkCluster = object.getSecond();
+                if (networkCluster != null) {
+                    if (networkCluster.isManagement()) {
+                        imagesToText.put(managementImage, constants.managementItemInfo());
+                    }
+
+                    if (networkCluster.isDisplay()) {
+                        imagesToText.put(displayImage, constants.displayItemInfo());
+                    }
+
+                    if (networkCluster.isMigration()) {
+                        imagesToText.put(migrationImage, constants.migrationItemInfo());
+                    }
+
+                    if (networkCluster.isGluster()) {
+                        imagesToText.put(glusterNwImage, constants.glusterNwItemInfo());
+                    }
+                }
+
+                return MultiImageColumnHelper.getTooltip(imagesToText);
+            }
+        };
+    }
+
+    private static class NetRoleColumnComparator implements Comparator<PairQueryable<Cluster, NetworkCluster>> {
+
+        private int calculateValue(NetworkCluster networkCluster) {
+            int res = 0;
+            if (networkCluster != null) {
+                if (networkCluster.isManagement()) {
+                    res += 10;
+                }
+                if (networkCluster.isDisplay()) {
+                    res += 4;
+                }
+                if (networkCluster.isMigration()) {
+                    res += 2;
+                }
+                if (networkCluster.isGluster()) {
+                    res += 1;
+                }
+            }
+            return res;
+        }
+
+        @Override
+        public int compare(PairQueryable<Cluster, NetworkCluster> o1, PairQueryable<Cluster, NetworkCluster> o2) {
+            return calculateValue(o1.getSecond()) - calculateValue(o2.getSecond());
+        }
+    }
 }

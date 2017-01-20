@@ -61,16 +61,16 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
     }
 
-    Iterable<ClusterNetworkModel> getNetworksTableItems() {
+    private Iterable<ClusterNetworkModel> getNetworksTableItems() {
         ClusterNetworkManageModel tableModel = networks.asEditor().flush();
         return tableModel != null ? tableModel.getItems() : new ArrayList<ClusterNetworkModel>();
     }
 
-    void refreshNetworksTable() {
+    private void refreshNetworksTable() {
         networks.asEditor().edit(networks.asEditor().flush());
     }
 
-    void initEntityModelCellTable() {
+    private void initEntityModelCellTable() {
         networks.enableColumnResizing();
         boolean multiCluster = networks.asEditor().flush().isMultiCluster();
 

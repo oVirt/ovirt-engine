@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
@@ -27,6 +26,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkStatusColumn;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -45,23 +45,24 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
     private final SafeHtml emptyImage;
     private final SafeHtml managementImage;
 
-    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabClusterNetworkView(SearchableDetailModelProvider<Network, ClusterListModel<Void>, ClusterNetworkListModel> modelProvider) {
         super(modelProvider);
-        displayImage =
-                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
-        migrationImage =
-                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.migrationNetwork()).getHTML());
-        glusterNwImage =
-                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.glusterNetwork()).getHTML());
-        emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
-        managementImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork()).getHTML());
+        displayImage = safeHtmlFromTrustedString(resources.networkMonitor());
+        migrationImage = safeHtmlFromTrustedString(resources.migrationNetwork());
+        glusterNwImage = safeHtmlFromTrustedString(resources.glusterNetwork());
+        emptyImage = safeHtmlFromTrustedString(resources.networkEmpty());
+        managementImage = safeHtmlFromTrustedString(resources.mgmtNetwork());
+
         initTable();
         initWidget(getTable());
+    }
+
+    private SafeHtml safeHtmlFromTrustedString(ImageResource resource) {
+        return SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resource).getHTML());
     }
 
     @Override
@@ -69,7 +70,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable() {
+    private void initTable() {
         getTable().enableColumnResizing();
 
         NetworkStatusColumn statusIconColumn = new NetworkStatusColumn();
@@ -94,69 +95,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusNetwork(), "100px"); //$NON-NLS-1$
 
-        AbstractSafeHtmlColumn<Network> roleColumn =
-                new AbstractSafeHtmlColumn<Network>() {
-                    @Override
-                    public SafeHtml getValue(Network network) {
-
-                        List<SafeHtml> images = new LinkedList<>();
-
-                        final NetworkCluster networkCluster = network.getCluster();
-                        if (networkCluster != null) {
-
-                            if (networkCluster.isManagement()) {
-                                images.add(managementImage);
-                            } else {
-                                images.add(emptyImage);
-                            }
-
-                            if (networkCluster.isDisplay()) {
-                                images.add(displayImage);
-                            } else {
-                                images.add(emptyImage);
-                            }
-
-                            if (networkCluster.isMigration()) {
-                                images.add(migrationImage);
-                            } else {
-                                images.add(emptyImage);
-                            }
-
-                            if (network.getCluster().isGluster()) {
-                                images.add(glusterNwImage);
-                            } else {
-                                images.add(emptyImage);
-                            }
-                        }
-
-                        return MultiImageColumnHelper.getValue(images);
-                    }
-
-                    @Override
-                    public SafeHtml getTooltip(Network network) {
-                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
-                        final NetworkCluster networkCluster = network.getCluster();
-                        if (networkCluster != null) {
-                            if (networkCluster.isManagement()) {
-                                imagesToText.put(managementImage, constants.managementItemInfo());
-                            }
-                            if (networkCluster.isDisplay()) {
-                                imagesToText.put(displayImage, constants.displayItemInfo());
-                            }
-
-                            if (networkCluster.isMigration()) {
-                                imagesToText.put(migrationImage, constants.migrationItemInfo());
-                            }
-
-                            if (network.getCluster().isGluster()) {
-                                imagesToText.put(glusterNwImage, constants.glusterNwItemInfo());
-                            }
-                        }
-                        return MultiImageColumnHelper.getTooltip(imagesToText);
-                    }
-                };
-
-        getTable().addColumn(roleColumn, constants.roleNetwork(), "90px"); //$NON-NLS-1$
+        getTable().addColumn(createNetRoleColumn(), constants.roleNetwork(), "90px"); //$NON-NLS-1$
 
         AbstractTextColumn<Network> descColumn = new AbstractTextColumn<Network>() {
             @Override
@@ -187,6 +126,54 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
                 return getDetailModel().getSetAsDisplayCommand();
             }
         });
+    }
+
+    private SafeHtml thisOrEmptyImage(boolean useFollowingImage, SafeHtml givenImage) {
+        return useFollowingImage ? givenImage : emptyImage;
+    }
+
+    private AbstractSafeHtmlColumn<Network> createNetRoleColumn() {
+        return new AbstractSafeHtmlColumn<Network>() {
+            @Override
+            public SafeHtml getValue(Network network) {
+
+                List<SafeHtml> images = new LinkedList<>();
+
+                final NetworkCluster networkCluster = network.getCluster();
+                if (networkCluster != null) {
+
+                    images.add(thisOrEmptyImage(networkCluster.isManagement(), managementImage));
+                    images.add(thisOrEmptyImage(networkCluster.isDisplay(), displayImage));
+                    images.add(thisOrEmptyImage(networkCluster.isMigration(), migrationImage));
+                    images.add(thisOrEmptyImage(network.getCluster().isGluster(), glusterNwImage));
+                }
+
+                return MultiImageColumnHelper.getValue(images);
+            }
+
+            @Override
+            public SafeHtml getTooltip(Network network) {
+                Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
+                final NetworkCluster networkCluster = network.getCluster();
+                if (networkCluster != null) {
+                    if (networkCluster.isManagement()) {
+                        imagesToText.put(managementImage, constants.managementItemInfo());
+                    }
+                    if (networkCluster.isDisplay()) {
+                        imagesToText.put(displayImage, constants.displayItemInfo());
+                    }
+
+                    if (networkCluster.isMigration()) {
+                        imagesToText.put(migrationImage, constants.migrationItemInfo());
+                    }
+
+                    if (network.getCluster().isGluster()) {
+                        imagesToText.put(glusterNwImage, constants.glusterNwItemInfo());
+                    }
+                }
+                return MultiImageColumnHelper.getTooltip(imagesToText);
+            }
+        };
     }
 
 }
