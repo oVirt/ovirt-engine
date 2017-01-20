@@ -834,6 +834,7 @@ select fn_db_update_default_config_value('vdsRetries', '3', '0', 'general', fals
 -- Override existing configuration to TLSv1 if it is SSLv3
 select fn_db_update_default_config_value('VdsmSSLProtocol','SSLv3','TLSv1','general', false);
 select fn_db_update_default_config_value('VdsmSSLProtocol','TLSv1','TLS','general',false);
+select fn_db_update_default_config_value('VdsmSSLProtocol','TLS','TLSv1.2','general',false);
 select fn_db_update_default_config_value('ExternalCommunicationProtocol','SSLv3','TLSv1','general', false);
 
 -- Adding no-TSX Intel processors in 3.6
