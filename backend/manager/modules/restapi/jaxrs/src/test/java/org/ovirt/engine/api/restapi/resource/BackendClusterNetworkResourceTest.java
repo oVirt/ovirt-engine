@@ -55,15 +55,15 @@ public class BackendClusterNetworkResourceTest
     @Test
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(1, false, false, false);
+        setUpEntityQueryExpectations(1, false, false, false, false);
 
         verifyModel(resource.get(), 1);
     }
 
     @Test
     public void testUpdate() throws Exception {
-        setUpEntityQueryExpectations(1, false, false, false);
-        setUpEntityQueryExpectations(1, true, true, true);
+        setUpEntityQueryExpectations(1, false, false, false, false);
+        setUpEntityQueryExpectations(1, true, true, true, true);
         setUpClusterExpectations(GUIDS[1]);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateNetworkOnCluster,
                                            NetworkClusterParameters.class,
@@ -95,7 +95,7 @@ public class BackendClusterNetworkResourceTest
     @Test
     public void testRemove() throws Exception {
         setUpClusterExpectations(CLUSTER_ID);
-        setUpEntityQueryExpectations(2, false, false, false);
+        setUpEntityQueryExpectations(2, false, false, false, false);
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.DetachNetworkToCluster,
@@ -121,7 +121,7 @@ public class BackendClusterNetworkResourceTest
 
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpClusterExpectations(CLUSTER_ID);
-        setUpEntityQueryExpectations(2, false, false, false);
+        setUpEntityQueryExpectations(2, false, false, false, false);
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.DetachNetworkToCluster,
@@ -166,19 +166,20 @@ public class BackendClusterNetworkResourceTest
         assertNotNull(model.getUsages().getUsages());
         assertTrue(model.getUsages().getUsages().contains(NetworkUsage.DISPLAY));
         assertTrue(model.getUsages().getUsages().contains(NetworkUsage.MIGRATION));
+        assertTrue(model.getUsages().getUsages().contains(NetworkUsage.DEFAULT_ROUTE));
         assertTrue(model.isSetRequired());
         assertEquals(true, model.isRequired());
    }
 
 
-    protected void setUpEntityQueryExpectations(int times, boolean isDisplay, boolean isMigration, boolean isRequired)
+    protected void setUpEntityQueryExpectations(int times, boolean isDisplay, boolean isMigration, boolean isRequired, boolean isDefaultRoute)
             throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { CLUSTER_ID },
-                                         getEntityList(isDisplay, isMigration, isRequired));
+                                         getEntityList(isDisplay, isMigration, isRequired, isDefaultRoute));
         }
     }
 }

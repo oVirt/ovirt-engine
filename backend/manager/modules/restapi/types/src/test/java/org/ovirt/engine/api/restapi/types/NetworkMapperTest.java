@@ -36,6 +36,7 @@ public class NetworkMapperTest extends AbstractInvertibleMappingTest<Network, or
         assertTrue(usagesSet.contains(NetworkUsage.MIGRATION));
         assertTrue(usagesSet.contains(NetworkUsage.MANAGEMENT));
         assertTrue(usagesSet.contains(NetworkUsage.VM));
+        assertTrue(usagesSet.contains(NetworkUsage.DEFAULT_ROUTE));
     }
 
     @Override
@@ -46,6 +47,7 @@ public class NetworkMapperTest extends AbstractInvertibleMappingTest<Network, or
         model.getUsages().getUsages().add(NetworkUsage.MIGRATION);
         model.getUsages().getUsages().add(NetworkUsage.MANAGEMENT);
         model.getUsages().getUsages().add(NetworkUsage.VM);
+        model.getUsages().getUsages().add(NetworkUsage.DEFAULT_ROUTE);
         return super.postPopulate(model);
     }
 }

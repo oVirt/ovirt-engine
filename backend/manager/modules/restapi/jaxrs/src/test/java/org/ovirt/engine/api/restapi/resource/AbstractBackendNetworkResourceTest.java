@@ -30,31 +30,35 @@ public class AbstractBackendNetworkResourceTest<N extends AbstractBackendNetwork
     protected org.ovirt.engine.core.common.businessentities.network.Network getEntity(int index,
             boolean isDisplay,
             boolean isMigration,
-            boolean isRequired) {
+            boolean isRequired,
+            boolean isDefaultRoute) {
         return setUpEntityExpectations(mock(org.ovirt.engine.core.common.businessentities.network.Network.class),
                 isDisplay,
                 isMigration,
                 isRequired,
+                isDefaultRoute,
                 index);
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.network.Network> getEntityList() {
-        return getEntities(false, false, false);
+        return getEntities(false, false, false, false);
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.network.Network> getEntityList(boolean isDisplay,
             boolean isMigration,
-            boolean isRequired) {
-        return getEntities(isDisplay, isMigration, isRequired);
+            boolean isRequired,
+            boolean isDefaultRoute) {
+        return getEntities(isDisplay, isMigration, isRequired, isDefaultRoute);
     }
 
     private List<org.ovirt.engine.core.common.businessentities.network.Network> getEntities(boolean isDisplay,
             boolean isMigration,
-            boolean isRequired) {
+            boolean isRequired,
+            boolean isDefaultRoute) {
         List<org.ovirt.engine.core.common.businessentities.network.Network> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             if (isDisplay) {
-                entities.add(getEntity(i, isDisplay, isMigration, isRequired));
+                entities.add(getEntity(i, isDisplay, isMigration, isRequired, isDefaultRoute));
             } else {
                 entities.add(getEntity(i));
             }

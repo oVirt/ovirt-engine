@@ -64,6 +64,7 @@ public class NetworkMapper {
             entity.getCluster().setMigration(networkUsages.contains(NetworkUsage.MIGRATION));
             entity.getCluster().setManagement(networkUsages.contains(NetworkUsage.MANAGEMENT));
             entity.getCluster().setGluster(networkUsages.contains(NetworkUsage.GLUSTER));
+            entity.getCluster().setDefaultRoute(networkUsages.contains(NetworkUsage.DEFAULT_ROUTE));
             entity.setVmNetwork(networkUsages.contains(NetworkUsage.VM));
         }
         if (model.isSetMtu()) {
@@ -120,6 +121,9 @@ public class NetworkMapper {
             }
             if (entity.getCluster().isManagement()) {
                 model.getUsages().getUsages().add(NetworkUsage.MANAGEMENT);
+            }
+            if (entity.getCluster().isDefaultRoute()) {
+                model.getUsages().getUsages().add(NetworkUsage.DEFAULT_ROUTE);
             }
             if (entity.getCluster().isGluster()) {
                 model.getUsages().getUsages().add(NetworkUsage.GLUSTER);

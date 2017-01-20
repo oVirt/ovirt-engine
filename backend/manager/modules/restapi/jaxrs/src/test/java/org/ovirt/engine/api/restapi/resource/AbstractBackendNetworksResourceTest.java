@@ -41,6 +41,7 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
         networkCluster.setDisplay(false);
         networkCluster.setMigration(false);
         networkCluster.setRequired(false);
+        networkCluster.setDefaultRoute(false);
         network.setCluster(networkCluster);
         network.setId(GUIDS[index]);
         network.setName(NAMES[index]);
@@ -53,11 +54,13 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
             boolean isDisplay,
             boolean isMigration,
             boolean isRequired,
+            boolean isDefaultRoute,
             int index) {
         NetworkCluster networkCluster = new NetworkCluster();
         networkCluster.setDisplay(isDisplay);
         networkCluster.setMigration(isMigration);
         networkCluster.setRequired(isRequired);
+        networkCluster.setDefaultRoute(isDefaultRoute);
         when(entity.getCluster()).thenReturn(networkCluster);
         return setUpEntityExpectations(entity, index);
      }
