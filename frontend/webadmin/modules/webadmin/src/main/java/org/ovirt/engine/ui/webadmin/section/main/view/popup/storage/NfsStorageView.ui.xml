@@ -60,13 +60,13 @@
                         <b:Row>
                             <ge:StringEntityModelTextBoxEditor ui:field="mountOptionsEditor" label="{constants.storagePopupAdditionalMountOptionsLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                         </b:Row>
-                        <b:Row>
-                            <b:Column size="SM_12">
-                                <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
-                            </b:Column>
-                        </b:Row>
                     </g:FlowPanel>
                 </g:FlowPanel>
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
             </b:Column>
         </b:Row>
     </b:Container>
