@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.repoimage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -24,7 +25,14 @@ public abstract class GetImagesListQueryBase<P extends GetImagesListParametersBa
     @Override
     protected void executeQueryCommand() {
         // Fetch all the Iso files of a given type for storage pool with active storage domain of this domain Id.
-        getQueryReturnValue().setReturnValue(getUserRequestForStorageDomainRepoFileList());
+        try {
+            getQueryReturnValue().setReturnValue(getUserRequestForStorageDomainRepoFileList());
+        } catch (Exception e) {
+            String message = Optional.of(e.getCause()).map(Throwable::getMessage).orElse("");
+            log.error("Failed to retrieve image list: {}", message);
+            getQueryReturnValue().setExceptionString(message);
+            getQueryReturnValue().setSucceeded(false);
+        }
     }
 
     /**
