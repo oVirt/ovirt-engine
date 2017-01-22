@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -420,6 +421,17 @@ public class VmInfoBuildUtils {
         }
 
         return vmDeviceUnitMap;
+    }
+
+    public List<Disk> getSortedDisks(VM vm) {
+        // order first by drive numbers and then order by boot for the bootable
+        // drive to be first (important for IDE to be index 0) !
+        List<Disk> diskImages = new ArrayList<>(vm.getDiskMap()
+                .values());
+        Collections.sort(diskImages, new DiskByDiskAliasComparator());
+        Collections.sort(diskImages,
+                Collections.reverseOrder(new DiskImageByBootAndSnapshotComparator(vm.getId())));
+        return diskImages;
     }
 
     public int getAvailableUnitForScsiDisk(Map<VmDevice, Integer> vmDeviceUnitMap, boolean reserveFirstTwoLuns) {

@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -283,7 +282,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     @Override
     public void buildVmDrives() {
         boolean bootDiskFound = false;
-        List<Disk> disks = getSortedDisks();
+        List<Disk> disks = vmInfoBuildUtils.getSortedDisks(vm);
         Map<VmDevice, Integer> vmDeviceVirtioScsiUnitMap =
                 vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(vm);
 
@@ -1257,17 +1256,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         } else {
             return "Etc/GMT";
         }
-    }
-
-    private List<Disk> getSortedDisks() {
-        // order first by drive numbers and then order by boot for the bootable
-        // drive to be first (important for IDE to be index 0) !
-        List<Disk> diskImages = new ArrayList<>(vm.getDiskMap()
-                .values());
-        Collections.sort(diskImages, new DiskByDiskAliasComparator());
-        Collections.sort(diskImages,
-                Collections.reverseOrder(new DiskImageByBootAndSnapshotComparator(vm.getId())));
-        return diskImages;
     }
 
     private void logUnsupportedInterfaceType() {
