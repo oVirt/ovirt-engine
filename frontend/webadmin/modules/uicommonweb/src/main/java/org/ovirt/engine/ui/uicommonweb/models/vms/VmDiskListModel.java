@@ -619,7 +619,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         List<Disk> disks = getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
-            if (isDiskLocked(disk) || (!isVmDown() && disk.getPlugged())) {
+            if (!isImageDiskOK(disk) || (!isVmDown() && disk.getPlugged())) {
                 return false;
             }
         }
