@@ -1061,7 +1061,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getCurrentStorageItem();
-        PosixStorageModel posixModel = (PosixStorageModel) storageModel;
+        final PosixStorageModel posixModel = (PosixStorageModel) storageModel;
         path = posixModel.getPath().getEntity();
 
         storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
@@ -1074,6 +1074,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 public void onSuccess(List<StorageDomain> storages) {
 
                     if (storages != null && storages.size() > 0) {
+                        posixModel.getPath().setIsValid(false);
                         handleDomainAlreadyExists(storages);
                     } else {
                         saveNewPosixStorage();
@@ -1191,7 +1192,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getCurrentStorageItem();
-        NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
+        final NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
         path = nfsModel.getPath().getEntity();
 
         storageDomain =
@@ -1207,6 +1208,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 public void onSuccess(List<StorageDomain> storages) {
 
                     if (storages != null && storages.size() > 0) {
+                        nfsModel.getPath().setIsValid(false);
                         handleDomainAlreadyExists(storages);
                     } else {
                         saveNewNfsStorage();
