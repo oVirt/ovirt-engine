@@ -75,7 +75,8 @@ public class SparsifyImageCommand<T extends StorageJobCommandParameters> extends
     protected boolean validate() {
         DiskValidator diskValidator = new DiskValidator(getDiskImage());
         if (!validate(diskValidator.isDiskExists()) ||
-                !validate(diskValidator.isDiskPluggedToVmsThatAreNotDown(false, vmsForDisk))) {
+                !validate(diskValidator.isDiskPluggedToVmsThatAreNotDown(false, vmsForDisk)) ||
+                !validate(diskValidator.isSparsifySupported())) {
             return false;
         }
 
