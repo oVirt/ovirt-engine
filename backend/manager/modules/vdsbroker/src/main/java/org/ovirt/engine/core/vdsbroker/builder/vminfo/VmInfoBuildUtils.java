@@ -427,12 +427,10 @@ public class VmInfoBuildUtils {
     public List<Disk> getSortedDisks(VM vm) {
         // order first by drive numbers and then order by boot for the bootable
         // drive to be first (important for IDE to be index 0) !
-        List<Disk> diskImages = new ArrayList<>(vm.getDiskMap()
-                .values());
-        Collections.sort(diskImages, new DiskByDiskAliasComparator());
-        Collections.sort(diskImages,
-                Collections.reverseOrder(new DiskByBootAndSnapshotComparator(vm.getId())));
-        return diskImages;
+        List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
+        Collections.sort(disks, new DiskByDiskAliasComparator());
+        Collections.sort(disks, Collections.reverseOrder(new DiskByBootAndSnapshotComparator(vm.getId())));
+        return disks;
     }
 
     public int getAvailableUnitForScsiDisk(Map<VmDevice, Integer> vmDeviceUnitMap, boolean reserveFirstTwoLuns) {
