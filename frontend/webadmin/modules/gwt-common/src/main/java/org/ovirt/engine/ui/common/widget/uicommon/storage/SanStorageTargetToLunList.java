@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.dom.client.Style.Unit;
@@ -144,9 +143,6 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         });
         loginButton.getElement().getStyle().setFloat(Float.RIGHT);
         loginButton.getElement().getStyle().setMarginRight(6, Unit.PX);
-        Style spanStyle = loginButton.getElement().getElementsByTagName("span").getItem(0).getStyle(); //$NON-NLS-1$
-        spanStyle.setPosition(Style.Position.RELATIVE);
-        spanStyle.setTop(-3, Unit.PX);
 
         panel.add(loginButton);
         panel.setCellVerticalAlignment(loginButton, HasVerticalAlignment.ALIGN_MIDDLE);
