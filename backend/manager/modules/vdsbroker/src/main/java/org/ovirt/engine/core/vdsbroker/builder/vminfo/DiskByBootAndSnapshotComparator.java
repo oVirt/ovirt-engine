@@ -6,11 +6,11 @@ import java.util.Comparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.compat.Guid;
 
-final class DiskImageByBootAndSnapshotComparator implements Comparator<Disk>, Serializable {
+final class DiskByBootAndSnapshotComparator implements Comparator<Disk>, Serializable {
     private static final long serialVersionUID = 4732164571328497830L;
     private Guid vmId;
 
-    DiskImageByBootAndSnapshotComparator(Guid vmId) {
+    DiskByBootAndSnapshotComparator(Guid vmId) {
         this.vmId = vmId;
     }
 
