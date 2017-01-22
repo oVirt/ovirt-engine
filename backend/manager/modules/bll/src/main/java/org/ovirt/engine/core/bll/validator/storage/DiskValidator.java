@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
@@ -19,7 +21,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 /**
@@ -147,5 +151,41 @@ public class DiskValidator {
                     ReplacementUtils.createSetVariableString("DiskName", bootDisk.getDiskAlias()));
         }
         return ValidationResult.VALID;
+    }
+
+    public ValidationResult isSparsifySupported() {
+        if (disk.getDiskStorageType() != DiskStorageType.IMAGE) {
+            return new ValidationResult(
+                    EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_DISK_STORAGE_TYPE,
+                    getDiskAliasVarReplacement(),
+                    ReplacementUtils.createSetVariableString("diskStorageType", disk.getDiskStorageType()));
+        }
+
+        StorageDomain diskStorageDomain = Injector.get(StorageDomainDao.class)
+                .get(((DiskImage) disk).getStorageIds().get(0));
+        if (diskStorageDomain.getStorageType().isFileDomain()) {
+            return ValidationResult.VALID;
+        }
+        if (diskStorageDomain.getStorageType().isBlockDomain()) {
+            if (disk.isWipeAfterDelete() && !diskStorageDomain.getSupportsDiscardZeroesData()) {
+                return new ValidationResult(EngineMessage
+                        .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_UNDERLYING_STORAGE_WHEN_WAD_IS_ENABLED,
+                        getStorageDomainNameVarReplacement(diskStorageDomain),
+                        getDiskAliasVarReplacement());
+            }
+            return ValidationResult.VALID;
+        }
+        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_STORAGE_TYPE,
+                getDiskAliasVarReplacement(),
+                getStorageDomainNameVarReplacement(diskStorageDomain),
+                ReplacementUtils.createSetVariableString("storageType", diskStorageDomain.getStorageType()));
+    }
+
+    private String getDiskAliasVarReplacement() {
+        return ReplacementUtils.createSetVariableString("diskAlias", disk.getDiskAlias());
+    }
+
+    private String getStorageDomainNameVarReplacement(StorageDomain storageDomain) {
+        return ReplacementUtils.createSetVariableString("storageDomainName", storageDomain.getName());
     }
 }

@@ -9,16 +9,19 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -33,14 +36,22 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DiskValidatorTest {
 
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
+
     @Mock
     private VmDao vmDao;
+
+    @Mock
+    private StorageDomainDao storageDomainDao;
 
     private DiskValidator validator;
     private DiskImage disk;
@@ -82,6 +93,18 @@ public class DiskValidatorTest {
         lunDisk = createLunDisk();
         lunValidator = spy(new DiskValidator(lunDisk));
         doReturn(vmDao).when(lunValidator).getVmDao();
+    }
+
+    private StorageDomain createStorageDomainForDisk(StorageType storageType) {
+        StorageDomain domain = new StorageDomain();
+        domain.setId(Guid.newGuid());
+        domain.setStorageType(storageType);
+        disk.setStorageIds(new ArrayList<>(Collections.singletonList(domain.getId())));
+
+        injectorRule.bind(StorageDomainDao.class, storageDomainDao);
+        when(storageDomainDao.get(domain.getId())).thenReturn(domain);
+
+        return domain;
     }
 
     private VmDevice createVmDeviceForDisk(VM vm, Disk disk, Guid snapshotId, boolean isPlugged) {
@@ -203,6 +226,49 @@ public class DiskValidatorTest {
                 ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
                 ReplacementUtils.createSetVariableString(DiskValidator.VM_NAME_VARIABLE, vm.getName())};
         assertThat(validator.isDiskAttachedToVm(vm), failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM, expectedReplacements));
+    }
+
+    @Test
+    public void sparsifyNotSupportedForDirectLun() {
+        setupForLun();
+        assertThat(lunValidator.isSparsifySupported(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_DISK_STORAGE_TYPE));
+    }
+
+    @Test
+    public void sparsifySupportedByFileDomain() {
+        createStorageDomainForDisk(StorageType.NFS);
+        assertThat(validator.isSparsifySupported(), isValid());
+    }
+
+    @Test
+    public void sparsifyNotSupportedByOpenstackDomain() {
+        createStorageDomainForDisk(StorageType.CINDER);
+        assertThat(validator.isSparsifySupported(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_STORAGE_TYPE));
+    }
+
+    @Test
+    public void sparsifySupportedWhenWipeAfterDeleteIsOff() {
+        createStorageDomainForDisk(StorageType.ISCSI);
+        assertThat(validator.isSparsifySupported(), isValid());
+    }
+
+    @Test
+    public void sparsifyNotSupportedWhenWipeAfterDeleteIsOn() {
+        StorageDomain storageDomain = createStorageDomainForDisk(StorageType.ISCSI);
+        disk.setWipeAfterDelete(true);
+        storageDomain.setSupportsDiscardZeroesData(false);
+        assertThat(validator.isSparsifySupported(), failsWith(EngineMessage
+                .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_UNDERLYING_STORAGE_WHEN_WAD_IS_ENABLED));
+    }
+
+    @Test
+    public void sparsifySupportedWhenWipeAfterDeleteIsOn() {
+        StorageDomain storageDomain = createStorageDomainForDisk(StorageType.FCP);
+        disk.setWipeAfterDelete(true);
+        storageDomain.setSupportsDiscardZeroesData(true);
+        assertThat(validator.isSparsifySupported(), isValid());
     }
 
     private LunDisk createLunDisk(ScsiGenericIO sgio) {
