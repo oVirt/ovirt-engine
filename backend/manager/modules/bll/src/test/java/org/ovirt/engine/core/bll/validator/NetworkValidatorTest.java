@@ -15,11 +15,10 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
@@ -37,10 +36,9 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class NetworkValidatorTest {
 
     private static final String NAMEABLE_NAME = "nameable";
@@ -50,9 +48,6 @@ public class NetworkValidatorTest {
     private static final Guid OTHER_GUID = Guid.newGuid();
     private static final int DEFAULT_VLAN_ID = 0;
     private static final int OTHER_VLAN_ID = 1;
-
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule();
 
     @Mock
     private DbFacade dbFacade;
