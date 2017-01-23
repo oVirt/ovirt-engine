@@ -22,7 +22,6 @@ import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
-import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
@@ -90,8 +89,6 @@ public class BackendTemplatesResource
         if (namedCluster(template)) {
             staticVm.setClusterId(clusterId);
         }
-
-        staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(template.getUsb()));
 
         // REVISIT: powershell has a IsVmTemlateWithSameNameExist safety check
         AddVmTemplateParameters params = new AddVmTemplateParameters(staticVm,
