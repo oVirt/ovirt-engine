@@ -142,17 +142,7 @@ public class StorageJobCallback extends ChildCommandsCallbackBase {
         return null;
     }
 
-    private void handlePolledJobStatus(StorageJobCommand<?> cmd, HostJobStatus status) {
-        if (status != null && status.executionStarted() && !cmd.getParameters().getJobStarted()) {
-            cmd.getParameters().setJobStarted(true);
-            cmd.persistCommand(cmd.getParameters().getParentCommand(), true);
-        }
-    }
-
-
     private void handlePolledJobInfo(StorageJobCommand<?> cmd, HostJobInfo jobInfo) {
-        handlePolledJobStatus(cmd, jobInfo.getStatus());
-
         if (jobInfo.getStatus() != HostJobStatus.failed) {
             return;
         }
@@ -180,23 +170,21 @@ public class StorageJobCallback extends ChildCommandsCallbackBase {
                     cmd.getCommandId());
 
             HostJobStatus jobStatus = pollEntity(cmd);
-            handlePolledJobStatus(cmd, jobStatus);
             if (jobStatus != null) {
                 return jobStatus;
             }
 
-            EntityPollingCommand entityPollingCommand = (EntityPollingCommand) cmd;
-            if (!cmd.getParameters().getJobStarted()) {
-                // If the command job may not have been started and the command supports job fencing, we can attempt
-                // to fence the job - which means that the host will never be able to execute it.
-                // Fencing the operation will usually be performed by executing an asynchronous fencing command on the
-                // entity the job is supposed to be performed on.
-                // If a fencing command was executed, the callback will wait for it to end and then will try to poll the
-                // entity again (it'll be detected as a running child command). On synchronous fencing/no fencing we
-                // will attempt to poll the entity again.
-                entityPollingCommand.attemptToFenceJob();
-            }
-
+            // If the job status couldn't been detected using entity polling and the command supports job fencing, we
+            // can attempt to fence the job - which means that the host will fail to execute it if it attempts to.
+            // Note that we may attempt to perform the fencing even if the job failed in case we couldn't determine
+            // the job status, that'll confirm the job failure.
+            //
+            // Fencing the operation will usually be performed by executing an asynchronous fencing command on the
+            // entity the job is supposed to be performed on.
+            // If a fencing command was executed, the callback will wait for it to end and then will try to poll the
+            // entity again (it'll be detected as a running child command). On synchronous fencing/no fencing we
+            // will attempt to poll the entity again.
+            ((EntityPollingCommand) cmd).attemptToFenceJob();
             return null;
         }
 

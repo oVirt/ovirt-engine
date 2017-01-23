@@ -83,10 +83,6 @@ public class HostJobInfo {
         public boolean isAlive() {
             return this == running || this == pending;
         }
-
-        public boolean executionStarted() {
-            return this == running || this == done || this == failed;
-        }
     }
 
     @Override
