@@ -8,32 +8,28 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(Silent.class)
+@RunWith(Strict.class)
 public class UpdateHostValidatorTest {
 
     private static final int HOST_NAME_SIZE = 20;
@@ -43,11 +39,6 @@ public class UpdateHostValidatorTest {
 
     @Mock
     private ProviderDao providerDao;
-
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(
-            mockConfig(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE)
-    );
 
     private VDS host = mock(VDS.class);
 
@@ -91,9 +82,6 @@ public class UpdateHostValidatorTest {
 
     @Test
     public void updateHostAddressAllowed() {
-        String hostName = generateRandomName();
-        when(oldHost.getHostName()).thenReturn(hostName);
-        when(host.getHostName()).thenReturn(hostName);
         when(oldHost.getStatus()).thenReturn(VDSStatus.InstallFailed);
 
         assertThat(validator.updateHostAddressAllowed(), isValid());
@@ -200,7 +188,6 @@ public class UpdateHostValidatorTest {
 
     @Test
     public void passwordProvidedForHostInstallation() {
-        when(host.getVdsType()).thenReturn(VDSType.VDS);
         validator = createValidatorForHostInstallation();
 
         assertThat(validator.passwordProvidedForHostInstallation(AuthenticationMethod.Password, RandomUtils.instance()
@@ -218,8 +205,6 @@ public class UpdateHostValidatorTest {
 
     @Test
     public void updatePortAllowedWhenInstallationRequired() {
-        when(oldHost.getPort()).thenReturn(RandomUtils.instance().nextInt());
-        when(host.getPort()).thenReturn(RandomUtils.instance().nextInt());
         validator = createValidatorForHostInstallation();
 
         assertThat(validator.updatePortAllowed(), isValid());
