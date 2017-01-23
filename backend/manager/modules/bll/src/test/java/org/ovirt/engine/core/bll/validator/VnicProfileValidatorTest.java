@@ -15,11 +15,10 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -37,10 +36,9 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-@RunWith(Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class VnicProfileValidatorTest {
 
     private static final String NAMEABLE_NAME = "nameable";
@@ -50,9 +48,6 @@ public class VnicProfileValidatorTest {
     private static final Guid OTHER_GUID = Guid.newGuid();
     private static final Guid VALID_NETWORK_FILTER_ID = Guid.newGuid();
     private static final Guid INVALID_NETWORK_FILTER_ID = Guid.newGuid();
-
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     private DbFacade dbFacade;
