@@ -3,7 +3,6 @@ package org.ovirt.engine.core.utils;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -13,6 +12,7 @@ import java.util.List;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.mockito.Answers;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
@@ -100,8 +100,7 @@ public class MockConfigRule extends TestWatcher {
     @Override
     public void starting(Description description) {
         origConfUtils = Config.getConfigUtils();
-        ConfigUtilsBase configUtils = mock(ConfigUtilsBase.class);
-        doCallRealMethod().when(configUtils).getValue(any(VdcOption.class));
+        ConfigUtilsBase configUtils = mock(ConfigUtilsBase.class, Answers.CALLS_REAL_METHODS);
         doAnswer(invocationOnMock -> {
             VdcOption option = new VdcOption();
             option.setOptionName(((ConfigValues) invocationOnMock.getArguments()[0]).name());
