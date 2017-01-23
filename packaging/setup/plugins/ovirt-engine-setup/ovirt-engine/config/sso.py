@@ -155,6 +155,7 @@ class Plugin(plugin.PluginBase):
                 client_secret=stdout[0],
                 scope=' '.join(
                     (
+                        'openid',
                         'ovirt-app-portal',
                         'ovirt-app-admin',
                         'ovirt-app-api',

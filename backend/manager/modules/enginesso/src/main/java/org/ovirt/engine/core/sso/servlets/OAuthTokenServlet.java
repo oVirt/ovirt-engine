@@ -99,7 +99,7 @@ public class OAuthTokenServlet extends HttpServlet {
         SsoUtils.validateRequestScope(request, accessToken, scope);
         SsoSession ssoSession = SsoUtils.getSsoSession(request, clientId, accessToken, true);
         log.debug("Sending json response");
-        SsoUtils.sendJsonData(response, buildResponse(ssoSession));
+        SsoUtils.sendJsonData(response, buildResponse(request, ssoSession, clientId));
     }
 
     private void handlePasswordGrantType(
@@ -227,6 +227,16 @@ public class OAuthTokenServlet extends HttpServlet {
         payload.put(SsoConstants.JSON_SCOPE, StringUtils.isEmpty(ssoSession.getScope()) ? "" : ssoSession.getScope());
         payload.put(SsoConstants.JSON_EXPIRES_IN, ssoSession.getValidTo().toString());
         payload.put(SsoConstants.JSON_TOKEN_TYPE, "bearer");
+        return payload;
+    }
+
+    private Map<String, Object> buildResponse(HttpServletRequest request,
+            SsoSession ssoSession,
+            String clientId) throws Exception {
+        Map<String, Object> payload = buildResponse(ssoSession);
+        if (SsoUtils.scopeAsList(ssoSession.getScope()).contains(SsoConstants.OPENID_SCOPE)) {
+            payload.put("id_token", SsoUtils.createJWT(request, ssoSession, clientId));
+        }
         return payload;
     }
 

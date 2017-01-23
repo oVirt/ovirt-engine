@@ -35,6 +35,7 @@ public class SsoSession implements Serializable {
     private String loginMessage;
     private String changePasswdMessage;
     private String engineUrl;
+    private String state;
     private boolean reauthenticate;
     private Credentials tempCredentials;
     private Credentials changePasswdCredentials;
@@ -266,8 +267,17 @@ public class SsoSession implements Serializable {
         this.sessionIdToken = sessionIdToken;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     public void cleanup() {
         redirectUri = null;
         authStack = null;
+        state = null;
     }
 }

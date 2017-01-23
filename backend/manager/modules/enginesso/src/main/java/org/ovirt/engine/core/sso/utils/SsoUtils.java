@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +39,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.util.InetAddressUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -51,6 +54,14 @@ import org.ovirt.engine.core.uutils.net.HttpClientBuilder;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 
 public class SsoUtils {
     private static Logger log = LoggerFactory.getLogger(SsoUtils.class);
@@ -94,6 +105,10 @@ public class SsoUtils {
             String appUrl = ssoSession.getAppUrl();
             if (StringUtils.isNotEmpty(appUrl)) {
                 redirectUrl.addParameter("app_url", appUrl);
+            }
+            String state = ssoSession.getState();
+            if (StringUtils.isNotEmpty(state)) {
+                redirectUrl.addParameter("state", state);
             }
             response.sendRedirect(redirectUrl.build());
             log.debug("Redirecting back to module: {}", redirectUrl);
@@ -722,6 +737,41 @@ public class SsoUtils {
             }
         }
         return new ArrayList<>(resolvedGroups.values());
+    }
+
+    private static SecureRandom random = new SecureRandom();
+    private static byte[] sharedSecret = new byte[32];
+    static {
+        random.nextBytes(sharedSecret);
+    }
+
+    public static String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId)
+            throws NoSuchAlgorithmException, JOSEException {
+        String serverName = request.getServerName();
+        String issuer = String.format("%s://%s:%s",
+                request.getScheme(),
+                InetAddressUtils.isIPv6Address(serverName) ? String.format("[%s]", serverName) : serverName,
+                request.getServerPort());
+
+        // Compose the JWT claims set
+        JWTClaimsSet jwtClaims = (new JWTClaimsSet.Builder())
+                .jwtID(ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.ID))
+                .issueTime(new Date(System.currentTimeMillis()))
+                .issuer(issuer)
+                .subject(String.format("%s@%s", ssoSession.getUserId(), ssoSession.getProfile()))
+                .audience(Arrays.asList(clientId))
+                .claim("sub", String.format("%s@%s", ssoSession.getUserId(), ssoSession.getProfile()))
+                .claim("preferred_username", String.format("%s@%s", ssoSession.getUserId(), ssoSession.getProfile()))
+                .claim("email", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.EMAIL))
+                .claim("name", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.FIRST_NAME))
+                .build();
+
+        // Create HMAC signer
+        JWSSigner signer = new MACSigner(sharedSecret);
+        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), jwtClaims);
+        signedJWT.sign(signer);
+
+        return signedJWT.serialize();
     }
 
     private static Set<String> processGroupMemberships(

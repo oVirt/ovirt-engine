@@ -55,6 +55,7 @@ public class SsoConstants {
     public static final String HTTP_PARAM_ENGINE_URL = "engine_url";
     public static final String HTTP_PARAM_REDIRECT_URI = "redirect_uri";
     public static final String HTTP_PARAM_SCOPE = "scope";
+    public static final String HTTP_PARAM_STATE = "state";
     public static final String HTTP_PARAM_CLIENT_ID = "client_id";
     public static final String HTTP_PARAM_CLIENT_SECRET = "client_secret";
     public static final String HTTP_REQ_ATTR_ACCESS_TOKEN = "access_token";
@@ -114,6 +115,7 @@ public class SsoConstants {
     public static final String SESSION_STATUES_QUERY = "session-statuses";
 
     public static final String AUTHZ_SEARCH_SCOPE = "ovirt-ext=token-info:authz-search";
+    public static final String OPENID_SCOPE = "openid";
     public static final String PASSWORD_ACCESS_SCOPE = "ovirt-ext=token:password-access";
     public static final String PUBLIC_AUTHZ_SEARCH_SCOPE = "ovirt-ext=token-info:public-authz-search";
     public static final String VALIDATE_SCOPE = "ovirt-ext=token-info:validate";
