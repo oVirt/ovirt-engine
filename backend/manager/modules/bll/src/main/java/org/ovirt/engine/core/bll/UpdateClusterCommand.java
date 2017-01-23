@@ -87,7 +87,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     private Event<Cluster> momPolicyUpdatedEvent;
 
     @Inject
-    private MoveMacsOfUpdatedCluster moveMacsOfUpdatedCluster;
+    private MoveMacs moveMacs;
 
     @Inject
     private InitGlusterCommandHelper glusterCommandHelper;
@@ -162,7 +162,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Override
     protected void executeCommand() {
         Guid newMacPoolId = getNewMacPoolId();
-        this.moveMacsOfUpdatedCluster.moveMacsOfUpdatedCluster(
+        moveMacs.moveMacsOfUpdatedCluster(
                 oldCluster,
                 newMacPoolId,
                 getContext());
