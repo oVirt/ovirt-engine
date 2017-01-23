@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -87,7 +86,6 @@ public class GlusterSnapshotSyncJobTest {
     @Before
     public void init() {
         syncJob = spy(GlusterSnapshotSyncJob.getInstance());
-        MockitoAnnotations.initMocks(this);
         syncJob.setLogUtil(logUtil);
 
         doReturn(clusterDao).when(syncJob).getClusterDao();
