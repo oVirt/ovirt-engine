@@ -61,7 +61,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
     }
 
     private AttachNetworkClusterValidator createNetworkClusterValidator() {
-        return new AttachNetworkClusterValidator(interfaceDao, networkDao, getNetworkCluster());
+        return new AttachNetworkClusterValidator(interfaceDao, networkDao, vdsDao, getNetworkCluster());
     }
 
     private boolean logicalNetworkExists() {

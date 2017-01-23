@@ -10,7 +10,6 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import java.util.Collections;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -28,16 +27,10 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
     @Mock
     private GlusterBrickDao brickDao;
 
-    @Before
-    public void setUp() {
-        oldNetworkCluster = new NetworkCluster();
-        super.setup();
-        doReturn(vdsDao).when(validator).getVdsDao();
-    }
-
     @Override
     protected UpdateNetworkClusterValidator createValidator() {
-        return new UpdateNetworkClusterValidator(interfaceDao, networkDao, networkCluster, oldNetworkCluster);
+        oldNetworkCluster = new NetworkCluster();
+        return new UpdateNetworkClusterValidator(interfaceDao, networkDao, vdsDao, networkCluster, oldNetworkCluster);
     }
 
     @Test

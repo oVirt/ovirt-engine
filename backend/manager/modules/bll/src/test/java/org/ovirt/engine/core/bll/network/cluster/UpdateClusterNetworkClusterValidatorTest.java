@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -9,7 +8,6 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import java.util.Collections;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner.Strict;
@@ -20,15 +18,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 public class UpdateClusterNetworkClusterValidatorTest extends
         NetworkClusterValidatorTestBase<UpdateClusterNetworkClusterValidator> {
 
-    @Before
-    public void setUp() {
-        super.setup();
-        doReturn(vdsDao).when(validator).getVdsDao();
-    }
-
     @Override
     protected UpdateClusterNetworkClusterValidator createValidator() {
-        return new UpdateClusterNetworkClusterValidator(interfaceDao, networkDao, networkCluster);
+        return new UpdateClusterNetworkClusterValidator(interfaceDao, networkDao, vdsDao, networkCluster);
     }
 
     @Test

@@ -132,6 +132,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         return new UpdateNetworkClusterValidator(
                 interfaceDao,
                 networkDao,
+                vdsDao,
                 getNetworkCluster(),
                 getOldNetworkCluster());
     }

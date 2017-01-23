@@ -772,6 +772,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         return new UpdateClusterNetworkClusterValidator(
                 interfaceDao,
                 networkDao,
+                vdsDao,
                 managementNetworkCluster);
     }
 

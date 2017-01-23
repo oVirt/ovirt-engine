@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -29,15 +28,15 @@ public abstract class NetworkClusterValidatorBase {
 
     private final InterfaceDao interfaceDao;
     private final NetworkDao networkDao;
+    private final VdsDao vdsDao;
 
     public NetworkClusterValidatorBase(InterfaceDao interfaceDao,
             NetworkDao networkDao,
+            VdsDao vdsDao,
             NetworkCluster networkCluster) {
-        Objects.requireNonNull(interfaceDao, "interfaceDao cannot be null");
-        Objects.requireNonNull(networkDao, "networkDao cannot be null");
-
-        this.interfaceDao = interfaceDao;
-        this.networkDao = networkDao;
+        this.interfaceDao = Objects.requireNonNull(interfaceDao, "interfaceDao cannot be null");
+        this.networkDao = Objects.requireNonNull(networkDao, "networkDao cannot be null");
+        this.vdsDao = Objects.requireNonNull(vdsDao, "vdsDao cannot be null");
         this.networkCluster = networkCluster;
     }
 
@@ -139,11 +138,7 @@ public abstract class NetworkClusterValidatorBase {
     }
 
     private boolean isClusterEmpty() {
-        return getVdsDao().getAllForCluster(networkCluster.getClusterId()).isEmpty();
-    }
-
-    VdsDao getVdsDao() {
-        return DbFacade.getInstance().getVdsDao();
+        return vdsDao.getAllForCluster(networkCluster.getClusterId()).isEmpty();
     }
 
     /**

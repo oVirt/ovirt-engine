@@ -9,6 +9,6 @@ public class AddClusterNetworkClusterValidatorTest extends
 
     @Override
     protected AddClusterNetworkClusterValidator createValidator() {
-        return new AddClusterNetworkClusterValidator(interfaceDao, networkDao, networkCluster);
+        return new AddClusterNetworkClusterValidator(interfaceDao, networkDao, vdsDao, networkCluster);
     }
 }
