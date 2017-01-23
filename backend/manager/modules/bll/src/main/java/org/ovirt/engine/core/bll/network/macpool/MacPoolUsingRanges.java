@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -86,9 +87,28 @@ public class MacPoolUsingRanges implements MacPool {
     }
 
     @Override
+    public List<String> addMacs(List<String> macs) {
+        List<String> notAddedMacs = new ArrayList<>(macs.size());
+        for (String mac : macs) {
+            if (!addMac(mac)) {
+                notAddedMacs.add(mac);
+            }
+        }
+
+        return notAddedMacs;
+    }
+
+    @Override
     public void forceAddMac(String mac) {
         macsStorage.useMacNoDuplicityCheck(MacAddressRangeUtils.macToLong(mac));
         logWhenMacPoolIsEmpty();
+    }
+
+    @Override
+    public void forceAddMacs(List<String> macs) {
+        for (String mac : macs) {
+            forceAddMac(mac);
+        }
     }
 
     @Override

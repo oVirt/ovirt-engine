@@ -32,11 +32,21 @@ public interface WriteMacPool {
     boolean addMac(String mac);
 
     /**
+     * @param macs macs to be added.
+     * @return list of macs, which failed to be added, because of existence of duplicate.
+     */
+    @AcquireWriteLock
+    List<String> addMacs(List<String> macs);
+
+    /**
      * Add given MAC address, regardless of it being in use.
      * @param mac MAC to add.
      */
     @AcquireWriteLock
     void forceAddMac(String mac);
+
+    @AcquireWriteLock
+    void forceAddMacs(List<String> macs);
 
     /**
      *

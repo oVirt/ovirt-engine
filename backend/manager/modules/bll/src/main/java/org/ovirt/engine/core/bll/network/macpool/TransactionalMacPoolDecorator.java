@@ -95,6 +95,12 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
     }
 
     @Override
+    public void forceAddMacs(List<String> macs) {
+        super.forceAddMacs(macs);
+        getStrategyForMacAllocation().forEach(e->e.releaseMacsInCaseOfRollback(macs));
+    }
+
+    @Override
     public final boolean addMac(String mac) {
         boolean added = super.addMac(mac);
         if (added) {
@@ -102,6 +108,19 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
         }
 
         return added;
+    }
+
+    @Override
+    public List<String> addMacs(List<String> macs) {
+        List<String> notAddedMacs = super.addMacs(macs);
+
+        boolean atLeastOneAddedMac = notAddedMacs.size() < macs.size();
+        if (atLeastOneAddedMac) {
+            List<String> addedMacs = macs.stream().filter(e->!notAddedMacs.contains(e)).collect(toList());
+            getStrategyForMacAllocation().forEach(e->e.releaseMacsInCaseOfRollback(addedMacs));
+        }
+
+        return notAddedMacs;
     }
 
     private interface TransactionalStrategyState {
@@ -166,7 +185,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
 
             @Override
             public void cleaningCompensationDataAfterSuccess() {
-                macsToReleaseOnCommit.forEach(macPool::freeMac);
+                macPool.freeMacs(macsToReleaseOnCommit);
             }
 
         }
@@ -219,7 +238,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
             }
 
             protected void releaseMacs() {
-                macs.forEach(macPool::freeMac);
+                macPool.freeMacs(macs);
             }
         }
     }
@@ -233,7 +252,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
 
         @Override
         public void releaseMacsOnCommit(List<String> macs) {
-            macs.forEach(macPool::freeMac);
+            macPool.freeMacs(macs);
         }
     }
 
