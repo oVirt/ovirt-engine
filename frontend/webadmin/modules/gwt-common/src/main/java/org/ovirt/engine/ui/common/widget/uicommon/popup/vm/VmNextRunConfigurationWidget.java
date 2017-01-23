@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import java.util.MissingResourceException;
+
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -9,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
+import org.ovirt.engine.ui.uicompat.NextRunFieldMessages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -86,6 +89,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
 
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final NextRunFieldMessages nextRunMessages = GWT.create(NextRunFieldMessages.class);
 
     public VmNextRunConfigurationWidget() {
         initEditors();
@@ -126,12 +130,22 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
             setVisibilityToChangedFieldsExpander(true);
             SafeHtmlBuilder changedFieldsBuilder = new SafeHtmlBuilder();
             for (String field: object.getChangedFields()) {
-                String escapedField = SafeHtmlUtils.htmlEscape(field);
+                String msg = getNextRunMessage(field);
+                String escapedField = SafeHtmlUtils.htmlEscape(msg);
                 changedFieldsBuilder.append(bulletedItem(escapedField));
             }
             changedFields.setHTML(changedFieldsBuilder.toSafeHtml());
         }
         setVisibilityToHotChanges(object);
+    }
+
+    private String getNextRunMessage(String field) {
+        try {
+            return nextRunMessages.getString(field);
+        } catch (MissingResourceException e) {
+            // ignore
+        }
+        return field;
     }
 
     private void setVisibilityToHotChanges(VmNextRunConfigurationModel object) {
