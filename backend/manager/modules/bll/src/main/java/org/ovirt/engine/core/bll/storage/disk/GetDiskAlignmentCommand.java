@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -113,6 +114,10 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         if (getVm() == null) {
             addValidationMessageVariable("diskAliases", getDiskAlias());
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
+        }
+
+        if (ArchitectureType.ppc == getCluster().getArchitecture().getFamily()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_NOT_SUPPORTED_ON_PPC);
         }
 
         if (getDiskStorageType() == DiskStorageType.IMAGE) {
