@@ -259,6 +259,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_VM_IS_BEING_CLONED();
 
+    String ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_CREATED();
+
     String ACTION_TYPE_FAILED_VM_IS_BEING_UPDATED();
 
     String ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING();

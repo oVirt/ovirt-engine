@@ -5,7 +5,6 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1116,11 +1115,16 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
+        Map<String, Pair<String, String>> locks = new HashMap<>();
+
         if (isTemplateVersion()) {
-            return Collections.singletonMap(getParameters().getBaseTemplateId().toString(),
+            locks.put(getParameters().getBaseTemplateId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
-        return super.getSharedLocks();
+        locks.put(getParameters().getVm().getId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_CREATED));
+
+        return locks;
     }
 
     @Override
