@@ -3,32 +3,63 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
+import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
 public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends VmCommand<T> {
 
-    private boolean dedicatedHostWasCleared;
-
     @Inject
     private CpuProfileHelper cpuProfileHelper;
 
+    @Inject
+    private MoveMacs moveMacs;
+
+    private boolean dedicatedHostWasCleared;
+
+    private Guid originalClusterId;
+    private Guid newClusterId;
+
+    private Guid sourceMacPoolId;
+    private Guid targetMacPoolId;
+
+    //cached value.
+    private List<String> macsToMigrate;
+
     public ChangeVMClusterCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+
+        originalClusterId = getVm().getClusterId();
+        newClusterId = getParameters().getClusterId();
+
+        sourceMacPoolId = getMacPoolId(originalClusterId);
+        targetMacPoolId = getMacPoolId(newClusterId);
+    }
+
+    private Guid getMacPoolId(Guid clusterId) {
+        return Optional.ofNullable(clusterDao.get(clusterId)).map(Cluster::getMacPoolId).orElse(null);
     }
 
     @Override
@@ -43,8 +74,19 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         }
 
         ChangeVmClusterValidator validator = ChangeVmClusterValidator.create(this,
-                getParameters().getClusterId(),
+                newClusterId,
                 getParameters().getVmCustomCompatibilityVersion());
+
+        if (macPoolChanged()) {
+            ReadMacPool macPoolForTargetCluster = macPoolPerCluster.getMacPoolForCluster(newClusterId);
+            ValidationResult validationResult =
+                    validator.validateCanMoveMacs(macPoolForTargetCluster, getMacsToMigrate());
+
+            if (!validationResult.isValid()) {
+                return validate(validationResult);
+            }
+        }
+
         return validator.validate();
     }
 
@@ -56,15 +98,16 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
     @Override
     protected void executeCommand() {
-        // check that the cluster are not the same
         VM vm = getVm();
-        if (vm.getClusterId().equals(getParameters().getClusterId())) {
+
+        boolean clusterRemainedTheSame = originalClusterId.equals(newClusterId);
+        if (clusterRemainedTheSame) {
             setSucceeded(true);
             return;
         }
 
         // update vm interfaces
-        List<Network> networks = networkDao.getAllForCluster(getParameters().getClusterId());
+        List<Network> networks = networkDao.getAllForCluster(newClusterId);
         List<VmNic> interfaces = vmNicDao.getAllForVm(getParameters().getVmId());
 
         for (final VmNic iface : interfaces) {
@@ -87,12 +130,13 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             dedicatedHostWasCleared = true;
         }
 
-        vm.setClusterId(getParameters().getClusterId());
+        vm.setClusterId(newClusterId);
 
         // Set cpu profile from the new cluster
         cpuProfileHelper.assignFirstCpuProfile(vm.getStaticData(), getUserId());
 
         vmStaticDao.update(vm.getStaticData());
+        moveMacsToAnotherMacPoolIfNeeded();
 
         // change vm cluster should remove the vm from all associated affinity groups
         List<AffinityGroup> allAffinityGroupsByVmId = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
@@ -115,7 +159,32 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return VmHandler.getPermissionsNeededToChangeCluster(getParameters().getVmId(), getParameters().getClusterId());
+        return VmHandler.getPermissionsNeededToChangeCluster(getParameters().getVmId(), newClusterId);
     }
 
+    void moveMacsToAnotherMacPoolIfNeeded() {
+        if (macPoolChanged()) {
+            moveMacs.migrateMacsToAnotherMacPool(sourceMacPoolId,
+                    targetMacPoolId,
+                    getMacsToMigrate(),
+                    true,
+                    getContext());
+        }
+    }
+
+    private boolean macPoolChanged() {
+        return !Objects.equals(sourceMacPoolId, targetMacPoolId);
+    }
+
+    private List<String> getMacsToMigrate() {
+        if (this.macsToMigrate == null) {
+            this.macsToMigrate = calculateMacsToMigrate();
+        }
+        return this.macsToMigrate;
+    }
+
+    private List<String> calculateMacsToMigrate() {
+        List<VmNic> vmNicsForVm = vmNicDao.getAllForVm(getVm().getId());
+        return vmNicsForVm.stream().map(VmNic::getMacAddress).collect(Collectors.toList());
+    }
 }
