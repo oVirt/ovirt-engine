@@ -15,7 +15,7 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 
 @Singleton
-public class MoveMacsOfUpdatedCluster {
+public class MoveMacs {
 
     @Inject
     VmNicDao vmNicDao;

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.MoveMacsOfUpdatedCluster;
+import org.ovirt.engine.core.bll.MoveMacs;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -58,7 +58,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private ManagementNetworkUtil managementNetworkUtil;
 
     @Inject
-    private MoveMacsOfUpdatedCluster moveMacsOfUpdatedCluster;
+    private MoveMacs moveMacs;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -92,7 +92,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         if (shouldSetNewMacPoolOnAllClusters) {
             List<Cluster> clusters = clusterDao.getAllForStoragePool(getStoragePoolId());
             for (Cluster cluster : clusters) {
-                this.moveMacsOfUpdatedCluster.updateClusterAndMoveMacs(cluster, newMacPoolId, getContext());
+                moveMacs.updateClusterAndMoveMacs(cluster, newMacPoolId, getContext());
             }
         }
     }
