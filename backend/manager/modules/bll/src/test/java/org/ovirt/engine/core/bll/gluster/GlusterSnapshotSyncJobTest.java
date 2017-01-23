@@ -19,13 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -46,10 +45,9 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
-@RunWith(Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class GlusterSnapshotSyncJobTest {
     private static final Guid CLUSTER_ID_1 = Guid.newGuid();
     private static final Guid VOLUME_ID_1 = Guid.newGuid();
@@ -85,9 +83,6 @@ public class GlusterSnapshotSyncJobTest {
 
     @Mock
     private EngineLock engineLock;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
 
     @Before
     public void init() {
