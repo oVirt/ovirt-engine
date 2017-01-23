@@ -14,6 +14,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -63,6 +64,7 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
     private VM vm;
     private StoragePool storagePool;
     private StorageDomain storageDomain;
+    private Cluster cluster;
 
     @Spy
     @InjectMocks
@@ -93,8 +95,9 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(vmDeviceId);
 
-        Cluster cluster = new Cluster();
+        cluster = new Cluster();
         cluster.setId(groupId);
+        cluster.setArchitecture(ArchitectureType.x86_64);
 
         VDS vds = new VDS();
         vds.setId(vdsId);
@@ -171,4 +174,12 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
     }
+
+    @Test
+    public void testGetAlignmentFailsForPPC() {
+        cluster.setArchitecture(ArchitectureType.ppc64);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_NOT_SUPPORTED_ON_PPC);
+    }
+
 }
