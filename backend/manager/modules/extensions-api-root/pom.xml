@@ -4,7 +4,7 @@
 
   <artifactId>ovirt-engine-extensions-api-root</artifactId>
   <groupId>org.ovirt.engine.api</groupId>
-  <version>0.0.0</version>
+  <version>0.0.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
 
