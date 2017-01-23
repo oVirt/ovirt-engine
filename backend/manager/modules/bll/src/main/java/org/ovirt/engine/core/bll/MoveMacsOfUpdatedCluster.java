@@ -33,20 +33,23 @@ public class MoveMacsOfUpdatedCluster {
      * to target {@link MacPool macPool}. Because source macPool may contain duplicates and/or allow
      * duplicates, {@link MacPool#forceAddMac(String)} is used to add them override
      * <em>allowDuplicates</em> setting of target macPool.
-     * @param oldMacPoolId id of macPool before update
-     * @param newMacPoolId macPool Id of updated cluster.
-     * @param clusterId
+     * @param sourceCluster {@link Cluster} cluster instance before update.
+     * @param targetMacPoolId macPool Id of updated cluster.
+     * @param commandContext {@link CommandContext} instance of calling command.
      *
      */
-    public void moveMacsOfUpdatedCluster(Guid oldMacPoolId,
-            Guid newMacPoolId,
-            Guid clusterId,
-            CommandContext commandContext) {
-        Objects.requireNonNull(oldMacPoolId); //this should not happen, just make sure this invariant is fulfilled.
-        Objects.requireNonNull(newMacPoolId); //this should not happen, just make sure this invariant is fulfilled.
+    public void moveMacsOfUpdatedCluster(Cluster sourceCluster, Guid targetMacPoolId, CommandContext commandContext) {
+        Objects.requireNonNull(sourceCluster);
+        Objects.requireNonNull(targetMacPoolId);
 
-        if (needToMigrateMacs(oldMacPoolId, newMacPoolId)) {
-            migrateMacs(oldMacPoolId, newMacPoolId, clusterId, commandContext);
+        Guid sourceMacPoolId = sourceCluster.getMacPoolId();
+        Guid clusterId = sourceCluster.getId();
+        Objects.requireNonNull(sourceMacPoolId);
+        Objects.requireNonNull(clusterId);
+
+        if (needToMigrateMacs(sourceMacPoolId, targetMacPoolId)) {
+            List<String> macsToMigrate = vmNicDao.getAllMacsByClusterId(clusterId);
+            migrateMacsToAnotherMacPool(sourceMacPoolId, targetMacPoolId, macsToMigrate, commandContext);
         }
     }
 
@@ -54,17 +57,16 @@ public class MoveMacsOfUpdatedCluster {
         return !oldMacPoolId.equals(newMacPoolId);
     }
 
-    private void migrateMacs(Guid oldMacPoolId,
-            Guid newMacPoolId,
-            Guid clusterId,
+    private void migrateMacsToAnotherMacPool(Guid sourceMacPoolId,
+            Guid targetMacPoolId,
+            List<String> macsToMigrate,
             CommandContext commandContext) {
-        List<String> vmInterfaceMacs = vmNicDao.getAllMacsByClusterId(clusterId);
-        Objects.requireNonNull(vmInterfaceMacs);
+        Objects.requireNonNull(macsToMigrate);
 
-        MacPool sourcePool = poolPerCluster.getMacPoolById(oldMacPoolId, commandContext);
-        MacPool targetPool = poolPerCluster.getMacPoolById(newMacPoolId, commandContext);
+        MacPool sourcePool = poolPerCluster.getMacPoolById(sourceMacPoolId, commandContext);
+        MacPool targetPool = poolPerCluster.getMacPoolById(targetMacPoolId, commandContext);
 
-        for (String mac : vmInterfaceMacs) {
+        for (String mac : macsToMigrate) {
             sourcePool.freeMac(mac);
             targetPool.forceAddMac(mac);
         }
@@ -72,7 +74,7 @@ public class MoveMacsOfUpdatedCluster {
 
     public void updateClusterAndMoveMacs(Cluster cluster, Guid newMacPoolId, CommandContext commandContext) {
         Guid oldMacPoolId = cluster.getMacPoolId();
-        moveMacsOfUpdatedCluster(oldMacPoolId, newMacPoolId, cluster.getId(), commandContext);
+        moveMacsOfUpdatedCluster(cluster, newMacPoolId, commandContext);
 
         if (needToMigrateMacs(oldMacPoolId, newMacPoolId)) {
             cluster.setMacPoolId(newMacPoolId);

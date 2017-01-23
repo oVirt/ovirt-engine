@@ -161,12 +161,10 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Override
     protected void executeCommand() {
-        Guid oldMacPoolId = getOldMacPoolId();
         Guid newMacPoolId = getNewMacPoolId();
         this.moveMacsOfUpdatedCluster.moveMacsOfUpdatedCluster(
-                oldMacPoolId,
+                oldCluster,
                 newMacPoolId,
-                getClusterId(),
                 getContext());
 
         getCluster().setArchitecture(getArchitecture());
