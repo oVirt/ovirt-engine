@@ -49,7 +49,7 @@ public class MoveMacs {
 
         if (needToMigrateMacs(sourceMacPoolId, targetMacPoolId)) {
             List<String> macsToMigrate = vmNicDao.getAllMacsByClusterId(clusterId);
-            migrateMacsToAnotherMacPool(sourceMacPoolId, targetMacPoolId, macsToMigrate, commandContext);
+            migrateMacsToAnotherMacPool(sourceMacPoolId, targetMacPoolId, macsToMigrate, false, commandContext);
         }
     }
 
@@ -57,19 +57,37 @@ public class MoveMacs {
         return !oldMacPoolId.equals(newMacPoolId);
     }
 
-    private void migrateMacsToAnotherMacPool(Guid sourceMacPoolId,
+    public void migrateMacsToAnotherMacPool(Guid sourceMacPoolId,
             Guid targetMacPoolId,
             List<String> macsToMigrate,
+            boolean checkForDuplicity,
             CommandContext commandContext) {
         Objects.requireNonNull(macsToMigrate);
+
+        if (macsToMigrate.isEmpty()) {
+            return;
+        }
 
         MacPool sourcePool = poolPerCluster.getMacPoolById(sourceMacPoolId, commandContext);
         MacPool targetPool = poolPerCluster.getMacPoolById(targetMacPoolId, commandContext);
 
-        for (String mac : macsToMigrate) {
-            sourcePool.freeMac(mac);
-            targetPool.forceAddMac(mac);
+        sourcePool.freeMacs(macsToMigrate);
+        if (checkForDuplicity) {
+            List<String> notAddedMacs = targetPool.addMacs(macsToMigrate);
+            boolean allMacsWereAdded = notAddedMacs.isEmpty();
+            if (!allMacsWereAdded) {
+                /* exception is thrown, because this is the easiest way, how to nullify updated VM data
+                 * and return macs to original pool.
+                 */
+                throw new IllegalStateException(createMessageCannotChangeClusterDueToDuplicatesInTargetPool(notAddedMacs));
+            }
+        } else {
+            targetPool.forceAddMacs(macsToMigrate);
         }
+    }
+
+    String createMessageCannotChangeClusterDueToDuplicatesInTargetPool(List<String> notAddedMacs) {
+        return "Cannot change cluster, some mac is already used in target cluster Mac Pool: " + notAddedMacs.toString();
     }
 
     public void updateClusterAndMoveMacs(Cluster cluster, Guid newMacPoolId, CommandContext commandContext) {
