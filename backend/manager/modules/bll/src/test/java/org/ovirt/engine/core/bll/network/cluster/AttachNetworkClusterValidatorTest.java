@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -11,16 +12,17 @@ import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Strict.class)
 public class AttachNetworkClusterValidatorTest extends NetworkClusterValidatorTestBase<AttachNetworkClusterValidator> {
 
     @Before
-    public void prepareNetworkClusterExpects() {
-        when(networkCluster.getClusterId()).thenReturn(TEST_CLUSTER_ID);
+    public void setUp() {
+        super.setup();
+        doReturn(vdsDao).when(validator).getVdsDao();
     }
 
     @Override
@@ -54,7 +56,7 @@ public class AttachNetworkClusterValidatorTest extends NetworkClusterValidatorTe
     private void testManagementNetworkChange(boolean managementAfter,
                                              boolean emptyCluster,
                                              Matcher<ValidationResult> expectedResult) {
-        when(networkCluster.isManagement()).thenReturn(managementAfter);
+        networkCluster.setManagement(managementAfter);
         when(vdsDao.getAllForCluster(TEST_CLUSTER_ID)).thenReturn(emptyCluster ?
                                                                                Collections.emptyList() :
                                                                                Collections.singletonList(null));

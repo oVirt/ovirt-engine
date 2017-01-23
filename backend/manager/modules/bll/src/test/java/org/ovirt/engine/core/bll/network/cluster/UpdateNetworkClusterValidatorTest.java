@@ -14,20 +14,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
-@RunWith(Silent.class)
+@RunWith(Strict.class)
 public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTestBase<UpdateNetworkClusterValidator> {
-    @Mock
-    GlusterBrickDao brickDao;
 
+    private NetworkCluster oldNetworkCluster;
+
+    @Mock
+    private GlusterBrickDao brickDao;
 
     @Before
-    public void prepareNetworkClusterExpects() {
-        when(networkCluster.getClusterId()).thenReturn(TEST_CLUSTER_ID);
+    public void setUp() {
+        oldNetworkCluster = new NetworkCluster();
+        super.setup();
+        doReturn(vdsDao).when(validator).getVdsDao();
     }
 
     @Override
@@ -88,8 +93,8 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
     private void testManagementNetworkUnset(boolean managementBefore,
                                             boolean managementAfter,
                                             Matcher<ValidationResult> expectedResult) {
-        when(oldNetworkCluster.isManagement()).thenReturn(managementBefore);
-        when(networkCluster.isManagement()).thenReturn(managementAfter);
+        oldNetworkCluster.setManagement(managementBefore);
+        networkCluster.setManagement(managementAfter);
         assertThat(validator.managementNetworkUnset(), expectedResult);
     }
 
@@ -106,8 +111,8 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
                                                    boolean managementAfter,
                                                    boolean emptyCluster,
                                                    Matcher<ValidationResult> expectedResult) {
-        when(oldNetworkCluster.isManagement()).thenReturn(managementBefore);
-        when(networkCluster.isManagement()).thenReturn(managementAfter);
+        oldNetworkCluster.setManagement(managementBefore);
+        networkCluster.setManagement(managementAfter);
         when(vdsDao.getAllForCluster(TEST_CLUSTER_ID)).thenReturn(emptyCluster ?
                                                                                Collections.emptyList() :
                                                                                Collections.singletonList(null));
@@ -143,9 +148,9 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
             boolean glusterService,
             boolean hasBricks,
             Matcher<ValidationResult> expectedResult) {
-        when(oldNetworkCluster.isGluster()).thenReturn(glusterNetworkBefore);
-        when(networkCluster.isGluster()).thenReturn(glusterNetworkAfter);
-        when(cluster.supportsGlusterService()).thenReturn(glusterService);
+        oldNetworkCluster.setGluster(glusterNetworkBefore);
+        networkCluster.setGluster(glusterNetworkAfter);
+        cluster.setGlusterService(glusterService);
         doReturn(brickDao).when(validator).getGlusterBrickDao();
         when(brickDao.getAllByClusterAndNetworkId(any(), any())).thenReturn(hasBricks ?
                 Collections.singletonList(null) : Collections.emptyList());

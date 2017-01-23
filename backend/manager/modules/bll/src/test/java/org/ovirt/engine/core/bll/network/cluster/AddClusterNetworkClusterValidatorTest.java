@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Strict.class)
 public class AddClusterNetworkClusterValidatorTest extends
         NetworkClusterValidatorTestBase<AddClusterNetworkClusterValidator> {
 
