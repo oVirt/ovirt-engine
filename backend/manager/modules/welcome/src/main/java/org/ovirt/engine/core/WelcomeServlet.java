@@ -135,24 +135,19 @@ public class WelcomeServlet extends HttpServlet {
                 log.debug("Unable to set request attributed for user menu", ex);
                 log.error("Unable to set request attributed for user menu: {}", ex.getMessage());
             }
-            error = (String) request.getSession(true).getAttribute(WelcomeUtils.ERROR);
-            if (StringUtils.isNotEmpty(error)) {
-                response.sendRedirect(engineUri + WelcomeUtils.ERROR_PAGE_URI);
-            } else {
-                request.setAttribute(LOCALE_KEYS, UnsupportedLocaleHelper.getDisplayedLocales(LocaleFilter.getLocaleKeys()));
-                String oVirtVersion = backend.runPublicQuery(VdcQueryType.GetConfigurationValue,
-                        new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
-                                ConfigCommon.defaultConfigurationVersion)).getReturnValue();
-                request.setAttribute("sso_credential_change_url", getCredentialsChangeUrl(request));
-                request.setAttribute(VERSION, oVirtVersion != null ? oVirtVersion : "myVersion");
-                request.setAttribute(SECTIONS, brandingManager
-                        .getWelcomeSections((Locale) request.getAttribute(LocaleFilter.LOCALE)));
-                log.debug("Including to ovirt-engine.jsp");
-                RequestDispatcher dispatcher = request.getRequestDispatcher(WelcomeUtils.WELCOME_PAGE_JSP_URI);
-                response.setContentType("text/html;charset=UTF-8");
-                if (dispatcher != null) {
-                    dispatcher.include(request, response);
-                }
+            request.setAttribute(LOCALE_KEYS, UnsupportedLocaleHelper.getDisplayedLocales(LocaleFilter.getLocaleKeys()));
+            String oVirtVersion = backend.runPublicQuery(VdcQueryType.GetConfigurationValue,
+                    new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
+                            ConfigCommon.defaultConfigurationVersion)).getReturnValue();
+            request.setAttribute("sso_credential_change_url", getCredentialsChangeUrl(request));
+            request.setAttribute(VERSION, oVirtVersion != null ? oVirtVersion : "myVersion");
+            request.setAttribute(SECTIONS, brandingManager
+                    .getWelcomeSections((Locale) request.getAttribute(LocaleFilter.LOCALE)));
+            log.debug("Including to ovirt-engine.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher(WelcomeUtils.WELCOME_PAGE_JSP_URI);
+            response.setContentType("text/html;charset=UTF-8");
+            if (dispatcher != null) {
+                dispatcher.include(request, response);
             }
         }
         log.debug("Exiting WelcomeServlet");

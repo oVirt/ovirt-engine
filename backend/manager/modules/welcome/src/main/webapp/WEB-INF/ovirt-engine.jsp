@@ -47,6 +47,20 @@
                     </script>
                 </div>
 
+                <div class="col-sm-12">
+                    <c:if test="${sessionScope.error != null && sessionScope.error != '' }">
+                        <div class="alert">
+                            <span class="pficon-layered">
+                                <span class="pficon pficon-warning-triangle"></span>
+                                <span class="pficon pficon-warning-exclamation"></span>
+                            </span>
+                            ${sessionScope.error}
+                        </div>
+                        <c:remove var="error_code" scope="session"/>
+                         <c:remove var="error" scope="session"/>
+                    </c:if>
+                </div>
+
                 <div style="clear: both;"></div>
 
                 <div class="col-sm-12">

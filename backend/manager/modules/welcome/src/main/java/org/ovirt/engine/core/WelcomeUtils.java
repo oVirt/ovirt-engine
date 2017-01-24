@@ -24,7 +24,6 @@ public class WelcomeUtils {
     public static final String TOKEN = "token";
     public static final String UTF8 = "UTF-8";
 
-    public static final String ERROR_PAGE_URI = "/error.html";
     public static final String CREDENTIALS_CHANGE_FORM_URI = "/credentials-change.html";
     public static final String LOGIN_URI = "/login";
     public static final String LOGOUT_URI = "/logout";

@@ -274,9 +274,6 @@ ENGINE_EXTENSIONS_IGNORED=".*?(Authz)"
 
 SENSITIVE_KEYS="${SENSITIVE_KEYS},ENGINE_SSO_CLIENT_SECRET"
 
-# Error page to display on sso errors
-ENGINE_ERROR_PAGE=${ENGINE_URI}/error.html
-
 # Client id to use.
 ENGINE_SSO_CLIENT_ID=
 
