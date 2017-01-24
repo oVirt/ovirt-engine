@@ -153,7 +153,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     protected void mockUninterestingMethods() {
         doReturn(true).when(cmd).isVmNameValidLength(any(VM.class));
-        doReturn(false).when(cmd).isVmWithSameNameExists(anyString(), any(Guid.class));
         doReturn(true).when(cmd).areParametersLegal(anyList());
         doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
         doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
@@ -260,17 +259,12 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     protected void initializeMock() {
         mockVmTemplateDaoReturnVmTemplate();
-        mockStorageDomainDaoGetForStoragePool();
         mockStorageDomainDaoGetAllForStoragePool();
         mockStorageDomainDaoGet();
     }
 
     protected void mockVmTemplateDaoReturnVmTemplate() {
         when(vmTemplateDao.get(any(Guid.class))).thenReturn(vmTemplate);
-    }
-
-    protected void mockStorageDomainDaoGetForStoragePool() {
-        when(sdDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(createStorageDomain());
     }
 
     protected void mockStorageDomainDaoGetAllForStoragePool() {

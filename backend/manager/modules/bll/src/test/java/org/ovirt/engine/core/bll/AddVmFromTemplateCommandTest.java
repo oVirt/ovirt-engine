@@ -16,7 +16,7 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Version;
 
-@RunWith(Silent.class)
+@RunWith(Strict.class)
 public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFromTemplateCommand<AddVmParameters>> {
 
     private static final int MAX_PCI_SLOTS = 26;
@@ -80,7 +80,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
-        mockStorageDomainDaoGetForStoragePool();
         mockMaxPciSlots();
 
         mockStorageDomainDaoGetAllForStoragePool();
@@ -97,7 +96,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
-        mockStorageDomainDaoGetForStoragePool();
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllForStoragePool();
         mockUninterestingMethods();
@@ -120,7 +118,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     public void testUnsupportedCpus() {
         vm.setVmOs(OsRepository.DEFAULT_X86_OS);
 
-        mockStorageDomainDaoGetForStoragePool();
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllForStoragePool();
         mockUninterestingMethods();
