@@ -22,8 +22,7 @@ public class LoginServlet extends HttpServlet {
         if (deployedResponse.containsKey(WelcomeUtils.ERROR)) {
             request.getSession(true).setAttribute(WelcomeUtils.ERROR, deployedResponse.get(WelcomeUtils.ERROR));
             request.getSession(true).setAttribute(WelcomeUtils.ERROR_CODE, deployedResponse.get(WelcomeUtils.ERROR_CODE));
-            response.sendRedirect(EngineLocalConfig.getInstance().getProperty(WelcomeUtils.ENGINE_URI) +
-                    WelcomeUtils.ERROR_PAGE_URI);
+            response.sendRedirect(EngineLocalConfig.getInstance().getProperty(WelcomeUtils.ENGINE_URI));
         } else {
             response.sendRedirect(
                     new URLBuilder(FiltersHelper.getEngineSsoUrl(request),
