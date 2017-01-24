@@ -35,6 +35,7 @@
       .infoIcon {
         float: left;
         padding-left: 2px;
+        line-height: 30px;
       }
 
       .refreshButton {
@@ -74,6 +75,7 @@
 
      .floatLeft {
        float: left;
+       line-height: 30px;
      }
 
     </ui:style>
@@ -429,8 +431,7 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="LG_5">
-                    <ge:EntityModelCheckBoxEditor ui:field="overrideMigrationPolicyEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
-                    <l:EnableableFormLabel ui:field="overrideMigrationPolicyLabel" text="{constants.overrideMigrationPolicyLabel}" addStyleNames="{style.floatLeft} {style.patternFlyRadio}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="overrideMigrationPolicyEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" label="{constants.overrideMigrationPolicyLabel}" />
                     <d:InfoIcon ui:field="migrationPolicyInfoIcon" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
                   <b:Column size="LG_1">
@@ -442,8 +443,7 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="LG_5">
-                    <ge:EntityModelCheckBoxEditor ui:field="overrideMigrationDowntimeEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
-                    <l:EnableableFormLabel ui:field="overrideMigrationDowntimeLabel" addStyleNames="{style.floatLeft} {style.patternFlyRadio}" text="{constants.overrideMigrationDowntimeLabel}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="overrideMigrationDowntimeEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" label="{constants.overrideMigrationDowntimeLabel}" />
                     <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
                   <b:Column size="LG_1">
@@ -493,8 +493,7 @@
               <b:Container addStyleNames="{style.container}">
                 <b:Row>
                   <b:Column size="LG_5">
-                    <ge:EntityModelCheckBoxEditor ui:field="isHighlyAvailableEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
-                    <l:EnableableFormLabel addStyleNames="{style.floatLeft} {style.patternFlyRadio}" text="{constants.highlyAvailableVmPopup}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="isHighlyAvailableEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" label="{constants.highlyAvailableVmPopup}" />
                   </b:Column>
                   <b:Column size="LG_1">
                     <ge:EntityModelDetachableWidget ui:field="isHighlyAvailableEditorWithDetachable" usePatternFly="true" />
@@ -568,8 +567,7 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="LG_5">
-                    <ge:EntityModelCheckBoxEditor ui:field="isMemoryBalloonDeviceEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" />
-                    <l:EnableableFormLabel addStyleNames="{style.floatLeft} {style.patternFlyRadio}" text="{constants.memoryBalloonDeviceEnabled}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="isMemoryBalloonDeviceEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.memoryBalloonDeviceEnabled}" />
                   </b:Column>
                   <b:Column size="LG_1">
                     <ge:EntityModelDetachableWidget ui:field="isMemoryBalloonDeviceEnabledDetachable" usePatternFly="true" />
@@ -582,8 +580,7 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="LG_5">
-                    <ge:EntityModelCheckBoxEditor ui:field="isIoThreadsEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" />
-                    <l:EnableableFormLabel addStyleNames="{style.floatLeft} {style.patternFlyRadio}" text="{constants.ioThreadsEnabled}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="isIoThreadsEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.ioThreadsEnabled}" />
                   </b:Column>
                   <b:Column size="LG_1">
                     <ge:EntityModelDetachableWidget ui:field="isIoThreadsEnabledDetachable" usePatternFly="true" />

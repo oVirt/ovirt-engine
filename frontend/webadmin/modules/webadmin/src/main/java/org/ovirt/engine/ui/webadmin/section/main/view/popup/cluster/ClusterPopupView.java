@@ -445,10 +445,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     EntityModelCheckBoxEditor skipFencingIfConnectivityBrokenCheckBox;
 
-    @UiField
-    @Ignore
-    Label skipFencingIfConnectivityBrokenCheckBoxLabel;
-
     @UiField(provided = true)
     @Path(value = "hostsWithBrokenConnectivityThreshold.selectedItem")
     @WithElementId
@@ -657,13 +653,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         skipFencingIfSDActiveCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         skipFencingIfConnectivityBrokenCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
-        skipFencingIfConnectivityBrokenCheckBox.hideLabel();
 
         skipFencingIfGlusterBricksUpCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
         skipFencingIfGlusterQuorumNotMetCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         spiceProxyOverrideEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
-        spiceProxyOverrideEnabled.hideLabel();
 
         additionalFeaturesEditor = new ListModelCheckBoxGroup<>(new AbstractRenderer<AdditionalFeature>() {
             @Override

@@ -55,8 +55,22 @@ public class EntityModelWidgetWithInfo extends Composite implements HasValidatio
         this(label, contentWidget, Align.RIGHT);
     }
 
+    /**
+     * The content will provide its own label.
+     * @param contentWidget The content widget
+     * @param alignment The alignment (LEFT/RIGHT);
+     */
+    public EntityModelWidgetWithInfo(Widget contentWidget, Align alignment) {
+        this(null, contentWidget, alignment);
+    }
+
     public EntityModelWidgetWithInfo(EnableableFormLabel label, Widget contentWidget, Align alignment) {
-        this.label = label;
+        if (label != null) {
+            this.label = label;
+        } else {
+            this.label = new EnableableFormLabel();
+            this.label.setVisible(false);
+        }
         this.contentWidget = contentWidget;
         this.alignment = alignment;
         infoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
