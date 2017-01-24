@@ -20,6 +20,7 @@
 
 import argparse
 from collections import defaultdict
+import datetime
 import decimal
 import gettext
 import json
@@ -141,7 +142,14 @@ def formatted_value(v):
     # simplejson natively support Decimal, but is not built into recent
     # python. Handle Decimal specifically here, which we get from the
     # database for values of type 'numeric'.
-    return str(v) if type(v) is decimal.Decimal else v
+    return (
+        str(v)
+        if (
+            type(v) is decimal.Decimal
+            or type(v) is datetime.datetime
+        )
+        else v
+    )
 
 
 def row_to_dict(row):
