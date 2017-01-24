@@ -56,7 +56,7 @@ public interface IVdsServer {
 
     StatusOnlyReturn reduceDomain(String jobId, Map<String, Object> reduceParams);
 
-    StatusOnlyReturn mergeSubchain(String jobId, Map<String, String> subchainInfo);
+    StatusOnlyReturn mergeSubchain(String jobId, Map<String, Object> subchainInfo);
 
     StatusOnlyReturn destroy(String vmId);
 

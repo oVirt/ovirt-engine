@@ -9,6 +9,7 @@ public class SubchainInfo {
     private Guid imageGroupId;
     private Guid baseImageId;
     private Guid topImageId;
+    private Integer baseImageGeneration;
 
     public SubchainInfo() {
     }
@@ -36,6 +37,14 @@ public class SubchainInfo {
         return topImageId;
     }
 
+    public Integer getBaseImageGeneration() {
+        return baseImageGeneration;
+    }
+
+    public void setBaseImageGeneration(Integer generation) {
+        this.baseImageGeneration = generation;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
@@ -43,6 +52,7 @@ public class SubchainInfo {
                 .append("imageGroupId", imageGroupId)
                 .append("baseImageId", baseImageId)
                 .append("topImageId", topImageId)
+                .append("generation", baseImageGeneration)
                 .build();
     }
 }
