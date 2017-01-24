@@ -27,7 +27,7 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
 
     private final WidgetWithLabelEditor<T, BaseEntityModelCheckboxEditor<T>> editor;
 
-    private final boolean useCheckBoxWidgetLabel;
+    private boolean useCheckBoxWidgetLabel;
 
     public BaseEntityModelCheckboxEditor(BaseEntityModelCheckbox<T> contentWidget) {
         this(Align.LEFT, contentWidget);
@@ -138,7 +138,9 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
     @Override
     public void hideLabel() {
         super.hideLabel();
-        getCheckboxWidgetLabel().getStyle().setDisplay(Display.NONE);
+        if (useCheckBoxWidgetLabel) {
+            getCheckboxWidgetLabel().getStyle().setDisplay(Display.NONE);
+        }
     }
 
     @Override
@@ -148,6 +150,10 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         } else {
             return super.getLabel();
         }
+    }
+
+    public void useWidgetLabel() {
+        useCheckBoxWidgetLabel = true;
     }
 
     @Override

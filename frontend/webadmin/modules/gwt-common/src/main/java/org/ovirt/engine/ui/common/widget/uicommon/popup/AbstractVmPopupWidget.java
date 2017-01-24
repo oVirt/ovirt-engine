@@ -642,19 +642,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "overrideMigrationDowntime.entity")
     @WithElementId("overrideMigrationDowntime")
     @UiField(provided = true)
-    public EntityModelCheckBoxOnlyEditor overrideMigrationDowntimeEditor;
+    public EntityModelCheckBoxEditor overrideMigrationDowntimeEditor;
 
     @UiField(provided = true)
     public EntityModelDetachableWidget overrideMigrationDowntimeEditorWithDetachable;
 
-    @UiField
-    @Ignore
-    public EnableableFormLabel overrideMigrationDowntimeLabel;
-
     @Path(value = "overrideMigrationPolicy.entity")
     @WithElementId("overrideMigrationPolicy")
     @UiField(provided = true)
-    public EntityModelCheckBoxOnlyEditor overrideMigrationPolicyEditor;
+    public EntityModelCheckBoxEditor overrideMigrationPolicyEditor;
 
     @UiField(provided = true)
     @Path(value = "migrationPolicies.selectedItem")
@@ -962,7 +958,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // TODO: How to align right without creating the widget manually?
         hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        isHighlyAvailableEditor.hideLabel();
 
         watchdogModelEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<VmWatchdogType>() {
             @Override
@@ -1003,10 +998,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         ssoMethodNone = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
         ssoMethodGuestAgent = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer());//$NON-NLS-1$
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.LEFT, new ModeSwitchingVisibilityRenderer());
-        isMemoryBalloonDeviceEnabled.hideLabel();
-        isIoThreadsEnabled = new EntityModelCheckBoxEditor(Align.LEFT, new ModeSwitchingVisibilityRenderer());
-        isIoThreadsEnabled.hideLabel();
+        isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isIoThreadsEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo = new InfoIcon(multiLineItalicSafeHtml(constants.cpuPinningLabelExplanation()));
@@ -1107,7 +1100,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         EnableableFormLabel label = new EnableableFormLabel();
         label.setText(constants.defineSpiceProxyEnable());
         spiceProxyOverrideEnabledEditor = new EntityModelCheckBoxOnlyEditor();
-        spiceProxyOverrideEnabledEditor.hideLabel();
         spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(label, spiceProxyOverrideEnabledEditor,
                 Align.LEFT);
     }
@@ -1441,12 +1433,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new ListModelListBoxEditor<>(new EnumRenderer<MigrationSupport>(), new ModeSwitchingVisibilityRenderer());
         migrationModeEditor.hideLabel();
 
-        overrideMigrationDowntimeEditor = new EntityModelCheckBoxOnlyEditor(new ModeSwitchingVisibilityRenderer(), false);
-        overrideMigrationDowntimeEditor.hideLabel();
+        overrideMigrationDowntimeEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         migrationDowntimeEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
 
-        overrideMigrationPolicyEditor = new EntityModelCheckBoxOnlyEditor(new ModeSwitchingVisibilityRenderer(), false);
-        overrideMigrationPolicyEditor.hideLabel();
+        overrideMigrationPolicyEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         migrationPolicyEditor = new ListModelListBoxOnlyEditor<>(new NameRenderer<MigrationPolicy>(), new ModeSwitchingVisibilityRenderer());
 
         autoConvergeEditor = new ListModelListBoxEditor<>(
