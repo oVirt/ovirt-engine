@@ -3,13 +3,11 @@ package org.ovirt.engine.core.bll.validator;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 
@@ -20,7 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -43,7 +41,7 @@ import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(Silent.class)
+@RunWith(Strict.class)
 public class HostValidatorTest {
 
     private static final int HOST_NAME_SIZE = 20;
@@ -58,10 +56,7 @@ public class HostValidatorTest {
     private StoragePoolDao storagePoolDao;
 
     @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(
-            mockConfig(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE),
-            mockConfig(ConfigValues.EncryptHostCommunication, Boolean.TRUE)
-    );
+    public MockConfigRule mockConfigRule = new MockConfigRule();
 
     @Mock
     private VDS host;
@@ -104,6 +99,7 @@ public class HostValidatorTest {
 
     @Test
     public void nameLengthIsTooLong() {
+        mockConfigRule.mockConfigValue(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE);
         when(host.getName()).thenReturn(RandomUtils.instance().nextString(HOST_NAME_SIZE * 2));
         assertThat(validator.nameLengthIsLegal(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG));
     }
@@ -133,8 +129,6 @@ public class HostValidatorTest {
 
     @Test
     public void hostNameNotUsed() {
-        when(hostDao.getAllForHostname(anyString())).thenReturn(Collections.emptyList());
-
         assertThat(validator.hostNameNotUsed(), isValid());
     }
 
@@ -175,11 +169,6 @@ public class HostValidatorTest {
 
     @Test
     public void validateSingleHostAttachedToLocalStorage() {
-        StoragePool dataCenter = mock(StoragePool.class);
-        when(dataCenter.isLocal()).thenReturn(true);
-        when(storagePoolDao.getForCluster(any(Guid.class))).thenReturn(dataCenter);
-        when(hostStaticDao.getAllForCluster(any(Guid.class))).thenReturn(Collections.emptyList());
-
         assertThat(validator.validateSingleHostAttachedToLocalStorage(), isValid());
     }
 
@@ -329,7 +318,6 @@ public class HostValidatorTest {
 
     @Test
     public void unsupportedHostedEngineDeployWhenClusterLevelIsUnsupported() {
-        when(hostedEngineHelper.isVmManaged()).thenReturn(false);
         mockCluster(Version.v3_6);
         when(host.getClusterId()).thenReturn(Guid.Empty);
         assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
@@ -338,7 +326,6 @@ public class HostValidatorTest {
 
     @Test
     public void allow36HostWithoutDeployingHostedEngine() {
-        when(hostedEngineHelper.isVmManaged()).thenReturn(false);
         mockCluster(Version.v3_6);
         when(host.getClusterId()).thenReturn(Guid.Empty);
         HostedEngineDeployConfiguration heConfig =
