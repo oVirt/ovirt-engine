@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -15,8 +17,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -30,8 +35,14 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.QuotaDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
+@RunWith(Strict.class)
 public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmParameters>> {
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule();
+
     @Mock
     private QuotaDao quotaDao;
 
@@ -47,12 +58,12 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
         generateStorageToDisksMap();
         initDestSDs();
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
     }
 
     @Test
     public void canAddVm() {
         List<String> reasons = new ArrayList<>();
+        doNothing().when(cmd).initTemplateDisks();
         initCommandMethods();
         cmd.init();
 
@@ -118,13 +129,11 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void testBeanValidations() {
-        initializeMock();
         assertTrue(cmd.validateInputs());
     }
 
     @Test
     public void testPatternBasedNameFails() {
-        initializeMock();
         cmd.getParameters().getVm().setName("aa-??bb");
         assertFalse("Pattern-based name should not be supported for VM", cmd.validateInputs());
     }
@@ -133,7 +142,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     public void refuseBalloonOnPPC() {
         setupCanAddPpcTest();
         cmd.getParameters().setBalloonEnabled(true);
-        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getCluster().getCompatibilityVersion())).thenReturn(false);
+        doNothing().when(cmd).initTemplateDisks();
         cmd.init();
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
@@ -141,6 +150,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void refuseSoundDeviceOnPPC() {
+        doNothing().when(cmd).initTemplateDisks();
         setupCanAddPpcTest();
         cmd.getParameters().setSoundDeviceEnabled(true);
         cmd.init();
@@ -149,7 +159,6 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     }
 
     private void setupCanAddPpcTest() {
-        doReturn(true).when(cmd).validateSpaceRequirements();
         doReturn(true).when(cmd).buildAndCheckDestStorageDomains();
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         cluster.setArchitecture(ArchitectureType.ppc64);
@@ -165,12 +174,13 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void testBlockUseHostCpuWithPPCArch() {
+        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
+        when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
+        doNothing().when(cmd).initTemplateDisks();
         setupCanAddPpcTest();
         cmd.setEffectiveCompatibilityVersion(Version.v4_0);
         doReturn(Collections.emptyList()).when(cmd).getImagesToCheckDestinationStorageDomains();
         initPpcCluster();
-        when(clusterDao.get(any(Guid.class))).thenReturn(cluster);
-        doReturn(true).when(cmd).areParametersLegal(Collections.emptyList());
         doReturn(true).when(cmd).validateAddVmCommand();
         doReturn(true).when(cmd).isVmNameValidLength(any(VM.class));
         when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.ppc64);

@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -14,6 +16,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner.Strict;
@@ -24,11 +27,15 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Strict.class)
 public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFromTemplateCommand<AddVmParameters>> {
 
     private static final int MAX_PCI_SLOTS = 26;
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule();
 
     @Override
     protected AddVmFromTemplateCommand<AddVmParameters> createCommand() {
@@ -39,6 +46,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     @Override
     public void setUp() {
         super.setUp();
+        doNothing().when(cmd).initTemplateDisks();
         doReturn(true).when(cmd).checkNumberOfMonitors();
         doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyList());
         initCommandMethods();
@@ -80,10 +88,12 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
+        doReturn(true).when(cmd).areParametersLegal(anyList());
+        doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
+        doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
         mockMaxPciSlots();
 
         mockStorageDomainDaoGetAllForStoragePool();
-        mockUninterestingMethods();
         mockGetAllSnapshots();
 
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
@@ -96,9 +106,14 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
+        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
+        when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
+        doReturn(true).when(cmd).areParametersLegal(anyList());
+        doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
+        doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
+        mockStorageDomainDaoGetAllForStoragePool();
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllForStoragePool();
-        mockUninterestingMethods();
 
         cmd.getParameters().setVirtioScsiEnabled(true);
         when(osRepository.isSoundDeviceEnabled(anyInt(), any(Version.class))).thenReturn(true);
@@ -116,11 +131,14 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void testUnsupportedCpus() {
+        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
+        doReturn(true).when(cmd).areParametersLegal(anyList());
+        doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
+        doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
         vm.setVmOs(OsRepository.DEFAULT_X86_OS);
 
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllForStoragePool();
-        mockUninterestingMethods();
         mockGetAllSnapshots();
         when(osRepository.getArchitectureFromOS(0)).thenReturn(ArchitectureType.x86_64);
         doReturn(storagePool).when(cmd).getStoragePool();

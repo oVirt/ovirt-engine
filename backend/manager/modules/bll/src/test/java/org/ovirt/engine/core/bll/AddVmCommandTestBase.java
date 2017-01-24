@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -15,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -47,20 +45,16 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends BaseCommandTest {
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule();
-
     protected static final int TOTAL_NUM_DOMAINS = 2;
-    protected static final Guid STORAGE_DOMAIN_ID_1 = Guid.newGuid();
-    protected static final Guid STORAGE_DOMAIN_ID_2 = Guid.newGuid();
-    protected static final Guid STORAGE_POOL_ID = Guid.newGuid();
+    private static final Guid STORAGE_DOMAIN_ID_1 = Guid.newGuid();
+    private static final Guid STORAGE_DOMAIN_ID_2 = Guid.newGuid();
+    private static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private static final int NUM_DISKS_STORAGE_DOMAIN_1 = 3;
     private static final int NUM_DISKS_STORAGE_DOMAIN_2 = 3;
     protected static final String CPU_ID = "0";
-    protected static final int MAX_MEMORY_SIZE = 4096;
+    private static final int MAX_MEMORY_SIZE = 4096;
 
     @Mock
     CpuFlagsManagerHandler cpuFlagsManagerHandler;
@@ -76,7 +70,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     @Mock
     protected StorageDomainValidator storageDomainValidator;
-    protected VmTemplate vmTemplate;
+    private VmTemplate vmTemplate;
     protected VM vm;
     protected Cluster cluster;
     protected StoragePool storagePool;
@@ -115,18 +109,13 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     protected abstract T createCommand();
 
-    public void initInjections() {
-        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
-
+    private void initOsRepository() {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        when(osRepository.isWindows(0)).thenReturn(true);
-        when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
-        when(osRepository.isSoundDeviceEnabled(anyInt(), any(Version.class))).thenReturn(false);
     }
 
     @Before
     public void setUp() {
-        initInjections();
+        initOsRepository();
 
         vmHandler.init();
 
@@ -143,20 +132,10 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         cmd.setStoragePool(storagePool);
 
         mockOtherDependencies();
-
-        doNothing().when(cmd).initTemplateDisks();
     }
 
     protected void mockOtherDependencies() {
         doReturn(storageDomainValidator).when(cmd).createStorageDomainValidator(any(StorageDomain.class));
-    }
-
-    protected void mockUninterestingMethods() {
-        doReturn(true).when(cmd).isVmNameValidLength(any(VM.class));
-        doReturn(true).when(cmd).areParametersLegal(anyList());
-        doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
-        doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
-        doReturn(false).when(cmd).isVirtioScsiControllerAttached(any(Guid.class));
     }
 
     protected void generateStorageToDisksMap() {
@@ -257,26 +236,8 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         doReturn(true).when(cmd).canAddVm(anyList(), anyString(), any(Guid.class), anyInt());
     }
 
-    protected void initializeMock() {
-        mockVmTemplateDaoReturnVmTemplate();
-        mockStorageDomainDaoGetAllForStoragePool();
-        mockStorageDomainDaoGet();
-    }
-
-    protected void mockVmTemplateDaoReturnVmTemplate() {
-        when(vmTemplateDao.get(any(Guid.class))).thenReturn(vmTemplate);
-    }
-
     protected void mockStorageDomainDaoGetAllForStoragePool() {
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(createStorageDomain()));
-    }
-
-    private void mockStorageDomainDaoGet() {
-        doAnswer(invocation -> {
-            StorageDomain result = createStorageDomain();
-            result.setId((Guid) invocation.getArguments()[0]);
-            return result;
-        }).when(sdDao).get(any(Guid.class));
     }
 
     protected StorageDomain createStorageDomain() {

@@ -14,7 +14,9 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
+@RunWith(Strict.class)
 public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFromSnapshotCommand<AddVmFromSnapshotParameters>> {
 
     private static final Guid SOURCE_SNAPSHOT_ID = Guid.newGuid();
@@ -88,13 +91,8 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
     public void testCannotDisableVirtioScsiCanDisableIDE() {
         cmd.getParameters().setVirtioScsiEnabled(false);
 
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).snapshotExists(any(Snapshot.class));
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
-
         VM vm = new VM();
-        Snapshot snapshot = new Snapshot();
         doReturn(vm).when(cmd).getVmFromConfiguration();
-        doReturn(snapshot).when(cmd).getSnapshot();
 
         DiskImage disk = new DiskImage();
         disk.setPlugged(true);
@@ -117,26 +115,17 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void canAddCloneVmFromSnapshotSnapshotDoesNotExist() {
-        initializeMock();
         cmd.getVm().setName("vm1");
-        mockUninterestingMethods();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 
     @Test
     public void canAddCloneVmFromSnapshotNoConfiguration() {
-        initializeMock();
         cmd.getVm().setName("vm1");
-        mockUninterestingMethods();
+        doReturn(null).when(cmd).getVmFromConfiguration();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any());
         when(snapshotDao.get(SOURCE_SNAPSHOT_ID)).thenReturn(new Snapshot());
         ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
-    }
-
-    @Override
-    protected void mockUninterestingMethods() {
-        super.mockUninterestingMethods();
-        doReturn(null).when(cmd).getVmFromConfiguration();
     }
 }
