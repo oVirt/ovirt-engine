@@ -29,8 +29,6 @@ import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -111,20 +109,6 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         initCluster();
         cluster.setCpuName("PPC8");
         cluster.setArchitecture(ArchitectureType.ppc64);
-    }
-
-    protected List<DiskImage> createDiskSnapshot(Guid diskId, int numOfImages) {
-        List<DiskImage> disksList = new ArrayList<>();
-        for (int i = 0; i < numOfImages; ++i) {
-            DiskImage diskImage = new DiskImage();
-            diskImage.setActive(false);
-            diskImage.setId(diskId);
-            diskImage.setImageId(Guid.newGuid());
-            diskImage.setParentId(Guid.newGuid());
-            diskImage.setImageStatus(ImageStatus.OK);
-            disksList.add(diskImage);
-        }
-        return disksList;
     }
 
     @Test

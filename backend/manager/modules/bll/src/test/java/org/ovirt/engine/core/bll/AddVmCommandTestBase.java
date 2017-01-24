@@ -161,7 +161,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         return diskImage;
     }
 
-    protected List<DiskImage> createDiskSnapshot(Guid diskId, int numOfImages) {
+    private List<DiskImage> createDiskSnapshot(Guid diskId, int numOfImages) {
         List<DiskImage> disksList = new ArrayList<>();
         for (int i = 0; i < numOfImages; ++i) {
             DiskImage diskImage = new DiskImage();
