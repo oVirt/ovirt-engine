@@ -53,36 +53,36 @@
                     <b:Row addStyleNames="{style.topDecorator} {style.topElement}">
                         <b:Column size="SM_6" addStyleNames="{style.nopadding}">
                             <g:FlowPanel>
-                                <b:Column size="SM_6">
+                                <b:Column size="SM_5">
                                     <g:Label addStyleNames="{style.floatLeft} control-label labelEnabled" text="{constants.storagePopupDataCenterLabel}" />
                                     <b:Icon type="EXCLAMATION" ui:field="datacenterAlertIcon" visible="false" addStyleNames="{style.floatLeft} {style.iconPadding}" />
                                 </b:Column>
-                                <e:ListModelListBoxEditor ui:field="datacenterListEditor" usePatternFly="true" widgetColSize="SM_6" />
+                                <e:ListModelListBoxEditor ui:field="datacenterListEditor" usePatternFly="true" widgetColSize="SM_7" />
                             </g:FlowPanel>
                         </b:Column>
                         <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.storagePopupNameLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.storagePopupNameLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
                         </b:Column>
                     </b:Row>
                     <b:Row addStyleNames="{style.topDecorator}">
                         <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <e:ListModelListBoxEditor ui:field="domainFunctionListEditor" label="{constants.storagePopupDomainFunctionLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            <e:ListModelListBoxEditor ui:field="domainFunctionListEditor" label="{constants.storagePopupDomainFunctionLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
                         </b:Column>
                         <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.storagePopupDescriptionLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                        </b:Column>
-                    </b:Row>
-                    <b:Row addStyleNames="{style.topDecorator}">
-                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <e:ListModelListBoxEditor ui:field="storageTypeListEditor" label="{constants.storagePopupStorageTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                        </b:Column>
-                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" label="{constants.commentLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.storagePopupDescriptionLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
                         </b:Column>
                     </b:Row>
                     <b:Row addStyleNames="{style.topDecorator}">
                         <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                            <e:ListModelListBoxEditor ui:field="hostListEditor" label="{constants.storagePopupHostLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                            <e:ListModelListBoxEditor ui:field="storageTypeListEditor" label="{constants.storagePopupStorageTypeLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                        </b:Column>
+                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                            <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" label="{constants.commentLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                        </b:Column>
+                    </b:Row>
+                    <b:Row addStyleNames="{style.topDecorator}">
+                        <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                            <e:ListModelListBoxEditor ui:field="hostListEditor" label="{constants.storagePopupHostLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
                         </b:Column>
                     </b:Row>
                     <b:Row>

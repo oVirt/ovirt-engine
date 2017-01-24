@@ -13,8 +13,39 @@
             color: red;
         }
 
+        .bar {
+            width: 22px !important;
+            border-right: none;
+            background-color: #fff;
+            text-align: center;
+            line-height: 0px;
+            height: inherit !important;
+        }
+
+        .dialogTab {
+            position: relative;
+            white-space: nowrap;
+            display: table;
+            top: 80px;
+            left: -92px;
+            width: 188px;
+            -webkit-transform: rotate(-90deg);
+            -moz-transform: rotate(-90deg);
+            -ms-transform: rotate(-90deg);
+        }
+
+        .tabPanel {
+            display: inline-block;
+        }
+
         .container {
             width: 100%;
+        }
+
+        .tabWrapper {
+            outline: none;
+            /* this is for 2 tabs, divide 100 by the number of tabs if you add more */
+            height: 50%;
         }
     </ui:style>
 
@@ -28,16 +59,16 @@
             </b:Column>
         </b:Row>
         <b:Row>
-            <t:DialogTabPanel ui:field="dialogTabPanel" height="306px" width="100%">
+            <t:DialogTabPanel ui:field="dialogTabPanel" barStyle="{style.bar}" addStyleNames="{style.tabPanel}" height="306px" width="100%">
                 <t:tab>
-                    <t:DialogTab ui:field="targetsToLunTab">
+                    <t:DialogTab ui:field="targetsToLunTab" tabLabelStyle="{style.dialogTab}" addStyleNames="{style.tabWrapper}">
                         <t:content>
                             <w:ValidatedPanelWidget ui:field="targetsToLunsPanel" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="lunToTargetsTab">
+                    <t:DialogTab ui:field="lunToTargetsTab" tabLabelStyle="{style.dialogTab}" addStyleNames="{style.tabWrapper}">
                         <t:content>
                             <w:ValidatedPanelWidget ui:field="lunsListPanel" />
                         </t:content>

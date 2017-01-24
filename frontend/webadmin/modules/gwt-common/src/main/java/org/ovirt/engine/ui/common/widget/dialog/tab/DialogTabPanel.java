@@ -96,7 +96,7 @@ public class DialogTabPanel extends Composite {
         tabContentContainer.setWidget(content);
     }
 
-    public void addBarStyle(String styleName) {
+    public void setBarStyle(String styleName) {
         tabContainer.addStyleName(styleName);
     }
 
