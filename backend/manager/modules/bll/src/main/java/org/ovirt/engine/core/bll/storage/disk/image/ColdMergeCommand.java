@@ -1,18 +1,24 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ColdMergeCommandParameters;
+import org.ovirt.engine.core.common.action.FenceVolumeJobCommandParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.HostJobInfo;
+import org.ovirt.engine.core.common.businessentities.SubchainInfo;
+import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.ColdMergeVDSCommandParameters;
@@ -20,7 +26,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
-public class ColdMergeCommand<T extends ColdMergeCommandParameters> extends StorageJobCommand<T> implements QuotaStorageDependent {
+public class ColdMergeCommand<T extends ColdMergeCommandParameters> extends StorageJobCommand<T> implements EntityPollingCommand {
+
+    @Inject
+    private VdsmImagePoller poller;
 
     public ColdMergeCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -28,11 +37,32 @@ public class ColdMergeCommand<T extends ColdMergeCommandParameters> extends Stor
 
     @Override
     protected void executeCommand() {
+        completeGenerationInfo();
         VdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.ColdMerge,
                 new ColdMergeVDSCommandParameters(getParameters().getStorageJobId(),
                         getParameters().getSubchainInfo()),
                 getParameters().getStoragePoolId(), this);
         setSucceeded(true);
+    }
+
+    @Override
+    public HostJobInfo.HostJobStatus poll() {
+        SubchainInfo info = getParameters().getSubchainInfo();
+        return poller.pollImage(getParameters().getStoragePoolId(), info.getStorageDomainId(), info.getImageGroupId(),
+                info.getBaseImageId(), info.getBaseImageGeneration(), getCommandId(), getActionType());
+    }
+
+    @Override
+    public void attemptToFenceJob() {
+        SubchainInfo info = getParameters().getSubchainInfo();
+        VdsmImageLocationInfo locationInfo = new VdsmImageLocationInfo(info.getStorageDomainId(), info.getImageGroupId(),
+                info.getBaseImageId(), info.getBaseImageGeneration());
+        FenceVolumeJobCommandParameters parameters = new FenceVolumeJobCommandParameters(locationInfo);
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setStoragePoolId(getParameters().getStoragePoolId());
+        parameters.setEndProcedure(VdcActionParametersBase.EndProcedure.COMMAND_MANAGED);
+        runInternalActionWithTasksContext(VdcActionType.FenceVolumeJob, parameters);
     }
 
     @Override
@@ -55,8 +85,11 @@ public class ColdMergeCommand<T extends ColdMergeCommandParameters> extends Stor
         return StepEnum.MERGE_SNAPSHOTS;
     }
 
-    @Override
-    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        return null;
+    private void completeGenerationInfo() {
+        SubchainInfo info = getParameters().getSubchainInfo();
+        DiskImage image = ImagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
+                info.getStorageDomainId(), info.getImageGroupId(), info.getBaseImageId());
+        info.setBaseImageGeneration(image.getImage().getGeneration());
+        persistCommandIfNeeded();
     }
 }

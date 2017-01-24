@@ -619,7 +619,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
     }
 
     @Override
-    public OneUuidReturn prepareMerge(String spUUID, Map<String, String> subchainInfo) {
+    public OneUuidReturn prepareMerge(String spUUID, Map<String, Object> subchainInfo) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.prepareMerge")
                         .withParameter("storagepoolID", spUUID)
@@ -631,7 +631,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
     }
 
     @Override
-    public OneUuidReturn finalizeMerge(String spUUID, Map<String, String> subchainInfo) {
+    public OneUuidReturn finalizeMerge(String spUUID, Map<String, Object> subchainInfo) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.finalizeMerge")
                         .withParameter("storagepoolID", spUUID)
