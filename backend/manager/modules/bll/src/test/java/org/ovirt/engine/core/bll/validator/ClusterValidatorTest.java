@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.validator;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -19,7 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -35,7 +34,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(Silent.class)
+@RunWith(Strict.class)
 public class ClusterValidatorTest {
 
     private static final Version SUPPORTED_VERSION = new Version(1, 1);
@@ -62,13 +61,11 @@ public class ClusterValidatorTest {
 
     @Before
     public void setup() {
-        mockConfigRule.mockConfigValue(ConfigValues.SupportedClusterLevels, Collections.singleton(SUPPORTED_VERSION));
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
     }
 
     @Test
     public void nameNotUsed() {
-        when(clusterDao.getByName(anyString(), anyBoolean())).thenReturn(Collections.emptyList());
         when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
@@ -109,6 +106,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void versionSupported() {
+        mockConfigRule.mockConfigValue(ConfigValues.SupportedClusterLevels, Collections.singleton(SUPPORTED_VERSION));
         when(cluster.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
 
         assertThat(validator.versionSupported(), isValid());
@@ -129,9 +127,7 @@ public class ClusterValidatorTest {
     @Test
     public void dataCenterVersionMatches() {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
-        when(cluster.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
         StoragePool dataCenter = mock(StoragePool.class);
-        when(dataCenter.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
@@ -293,7 +289,6 @@ public class ClusterValidatorTest {
 
     @Test
     public void migrationSupported() {
-        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
         doReturn(true).when(validator).migrationSupportedForArch(any(ArchitectureType.class));
 
@@ -302,7 +297,6 @@ public class ClusterValidatorTest {
 
     @Test
     public void migrationNotSupported() {
-        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
         doReturn(false).when(validator).migrationSupportedForArch(any(ArchitectureType.class));
 
