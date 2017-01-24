@@ -2857,7 +2857,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         if (templateWithVersionRequired) {
-            getTemplateWithVersion().validateSelectedItem(new IValidation[]{new NotEmptyValidation()});
+            getTemplateWithVersion().validateSelectedItem(
+                    new IValidation[]{new NotEmptyValidation(), createEachDiskAHasStorageDomainValidation()});
         }
         getDisksAllocationModel().validateEntity(new IValidation[]{});
 
@@ -2916,6 +2917,28 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getValid().setEntity(isValid);
         fireValidationCompleteEvent();
         return isValid;
+    }
+
+    /**
+     * It validates that each selected disk has its storage domain accessible from frontend. I may happen that there is
+     * a missing permission on storage domain that causes diskModel.getStorageDomain().getSelectedItem() to be null and
+     * consequently a frontend NPE.
+     */
+    private IValidation createEachDiskAHasStorageDomainValidation() {
+        return new IValidation() {
+            @Override public ValidationResult validate(Object value) {
+                for (DiskModel diskModel : getDisksAllocationModel().getDisks()) {
+                    final StorageDomain storageDomain = diskModel.getStorageDomain().getSelectedItem();
+                    if (storageDomain == null) {
+                        final String diskName = diskModel.getDisk().getDiskAlias();
+                        final String errorMessage = ConstantsManager.getInstance().getMessages()
+                                .storageDomainOfDiskCannotBeAccessed(diskName);
+                        return ValidationResult.fail(errorMessage);
+                    }
+                }
+                return ValidationResult.ok();
+            }
+        };
     }
 
     public void fireValidationCompleteEvent() {

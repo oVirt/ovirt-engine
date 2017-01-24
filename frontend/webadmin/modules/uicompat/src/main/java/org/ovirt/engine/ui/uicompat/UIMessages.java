@@ -404,5 +404,7 @@ public interface UIMessages extends Messages {
     String nullOperationUnmanagedNetwork(String networkName);
 
     String nullOperationOutOfSyncNetwork(String networkName);
+
+    String storageDomainOfDiskCannotBeAccessed(String diskName);
 }
 
