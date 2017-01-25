@@ -438,7 +438,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             final DiskProfile diskProfile =
                     diskProfileHelper.createDiskProfile(getStorageDomain().getId(), getStorageDomainName());
             DiskProfileParameters diskProfileParameters = new DiskProfileParameters(diskProfile, true);
-            runInternalAction(VdcActionType.AddDiskProfile, diskProfileParameters);
+            runInternalActionWithTasksContext(VdcActionType.AddDiskProfile, diskProfileParameters);
             getCompensationContext().snapshotNewEntity(diskProfile);
             getCompensationContext().stateChanged();
             return null;
