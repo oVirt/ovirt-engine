@@ -20,7 +20,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -41,7 +41,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-@RunWith(Silent.class)
+@RunWith(Strict.class)
 public class DiskValidatorTest {
 
     @ClassRule
@@ -92,7 +92,6 @@ public class DiskValidatorTest {
     private void setupForLun() {
         lunDisk = createLunDisk();
         lunValidator = spy(new DiskValidator(lunDisk));
-        doReturn(vmDao).when(lunValidator).getVmDao();
     }
 
     private StorageDomain createStorageDomainForDisk(StorageType storageType) {
@@ -123,7 +122,6 @@ public class DiskValidatorTest {
         List<Pair<VM, VmDevice>> vmsInfo = new LinkedList<>();
         vmsInfo.add(new Pair<>(vm1, device1));
         vmsInfo.add(new Pair<>(vm2, device2));
-        when(vmDao.getVmsWithPlugInfo(disk.getId())).thenReturn(vmsInfo);
         return vmsInfo;
     }
 
