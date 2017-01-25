@@ -101,4 +101,15 @@ public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<External
     public void setUsePatternFly(boolean use) {
         dnsServersEditor.setUsePatternFly(use);
     }
+
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        nextTabIndex = nameEditor.setTabIndexes(nextTabIndex);
+        nextTabIndex = cidrEditor.setTabIndexes(nextTabIndex);
+        nextTabIndex = ipVersionEditor.setTabIndexes(nextTabIndex);
+        nextTabIndex = gatewayEditor.setTabIndexes(nextTabIndex);
+        nextTabIndex = dnsServersEditor.setTabIndexes(nextTabIndex);
+        return nextTabIndex;
+    }
+
 }

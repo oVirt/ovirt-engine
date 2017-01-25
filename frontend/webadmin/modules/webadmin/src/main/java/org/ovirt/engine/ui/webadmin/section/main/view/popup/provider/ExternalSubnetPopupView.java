@@ -74,4 +74,12 @@ public class ExternalSubnetPopupView extends AbstractModelBoundPopupView<NewExte
     public void cleanup() {
         driver.cleanup();
     }
+
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        nextTabIndex = networkEditor.setTabIndexes(nextTabIndex);
+        nextTabIndex = subnetWidget.setTabIndexes(nextTabIndex);
+        return nextTabIndex;
+    }
+
 }

@@ -12,6 +12,7 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -404,12 +405,6 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             }
         }
 
-        public void removeAllButtons() {
-            while (!buttons.isEmpty()) {
-                removeLastButton();
-            }
-        }
-
         public void removeLastButton() {
             remove(buttons.remove(buttons.size() - 1));
         }
@@ -430,6 +425,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             }
             clear();
         }
+
     }
 
     @Override
@@ -520,6 +516,21 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
      */
     protected void toggleGhost(T value, V widget, boolean becomingGhost) {
         setButtonsEnabled(widget, !becomingGhost && enabled);
+    }
+
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        for (Pair<T, V> item : items) {
+            V widget = item.getSecond();
+
+            if (widget instanceof FocusableComponentsContainer) {
+                nextTabIndex = ((FocusableComponentsContainer) widget).setTabIndexes(nextTabIndex);
+            } else if (widget instanceof Focusable) {
+                ((Focusable) widget).setTabIndex(nextTabIndex++);
+            }
+        }
+
+        return nextTabIndex;
     }
 
 }
