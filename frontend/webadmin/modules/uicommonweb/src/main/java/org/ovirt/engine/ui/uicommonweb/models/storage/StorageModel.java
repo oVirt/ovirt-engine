@@ -581,6 +581,8 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                 if (getCurrentStorageItem().getRole() == StorageDomainType.ISO
                         || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
                     // ISO/Export domains should not be available for '(none)' DC
+                    formats.add(StorageFormatType.V1);
+                    getFormat().setItems(formats);
                     return;
                 }
 
