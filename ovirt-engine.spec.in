@@ -534,6 +534,7 @@ Summary:	%{ovirt_product_name_short} Tools (hosts inventory for ansible)
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-plugin-ovirt-engine-common >= %{version}-%{release}
 Requires:	%{name}-setup-plugin-ovirt-engine >= %{version}-%{release}
+Requires:	ansible >= 2.2.0
 
 %description hosts-ansible-inventory
 %{ovirt_product_name_short} Tools (hosts inventory for ansible)
