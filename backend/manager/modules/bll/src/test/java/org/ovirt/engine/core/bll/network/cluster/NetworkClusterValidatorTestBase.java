@@ -92,6 +92,32 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
                         .and(replacements(hasItem(NETWORK_NAME_REPLACEMENT))));
     }
 
+    @Test
+    public void testDefaultRouteNetworkCannotBeExternal() throws Exception {
+        networkCluster.setDefaultRoute(true);
+        setNetworkExternal(network, true);
+
+        EngineMessage message = EngineMessage.ACTION_TYPE_FAILED_DEFAULT_ROUTE_NETWORK_CANNOT_BE_EXTERNAL;
+        assertThat(validator.defaultRouteNetworkCannotBeExternal(network),
+                both(failsWith(message)).and(replacements(hasItem(NETWORK_NAME_REPLACEMENT))));
+    }
+
+    @Test
+    public void testDefaultRouteNetworkCannotBeExternalWhenNotDefaultRoute() throws Exception {
+        networkCluster.setDefaultRoute(false);
+        setNetworkExternal(network, true);
+
+        assertThat(validator.defaultRouteNetworkCannotBeExternal(network), isValid());
+    }
+
+    @Test
+    public void testDefaultRouteNetworkCannotBeExternalWhenNotExternalNetwork() throws Exception {
+        networkCluster.setDefaultRoute(true);
+        setNetworkExternal(network, false);
+
+        assertThat(validator.defaultRouteNetworkCannotBeExternal(network), isValid());
+    }
+
     private void testManagementNetworkNotExternal(boolean management,
                                                   boolean external,
                                                   Matcher<ValidationResult> expected) {

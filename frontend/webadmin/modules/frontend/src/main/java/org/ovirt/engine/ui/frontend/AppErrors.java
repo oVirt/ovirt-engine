@@ -2724,5 +2724,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String STORAGE_DOMAIN_SYNC_SCHEDULING_IN_PROGRESS();
 
     String VALIDATION_INVALID_SCHEDULE();
+
+    String ACTION_TYPE_FAILED_DEFAULT_ROUTE_NETWORK_CANNOT_BE_EXTERNAL();
 }
 

@@ -39,6 +39,7 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
 
         boolean result = validate(validator.managementNetworkRequired(network));
         result = result && validate(validator.managementNetworkNotExternal(network));
+        result = result && validate(validator.defaultRouteNetworkCannotBeExternal(network));
         result = result && validate(validator.managementNetworkChange());
         result = result && validate(validator.roleNetworkHasIp());
         result = result && (!getPersistedNetwork().isExternal() || validateExternalNetwork(validator));

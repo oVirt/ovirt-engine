@@ -110,6 +110,13 @@ public abstract class NetworkClusterValidatorBase {
                         network.isExternal());
     }
 
+    public ValidationResult defaultRouteNetworkCannotBeExternal(Network network) {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DEFAULT_ROUTE_NETWORK_CANNOT_BE_EXTERNAL,
+                String.format(NETWORK_NAME_REPLACEMENT, network.getName())).when(
+                networkCluster.isDefaultRoute() &&
+                        network.isExternal());
+    }
+
     public ValidationResult managementNetworkRequired(Network network) {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED,
                 String.format(NETWORK_NAME_REPLACEMENT, network.getName())).when(
