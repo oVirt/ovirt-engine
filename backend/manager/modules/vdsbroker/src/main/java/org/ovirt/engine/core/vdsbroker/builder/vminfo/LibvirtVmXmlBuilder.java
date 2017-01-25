@@ -1019,7 +1019,7 @@ public class LibvirtVmXmlBuilder {
         List<Disk> diskImages = new ArrayList<>(vm.getDiskMap().values());
         Collections.sort(diskImages, new DiskByDiskAliasComparator());
         Collections.sort(diskImages,
-                Collections.reverseOrder(new DiskImageByBootAndSnapshotComparator(vm.getId())));
+                Collections.reverseOrder(new DiskByBootAndSnapshotComparator(vm.getId())));
         return diskImages;
     }
 
