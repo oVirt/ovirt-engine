@@ -228,7 +228,7 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
     @Override
     public void updateTabIndexes() {
         // Update tab indexes for popup view's content
-        int nextTabIndex = setTabIndexes(0);
+        int nextTabIndex = setTabIndexes(1);
 
         // Update tab indexes for popup view's footer buttons
         for (FocusableComponentsContainer button : focusableButtons) {
