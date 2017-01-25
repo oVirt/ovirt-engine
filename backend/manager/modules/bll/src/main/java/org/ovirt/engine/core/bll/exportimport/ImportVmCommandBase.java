@@ -528,7 +528,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             initInterface(iface);
             vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser());
 
-            final boolean reassignMac = getParameters().isReassignBadMacs() && vnicHasBadMac(iface);
+            final boolean reassignMac = shouldMacBeReassigned(iface);
             final boolean reserveExistingMac = !(reassignMac || getParameters().isImportAsNewEntity());
             vmInterfaceManager.add(iface,
                                    getCompensationContext(),
@@ -540,6 +540,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         vnicProfileHelper.auditInvalidInterfaces(getVmName());
+    }
+
+    protected boolean shouldMacBeReassigned(VmNetworkInterface iface) {
+        return getParameters().isReassignBadMacs() && vnicHasBadMac(iface);
     }
 
     protected boolean vnicHasBadMac(VmNetworkInterface vnic) {
