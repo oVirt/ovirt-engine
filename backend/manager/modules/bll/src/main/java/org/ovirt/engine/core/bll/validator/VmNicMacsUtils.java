@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -20,10 +21,6 @@ public class VmNicMacsUtils {
     private static final Pattern VALIDATE_MAC_ADDRESS =
             Pattern.compile(MacAddressValidationPatterns.UNICAST_MAC_ADDRESS_FORMAT);
 
-    private boolean nicWithoutMacAddress(VmNic vmNic) {
-        return vmNic.getMacAddress() == null;
-    }
-
     public ValidationResult validateMacAddress(List<? extends VmNic> vmNics) {
         for (VmNic iface : vmNics) {
             if (iface.getMacAddress() != null) {
@@ -38,13 +35,15 @@ public class VmNicMacsUtils {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult validateThereIsEnoughOfFreeMacs(List<? extends VmNic> vmNics, MacPool macPool) {
-        Stream<? extends VmNic> nicsWithoutMacAddress = vmNics.stream().filter(this::nicWithoutMacAddress);
-        long requiredMacs = nicsWithoutMacAddress.count();
+    public <T extends VmNic> ValidationResult validateThereIsEnoughOfFreeMacs(List<T> vmNics,
+            MacPool macPool,
+            Predicate<T> vnicRequiresNewMacPredicate) {
+        Stream<T> vnicsRequireNewMac = vmNics.stream().filter(vnicRequiresNewMacPredicate);
+        long requiredMacs = vnicsRequireNewMac.count();
 
         boolean notEnoughOfMacs = requiredMacs > 0 && macPool.getAvailableMacsCount() < requiredMacs;
 
-        return ValidationResult.failWith(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES) .when(notEnoughOfMacs);
+        return ValidationResult.failWith(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES).when(notEnoughOfMacs);
     }
 
     public void replaceInvalidEmptyStringMacAddressesWithNull(List<VmNetworkInterface> vmNetworkInterfaces) {

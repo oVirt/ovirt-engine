@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -469,7 +470,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
         if (!getParameters().isImportAsNewEntity()) {
             List<VmNetworkInterface> vmNetworkInterfaces = getVm().getInterfaces();
-            if (!validate(vmNicMacsUtils.validateThereIsEnoughOfFreeMacs(vmNetworkInterfaces, getMacPool()))) {
+            if (!validate(vmNicMacsUtils.validateThereIsEnoughOfFreeMacs(vmNetworkInterfaces,
+                    getMacPool(),
+                    getVnicRequiresNewMacPredicate()))) {
                 return false;
             }
 
@@ -487,6 +490,14 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         return true;
+    }
+
+    private Predicate<VmNetworkInterface> getVnicRequiresNewMacPredicate() {
+        return ((Predicate<VmNetworkInterface>) this::nicWithoutMacAddress).or(this::shouldMacBeReassigned);
+    }
+
+    private boolean nicWithoutMacAddress(VmNic vmNic) {
+        return vmNic.getMacAddress() == null;
     }
 
     protected boolean handleDestStorageDomains() {
