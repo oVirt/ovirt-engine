@@ -855,7 +855,7 @@ public interface CommonApplicationConstants extends Constants {
 
     String wipeAfterDeleteVmDiskPopup();
 
-    String passDiscardVmDiskPopup();
+    String enableDiscardVmDiskPopup();
 
     String isBootableVmDiskPopup();
 
