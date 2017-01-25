@@ -36,7 +36,7 @@ public class DnsServersWidget extends AddRemoveRowWidget<ListModel<EntityModel<S
     @Override
     protected EntityModel<String> createGhostValue() {
         EntityModel<String> value = new EntityModel<>();
-        value.setEntity(""); //$NON-NLS-1$
+        value.setEntity("");
         return value;
     }
 
@@ -48,4 +48,5 @@ public class DnsServersWidget extends AddRemoveRowWidget<ListModel<EntityModel<S
     public void setDnsServerWidth(double value) {
         this.width = value;
     }
+
 }

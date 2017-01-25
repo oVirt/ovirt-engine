@@ -73,4 +73,11 @@ public class DnsServerEditor extends AbstractModelBoundPopupWidget<EntityModel<S
     public void setEnabled(boolean enabled) {
         stringEditor.setEnabled(enabled);
     }
+
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        nextTabIndex = stringEditor.setTabIndexes(nextTabIndex);
+        return nextTabIndex;
+    }
+
 }
