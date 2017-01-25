@@ -96,24 +96,24 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
         return getCluster() != null;
     }
 
-    private void attachNetwork(Guid clusterId, NetworkCluster networkCluster, Network network) {
+    private void attachNetwork(Guid clusterId, NetworkCluster networkClusterFromUserRequest, Network network) {
         networkClusterDao.save(new NetworkCluster(clusterId, network.getId(),
                 NetworkStatus.OPERATIONAL,
                 false,
-                networkCluster.isRequired(),
+                networkClusterFromUserRequest.isRequired(),
                 false,
                 false,
                 false,
                 false));
 
         List<VDS> hosts = vdsDao.getAllForCluster(clusterId);
-        List<Network> clusterNetworks = networkDao.getAllForCluster(clusterId);
+        List<Network> networksOfCluster = networkDao.getAllForCluster(clusterId);
         for (VDS host : hosts) {
             HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(this.networkAttachmentDao,
                 host.getId(),
                 interfaceDao.getAllInterfacesForVds(host.getId()),
                 Collections.emptyList(),
-                clusterNetworks);
+                networksOfCluster);
             persister.persistNetworkAttachments();
         }
 
@@ -121,7 +121,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
             final DisplayNetworkClusterHelper displayNetworkClusterHelper = new DisplayNetworkClusterHelper(
                     networkClusterDao,
                     vmDao,
-                    networkCluster,
+                    networkClusterFromUserRequest,
                     network.getName(),
                     auditLogDirector);
             if (displayNetworkClusterHelper.isDisplayToBeUpdated()) {
@@ -137,6 +137,10 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
 
         if (network.getCluster().isGluster()) {
             networkClusterDao.setNetworkExclusivelyAsGluster(clusterId, network.getId());
+        }
+
+        if (network.getCluster().isDefaultRoute()) {
+            networkClusterDao.setNetworkExclusivelyAsDefaultRoute(clusterId, network.getId());
         }
 
         NetworkClusterHelper.setStatus(clusterId, network);

@@ -1556,6 +1556,27 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION set_network_exclusively_as_default_role_network (
+    v_cluster_id UUID,
+    v_network_id UUID
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE network_cluster
+    SET default_route = true
+    WHERE cluster_id = v_cluster_id
+        AND network_id = v_network_id;
+
+    IF FOUND THEN
+        UPDATE network_cluster
+        SET default_route = false
+        WHERE cluster_id = v_cluster_id
+            AND network_id != v_network_id;
+    END IF;
+
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION set_network_exclusively_as_gluster (
     v_cluster_id UUID,
     v_network_id UUID

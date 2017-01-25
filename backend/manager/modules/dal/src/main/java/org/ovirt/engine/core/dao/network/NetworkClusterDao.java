@@ -86,6 +86,11 @@ public interface NetworkClusterDao extends Dao {
     void setNetworkExclusivelyAsMigration(Guid clusterId, Guid networkId);
 
     /**
+     * Sets this cluster network as the only default route network in the cluster.
+     */
+    void setNetworkExclusivelyAsDefaultRoute(Guid clusterId, Guid networkId);
+
+    /**
      * Sets this cluster network as the only management network on the cluster.
      */
     void setNetworkExclusivelyAsManagement(Guid clusterId, Guid networkId);

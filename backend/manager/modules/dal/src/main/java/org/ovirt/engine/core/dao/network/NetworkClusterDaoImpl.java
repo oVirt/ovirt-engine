@@ -106,43 +106,41 @@ public class NetworkClusterDaoImpl extends BaseDao implements NetworkClusterDao 
     @Override
     public void remove(Guid clusterid, Guid networkid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cluster_id", clusterid).addValue("network_id",
-                        networkid);
+                .addValue("cluster_id", clusterid)
+                .addValue("network_id", networkid);
 
         getCallsHandler().executeModification("Deletenetwork_cluster", parameterSource);
     }
 
     @Override
     public void setNetworkExclusivelyAsDisplay(Guid clusterId, Guid networkId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cluster_id", clusterId).addValue("network_id", networkId);
-
-        getCallsHandler().executeModification("set_network_exclusively_as_display", parameterSource);
+        setExclusiveFlagOnNetworkCluster(clusterId, networkId, "set_network_exclusively_as_display");
     }
 
     @Override
     public void setNetworkExclusivelyAsMigration(Guid clusterId, Guid networkId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cluster_id", clusterId).addValue("network_id", networkId);
+        setExclusiveFlagOnNetworkCluster(clusterId, networkId, "set_network_exclusively_as_migration");
+    }
 
-        getCallsHandler().executeModification("set_network_exclusively_as_migration", parameterSource);
+    @Override
+    public void setNetworkExclusivelyAsDefaultRoute(Guid clusterId, Guid networkId) {
+        setExclusiveFlagOnNetworkCluster(clusterId, networkId, "set_network_exclusively_as_default_role_network");
     }
 
     @Override
     public void setNetworkExclusivelyAsManagement(Guid clusterId, Guid networkId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cluster_id", clusterId).addValue("network_id", networkId);
-
-        getCallsHandler().executeModification("set_network_exclusively_as_management", parameterSource);
+        setExclusiveFlagOnNetworkCluster(clusterId, networkId, "set_network_exclusively_as_management");
     }
 
     @Override
     public void setNetworkExclusivelyAsGluster(Guid clusterId, Guid networkId) {
+        setExclusiveFlagOnNetworkCluster(clusterId, networkId, "set_network_exclusively_as_gluster");
+    }
+
+    private void setExclusiveFlagOnNetworkCluster(Guid clusterId, Guid networkId, String procedureName) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("cluster_id", clusterId).addValue("network_id", networkId);
 
-        getCallsHandler().executeModification("set_network_exclusively_as_gluster", parameterSource);
-
+        getCallsHandler().executeModification(procedureName, parameterSource);
     }
-
 }

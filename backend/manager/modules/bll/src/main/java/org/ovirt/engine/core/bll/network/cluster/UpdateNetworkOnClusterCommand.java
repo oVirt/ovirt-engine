@@ -83,6 +83,11 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
                     getNetworkCluster().isGluster() ? getPersistedNetwork().getId() : null);
         }
 
+        if (getNetworkCluster().isDefaultRoute() != getOldNetworkCluster().isDefaultRoute()) {
+            networkClusterDao.setNetworkExclusivelyAsDefaultRoute(getClusterId(),
+                    getNetworkCluster().isDefaultRoute() ? getPersistedNetwork().getId() : managementNetwork.getId());
+        }
+
         NetworkClusterHelper.setStatus(getClusterId(), getPersistedNetwork());
         setSucceeded(true);
     }
