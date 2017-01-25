@@ -1158,13 +1158,13 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
      * the two features have almost the same libvirt version support
      */
     private void addNumaSetting() {
-        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         List<VdsNumaNode> totalVdsNumaNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vdsId);
         if (totalVdsNumaNodes.isEmpty()) {
             log.warn("No NUMA nodes found for host {} for vm {} {}", vdsId, vm.getName(), vm.getId());
             return;
         }
 
+        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         // if user didn't set specific NUMA conf
         // create a default one with one guest numa node
         if (vmNumaNodes.isEmpty()) {

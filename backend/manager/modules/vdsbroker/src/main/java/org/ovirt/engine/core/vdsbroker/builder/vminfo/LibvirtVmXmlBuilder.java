@@ -4,10 +4,11 @@ import static org.ovirt.engine.core.common.utils.VmDeviceCommonUtils.updateVmDev
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -40,9 +42,11 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -82,78 +86,87 @@ public class LibvirtVmXmlBuilder {
     @Inject
     private NetworkClusterDao networkClusterDao;
 
+    private OsRepository osRepository;
     private String serialConsolePath;
+    private boolean hypervEnabled;
 
     public LibvirtVmXmlBuilder() {
+        osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     }
 
     public String build(Map<String, Object> createInfo, VM vm, Guid vdsId) {
+        hypervEnabled = osRepository.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion());
         List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vm.getId());
 
         XmlTextWriter writer = new XmlTextWriter();
-        writeHeader(writer, Boolean.parseBoolean(createInfo.get(VdsProperties.kvmEnable).toString()));
-        writer.writeElement("name", createInfo.get(VdsProperties.vm_name).toString());
-        writer.writeElement("uuid", createInfo.get(VdsProperties.vm_guid).toString());
-        writeMemory(writer, createInfo);
-        writeIoThreads(writer, createInfo);
-        writeMaxMemory(writer, createInfo);
-        writevCpu(writer, createInfo);
+        writeHeader(writer);
+        writeName(writer, vm);
+        writeId(writer, vm);
+        writeMemory(writer, vm);
+        writeIoThreads(writer, vm);
+        writeMaxMemory(writer, vm);
+        writevCpu(writer, createInfo, vm);
         writeMetadata(writer);
-        writeSystemInfo(writer, createInfo, vdsId);
-        writeClock(writer, createInfo, vm);
-        writeFeatures(writer, createInfo, vm);
+        writeSystemInfo(writer, vm, vdsId);
+        writeClock(writer, vm);
+        writeFeatures(writer, vm);
         writeCpu(writer, createInfo, vm);
         writeNumaTune(writer, createInfo, vm);
-        writeDevices(writer, devices, createInfo, vm);
+        writeDevices(writer, devices, vm);
         // note that this must be called after writeDevices to get the serial console, if exists
-        writeOs(writer, createInfo, vm);
+        writeOs(writer, vm);
         return writer.getStringXML();
     }
 
-    private void writeHeader(XmlTextWriter writer, boolean kvm) {
+    private void writeHeader(XmlTextWriter writer) {
         writer.writeStartDocument(false);
         writer.setPrefix(OVIRT_PREFIX, OVIRT_URI);
         writer.writeStartElement("domain");
-        writer.writeAttributeString("type", kvm ? "kvm" : "qemu");
+        writer.writeAttributeString("type", "kvm");
         writer.writeNamespace(OVIRT_PREFIX, OVIRT_URI);
     }
 
-    private void writeMemory(XmlTextWriter writer, Map<String, Object> createInfo) {
-        int memSizeKB = (int) createInfo.get(VdsProperties.mem_size_mb) * 1024;
+    private void writeName(XmlTextWriter writer, VM vm) {
+        writer.writeElement("name", vm.getName());
+    }
+
+    private void writeId(XmlTextWriter writer, VM vm) {
+        writer.writeElement("uuid", vm.getId().toString());
+    }
+
+    private void writeMemory(XmlTextWriter writer, VM vm) {
+        int memSizeKB = vm.getMemSizeMb() * 1024;
         writer.writeElement("memory", String.valueOf(memSizeKB));
         writer.writeElement("currentMemory", String.valueOf(memSizeKB));
     }
 
-    private void writeIoThreads(XmlTextWriter writer, Map<String, Object> createInfo) {
-        if (createInfo.containsKey(VdsProperties.numOfIoThreads)) {
-            writer.writeElement("iothreads", createInfo.get(VdsProperties.numOfIoThreads).toString());
+    private void writeIoThreads(XmlTextWriter writer, VM vm) {
+        if (vm.getNumOfIoThreads() == 0) {
+            return;
         }
+
+        writer.writeElement("iothreads", String.valueOf(vm.getNumOfIoThreads()));
     }
 
-    private void writeMaxMemory(XmlTextWriter writer, Map<String, Object> createInfo) {
-        if (!createInfo.containsKey(VdsProperties.maxMemSize)) {
-            return;
-        }
-
-        if (Objects.equals(createInfo.get(VdsProperties.maxMemSize), createInfo.get(VdsProperties.mem_size_mb))) {
-            // skip if memory and max-memory are identical
-            return;
+    private void writeMaxMemory(XmlTextWriter writer, VM vm) {
+        if (!FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())
+                // the next check is because QEMU fails if memory and maxMemory are the same
+                || vm.getVmMemSizeMb() == vm.getMaxMemorySizeMb()) {
+                return;
         }
 
         writer.writeStartElement("maxMemory");
-        writer.writeAttributeString("slots", createInfo.get(VdsProperties.maxMemSlots).toString());
-        int maxMemSize = (int) createInfo.get(VdsProperties.maxMemSize);
-        Long maxMemSizeKB = (long) maxMemSize * 1024;
-        writer.writeRaw(maxMemSizeKB.toString());
+        writer.writeAttributeString("slots", Config.getValue(ConfigValues.MaxMemorySlots).toString());
+        writer.writeRaw(String.valueOf(vm.getMaxMemorySizeMb() * 1024));
         writer.writeEndElement();
     }
 
-    private void writevCpu(XmlTextWriter writer, Map<String, Object> createInfo) {
+    private void writevCpu(XmlTextWriter writer, Map<String, Object> createInfo, VM vm) {
         writer.writeStartElement("vcpu");
-        writer.writeAttributeString("current", createInfo.get(VdsProperties.num_of_cpus).toString());
-        writer.writeRaw(createInfo.containsKey(VdsProperties.max_number_of_cpus) ?
-                createInfo.get(VdsProperties.max_number_of_cpus).toString()
-                : createInfo.get(VdsProperties.num_of_cpus).toString());
+        writer.writeAttributeString("current", String.valueOf(vm.getNumOfCpus()));
+        writer.writeRaw(FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) ?
+                VmCpuCountHelper.calcMaxVCpu(vm.getStaticData(), vm.getClusterCompatibilityVersion()).toString()
+                : String.valueOf(vm.getNumOfCpus()));
         writer.writeEndElement();
     }
 
@@ -188,15 +201,14 @@ public class LibvirtVmXmlBuilder {
         }
 
         // TODO: optional
-        if (createInfo.containsKey(VdsProperties.cores_per_socket) ||
-                createInfo.containsKey(VdsProperties.threads_per_core)) {
+        if ((boolean) Config.getValue(ConfigValues.SendSMPOnRunVm)) {
             writer.writeStartElement("topology");
-            writer.writeAttributeString("cores", createInfo.get(VdsProperties.cores_per_socket).toString());
-            writer.writeAttributeString("threads", createInfo.get(VdsProperties.threads_per_core).toString());
-            int cores = Integer.parseInt(createInfo.get(VdsProperties.cores_per_socket).toString());
-            int threads = Integer.parseInt(createInfo.get(VdsProperties.threads_per_core).toString());
-            int vcpus = Integer.parseInt(createInfo.get(VdsProperties.max_number_of_cpus).toString());
-            writer.writeAttributeString("sockets", String.valueOf(vcpus / cores / threads));
+            writer.writeAttributeString("cores", Integer.toString(vm.getCpuPerSocket()));
+            writer.writeAttributeString("threads", Integer.toString(vm.getThreadsPerCpu()));
+            int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) ?
+                    VmCpuCountHelper.calcMaxVCpu(vm.getStaticData(), vm.getClusterCompatibilityVersion())
+                    : vm.getNumOfCpus();
+            writer.writeAttributeString("sockets", String.valueOf(vcpus / vm.getCpuPerSocket() / vm.getThreadsPerCpu()));
             writer.writeEndElement();
         }
 
@@ -229,7 +241,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeSystemInfo(XmlTextWriter writer, Map<String, Object> createInfo, Guid vdsId) {
+    private void writeSystemInfo(XmlTextWriter writer, VM vm, Guid vdsId) {
         String osName = "";
         String osVersion = "";
 
@@ -275,7 +287,7 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("entry");
         writer.writeAttributeString("name", "uuid");
-        writer.writeRaw(createInfo.get(VdsProperties.vm_guid).toString());
+        writer.writeRaw(vm.getId().toString());
         writer.writeEndElement();
 
         writer.writeEndElement();
@@ -319,27 +331,26 @@ public class LibvirtVmXmlBuilder {
         }
     }
 
-    private void writeOs(XmlTextWriter writer, Map<String, Object> createInfo, VM vm) {
+    private void writeOs(XmlTextWriter writer, VM vm) {
         writer.writeStartElement("os");
 
         writer.writeStartElement("type");
         writer.writeAttributeString("arch", vm.getClusterArch().toString());
-        writer.writeAttributeString("machine", createInfo.get(VdsProperties.emulatedMachine).toString()); // TODO default?
+        writer.writeAttributeString("machine", getVmEmulatedMachine(vm));
         writer.writeRaw("hvm");
         writer.writeEndElement();
 
-        // TODO boot?
+        // No need to the boot section that VDSM defines
 
-        if (createInfo.containsKey(VdsProperties.InitrdUrl)) {
-            writer.writeElement("initrd", createInfo.get(VdsProperties.InitrdUrl).toString());
+        if (!StringUtils.isEmpty(vm.getInitrdUrl())) {
+            writer.writeElement("initrd", vm.getInitrdUrl());
         }
 
-        if (createInfo.containsKey(VdsProperties.KernelUrl)) {
-            writer.writeElement("kernel", createInfo.get(VdsProperties.KernelUrl).toString());
-        }
-
-        if (createInfo.containsKey(VdsProperties.KernelParams)) {
-            writer.writeElement("cmdline", createInfo.get(VdsProperties.KernelParams).toString());
+        if (!StringUtils.isEmpty(vm.getKernelUrl())) {
+            writer.writeElement("kernel", vm.getKernelUrl());
+            if (!StringUtils.isEmpty(vm.getKernelParams())) {
+                writer.writeElement("cmdline", vm.getKernelParams());
+            }
         }
 
         if (vm.getClusterArch().getFamily() == ArchitectureType.x86) {
@@ -348,7 +359,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
-        if (Boolean.parseBoolean((String) createInfo.get(VdsProperties.BOOT_MENU_ENABLE))) {
+        if (vm.isBootMenuEnabled()) {
             writer.writeStartElement("bootmenu");
             writer.writeAttributeString("enable", "yes");
             writer.writeAttributeString("timeout", String.valueOf(BOOT_MENU_TIMEOUT));
@@ -364,15 +375,10 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeClock(XmlTextWriter writer, Map<String, Object> createInfo, VM vm) {
-        boolean hypervEnabled = false;
-        if (createInfo.containsKey(VdsProperties.hypervEnable)) {
-            hypervEnabled = Boolean.parseBoolean(createInfo.get(VdsProperties.hypervEnable).toString());
-        }
-
+    private void writeClock(XmlTextWriter writer, VM vm) {
         writer.writeStartElement("clock");
         writer.writeAttributeString("offset", "variable");
-        writer.writeAttributeString("adjustment", createInfo.get(VdsProperties.utc_diff).toString());
+        writer.writeAttributeString("adjustment", String.valueOf(getVmTimeZone(vm)));
 
         if (hypervEnabled) {
             writer.writeStartElement("timer");
@@ -401,17 +407,12 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeFeatures(XmlTextWriter writer, Map<String, Object> createInfo, VM vm) {
+    private void writeFeatures(XmlTextWriter writer, VM vm) {
         if (vm.getClusterArch().getFamily() != ArchitectureType.x86) {
             return;
         }
 
-        boolean acpiEnabled = Boolean.parseBoolean(createInfo.get(VdsProperties.acpiEnable).toString());
-        boolean hypervEnabled = false;
-        if (createInfo.containsKey(VdsProperties.hypervEnable)) {
-            hypervEnabled = Boolean.parseBoolean(createInfo.get(VdsProperties.hypervEnable).toString());
-        }
-
+        boolean acpiEnabled = vm.getAcpiEnable();
         if (!acpiEnabled && !hypervEnabled) {
             return;
         }
@@ -452,10 +453,10 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeDevices(XmlTextWriter writer, List<VmDevice> devices, Map<String, Object> createInfo, VM vm) {
+    private void writeDevices(XmlTextWriter writer, List<VmDevice> devices, VM vm) {
         writer.writeStartElement("devices");
 
-        writeInput(writer, createInfo, vm);
+        writeInput(writer, vm);
 
         writeGuestAgentChannels(writer, vm);
 
@@ -555,11 +556,9 @@ public class LibvirtVmXmlBuilder {
             }
         }
 
-        if (serialConsolePath != null) {
-            writeSerialConsole(writer, serialConsolePath);
-        }
+        writeSerialConsole(writer, serialConsolePath);
 
-        // TODO leases
+        writeLease(writer, vm);
 
         if (spiceExists) {
             writeSpiceVmcChannel(writer);
@@ -580,7 +579,28 @@ public class LibvirtVmXmlBuilder {
         writeInterfaces(writer, interfaceDevices, vm);
         writeDisks(writer, diskDevices, vm);
         writeCdRom(writer, cdromDevices, vm);
-        // TODO cdroms
+        // TODO floppy
+
+        writer.writeEndElement();
+    }
+
+    private void writeLease(XmlTextWriter writer, VM vm) {
+        if (vm.getLeaseStorageDomainId() == null) {
+            return;
+        }
+
+        writer.writeStartElement("lease");
+        writer.writeElement("key", vm.getId().toString());
+        writer.writeElement("lockspace", vm.getLeaseStorageDomainId().toString());
+
+        writer.writeStartElement("target");
+        writer.writeAttributeString("offset", String.format("LEASE-OFFSET:%s:%s",
+                vm.getId(),
+                vm.getLeaseStorageDomainId()));
+        writer.writeAttributeString("path", String.format("LEASE-PATH:%s:%s",
+                vm.getId(),
+                vm.getLeaseStorageDomainId()));
+        writer.writeEndElement();
 
         writer.writeEndElement();
     }
@@ -697,6 +717,9 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeSerialConsole(XmlTextWriter writer, String path) {
+        if (serialConsolePath == null) {
+            return;
+        }
         //  <serial type='pty'>
         //     <target port='0'>
         //  </serial>
@@ -816,7 +839,7 @@ public class LibvirtVmXmlBuilder {
                 writer.writeEndElement();
             }
 
-            if (Config.getValue(ConfigValues.SSLEnabled)) {
+            if ((boolean) Config.getValue(ConfigValues.SSLEnabled)) {
                 String channels = Config.getValue(ConfigValues.SpiceSecureChannels, vm.getCompatibilityVersion().toString());
                 for (String channel : channels.split(",")) {
                     writer.writeStartElement("channel");
@@ -835,7 +858,7 @@ public class LibvirtVmXmlBuilder {
             String displayIp = (String) device.getSpecParams().get("displayIp");
             if (displayIp == null) {
                 writer.writeAttributeString("type", "network");
-                writer.writeAttributeString("network", displayNetwork); // VDSM should replace that?
+                writer.writeAttributeString("network", String.format("DISPLAY-NETWORK:%s", displayNetwork));
             } else {
                 writer.writeAttributeString("type", "address");
                 writer.writeAttributeString("address", displayIp);
@@ -955,7 +978,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("driver");
             writer.writeAttributeString("name", "qemu");
             writer.writeAttributeString("io", "threads");
-            writer.writeAttributeString("format", diskImage.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
+            writer.writeAttributeString("type", diskImage.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
             if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
                 writer.writeAttributeString("discard", "unmap");
             }
@@ -980,7 +1003,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("driver");
             writer.writeAttributeString("name", "qemu");
             writer.writeAttributeString("io", "native");
-            writer.writeAttributeString("format", "raw");
+            writer.writeAttributeString("type", "raw");
             if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
                 writer.writeAttributeString("discard", "unmap");
             }
@@ -1043,11 +1066,11 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("snapshot", "no");
 
         writer.writeStartElement("source");
-        writer.writeAttributeString("file", "optional"); // TODO: path
+        writer.writeAttributeString("file", ""); // TODO: path
         writer.writeAttributeString("startupPolicy", "optional");
         writer.writeEndElement();
 
-        String cdInterface = getOsRepository().getCdInterface(
+        String cdInterface = osRepository.getCdInterface(
                 vm.getOs(),
                 vm.getCompatibilityVersion(),
                 ChipsetType.fromMachineType(vm.getEmulatedMachine()));
@@ -1259,10 +1282,11 @@ public class LibvirtVmXmlBuilder {
         }
     }
 
-    private void writeInput(XmlTextWriter writer, Map<String, Object> createInfo, VM vm) {
+    private void writeInput(XmlTextWriter writer, VM vm) {
         writer.writeStartElement("input");
 
-        if (createInfo.containsKey(VdsProperties.TabletEnable)) {
+        boolean tabletEnable = vm.getGraphicsInfos().size() == 1 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC);
+        if (tabletEnable) {
             writer.writeAttributeString("type", "tablet");
             writer.writeAttributeString("bus", "usb");
         }
@@ -1280,10 +1304,6 @@ public class LibvirtVmXmlBuilder {
 
     private void logUnsupportedInterfaceType() {
         log.error("Unsupported interface type, ISCSI interface type is not supported.");
-    }
-
-    OsRepository getOsRepository() {
-        return SimpleDependencyInjector.getInstance().get(OsRepository.class);
     }
 
     private String getDisplayNetwork(VM vm) {
@@ -1314,4 +1334,51 @@ public class LibvirtVmXmlBuilder {
 //        return index;
 //    }
 
+    private String getTimeZoneForVm(VM vm) {
+        if (!StringUtils.isEmpty(vm.getTimeZone())) {
+            return vm.getTimeZone();
+        }
+
+        // else fallback to engine config default for given OS type
+        if (osRepository.isWindows(vm.getOs())) {
+            return Config.getValue(ConfigValues.DefaultWindowsTimeZone);
+        } else {
+            return "Etc/GMT";
+        }
+    }
+
+    public int getVmTimeZone(VM vm) {
+        // get vm timezone
+        String timeZone = getTimeZoneForVm(vm);
+
+        final String javaZoneId;
+        if (osRepository.isWindows(vm.getOs())) {
+            // convert to java & calculate offset
+            javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
+        } else {
+            javaZoneId = timeZone;
+        }
+
+        int offset = 0;
+        if (javaZoneId != null) {
+            offset = TimeZone.getTimeZone(javaZoneId).getOffset(
+                    new Date().getTime()) / 1000;
+        }
+        return offset;
+    }
+
+    public String getVmEmulatedMachine(VM vm) {
+        if (vm.getEmulatedMachine() != null) {
+            return vm.getEmulatedMachine();
+        }
+
+        switch(vm.getClusterArch()) {
+        case ppc64:
+        case ppc64le:
+            return "pseries";
+        case x86_64:
+        default:
+            return "pc";
+        }
+    }
 }
