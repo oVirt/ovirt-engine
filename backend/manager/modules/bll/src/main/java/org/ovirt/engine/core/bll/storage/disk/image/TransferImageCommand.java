@@ -213,6 +213,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
         getParameters().setStorageDomainId(domainId);
         getParameters().setImageId(imageGuid);
+        getParameters().setDestinationImageId(image.getImageId());
 
         // ovirt-imageio-daemon must know the boundaries of the target image for writing permissions.
         if (getParameters().getTransferSize() == 0) {
