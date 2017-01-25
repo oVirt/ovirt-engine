@@ -228,4 +228,10 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         // Related Model is still alive for uploading the file.
         // TODO(vs) fix the associated models so that we can call `driver.cleanup()`
     }
+
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        nextTabIndex = vmDiskPopupWidget.setTabIndexes(nextTabIndex);
+        return nextTabIndex;
+    }
 }
