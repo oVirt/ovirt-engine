@@ -27,7 +27,7 @@
             white-space: nowrap;
             display: table;
             top: 80px;
-            left: -92px;
+            left: -88px;
             width: 188px;
             -webkit-transform: rotate(-90deg);
             -moz-transform: rotate(-90deg);
