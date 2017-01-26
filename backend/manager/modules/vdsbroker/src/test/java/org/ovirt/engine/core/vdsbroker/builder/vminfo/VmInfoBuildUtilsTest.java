@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
@@ -64,6 +65,8 @@ public class VmInfoBuildUtilsTest {
     private NetworkDao networkDao;
     @Mock
     private NetworkFilterDao networkFilterDao;
+    @Mock
+    private NetworkClusterDao networkClusterDao;
     @Mock
     private NetworkQoSDao networkQosDao;
     @Mock

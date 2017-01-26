@@ -4,13 +4,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.CharEncoding;
@@ -32,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
@@ -54,12 +51,10 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.collections.ComparatorUtils;
@@ -84,8 +79,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     private final VmInfoBuildUtils vmInfoBuildUtils;
     private final VdsNumaNodeDao vdsNumaNodeDao;
     private final VmNumaNodeDao vmNumaNodeDao;
-    private final NetworkClusterDao networkClusterDao;
-    private final NetworkDao networkDao;
     private final VmDeviceDao vmDeviceDao;
     private final ClusterDao clusterDao;
 
@@ -104,15 +97,12 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             Guid vdsId,
             Map<String, Object> createInfo,
             ClusterDao clusterDao,
-            NetworkClusterDao networkClusterDao,
             NetworkDao networkDao,
             VdsNumaNodeDao vdsNumaNodeDao,
             VmDeviceDao vmDeviceDao,
             VmNumaNodeDao vmNumaNodeDao,
             VmInfoBuildUtils vmInfoBuildUtils) {
         this.clusterDao = Objects.requireNonNull(clusterDao);
-        this.networkClusterDao = Objects.requireNonNull(networkClusterDao);
-        this.networkDao = Objects.requireNonNull(networkDao);
         this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
         this.vmNumaNodeDao = Objects.requireNonNull(vmNumaNodeDao);
@@ -817,26 +807,9 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     @Override
     public void buildVmNetworkCluster() {
         // set Display network
-        List<NetworkCluster> all = networkClusterDao.getAllForCluster(vm.getClusterId());
-        NetworkCluster networkCluster = null;
-        for (NetworkCluster tempNetworkCluster : all) {
-            if (tempNetworkCluster.isDisplay()) {
-                networkCluster = tempNetworkCluster;
-                break;
-            }
-        }
-        if (networkCluster != null) {
-            Network net = null;
-            List<Network> allNetworks = networkDao.getAll();
-            for (Network tempNetwork : allNetworks) {
-                if (tempNetwork.getId().equals(networkCluster.getNetworkId())) {
-                    net = tempNetwork;
-                    break;
-                }
-            }
-            if (net != null) {
-                createInfo.put(VdsProperties.DISPLAY_NETWORK, net.getName());
-            }
+        Network net = vmInfoBuildUtils.getDisplayNetwork(vm);
+        if (net != null) {
+            createInfo.put(VdsProperties.DISPLAY_NETWORK, net.getName());
         }
     }
 
@@ -859,22 +832,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     @Override
     public void buildVmTimeZone() {
         // get vm timezone
-        String timeZone = getTimeZoneForVm(vm);
-
-        final String javaZoneId;
-        if (osRepository.isWindows(vm.getOs())) {
-            // convert to java & calculate offset
-            javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
-        } else {
-            javaZoneId = timeZone;
-        }
-
-        int offset = 0;
-        if (javaZoneId != null) {
-            offset = TimeZone.getTimeZone(javaZoneId).getOffset(
-                    new Date().getTime()) / 1000;
-        }
-        createInfo.put(VdsProperties.utc_diff, "" + offset);
+        createInfo.put(VdsProperties.utc_diff, "" + vmInfoBuildUtils.getVmTimeZone(vm));
     }
 
     @Override

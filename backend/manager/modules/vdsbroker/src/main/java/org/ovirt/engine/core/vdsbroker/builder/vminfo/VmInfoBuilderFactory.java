@@ -12,13 +12,11 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 @Singleton
 public class VmInfoBuilderFactory {
     private final ClusterDao clusterDao;
-    private final NetworkClusterDao networkClusterDao;
     private final NetworkDao networkDao;
     private final VdsNumaNodeDao vdsNumaNodeDao;
     private final VmDeviceDao vmDeviceDao;
@@ -28,14 +26,12 @@ public class VmInfoBuilderFactory {
     @Inject
     VmInfoBuilderFactory(
             ClusterDao clusterDao,
-            NetworkClusterDao networkClusterDao,
             NetworkDao networkDao,
             VdsNumaNodeDao vdsNumaNodeDao,
             VmDeviceDao vmDeviceDao,
             VmNumaNodeDao vmNumaNodeDao,
             VmInfoBuildUtils vmInfoBuildUtils) {
         this.clusterDao = Objects.requireNonNull(clusterDao);
-        this.networkClusterDao = Objects.requireNonNull(networkClusterDao);
         this.networkDao = Objects.requireNonNull(networkDao);
         this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
@@ -49,7 +45,6 @@ public class VmInfoBuilderFactory {
                 vdsId,
                 createInfo,
                 clusterDao,
-                networkClusterDao,
                 networkDao,
                 vdsNumaNodeDao,
                 vmDeviceDao,

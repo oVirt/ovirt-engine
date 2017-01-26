@@ -4,11 +4,9 @@ import static org.ovirt.engine.core.common.utils.VmDeviceCommonUtils.updateVmDev
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -25,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -46,10 +43,8 @@ import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -93,8 +88,6 @@ public class LibvirtVmXmlBuilder {
     private VnicProfileDao vnicProfileDao;
     @Inject
     private NetworkDao networkDao;
-    @Inject
-    private NetworkClusterDao networkClusterDao;
 
     private OsRepository osRepository;
     private String serialConsolePath;
@@ -210,7 +203,6 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
-        // TODO: optional
         if ((boolean) Config.getValue(ConfigValues.SendSMPOnRunVm)) {
             writer.writeStartElement("topology");
             writer.writeAttributeString("cores", Integer.toString(vm.getCpuPerSocket()));
@@ -388,7 +380,7 @@ public class LibvirtVmXmlBuilder {
     private void writeClock(XmlTextWriter writer, VM vm) {
         writer.writeStartElement("clock");
         writer.writeAttributeString("offset", "variable");
-        writer.writeAttributeString("adjustment", String.valueOf(getVmTimeZone(vm)));
+        writer.writeAttributeString("adjustment", String.valueOf(vmInfoBuildUtils.getVmTimeZone(vm)));
 
         if (hypervEnabled) {
             writer.writeStartElement("timer");
@@ -822,6 +814,17 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeGraphics(XmlTextWriter writer, VmDevice device, VM vm) {
+        // <graphics type='spice' port='5900' tlsPort='5901' autoport='yes'
+        //           listen='0' keymap='en-us'
+        //           passwdValidTo='1970-01-01T00:00:01'>
+        //   <listen type='address' address='0'/>
+        //   <clipboard copypaste='no'/>
+        // </graphics>
+        // OR
+        // <graphics type='vnc' port='5900' autoport='yes' listen='0'
+        //           keymap='en-us' passwdValidTo='1970-01-01T00:00:01'>
+        //   <listen type='address' address='0'/>
+        // </graphics>
         writer.writeStartElement("graphics");
         writer.writeAttributeString("type", device.getDevice());
         writer.writeAttributeString("port", String.valueOf(LIBVIRT_PORT_AUTOSELECT));
@@ -830,7 +833,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("passwd", "*****");
         writer.writeAttributeString("passwdValidTo", "1970-01-01T00:00:01");
 
-        String displayNetwork = getDisplayNetwork(vm);
+        Network displayNetwork = vmInfoBuildUtils.getDisplayNetwork(vm);
         if (displayNetwork == null) {
             writer.writeAttributeString("listen", "0");
         }
@@ -838,11 +841,13 @@ public class LibvirtVmXmlBuilder {
         switch (device.getDevice()) {
         case "spice":
             writer.writeAttributeString("tlsPort", String.valueOf(LIBVIRT_PORT_AUTOSELECT));
+
             if (!vm.isSpiceFileTransferEnabled()) {
                 writer.writeStartElement("filetransfer");
                 writer.writeAttributeString("enable", "no");
                 writer.writeEndElement();
             }
+
             if (!vm.isSpiceCopyPasteEnabled()) {
                 writer.writeStartElement("clipboard");
                 writer.writeAttributeString("copypaste", "no");
@@ -868,7 +873,7 @@ public class LibvirtVmXmlBuilder {
             String displayIp = (String) device.getSpecParams().get("displayIp");
             if (displayIp == null) {
                 writer.writeAttributeString("type", "network");
-                writer.writeAttributeString("network", String.format("DISPLAY-NETWORK:%s", displayNetwork));
+                writer.writeAttributeString("network", String.format("DISPLAY-NETWORK:%s", displayNetwork.getName()));
             } else {
                 writer.writeAttributeString("type", "address");
                 writer.writeAttributeString("address", displayIp);
@@ -1316,26 +1321,6 @@ public class LibvirtVmXmlBuilder {
         log.error("Unsupported interface type, ISCSI interface type is not supported.");
     }
 
-    private String getDisplayNetwork(VM vm) {
-        List<NetworkCluster> all = networkClusterDao.getAllForCluster(vm.getClusterId());
-        NetworkCluster networkCluster = null;
-        for (NetworkCluster tempNetworkCluster : all) {
-            if (tempNetworkCluster.isDisplay()) {
-                networkCluster = tempNetworkCluster;
-                break;
-            }
-        }
-        if (networkCluster != null) {
-            List<Network> allNetworks = networkDao.getAll();
-            for (Network tempNetwork : allNetworks) {
-                if (tempNetwork.getId().equals(networkCluster.getNetworkId())) {
-                    return tempNetwork.getName();
-                }
-            }
-        }
-        return null;
-    }
-
 //    private int getBootableDiskIndex(Disk disk) {
 //        int index = ArchStrategyFactory.getStrategy(vm.getClusterArch())
 //                .run(new GetBootableDiskIndex(numOfReservedScsiIndexes))
@@ -1343,39 +1328,6 @@ public class LibvirtVmXmlBuilder {
 //        log.info("Bootable disk '{}' set to index '{}'", disk.getId(), index);
 //        return index;
 //    }
-
-    private String getTimeZoneForVm(VM vm) {
-        if (!StringUtils.isEmpty(vm.getTimeZone())) {
-            return vm.getTimeZone();
-        }
-
-        // else fallback to engine config default for given OS type
-        if (osRepository.isWindows(vm.getOs())) {
-            return Config.getValue(ConfigValues.DefaultWindowsTimeZone);
-        } else {
-            return "Etc/GMT";
-        }
-    }
-
-    public int getVmTimeZone(VM vm) {
-        // get vm timezone
-        String timeZone = getTimeZoneForVm(vm);
-
-        final String javaZoneId;
-        if (osRepository.isWindows(vm.getOs())) {
-            // convert to java & calculate offset
-            javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
-        } else {
-            javaZoneId = timeZone;
-        }
-
-        int offset = 0;
-        if (javaZoneId != null) {
-            offset = TimeZone.getTimeZone(javaZoneId).getOffset(
-                    new Date().getTime()) / 1000;
-        }
-        return offset;
-    }
 
     public String getVmEmulatedMachine(VM vm) {
         if (vm.getEmulatedMachine() != null) {

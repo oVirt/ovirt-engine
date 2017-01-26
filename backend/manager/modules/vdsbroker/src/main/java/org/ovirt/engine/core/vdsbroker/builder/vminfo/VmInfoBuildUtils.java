@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -38,13 +41,17 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
@@ -66,6 +73,7 @@ public class VmInfoBuildUtils {
 
     private static final String FIRST_MASTER_MODEL = "ich9-ehci1";
 
+    private final NetworkClusterDao networkClusterDao;
     private final NetworkDao networkDao;
     private final NetworkFilterDao networkFilterDao;
     private final NetworkQoSDao networkQosDao;
@@ -73,6 +81,8 @@ public class VmInfoBuildUtils {
     private final VmDeviceDao vmDeviceDao;
     private final VnicProfileDao vnicProfileDao;
     private final VmNicFilterParameterDao vmNicFilterParameterDao;
+
+    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
     @Inject
     VmInfoBuildUtils(
@@ -82,7 +92,8 @@ public class VmInfoBuildUtils {
             StorageQosDao storageQosDao,
             VmDeviceDao vmDeviceDao,
             VnicProfileDao vnicProfileDao,
-            VmNicFilterParameterDao vmNicFilterParameterDao) {
+            VmNicFilterParameterDao vmNicFilterParameterDao,
+            NetworkClusterDao networkClusterDao) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
@@ -90,6 +101,7 @@ public class VmInfoBuildUtils {
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
         this.vnicProfileDao = Objects.requireNonNull(vnicProfileDao);
         this.vmNicFilterParameterDao = Objects.requireNonNull(vmNicFilterParameterDao);
+        this.networkClusterDao = Objects.requireNonNull(networkClusterDao);
     }
 
     OsRepository getOsRepository() {
@@ -493,6 +505,59 @@ public class VmInfoBuildUtils {
 
         event.addCustomValue("UnsupportedFeatures", StringUtils.join(unsupportedFeatureNames, ", "));
         new AuditLogDirector().log(event, AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES);
+    }
+
+    public Network getDisplayNetwork(VM vm) {
+        List<NetworkCluster> all = networkClusterDao.getAllForCluster(vm.getClusterId());
+        NetworkCluster networkCluster = null;
+        for (NetworkCluster tempNetworkCluster : all) {
+            if (tempNetworkCluster.isDisplay()) {
+                networkCluster = tempNetworkCluster;
+                break;
+            }
+        }
+        if (networkCluster != null) {
+            List<Network> allNetworks = networkDao.getAll();
+            for (Network tempNetwork : allNetworks) {
+                if (tempNetwork.getId().equals(networkCluster.getNetworkId())) {
+                    return tempNetwork;
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getTimeZoneForVm(VM vm) {
+        if (!StringUtils.isEmpty(vm.getTimeZone())) {
+            return vm.getTimeZone();
+        }
+
+        // else fallback to engine config default for given OS type
+        if (osRepository.isWindows(vm.getOs())) {
+            return Config.getValue(ConfigValues.DefaultWindowsTimeZone);
+        } else {
+            return "Etc/GMT";
+        }
+    }
+
+    public int getVmTimeZone(VM vm) {
+        // get vm timezone
+        String timeZone = getTimeZoneForVm(vm);
+
+        final String javaZoneId;
+        if (osRepository.isWindows(vm.getOs())) {
+            // convert to java & calculate offset
+            javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
+        } else {
+            javaZoneId = timeZone;
+        }
+
+        int offset = 0;
+        if (javaZoneId != null) {
+            offset = TimeZone.getTimeZone(javaZoneId).getOffset(
+                    new Date().getTime()) / 1000;
+        }
+        return offset;
     }
 
 }
