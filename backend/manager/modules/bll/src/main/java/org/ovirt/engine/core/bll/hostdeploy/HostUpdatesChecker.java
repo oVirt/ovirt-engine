@@ -58,8 +58,7 @@ public class HostUpdatesChecker {
             auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FINISHED);
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
-            auditLog.addCustomValue("Message", "Another refresh process is already running");
-            auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_FAILED);
+            auditLogDirector.log(auditLog, AuditLogType.HOST_AVAILABLE_UPDATES_PROCESS_IS_ALREADY_RUNNING);
         } catch (Exception e) {
             log.error("Failed to check if updates are available for host '{}' with error message '{}'",
                     host.getName(),
