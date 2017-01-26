@@ -12,7 +12,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.TransferImageParameters;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -20,8 +19,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
-import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
-import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
@@ -296,7 +293,15 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             Guid transferingVdsId = context.entity.getVdsId();
             if (verifyImage(transferingVdsId)) {
                 setVolumeLegalityInStorage(LEGAL_IMAGE);
-                updateQcowCompat();
+                if (getImage().getVolumeFormat().equals(VolumeFormat.COW)) {
+                    setQcowCompat(getImage().getImage(),
+                            getStoragePool().getId(),
+                            getImage().getImage().getDiskId(),
+                            getImage().getImageId(),
+                            getStorageDomainId(),
+                            false);
+                    imageDao.update(getImage().getImage());
+                }
                 unLockImage();
                 updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
             } else {
@@ -306,23 +311,6 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
             // Finished using the image, tear it down.
             tearDownImage(context.entity.getVdsId());
-        }
-    }
-
-    private void updateQcowCompat() {
-        if (getImage().getVolumeFormat().equals(VolumeFormat.COW)) {
-            getImage().setQcowCompat(QcowCompat.QCOW2_V2);
-            if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
-                QemuImageInfo qemuImageInfo =
-                        ImagesHandler.getQemuImageInfoFromVdsm(getStoragePool().getId(), getStorageDomainId(),
-                                getImage().getImage().getDiskId(),
-                                getImage().getImageId(),
-                                false);
-                if (qemuImageInfo != null) {
-                    getImage().setQcowCompat(qemuImageInfo.getQcowCompat());
-                }
-            }
-            imageDao.update(getImage().getImage());
         }
     }
 

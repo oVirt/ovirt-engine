@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
@@ -364,17 +365,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                     getDestinationDiskImage().getImage().setVolumeType(newImageIRS.getVolumeType());
                     getDestinationDiskImage().getImage().setVolumeFormat(newImageIRS.getVolumeFormat());
                     if (newImageIRS.getVolumeFormat().equals(VolumeFormat.COW)) {
-                        getDestinationDiskImage().getImage().setQcowCompat(QcowCompat.QCOW2_V2);
-                        if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
-                            QemuImageInfo qemuImageInfo = ImagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
-                                    newStorageDomainID,
-                                    newImageGroupId,
-                                    newImageId,
-                                    true);
-                            if (qemuImageInfo != null) {
-                                getDestinationDiskImage().getImage().setQcowCompat(qemuImageInfo.getQcowCompat());
-                            }
-                        }
+                        setQcowCompat(getDestinationDiskImage().getImage(), storagePoolId, newImageGroupId, newImageId, newStorageDomainID, true);
                     }
                 }
             } catch (EngineException e) {
@@ -394,6 +385,25 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         }
 
         setSucceeded(true);
+    }
+
+    protected void setQcowCompat(Image diskImage,
+            Guid storagePoolId,
+            Guid newImageGroupId,
+            Guid newImageId,
+            Guid newStorageDomainID,
+            boolean shouldPrepareAndTeardown) {
+        diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
+        if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
+            QemuImageInfo qemuImageInfo = ImagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
+                    newStorageDomainID,
+                    newImageGroupId,
+                    newImageId,
+                    shouldPrepareAndTeardown);
+            if (qemuImageInfo != null) {
+                diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
+            }
+        }
     }
 
     @Override
