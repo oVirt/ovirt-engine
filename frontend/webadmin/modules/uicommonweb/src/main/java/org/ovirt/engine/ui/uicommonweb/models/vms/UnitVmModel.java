@@ -2927,6 +2927,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private IValidation createEachDiskAHasStorageDomainValidation() {
         return new IValidation() {
             @Override public ValidationResult validate(Object value) {
+                if (getDisksAllocationModel() == null
+                    || getDisksAllocationModel().getDisks() == null) {
+                    return ValidationResult.ok();
+                }
                 for (DiskModel diskModel : getDisksAllocationModel().getDisks()) {
                     final StorageDomain storageDomain = diskModel.getStorageDomain().getSelectedItem();
                     if (storageDomain == null) {
