@@ -11,6 +11,7 @@ Install the following system components:
 - unzip
 - openssl
 - postgresql-server postgresql
+- python-dateutil / dateutil
 - python-m2crypto / m2crypto
 - python-psycopg2 / psycopg
 - python-jinja2 / Jinja2
