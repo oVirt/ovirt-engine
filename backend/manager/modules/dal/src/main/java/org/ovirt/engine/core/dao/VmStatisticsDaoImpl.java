@@ -35,6 +35,7 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
         return createIdParameterMapper(statistics.getId())
                 .addValue("cpu_sys", statistics.getCpuSys())
                 .addValue("cpu_user", statistics.getCpuUser())
+                .addValue("elapsed_time", statistics.getElapsedTime())
                 .addValue("usage_cpu_percent",
                         statistics.getUsageCpuPercent())
                 .addValue("usage_mem_percent",
@@ -56,6 +57,7 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
         VmStatistics entity = new VmStatistics();
         entity.setCpuSys(rs.getDouble("cpu_sys"));
         entity.setCpuUser(rs.getDouble("cpu_user"));
+        entity.setElapsedTime(rs.getDouble("elapsed_time"));
         entity.setUsageCpuPercent((Integer) rs.getObject("usage_cpu_percent"));
         entity.setUsageMemPercent((Integer) rs.getObject("usage_mem_percent"));
         entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
