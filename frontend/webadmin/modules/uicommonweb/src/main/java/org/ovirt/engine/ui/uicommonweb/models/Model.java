@@ -311,15 +311,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     }
 
     public Model setIsChangeable(boolean value) {
-        if (isChangable != value) {
-            isChangable = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsChangable")); //$NON-NLS-1$
-
-            if (isChangable) {
-                setChangeProhibitionReason(null);
-            }
-        }
-        return this;
+        return setIsChangeable(value, null);
     }
 
     /**
@@ -327,10 +319,11 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
      * {@code null}.
      */
     public Model setIsChangeable(boolean value, String reason) {
-        setIsChangeable(value);
-        if (!value) {
-            setChangeProhibitionReason(reason);
+        if (isChangable != value) {
+            isChangable = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsChangable")); //$NON-NLS-1$
         }
+        setChangeProhibitionReason(value ? null : reason);
         return this;
     }
 
