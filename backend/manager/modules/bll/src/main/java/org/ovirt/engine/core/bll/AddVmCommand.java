@@ -105,6 +105,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
@@ -632,6 +633,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (!isCpuSharesValid(vmFromParams)) {
             return failValidation(EngineMessage.QOS_CPU_SHARES_OUT_OF_RANGE);
+        }
+
+        if (!VmCpuCountHelper.validateCpuCounts(vmFromParams)) {
+            return failValidation(EngineMessage.TOO_MANY_CPU_COMPONENTS);
         }
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled())) {

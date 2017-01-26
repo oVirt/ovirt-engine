@@ -1231,7 +1231,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     }
 
     private Integer calcMaxVCpu() {
-        return VmCpuCountHelper.calcMaxVCpu(vm.getStaticData(), vm.getClusterCompatibilityVersion());
+        return VmCpuCountHelper.calcMaxVCpu(vm, vm.getClusterCompatibilityVersion());
     }
 
     private void addCpuPinning() {

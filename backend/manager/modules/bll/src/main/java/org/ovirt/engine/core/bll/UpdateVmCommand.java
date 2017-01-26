@@ -80,6 +80,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.DateTime;
@@ -846,6 +847,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (!isCpuSharesValid(vmFromParams)) {
             return failValidation(EngineMessage.QOS_CPU_SHARES_OUT_OF_RANGE);
+        }
+
+        if (!VmCpuCountHelper.validateCpuCounts(vmFromParams)) {
+            return failValidation(EngineMessage.TOO_MANY_CPU_COMPONENTS);
         }
 
         if (vmFromParams.isUseHostCpuFlags() && (ArchitectureType.ppc == getCluster().getArchitecture().getFamily())) {
