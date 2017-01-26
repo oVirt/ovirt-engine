@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.CloneVmPop
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmNextRunConfigurationPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmPopupPresenterWidget;
@@ -48,6 +49,7 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
     private final Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider;
     private final Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider;
     private final Provider<DefaultConfirmationPopupPresenterWidget> defaultPopupProvider;
+    private final Provider<VmDiskRemovePopupPresenterWidget> removeDiskConfirmPopupProvider;
 
     @Inject
     public UserPortalListProvider(EventBus eventBus,
@@ -64,7 +66,8 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
             Provider<CloneVmPopupPresenterWidget> cloneVmProvider,
             Provider<VmNextRunConfigurationPresenterWidget> nextRunProvider,
             Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider,
-            Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider) {
+            Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider,
+            Provider<VmDiskRemovePopupPresenterWidget> removeDiskConfirmPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider, user);
         this.newVmPopupProvider = newVmPopupProvider;
         this.runOncePopupProvider = runOncePopupProvider;
@@ -79,6 +82,7 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
         this.newDiskPopupProvider = newDiskPopupProvider;
         this.attachDiskPopupProvider = attachDiskPopupProvider;
         this.defaultPopupProvider = defaultConfirmPopupProvider;
+        this.removeDiskConfirmPopupProvider = removeDiskConfirmPopupProvider;
     }
 
     @Override
@@ -147,6 +151,8 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
             return nextRunProvider.get();
         } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
             return defaultPopupProvider.get();
+        } else if (lastExecutedCommand == getModel().getEditCommand()) {
+            return removeDiskConfirmPopupProvider.get();
         } else {
             return super.getConfirmModelPopup(source, lastExecutedCommand);
         }
