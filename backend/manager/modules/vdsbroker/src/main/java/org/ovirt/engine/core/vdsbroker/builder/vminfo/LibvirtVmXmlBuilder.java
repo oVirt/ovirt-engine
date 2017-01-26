@@ -178,7 +178,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("vcpu");
         writer.writeAttributeString("current", String.valueOf(vm.getNumOfCpus()));
         writer.writeRaw(FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) ?
-                VmCpuCountHelper.calcMaxVCpu(vm.getStaticData(), vm.getClusterCompatibilityVersion()).toString()
+                VmCpuCountHelper.calcMaxVCpu(vm, vm.getClusterCompatibilityVersion()).toString()
                 : String.valueOf(vm.getNumOfCpus()));
         writer.writeEndElement();
     }
@@ -218,7 +218,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("cores", Integer.toString(vm.getCpuPerSocket()));
             writer.writeAttributeString("threads", Integer.toString(vm.getThreadsPerCpu()));
             int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) ?
-                    VmCpuCountHelper.calcMaxVCpu(vm.getStaticData(), vm.getClusterCompatibilityVersion())
+                    VmCpuCountHelper.calcMaxVCpu(vm, vm.getClusterCompatibilityVersion())
                     : vm.getNumOfCpus();
             writer.writeAttributeString("sockets", String.valueOf(vcpus / vm.getCpuPerSocket() / vm.getThreadsPerCpu()));
             writer.writeEndElement();

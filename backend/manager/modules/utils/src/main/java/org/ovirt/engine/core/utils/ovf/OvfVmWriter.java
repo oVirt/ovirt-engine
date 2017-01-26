@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Match;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
@@ -72,6 +73,11 @@ public class OvfVmWriter extends OvfWriter {
         StringBuilder fullNameSB = new StringBuilder(EXPORT_ONLY_PREFIX);
         fullNameSB.append(name);
         _writer.writeElement(fullNameSB.toString(), value);
+    }
+
+    @Override
+    protected Integer maxNumOfVcpus() {
+        return VmCpuCountHelper.calcMaxVCpu(_vm, getVersion());
     }
 
     @Override
