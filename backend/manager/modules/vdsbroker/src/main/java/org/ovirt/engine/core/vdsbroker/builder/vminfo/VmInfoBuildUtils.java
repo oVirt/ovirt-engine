@@ -18,6 +18,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -558,6 +559,17 @@ public class VmInfoBuildUtils {
                     new Date().getTime()) / 1000;
         }
         return offset;
+    }
+
+    public String getEmulatedMachineByClusterArch(ArchitectureType arch) {
+        switch(arch) {
+        case ppc64:
+        case ppc64le:
+            return "pseries";
+        case x86_64:
+        default:
+            return "pc";
+        }
     }
 
 }

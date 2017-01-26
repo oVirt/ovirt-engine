@@ -301,6 +301,7 @@ public class LibvirtVmXmlBuilder {
         if (!createInfo.containsKey(VdsProperties.NUMA_TUNE)) {
             return;
         }
+
         // <numatune>
         //   <memory mode='strict' nodeset='0-1'/>
         //   <memnode cellid='0' mode='strict' nodeset='1'>
@@ -338,7 +339,9 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("type");
         writer.writeAttributeString("arch", vm.getClusterArch().toString());
-        writer.writeAttributeString("machine", getVmEmulatedMachine(vm));
+        writer.writeAttributeString("machine", vm.getEmulatedMachine() != null ?
+                vm.getEmulatedMachine()
+                : vmInfoBuildUtils.getEmulatedMachineByClusterArch(vm.getClusterArch()));
         writer.writeRaw("hvm");
         writer.writeEndElement();
 
@@ -378,6 +381,15 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeClock(XmlTextWriter writer, VM vm) {
+        // <clock offset="variable" adjustment="-3600">
+        //   <timer name="rtc" tickpolicy="catchup">
+        // </clock>
+        //
+        // for hyperv:
+        // <clock offset="variable" adjustment="-3600">
+        //   <timer name="hypervclock" present="yes">
+        //   <timer name="rtc" tickpolicy="catchup">
+        // </clock>
         writer.writeStartElement("clock");
         writer.writeAttributeString("offset", "variable");
         writer.writeAttributeString("adjustment", String.valueOf(vmInfoBuildUtils.getVmTimeZone(vm)));
@@ -414,6 +426,18 @@ public class LibvirtVmXmlBuilder {
             return;
         }
 
+        // Currently only
+        // <features>
+        //   <acpi/>
+        // <features/>
+        //
+        // for hyperv:
+        // <features>
+        //   <acpi/>
+        //   <hyperv>
+        //     <relaxed state='on'/>
+        //   </hyperv>
+        // <features/>
         boolean acpiEnabled = vm.getAcpiEnable();
         if (!acpiEnabled && !hypervEnabled) {
             return;
@@ -449,6 +473,13 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeMetadata(XmlTextWriter writer) {
+        // <domain xmlns:ovirt="http://ovirt.org/vm/tune/1.0">
+        // ...
+        //   <metadata>
+        //     <ovirt:qos xmlns:ovirt=>
+        //   </metadata>
+        // ...
+        // </domain>
         writer.writeStartElement("metadata");
         writer.writeStartElement(OVIRT_URI, "qos");
         writer.writeEndElement();
@@ -814,6 +845,12 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeGraphics(XmlTextWriter writer, VmDevice device, VM vm) {
+        GraphicsType graphicsType = GraphicsType.fromString(device.getDevice());
+        if (graphicsType == null) {
+            log.error("Unsupported graphics type: {}", device.getDevice());
+            return;
+        }
+
         // <graphics type='spice' port='5900' tlsPort='5901' autoport='yes'
         //           listen='0' keymap='en-us'
         //           passwdValidTo='1970-01-01T00:00:01'>
@@ -838,8 +875,8 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("listen", "0");
         }
 
-        switch (device.getDevice()) {
-        case "spice":
+        switch (graphicsType) {
+        case SPICE:
             writer.writeAttributeString("tlsPort", String.valueOf(LIBVIRT_PORT_AUTOSELECT));
 
             if (!vm.isSpiceFileTransferEnabled()) {
@@ -863,9 +900,18 @@ public class LibvirtVmXmlBuilder {
                     writer.writeEndElement();
                 }
             }
+
             break;
 
-        case "vnc":
+        case VNC:
+            writer.writeAttributeString("keymap",
+                    vm.getDynamicData().getVncKeyboardLayout() != null ?
+                            vm.getDynamicData().getVncKeyboardLayout()
+                            : vm.getDefaultVncKeyboardLayout() != null ?
+                                    vm.getDefaultVncKeyboardLayout()
+                                    : Config.getValue(ConfigValues.VncKeyboardLayout));
+
+            break;
         }
 
         if (displayNetwork != null) {
@@ -975,7 +1021,7 @@ public class LibvirtVmXmlBuilder {
             // TODO address, name
             break;
         default:
-            logUnsupportedInterfaceType();
+            log.error("Unsupported interface type, ISCSI interface type is not supported.");
         }
 
         switch (disk.getDiskStorageType()) {
@@ -1317,10 +1363,6 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void logUnsupportedInterfaceType() {
-        log.error("Unsupported interface type, ISCSI interface type is not supported.");
-    }
-
 //    private int getBootableDiskIndex(Disk disk) {
 //        int index = ArchStrategyFactory.getStrategy(vm.getClusterArch())
 //                .run(new GetBootableDiskIndex(numOfReservedScsiIndexes))
@@ -1329,18 +1371,4 @@ public class LibvirtVmXmlBuilder {
 //        return index;
 //    }
 
-    public String getVmEmulatedMachine(VM vm) {
-        if (vm.getEmulatedMachine() != null) {
-            return vm.getEmulatedMachine();
-        }
-
-        switch(vm.getClusterArch()) {
-        case ppc64:
-        case ppc64le:
-            return "pseries";
-        case x86_64:
-        default:
-            return "pc";
-        }
-    }
 }
