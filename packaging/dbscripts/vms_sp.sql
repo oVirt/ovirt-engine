@@ -158,6 +158,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION InsertVmStatistics (
     v_cpu_sys DECIMAL(18, 0),
     v_cpu_user DECIMAL(18, 0),
+    v_elapsed_time DECIMAL(18, 0),
     v_usage_cpu_percent INT,
     v_usage_mem_percent INT,
     v_usage_network_percent INT,
@@ -171,6 +172,7 @@ BEGIN
     INSERT INTO vm_statistics (
         cpu_sys,
         cpu_user,
+        elapsed_time,
         usage_cpu_percent,
         usage_mem_percent,
         usage_network_percent,
@@ -182,6 +184,7 @@ BEGIN
     VALUES (
         v_cpu_sys,
         v_cpu_user,
+        v_elapsed_time,
         v_usage_cpu_percent,
         v_usage_mem_percent,
         v_usage_network_percent,
@@ -196,6 +199,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION UpdateVmStatistics (
     v_cpu_sys DECIMAL(18, 0),
     v_cpu_user DECIMAL(18, 0),
+    v_elapsed_time DECIMAL(18, 0),
     v_usage_cpu_percent INT,
     v_usage_mem_percent INT,
     v_usage_network_percent INT,
@@ -209,6 +213,7 @@ BEGIN
     UPDATE vm_statistics
     SET cpu_sys = v_cpu_sys,
         cpu_user = v_cpu_user,
+        elapsed_time = v_elapsed_time,
         usage_cpu_percent = v_usage_cpu_percent,
         usage_mem_percent = v_usage_mem_percent,
         usage_network_percent = v_usage_network_percent,
