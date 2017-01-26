@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -309,17 +310,19 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     }
 
     private void updateQcowCompat() {
-        if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())
-                && getImage().getVolumeFormat().equals(VolumeFormat.COW)) {
-            QemuImageInfo qemuImageInfo =
-                    ImagesHandler.getQemuImageInfoFromVdsm(getStoragePool().getId(), getStorageDomainId(),
-                            getImage().getImage().getDiskId(),
-                            getImage().getImageId(),
-                            false);
-            if (qemuImageInfo != null) {
-                getImage().setQcowCompat(qemuImageInfo.getQcowCompat());
-                imageDao.update(getImage().getImage());
+        if (getImage().getVolumeFormat().equals(VolumeFormat.COW)) {
+            getImage().setQcowCompat(QcowCompat.QCOW2_V2);
+            if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
+                QemuImageInfo qemuImageInfo =
+                        ImagesHandler.getQemuImageInfoFromVdsm(getStoragePool().getId(), getStorageDomainId(),
+                                getImage().getImage().getDiskId(),
+                                getImage().getImageId(),
+                                false);
+                if (qemuImageInfo != null) {
+                    getImage().setQcowCompat(qemuImageInfo.getQcowCompat());
+                }
             }
+            imageDao.update(getImage().getImage());
         }
     }
 
