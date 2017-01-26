@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Version;
 
 public class OvfTemplateWriter extends OvfWriter {
@@ -51,6 +52,11 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.writeStartElement("AutoStartup"); // aka highly available
         _writer.writeRaw(String.valueOf(_vmTemplate.isAutoStartup()));
         _writer.writeEndElement();
+    }
+
+    @Override
+    protected Integer maxNumOfVcpus() {
+        return VmCpuCountHelper.calcMaxVCpu(_vmTemplate, getVersion());
     }
 
     @Override
