@@ -61,6 +61,16 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class generates a Libvirt's Domain XML from the internal representation of
+ * a given Virtual Machine within ovirt-engine.
+ * Note that any non-trivial logic that can be extracted into a utility method that could be
+ * used when generating another representation of the VM should reside in {@link VmInfoBuildUtils}.
+ * Also note that there should not be any call to VDSM from this class. If the generated XML
+ * needs to contain information that the engine does not know about then either this information
+ * should be added to the hosts/VMs monitoring or to GetCapabilities, or to represent the data
+ * using place-holders that are replaced by VDSM (see {@link #writeLease(XmlTextWriter, VM)}).
+ */
 public class LibvirtVmXmlBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(LibvirtVmXmlBuilder.class);
