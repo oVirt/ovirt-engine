@@ -98,8 +98,11 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
             hostPackagesManager.addUnit(new VdsDeployPackagesUnit(packages, false));
             hostPackagesManager.execute();
         } catch (final Exception e) {
-            log.error("Failed to update host '{}' packages '{}'.", host.getName(), StringUtils.join(packages, ", "));
-            log.error("Exception", e);
+            log.error("Failed to update host '{}' packages '{}': {}",
+                 host.getName(),
+                 StringUtils.join(packages, ", "),
+                 e.getMessage());
+            log.debug("Exception", e);
 
             throw new RuntimeException(e);
         }
