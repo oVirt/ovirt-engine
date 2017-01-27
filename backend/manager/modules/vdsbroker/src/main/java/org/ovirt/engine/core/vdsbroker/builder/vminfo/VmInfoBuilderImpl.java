@@ -111,10 +111,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         this.vdsId = vdsId;
         this.vm = vm;
         this.createInfo = createInfo;
-        final boolean hasNonDefaultBootOrder = vm.getBootSequence() != vm.getDefaultBootSequence();
-        if (hasNonDefaultBootOrder) {
-            bootableDevices = new ArrayList<>();
-        }
+        bootableDevices = new ArrayList<>();
     }
 
     @Override
@@ -379,7 +376,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                     vmInfoBuildUtils.buildCinderDisk((CinderDisk) disk, struct);
                     break;
                 }
-                vmInfoBuildUtils.addBootOrder(vmDevice, struct);
                 struct.put(VdsProperties.Shareable,
                         (vmDevice.getSnapshotId() != null)
                                 ? VdsProperties.Transient : String.valueOf(disk.isShareable()));
@@ -388,7 +384,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                 struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
                 struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
                 devices.add(struct);
-                addToBootableDevices(vmDevice);
+                bootableDevices.add(vmDevice);
             }
         }
 
@@ -453,7 +449,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                 }
 
                 devices.add(struct);
-                addToBootableDevices(vmDevice);
+                bootableDevices.add(vmDevice);
             }
         }
     }
@@ -499,24 +495,19 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     @Override
     public void buildVmBootSequence() {
-        // Check if boot sequence in parameters is different from default boot sequence
-        if (bootableDevices != null) {
-            // recalculate boot order from source devices and set it to target devices
-            VmDeviceCommonUtils.updateVmDevicesBootOrder(
-                    vm,
-                    vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence(),
-                    bootableDevices);
-            for (VmDevice vmDevice : bootableDevices) {
-                for (Map<String, Object> struct : devices) {
-                    String deviceId = (String) struct.get(VdsProperties.DeviceId);
-                    if (deviceId != null && deviceId.equals(vmDevice.getDeviceId().toString())) {
-                        if (vmDevice.getBootOrder() > 0) {
-                            struct.put(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
-                        } else {
-                            struct.keySet().remove(VdsProperties.BootOrder);
-                        }
-                        break;
+        // recalculate boot order from source devices and set it to target devices
+        VmDeviceCommonUtils.updateVmDevicesBootOrder(
+                vm,
+                vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence(),
+                bootableDevices);
+        for (VmDevice vmDevice : bootableDevices) {
+            for (Map<String, Object> struct : devices) {
+                String deviceId = (String) struct.get(VdsProperties.DeviceId);
+                if (deviceId != null && deviceId.equals(vmDevice.getDeviceId().toString())) {
+                    if (vmDevice.getBootOrder() > 0) {
+                        struct.put(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
                     }
+                    break;
                 }
             }
         }
@@ -996,7 +987,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
         vmInfoBuildUtils.addAddress(vmDevice, struct);
         struct.put(VdsProperties.MAC_ADDR, vmInterface.getMacAddress());
-        vmInfoBuildUtils.addBootOrder(vmDevice, struct);
         struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
         struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
         struct.put(VdsProperties.NIC_TYPE, nicModel);
@@ -1028,15 +1018,8 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         }
         struct.put(VdsProperties.SpecParams, specParams);
         struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
-        vmInfoBuildUtils.addBootOrder(vmDevice, struct);
         devices.add(struct);
-        addToBootableDevices(vmDevice);
-    }
-
-    private void addToBootableDevices(VmDevice vmDevice) {
-        if (bootableDevices != null) {
-            bootableDevices.add(vmDevice);
-        }
+        bootableDevices.add(vmDevice);
     }
 
     private void buildVmUsbControllers() {
