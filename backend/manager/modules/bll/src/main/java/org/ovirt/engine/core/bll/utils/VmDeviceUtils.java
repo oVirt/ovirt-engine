@@ -1116,19 +1116,17 @@ public class VmDeviceUtils {
      */
     public void updateBootOrder(Guid vmId) {
         VM vm = vmDao.get(vmId);
-        if (vm != null) {
-            // Returns the devices sorted in ascending order
-            List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmId);
-            // Reset current boot order
-            for (VmDevice device: devices) {
-                device.setBootOrder(0);
-            }
-            vmHandler.updateDisksForVm(vm, diskDao.getAllForVm(vmId));
-            vmHandler.updateDisksVmDataForVm(vm);
-            vmHandler.updateNetworkInterfacesFromDb(vm);
-            VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices);
-            vmDeviceDao.updateBootOrderInBatch(devices);
+        if (vm == null) {
+            return;
         }
+        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmId);
+        // Reset current boot order
+        devices.forEach(dev -> dev.setBootOrder(0));
+        vmHandler.updateDisksForVm(vm, diskDao.getAllForVm(vmId));
+        vmHandler.updateDisksVmDataForVm(vm);
+        vmHandler.updateNetworkInterfacesFromDb(vm);
+        VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices);
+        vmDeviceDao.updateBootOrderInBatch(devices);
     }
 
     /*

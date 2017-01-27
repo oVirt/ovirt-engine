@@ -102,10 +102,7 @@ public class VmDeviceCommonUtils {
 
         // reset current boot order of all relevant devices before recomputing it.
         for (VmDevice device : devices) {
-            if (isBootable(device)) {
-                // a boot order of 0 prevents it from being sent to VDSM
-                device.setBootOrder(0);
-            }
+            device.setBootOrder(0);
         }
 
         switch (bootSequence) {
@@ -273,47 +270,10 @@ public class VmDeviceCommonUtils {
         return null;
     }
 
-    /**
-     * Computes old boot sequence enum value from the given list of devices.
-     */
-    public static BootSequence getBootSequence(List<VmDevice> devices) {
-        StringBuilder sb = new StringBuilder();
-        BootSequence ret = BootSequence.C;
-        for (VmDevice device : devices) {
-            if (device.getBootOrder() > 0) {
-                if (isNetwork(device) && sb.indexOf(NETWORK_CHAR) < 0) {
-                    sb.append(NETWORK_CHAR);
-                }
-                if (isDisk(device) && sb.indexOf(DRIVE_CHAR) < 0) {
-                    sb.append(DRIVE_CHAR);
-                }
-                if (isCD(device) && sb.indexOf(CDROM_CHAR) < 0) {
-                    sb.append(CDROM_CHAR);
-                }
-                // maximum string is 3 characters, so, if reached , exit loop.
-                if (sb.length() == 3) {
-                    break;
-                }
-            }
-        }
-
-        for (BootSequence bs : BootSequence.values()) {
-            if (bs.name().equals(sb.toString())) {
-                ret = bs;
-                break;
-            }
-        }
-        return ret;
-    }
-
     public static boolean isInWhiteList(VmDeviceGeneralType type, String device) {
         String expr = getDeviceTypeSearchExpr(type, device);
         String whiteList = Config.getValue(ConfigValues.ManagedDevicesWhiteList);
         return whiteList.indexOf(expr) >= 0;
-    }
-
-    private static boolean isBootable(VmDevice device) {
-        return VmDeviceGeneralType.DISK == device.getType() || VmDeviceGeneralType.INTERFACE == device.getType();
     }
 
     private static String getDeviceTypeSearchExpr(VmDeviceGeneralType type, String device) {
