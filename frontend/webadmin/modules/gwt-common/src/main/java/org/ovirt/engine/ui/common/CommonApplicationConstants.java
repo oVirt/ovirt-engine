@@ -1519,8 +1519,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String devicePluggedAlias();
 
-    String deviceBootOrderAlias();
-
     String deviceManagedAlias();
 
     String deviceSpecParamsAlias();

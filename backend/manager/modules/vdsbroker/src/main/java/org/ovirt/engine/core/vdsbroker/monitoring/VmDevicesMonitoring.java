@@ -652,7 +652,6 @@ public class VmDevicesMonitoring implements BackendService {
                 VmDeviceGeneralType.forValue(typeName),
                 deviceName,
                 address,
-                0,
                 specParams,
                 false,
                 true,

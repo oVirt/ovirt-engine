@@ -55,7 +55,6 @@ public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase {
         newVmDevice.setType(VmDeviceGeneralType.INTERFACE);
         newVmDevice.setDevice("bridge");
         newVmDevice.setAddress("sample");
-        newVmDevice.setBootOrder(1);
         newVmDevice.setManaged(true);
         newVmDevice.setPlugged(true);
         newVmDevice.setReadOnly(false);

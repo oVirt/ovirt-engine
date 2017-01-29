@@ -417,7 +417,6 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                 }
 
                 reloadDisks();
-                updateBootOrder();
 
                 setSucceeded(true);
                 // If necessary set the new Storage QoS values on running VMs asynchronously
@@ -538,10 +537,6 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     protected void reloadDisks() {
         vmHandler.updateDisksFromDb(getVm());
-    }
-
-    protected void updateBootOrder() {
-        getVmDeviceUtils().updateBootOrder(getVm().getStaticData());
     }
 
     private void extendDiskImageSize() {

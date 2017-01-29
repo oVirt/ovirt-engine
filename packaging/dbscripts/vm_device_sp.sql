@@ -9,7 +9,6 @@ CREATE OR REPLACE FUNCTION InsertVmDevice (
     v_device VARCHAR(30),
     v_type VARCHAR(30),
     v_address VARCHAR(255),
-    v_boot_order INT,
     v_spec_params TEXT,
     v_is_managed boolean,
     v_is_plugged boolean,
@@ -28,7 +27,6 @@ BEGIN
         device,
         type,
         address,
-        boot_order,
         spec_params,
         is_managed,
         is_plugged,
@@ -45,7 +43,6 @@ BEGIN
         v_device,
         v_type,
         v_address,
-        v_boot_order,
         v_spec_params,
         v_is_managed,
         v_is_plugged,
@@ -65,7 +62,6 @@ CREATE OR REPLACE FUNCTION UpdateVmDevice (
     v_device VARCHAR(30),
     v_type VARCHAR(30),
     v_address VARCHAR(255),
-    v_boot_order INT,
     v_spec_params TEXT,
     v_is_managed boolean,
     v_is_plugged boolean,
@@ -82,7 +78,6 @@ BEGIN
     SET device = v_device,
         type = v_type,
         address = v_address,
-        boot_order = v_boot_order,
         spec_params = v_spec_params,
         is_managed = v_is_managed,
         is_plugged = v_is_plugged,
@@ -124,21 +119,6 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE vm_device
     SET is_plugged = v_is_plugged,
-        _update_date = current_timestamp
-    WHERE device_id = v_device_id
-        AND vm_id = v_vm_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION UpdateVmDeviceBootOrder (
-    v_device_id UUID,
-    v_vm_id UUID,
-    v_boot_order INT
-    )
-RETURNS VOID AS $PROCEDURE$
-BEGIN
-    UPDATE vm_device
-    SET boot_order = v_boot_order,
         _update_date = current_timestamp
     WHERE device_id = v_device_id
         AND vm_id = v_vm_id;

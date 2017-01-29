@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -53,11 +52,9 @@ import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class VmDeviceUtils {
@@ -73,8 +70,6 @@ public class VmDeviceUtils {
     private final VmDeviceDao vmDeviceDao;
     private final ClusterDao clusterDao;
     private final VmTemplateDao vmTemplateDao;
-    private final DiskVmElementDao diskVmElementDao;
-    private final VmNetworkInterfaceDao vmNetworkInterfaceDao;
     private final VmHandler vmHandler;
     private final MacPoolPerCluster macPoolPerCluster;
 
@@ -85,8 +80,6 @@ public class VmDeviceUtils {
             VmDeviceDao vmDeviceDao,
             ClusterDao clusterDao,
             VmTemplateDao vmTemplateDao,
-            DiskVmElementDao diskVmElementDao,
-            VmNetworkInterfaceDao vmNetworkInterfaceDao,
             VmHandler vmHandler,
             MacPoolPerCluster macPoolPerCluster) {
         this.vmDao = vmDao;
@@ -95,8 +88,6 @@ public class VmDeviceUtils {
         this.vmTemplateDao = vmTemplateDao;
         this.vmHandler = vmHandler;
         this.macPoolPerCluster = macPoolPerCluster;
-        this.diskVmElementDao = diskVmElementDao;
-        this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
         init();
     }
 
@@ -1102,39 +1093,6 @@ public class VmDeviceUtils {
     }
 
     /*
-     * Boot order
-     */
-
-    /**
-     * If default boot sequence differs in the old and new VMs, updates boot order in all devices in the new VM
-     * according to the new default boot sequence. Stores the updated devices in the DB.
-     */
-    private void updateBootOrder(VmBase oldVmBase, VmBase newVmBase) {
-        if (oldVmBase.getDefaultBootSequence() != newVmBase.getDefaultBootSequence()) {
-            updateBootOrder(newVmBase);
-        }
-    }
-
-    /**
-     * Updates boot order in all devices in the VM according to the default boot sequence.
-     * Stores the updated devices in the DB.
-     */
-    public void updateBootOrder(VmBase vmBase) {
-        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmBase.getId());
-        // Reset current boot order
-        devices.forEach(dev -> dev.setBootOrder(0));
-        Map<VmDeviceId, DiskVmElement> diskVmElements = diskVmElementDao.getAllForVm(vmBase.getId())
-                .stream()
-                .collect(Collectors.toMap(DiskVmElement::getId, element -> element));
-        VmDeviceCommonUtils.updateVmDevicesBootOrder(
-                vmBase.getDefaultBootSequence(),
-                devices,
-                vmNetworkInterfaceDao.getAllForVm(vmBase.getId()),
-                diskVmElements);
-        vmDeviceDao.updateBootOrderInBatch(devices);
-    }
-
-    /*
      * Generic device methods
      */
 
@@ -1207,7 +1165,6 @@ public class VmDeviceUtils {
         }
 
         updateCdPath(oldVmBase, newVmBase);
-        updateBootOrder(oldVmBase, newVmBase);
         updateVideoDevices(oldVmBase, newVmBase);
         updateUsbSlots(oldVmBase, newVmBase);
         updateMemoryBalloon(newVmBase.getId(), params.isBalloonEnabled());
@@ -1418,7 +1375,6 @@ public class VmDeviceUtils {
         }
 
         if (dstIsVm) {
-            updateBootOrder(dstVmBase);
             addVideoDevices(dstVmBase, getNeededNumberOfVideoDevices(dstVmBase));
         }
     }
@@ -1537,7 +1493,6 @@ public class VmDeviceUtils {
                         generalType,
                         type.getName(),
                         StringUtils.isNotBlank(address) ? address : "",
-                        0,
                         specParams,
                         true,
                         isPlugged,
@@ -1547,14 +1502,6 @@ public class VmDeviceUtils {
                         null,
                         null);
         vmDeviceDao.save(managedDevice);
-
-        // If we've added Disk/Interface/CD/Floppy, we have to recalculate boot order
-        if (generalType == VmDeviceGeneralType.DISK || generalType == VmDeviceGeneralType.INTERFACE) {
-            VM vm = vmDao.get(id.getVmId());
-            if (vm != null) {
-                updateBootOrder(vm.getStaticData());
-            }
-        }
 
         return managedDevice;
     }
@@ -1672,7 +1619,6 @@ public class VmDeviceUtils {
         VmDevice exportedDevice = vmBase.getManagedDeviceMap().get(deviceId);
         if (exportedDevice != null) {
             vmDevice.setAddress(exportedDevice.getAddress());
-            vmDevice.setBootOrder(exportedDevice.getBootOrder());
             vmDevice.setPlugged(exportedDevice.isPlugged());
             vmDevice.setReadOnly(exportedDevice.getReadOnly());
             vmDevicesToUpdate.add(vmDevice);
@@ -1770,7 +1716,6 @@ public class VmDeviceUtils {
                                     update.getGeneralType(),
                                     update.getType().getName(),
                                     "",
-                                    0,
                                     Collections.emptyMap(),
                                     true,
                                     true,
@@ -1816,7 +1761,6 @@ public class VmDeviceUtils {
                     VmDeviceGeneralType.VIDEO,
                     vmVideoDeviceTypeforNextRun.toString(),
                     "",
-                    0,
                     Collections.emptyMap(),
                     true,
                     true,

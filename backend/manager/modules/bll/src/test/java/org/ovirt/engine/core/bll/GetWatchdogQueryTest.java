@@ -50,7 +50,7 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
         watchdogSpecParams.put("model", "i6300esb");
         watchdogSpecParams.put("action", "reset");
         VmDevice vmDevice = new VmDevice(new VmDeviceId(new Guid("6f86b8a4-e721-4149-b2df-056eb621b16a"),
-                TEST_VM_ID), VmDeviceGeneralType.WATCHDOG, VmDeviceType.WATCHDOG.getName(), "", 1, watchdogSpecParams,
+                TEST_VM_ID), VmDeviceGeneralType.WATCHDOG, VmDeviceType.WATCHDOG.getName(), "", watchdogSpecParams,
                 true, true, true, "", null, null, null);
         when(vmDeviceDao.getVmDeviceByVmIdAndType(TEST_VM_ID, VmDeviceGeneralType.WATCHDOG))
                 .thenReturn(Collections.singletonList(vmDevice));

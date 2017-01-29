@@ -42,8 +42,6 @@ import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
  * Activate or deactivate a virtual network interface of a VM in case it is in a valid status. If the VM is down, simply
@@ -205,7 +203,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         }
 
         // In any case, the device is updated
-        TransactionSupport.executeInNewTransaction(updateDevice());
+        updateDevice();
         setSucceeded(true);
     }
 
@@ -338,13 +336,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         return providerProxy;
     }
 
-    private TransactionMethod<Void> updateDevice() {
-        return () -> {
-            vmDevice.setPlugged(getParameters().getAction() == PlugAction.PLUG);
-            vmDeviceDao.update(vmDevice);
-            getVmDeviceUtils().updateBootOrder(getVm().getStaticData());
-            return null;
-        };
+    private void updateDevice() {
+        vmDevice.setPlugged(getParameters().getAction() == PlugAction.PLUG);
+        vmDeviceDao.update(vmDevice);
     }
 
     @Override

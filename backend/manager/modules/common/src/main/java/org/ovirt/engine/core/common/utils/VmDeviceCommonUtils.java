@@ -70,7 +70,6 @@ public class VmDeviceCommonUtils {
                 VmDeviceGeneralType.CONTROLLER,
                 VmDeviceType.VIRTIOSERIAL.getName(),
                 "",
-                0,
                 new HashMap<String, Object>(),
                 true,
                 true,
@@ -86,7 +85,7 @@ public class VmDeviceCommonUtils {
      */
     public static void updateVmDevicesBootOrder(
             BootSequence bootSequence,
-            List<VmDevice> devices,
+            Collection<VmDevice> devices,
             List<VmNetworkInterface> interfaces,
             Map<VmDeviceId, DiskVmElement> deviceIdToDiskVmElement) {
 
@@ -167,7 +166,7 @@ public class VmDeviceCommonUtils {
     /**
      * updates network devices boot order
      */
-    private static int setNetworkBootOrder(List<VmDevice> devices, int bootOrder, List<VmNetworkInterface> interfaces) {
+    private static int setNetworkBootOrder(Collection<VmDevice> devices, int bootOrder, List<VmNetworkInterface> interfaces) {
         for (VmDevice pluggedInterface : sortInterfacesByName(getPluggedManagedInterfaces(devices), interfaces)) {
             pluggedInterface.setBootOrder(++bootOrder);
         }
@@ -175,7 +174,7 @@ public class VmDeviceCommonUtils {
         return bootOrder;
     }
 
-    private static List<VmDevice> getPluggedManagedInterfaces(List<VmDevice> devices) {
+    private static List<VmDevice> getPluggedManagedInterfaces(Collection<VmDevice> devices) {
         List<VmDevice> result = new ArrayList<>();
         for (VmDevice device : devices) {
             if ((isHostDevInterface(device) || isBridge(device)) && device.isPlugged() && device.isManaged()) {
@@ -213,7 +212,7 @@ public class VmDeviceCommonUtils {
     /**
      * updates CD boot order
      */
-    private static int setCDBootOrder(List<VmDevice> devices, int bootOrder) {
+    private static int setCDBootOrder(Collection<VmDevice> devices, int bootOrder) {
         for (VmDevice device : devices) {
             if (isCD(device) && device.isPlugged()) {
                 device.setBootOrder(++bootOrder);
@@ -227,7 +226,7 @@ public class VmDeviceCommonUtils {
      * snapshot disk devices always will have lower priority than regular attached disks.
      */
     private static int setDiskBootOrder(
-            List<VmDevice> devices,
+            Collection<VmDevice> devices,
             int bootOrder,
             Map<VmDeviceId, DiskVmElement> deviceIdTodiskVmElement) {
         LinkedList<VmDevice> diskDevices = new LinkedList<>();

@@ -7630,7 +7630,6 @@
         <column>type</column>
         <column>device</column>
         <column>address</column>
-        <column>boot_order</column>
         <column>spec_params</column>
         <column>is_managed</column>
         <column>is_plugged</column>
@@ -7645,7 +7644,6 @@
             <value>disk</value>
             <value>disk</value>
             <value>sample</value>
-            <value>1</value>
             <value>{}</value>
             <value>true</value>
             <value>false</value>
@@ -7661,7 +7659,6 @@
             <value>disk</value>
             <value>disk</value>
             <value>sample</value>
-            <value>1</value>
             <value>{}</value>
             <value>true</value>
             <value>false</value>
@@ -7678,7 +7675,6 @@
             <value>disk</value>
             <value>disk</value>
             <value>sample</value>
-            <value>1</value>
             <null/>
             <value>true</value>
             <value>true</value>
@@ -7694,7 +7690,6 @@
             <value>disk</value>
             <value>disk</value>
             <value>sample</value>
-            <value>1</value>
             <value></value>
             <value>true</value>
             <value>false</value>
@@ -7710,7 +7705,6 @@
             <value>disk</value>
             <value>disk</value>
             <value>sample</value>
-            <value>1</value>
             <value></value>
             <value>true</value>
             <value>false</value>
@@ -7726,7 +7720,6 @@
             <value>disk</value>
             <value>disk</value>
             <value>sample</value>
-            <value>1</value>
             <value>{}</value>
             <value>true</value>
             <value>false</value>
@@ -7742,7 +7735,6 @@
             <value>interface</value>
             <value>bridge</value>
             <value>sample</value>
-            <value>1</value>
             <value>{}</value>
             <value>true</value>
             <value>false</value>
@@ -7758,7 +7750,6 @@
             <value>interface</value>
             <value>bridge</value>
             <value>sample</value>
-            <value>1</value>
             <value>{  "floppy" : [ "java.util.ArrayList", [ [ "java.util.LinkedHashMap", { "filename" : "content"  } ] ] ]}</value>
             <value>true</value>
             <value>false</value>
@@ -7774,7 +7765,6 @@
             <value>interface</value>
             <value>bridge</value>
             <value>sample</value>
-            <value>1</value>
             <value>{}</value>
             <value>true</value>
             <value>false</value>
@@ -7790,7 +7780,6 @@
             <value>interface</value>
             <value>bridge</value>
             <value>sample</value>
-            <value>1</value>
             <value>{}</value>
             <value>true</value>
             <value>false</value>
@@ -7806,7 +7795,6 @@
             <value>disk</value>
             <value>disk</value>
             <value>sample</value>
-            <value>1</value>
             <value>{}</value>
             <value>true</value>
             <value>true</value>
@@ -7822,7 +7810,6 @@
             <value>disk</value>
             <value>disk</value>
             <value>sample</value>
-            <value>1</value>
             <value>{}</value>
             <value>true</value>
             <value>true</value>
@@ -7838,7 +7825,6 @@
             <value>hostdev</value>
             <value>pci_0000_00_1f_0</value>
             <value>sample</value>
-            <value>1</value>
             <value>{}</value>
             <value>true</value>
             <value>true</value>
@@ -7854,7 +7840,6 @@
             <value>hostdev</value>
             <value>pci_0000_00_1f_2</value>
             <value>sample</value>
-            <value>1</value>
             <value>{}</value>
             <value>true</value>
             <value>true</value>
@@ -7870,7 +7855,6 @@
             <value>hostdev</value>
             <value>pci_0000_00_1f_2</value>
             <value>sample</value>
-            <value>1</value>
             <value>{}</value>
             <value>true</value>
             <value>true</value>

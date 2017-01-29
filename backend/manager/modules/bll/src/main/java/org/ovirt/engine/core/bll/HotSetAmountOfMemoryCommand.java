@@ -114,7 +114,6 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
                 VmDeviceGeneralType.MEMORY,
                 VmDeviceType.MEMORY.getName(),
                 "",
-                0,
                 specParams,
                 true,
                 true,

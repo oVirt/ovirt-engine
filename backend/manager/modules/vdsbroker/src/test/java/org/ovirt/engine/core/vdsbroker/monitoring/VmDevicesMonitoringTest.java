@@ -102,7 +102,6 @@ public class VmDevicesMonitoringTest {
                 type,
                 device,
                 "",
-                0,
                 Collections.emptyMap(),
                 isManaged,
                 true,

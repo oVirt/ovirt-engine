@@ -198,28 +198,6 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     }
 
     @Test
-    public void testUpdateBootOrder() {
-        VmDevice vmDevice = dao.get(getExistingEntityId());
-        int newBootOrderValue = vmDevice.getBootOrder() + 1;
-        assertTrue(StringUtils.isNotBlank(vmDevice.getAddress()));
-        vmDevice.setBootOrder(newBootOrderValue);
-        dao.updateBootOrder(vmDevice);
-        dao.get(getExistingEntityId());
-        assertEquals(vmDevice.getBootOrder(), newBootOrderValue);
-    }
-
-    @Test
-    public void testUpdateBootOrderInBatch() {
-        VmDevice vmDevice = dao.get(getExistingEntityId());
-        int newBootOrderValue = vmDevice.getBootOrder() + 1;
-        assertTrue(StringUtils.isNotBlank(vmDevice.getAddress()));
-        vmDevice.setBootOrder(newBootOrderValue);
-        dao.updateBootOrderInBatch(Collections.singletonList(vmDevice));
-        dao.get(getExistingEntityId());
-        assertEquals(vmDevice.getBootOrder(), newBootOrderValue);
-    }
-
-    @Test
     public void testExistsVmDeviceByVmIdAndType() {
         assertTrue(dao.existsVmDeviceByVmIdAndType(EXISTING_VM_ID, VmDeviceGeneralType.HOSTDEV));
         assertFalse(dao.existsVmDeviceByVmIdAndType(NON_EXISTING_VM_ID, VmDeviceGeneralType.HOSTDEV));
@@ -247,7 +225,6 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                 VmDeviceGeneralType.DISK,
                 "floppy",
                 "type:'drive', controller:'0', bus:'0', unit:'1'",
-                2,
                 new HashMap<>(),
                 true, false, false, "alias", Collections.singletonMap("prop1", "value1"), null, null);
     }
