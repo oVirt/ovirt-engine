@@ -52,7 +52,7 @@ public class SubchainInfo {
                 .append("imageGroupId", imageGroupId)
                 .append("baseImageId", baseImageId)
                 .append("topImageId", topImageId)
-                .append("generation", baseImageGeneration)
+                .append("baseImageGeneration", baseImageGeneration)
                 .build();
     }
 }
