@@ -837,7 +837,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         Map<String, Object> device = new HashMap<>();
         device.put(VdsProperties.Type, VdsProperties.VmLease);
         device.put(VdsProperties.Device, VdsProperties.VmLease);
-        device.put(VdsProperties.DeviceId, Guid.newGuid());
+        device.put(VdsProperties.DeviceId, Guid.newGuid().toString());
         device.put(VdsProperties.VmLeaseSdId, vm.getLeaseStorageDomainId().toString());
         device.put(VdsProperties.VmLeaseId, vm.getId().toString());
         devices.add(device);
