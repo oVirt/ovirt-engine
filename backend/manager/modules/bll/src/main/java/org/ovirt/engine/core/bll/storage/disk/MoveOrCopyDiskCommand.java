@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -198,7 +199,12 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         }
         StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
         if (validate(storageDomainValidator.isDomainWithinThresholds())) {
-            getImage().getSnapshots().addAll(diskImageDao.getAllSnapshotsForLeaf(getImage().getImageId()));
+            // If we are copying a template's disk we do not want all its copies
+            if (getImage().getVmEntityType() == VmEntityType.TEMPLATE) {
+                getImage().getSnapshots().add(getImage());
+            } else {
+                getImage().getSnapshots().addAll(diskImageDao.getAllSnapshotsForLeaf(getImage().getImageId()));
+            }
             return validate(storageDomainValidator.hasSpaceForDiskWithSnapshots(getImage()));
         }
         return false;
