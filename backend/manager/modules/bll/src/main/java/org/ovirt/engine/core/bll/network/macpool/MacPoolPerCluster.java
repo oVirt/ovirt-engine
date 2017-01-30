@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.utils.lock.AutoCloseableLock;
@@ -38,15 +37,10 @@ public class MacPoolPerCluster {
     @Inject
     MacPoolFactory macPoolFactory;
 
-    @Inject
-    private DbFacade dbFacade;
-
     private static final Logger log = LoggerFactory.getLogger(MacPoolPerCluster.class);
 
     static final String UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST = "This MAC Pool already exist";
     static final String INEXISTENT_POOL_EXCEPTION_MESSAGE = "Coding error, pool for requested GUID does not exist";
-    static final String POOL_TO_BE_REMOVED_DOES_NOT_EXIST_EXCEPTION_MESSAGE =
-            "Trying to removed pool which does not exist.";
     private final Map<Guid, MacPool> macPools = new HashMap<>();
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
 
