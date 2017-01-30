@@ -89,6 +89,7 @@ BEGIN
                 FROM vds_statistics
                 WHERE ha_score IS NOT NULL AND ha_configured
         ) t;
+    UPDATE vds_spm_id_map SET vds_spm_id=(SELECT MAX(vds_spm_id)+1 FROM vds_spm_id_map) WHERE vds_spm_id=1;
 END;
 $procedure$
 LANGUAGE plpgsql;
