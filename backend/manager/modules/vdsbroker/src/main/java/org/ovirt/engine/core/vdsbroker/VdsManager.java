@@ -344,6 +344,11 @@ public class VdsManager {
     public VDS getCopyVds() {
         return cachedVds.clone();
     }
+
+    public VDSStatus getStatus() {
+        return cachedVds.getStatus();
+    }
+
     public String getVdsName() {
         return cachedVds.getName();
     }

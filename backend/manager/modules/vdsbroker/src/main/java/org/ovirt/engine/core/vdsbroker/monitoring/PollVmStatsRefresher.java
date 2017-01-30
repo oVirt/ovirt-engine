@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -28,7 +29,7 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
 
     @OnTimerMethodAnnotation("poll")
     public void poll() {
-        if (vdsManager.isMonitoringNeeded()) {
+        if (isMonitoringNeeded(vdsManager.getStatus())) {
             VmsListFetcher fetcher = new VmsStatisticsFetcher(vdsManager);
 
             long fetchTime = System.nanoTime();
@@ -57,4 +58,21 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
         scheduler.deleteJob(vmsMonitoringJobId);
     }
 
+    /* visible for testing only */
+    boolean isMonitoringNeeded(VDSStatus status) {
+        switch (status) {
+        default:
+            return false;
+        case Up:
+        case Error:
+        case NonOperational:
+        case PreparingForMaintenance:
+        // FIXME The below statuses are probably not relevant
+        // for monitoring but it's currently not final.
+        case NonResponsive:
+        case Initializing:
+        case Connecting:
+            return true;
+        }
+    }
 }
