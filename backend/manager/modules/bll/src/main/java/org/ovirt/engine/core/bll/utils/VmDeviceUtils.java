@@ -1125,7 +1125,7 @@ public class VmDeviceUtils {
         vmHandler.updateDisksForVm(vm, diskDao.getAllForVm(vmId));
         vmHandler.updateDisksVmDataForVm(vm);
         vmHandler.updateNetworkInterfacesFromDb(vm);
-        VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices);
+        VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, vm.getDefaultBootSequence(), devices);
         vmDeviceDao.updateBootOrderInBatch(devices);
     }
 

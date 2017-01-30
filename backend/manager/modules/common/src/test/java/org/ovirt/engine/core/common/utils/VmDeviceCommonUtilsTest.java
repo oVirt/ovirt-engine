@@ -57,6 +57,7 @@ public class VmDeviceCommonUtilsTest {
         // ordered according to their names and not according to their position in the list
         VmDeviceCommonUtils.updateVmDevicesBootOrder(
                 vm,
+                vm.getDefaultBootSequence(),
                 Arrays.asList(bootableDisk, nic2, cd, nic1, nonBootableDisk, unmanagedNic));
 
         int index = 1;

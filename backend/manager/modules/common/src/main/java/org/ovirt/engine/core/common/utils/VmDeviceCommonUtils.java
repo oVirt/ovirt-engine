@@ -82,15 +82,6 @@ public class VmDeviceCommonUtils {
     }
 
     /**
-     * Updates given devices boot order in accordance with default boot sequence.
-     */
-    public static void updateVmDevicesBootOrder(
-            VM vm,
-            List<VmDevice> devices) {
-        updateVmDevicesBootOrder(vm, vm.getDefaultBootSequence(), devices);
-    }
-
-    /**
      * Updates given devices boot order in accordance with bootSequence given.
      */
     public static void updateVmDevicesBootOrder(
