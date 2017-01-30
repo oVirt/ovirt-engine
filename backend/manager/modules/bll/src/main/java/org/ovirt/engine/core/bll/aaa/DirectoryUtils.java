@@ -105,10 +105,6 @@ public class DirectoryUtils {
         return directoryGroup;
     }
 
-    public static DbGroup mapGroupRecordToDbGroup(String directory, ExtMap groupRecord) {
-        return new DbGroup(mapGroupRecordToDirectoryGroup(directory, groupRecord));
-    }
-
     public static void flatGroups(ExtMap principal) {
         Map<String, ExtMap> accumulator = new HashMap<>();
         flatGroups(principal, PrincipalRecord.GROUPS, accumulator);
