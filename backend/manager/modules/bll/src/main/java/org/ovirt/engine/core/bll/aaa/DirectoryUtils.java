@@ -27,7 +27,7 @@ public class DirectoryUtils {
     public static DbUser mapPrincipalRecordToDbUser(String authz, ExtMap principal) {
         principal = principal.clone();
         flatGroups(principal);
-        DbUser dbUser = DbFacade.getInstance().getDbUserDao().getByExternalId(authz,  principal.<String>get(PrincipalRecord.ID));
+        DbUser dbUser = DbFacade.getInstance().getDbUserDao().getByExternalId(authz,  principal.get(PrincipalRecord.ID));
         Guid userId = dbUser != null ? dbUser.getId() : Guid.newGuid();
         dbUser = new DbUser(mapPrincipalRecordToDirectoryUser(authz, principal));
         dbUser.setId(userId);
@@ -35,7 +35,7 @@ public class DirectoryUtils {
         Set<Guid> groupIds = new HashSet<>();
         Set<String> groupsNames = new HashSet<>();
         for (ExtMap group : principal.<Collection<ExtMap>>get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
-            DbGroup dbGroup = dao.getByExternalId(authz, group.<String> get(GroupRecord.ID));
+            DbGroup dbGroup = dao.getByExternalId(authz, group.get(GroupRecord.ID));
             if (dbGroup != null) {
                 groupIds.add(dbGroup.getId());
                 groupsNames.add(dbGroup.getName());
@@ -51,20 +51,20 @@ public class DirectoryUtils {
         if (principalRecord != null) {
             directoryUser = new DirectoryUser(
                     authzName,
-                    principalRecord.<String> get(Authz.PrincipalRecord.NAMESPACE),
-                    principalRecord.<String> get(Authz.PrincipalRecord.ID),
-                    principalRecord.<String> get(Authz.PrincipalRecord.NAME),
-                    principalRecord.<String> get(Authz.PrincipalRecord.PRINCIPAL),
-                    principalRecord.<String> get(Authz.PrincipalRecord.DISPLAY_NAME)
+                    principalRecord.get(Authz.PrincipalRecord.NAMESPACE),
+                    principalRecord.get(Authz.PrincipalRecord.ID),
+                    principalRecord.get(Authz.PrincipalRecord.NAME),
+                    principalRecord.get(Authz.PrincipalRecord.PRINCIPAL),
+                    principalRecord.get(Authz.PrincipalRecord.DISPLAY_NAME)
                     );
-            directoryUser.setDepartment(principalRecord.<String> get(Authz.PrincipalRecord.DEPARTMENT));
-            directoryUser.setFirstName(principalRecord.<String> get(Authz.PrincipalRecord.FIRST_NAME));
-            directoryUser.setLastName(principalRecord.<String> get(Authz.PrincipalRecord.LAST_NAME));
-            directoryUser.setEmail(principalRecord.<String> get(Authz.PrincipalRecord.EMAIL));
-            directoryUser.setTitle(principalRecord.<String> get(Authz.PrincipalRecord.TITLE));
-            directoryUser.setPrincipal(principalRecord.<String> get(Authz.PrincipalRecord.PRINCIPAL));
+            directoryUser.setDepartment(principalRecord.get(Authz.PrincipalRecord.DEPARTMENT));
+            directoryUser.setFirstName(principalRecord.get(Authz.PrincipalRecord.FIRST_NAME));
+            directoryUser.setLastName(principalRecord.get(Authz.PrincipalRecord.LAST_NAME));
+            directoryUser.setEmail(principalRecord.get(Authz.PrincipalRecord.EMAIL));
+            directoryUser.setTitle(principalRecord.get(Authz.PrincipalRecord.TITLE));
+            directoryUser.setPrincipal(principalRecord.get(Authz.PrincipalRecord.PRINCIPAL));
             List<DirectoryGroup> directoryGroups = new ArrayList<>();
-            Collection<ExtMap> groups = principalRecord.<Collection<ExtMap>> get(Authz.PrincipalRecord.GROUPS);
+            Collection<ExtMap> groups = principalRecord.get(Authz.PrincipalRecord.GROUPS);
             if (groups != null) {
                 for (ExtMap group : groups) {
                     directoryGroups.add(mapGroupRecordToDirectoryGroup(authzName, group));
@@ -88,10 +88,10 @@ public class DirectoryUtils {
         if (group != null) {
             directoryGroup = new DirectoryGroup(
                     authzName,
-                    group.<String> get(Authz.GroupRecord.NAMESPACE),
-                    group.<String> get(Authz.GroupRecord.ID),
-                    group.<String> get(Authz.GroupRecord.NAME),
-                    group.<String> get(Authz.GroupRecord.DISPLAY_NAME)
+                    group.get(Authz.GroupRecord.NAMESPACE),
+                    group.get(Authz.GroupRecord.ID),
+                    group.get(Authz.GroupRecord.NAME),
+                    group.get(Authz.GroupRecord.DISPLAY_NAME)
                     );
             loopPrevention.add(directoryGroup.getId());
             for (ExtMap memberOf : group.<Collection<ExtMap>> get(
@@ -118,7 +118,7 @@ public class DirectoryUtils {
     private static void flatGroups(ExtMap entity, ExtKey key, Map<String, ExtMap> accumulator) {
         for (ExtMap group : entity.<Collection<ExtMap>>get(key, Collections.<ExtMap> emptyList())) {
             if(!accumulator.containsKey(group.<String>get(GroupRecord.ID))) {
-                accumulator.put(group.<String>get(GroupRecord.ID), group);
+                accumulator.put(group.get(GroupRecord.ID), group);
                 flatGroups(group, GroupRecord.GROUPS, accumulator);
             }
         }
