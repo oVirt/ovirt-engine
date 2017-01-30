@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ejb.Singleton;
+
 import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
@@ -22,9 +24,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbGroupDao;
 
+@Singleton
 public class DirectoryUtils {
 
-    public static DbUser mapPrincipalRecordToDbUser(String authz, ExtMap principal) {
+    public DbUser mapPrincipalRecordToDbUser(String authz, ExtMap principal) {
         principal = principal.clone();
         flatGroups(principal);
         DbUser dbUser = DbFacade.getInstance().getDbUserDao().getByExternalId(authz,  principal.get(PrincipalRecord.ID));
@@ -46,7 +49,7 @@ public class DirectoryUtils {
         return dbUser;
     }
 
-    public static DirectoryUser mapPrincipalRecordToDirectoryUser(final String authzName, final ExtMap principalRecord) {
+    public DirectoryUser mapPrincipalRecordToDirectoryUser(final String authzName, final ExtMap principalRecord) {
         DirectoryUser directoryUser = null;
         if (principalRecord != null) {
             directoryUser = new DirectoryUser(
@@ -75,11 +78,11 @@ public class DirectoryUtils {
         return directoryUser;
     }
 
-    public static DirectoryGroup mapGroupRecordToDirectoryGroup(final String authzName, final ExtMap group) {
+    public DirectoryGroup mapGroupRecordToDirectoryGroup(final String authzName, final ExtMap group) {
         return mapGroupRecordToDirectoryGroup(authzName, group, new HashSet<>());
     }
 
-    private static DirectoryGroup mapGroupRecordToDirectoryGroup(
+    private DirectoryGroup mapGroupRecordToDirectoryGroup(
             final String authzName,
             final ExtMap group,
             final Set<String> loopPrevention
@@ -105,13 +108,13 @@ public class DirectoryUtils {
         return directoryGroup;
     }
 
-    public static void flatGroups(ExtMap principal) {
+    public void flatGroups(ExtMap principal) {
         Map<String, ExtMap> accumulator = new HashMap<>();
         flatGroups(principal, PrincipalRecord.GROUPS, accumulator);
         principal.put(PrincipalRecord.GROUPS, new ArrayList<>(accumulator.values()));
     }
 
-    private static void flatGroups(ExtMap entity, ExtKey key, Map<String, ExtMap> accumulator) {
+    private void flatGroups(ExtMap entity, ExtKey key, Map<String, ExtMap> accumulator) {
         for (ExtMap group : entity.<Collection<ExtMap>>get(key, Collections.<ExtMap> emptyList())) {
             if(!accumulator.containsKey(group.<String>get(GroupRecord.ID))) {
                 accumulator.put(group.get(GroupRecord.ID), group);
@@ -120,7 +123,7 @@ public class DirectoryUtils {
         }
     }
 
-    public static Collection<DirectoryGroup> mapGroupRecordsToDirectoryGroups(final String authzName,
+    public Collection<DirectoryGroup> mapGroupRecordsToDirectoryGroups(final String authzName,
             final Collection<ExtMap> groups) {
         List<DirectoryGroup> results = new ArrayList<>();
         for (ExtMap group : groups) {
@@ -129,7 +132,7 @@ public class DirectoryUtils {
         return results;
     }
 
-    public static Collection<DirectoryUser> mapPrincipalRecordsToDirectoryUsers(final String authzName,
+    public Collection<DirectoryUser> mapPrincipalRecordsToDirectoryUsers(final String authzName,
             final Collection<ExtMap> users) {
         List<DirectoryUser> results = new ArrayList<>();
         for (ExtMap user : users) {

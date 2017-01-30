@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
@@ -15,6 +17,8 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class GetDirectoryGroupsForUserQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+    @Inject
+    private DirectoryUtils directoryUtils;
 
     public GetDirectoryGroupsForUserQuery(P parameters) {
         super(parameters);
@@ -45,9 +49,9 @@ public class GetDirectoryGroupsForUserQuery<P extends VdcQueryParametersBase> ex
 
         if (!principalRecords.isEmpty()) {
             ExtMap principalRecord = principalRecords.iterator().next();
-            DirectoryUtils.flatGroups(principalRecord);
+            directoryUtils.flatGroups(principalRecord);
             for (ExtMap group : principalRecord.<Collection<ExtMap>>get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
-                groups.add(DirectoryUtils.mapGroupRecordToDirectoryGroup(dbUser.getDomain(), group));
+                groups.add(directoryUtils.mapGroupRecordToDirectoryGroup(dbUser.getDomain(), group));
             }
         }
 

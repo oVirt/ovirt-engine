@@ -35,6 +35,9 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
     @Inject
     private SessionDataContainer sessionDataContainer;
 
+    @Inject
+    private DirectoryUtils directoryUtils;
+
     public LoginOnBehalfCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -100,7 +103,7 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
             throw new EngineException(EngineError.PRINCIPAL_NOT_FOUND,
                     String.format("%s in domain '%s", principalName, authzName));
         }
-        DbUser user =  new DbUser(DirectoryUtils.mapPrincipalRecordToDirectoryUser(authzName, principalRecord));
+        DbUser user =  new DbUser(directoryUtils.mapPrincipalRecordToDirectoryUser(authzName, principalRecord));
         user.setId(Guid.newGuid());
         return user;
     }
@@ -125,8 +128,8 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
     }
 
     private String createSession(DbUser mappedUser, String authzName, ExtMap principalRecord) {
-        DirectoryUtils.flatGroups(principalRecord);
-        DbUser dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(authzName, principalRecord);
+        directoryUtils.flatGroups(principalRecord);
+        DbUser dbUser = directoryUtils.mapPrincipalRecordToDbUser(authzName, principalRecord);
         dbUser.setId(mappedUser.getId());
         String engineSessionId;
         try {

@@ -22,6 +22,9 @@ public class GetAuthzGroupsByUserIdQuery<P extends IdQueryParameters> extends Qu
     @Inject
     private DbUserDao dbUserDao;
 
+    @Inject
+    private DirectoryUtils directoryUtils;
+
     public GetAuthzGroupsByUserIdQuery(P parameters) {
         super(parameters);
     }
@@ -49,7 +52,7 @@ public class GetAuthzGroupsByUserIdQuery<P extends IdQueryParameters> extends Qu
 
         if (!principalRecords.isEmpty()) {
             ExtMap principalRecord = principalRecords.iterator().next();
-            DirectoryUtils.flatGroups(principalRecord);
+            directoryUtils.flatGroups(principalRecord);
             for (ExtMap group : principalRecord.<Collection<ExtMap>>get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
                 groups.add(new AuthzGroup(dbUser.getDomain(), group.get(GroupRecord.NAMESPACE), group.get(GroupRecord.NAME)));
             }

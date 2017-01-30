@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
@@ -11,6 +13,8 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 
 public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private DirectoryUtils directoryUtils;
 
     public GetDirectoryGroupByIdQuery(P parameters) {
         super(parameters);
@@ -22,7 +26,7 @@ public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> ex
         if (!response.containsKey("result")) {
             getQueryReturnValue().setSucceeded(false);
         } else {
-            Collection<DirectoryGroup> groups = DirectoryUtils.mapGroupRecordsToDirectoryGroups(
+            Collection<DirectoryGroup> groups = directoryUtils.mapGroupRecordsToDirectoryGroups(
                     getParameters().getDomain(),
                     (Collection<ExtMap>) response.get("result"));
             if (!groups.isEmpty()) {

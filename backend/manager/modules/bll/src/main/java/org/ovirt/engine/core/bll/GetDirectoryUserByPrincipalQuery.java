@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.aaa.DirectoryUtils;
@@ -10,6 +12,8 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.GetDirectoryUserByPrincipalParameters;
 
 public class GetDirectoryUserByPrincipalQuery<P extends GetDirectoryUserByPrincipalParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private DirectoryUtils directoryUtils;
 
     public GetDirectoryUserByPrincipalQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
@@ -36,7 +40,7 @@ public class GetDirectoryUserByPrincipalQuery<P extends GetDirectoryUserByPrinci
             }
         }
         getQueryReturnValue().setReturnValue(
-                DirectoryUtils.mapPrincipalRecordToDirectoryUser(
+                directoryUtils.mapPrincipalRecordToDirectoryUser(
                         getParameters().getAuthz(),
                         principalRecord
                 )

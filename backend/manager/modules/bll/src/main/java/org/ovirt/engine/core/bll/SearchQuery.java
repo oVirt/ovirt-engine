@@ -140,6 +140,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     @Inject
     private ImageTransferDao imageTransferDao;
 
+    @Inject
+    private DirectoryUtils directoryUtils;
+
     public SearchQuery(P parameters) {
         super(parameters);
     }
@@ -257,7 +260,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         if (response.containsKey("result")) {
             Collection<ExtMap> users = (Collection<ExtMap>) response.get("result");
             results = users.stream()
-                    .map((ExtMap u) -> DirectoryUtils.mapPrincipalRecordToDirectoryUser(data.getAuthz(), u))
+                    .map((ExtMap u) -> directoryUtils.mapPrincipalRecordToDirectoryUser(data.getAuthz(), u))
                     .collect(Collectors.toList());
         }
         return results;
@@ -285,7 +288,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         if (response.containsKey("result")) {
             Collection<ExtMap> groups = (Collection<ExtMap>) response.get("result");
             results = groups.stream()
-                    .map((ExtMap g) -> DirectoryUtils.mapGroupRecordToDirectoryGroup(data.getAuthz(), g))
+                    .map((ExtMap g) -> directoryUtils.mapGroupRecordToDirectoryGroup(data.getAuthz(), g))
                     .collect(Collectors.toList());
         }
         return results;
