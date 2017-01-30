@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
@@ -21,24 +22,28 @@ import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbGroupDao;
+import org.ovirt.engine.core.dao.DbUserDao;
 
 @Singleton
 public class DirectoryUtils {
+    @Inject
+    private DbUserDao dbUserDao;
+
+    @Inject
+    private DbGroupDao dbGroupDao;
 
     public DbUser mapPrincipalRecordToDbUser(String authz, ExtMap principal) {
         principal = principal.clone();
         flatGroups(principal);
-        DbUser dbUser = DbFacade.getInstance().getDbUserDao().getByExternalId(authz,  principal.get(PrincipalRecord.ID));
+        DbUser dbUser = dbUserDao.getByExternalId(authz,  principal.get(PrincipalRecord.ID));
         Guid userId = dbUser != null ? dbUser.getId() : Guid.newGuid();
         dbUser = new DbUser(mapPrincipalRecordToDirectoryUser(authz, principal));
         dbUser.setId(userId);
-        DbGroupDao dao = DbFacade.getInstance().getDbGroupDao();
         Set<Guid> groupIds = new HashSet<>();
         Set<String> groupsNames = new HashSet<>();
         for (ExtMap group : principal.<Collection<ExtMap>>get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
-            DbGroup dbGroup = dao.getByExternalId(authz, group.get(GroupRecord.ID));
+            DbGroup dbGroup = dbGroupDao.getByExternalId(authz, group.get(GroupRecord.ID));
             if (dbGroup != null) {
                 groupIds.add(dbGroup.getId());
                 groupsNames.add(dbGroup.getName());
