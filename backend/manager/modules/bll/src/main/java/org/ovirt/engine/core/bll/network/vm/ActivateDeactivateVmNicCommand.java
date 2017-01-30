@@ -342,7 +342,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         return () -> {
             vmDevice.setIsPlugged(getParameters().getAction() == PlugAction.PLUG);
             vmDeviceDao.update(vmDevice);
-            getVmDeviceUtils().updateBootOrder(getVm().getId());
+            getVmDeviceUtils().updateBootOrder(getVm().getStaticData());
             return null;
         };
     }

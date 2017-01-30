@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -52,10 +53,11 @@ import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class VmDeviceUtils {
@@ -69,9 +71,10 @@ public class VmDeviceUtils {
 
     private final VmDao vmDao;
     private final VmDeviceDao vmDeviceDao;
-    private final DiskDao diskDao;
     private final ClusterDao clusterDao;
     private final VmTemplateDao vmTemplateDao;
+    private final DiskVmElementDao diskVmElementDao;
+    private final VmNetworkInterfaceDao vmNetworkInterfaceDao;
     private final VmHandler vmHandler;
     private final MacPoolPerCluster macPoolPerCluster;
 
@@ -80,18 +83,20 @@ public class VmDeviceUtils {
     @Inject
     VmDeviceUtils(VmDao vmDao,
             VmDeviceDao vmDeviceDao,
-            DiskDao diskDao,
             ClusterDao clusterDao,
             VmTemplateDao vmTemplateDao,
+            DiskVmElementDao diskVmElementDao,
+            VmNetworkInterfaceDao vmNetworkInterfaceDao,
             VmHandler vmHandler,
             MacPoolPerCluster macPoolPerCluster) {
         this.vmDao = vmDao;
         this.vmDeviceDao = vmDeviceDao;
-        this.diskDao = diskDao;
         this.clusterDao = clusterDao;
         this.vmTemplateDao = vmTemplateDao;
         this.vmHandler = vmHandler;
         this.macPoolPerCluster = macPoolPerCluster;
+        this.diskVmElementDao = diskVmElementDao;
+        this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
         init();
     }
 
@@ -1106,7 +1111,7 @@ public class VmDeviceUtils {
      */
     private void updateBootOrder(VmBase oldVmBase, VmBase newVmBase) {
         if (oldVmBase.getDefaultBootSequence() != newVmBase.getDefaultBootSequence()) {
-            updateBootOrder(newVmBase.getId());
+            updateBootOrder(newVmBase);
         }
     }
 
@@ -1114,18 +1119,18 @@ public class VmDeviceUtils {
      * Updates boot order in all devices in the VM according to the default boot sequence.
      * Stores the updated devices in the DB.
      */
-    public void updateBootOrder(Guid vmId) {
-        VM vm = vmDao.get(vmId);
-        if (vm == null) {
-            return;
-        }
-        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmId);
+    public void updateBootOrder(VmBase vmBase) {
+        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmBase.getId());
         // Reset current boot order
         devices.forEach(dev -> dev.setBootOrder(0));
-        vmHandler.updateDisksForVm(vm, diskDao.getAllForVm(vmId));
-        vmHandler.updateDisksVmDataForVm(vm);
-        vmHandler.updateNetworkInterfacesFromDb(vm);
-        VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, vm.getDefaultBootSequence(), devices);
+        Map<VmDeviceId, DiskVmElement> diskVmElements = diskVmElementDao.getAllForVm(vmBase.getId())
+                .stream()
+                .collect(Collectors.toMap(DiskVmElement::getId, element -> element));
+        VmDeviceCommonUtils.updateVmDevicesBootOrder(
+                vmBase.getDefaultBootSequence(),
+                devices,
+                vmNetworkInterfaceDao.getAllForVm(vmBase.getId()),
+                diskVmElements);
         vmDeviceDao.updateBootOrderInBatch(devices);
     }
 
@@ -1413,7 +1418,7 @@ public class VmDeviceUtils {
         }
 
         if (dstIsVm) {
-            updateBootOrder(dstVmBase.getId());
+            updateBootOrder(dstVmBase);
             addVideoDevices(dstVmBase, getNeededNumberOfVideoDevices(dstVmBase));
         }
     }
@@ -1545,7 +1550,7 @@ public class VmDeviceUtils {
 
         // If we've added Disk/Interface/CD/Floppy, we have to recalculate boot order
         if (generalType == VmDeviceGeneralType.DISK || generalType == VmDeviceGeneralType.INTERFACE) {
-            updateBootOrder(id.getVmId());
+            updateBootOrder(vmDao.get(id.getVmId()).getStaticData());
         }
 
         return managedDevice;

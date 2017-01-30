@@ -85,9 +85,10 @@ public class VmDeviceCommonUtils {
      * Updates given devices boot order in accordance with bootSequence given.
      */
     public static void updateVmDevicesBootOrder(
-            VM vm,
             BootSequence bootSequence,
-            List<VmDevice> devices) {
+            List<VmDevice> devices,
+            List<VmNetworkInterface> interfaces,
+            Map<VmDeviceId, DiskVmElement> deviceIdToDiskVmElement) {
 
         int bootOrder = 0;
 
@@ -98,24 +99,24 @@ public class VmDeviceCommonUtils {
 
         switch (bootSequence) {
         case C:
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
+            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
             break;
         case CD:
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
+            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
         case CDN:
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
+            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
+            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
             break;
         case CN:
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
-            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
+            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
             break;
         case CND:
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
-            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
+            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
         case D:
@@ -123,42 +124,42 @@ public class VmDeviceCommonUtils {
             break;
         case DC:
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
+            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
             break;
         case DCN:
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
-            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
+            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
             break;
         case DN:
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
+            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
             break;
         case DNC:
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
+            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
             break;
         case N:
-            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
+            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
             break;
         case NC:
-            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
+            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
             break;
         case NCD:
-            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
+            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
         case ND:
-            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
+            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
         case NDC:
-            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
+            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vm, devices, bootOrder);
+            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
             break;
         }
     }
@@ -166,8 +167,8 @@ public class VmDeviceCommonUtils {
     /**
      * updates network devices boot order
      */
-    private static int setNetworkBootOrder(VM vm, List<VmDevice> devices, int bootOrder) {
-        for (VmDevice pluggedInterface : sortInterfacesByName(vm, getPluggedManagedInterfaces(devices))) {
+    private static int setNetworkBootOrder(List<VmDevice> devices, int bootOrder, List<VmNetworkInterface> interfaces) {
+        for (VmDevice pluggedInterface : sortInterfacesByName(getPluggedManagedInterfaces(devices), interfaces)) {
             pluggedInterface.setBootOrder(++bootOrder);
         }
 
@@ -185,13 +186,13 @@ public class VmDeviceCommonUtils {
         return result;
     }
 
-    private static List<VmDevice> sortInterfacesByName(VM vm, List<VmDevice> pluggedInterfaces) {
+    private static List<VmDevice> sortInterfacesByName(List<VmDevice> pluggedInterfaces, List<VmNetworkInterface> interfaces) {
         if (pluggedInterfaces.size() < 2) {
             return pluggedInterfaces;
         }
 
         final Map<Guid, String> deviceIdToIfaceName = new HashMap<>();
-        for (VmNetworkInterface iface : vm.getInterfaces()) {
+        for (VmNetworkInterface iface : interfaces) {
             deviceIdToIfaceName.put(iface.getId(), iface.getName());
         }
 
@@ -225,9 +226,10 @@ public class VmDeviceCommonUtils {
      * updates disk boot order
      * snapshot disk devices always will have lower priority than regular attached disks.
      */
-    private static int setDiskBootOrder(VM vm,
+    private static int setDiskBootOrder(
             List<VmDevice> devices,
-            int bootOrder) {
+            int bootOrder,
+            Map<VmDeviceId, DiskVmElement> deviceIdTodiskVmElement) {
         LinkedList<VmDevice> diskDevices = new LinkedList<>();
         for (VmDevice device : devices) {
             if (isDisk(device)) {
@@ -243,7 +245,7 @@ public class VmDeviceCommonUtils {
         }
 
         for (VmDevice device : diskDevices) {
-            DiskVmElement dve = getDiskVmElement(vm, device.getDeviceId());
+            DiskVmElement dve = deviceIdTodiskVmElement.get(device.getId());
             if (dve != null && dve.isBoot()) {
                 device.setBootOrder(++bootOrder);
             }
@@ -252,13 +254,15 @@ public class VmDeviceCommonUtils {
         return bootOrder;
     }
 
-    private static DiskVmElement getDiskVmElement(VM vm, Guid diskId) {
-        for (Disk disk : vm.getDiskMap().values()) {
-            if (disk.getId().equals(diskId)) {
-                return disk.getDiskVmElementForVm(vm.getId());
+    public static Map<VmDeviceId, DiskVmElement> extractDiskVmElements(VM vm) {
+        Map<VmDeviceId, DiskVmElement> result = new HashMap<>();
+        for(Disk disk : vm.getDiskMap().values()) {
+            DiskVmElement element = disk.getDiskVmElementForVm(vm.getId());
+            if (element != null) {
+                result.put(element.getId(), element);
             }
         }
-        return null;
+        return result;
     }
 
     public static boolean isInWhiteList(VmDeviceGeneralType type, String device) {

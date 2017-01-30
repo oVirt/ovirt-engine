@@ -169,7 +169,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
 
     private void updateBootOrder() {
         TransactionSupport.executeInNewTransaction(() -> {
-            getVmDeviceUtils().updateBootOrder(getVm().getId());
+            getVmDeviceUtils().updateBootOrder(getVm().getStaticData());
             return null;
         });
     }

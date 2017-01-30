@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -607,7 +608,11 @@ public class LibvirtVmXmlBuilder {
                 .filter(VmDevice::getIsManaged)
                 .collect(Collectors.toList());
         BootSequence bootSequence = vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence();
-        updateVmDevicesBootOrder(vm, bootSequence, managedAndPluggedBootableDevices);
+        updateVmDevicesBootOrder(
+                bootSequence,
+                managedAndPluggedBootableDevices,
+                vm.getInterfaces(),
+                VmDeviceCommonUtils.extractDiskVmElements(vm));
 
         writeInterfaces(writer, interfaceDevices, vm);
         writeDisks(writer, diskDevices, vm);

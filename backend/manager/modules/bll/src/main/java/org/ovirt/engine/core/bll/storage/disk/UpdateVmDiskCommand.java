@@ -541,7 +541,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     }
 
     protected void updateBootOrder() {
-        getVmDeviceUtils().updateBootOrder(getVm().getId());
+        getVmDeviceUtils().updateBootOrder(getVm().getStaticData());
     }
 
     private void extendDiskImageSize() {
