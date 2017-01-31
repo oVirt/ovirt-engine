@@ -67,7 +67,7 @@ public class ConvergenceConfigProvider {
     }
 
     void initMigrationPolicies(String policiesStr, Version version) {
-        List<MigrationPolicy> policies = Collections.EMPTY_LIST;
+        List<MigrationPolicy> policies = Collections.emptyList();
 
         try {
             policies = parse(policiesStr);
