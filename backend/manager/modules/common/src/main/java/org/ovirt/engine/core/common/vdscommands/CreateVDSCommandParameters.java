@@ -5,16 +5,16 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
+public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     private VM vm;
     private SysPrepParams sysPrepParams;
     private boolean runInUnknownStatus;
 
-    public CreateVmVDSCommandParameters() {
+    public CreateVDSCommandParameters() {
     }
 
-    public CreateVmVDSCommandParameters(Guid vdsId, VM vm) {
+    public CreateVDSCommandParameters(Guid vdsId, VM vm) {
         super(vdsId, vm.getId());
         this.vm = vm;
     }

@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
@@ -136,8 +136,8 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     }
 
     @Override
-    protected CreateVmVDSCommandParameters buildCreateVmParameters() {
-        CreateVmVDSCommandParameters createVmParams = super.buildCreateVmParameters();
+    protected CreateVDSCommandParameters buildCreateVmParameters() {
+        CreateVDSCommandParameters createVmParams = super.buildCreateVmParameters();
 
         RunVmOnceParams runOnceParams = getParameters();
 

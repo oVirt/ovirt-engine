@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
-import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -22,7 +22,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSGenericException;
 
-public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends ManagingVmCommand<P> {
+public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends ManagingVmCommand<P> {
 
     @Inject
     private VmDao vmDao;
@@ -31,7 +31,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     @Inject
     private SnapshotDao snapshotDao;
 
-    public CreateVmVDSCommand(P parameters) {
+    public CreateVDSCommand(P parameters) {
         super(parameters);
     }
 
@@ -71,15 +71,15 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         final VM vm = getParameters().getVm();
         if (isSysprepUsed(vm)) {
             // use answer file to run after sysprep.
-            CreateVmVDSCommandParameters createVmFromSysPrepParam =
-                    new CreateVmVDSCommandParameters(getParameters().getVdsId(), vm);
+            CreateVDSCommandParameters createVmFromSysPrepParam =
+                    new CreateVDSCommandParameters(getParameters().getVdsId(), vm);
             createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
             return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromSysPrep, createVmFromSysPrepParam);
         } else if (isCloudInitUsed(vm)) {
             return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromCloudInit, getParameters());
         } else {
             // normal run.
-            return resourceManager.runVdsCommand(VDSCommandType.Create, getParameters());
+            return resourceManager.runVdsCommand(VDSCommandType.CreateBroker, getParameters());
         }
     }
 

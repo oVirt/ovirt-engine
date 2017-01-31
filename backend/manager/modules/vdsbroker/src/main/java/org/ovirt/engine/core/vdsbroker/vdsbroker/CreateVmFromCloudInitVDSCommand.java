@@ -2,10 +2,10 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 
-public class CreateVmFromCloudInitVDSCommand<P extends CreateVmVDSCommandParameters>
-        extends CreateVDSCommand<P> {
+public class CreateVmFromCloudInitVDSCommand<P extends CreateVDSCommandParameters>
+        extends CreateBrokerVDSCommand<P> {
     public CreateVmFromCloudInitVDSCommand(P parameters) throws Exception {
         super(parameters);
 

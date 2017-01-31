@@ -127,7 +127,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     private void setCreateVmVDSMethod() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(VMStatus.Up);
-        when(vdsBrokerFrontend.runAsyncVdsCommand(eq(VDSCommandType.CreateVm),
+        when(vdsBrokerFrontend.runAsyncVdsCommand(eq(VDSCommandType.Create),
                 any(VdsAndVmIDVDSParametersBase.class),
                 any(IVdsAsyncCommand.class))).thenReturn(returnValue);
     }

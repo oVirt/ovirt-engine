@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 
 
-public class CreateVmFromSysPrepVDSCommand<P extends CreateVmVDSCommandParameters>
-        extends CreateVDSCommand<P> {
+public class CreateVmFromSysPrepVDSCommand<P extends CreateVDSCommandParameters>
+        extends CreateBrokerVDSCommand<P> {
     public CreateVmFromSysPrepVDSCommand(P parameters) {
         super(parameters);
         String sysPrepContent =

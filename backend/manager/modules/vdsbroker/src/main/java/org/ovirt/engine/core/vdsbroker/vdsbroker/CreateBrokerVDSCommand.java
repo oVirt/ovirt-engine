@@ -4,22 +4,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuilder;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends VmReturnVdsBrokerCommand<P> {
+public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extends VmReturnVdsBrokerCommand<P> {
 
-    private static final Logger log = LoggerFactory.getLogger(CreateVDSCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(CreateBrokerVDSCommand.class);
 
     protected VM vm;
     protected Map<String, Object> createInfo;
     protected VmInfoBuilder builder;
 
-    public CreateVDSCommand(P parameters) {
+    public CreateBrokerVDSCommand(P parameters) {
         super(parameters, parameters.getVm().getId());
         vm = parameters.getVm();
         createInfo = new HashMap<>();

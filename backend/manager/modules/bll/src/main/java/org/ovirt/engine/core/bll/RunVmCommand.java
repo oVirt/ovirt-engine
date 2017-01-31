@@ -74,7 +74,7 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.StartEntity;
-import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ResumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -545,7 +545,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         initParametersForPassthroughVnics();
 
         VMStatus vmStatus = (VMStatus) getVdsBroker()
-                .runAsyncVdsCommand(VDSCommandType.CreateVm, buildCreateVmParameters(), this).getReturnValue();
+                .runAsyncVdsCommand(VDSCommandType.Create, buildCreateVmParameters(), this).getReturnValue();
 
         // Don't use the memory from the active snapshot anymore if there's a chance that disks were changed
         memoryFromSnapshotUsed = vmStatus.isRunning() || vmStatus == VMStatus.RestoringState;
@@ -565,8 +565,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      *
      * @return the VDS create VM parameters
      */
-    protected CreateVmVDSCommandParameters buildCreateVmParameters() {
-        CreateVmVDSCommandParameters parameters  = new CreateVmVDSCommandParameters(getVdsId(), getVm());
+    protected CreateVDSCommandParameters buildCreateVmParameters() {
+        CreateVDSCommandParameters parameters  = new CreateVDSCommandParameters(getVdsId(), getVm());
         parameters.setRunInUnknownStatus(getParameters().isRunInUnknownStatus());
         return parameters;
     }
