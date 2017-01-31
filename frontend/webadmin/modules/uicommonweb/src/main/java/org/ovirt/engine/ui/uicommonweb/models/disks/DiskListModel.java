@@ -528,7 +528,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
     private void updateActionAvailability() {
         Disk disk = getSelectedItem();
-        ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList) getSelectedItems() : null;
+        ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
         boolean shouldAllowEdit = true;
         if (disk != null) {
             shouldAllowEdit = !disk.isOvfStore() && !isDiskLocked(disk);
