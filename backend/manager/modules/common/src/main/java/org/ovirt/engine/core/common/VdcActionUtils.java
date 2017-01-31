@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.VmWithStatusForExclusiveLock;
 
 public final class VdcActionUtils {
 
@@ -301,6 +302,7 @@ public final class VdcActionUtils {
                         VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm, VdcActionType.ExtendImageSize,
                         VdcActionType.RebootVm));
         _matrix.put(VM.class, vmMatrix);
+        _matrix.put(VmWithStatusForExclusiveLock.class, vmMatrix);
 
         Map<Enum<?>, Set<VdcActionType>> vmTemplateMatrix = new HashMap<>();
         vmTemplateMatrix.put(

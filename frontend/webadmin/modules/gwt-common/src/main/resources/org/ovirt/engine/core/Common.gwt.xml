@@ -68,6 +68,7 @@
         <include name="common/businessentities/HasErrata.java" />
         <include name="common/businessentities/ChipsetType.java" />
         <include name="common/businessentities/GuestContainer.java" />
+        <include name="common/businessentities/VmWithStatusForExclusiveLock.java" />
 
         <!-- Network business entities -->
         <include name="common/businessentities/network/VdsNetworkInterface.java" />

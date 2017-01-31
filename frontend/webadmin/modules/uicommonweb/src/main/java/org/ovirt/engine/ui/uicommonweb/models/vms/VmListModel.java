@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.VmWithStatusForExclusiveLock;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -1947,43 +1948,42 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     @Override
     protected void updateActionsAvailability() {
-        List items = getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems() : new ArrayList();
+        List items = getSelectedItems() != null && getSelectedItem() != null ? getSelectedItemsWithStatusForExclusiveLock() : new ArrayList();
 
         boolean singleVmSelected = items.size() == 1;
         boolean vmsSelected = items.size() > 0;
 
-        getCloneVmCommand().setIsExecutionAllowed(singleVmSelected);
         getEditCommand().setIsExecutionAllowed(isEditCommandExecutionAllowed(items));
         getRemoveCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.RemoveVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.RemoveVm));
         getRunCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.RunVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.RunVm));
         getCloneVmCommand().setIsExecutionAllowed(singleVmSelected
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CloneVm));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.CloneVm));
         getPauseCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.HibernateVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.HibernateVm));
         getShutdownCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.ShutdownVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.ShutdownVm));
         getStopCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.StopVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.StopVm));
         getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.getInstance().isRebootCommandExecutionAllowed(items));
         getMigrateCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.MigrateVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.MigrateVm));
         getCancelMigrateCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.CancelMigrateVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.CancelMigrateVm));
         getNewTemplateCommand().setIsExecutionAllowed(singleVmSelected
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.AddVmTemplate));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.AddVmTemplate));
         getRunOnceCommand().setIsExecutionAllowed(singleVmSelected
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RunVmOnce));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.RunVmOnce));
         getExportCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ExportVm));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.ExportVm));
         getCreateSnapshotCommand().setIsExecutionAllowed(singleVmSelected
                 && !getSelectedItem().isStateless() && !getSelectedItem().isPreviewSnapshot()
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.CreateAllSnapshotsFromVm));
         getRetrieveIsoImagesCommand().setIsExecutionAllowed(singleVmSelected
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ChangeDisk));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.ChangeDisk));
         getChangeCdCommand().setIsExecutionAllowed(singleVmSelected
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ChangeDisk));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.ChangeDisk));
         getAssignTagsCommand().setIsExecutionAllowed(vmsSelected);
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null || singleVmSelected);
@@ -1991,6 +1991,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         getConsoleConnectCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
         getEditConsoleCommand().setIsExecutionAllowed(singleVmSelected && isConsoleEditEnabled());
         getCancelConvertCommand().setIsExecutionAllowed(isSelectedVmBeingConverted());
+    }
+
+    private List<VmWithStatusForExclusiveLock> getSelectedItemsWithStatusForExclusiveLock() {
+        List<VmWithStatusForExclusiveLock> vmsWithStatusForExclusive = new ArrayList<>();
+        for (VM vm : getSelectedItems()) {
+            vmsWithStatusForExclusive.add(new VmWithStatusForExclusiveLock(vm));
+        }
+        return vmsWithStatusForExclusive;
     }
 
     private boolean isSelectedVmBeingConverted() {
