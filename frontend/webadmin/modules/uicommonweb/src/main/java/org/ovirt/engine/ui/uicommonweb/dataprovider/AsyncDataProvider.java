@@ -67,6 +67,7 @@ import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.VmWithStatusForExclusiveLock;
 import org.ovirt.engine.core.common.businessentities.aaa.AuthzGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -2906,7 +2907,7 @@ public class AsyncDataProvider {
     }
 
     public boolean isRebootCommandExecutionAllowed(List<VM> vms) {
-        if (vms.isEmpty() || !VdcActionUtils.canExecutePartially(vms, VM.class, VdcActionType.RebootVm)) {
+        if (vms.isEmpty() || !VdcActionUtils.canExecutePartially(vms, VmWithStatusForExclusiveLock.class, VdcActionType.RebootVm)) {
             return false;
         }
 
