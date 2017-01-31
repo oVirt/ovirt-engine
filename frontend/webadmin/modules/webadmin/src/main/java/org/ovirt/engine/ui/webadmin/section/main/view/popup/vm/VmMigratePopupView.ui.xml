@@ -38,17 +38,17 @@
                 </b:Row>
                 <b:Row>
                     <b:Column size="SM_12">
-                        <g:Label ui:field="message1" addStyleNames="{style.errorLabel}" />
+                        <g:Label ui:field="message1" text="{constants.vmMigrateHostDisabledVMsInServerClusters}" addStyleNames="{style.errorLabel}" />
                     </b:Column>
                 </b:Row>
                 <b:Row>
                     <b:Column size="SM_12">
-                        <g:Label ui:field="message2" />
+                        <g:Label ui:field="message2" text="{constants.vmMigrateSomeVmsAlreadyRunningOnHost}" />
                     </b:Column>
                 </b:Row>
                 <b:Row>
                     <b:Column size="SM_12">
-                        <g:Label ui:field="message3" addStyleNames="{style.errorLabel}" />
+                        <g:Label ui:field="message3" text="{constants.vmMigrateNoAvailableHost}" addStyleNames="{style.errorLabel}" />
                     </b:Column>
                 </b:Row>
             </b:Container>

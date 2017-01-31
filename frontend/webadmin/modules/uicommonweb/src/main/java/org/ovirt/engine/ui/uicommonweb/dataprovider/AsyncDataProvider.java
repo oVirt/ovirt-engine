@@ -137,6 +137,7 @@ import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetValidHostsForVmsParameters;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmFromOvaQueryParameters;
@@ -1922,6 +1923,12 @@ public class AsyncDataProvider {
             searchParameters.setMaxCount(maxCount);
         }
         Frontend.getInstance().runQuery(QueryType.Search, searchParameters, aQuery);
+    }
+
+    public void getValidHostsForVms(AsyncQuery<List<VDS>> aQuery, List<VM> vms, Guid clusterId) {
+        GetValidHostsForVmsParameters params = new GetValidHostsForVmsParameters(vms, clusterId);
+        aQuery.converterCallback = new ListConverter<>();
+        Frontend.getInstance().runQuery(QueryType.GetValidHostsForVms, params, aQuery);
     }
 
     public void getVmNicList(AsyncQuery<List<VmNetworkInterface>> aQuery, Guid id) {

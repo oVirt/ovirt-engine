@@ -70,6 +70,17 @@ public class MigrateModel extends Model {
         }
     }
 
+    private boolean enableSelectionElements;
+
+    public boolean getEnableSelectionElements() {
+        return enableSelectionElements;
+    }
+
+    public void setEnableSelectionElements(boolean value) {
+        enableSelectionElements = value;
+        onPropertyChanged(new PropertyChangedEventArgs("EnableSelectionElements")); //$NON-NLS-1$
+    }
+
     private boolean isHostSelAvailable;
 
     public boolean getIsHostSelAvailable() {
@@ -142,6 +153,7 @@ public class MigrateModel extends Model {
         this.parentModel = parentModel;
         setHosts(new ListModel<VDS>());
         getHosts().getSelectedItemChangedEvent().addListener(this);
+        setEnableSelectionElements(true);
 
         setSelectHostAutomatically_IsSelected(new EntityModel<Boolean>());
         getSelectHostAutomatically_IsSelected().getEntityChangedEvent().addListener(this);
@@ -159,9 +171,9 @@ public class MigrateModel extends Model {
             return;
         }
 
-        final String clusterName = privateVmList.get(0).getClusterName();
-        AsyncDataProvider.getInstance().getUpHostListByCluster(new AsyncQuery<>(
-                returnValue -> postMigrateGetUpHosts(privateVmList, returnValue)), clusterName);
+        final Guid clusterId = privateVmList.get(0).getClusterId();
+        AsyncDataProvider.getInstance().getValidHostsForVms(new AsyncQuery<>(
+                returnValue -> postMigrateGetUpHosts(privateVmList, returnValue)), privateVmList, clusterId);
     }
 
     private void postMigrateGetUpHosts(List<VM> selectedVms, List<VDS> hosts) {
@@ -169,30 +181,32 @@ public class MigrateModel extends Model {
         setIsSameVdsMessageVisible(false);
         setNoSelAvailable(false);
 
-        Guid run_on_vds = null;
+        Guid runOnVds = null;
+        VM firstSelectedVm = selectedVms.get(0);
         boolean allRunOnSameVds = true;
 
         for (VM item : selectedVms) {
-            if (!item.getClusterId().equals((selectedVms.get(0)).getClusterId())) {
+            if (!item.getClusterId().equals(firstSelectedVm.getClusterId())) {
                 setVmsOnSameCluster(false);
             }
-            if (run_on_vds == null) {
-                run_on_vds = item.getRunOnVds();
-            }
-            else if (allRunOnSameVds && !run_on_vds.equals(item.getRunOnVds())) {
+
+            if (runOnVds == null) {
+                runOnVds = item.getRunOnVds();
+            } else if (allRunOnSameVds && !runOnVds.equals(item.getRunOnVds())) {
                 allRunOnSameVds = false;
             }
         }
 
         setIsHostSelAvailable(getVmsOnSameCluster() && hosts.size() > 0);
 
-        removeUnselectableHosts(hosts, run_on_vds, allRunOnSameVds);
+        removeUnselectableHosts(hosts, runOnVds, allRunOnSameVds);
 
         getCommands().clear();
 
         if (hosts.isEmpty()) {
             setIsHostSelAvailable(false);
             getHosts().setItems(new ArrayList<VDS>());
+            setEnableSelectionElements(false);
 
             if (allRunOnSameVds) {
                 setNoSelAvailable(true);
@@ -209,11 +223,13 @@ public class MigrateModel extends Model {
         }
     }
 
-    private void removeUnselectableHosts(List<VDS> hosts, Guid run_on_vds, boolean allRunOnSameVds) {
+    private void removeUnselectableHosts(List<VDS> hosts,
+                                         Guid runOnVds,
+                                         boolean allRunOnSameVds) {
         if (getVmsOnSameCluster() && allRunOnSameVds) {
             VDS runOnSameVDS = null;
             for (VDS host : hosts) {
-                if (host.getId().equals(run_on_vds)) {
+                if (host.getId().equals(runOnVds)) {
                     runOnSameVDS = host;
                 }
             }

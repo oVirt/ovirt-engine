@@ -22,12 +22,6 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String hostGlusterDisconnectedAlert();
 
-    String migrateHostDisabledVMsInServerClusters();
-
-    String migrateSomeVmsAlreadyRunningOnHost();
-
-    String migrateNoAvailableHost();
-
     String manaulFencePopupMessageLabel(String hostName);
 
     String storageDestroyPopupMessageLabel(String storageName);

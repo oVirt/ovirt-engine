@@ -77,6 +77,7 @@ public enum QueryType implements Serializable {
     GetErrataForVm,
     GetErratumByIdForVm,
     GetAllHostNamesPinnedToVmById,
+    GetValidHostsForVms,
 
     // VdsStatic Queries
     GetVdsStaticByName,

@@ -828,6 +828,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String vmMigratePopupHostsListLabel();
 
+    String vmMigrateHostDisabledVMsInServerClusters();
+
+    String vmMigrateSomeVmsAlreadyRunningOnHost();
+
+    String vmMigrateNoAvailableHost();
+
     String importVm_destCluster();
 
     String importVm_destClusterQuota();

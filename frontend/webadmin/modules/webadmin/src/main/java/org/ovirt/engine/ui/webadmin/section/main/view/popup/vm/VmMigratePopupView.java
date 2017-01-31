@@ -8,8 +8,6 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MigrateModel;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -55,15 +53,12 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private static final ApplicationMessages messages = AssetProvider.getMessages();
-
     @Inject
     public VmMigratePopupView(EventBus eventBus) {
         super(eventBus);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        localize();
         driver.initialize(this);
     }
 
@@ -72,14 +67,6 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         selectDestinationHostEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
 
         hostsListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
-    }
-
-    void localize() {
-        // TODO: these are not 'messages' in the GWT sense, but constants, move these parameterless messages to
-        // constants.
-        message1.setText(messages.migrateHostDisabledVMsInServerClusters());
-        message2.setText(messages.migrateSomeVmsAlreadyRunningOnHost());
-        message3.setText(messages.migrateNoAvailableHost());
     }
 
     private void updateMessages(MigrateModel object) {
@@ -93,10 +80,16 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         driver.edit(object);
 
         updateMessages(object);
+        enableSelectionElements(object.getEnableSelectionElements());
 
         // Listen for changes in the properties of the model in order
         // to update the alerts panel:
-        object.getPropertyChangedEvent().addListener((ev, sender, args) -> updateMessages(object));
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> updateSelectionElements(object));
+    }
+
+    private void updateSelectionElements(final MigrateModel model) {
+        updateMessages(model);
+        enableSelectionElements(model.getEnableSelectionElements());
     }
 
     @Override
@@ -107,5 +100,11 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
     @Override
     public void cleanup() {
         driver.cleanup();
+    }
+
+    private void enableSelectionElements(boolean enableElements) {
+        selectHostAutomaticallyEditor.setEnabled(enableElements);
+        selectDestinationHostEditor.setEnabled(enableElements);
+        hostsListEditor.setEnabled(enableElements);
     }
 }
