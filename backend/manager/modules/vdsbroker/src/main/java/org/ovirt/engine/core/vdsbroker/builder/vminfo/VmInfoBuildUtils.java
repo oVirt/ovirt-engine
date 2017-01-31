@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -37,12 +38,14 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
@@ -72,6 +75,9 @@ public class VmInfoBuildUtils {
     private final StorageQosDao storageQosDao;
     private final VmDeviceDao vmDeviceDao;
     private final VnicProfileDao vnicProfileDao;
+    private final ClusterFeatureDao clusterFeatureDao;
+
+    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
     @Inject
     VmInfoBuildUtils(
@@ -80,13 +86,15 @@ public class VmInfoBuildUtils {
             NetworkQoSDao networkQosDao,
             StorageQosDao storageQosDao,
             VmDeviceDao vmDeviceDao,
-            VnicProfileDao vnicProfileDao) {
+            VnicProfileDao vnicProfileDao,
+            ClusterFeatureDao clusterFeatureDao) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
         this.storageQosDao = Objects.requireNonNull(storageQosDao);
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
         this.vnicProfileDao = Objects.requireNonNull(vnicProfileDao);
+        this.clusterFeatureDao = Objects.requireNonNull(clusterFeatureDao);
     }
 
     OsRepository getOsRepository() {
@@ -561,9 +569,11 @@ public class VmInfoBuildUtils {
 
     public Optional<String> getNetworkDiskType(VM vm, DiskImage diskImage) {
         StorageType storageType = diskImage.getStorageTypes().get(0);
-        if (storageType == StorageType.GLUSTERFS &&
-                FeatureSupported.libgfApiSupported(vm.getCompatibilityVersion())) {
-            return Optional.of(VdsProperties.NETWORK);
+        if (storageType == StorageType.GLUSTERFS) {
+            if (FeatureSupported.libgfApiSupported(vm.getCompatibilityVersion())
+                    || isFeatureSupportedAsAdditionalFeature(vm.getClusterId(), ConfigValues.LibgfApiSupported.name())) {
+                return Optional.of(VdsProperties.NETWORK);
+            }
         }
         return Optional.empty();
     }
@@ -571,5 +581,13 @@ public class VmInfoBuildUtils {
     public Map<String, Object> prepareGlusterDisk(VM vm, DiskImage diskImage, Map<String, Object> struct) {
         getNetworkDiskType(vm, diskImage).ifPresent((diskType) -> struct.put(VdsProperties.DiskType, diskType));
         return struct;
+    }
+
+    private boolean isFeatureSupportedAsAdditionalFeature(Guid clusterId, String featureName) {
+        return clusterFeatureDao.getSupportedFeaturesByClusterId(clusterId).stream()
+        .filter(SupportedAdditionalClusterFeature::isEnabled)
+        .filter(f -> f.getFeature().getName().equals(featureName))
+        .findAny()
+        .isPresent();
     }
 }
