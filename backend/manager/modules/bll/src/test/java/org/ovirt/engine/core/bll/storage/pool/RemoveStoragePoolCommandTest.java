@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -23,8 +23,18 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<StorageDomain> domainsList = new ArrayList<>();
-        List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
-        assertTrue(listReturned.isEmpty());
+        assertTrue(cmd.validateDomainsInMaintenance(domainsList));
+    }
+
+    @Test
+    public void testMaintenanceDomainInList() {
+        StoragePoolParametersBase param = new StoragePoolParametersBase();
+        RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
+        List<StorageDomain> domainsList = new ArrayList<>();
+        StorageDomain tempStorageDomains = new StorageDomain();
+        tempStorageDomains.setStatus(StorageDomainStatus.Maintenance);
+        domainsList.add(tempStorageDomains);
+        assertTrue(cmd.validateDomainsInMaintenance(domainsList));
     }
 
     /**
@@ -38,8 +48,7 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
         StorageDomain tempStorageDomains = new StorageDomain();
         tempStorageDomains.setStatus(StorageDomainStatus.Active);
         domainsList.add(tempStorageDomains);
-        List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
-        assertTrue(!listReturned.isEmpty());
+        assertFalse(cmd.validateDomainsInMaintenance(domainsList));
     }
 
     private void testBusyDomainInList(StorageDomainStatus status) {
@@ -49,8 +58,7 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
         StorageDomain tempStorageDomains = new StorageDomain();
         tempStorageDomains.setStatus(status);
         domainsList.add(tempStorageDomains);
-        List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
-        assertTrue(!listReturned.isEmpty());
+        assertFalse(cmd.validateDomainsInMaintenance(domainsList));
     }
 
     /**
@@ -83,8 +91,7 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
         tempStorageDomains.setStatus(StorageDomainStatus.Active);
         domainsList.add(tempStorageDomains);
 
-        List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
-        assertEquals(2, listReturned.size());
+        assertFalse(cmd.validateDomainsInMaintenance(domainsList));
     }
 
     /**
@@ -117,7 +124,6 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
         tempStorageDomains.setStatus(StorageDomainStatus.Inactive);
         domainsList.add(tempStorageDomains);
 
-        List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
-        assertTrue(listReturned.isEmpty());
+        assertFalse(cmd.validateDomainsInMaintenance(domainsList));
     }
 }

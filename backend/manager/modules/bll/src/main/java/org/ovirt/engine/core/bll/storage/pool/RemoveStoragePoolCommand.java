@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -314,10 +313,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
         final List<StorageDomain> poolDomains =
                 storageDomainDao.getAllForStoragePool(getStoragePool().getId());
-        final List<StorageDomain> activeOrLockedDomains = getActiveOrLockedDomainList(poolDomains);
 
-        if (!activeOrLockedDomains.isEmpty()) {
-            return failValidation(EngineMessage.ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS);
+        if (!validateDomainsInMaintenance(poolDomains)) {
+            return false;
         }
         if (!getParameters().getForceDelete()) {
             if(poolDomains.size() > 1) {
@@ -352,10 +350,12 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
-    protected List<StorageDomain> getActiveOrLockedDomainList(List<StorageDomain> domainsList) {
-        return domainsList.stream()
-                .filter(d -> d.getStatus() == StorageDomainStatus.Active || d.getStatus().isStorageDomainInProcess())
-                .collect(Collectors.toList());
+    protected boolean validateDomainsInMaintenance(List<StorageDomain> domainsList) {
+        if (domainsList.stream().anyMatch(d -> d.getStatus() != StorageDomainStatus.Maintenance)) {
+            return failValidation(EngineMessage.ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS);
+        }
+
+        return true;
     }
 
     @Override
