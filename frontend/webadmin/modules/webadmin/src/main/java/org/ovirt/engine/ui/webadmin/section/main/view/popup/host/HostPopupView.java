@@ -767,7 +767,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         addTextAndLinkAlert(fetchPanel, constants.fetchingHostFingerprint(), object.getSSHFingerPrint());
         providerSearchFilterLabel.setText(constants.hostPopupProviderSearchFilter());
         nameEditor.setFocus(true);
-        hostedEngineTab.setVisible(object.getIsHeSystem());
+        hostedEngineTab.setVisible(object.getIsHeSystem() && object.getIsNew());
     }
 
     private void showDiscoveredHostsWidgets(boolean enabled) {
