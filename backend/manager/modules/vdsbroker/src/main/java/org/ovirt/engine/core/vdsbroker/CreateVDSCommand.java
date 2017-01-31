@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
@@ -19,15 +18,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSGenericException;
 
 public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends ManagingVmCommand<P> {
 
     @Inject
     private VmDao vmDao;
-    @Inject
-    private VmDynamicDao vmDynamicDao;
     @Inject
     private SnapshotDao snapshotDao;
 
@@ -97,17 +93,9 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
     private boolean canExecute() {
         Guid guid = getParameters().getVm().getId();
         String vmName = getParameters().getVm().getName();
-        VmDynamic vmDynamicFromDb = vmDynamicDao.get(guid);
 
         if (resourceManager.isVmDuringInitiating(getParameters().getVm().getId())) {
             log.info("Vm Running failed - vm '{}'({}) already running", vmName, guid);
-            getVDSReturnValue().setReturnValue(vmDynamicFromDb.getStatus());
-            return false;
-        }
-
-        VMStatus vmStatus = vmDynamicFromDb.getStatus();
-        if (vmStatus == VMStatus.ImageLocked) {
-            log.info("VM Running failed - vm '{}'({}) - cannot run vm when image is locked", vmName, guid);
             return false;
         }
 
