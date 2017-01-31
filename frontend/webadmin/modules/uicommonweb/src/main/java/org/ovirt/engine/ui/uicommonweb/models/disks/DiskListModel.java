@@ -542,8 +542,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         getExportCommand().setIsExecutionAllowed(isExportCommandAvailable());
         updateCopyAndMoveCommandAvailability(disks);
 
-        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List) getItems() : null,
-                getSelectedItems() != null ? (List) getSelectedItems() : null,
+        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? getItems() : null,
+                getSelectedItems() != null ? getSelectedItems() : null,
                 getSystemTreeSelectedItem(),
                 getChangeQuotaCommand());
 
