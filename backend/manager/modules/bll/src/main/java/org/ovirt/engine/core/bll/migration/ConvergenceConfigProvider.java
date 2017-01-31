@@ -35,7 +35,7 @@ public class ConvergenceConfigProvider {
     @PostConstruct
     public void initialize() {
         for (Version version : Version.ALL) {
-            initMigrationPolicies(Config.<String>getValue(ConfigValues.MigrationPolicies, version.toString()), version);
+            initMigrationPolicies(Config.getValue(ConfigValues.MigrationPolicies, version.toString()), version);
         }
     }
 
