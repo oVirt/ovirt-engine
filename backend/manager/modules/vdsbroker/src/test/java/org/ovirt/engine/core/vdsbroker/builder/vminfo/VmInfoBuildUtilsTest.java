@@ -3,14 +3,18 @@ package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils.MB_TO_BYTES;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -19,7 +23,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -34,10 +40,13 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -66,12 +75,10 @@ public class VmInfoBuildUtilsTest {
     private static final Guid VM_ID = Guid.newGuid();
     private static final Guid DISK_IMAGE_ID = Guid.newGuid();
     private static final Guid LUN_DISK_ID = Guid.newGuid();
+    private static final Guid CLUSTER_ID = Guid.newGuid();
 
     @ClassRule
     public static InjectorRule injectorRule = new InjectorRule();
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
     @Mock
     private NetworkDao networkDao;
     @Mock
@@ -88,6 +95,8 @@ public class VmInfoBuildUtilsTest {
     private VnicProfileDao vnicProfileDao;
     @Mock
     private VmNicFilterParameterDao vmNicFilterParameterDao;
+    @Mock
+    private ClusterFeatureDao clusterFeatureDao;
 
     @Mock
     private AuditLogDirector auditLogDirector;
@@ -100,6 +109,12 @@ public class VmInfoBuildUtilsTest {
     private VmDevice vmDevice;
 
     private DiskImage diskImage = new DiskImage();
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.LibgfApiSupported, Version.v4_1, false),
+            mockConfig(ConfigValues.LibgfApiSupported, Version.v4_2, true)
+    );
 
     @Before
     public void setUp() {
@@ -280,5 +295,45 @@ public class VmInfoBuildUtilsTest {
         assertEquals("sde", underTest.makeDiskName("scsi", 4));
         assertEquals("fdf", underTest.makeDiskName("fdc", 5));
         assertEquals("vdh", underTest.makeDiskName("virtio", 7));
+    }
+
+    private Set<SupportedAdditionalClusterFeature> getSupportedAdditionalClusterFeatures(Boolean enabled) {
+        SupportedAdditionalClusterFeature clusterFeature = new SupportedAdditionalClusterFeature();
+        AdditionalFeature feature = new AdditionalFeature(Guid.newGuid(), ConfigValues.LibgfApiSupported.name(), Version.v4_1, null, null);
+        clusterFeature.setFeature(feature);
+        clusterFeature.setEnabled(enabled);
+        return Collections.singleton(clusterFeature);
+    }
+
+    @Test
+    public void testGetNetworkDiskTypeForV41ClusterEnabled() {
+        DiskImage diskImage = new DiskImage();
+        diskImage.setStorageTypes(new ArrayList<>(Arrays.asList(StorageType.GLUSTERFS)));
+        VM vm = new VM();
+        vm.setClusterCompatibilityVersion(Version.v4_1);
+        vm.setClusterId(CLUSTER_ID);
+        doReturn(getSupportedAdditionalClusterFeatures(true)).when(clusterFeatureDao).getSupportedFeaturesByClusterId(CLUSTER_ID);
+        assertEquals(VdsProperties.NETWORK, underTest.getNetworkDiskType(vm, diskImage).get());
+    }
+
+    @Test
+    public void testGetNetworkDiskTypeForV41() {
+        DiskImage diskImage = new DiskImage();
+        diskImage.setStorageTypes(new ArrayList<>(Arrays.asList(StorageType.GLUSTERFS)));
+        VM vm = new VM();
+        vm.setClusterCompatibilityVersion(Version.v4_1);
+        vm.setClusterId(CLUSTER_ID);
+        doReturn(getSupportedAdditionalClusterFeatures(false)).when(clusterFeatureDao).getSupportedFeaturesByClusterId(CLUSTER_ID);
+        assertEquals(false, underTest.getNetworkDiskType(vm, diskImage).isPresent());
+    }
+
+    @Test
+    public void testGetNetworkDiskTypeForV42() {
+        DiskImage diskImage = new DiskImage();
+        VM vm = new VM();
+        vm.setClusterCompatibilityVersion(Version.v4_2);
+        vm.setClusterId(CLUSTER_ID);
+        diskImage.setStorageTypes(new ArrayList<>(Arrays.asList(StorageType.GLUSTERFS)));
+        assertEquals(VdsProperties.NETWORK, underTest.getNetworkDiskType(vm, diskImage).get());
     }
 }

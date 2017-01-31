@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -66,6 +67,7 @@ import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -102,6 +104,7 @@ public class VmInfoBuildUtils {
     private final VnicProfileDao vnicProfileDao;
     private final VmNicFilterParameterDao vmNicFilterParameterDao;
     private final AuditLogDirector auditLogDirector;
+    private final ClusterFeatureDao clusterFeatureDao;
 
     private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
@@ -115,7 +118,8 @@ public class VmInfoBuildUtils {
             VnicProfileDao vnicProfileDao,
             VmNicFilterParameterDao vmNicFilterParameterDao,
             NetworkClusterDao networkClusterDao,
-            AuditLogDirector auditLogDirector) {
+            AuditLogDirector auditLogDirector,
+            ClusterFeatureDao clusterFeatureDao) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
@@ -125,6 +129,7 @@ public class VmInfoBuildUtils {
         this.vmNicFilterParameterDao = Objects.requireNonNull(vmNicFilterParameterDao);
         this.networkClusterDao = Objects.requireNonNull(networkClusterDao);
         this.auditLogDirector = Objects.requireNonNull(auditLogDirector);
+        this.clusterFeatureDao = Objects.requireNonNull(clusterFeatureDao);
     }
 
     OsRepository getOsRepository() {
@@ -836,9 +841,11 @@ public class VmInfoBuildUtils {
 
     public Optional<String> getNetworkDiskType(VM vm, DiskImage diskImage) {
         StorageType storageType = diskImage.getStorageTypes().get(0);
-        if (storageType == StorageType.GLUSTERFS &&
-                FeatureSupported.libgfApiSupported(vm.getCompatibilityVersion())) {
-            return Optional.of(VdsProperties.NETWORK);
+        if (storageType == StorageType.GLUSTERFS) {
+            if (FeatureSupported.libgfApiSupported(vm.getCompatibilityVersion())
+                    || isFeatureSupportedAsAdditionalFeature(vm.getClusterId(), ConfigValues.LibgfApiSupported.name())) {
+                return Optional.of(VdsProperties.NETWORK);
+            }
         }
         return Optional.empty();
     }
@@ -846,5 +853,13 @@ public class VmInfoBuildUtils {
     public Map<String, Object> prepareGlusterDisk(VM vm, DiskImage diskImage, Map<String, Object> struct) {
         getNetworkDiskType(vm, diskImage).ifPresent((diskType) -> struct.put(VdsProperties.DiskType, diskType));
         return struct;
+    }
+
+    private boolean isFeatureSupportedAsAdditionalFeature(Guid clusterId, String featureName) {
+        return clusterFeatureDao.getSupportedFeaturesByClusterId(clusterId).stream()
+        .filter(SupportedAdditionalClusterFeature::isEnabled)
+        .filter(f -> f.getFeature().getName().equals(featureName))
+        .findAny()
+        .isPresent();
     }
 }
