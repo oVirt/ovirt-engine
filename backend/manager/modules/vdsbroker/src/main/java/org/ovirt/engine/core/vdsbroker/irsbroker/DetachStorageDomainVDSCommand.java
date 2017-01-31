@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,5 +32,10 @@ public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSComma
                     getParameters().getMasterVersion());
             proceedProxyReturnValue();
         }
+    }
+
+    @Override
+    protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
+        return new IrsOperationFailedNoFailoverException(errorMessage);
     }
 }
