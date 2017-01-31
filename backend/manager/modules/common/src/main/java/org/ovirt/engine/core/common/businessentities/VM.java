@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.locks.LockInfo;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -1243,17 +1241,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     public boolean isFirstRun() {
         return vmStatic.isFirstRun();
-    }
-
-    public boolean isSysprepUsed() {
-        return getInitializationType() == InitializationType.Sysprep
-                && SimpleDependencyInjector.getInstance().get(OsRepository.class).isWindows(getVmOsId())
-                && (getFloppyPath() == null || "".equals(getFloppyPath()));
-    }
-
-    public boolean isCloudInitUsed() {
-        return getInitializationType() == InitializationType.CloudInit
-                && !SimpleDependencyInjector.getInstance().get(OsRepository.class).isWindows(getVmOsId());
     }
 
     private double _actualDiskWithSnapthotsSize;

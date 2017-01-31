@@ -5,11 +5,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -66,18 +69,29 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
 
     private VDSReturnValue runCreateVDSCommand() {
         final VM vm = getParameters().getVm();
-        if (vm.isSysprepUsed()) {
+        if (isSysprepUsed(vm)) {
             // use answer file to run after sysprep.
             CreateVmVDSCommandParameters createVmFromSysPrepParam =
                     new CreateVmVDSCommandParameters(getParameters().getVdsId(), vm);
             createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
             return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromSysPrep, createVmFromSysPrepParam);
-        } else if (vm.isCloudInitUsed()) {
+        } else if (isCloudInitUsed(vm)) {
             return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromCloudInit, getParameters());
         } else {
             // normal run.
             return resourceManager.runVdsCommand(VDSCommandType.Create, getParameters());
         }
+    }
+
+    private boolean isSysprepUsed(VM vm) {
+        return vm.getInitializationType() == InitializationType.Sysprep
+                && SimpleDependencyInjector.getInstance().get(OsRepository.class).isWindows(vm.getVmOsId())
+                && (vm.getFloppyPath() == null || "".equals(vm.getFloppyPath()));
+    }
+
+    private boolean isCloudInitUsed(VM vm) {
+        return vm.getInitializationType() == InitializationType.CloudInit
+                && !SimpleDependencyInjector.getInstance().get(OsRepository.class).isWindows(vm.getVmOsId());
     }
 
     private boolean canExecute() {
