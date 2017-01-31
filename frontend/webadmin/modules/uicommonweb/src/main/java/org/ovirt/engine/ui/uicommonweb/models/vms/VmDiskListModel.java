@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Version;
@@ -571,6 +572,11 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
                 ((DiskImage) disk).getImageStatus() == ImageStatus.OK;
     }
 
+    private boolean isImageDiskPreallocated(Disk disk) {
+        return disk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                ((DiskImage) disk).getImage().getVolumeType() == VolumeType.Preallocated;
+    }
+
     private boolean isMoveCommandAvailable() {
         ArrayList<Disk> disks =
                 getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
@@ -619,7 +625,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         List<Disk> disks = getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
-            if (!isImageDiskOK(disk) || (!isVmDown() && disk.getPlugged())) {
+            if (!isImageDiskOK(disk) || isImageDiskPreallocated(disk) || (!isVmDown() && disk.getPlugged())) {
                 return false;
             }
         }
