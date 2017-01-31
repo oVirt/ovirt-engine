@@ -1550,7 +1550,10 @@ public class VmDeviceUtils {
 
         // If we've added Disk/Interface/CD/Floppy, we have to recalculate boot order
         if (generalType == VmDeviceGeneralType.DISK || generalType == VmDeviceGeneralType.INTERFACE) {
-            updateBootOrder(vmDao.get(id.getVmId()).getStaticData());
+            VM vm = vmDao.get(id.getVmId());
+            if (vm != null) {
+                updateBootOrder(vm.getStaticData());
+            }
         }
 
         return managedDevice;
