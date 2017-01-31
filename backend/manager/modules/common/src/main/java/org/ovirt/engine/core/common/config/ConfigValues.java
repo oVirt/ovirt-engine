@@ -1975,5 +1975,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     VmLeasesSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    DomainXML,
+
     Invalid
 }
