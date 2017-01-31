@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.common.constants;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+
 public class StorageConstants {
     public static final int OVF_MAX_ITEMS_PER_SQL_STATEMENT = 100;
 
@@ -17,4 +23,6 @@ public class StorageConstants {
     public static final String STEP_DEVICE_TYPE = "device";
     public static final String GLUSTER_BACKUP_SERVERS_MNT_OPTION = "backup-volfile-servers";
     public static final String GLUSTER_VOL_SEPARATOR = ":/";
+    public static final Set<StorageDomainStatus> monitoredDomainStatuses =
+            Collections.unmodifiableSet(EnumSet.of(StorageDomainStatus.Active, StorageDomainStatus.Inactive));
 }

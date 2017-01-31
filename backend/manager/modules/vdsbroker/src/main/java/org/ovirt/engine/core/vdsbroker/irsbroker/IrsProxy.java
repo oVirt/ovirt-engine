@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.Event;
@@ -236,7 +237,7 @@ public class IrsProxy {
                                 .getAllForStoragePoolAndStatuses(_storagePoolId, StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus)
                                 .isEmpty()) {
                             storagePoolDomainHelper.updateApplicablePoolDomainsStatuses(_storagePoolId,
-                                    StoragePoolDomainHelper.storageDomainMonitoredStatus,
+                                    StorageConstants.monitoredDomainStatuses,
                                     StorageDomainStatus.Unknown, "no reporting hosts");
                         }
 

@@ -38,9 +38,6 @@ public class StoragePoolDomainHelper {
 
     private static final Logger log = LoggerFactory.getLogger(StoragePoolDomainHelper.class);
 
-    public static final Set<StorageDomainStatus> storageDomainMonitoredStatus =
-            Collections.unmodifiableSet(EnumSet.of(StorageDomainStatus.Inactive, StorageDomainStatus.Active));
-
     public static final Set<VDSStatus> vdsDomainsActiveMonitoringStatus = Collections.unmodifiableSet(EnumSet.of(VDSStatus.Up));
 
     public static final Set<VDSStatus> vdsDomainsMaintenanceMonitoringStatus =
