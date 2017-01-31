@@ -27,67 +27,36 @@ public class OvfVmWriter extends OvfWriter {
     @Override
     protected void writeGeneralData() {
         super.writeGeneralData();
-        _writer.writeStartElement(OvfProperties.NAME);
-        _writer.writeRaw(_vm.getStaticData().getName());
-        _writer.writeEndElement();
-        _writer.writeStartElement(OvfProperties.TEMPLATE_ID);
-        _writer.writeRaw(_vm.getStaticData().getVmtGuid().toString());
-        _writer.writeEndElement();
-        _writer.writeStartElement(OvfProperties.TEMPLATE_NAME);
-        _writer.writeRaw(_vm.getVmtName());
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.NAME, _vm.getStaticData().getName());
+        _writer.writeElement(OvfProperties.TEMPLATE_ID, _vm.getStaticData().getVmtGuid().toString());
+        _writer.writeElement(OvfProperties.TEMPLATE_NAME, _vm.getVmtName());
         if (_vm.getInstanceTypeId() != null ) {
-            _writer.writeStartElement(OvfProperties.INSTANCE_TYPE_ID);
-            _writer.writeRaw(_vm.getInstanceTypeId().toString());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.INSTANCE_TYPE_ID, _vm.getInstanceTypeId().toString());
         }
         if (_vm.getImageTypeId() != null ) {
-            _writer.writeStartElement(OvfProperties.IMAGE_TYPE_ID);
-            _writer.writeRaw(_vm.getImageTypeId().toString());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.IMAGE_TYPE_ID, _vm.getImageTypeId().toString());
         }
-        _writer.writeStartElement(OvfProperties.IS_INITIALIZED);
-        _writer.writeRaw(String.valueOf(_vm.getStaticData().isInitialized()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(OvfProperties.ORIGIN);
-        _writer.writeRaw(String.valueOf(_vm.getOrigin().getValue()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.IS_INITIALIZED, String.valueOf(_vm.getStaticData().isInitialized()));
+        _writer.writeElement(OvfProperties.ORIGIN, String.valueOf(_vm.getOrigin().getValue()));
         if (!StringUtils.isBlank(_vm.getAppList())) {
-            _writer.writeStartElement(OvfProperties.APPLICATIONS_LIST);
-            _writer.writeRaw(_vm.getAppList());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.APPLICATIONS_LIST, _vm.getAppList());
         }
         if (_vm.getQuotaId() != null) {
-            _writer.writeStartElement(OvfProperties.QUOTA_ID);
-            _writer.writeRaw(_vm.getQuotaId().toString());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.QUOTA_ID, _vm.getQuotaId().toString());
         }
-        _writer.writeStartElement(OvfProperties.VM_DEFAULT_DISPLAY_TYPE);
-        _writer.writeRaw(String.valueOf(_vm.getDefaultDisplayType().getValue()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(OvfProperties.TRUSTED_SERVICE);
-        _writer.writeRaw(String.valueOf(_vm.isTrustedService()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.VM_DEFAULT_DISPLAY_TYPE, String.valueOf(_vm.getDefaultDisplayType().getValue()));
+        _writer.writeElement(OvfProperties.TRUSTED_SERVICE, String.valueOf(_vm.isTrustedService()));
 
         if (_vm.getStaticData().getOriginalTemplateGuid() != null) {
-            _writer.writeStartElement(OvfProperties.ORIGINAL_TEMPLATE_ID);
-            _writer.writeRaw(_vm.getStaticData().getOriginalTemplateGuid().toString());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.ORIGINAL_TEMPLATE_ID, _vm.getStaticData().getOriginalTemplateGuid().toString());
         }
 
         if (_vm.getStaticData().getOriginalTemplateName() != null) {
-            _writer.writeStartElement(OvfProperties.ORIGINAL_TEMPLATE_NAME);
-            _writer.writeRaw(_vm.getStaticData().getOriginalTemplateName());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.ORIGINAL_TEMPLATE_NAME, _vm.getStaticData().getOriginalTemplateName());
         }
 
-        _writer.writeStartElement(OvfProperties.USE_HOST_CPU);
-        _writer.writeRaw(String.valueOf(_vm.getStaticData().isUseHostCpuFlags()));
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.USE_LATEST_VERSION);
-        _writer.writeRaw(String.valueOf(_vm.isUseLatestVersion()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.USE_HOST_CPU, String.valueOf(_vm.getStaticData().isUseHostCpuFlags()));
+        _writer.writeElement(OvfProperties.USE_LATEST_VERSION, String.valueOf(_vm.isUseLatestVersion()));
 
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
         // Gets a map that its keys are aliases to fields that should be OVF
@@ -102,10 +71,7 @@ public class OvfVmWriter extends OvfWriter {
     private void writeLogEvent(String name, String value) {
         StringBuilder fullNameSB = new StringBuilder(EXPORT_ONLY_PREFIX);
         fullNameSB.append(name);
-        _writer.writeStartElement(fullNameSB.toString());
-        _writer.writeRaw(value);
-        _writer.writeEndElement();
-
+        _writer.writeElement(fullNameSB.toString(), value);
     }
 
     @Override
@@ -130,15 +96,9 @@ public class OvfVmWriter extends OvfWriter {
 
                 _writer.writeStartElement("ProductSection");
                 _writer.writeAttributeString(OVF_URI, "class", product);
-                _writer.writeStartElement("Info");
-                _writer.writeRaw(app);
-                _writer.writeEndElement();
-                _writer.writeStartElement("Product");
-                _writer.writeRaw(product);
-                _writer.writeEndElement();
-                _writer.writeStartElement("Version");
-                _writer.writeRaw(version);
-                _writer.writeEndElement();
+                _writer.writeElement("Info", app);
+                _writer.writeElement("Product", product);
+                _writer.writeElement("Version", version);
                 _writer.writeEndElement();
             }
         }

@@ -243,212 +243,117 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     protected void writeGeneralData() {
         if (vmBase.getDescription() != null) {
-            _writer.writeStartElement(OvfProperties.DESCRIPTION);
-            _writer.writeRaw(vmBase.getDescription());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.DESCRIPTION, vmBase.getDescription());
         }
 
         if (vmBase.getComment() != null) {
-            _writer.writeStartElement(OvfProperties.COMMENT);
-            _writer.writeRaw(vmBase.getComment());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.COMMENT, vmBase.getComment());
         }
 
-        _writer.writeStartElement(OvfProperties.CREATION_DATE);
-        _writer.writeRaw(OvfParser.localDateToUtcDateString(vmBase.getCreationDate()));
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.EXPORT_DATE);
-        _writer.writeRaw(OvfParser.localDateToUtcDateString(new Date()));
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.DELETE_PROTECTED);
-        _writer.writeRaw(String.valueOf(vmBase.isDeleteProtected()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.CREATION_DATE, OvfParser.localDateToUtcDateString(vmBase.getCreationDate()));
+        _writer.writeElement(OvfProperties.EXPORT_DATE, OvfParser.localDateToUtcDateString(new Date()));
+        _writer.writeElement(OvfProperties.DELETE_PROTECTED, String.valueOf(vmBase.isDeleteProtected()));
 
         if (vmBase.getSsoMethod() != null) {
-            _writer.writeStartElement(OvfProperties.SSO_METHOD);
-            _writer.writeRaw(vmBase.getSsoMethod().toString());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.SSO_METHOD, vmBase.getSsoMethod().toString());
         }
 
-        _writer.writeStartElement(OvfProperties.IS_SMARTCARD_ENABLED);
-        _writer.writeRaw(String.valueOf(vmBase.isSmartcardEnabled()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.IS_SMARTCARD_ENABLED, String.valueOf(vmBase.isSmartcardEnabled()));
 
         if (vmBase.getNumOfIoThreads() != 0) {
-            _writer.writeStartElement(OvfProperties.NUM_OF_IOTHREADS);
-            _writer.writeRaw(String.valueOf(vmBase.getNumOfIoThreads()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.NUM_OF_IOTHREADS, String.valueOf(vmBase.getNumOfIoThreads()));
         }
 
-        _writer.writeStartElement(OvfProperties.TIMEZONE);
-        _writer.writeRaw(vmBase.getTimeZone());
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.DEFAULT_BOOT_SEQUENCE);
-        _writer.writeRaw(String.valueOf(vmBase.getDefaultBootSequence().getValue()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.TIMEZONE, vmBase.getTimeZone());
+        _writer.writeElement(OvfProperties.DEFAULT_BOOT_SEQUENCE, String.valueOf(vmBase.getDefaultBootSequence().getValue()));
 
         if (!StringUtils.isBlank(vmBase.getInitrdUrl())) {
-            _writer.writeStartElement(OvfProperties.INITRD_URL);
-            _writer.writeRaw(vmBase.getInitrdUrl());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.INITRD_URL, vmBase.getInitrdUrl());
         }
         if (!StringUtils.isBlank(vmBase.getKernelUrl())) {
-            _writer.writeStartElement(OvfProperties.KERNEL_URL);
-            _writer.writeRaw(vmBase.getKernelUrl());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.KERNEL_URL, vmBase.getKernelUrl());
         }
         if (!StringUtils.isBlank(vmBase.getKernelParams())) {
-            _writer.writeStartElement(OvfProperties.KERNEL_PARAMS);
-            _writer.writeRaw(vmBase.getKernelParams());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.KERNEL_PARAMS, vmBase.getKernelParams());
         }
 
-        _writer.writeStartElement(OvfProperties.GENERATION);
-        _writer.writeRaw(String.valueOf(vmBase.getDbGeneration()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.GENERATION, String.valueOf(vmBase.getDbGeneration()));
 
         if (vmBase.getCustomCompatibilityVersion() != null) {
-            _writer.writeStartElement(OvfProperties.CUSTOM_COMPATIBILITY_VERSION);
-            _writer.writeRaw(String.valueOf(vmBase.getCustomCompatibilityVersion()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.CUSTOM_COMPATIBILITY_VERSION, String.valueOf(vmBase.getCustomCompatibilityVersion()));
         }
 
-        _writer.writeStartElement(OvfProperties.CLUSTER_COMPATIBILITY_VERSION);
-        _writer.writeRaw(String.valueOf(version));// cluster version the VM/Snapshot originates from
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.VM_TYPE);
-        _writer.writeRaw(String.valueOf(vmBase.getVmType().getValue()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.CLUSTER_COMPATIBILITY_VERSION, String.valueOf(version));// cluster version the VM/Snapshot originates from
+        _writer.writeElement(OvfProperties.VM_TYPE, String.valueOf(vmBase.getVmType().getValue()));
 
         if (vmBase.getTunnelMigration() != null) {
-            _writer.writeStartElement(OvfProperties.TUNNEL_MIGRATION);
-            _writer.writeRaw(String.valueOf(vmBase.getTunnelMigration()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.TUNNEL_MIGRATION, String.valueOf(vmBase.getTunnelMigration()));
         }
 
         if (vmBase.getVncKeyboardLayout() != null) {
-            _writer.writeStartElement(OvfProperties.VNC_KEYBOARD_LAYOUT);
-            _writer.writeRaw(vmBase.getVncKeyboardLayout());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.VNC_KEYBOARD_LAYOUT, vmBase.getVncKeyboardLayout());
         }
 
-        _writer.writeStartElement(OvfProperties.MIN_ALLOCATED_MEMORY);
-        _writer.writeRaw(String.valueOf(vmBase.getMinAllocatedMem()));
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.IS_STATELESS);
-        _writer.writeRaw(String.valueOf(vmBase.isStateless()));
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.IS_RUN_AND_PAUSE);
-        _writer.writeRaw(String.valueOf(vmBase.isRunAndPause()));
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.AUTO_STARTUP);
-        _writer.writeRaw(String.valueOf(vmBase.isAutoStartup()));
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.PRIORITY);
-        _writer.writeRaw(String.valueOf(vmBase.getPriority()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.MIN_ALLOCATED_MEMORY, String.valueOf(vmBase.getMinAllocatedMem()));
+        _writer.writeElement(OvfProperties.IS_STATELESS, String.valueOf(vmBase.isStateless()));
+        _writer.writeElement(OvfProperties.IS_RUN_AND_PAUSE, String.valueOf(vmBase.isRunAndPause()));
+        _writer.writeElement(OvfProperties.AUTO_STARTUP, String.valueOf(vmBase.isAutoStartup()));
+        _writer.writeElement(OvfProperties.PRIORITY, String.valueOf(vmBase.getPriority()));
 
         if (vmBase.getCreatedByUserId() != null) {
-            _writer.writeStartElement(OvfProperties.CREATED_BY_USER_ID);
-            _writer.writeRaw(String.valueOf(vmBase.getCreatedByUserId()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.CREATED_BY_USER_ID, String.valueOf(vmBase.getCreatedByUserId()));
         }
 
         if (vmBase.getMigrationDowntime() != null) {
-            _writer.writeStartElement(OvfProperties.MIGRATION_DOWNTIME);
-            _writer.writeRaw(String.valueOf(vmBase.getMigrationDowntime()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.MIGRATION_DOWNTIME, String.valueOf(vmBase.getMigrationDowntime()));
         }
         writeVmInit();
 
         if (vmBase.getMigrationSupport() != null) {
-            _writer.writeStartElement(OvfProperties.MIGRATION_SUPPORT);
-            _writer.writeRaw(String.valueOf(vmBase.getMigrationSupport().getValue()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.MIGRATION_SUPPORT, String.valueOf(vmBase.getMigrationSupport().getValue()));
         }
 
         // TODO dedicated to multiple hosts - are we breaking any standard here?
         if (vmBase.getDedicatedVmForVdsList().size() > 0) {
             for (Guid hostId : vmBase.getDedicatedVmForVdsList()) {
-                _writer.writeStartElement(OvfProperties.DEDICATED_VM_FOR_VDS);
-                _writer.writeRaw(String.valueOf(hostId));
-                _writer.writeEndElement();
+                _writer.writeElement(OvfProperties.DEDICATED_VM_FOR_VDS, String.valueOf(hostId));
             }
         }
 
         if (vmBase.getSerialNumberPolicy() != null) {
-            _writer.writeStartElement(OvfProperties.SERIAL_NUMBER_POLICY);
-            _writer.writeRaw(String.valueOf(vmBase.getSerialNumberPolicy().getValue()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.SERIAL_NUMBER_POLICY, String.valueOf(vmBase.getSerialNumberPolicy().getValue()));
         }
 
         if (vmBase.getCustomSerialNumber() != null) {
-            _writer.writeStartElement(OvfProperties.CUSTOM_SERIAL_NUMBER);
-            _writer.writeRaw(vmBase.getCustomSerialNumber());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.CUSTOM_SERIAL_NUMBER, vmBase.getCustomSerialNumber());
         }
 
-        _writer.writeStartElement(OvfProperties.IS_BOOT_MENU_ENABLED);
-        _writer.writeRaw(String.valueOf(vmBase.isBootMenuEnabled()));
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.IS_SPICE_FILE_TRANSFER_ENABLED);
-        _writer.writeRaw(String.valueOf(vmBase.isSpiceFileTransferEnabled()));
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.IS_SPICE_COPY_PASTE_ENABLED);
-        _writer.writeRaw(String.valueOf(vmBase.isSpiceCopyPasteEnabled()));
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.ALLOW_CONSOLE_RECONNECT);
-        _writer.writeRaw(String.valueOf(vmBase.isAllowConsoleReconnect()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.IS_BOOT_MENU_ENABLED, String.valueOf(vmBase.isBootMenuEnabled()));
+        _writer.writeElement(OvfProperties.IS_SPICE_FILE_TRANSFER_ENABLED, String.valueOf(vmBase.isSpiceFileTransferEnabled()));
+        _writer.writeElement(OvfProperties.IS_SPICE_COPY_PASTE_ENABLED, String.valueOf(vmBase.isSpiceCopyPasteEnabled()));
+        _writer.writeElement(OvfProperties.ALLOW_CONSOLE_RECONNECT, String.valueOf(vmBase.isAllowConsoleReconnect()));
 
         if (vmBase.getAutoConverge() != null) {
-            _writer.writeStartElement(OvfProperties.IS_AUTO_CONVERGE);
-            _writer.writeRaw(String.valueOf(vmBase.getAutoConverge()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.IS_AUTO_CONVERGE, String.valueOf(vmBase.getAutoConverge()));
         }
 
         if (vmBase.getMigrateCompressed() != null) {
-            _writer.writeStartElement(OvfProperties.IS_MIGRATE_COMPRESSED);
-            _writer.writeRaw(String.valueOf(vmBase.getMigrateCompressed()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.IS_MIGRATE_COMPRESSED, String.valueOf(vmBase.getMigrateCompressed()));
         }
 
         if (vmBase.getMigrationPolicyId() != null) {
-            _writer.writeStartElement(OvfProperties.MIGRATION_POLICY_ID);
-            _writer.writeRaw(String.valueOf(vmBase.getMigrationPolicyId()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.MIGRATION_POLICY_ID, String.valueOf(vmBase.getMigrationPolicyId()));
         }
 
         writeCustomEmulatedMachine();
         writeCustomCpuName();
 
-        _writer.writeStartElement(OvfProperties.PREDEFINED_PROPERTIES);
-        _writer.writeRaw(vmBase.getPredefinedProperties());
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.USER_DEFINED_PROPERTIES);
-        _writer.writeRaw(vmBase.getUserDefinedProperties());
-        _writer.writeEndElement();
-
-        _writer.writeStartElement(OvfProperties.MAX_MEMORY_SIZE_MB);
-        _writer.writeRaw(String.valueOf(vmBase.getMaxMemorySizeMb()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.PREDEFINED_PROPERTIES, vmBase.getPredefinedProperties());
+        _writer.writeElement(OvfProperties.USER_DEFINED_PROPERTIES, vmBase.getUserDefinedProperties());
+        _writer.writeElement(OvfProperties.MAX_MEMORY_SIZE_MB, String.valueOf(vmBase.getMaxMemorySizeMb()));
 
         if (vmBase.getLeaseStorageDomainId() != null) {
-            _writer.writeStartElement(OvfProperties.VM_LEASE);
-            _writer.writeRaw(vmBase.getLeaseStorageDomainId().toString());
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.VM_LEASE, vmBase.getLeaseStorageDomainId().toString());
         }
     }
 
@@ -585,27 +490,13 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     private void writeVmDeviceInfo(VmDevice vmDevice) {
-        _writer.writeStartElement(OvfProperties.VMD_TYPE);
-        _writer.writeRaw(String.valueOf(vmDevice.getType().getValue()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(OvfProperties.VMD_DEVICE);
-        _writer.writeRaw(String.valueOf(vmDevice.getDevice()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(OvfProperties.VMD_ADDRESS);
-        _writer.writeRaw(vmDevice.getAddress());
-        _writer.writeEndElement();
-        _writer.writeStartElement(OvfProperties.VMD_BOOT_ORDER);
-        _writer.writeRaw(String.valueOf(vmDevice.getBootOrder()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(OvfProperties.VMD_IS_PLUGGED);
-        _writer.writeRaw(String.valueOf(vmDevice.getIsPlugged()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(OvfProperties.VMD_IS_READONLY);
-        _writer.writeRaw(String.valueOf(vmDevice.getIsReadOnly()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(OvfProperties.VMD_ALIAS);
-        _writer.writeRaw(String.valueOf(vmDevice.getAlias()));
-        _writer.writeEndElement();
+        _writer.writeElement(OvfProperties.VMD_TYPE, String.valueOf(vmDevice.getType().getValue()));
+        _writer.writeElement(OvfProperties.VMD_DEVICE, String.valueOf(vmDevice.getDevice()));
+        _writer.writeElement(OvfProperties.VMD_ADDRESS, vmDevice.getAddress());
+        _writer.writeElement(OvfProperties.VMD_BOOT_ORDER, String.valueOf(vmDevice.getBootOrder()));
+        _writer.writeElement(OvfProperties.VMD_IS_PLUGGED, String.valueOf(vmDevice.getIsPlugged()));
+        _writer.writeElement(OvfProperties.VMD_IS_READONLY, String.valueOf(vmDevice.getIsReadOnly()));
+        _writer.writeElement(OvfProperties.VMD_ALIAS, String.valueOf(vmDevice.getAlias()));
         if (vmDevice.getSpecParams() != null && vmDevice.getSpecParams().size() != 0
                 && !VmPayload.isPayload(vmDevice.getSpecParams())) {
             _writer.writeStartElement(OvfProperties.VMD_SPEC_PARAMS);
@@ -613,15 +504,12 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeEndElement();
         }
         if (vmDevice.getCustomProperties() != null && !vmDevice.getCustomProperties().isEmpty()) {
-            _writer.writeStartElement(OvfProperties.VMD_CUSTOM_PROP);
-            _writer.writeRaw(DevicePropertiesUtils.getInstance().convertProperties(vmDevice.getCustomProperties()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.VMD_CUSTOM_PROP,
+                    DevicePropertiesUtils.getInstance().convertProperties(vmDevice.getCustomProperties()));
         }
 
         if (vmDevice.getSnapshotId() != null) {
-            _writer.writeStartElement(OvfProperties.VMD_SNAPSHOT_PROP);
-            _writer.writeRaw(String.valueOf(vmDevice.getSnapshotId()));
-            _writer.writeEndElement();
+            _writer.writeElement(OvfProperties.VMD_SNAPSHOT_PROP, String.valueOf(vmDevice.getSnapshotId()));
         }
     }
 
@@ -642,12 +530,8 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeAttributeString(OVF_URI, "id", vmBase.getId().toString());
         _writer.writeAttributeString(OVF_URI, "required", "false");
         _writer.writeAttributeString(XSI_URI, "type", OVF_PREFIX + ":OperatingSystemSection_Type");
-        _writer.writeStartElement("Info");
-        _writer.writeRaw("Guest Operating System");
-        _writer.writeEndElement();
-        _writer.writeStartElement("Description");
-        _writer.writeRaw(osRepository.getUniqueOsNames().get(vmBase.getOsId()));
-        _writer.writeEndElement();
+        _writer.writeElement("Info", "Guest Operating System");
+        _writer.writeElement("Description", osRepository.getUniqueOsNames().get(vmBase.getOsId()));
         _writer.writeEndElement();
     }
 
