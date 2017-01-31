@@ -88,8 +88,8 @@ public class OvfVmReader extends OvfReader {
             image.setLastModifiedDate(last_modified_date);
         }
         VmDevice readDevice = readManagedVmDevice(node, image.getId());
-        image.setPlugged(readDevice.getIsPlugged());
-        image.setReadOnly(readDevice.getIsReadOnly());
+        image.setPlugged(readDevice.isPlugged());
+        image.setReadOnly(readDevice.getReadOnly());
     }
 
     @Override

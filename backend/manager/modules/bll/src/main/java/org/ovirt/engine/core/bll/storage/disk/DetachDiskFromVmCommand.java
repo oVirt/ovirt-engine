@@ -52,7 +52,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             disk = diskHandler.loadDiskFromSnapshot(disk.getId(), vmDevice.getSnapshotId());
         }
 
-        if (vmDevice.getIsPlugged() && getVm().getStatus() != VMStatus.Down) {
+        if (vmDevice.isPlugged() && getVm().getStatus() != VMStatus.Down) {
             if (!isDiskSupportedForPlugUnPlug(getDiskVmElement(), disk.getDiskAlias())) {
                 return false;
             }
@@ -99,7 +99,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
     }
 
     private boolean diskShouldBeUnPlugged() {
-        return Boolean.TRUE.equals(getParameters().isPlugUnPlug() && vmDevice.getIsPlugged()
+        return Boolean.TRUE.equals(getParameters().isPlugUnPlug() && vmDevice.isPlugged()
                 && getVm().getStatus() != VMStatus.Down);
     }
 

@@ -498,7 +498,7 @@ public class VmDevicesMonitoring implements BackendService {
                     processedDeviceIds.add(newDevice.getDeviceId());
                 }
             } else {
-                dbDevice.setIsPlugged(Boolean.TRUE);
+                dbDevice.setPlugged(Boolean.TRUE);
                 dbDevice.setAddress(vdsmDevice.get(VdsProperties.Address).toString());
                 dbDevice.setAlias(StringUtils.defaultString((String) vdsmDevice.get(VdsProperties.Alias)));
                 dbDevice.setLogicalName(logicalName);
@@ -598,9 +598,9 @@ public class VmDevicesMonitoring implements BackendService {
                 continue;
             }
 
-            if (device.getIsManaged()) {
-                if (device.getIsPlugged()) {
-                    device.setIsPlugged(Boolean.FALSE);
+            if (device.isManaged()) {
+                if (device.isPlugged()) {
+                    device.setPlugged(Boolean.FALSE);
                     device.setAddress("");
                     change.addDeviceToUpdate(device);
                     log.debug("VM '{}' managed pluggable device was unplugged : '{}'", vmId, device);

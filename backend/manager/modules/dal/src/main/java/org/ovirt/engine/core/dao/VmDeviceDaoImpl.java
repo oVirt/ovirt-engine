@@ -46,9 +46,9 @@ public class VmDeviceDaoImpl extends
                 .addValue("address", entity.getAddress())
                 .addValue("boot_order", entity.getBootOrder())
                 .addValue("spec_params", SerializationFactory.getSerializer().serialize(entity.getSpecParams()))
-                .addValue("is_managed", entity.getIsManaged())
-                .addValue("is_plugged", entity.getIsPlugged())
-                .addValue("is_readonly", entity.getIsReadOnly())
+                .addValue("is_managed", entity.isManaged())
+                .addValue("is_plugged", entity.isPlugged())
+                .addValue("is_readonly", entity.getReadOnly())
                 .addValue("alias", entity.getAlias())
                 .addValue("custom_properties",
                         SerializationFactory.getSerializer().serialize(entity.getCustomProperties()))
@@ -182,12 +182,12 @@ public class VmDeviceDaoImpl extends
         vmDevice.setBootOrder(rs.getInt("boot_order"));
         vmDevice.setSpecParams(SerializationFactory.getDeserializer()
                 .deserializeOrCreateNew(rs.getString("spec_params"), HashMap.class));
-        vmDevice.setIsManaged(rs.getBoolean("is_managed"));
+        vmDevice.setManaged(rs.getBoolean("is_managed"));
 
         // note - those columns are being used also in DiskVmRowMapper, therefore any related
         // change should be done there as well.
-        vmDevice.setIsPlugged(rs.getBoolean("is_plugged"));
-        vmDevice.setIsReadOnly(rs.getBoolean("is_readonly"));
+        vmDevice.setPlugged(rs.getBoolean("is_plugged"));
+        vmDevice.setReadOnly(rs.getBoolean("is_readonly"));
 
         vmDevice.setAlias(rs.getString("alias"));
         vmDevice.setCustomProperties(SerializationFactory.getDeserializer()
@@ -249,7 +249,7 @@ public class VmDeviceDaoImpl extends
     @Override
     public void updateHotPlugDisk(VmDevice vmDevice) {
         MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
-                .addValue("is_plugged", vmDevice.getIsPlugged());
+                .addValue("is_plugged", vmDevice.isPlugged());
         getCallsHandler().executeModification("UpdateVmDeviceForHotPlugDisk", paramsForUpdate);
     }
 

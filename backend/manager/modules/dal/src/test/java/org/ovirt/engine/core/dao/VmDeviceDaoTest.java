@@ -189,12 +189,12 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     @Test
     public void testUpdateHotPlugDisk() {
         VmDevice vmDevice = dao.get(getExistingEntityId());
-        boolean newPluggedValue = !vmDevice.getIsPlugged();
+        boolean newPluggedValue = !vmDevice.isPlugged();
         assertTrue(StringUtils.isNotBlank(vmDevice.getAddress()));
-        vmDevice.setIsPlugged(newPluggedValue);
+        vmDevice.setPlugged(newPluggedValue);
         dao.updateHotPlugDisk(vmDevice);
         dao.get(getExistingEntityId());
-        assertEquals(vmDevice.getIsPlugged(), newPluggedValue);
+        assertEquals(vmDevice.isPlugged(), newPluggedValue);
     }
 
     @Test

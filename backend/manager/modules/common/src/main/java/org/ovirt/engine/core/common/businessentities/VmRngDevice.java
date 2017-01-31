@@ -117,8 +117,8 @@ public class VmRngDevice extends VmDevice implements Serializable {
         setDevice(VmDeviceType.VIRTIO.getName());
         setType(VmDeviceGeneralType.RNG);
         setAddress("");
-        setIsPlugged(true);
-        setIsManaged(true);
+        setPlugged(true);
+        setManaged(true);
         setSpecParams(specPars);
     }
 

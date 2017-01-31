@@ -76,13 +76,13 @@ public class VmDeviceCommonUtilsTest {
         interfaces.add(vmNic);
 
         VmDevice device = createNetworkInterfaceDevice(plugged, id);
-        device.setIsManaged(true);
+        device.setManaged(true);
         return device;
     }
 
     private VmDevice createUnmanagedNetworkInterface(boolean plugged) {
         VmDevice device = createNetworkInterfaceDevice(plugged, Guid.newGuid());
-        device.setIsManaged(false);
+        device.setManaged(false);
         return device;
     }
 
@@ -90,7 +90,7 @@ public class VmDeviceCommonUtilsTest {
         VmDevice device = new VmDevice();
         device.setType(VmDeviceGeneralType.INTERFACE);
         device.setDevice(VmDeviceType.BRIDGE.getName());
-        device.setIsPlugged(plugged);
+        device.setPlugged(plugged);
         device.setId(new VmDeviceId(id, null));
         return device;
     }
@@ -114,7 +114,7 @@ public class VmDeviceCommonUtilsTest {
         VmDevice device = new VmDevice();
         device.setType(VmDeviceGeneralType.DISK);
         device.setDevice(VmDeviceType.CDROM.getName());
-        device.setIsPlugged(true);
+        device.setPlugged(true);
         device.setId(new VmDeviceId(id, null));
 
         return device;

@@ -53,9 +53,9 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     private RequiredAction getRequiredAction() {
         if (requiredAction == null) {
-            if (!oldVmDevice.getIsPlugged() && getInterface().isPlugged()) {
+            if (!oldVmDevice.isPlugged() && getInterface().isPlugged()) {
                 requiredAction = RequiredAction.PLUG;
-            } else if (oldVmDevice.getIsPlugged() && !getInterface().isPlugged()) {
+            } else if (oldVmDevice.isPlugged() && !getInterface().isPlugged()) {
                 requiredAction = RequiredAction.UNPLUG;
             } else if (liveActionRequired() && propertiesRequiringVmUpdateDeviceWereUpdated()) {
                 requiredAction = RequiredAction.UPDATE_VM_DEVICE;
@@ -66,7 +66,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     }
 
     private boolean liveActionRequired() {
-        return oldVmDevice.getIsPlugged() && getInterface().isPlugged() && getVm().getStatus() == VMStatus.Up;
+        return oldVmDevice.isPlugged() && getInterface().isPlugged() && getVm().getStatus() == VMStatus.Up;
     }
 
     @Override

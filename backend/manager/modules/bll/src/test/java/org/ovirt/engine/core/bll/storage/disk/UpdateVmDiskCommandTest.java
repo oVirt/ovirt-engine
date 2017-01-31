@@ -192,7 +192,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         VmDevice vmDevice = stubVmDevice(diskImageGuid, vmId); // Default RO is false
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
 
-        vmDevice.setIsReadOnly(true);
+        vmDevice.setReadOnly(true);
         command.getParameters().getDiskInfo().setReadOnly(false);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
@@ -469,7 +469,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(oldDisk).when(command).getOldDisk();
 
         VmDevice vmDevice = stubVmDevice(diskImageGuid, vmId);
-        vmDevice.setIsReadOnly(true);
+        vmDevice.setReadOnly(true);
 
         assertFalse(command.validateCanResizeDisk());
         ValidateTestUtils.assertValidationMessages

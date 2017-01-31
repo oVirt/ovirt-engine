@@ -60,7 +60,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         for (Pair<VM, VmDevice> pair : vms) {
             VmDevice device = pair.getSecond();
             if (includeVmsSnapshotAttachedTo || device.getSnapshotId() == null) {
-                MultiValueMapUtils.addToMap(device.getIsPlugged(), pair.getFirst(), result);
+                MultiValueMapUtils.addToMap(device.isPlugged(), pair.getFirst(), result);
             }
         }
         return result;

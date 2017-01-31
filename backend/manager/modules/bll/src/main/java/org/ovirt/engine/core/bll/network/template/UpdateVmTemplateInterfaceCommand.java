@@ -35,7 +35,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
         VmDevice vmDevice =
                 vmDeviceDao.get(new VmDeviceId(getParameters().getInterface().getId(),
                         getParameters().getVmTemplateId()));
-        vmDevice.setIsPlugged(getParameters().getInterface().isPlugged());
+        vmDevice.setPlugged(getParameters().getInterface().isPlugged());
         vmDevice.setDevice(getParameters().getInterface().isPassthrough() ? VmDeviceType.HOST_DEVICE.getName()
                 : VmDeviceType.BRIDGE.getName());
         vmDeviceDao.update(vmDevice);

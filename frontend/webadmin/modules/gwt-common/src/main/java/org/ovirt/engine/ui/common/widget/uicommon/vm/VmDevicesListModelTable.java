@@ -69,7 +69,7 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
         final AbstractCheckboxColumn<VmDevice> readonlyColumn = new AbstractCheckboxColumn<VmDevice>() {
             @Override
             public Boolean getValue(VmDevice object) {
-                return object.getIsReadOnly();
+                return object.getReadOnly();
             }
 
             @Override
@@ -85,7 +85,7 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
         final AbstractCheckboxColumn<VmDevice> pluggedColumn = new AbstractCheckboxColumn<VmDevice>() {
             @Override
             public Boolean getValue(VmDevice object) {
-                return object.getIsPlugged();
+                return object.isPlugged();
             }
 
             @Override
@@ -101,7 +101,7 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
         final AbstractCheckboxColumn<VmDevice> managedColumn = new AbstractCheckboxColumn<VmDevice>() {
             @Override
             public Boolean getValue(VmDevice object) {
-                return object.getIsManaged();
+                return object.isManaged();
             }
 
             @Override

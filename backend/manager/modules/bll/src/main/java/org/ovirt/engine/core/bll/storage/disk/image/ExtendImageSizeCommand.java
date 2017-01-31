@@ -247,7 +247,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
             vmsDiskPluggedTo = new LinkedList<>();
 
             for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
-                if (Boolean.TRUE.equals(pair.getSecond().getIsPlugged()) && pair.getSecond().getSnapshotId() == null) {
+                if (Boolean.TRUE.equals(pair.getSecond().isPlugged()) && pair.getSecond().getSnapshotId() == null) {
                    vmsDiskPluggedTo.add(pair.getFirst());
                 }
             }

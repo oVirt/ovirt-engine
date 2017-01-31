@@ -16,7 +16,7 @@ public class HotUnPlugDiskFromVmCommand<T extends VmDiskOperationParameterBase> 
 
     @Override
     protected void updateDeviceProperties() {
-        oldVmDevice.setIsPlugged(false);
+        oldVmDevice.setPlugged(false);
         oldVmDevice.setAddress("");
         oldVmDevice.setLogicalName(null);
         vmDeviceDao.update(oldVmDevice);

@@ -296,13 +296,13 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
       */
     protected void createDiskWrongPlug(boolean plugged) {
         createVirtIODisk();
-        vmDevice.setIsPlugged(plugged);
+        vmDevice.setPlugged(plugged);
     }
 
     protected void mockVmDevice(boolean plugged) {
         vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId());
-        vmDevice.setIsPlugged(plugged);
+        vmDevice.setPlugged(plugged);
         when(vmDeviceDao.get(any(VmDeviceId.class))).thenReturn(vmDevice);
     }
 

@@ -68,7 +68,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         VmDeviceId vmDeviceId = new VmDeviceId(diskId, vmId);
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(vmDeviceId);
-        vmDevice.setIsPlugged(true);
+        vmDevice.setPlugged(true);
 
         when(vmDao.getVmsListForDisk(diskId, Boolean.TRUE)).thenReturn(Collections.singletonList(vm));
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);

@@ -17,8 +17,8 @@ public class VmHostDevice extends VmDevice {
     public VmHostDevice() {
         setType(VmDeviceGeneralType.HOSTDEV);
         setAddress("");
-        setIsManaged(true);
-        setIsPlugged(true);
+        setManaged(true);
+        setPlugged(true);
         setId(new VmDeviceId());
         setSpecParams(new HashMap<String, Object>());
     }

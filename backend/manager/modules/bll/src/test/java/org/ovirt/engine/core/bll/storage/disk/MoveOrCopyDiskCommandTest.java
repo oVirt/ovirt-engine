@@ -333,9 +333,9 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         VM vm2 = new VM();
         vm2.setStatus(VMStatus.Down);
         VmDevice device1 = new VmDevice();
-        device1.setIsPlugged(true);
+        device1.setPlugged(true);
         VmDevice device2 = new VmDevice();
-        device2.setIsPlugged(true);
+        device2.setPlugged(true);
         vmList.add(new Pair<>(vm1, device1));
         vmList.add(new Pair<>(vm2, device2));
 

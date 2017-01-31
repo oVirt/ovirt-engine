@@ -584,7 +584,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             VnicProfile vnicProfile = vnicProfileDao.get(iface.getVnicProfileId());
             Network network = NetworkHelper.getNetworkByVnicProfile(vnicProfile);
             VmDevice vmDevice = nicDevices.get(new VmDeviceId(iface.getId(), getVmId()));
-            if (network != null && network.isExternal() && vmDevice.getIsPlugged()) {
+            if (network != null && network.isExternal() && vmDevice.isPlugged()) {
                 Provider<?> provider = providerDao.get(network.getProvidedBy().getProviderId());
                 NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
                 Map<String, String> deviceProperties = providerProxy.allocate(network, vnicProfile, iface, getVds());
@@ -806,7 +806,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         VmDeviceGeneralType.DISK,
                         deviceType.getName());
         for (VmDevice vmDevice : vmDevices) {
-            if (vmDevice.getIsManaged() && VmPayload.isPayload(vmDevice.getSpecParams())) {
+            if (vmDevice.isManaged() && VmPayload.isPayload(vmDevice.getSpecParams())) {
                 return new VmPayload(vmDevice);
             }
         }

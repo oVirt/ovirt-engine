@@ -343,7 +343,7 @@ public class VmInfoBuildUtils {
         struct.put(VdsProperties.Device, vmDevice.getDevice());
         struct.put(VdsProperties.Index, "0"); // IDE slot 2 is reserved by VDSM to CDROM
         struct.put(VdsProperties.INTERFACE, VdsProperties.Fdc);
-        struct.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
+        struct.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getReadOnly()));
         struct.put(VdsProperties.Shareable, Boolean.FALSE.toString());
     }
 

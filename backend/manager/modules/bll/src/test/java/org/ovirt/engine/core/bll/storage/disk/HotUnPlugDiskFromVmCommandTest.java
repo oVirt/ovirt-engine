@@ -24,6 +24,6 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
     @Override
     protected void createVirtIODisk() {
         super.createVirtIODisk();
-        vmDevice.setIsPlugged(true);
+        vmDevice.setPlugged(true);
     }
 }

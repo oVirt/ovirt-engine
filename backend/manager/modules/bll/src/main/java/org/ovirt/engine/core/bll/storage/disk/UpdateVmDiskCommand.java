@@ -297,7 +297,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     protected boolean validateCanUpdateReadOnly() {
         if (updateReadOnlyRequested()) {
-            if(getVm().getStatus() != VMStatus.Down && vmDeviceForVm.getIsPlugged()) {
+            if(getVm().getStatus() != VMStatus.Down && vmDeviceForVm.isPlugged()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
             DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(getNewDisk(), getDiskVmElement());
@@ -318,7 +318,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         DiskImage oldDiskImage = (DiskImage) getOldDisk();
 
         if (newDiskImage.getSize() != oldDiskImage.getSize()) {
-            if (Boolean.TRUE.equals(getVmDeviceForVm().getIsReadOnly())) {
+            if (Boolean.TRUE.equals(getVmDeviceForVm().getReadOnly())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
             }
 
@@ -427,7 +427,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
             private void updateDeviceProperties() {
                 if (updateReadOnlyRequested()) {
-                    vmDeviceForVm.setIsReadOnly(getNewDisk().getReadOnly());
+                    vmDeviceForVm.setReadOnly(getNewDisk().getReadOnly());
                     vmDeviceDao.update(vmDeviceForVm);
                 }
 
@@ -783,7 +783,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     protected boolean updateReadOnlyRequested() {
         Boolean readOnlyNewValue = getNewDisk().getReadOnly();
-        return readOnlyNewValue != null && !getVmDeviceForVm().getIsReadOnly().equals(readOnlyNewValue);
+        return readOnlyNewValue != null && !getVmDeviceForVm().getReadOnly().equals(readOnlyNewValue);
     }
 
     protected boolean updateWipeAfterDeleteRequested() {
@@ -849,7 +849,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
                 VM vm = pair.getFirst();
                 vmsDiskOrSnapshotAttachedTo.add(vm);
-                if (Boolean.TRUE.equals(pair.getSecond().getIsPlugged())) {
+                if (Boolean.TRUE.equals(pair.getSecond().isPlugged())) {
                     if (pair.getSecond().getSnapshotId() != null) {
                         vmsDiskSnapshotPluggedTo.add(vm);
                     } else {

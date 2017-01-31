@@ -13,8 +13,8 @@ public class GraphicsDevice extends VmDevice implements Serializable {
         setDevice(type.name().toLowerCase());
         setId(new VmDeviceId());
         setAddress("");
-        setIsPlugged(true);
-        setIsManaged(true);
+        setPlugged(true);
+        setManaged(true);
     }
 
     public GraphicsDevice(VmDevice vmDev) {

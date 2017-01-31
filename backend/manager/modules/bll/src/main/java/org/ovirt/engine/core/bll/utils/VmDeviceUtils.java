@@ -1179,7 +1179,7 @@ public class VmDeviceUtils {
         vmBase.setUnmanagedDeviceList(vmDeviceDao.getUnmanagedDevicesByVmId(vmBase.getId()));
         Map<Guid, VmDevice> vmManagedDeviceMap = new HashMap<>();
         for (VmDevice device : devices) {
-            if (device.getIsManaged()) {
+            if (device.isManaged()) {
                 vmManagedDeviceMap.put(device.getDeviceId(), device);
             }
         }
@@ -1607,7 +1607,7 @@ public class VmDeviceUtils {
                 exportedDevice = vmDevice;
             }
 
-            exportedDevice.setIsPlugged(exportedDevice.getIsPlugged() && canPlugInterface(iface, vmBase));
+            exportedDevice.setPlugged(exportedDevice.isPlugged() && canPlugInterface(iface, vmBase));
             updateImportedVmDevice(vmBase, vmDevice, deviceId, vmDevicesToUpdate);
         }
     }
@@ -1644,7 +1644,7 @@ public class VmDeviceUtils {
                     continue;
 
             }
-            vmDevice.setIsManaged(true);
+            vmDevice.setManaged(true);
             vmDeviceToAdd.add(vmDevice);
         }
 
@@ -1670,8 +1670,8 @@ public class VmDeviceUtils {
         if (exportedDevice != null) {
             vmDevice.setAddress(exportedDevice.getAddress());
             vmDevice.setBootOrder(exportedDevice.getBootOrder());
-            vmDevice.setIsPlugged(exportedDevice.getIsPlugged());
-            vmDevice.setIsReadOnly(exportedDevice.getIsReadOnly());
+            vmDevice.setPlugged(exportedDevice.isPlugged());
+            vmDevice.setReadOnly(exportedDevice.getReadOnly());
             vmDevicesToUpdate.add(vmDevice);
         }
     }

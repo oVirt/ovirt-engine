@@ -568,7 +568,7 @@ public class SnapshotsManager {
      * of the snapshot. Other disks shouldn't be removed as they are not part of the snapshot).
      */
     private boolean deviceCanBeRemoved(VmDevice vmDevice) {
-        if (!vmDevice.getDevice().equals(VmDeviceType.DISK.getName()) || !vmDevice.getIsManaged()) {
+        if (!vmDevice.getDevice().equals(VmDeviceType.DISK.getName()) || !vmDevice.isManaged()) {
             return true;
         }
 

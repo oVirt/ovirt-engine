@@ -110,7 +110,7 @@ public class DiskValidatorTest {
         VmDevice device = new VmDevice();
         device.setId(new VmDeviceId(vm.getId(), disk.getId()));
         device.setSnapshotId(snapshotId);
-        device.setIsPlugged(isPlugged);
+        device.setPlugged(isPlugged);
         return device;
     }
 

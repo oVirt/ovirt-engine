@@ -16,84 +16,51 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comparable<VmDevice> {
 
-    /**
-     * Needed for java serialization/deserialization mechanism.
-     */
     private static final long serialVersionUID = 826297167224396854L;
 
-    /**
-     * Device id and Vm id pair as a compound key
-     */
+    /** Device id and Vm id pair as a compound key */
     private VmDeviceId id;
 
-    /**
-     * The device name.
-     */
+    /** The device name. */
     private String device;
 
-    /**
-     * The device type.
-     */
+    /** The device type. */
     private VmDeviceGeneralType type;
 
-    /**
-     * The device address.
-     */
+    /** The device address. */
     private String address;
 
-    /**
-     * The device boot order (if applicable).
-     */
+    /** The device boot order (if applicable). */
     private int bootOrder;
 
-    /**
-     * The device special parameters.
-     */
+    /** The device special parameters. */
     private Map<String, Object> specParams;
 
-    /**
-     * The device managed/unmanaged flag
-     */
-    private boolean isManaged;
+    /** The device managed/unmanaged flag */
+    private boolean managed;
 
-    /**
-     * The device plugged flag
-     */
-    private boolean isPlugged;
+    /** The device plugged flag */
+    private boolean plugged;
 
-    /**
-     * The device read-only flag
-     */
-    private Boolean isReadOnly;
+    /** The device read-only flag */
+    private Boolean readOnly;
 
-    /**
-     * The device flag indicating whether the device
-     * is a device from a taken snapshot
-     */
+    /** The device flag indicating whether the device is a device from a taken snapshot */
     private Guid snapshotId;
 
-    /**
-     * The device alias.
-     */
+    /** The device alias. */
     private String alias;
 
-    /**
-     * The device logical name.
-     */
+    /** The device logical name. */
     private String logicalName;
 
-    /**
-     * Map of custom properties
-     */
+    /** Map of custom properties */
     private Map<String, String> customProperties;
 
-    /**
-     * The passthrough host device this vm device represents in case there is any.
-     */
+    /** The passthrough host device this vm device represents in case there is any. */
     private String hostDevice;
 
     public VmDevice() {
-        isPlugged = Boolean.FALSE;
         alias = "";
     }
 
@@ -113,9 +80,9 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
         this.address = address;
         this.bootOrder = bootOrder;
         this.specParams = specParams;
-        this.isManaged = isManaged;
-        this.isPlugged = isPlugged;
-        this.isReadOnly = isReadOnly;
+        this.managed = isManaged;
+        this.plugged = isPlugged;
+        this.readOnly = isReadOnly;
         this.alias = alias;
         this.customProperties = customProperties;
         this.snapshotId = snapshotId;
@@ -193,28 +160,28 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
         this.specParams = specParams;
     }
 
-    public boolean getIsManaged() {
-        return isManaged;
+    public boolean isManaged() {
+        return managed;
     }
 
-    public void setIsManaged(boolean isManaged) {
-        this.isManaged = isManaged;
+    public void setManaged(boolean managed) {
+        this.managed = managed;
     }
 
-    public boolean getIsPlugged() {
-        return isPlugged;
+    public boolean isPlugged() {
+        return plugged;
     }
 
-    public void setIsPlugged(boolean isPlugged) {
-        this.isPlugged = isPlugged;
+    public void setPlugged(boolean plugged) {
+        this.plugged = plugged;
     }
 
-    public Boolean getIsReadOnly() {
-        return isReadOnly == null ? Boolean.FALSE : isReadOnly;
+    public Boolean getReadOnly() {
+        return readOnly == null ? Boolean.FALSE : readOnly;
     }
 
-    public void setIsReadOnly(Boolean isReadOnly) {
-        this.isReadOnly = isReadOnly;
+    public void setReadOnly(Boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
     public Guid getSnapshotId() {
@@ -266,9 +233,9 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
                 address,
                 bootOrder,
                 specParams,
-                isManaged,
-                isPlugged,
-                getIsReadOnly(),
+                managed,
+                plugged,
+                getReadOnly(),
                 alias,
                 customProperties,
                 snapshotId,
@@ -292,9 +259,9 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
                 && address.equals(other.address)
                 && bootOrder == other.bootOrder
                 && Objects.equals(specParams, other.specParams)
-                && isManaged == other.isManaged
-                && getIsPlugged() == other.getIsPlugged()
-                && getIsReadOnly().equals(other.getIsReadOnly())
+                && managed == other.managed
+                && isPlugged() == other.isPlugged()
+                && getReadOnly().equals(other.getReadOnly())
                 && alias.equals(other.alias)
                 && Objects.equals(customProperties, other.customProperties)
                 && Objects.equals(snapshotId, other.snapshotId)
@@ -311,9 +278,9 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
                 .append("bootOrder", getBootOrder())
                 .append("specParams", getSpecParams())
                 .append("address", getAddress())
-                .append("managed", getIsManaged())
-                .append("plugged", getIsPlugged())
-                .append("readOnly", getIsReadOnly())
+                .append("managed", isManaged())
+                .append("plugged", isPlugged())
+                .append("readOnly", getReadOnly())
                 .append("deviceAlias", getAlias())
                 .append("customProperties", getCustomProperties())
                 .append("snapshotId", getSnapshotId())

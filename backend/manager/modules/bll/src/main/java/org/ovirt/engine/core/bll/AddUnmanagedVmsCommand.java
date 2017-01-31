@@ -142,7 +142,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
                 GraphicsDevice graphicsDevice = new GraphicsDevice(VmDeviceType.valueOf(deviceName.toUpperCase()));
                 graphicsDevice.setVmId(vmId);
                 graphicsDevice.setDeviceId(Guid.newGuid());
-                graphicsDevice.setIsManaged(true);
+                graphicsDevice.setManaged(true);
                 graphicsDevices.add(graphicsDevice);
             }
         }

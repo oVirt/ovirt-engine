@@ -124,11 +124,11 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
             }
         }
 
-        if (getPlugAction() == VDSCommandType.HotPlugDisk && oldVmDevice.getIsPlugged()) {
+        if (getPlugAction() == VDSCommandType.HotPlugDisk && oldVmDevice.isPlugged()) {
             return failValidation(EngineMessage.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
         }
 
-        if (getPlugAction() == VDSCommandType.HotUnPlugDisk && !oldVmDevice.getIsPlugged()) {
+        if (getPlugAction() == VDSCommandType.HotUnPlugDisk && !oldVmDevice.isPlugged()) {
             return failValidation(EngineMessage.HOT_UNPLUG_DISK_IS_NOT_PLUGGED);
         }
 
@@ -163,7 +163,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
 
     protected void updateDeviceProperties() {
         VmDevice device = vmDeviceDao.get(oldVmDevice.getId());
-        device.setIsPlugged(true);
+        device.setPlugged(true);
         vmDeviceDao.updateHotPlugDisk(device);
     }
 

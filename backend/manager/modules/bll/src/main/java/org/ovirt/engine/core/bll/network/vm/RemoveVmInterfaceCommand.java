@@ -76,7 +76,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         if (vm.getStatus() != VMStatus.Down && vm.getStatus() != VMStatus.ImageLocked
                 && vmDeviceDao
                         .get(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()))
-                        .getIsPlugged()) {
+                        .isPlugged()) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE);
             return false;
         }

@@ -37,7 +37,7 @@ public class VmPayload extends VmDevice implements Serializable {
     public VmPayload(VmDevice dev) {
         super(dev.getId(), dev.getType(), dev.getDevice(),
                 dev.getAddress(), dev.getBootOrder(), dev.getSpecParams(),
-                dev.getIsManaged(), dev.getIsPlugged(), dev.getIsReadOnly(),
+                dev.isManaged(), dev.isPlugged(), dev.getReadOnly(),
                 dev.getAlias(), dev.getCustomProperties(), dev.getSnapshotId(),
                 dev.getLogicalName());
 

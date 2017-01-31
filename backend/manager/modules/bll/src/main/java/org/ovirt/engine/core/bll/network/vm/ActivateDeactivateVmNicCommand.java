@@ -340,7 +340,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     private TransactionMethod<Void> updateDevice() {
         return () -> {
-            vmDevice.setIsPlugged(getParameters().getAction() == PlugAction.PLUG);
+            vmDevice.setPlugged(getParameters().getAction() == PlugAction.PLUG);
             vmDeviceDao.update(vmDevice);
             getVmDeviceUtils().updateBootOrder(getVm().getStaticData());
             return null;

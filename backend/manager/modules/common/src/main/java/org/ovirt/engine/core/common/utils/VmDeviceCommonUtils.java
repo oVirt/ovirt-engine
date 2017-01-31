@@ -178,7 +178,7 @@ public class VmDeviceCommonUtils {
     private static List<VmDevice> getPluggedManagedInterfaces(List<VmDevice> devices) {
         List<VmDevice> result = new ArrayList<>();
         for (VmDevice device : devices) {
-            if ((isHostDevInterface(device) || isBridge(device)) && device.getIsPlugged() && device.getIsManaged()) {
+            if ((isHostDevInterface(device) || isBridge(device)) && device.isPlugged() && device.isManaged()) {
                 result.add(device);
             }
         }
@@ -215,7 +215,7 @@ public class VmDeviceCommonUtils {
      */
     private static int setCDBootOrder(List<VmDevice> devices, int bootOrder) {
         for (VmDevice device : devices) {
-            if (isCD(device) && device.getIsPlugged()) {
+            if (isCD(device) && device.isPlugged()) {
                 device.setBootOrder(++bootOrder);
             }
         }
@@ -377,9 +377,9 @@ public class VmDeviceCommonUtils {
         vmDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
         vmDevice.setType(VmDeviceGeneralType.VIDEO);
         vmDevice.setDevice(vmBase.getDefaultDisplayType().getDefaultVmDeviceType().getName());
-        vmDevice.setIsManaged(true);
-        vmDevice.setIsPlugged(true);
-        vmDevice.setIsReadOnly(false);
+        vmDevice.setManaged(true);
+        vmDevice.setPlugged(true);
+        vmDevice.setReadOnly(false);
         vmDevice.setAddress("");
         vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
     }

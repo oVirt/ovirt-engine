@@ -56,9 +56,9 @@ public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase {
         newVmDevice.setDevice("bridge");
         newVmDevice.setAddress("sample");
         newVmDevice.setBootOrder(1);
-        newVmDevice.setIsManaged(true);
-        newVmDevice.setIsPlugged(true);
-        newVmDevice.setIsReadOnly(false);
+        newVmDevice.setManaged(true);
+        newVmDevice.setPlugged(true);
+        newVmDevice.setReadOnly(false);
         Map<String, String> customProp = new LinkedHashMap<>();
         customProp.put("prop1", "val1");
         newVmDevice.setCustomProperties(customProp);

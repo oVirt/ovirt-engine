@@ -56,7 +56,7 @@ public class DiskValidator {
 
             VM currVm = pair.getFirst();
             if (VMStatus.Down != currVm.getStatus()) {
-                if (vmDevice.getIsPlugged()) {
+                if (vmDevice.isPlugged()) {
                     return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
                 }
             }

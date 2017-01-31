@@ -557,7 +557,7 @@ public class LibvirtVmXmlBuilder {
                 }
                 break;
             case DISK:
-                if (!device.getIsPlugged()) {
+                if (!device.isPlugged()) {
                     break;
                 }
 
@@ -572,7 +572,7 @@ public class LibvirtVmXmlBuilder {
                 }
                 break;
             case INTERFACE:
-                if (device.getIsPlugged()) {
+                if (device.isPlugged()) {
                     interfaceDevices.add(device);
                 }
                 break;
@@ -605,7 +605,7 @@ public class LibvirtVmXmlBuilder {
 
         bootableDevices.forEach(device -> device.setBootOrder(0));
         List<VmDevice> managedAndPluggedBootableDevices = bootableDevices.stream()
-                .filter(VmDevice::getIsManaged)
+                .filter(VmDevice::isManaged)
                 .collect(Collectors.toList());
         BootSequence bootSequence = vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence();
         updateVmDevicesBootOrder(
@@ -654,7 +654,7 @@ public class LibvirtVmXmlBuilder {
                 .collect(Collectors.toMap(VmDevice::getId, dev -> dev));
         for (Disk disk : getSortedDisks(vm)) {
             VmDevice device = deviceIdToDevice.get(new VmDeviceId(disk.getId(), vm.getId()));
-            if (device.getIsManaged()) {
+            if (device.isManaged()) {
                 writeManagedDisk(writer, device, vm, disk);
             }
             // TODO: else
@@ -1086,7 +1086,7 @@ public class LibvirtVmXmlBuilder {
             break;
         }
 
-        if (device.getIsReadOnly()) {
+        if (device.getReadOnly()) {
             writer.writeElement("readonly", null);
         }
 

@@ -189,7 +189,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                     VmDeviceType.CDROM.getName());
             for (VmDevice vmDevice : vmDevices) {
                 // skip unmanaged devices (handled separately)
-                if (!vmDevice.getIsManaged()) {
+                if (!vmDevice.isManaged()) {
                     continue;
                 }
                 // The Payload is loaded in via RunVmCommand to VM.
@@ -244,7 +244,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                     VmDeviceType.FLOPPY.getName());
             for (VmDevice vmDevice : vmDevices) {
                 // skip unmanaged devices (handled separately)
-                if (!vmDevice.getIsManaged()) {
+                if (!vmDevice.isManaged()) {
                     continue;
                 }
                 // more than one device mean that we have payload and should use it
@@ -292,10 +292,10 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             VmDevice vmDevice = vmInfoBuildUtils.getVmDeviceByDiskId(disk.getId(), vm.getId());
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
             // skip unmanaged devices (handled separately)
-            if (!vmDevice.getIsManaged()) {
+            if (!vmDevice.isManaged()) {
                 continue;
             }
-            if (vmDevice.getIsPlugged()) {
+            if (vmDevice.isPlugged()) {
                 struct.put(VdsProperties.Type, vmDevice.getType().getValue());
                 struct.put(VdsProperties.Device, vmDevice.getDevice());
                 switch (dve.getDiskInterface()) {
@@ -380,7 +380,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                         (vmDevice.getSnapshotId() != null)
                                 ? VdsProperties.Transient : String.valueOf(disk.isShareable()));
                 struct.put(VdsProperties.Optional, Boolean.FALSE.toString());
-                struct.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
+                struct.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getReadOnly()));
                 struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
                 struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
                 devices.add(struct);
@@ -425,7 +425,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             VmDevice vmDevice =
                     devicesByDeviceId.get(new VmDeviceId(vmInterface.getId(), vmInterface.getVmId()));
 
-            if (vmDevice != null && vmDevice.getIsManaged() && vmDevice.getIsPlugged()) {
+            if (vmDevice != null && vmDevice.isManaged() && vmDevice.isPlugged()) {
 
                 Map<String, Object> struct = new HashMap<>();
                 VmInterfaceType ifaceType = VmInterfaceType.rtl8139;
@@ -609,7 +609,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                                     VmDeviceType.MEMBALLOON.getName());
             for (VmDevice vmDevice : vmDevices) {
                 // skip unamanged devices (handled separtely)
-                if (!vmDevice.getIsManaged()) {
+                if (!vmDevice.isManaged()) {
                     continue;
                 }
                 addMemBalloonDevice(vmDevice);
@@ -889,7 +889,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         List<VmDevice> vmVideoDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.VIDEO);
         for (VmDevice vmVideoDevice : vmVideoDevices) {
             // skip unmanaged devices (handled separately)
-            if (!vmVideoDevice.getIsManaged()) {
+            if (!vmVideoDevice.isManaged()) {
                 continue;
             }
 

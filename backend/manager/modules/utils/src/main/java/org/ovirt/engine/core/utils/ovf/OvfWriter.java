@@ -494,8 +494,8 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeElement(OvfProperties.VMD_DEVICE, String.valueOf(vmDevice.getDevice()));
         _writer.writeElement(OvfProperties.VMD_ADDRESS, vmDevice.getAddress());
         _writer.writeElement(OvfProperties.VMD_BOOT_ORDER, String.valueOf(vmDevice.getBootOrder()));
-        _writer.writeElement(OvfProperties.VMD_IS_PLUGGED, String.valueOf(vmDevice.getIsPlugged()));
-        _writer.writeElement(OvfProperties.VMD_IS_READONLY, String.valueOf(vmDevice.getIsReadOnly()));
+        _writer.writeElement(OvfProperties.VMD_IS_PLUGGED, String.valueOf(vmDevice.isPlugged()));
+        _writer.writeElement(OvfProperties.VMD_IS_READONLY, String.valueOf(vmDevice.getReadOnly()));
         _writer.writeElement(OvfProperties.VMD_ALIAS, String.valueOf(vmDevice.getAlias()));
         if (vmDevice.getSpecParams() != null && vmDevice.getSpecParams().size() != 0
                 && !VmPayload.isPayload(vmDevice.getSpecParams())) {
