@@ -29,10 +29,12 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -61,6 +63,9 @@ public class DiskValidatorTest {
     private static DiskImage createDiskImage() {
         DiskImage disk = new DiskImage();
         disk.setId(Guid.newGuid());
+        Image image = new Image();
+        image.setVolumeType(VolumeType.Sparse);
+        disk.setImage(image);
         return disk;
     }
 
@@ -269,6 +274,14 @@ public class DiskValidatorTest {
         disk.setWipeAfterDelete(true);
         storageDomain.setSupportsDiscardZeroesData(true);
         assertThat(validator.isSparsifySupported(), isValid());
+    }
+
+    @Test
+    public void sparsifyNotSupportedWhenDiskIsPreallocated() {
+        StorageDomain storageDomain = createStorageDomainForDisk(StorageType.NFS);
+        disk.getImage().setVolumeType(VolumeType.Preallocated);
+        assertThat(validator.isSparsifySupported(), failsWith(EngineMessage
+                .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_FOR_PREALLOCATED));
     }
 
     private LunDisk createLunDisk(ScsiGenericIO sgio) {

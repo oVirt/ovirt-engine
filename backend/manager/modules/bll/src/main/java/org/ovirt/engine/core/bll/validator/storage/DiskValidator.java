@@ -16,6 +16,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -161,24 +163,32 @@ public class DiskValidator {
                     ReplacementUtils.createSetVariableString("diskStorageType", disk.getDiskStorageType()));
         }
 
-        StorageDomain diskStorageDomain = Injector.get(StorageDomainDao.class)
-                .get(((DiskImage) disk).getStorageIds().get(0));
-        if (diskStorageDomain.getStorageType().isFileDomain()) {
-            return ValidationResult.VALID;
+        if (((DiskImage) disk).getImage().getVolumeType() == VolumeType.Preallocated) {
+            return new ValidationResult(
+                    EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_FOR_PREALLOCATED,
+                    getDiskAliasVarReplacement());
         }
-        if (diskStorageDomain.getStorageType().isBlockDomain()) {
-            if (disk.isWipeAfterDelete() && !diskStorageDomain.getSupportsDiscardZeroesData()) {
-                return new ValidationResult(EngineMessage
-                        .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_UNDERLYING_STORAGE_WHEN_WAD_IS_ENABLED,
-                        getStorageDomainNameVarReplacement(diskStorageDomain),
-                        getDiskAliasVarReplacement());
-            }
-            return ValidationResult.VALID;
+
+        StorageDomain diskStorageDomain =
+                Injector.get(StorageDomainDao.class).get(((DiskImage) disk).getStorageIds().get(0));
+        StorageType domainStorageType = diskStorageDomain.getStorageType();
+
+        if (!domainStorageType.isFileDomain() && !domainStorageType.isBlockDomain()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_STORAGE_TYPE,
+                    getDiskAliasVarReplacement(),
+                    getStorageDomainNameVarReplacement(diskStorageDomain),
+                    ReplacementUtils.createSetVariableString("storageType", domainStorageType));
         }
-        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_STORAGE_TYPE,
-                getDiskAliasVarReplacement(),
-                getStorageDomainNameVarReplacement(diskStorageDomain),
-                ReplacementUtils.createSetVariableString("storageType", diskStorageDomain.getStorageType()));
+
+        if (domainStorageType.isBlockDomain() && disk.isWipeAfterDelete()
+                && !diskStorageDomain.getSupportsDiscardZeroesData()) {
+            return new ValidationResult(
+                    EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_UNDERLYING_STORAGE_WHEN_WAD_IS_ENABLED,
+                    getStorageDomainNameVarReplacement(diskStorageDomain),
+                    getDiskAliasVarReplacement());
+        }
+
+        return ValidationResult.VALID;
     }
 
     private String getDiskAliasVarReplacement() {
