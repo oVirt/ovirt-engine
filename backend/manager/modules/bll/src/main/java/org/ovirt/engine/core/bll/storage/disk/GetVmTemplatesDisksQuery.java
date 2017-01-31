@@ -33,14 +33,13 @@ public class GetVmTemplatesDisksQuery<P extends IdQueryParameters> extends Queri
     @Override
     protected void executeQueryCommand() {
         List<Disk> disks = getTemplateDisks();
-        for (Disk disk : disks) {
-            disk.setDiskVmElements(Collections.singletonList(getDiskVmElement(disk)));
-        }
         getQueryReturnValue().setReturnValue(disks);
     }
 
     protected List<Disk> getTemplateDisks() {
-        return diskDao.getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        List<Disk> disks = diskDao.getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        disks.forEach(disk -> disk.setDiskVmElements(Collections.singletonList(getDiskVmElement(disk))));
+        return disks;
     }
 
     private DiskVmElement getDiskVmElement(BaseDisk disk) {
