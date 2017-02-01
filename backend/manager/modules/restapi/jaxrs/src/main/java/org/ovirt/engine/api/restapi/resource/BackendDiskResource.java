@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -206,6 +207,9 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
     @Override
     public Response sparsify(Action action) {
         Disk disk = get();
+        if (disk == null) {
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
+        }
         Guid imageId = getDiskImageId(disk.getImageId());
         StorageJobCommandParameters params = new StorageJobCommandParameters(imageId);
         return doAction(VdcActionType.SparsifyImage, params, action);
