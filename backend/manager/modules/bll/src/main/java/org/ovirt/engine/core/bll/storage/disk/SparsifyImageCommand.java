@@ -58,7 +58,7 @@ public class SparsifyImageCommand<T extends StorageJobCommandParameters> extends
     @Override
     protected void init() {
         super.init();
-        if (getDiskImage().getVmEntityType().isTemplateType()) {
+        if (getDiskImage() != null && getDiskImage().getVmEntityType().isTemplateType()) {
             initVmTemplateId();
         }
     }
