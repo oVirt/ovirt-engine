@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.ejb.Singleton;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.common.predicates.NicIsPluggedPredicate;
 import org.ovirt.engine.core.common.businessentities.VM;

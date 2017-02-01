@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.lsm;
 
-import javax.ejb.Singleton;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.common.AuditLogType;

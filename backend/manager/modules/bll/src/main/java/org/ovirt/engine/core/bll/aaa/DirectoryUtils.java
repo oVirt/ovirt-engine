@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ejb.Singleton;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;

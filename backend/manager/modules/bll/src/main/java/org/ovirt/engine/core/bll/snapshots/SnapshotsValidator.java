@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.snapshots;
 
-import javax.ejb.Singleton;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;

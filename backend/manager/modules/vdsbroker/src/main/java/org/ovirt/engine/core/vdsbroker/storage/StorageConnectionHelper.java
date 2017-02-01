@@ -2,8 +2,8 @@ package org.ovirt.engine.core.vdsbroker.storage;
 
 import java.util.Map;
 
-import javax.ejb.Singleton;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
