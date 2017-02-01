@@ -40,9 +40,4 @@ public class UserPortalSimpleActionTable<T> extends SimpleActionTable<T> {
             AbstractRefreshManager<RefreshPanel> refreshManager) {
         super(dataProvider, resources, eventBus, clientStorage, refreshManager);
     }
-
-    @Override
-    protected String getBarPanelStyleName() {
-        return style.obrand_mainBarPanel();
-    }
 }

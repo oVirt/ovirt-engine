@@ -116,7 +116,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
             }
         },
-        constants.usedMemoryQuota(), "100px"); //$NON-NLS-1$
+        constants.usedMemoryQuota(), "145px"); //$NON-NLS-1$
 
         getTable().addColumn(new AbstractTextColumn<Quota>() {
             @Override
@@ -151,7 +151,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 }
                 return returnVal;
             }
-        }, constants.freeMemory(), "80px"); //$NON-NLS-1$
+        }, constants.freeMemory(), "100px"); //$NON-NLS-1$
 
         getTable().addColumn(new AbstractQuotaPercentColumn<Quota>() {
             @Override
@@ -182,7 +182,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
             }
         },
-        constants.runningCpuQuota(), "100px"); //$NON-NLS-1$
+        constants.runningCpuQuota(), "135px"); //$NON-NLS-1$
 
         getTable().addColumn(new AbstractTextColumn<Quota>() {
             @Override
@@ -218,7 +218,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 }
                 return returnVal;
             }
-        }, constants.freeVcpu(), "80px"); //$NON-NLS-1$
+        }, constants.freeVcpu(), "100px"); //$NON-NLS-1$
 
         getTable().addColumn(new AbstractQuotaPercentColumn<Quota>() {
             @Override
@@ -247,7 +247,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
             }
         },
-        constants.usedStorageQuota(), "100px"); //$NON-NLS-1$
+        constants.usedStorageQuota(), "155px"); //$NON-NLS-1$
 
         getTable().addColumn(new AbstractTextColumn<Quota>() {
             @Override
@@ -281,7 +281,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 }
                 return returnVal;
             }
-        }, constants.freeStorage(), "80px"); //$NON-NLS-1$
+        }, constants.freeStorage(), "100px"); //$NON-NLS-1$
 
         addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuota()) {

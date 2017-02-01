@@ -84,7 +84,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
             }
         };
         customEventIdColumn.makeSortable(AuditLogConditionFieldAutoCompleter.CUSTOM_EVENT_ID);
-        getTable().addColumn(customEventIdColumn, constants.customEventIdEvent(), "100px"); //$NON-NLS-1$
+        getTable().addColumn(customEventIdColumn, constants.customEventIdEvent(), "120px"); //$NON-NLS-1$
     }
 
 }

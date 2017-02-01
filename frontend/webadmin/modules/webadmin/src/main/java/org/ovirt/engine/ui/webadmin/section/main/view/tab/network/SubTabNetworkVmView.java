@@ -67,7 +67,6 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         });
 
         getTable().setTableOverhead(viewRadioGroup);
-        getTable().setTableTopMargin(20);
     }
 
     private void handleRadioButtonClick(ClickEvent event) {

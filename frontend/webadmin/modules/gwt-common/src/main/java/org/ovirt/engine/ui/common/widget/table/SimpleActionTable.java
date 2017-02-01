@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -35,9 +34,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
 
     @UiField
     SimplePanel tableOverhead;
-
-    @UiField
-    HTMLPanel barPanel;
 
     @UiField(provided = true)
     @WithElementId
@@ -85,7 +81,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         super(dataProvider, resources, headerResources, clientStorage);
         this.refreshPanel = refreshManager.getRefreshPanel();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        initStyles();
         refreshPanel.setVisible(false);
         prevPageButton.setVisible(false);
         nextPageButton.setVisible(false);
@@ -108,14 +103,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         toCount.getElement().setInnerText(String.valueOf(getDataProvider().getToCount()));
     }
 
-    void initStyles() {
-        barPanel.setStyleName(getBarPanelStyleName());
-    }
-
-    protected String getBarPanelStyleName() {
-        return style.bar();
-    }
-
     public void showRefreshButton() {
         if (getDataProvider().getModel().getIsTimerDisabled()) {
             refreshPanel.hideRefreshMenuButton();
@@ -128,10 +115,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     public void showItemsCount() {
-    }
-
-    public void setBarStyle(String barStyle) {
-        barPanel.setStyleName(barStyle);
     }
 
     @Override
@@ -156,15 +139,8 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         tableOverhead.setWidget(widget);
     }
 
-    public void setTableTopMargin(int topMargin) {
-        tableHeaderContainer.getElement().getStyle().setMarginTop(topMargin, Unit.PX);
-        tableContainer.getElement().getStyle().setMarginTop(topMargin, Unit.PX);
-    }
-
     interface Style extends CssResource {
         String subTitledButton();
-
-        String bar();
     }
 
 }

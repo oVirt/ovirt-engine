@@ -42,6 +42,8 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
     }
 
     void initTable() {
+        getTable().enableColumnResizing();
+
         PermissionTypeColumn typeColumn = new PermissionTypeColumn();
         typeColumn.setContextMenuTitle(constants.typePermission());
         getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
@@ -53,7 +55,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
             }
         };
         roleColumn.makeSortable();
-        getTable().addColumn(roleColumn, constants.rolePermission());
+        getTable().addColumn(roleColumn, constants.rolePermission(), "560px"); //$NON-NLS-1$
 
         AbstractTextColumn<Permission> permissionColumn = new AbstractObjectNameColumn<Permission>() {
             @Override
@@ -62,7 +64,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
             }
         };
         permissionColumn.makeSortable();
-        getTable().addColumn(permissionColumn, constants.objectPermission());
+        getTable().addColumn(permissionColumn, constants.objectPermission(), "560px");  //$NON-NLS-1$
 
         AbstractTextColumn<Permission> inheritedColumn = new AbstractGroupNameColumn<Permission>() {
             @Override
@@ -71,7 +73,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
             }
         };
         inheritedColumn.makeSortable();
-        getTable().addColumn(inheritedColumn, constants.inheritedPermission());
+        getTable().addColumn(inheritedColumn, constants.inheritedPermission(), "560px");  //$NON-NLS-1$
 
         addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Permission>(constants.removePermission()) {

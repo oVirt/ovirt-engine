@@ -54,8 +54,6 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         userTypes = new UsersTypeRadioGroup();
         userTypes.addChangeHandler(this);
         getTable().setTableOverhead(userTypes);
-        //Needs this to not hide the overhead behind the buttons.
-        getTable().setTableTopMargin(20);
     }
 
     void initTable() {

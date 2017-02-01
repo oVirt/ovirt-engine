@@ -5,29 +5,29 @@
 }
 
 .cellTableHeader {
-    border-top: 1px solid #E3EDF6;
-    border-bottom: 1px solid #E3EDF6;
-    border-right: 1px solid #D7D7E1;
-    padding: 0 0 0 2px;
-    margin-right: 3px;
+    padding: 0px 0px 0px 4px;
     text-align: left;
-    color: #111111;
-    font-size: 11px;
-    background-color: #F0F2FF;
-    height: 28px;
+    background-image: linear-gradient(to bottom, #fafafa 0, #ededed 100%);
+    height: 27px;
     line-height: 28px;
     white-space: nowrap;
+    position: relative;
+    border-top: 0px solid #d1d1d1;
+    border-bottom: 0px solid #d1d1d1;
+    border-left: 1px solid #d1d1d1;
+    border-right: 1px solid #d1d1d1;
 }
 
 .cellTableCell {
-    padding: 0 8px 0 2px;
+    padding: 0px 4px 0px 4px;
     height: 26px !important;
-    border-top: 0;
-    border-bottom: 1px solid #EDEEF0;
-    border-right: 0;
-    border-left: 0;
+    border: 1px solid #d1d1d1;
     white-space: nowrap;
     cursor: pointer;
+}
+
+.cellTableCell > div > div {
+    margin-top: 2px;
 }
 
 .cellTableEvenRow {
@@ -35,11 +35,12 @@
 }
 
 .cellTableOddRow {
-    background-color: #f3f7fb;
+    background-color: #f5f5f5;
 }
 
 .cellTableHoveredRow {
-    background-color: #eee;
+    background-color: #def3ff;
+    border-bottom-color: #7dc3e8;
 }
 
 .cellTableSelectedRow a {
@@ -47,7 +48,7 @@
 }
 
 .cellTableSelectedRow {
-    background-color: #C3D0E0;
+    background-color: #0088ce;
     color: white;
     overflow: auto;
 }

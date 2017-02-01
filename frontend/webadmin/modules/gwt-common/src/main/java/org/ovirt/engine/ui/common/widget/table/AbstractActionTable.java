@@ -290,11 +290,16 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         // Default to 'no items to display'
         this.table.setEmptyTableWidget(new NoItemsLabel());
 
-        // column resizing persistence -- can be enabled only when the tableHeader widget is visible
         if (isTableHeaderVisible()) {
+            // column resizing persistence -- can be enabled only when the tableHeader widget is visible
             tableHeader.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
             table.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
+
+            // hide the table widget's default header and the header widget's body
+            table.getElement().addClassName("aat-hide-header"); //$NON-NLS-1$
+            tableHeader.getElement().addClassName("aat-hide-body"); //$NON-NLS-1$
         }
+
         addModelSearchStringChangeListener(dataProvider.getModel());
     }
 
@@ -452,6 +457,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         tableContainer.add(table);
         tableHeaderContainer.setWidget(tableHeader);
         tableHeaderContainer.setVisible(isTableHeaderVisible());
+
+        table.getElement().addClassName("aat-table"); //$NON-NLS-1$
+        tableHeader.getElement().addClassName("aat-header"); //$NON-NLS-1$
 
         // Use relative positioning for tableHeader, in order to align it with main table
         tableHeader.getElement().getStyle().setPosition(Position.RELATIVE);

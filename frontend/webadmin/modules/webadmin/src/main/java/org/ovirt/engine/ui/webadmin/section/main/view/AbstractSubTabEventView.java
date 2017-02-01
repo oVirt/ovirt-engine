@@ -40,14 +40,13 @@ public abstract class AbstractSubTabEventView<I, M extends ListWithDetailsModel,
     protected void initTable() {
         super.initTable();
 
-        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<AuditLog>(constants.details(),
                 CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getModelBoundTableWidget().getModel().getDetailsCommand();
             }
-        }));
+        });
     }
 
     protected abstract void generateIds();

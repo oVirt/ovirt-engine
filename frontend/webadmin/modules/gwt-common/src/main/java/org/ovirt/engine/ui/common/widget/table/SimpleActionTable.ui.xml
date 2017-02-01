@@ -15,20 +15,6 @@
             height: 100%;
         }
 
-        .bar {
-            padding-top: 4px;
-        }
-
-        .refreshButton {
-            float: right;
-            font-size: 12px;
-            height: 14px;
-            width: 12px;
-            margin-right: 5px;
-            background: transparent;
-            border: 1px solid transparent;
-        }
-
         .refreshPanel {
             float: right;
             cursor: pointer;
@@ -37,42 +23,7 @@
         }
 
         .headerContainer {
-            height: 28px;
-            top: 34px;
-            bottom: 0px;
-            left: 0px;
-            right: 0px;
-            background-color: #F0F2FF;
-        }
-
-        .prevButtonStyle {
-            width: 10px;
-            float: right;
-            padding-right: 3px;
-            margin-top: -2px;
-            border: 0px;
-            background: transparent;
-        }
-
-        .nextButtonStyle {
-            width: 10px;
-            float: right;
-            padding-left: 10px;
-            padding-right: 15px;
-            margin-top: -2px;
-            border: 0px;
-            background: transparent;
-        }
-
-        .itemsCountLabelStyle {
-            font-weight: bold;
-            float: right;
-            margin-top: 5px;
-            padding-left: 5px;
-            min-width: 30px;
-            text-align: center;
-            font-size: 11px;
-            color: #666
+            background-image: linear-gradient(to bottom, #fafafa 0, #ededed 100%);
         }
 
         .subTitledButton {
@@ -96,7 +47,6 @@
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.panel} obrand_main_tab">
-        <g:HTMLPanel ui:field="barPanel" addStyleNames="{style.bar}" />
         <g:SimplePanel ui:field="tableOverhead" addStyleNames="{style.tableOverhead}" />
         <g:SimplePanel ui:field="tableHeaderContainer" addStyleNames="{style.headerContainer}" />
         <g:FlowPanel ui:field="tableContainer" />

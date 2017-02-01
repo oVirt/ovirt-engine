@@ -332,6 +332,11 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
         columnVisibleMap.put(column, visible);
 
+        column.setCellStyleNames(visible ? "grid-visible" : "grid-hidden"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        int index = getColumnIndex(column);
+        addColumnStyleName(index, visible ? "grid-visible" : "grid-hidden"); //$NON-NLS-1$ //$NON-NLS-2$
+
         if (columnResizePersistenceEnabled) {
             String persistedWidth = readColumnWidth(column);
             if (persistedWidth != null) {
