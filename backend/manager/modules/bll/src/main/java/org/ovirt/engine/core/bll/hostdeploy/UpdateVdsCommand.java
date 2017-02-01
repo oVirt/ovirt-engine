@@ -97,7 +97,6 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         getParameters().getPassword()))
                 && validate(validator.updatePortAllowed())
                 && validate(validator.clusterNotChanged())
-                && validate(validator.changeProtocolAllowed())
                 && validate(validator.hostProviderExists())
                 && validate(validator.hostProviderTypeMatches())
                 && validateNetworkProviderConfiguration()

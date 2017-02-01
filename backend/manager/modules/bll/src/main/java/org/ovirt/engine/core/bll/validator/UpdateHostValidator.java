@@ -107,12 +107,6 @@ public class UpdateHostValidator extends HostValidator {
                 .unless(oldHost.getClusterId().equals(getHost().getClusterId()));
     }
 
-    public ValidationResult changeProtocolAllowed() {
-        return ValidationResult.failWith(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE)
-                .when(oldHost.getStatus() != VDSStatus.Maintenance
-                        && oldHost.getStatus() != VDSStatus.InstallingOS);
-    }
-
     public ValidationResult hostProviderExists() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST)
                 .when(getHost().getHostProviderId() != null && getProvider() == null);
