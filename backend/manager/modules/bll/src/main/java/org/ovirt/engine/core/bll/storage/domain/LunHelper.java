@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import javax.ejb.Singleton;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.storage.connection.ISCSIStorageHelper;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
