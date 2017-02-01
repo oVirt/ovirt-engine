@@ -68,10 +68,10 @@ public enum StepEnum {
         }
     }
 
-    private StepEnum() {
+    StepEnum() {
     }
 
-    private StepEnum(AsyncTaskType asyncTaskType) {
+    StepEnum(AsyncTaskType asyncTaskType) {
         this.asyncTaskType = asyncTaskType;
     }
 
