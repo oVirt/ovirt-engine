@@ -109,6 +109,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Inject
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
 
+    @Inject
+    private MemoryStorageHandler memoryStorageHandler;
+
     private List<DiskImage> imageList;
 
     private MacPool macPool;
@@ -557,7 +560,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         List<DiskImage> memoryDisksList =
                 MemoryUtils.createDiskDummies(vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm()),
                         MemoryUtils.METADATA_SIZE_IN_BYTES);
-        StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
+        StorageDomain storageDomain = memoryStorageHandler.findStorageDomainForMemory(
                 getParameters().getStoragePoolId(), memoryDisksList, getVmDisksDummies(), getVm());
         disksList.addAll(memoryDisksList);
         return storageDomain;

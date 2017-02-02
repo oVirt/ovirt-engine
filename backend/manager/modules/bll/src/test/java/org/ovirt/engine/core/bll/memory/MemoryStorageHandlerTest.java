@@ -36,7 +36,7 @@ public class MemoryStorageHandlerTest {
     private List<DiskImage> vmDisks;
 
     @Spy
-    private MemoryStorageHandler memoryStorageHandler = MemoryStorageHandler.getInstance();
+    private MemoryStorageHandler memoryStorageHandler;
 
     @Before
     public void setUp() {

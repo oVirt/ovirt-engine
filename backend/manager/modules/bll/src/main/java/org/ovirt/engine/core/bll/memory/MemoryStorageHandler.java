@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainNumberOfVmDisksComparator;
 import org.ovirt.engine.core.bll.memory.sdfilters.StorageDomainSpaceRequirementsFilter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -22,18 +24,10 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class MemoryStorageHandler {
 
-    private static final MemoryStorageHandler instance = new MemoryStorageHandler();
-
     private static final Logger log = LoggerFactory.getLogger(MemoryStorageHandler.class);
-
-    private MemoryStorageHandler() {
-    }
-
-    public static MemoryStorageHandler getInstance() {
-        return instance;
-    }
 
     /**
      * Returns a <code>StorageDomain</code> in the given <code>StoragePool</code> that has
@@ -89,7 +83,7 @@ public class MemoryStorageHandler {
     protected List<Predicate<StorageDomain>> getStorageDomainFilters(List<DiskImage> memoryDisks) {
         return Arrays.asList(ACTIVE_DOMAINS_PREDICATE,
                 DATA_DOMAINS_PREDICATE,
-                new StorageDomainSpaceRequirementsFilter(memoryDisks));
+                new StorageDomainSpaceRequirementsFilter(this, memoryDisks));
     }
 
     protected List<Comparator<StorageDomain>> getStorageDomainComparators(Collection<DiskImage> vmDisks) {

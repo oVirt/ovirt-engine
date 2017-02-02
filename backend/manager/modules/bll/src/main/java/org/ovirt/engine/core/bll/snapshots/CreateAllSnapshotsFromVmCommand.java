@@ -93,6 +93,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Inject
     private VmOverheadCalculator vmOverheadCalculator;
+    @Inject
+    private MemoryStorageHandler memoryStorageHandler;
 
     public CreateAllSnapshotsFromVmCommand(Guid commandId) {
         super(commandId);
@@ -261,7 +263,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     public Guid getStorageDomainIdForVmMemory(List<DiskImage> memoryDisksList) {
         if (cachedStorageDomainId.equals(Guid.Empty) && getVm() != null) {
-            StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
+            StorageDomain storageDomain = memoryStorageHandler.findStorageDomainForMemory(
                     getVm().getStoragePoolId(), memoryDisksList, getDisksList(), getVm());
             if (storageDomain != null) {
                 cachedStorageDomainId = storageDomain.getId();

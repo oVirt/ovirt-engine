@@ -11,22 +11,20 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
 public class StorageDomainSpaceRequirementsFilter implements Predicate<StorageDomain> {
 
+    private MemoryStorageHandler memoryStorageHandler;
     private List<DiskImage> memoryDisks;
 
-    public StorageDomainSpaceRequirementsFilter(List<DiskImage> memoryDisks) {
+    public StorageDomainSpaceRequirementsFilter(MemoryStorageHandler memoryStorageHandler, List<DiskImage> memoryDisks) {
+        this.memoryStorageHandler = memoryStorageHandler;
         this.memoryDisks = memoryDisks;
     }
 
     @Override
     public boolean test(StorageDomain storageDomain) {
-        updateDisksStorage(storageDomain, memoryDisks);
+        memoryStorageHandler.updateDisksStorage(storageDomain, memoryDisks);
         StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
         return storageDomainValidator.isDomainWithinThresholds().isValid() &&
                 storageDomainValidator.hasSpaceForClonedDisks(memoryDisks).isValid();
-    }
-
-    protected void updateDisksStorage(StorageDomain storageDomain, List<DiskImage> disksList) {
-        MemoryStorageHandler.getInstance().updateDisksStorage(storageDomain, disksList);
     }
 
     protected StorageDomainValidator getStorageDomainValidator(StorageDomain storageDomain) {

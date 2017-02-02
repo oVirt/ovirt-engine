@@ -47,6 +47,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Inject
     private VmOverheadCalculator vmOverheadCalculator;
+    @Inject
+    private MemoryStorageHandler memoryStorageHandler;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -84,7 +86,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             List<DiskImage> diskDummiesForMemSize = MemoryUtils.createDiskDummies(
                     vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm()),
                     MemoryUtils.METADATA_SIZE_IN_BYTES);
-            StorageDomain storageDomain = MemoryStorageHandler.getInstance().findStorageDomainForMemory(
+            StorageDomain storageDomain = memoryStorageHandler.findStorageDomainForMemory(
                     getStoragePoolId(), diskDummiesForMemSize,
                     DisksFilter.filterImageDisks(diskDao.getAllForVm(getVmId())), getVm());
             if (storageDomain != null) {

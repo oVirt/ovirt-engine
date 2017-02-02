@@ -2,10 +2,8 @@ package org.ovirt.engine.core.bll.memory.sdfilters;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -18,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -64,8 +63,7 @@ public class StorageDomainSpaceRequirementsFilterTest {
     }
 
     private void initFilter() {
-        filter = spy(new StorageDomainSpaceRequirementsFilter(memoryDisks));
-        doNothing().when(filter).updateDisksStorage(any(StorageDomain.class), anyList());
+        filter = spy(new StorageDomainSpaceRequirementsFilter(mock(MemoryStorageHandler.class), memoryDisks));
         doReturn(storageDomainValidator).when(filter).getStorageDomainValidator(storageDomain);
     }
 
