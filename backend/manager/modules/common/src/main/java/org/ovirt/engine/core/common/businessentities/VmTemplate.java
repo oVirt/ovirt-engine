@@ -47,9 +47,6 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private HashMap<Guid, DiskImage> diskTemplateMap;
 
-    @EditableVmTemplateField
-    private double actualDiskSize;
-
     private VmEntityType templateType;
 
     private ArchitectureType clusterArch;
@@ -276,21 +273,13 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     }
 
     public double getActualDiskSize() {
-        if (actualDiskSize == 0 && getDiskImageMap() != null) {
-            for (Disk disk : getDiskImageMap().values()) {
-                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    actualDiskSize += ((DiskImage) disk).getActualSize();
-                }
+        double result = 0;
+        for (Disk disk : getDiskImageMap().values()) {
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                result += ((DiskImage) disk).getActualSize();
             }
         }
-        return actualDiskSize;
-    }
-
-    /**
-     * empty setters to fix CXF issue
-     */
-    public void setActualDiskSize(double actualDiskSize) {
-        // Purposely empty
+        return result;
     }
 
     @JsonIgnore
