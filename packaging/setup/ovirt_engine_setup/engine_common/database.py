@@ -32,9 +32,7 @@ from otopi import util
 from ovirt_engine import util as outil
 
 from ovirt_engine_setup import util as osetuputil
-from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
-from ovirt_engine_setup.engine_common.constants import ProvisioningEnv
 
 from ovirt_setup_lib import hostname as osetuphostname
 from ovirt_setup_lib import dialog
@@ -972,12 +970,12 @@ class OvirtUtils(base.Base):
                     expected,
                 )
                 invalid_config_items.append({
-                        'key': key,
-                        'current': current,
-                        'expected': expected,
-                        'format_str': item['error_msg'],
-                        'name': name,
-                        'pg_host': self._environment[self._dbenvkeys[DEK.HOST]]
+                    'key': key,
+                    'current': current,
+                    'expected': expected,
+                    'format_str': item['error_msg'],
+                    'name': name,
+                    'pg_host': self._environment[self._dbenvkeys[DEK.HOST]]
                 })
         return invalid_config_items
 

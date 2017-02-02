@@ -50,9 +50,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
-        condition=lambda self: (self.environment[
-                    oenginecons.CoreEnv.ENABLE
-                ])
+        condition=lambda self: (self.environment[oenginecons.CoreEnv.ENABLE])
     )
     def _init(self):
         self.environment.setdefault(
@@ -71,18 +69,18 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: (
-                self.environment[
-                    oenginecons.CoreEnv.ENABLE
-                ] and not self.environment[
-                    oenginecons.EngineDBEnv.NEW_DATABASE
-                ]
+            self.environment[
+                oenginecons.CoreEnv.ENABLE
+            ] and not self.environment[
+                oenginecons.EngineDBEnv.NEW_DATABASE
+            ]
         ),
         before=(
-                oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
+            oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
         ),
         after=(
-                oengcommcons.Stages.DB_CONNECTION_STATUS,
-                oengcommcons.Stages.DIALOG_TITLES_S_ENGINE,
+            oengcommcons.Stages.DB_CONNECTION_STATUS,
+            oengcommcons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
     )
     def _customization(self):
