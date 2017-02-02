@@ -109,7 +109,7 @@ public class MemoryStorageHandler {
         Comparator<StorageDomain> comp =
                 getStorageDomainComparators(vmDisks).stream().reduce(Comparator::thenComparing).orElse(null);
 
-        Collections.sort(domainsInPool, comp);
+        domainsInPool.sort(comp);
     }
 
     private void updateDiskVolumeType(StorageType storageType, DiskImage disk) {
