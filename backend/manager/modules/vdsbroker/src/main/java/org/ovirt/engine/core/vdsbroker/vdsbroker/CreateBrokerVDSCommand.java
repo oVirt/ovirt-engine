@@ -43,7 +43,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         buildVmData();
         log.info("VM {}", createInfo);
         if ((boolean) Config.getValue(ConfigValues.DomainXML)) {
-            String libvirtXml = Injector.injectMembers(new LibvirtVmXmlBuilder()).build(createInfo, vm, getVds().getId());
+            String libvirtXml = Injector.injectMembers(new LibvirtVmXmlBuilder(createInfo, vm, getVds().getId())).build();
             String prettyLibvirtXml = prettify(libvirtXml);
             if (prettyLibvirtXml != null) {
                 log.info("VM {}", prettyLibvirtXml);

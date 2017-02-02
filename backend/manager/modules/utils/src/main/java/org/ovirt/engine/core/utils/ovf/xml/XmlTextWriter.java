@@ -132,6 +132,14 @@ public class XmlTextWriter {
         writeEndElement();
     }
 
+    /**
+     * Write out an entire element without content.
+     * @param name The name of the element.
+     */
+    public void writeElement(String name) {
+        writeElement(name, null);
+    }
+
     public String getStringXML() {
         try {
             writer.writeEndElement();

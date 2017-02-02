@@ -3,12 +3,14 @@ package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 import static org.ovirt.engine.core.common.utils.VmDeviceCommonUtils.updateVmDevicesBootOrder;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -93,36 +94,46 @@ public class LibvirtVmXmlBuilder {
     private OsRepository osRepository;
     private String serialConsolePath;
     private boolean hypervEnabled;
+    private XmlTextWriter writer;
 
-    public LibvirtVmXmlBuilder() {
-        osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+    private Map<String, Object> createInfo;
+    private VM vm;
+    private Guid vdsId;
+
+    public LibvirtVmXmlBuilder(Map<String, Object> createInfo, VM vm, Guid vdsId) {
+        this.createInfo = createInfo;
+        this.vm = vm;
+        this.vdsId = vdsId;
     }
 
-    public String build(Map<String, Object> createInfo, VM vm, Guid vdsId) {
+    @PostConstruct
+    private void init() {
+        osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         hypervEnabled = osRepository.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion());
-        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vm.getId());
+        writer = new XmlTextWriter();
+    }
 
-        XmlTextWriter writer = new XmlTextWriter();
-        writeHeader(writer);
-        writeName(writer, vm);
-        writeId(writer, vm);
-        writeMemory(writer, vm);
-        writeIoThreads(writer, vm);
-        writeMaxMemory(writer, vm);
-        writevCpu(writer, createInfo, vm);
-        writeMetadata(writer);
-        writeSystemInfo(writer, vm, vdsId);
-        writeClock(writer, vm);
-        writeFeatures(writer, vm);
-        writeCpu(writer, createInfo, vm);
-        writeNumaTune(writer, createInfo, vm);
-        writeDevices(writer, devices, vm);
+    public String build() {
+        writeHeader();
+        writeName();
+        writeId();
+        writeMemory();
+        writeIoThreads();
+        writeMaxMemory();
+        writevCpu();
+        writeMetadata();
+        writeSystemInfo();
+        writeClock();
+        writeFeatures();
+        writeCpu();
+        writeNumaTune();
+        writeDevices();
         // note that this must be called after writeDevices to get the serial console, if exists
-        writeOs(writer, vm);
+        writeOs();
         return writer.getStringXML();
     }
 
-    private void writeHeader(XmlTextWriter writer) {
+    private void writeHeader() {
         writer.writeStartDocument(false);
         writer.setPrefix(OVIRT_PREFIX, OVIRT_URI);
         writer.writeStartElement("domain");
@@ -130,21 +141,21 @@ public class LibvirtVmXmlBuilder {
         writer.writeNamespace(OVIRT_PREFIX, OVIRT_URI);
     }
 
-    private void writeName(XmlTextWriter writer, VM vm) {
+    private void writeName() {
         writer.writeElement("name", vm.getName());
     }
 
-    private void writeId(XmlTextWriter writer, VM vm) {
+    private void writeId() {
         writer.writeElement("uuid", vm.getId().toString());
     }
 
-    private void writeMemory(XmlTextWriter writer, VM vm) {
+    private void writeMemory() {
         int memSizeKB = vm.getMemSizeMb() * 1024;
         writer.writeElement("memory", String.valueOf(memSizeKB));
         writer.writeElement("currentMemory", String.valueOf(memSizeKB));
     }
 
-    private void writeIoThreads(XmlTextWriter writer, VM vm) {
+    private void writeIoThreads() {
         if (vm.getNumOfIoThreads() == 0) {
             return;
         }
@@ -152,7 +163,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeElement("iothreads", String.valueOf(vm.getNumOfIoThreads()));
     }
 
-    private void writeMaxMemory(XmlTextWriter writer, VM vm) {
+    private void writeMaxMemory() {
         if (!FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())
                 // the next check is because QEMU fails if memory and maxMemory are the same
                 || vm.getVmMemSizeMb() == vm.getMaxMemorySizeMb()) {
@@ -165,7 +176,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writevCpu(XmlTextWriter writer, Map<String, Object> createInfo, VM vm) {
+    private void writevCpu() {
         writer.writeStartElement("vcpu");
         writer.writeAttributeString("current", String.valueOf(vm.getNumOfCpus()));
         writer.writeRaw(FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) ?
@@ -174,7 +185,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeCpu(XmlTextWriter writer, Map<String, Object> createInfo, VM vm) {
+    private void writeCpu() {
         writer.writeStartElement("cpu");
 
         String cpuType = createInfo.get(VdsProperties.cpuType).toString();
@@ -244,7 +255,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeSystemInfo(XmlTextWriter writer, VM vm, Guid vdsId) {
+    private void writeSystemInfo() {
         String osName = "";
         String osVersion = "";
 
@@ -298,7 +309,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeNumaTune(XmlTextWriter writer, Map<String, Object> createInfo, VM vm) {
+    private void writeNumaTune() {
         if (!createInfo.containsKey(VdsProperties.NUMA_TUNE)) {
             return;
         }
@@ -335,7 +346,7 @@ public class LibvirtVmXmlBuilder {
         }
     }
 
-    private void writeOs(XmlTextWriter writer, VM vm) {
+    private void writeOs() {
         writer.writeStartElement("os");
 
         writer.writeStartElement("type");
@@ -381,11 +392,10 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeClock(XmlTextWriter writer, VM vm) {
+    private void writeClock() {
         // <clock offset="variable" adjustment="-3600">
         //   <timer name="rtc" tickpolicy="catchup">
         // </clock>
-        //
         // for hyperv:
         // <clock offset="variable" adjustment="-3600">
         //   <timer name="hypervclock" present="yes">
@@ -422,7 +432,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeFeatures(XmlTextWriter writer, VM vm) {
+    private void writeFeatures() {
         if (vm.getClusterArch().getFamily() != ArchitectureType.x86) {
             return;
         }
@@ -431,7 +441,6 @@ public class LibvirtVmXmlBuilder {
         // <features>
         //   <acpi/>
         // <features/>
-        //
         // for hyperv:
         // <features>
         //   <acpi/>
@@ -473,7 +482,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeMetadata(XmlTextWriter writer) {
+    private void writeMetadata() {
         // <domain xmlns:ovirt="http://ovirt.org/vm/tune/1.0">
         // ...
         //   <metadata>
@@ -487,7 +496,8 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeDevices(XmlTextWriter writer, List<VmDevice> devices, VM vm) {
+    private void writeDevices() {
+        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vm.getId());
         writer.writeStartElement("devices");
 
         writeInput(writer, vm);
@@ -508,6 +518,10 @@ public class LibvirtVmXmlBuilder {
 
         boolean spiceExists = false;
         for (VmDevice device : devices) {
+            if (!device.isPlugged()) {
+                continue;
+            }
+
             switch (device.getType()) {
             case BALLOON:
                 writeBalloon(writer, device, vm);
@@ -557,10 +571,6 @@ public class LibvirtVmXmlBuilder {
                 }
                 break;
             case DISK:
-                if (!device.isPlugged()) {
-                    break;
-                }
-
                 switch(VmDeviceType.getByName(device.getDevice())) {
                 case CDROM:
                     cdromDevices.add(device);
@@ -572,9 +582,7 @@ public class LibvirtVmXmlBuilder {
                 }
                 break;
             case INTERFACE:
-                if (device.isPlugged()) {
-                    interfaceDevices.add(device);
-                }
+                interfaceDevices.add(device);
                 break;
             case REDIR:
                 writeRedir(writer, device);
@@ -598,13 +606,19 @@ public class LibvirtVmXmlBuilder {
             writeSpiceVmcChannel(writer);
         }
 
-        List<VmDevice> bootableDevices = new ArrayList<>();
-        bootableDevices.addAll(diskDevices);
-        bootableDevices.addAll(cdromDevices);
-        bootableDevices.addAll(interfaceDevices);
+        updateBootOrder(diskDevices, cdromDevices, interfaceDevices);
 
-        bootableDevices.forEach(device -> device.setBootOrder(0));
-        List<VmDevice> managedAndPluggedBootableDevices = bootableDevices.stream()
+        writeInterfaces(writer, interfaceDevices, vm);
+        writeDisks(writer, diskDevices, vm);
+        writeCdRom(writer, cdromDevices, vm);
+        // TODO floppy
+
+        writer.writeEndElement();
+    }
+
+    private void updateBootOrder(List<VmDevice> ... bootableDevices) {
+        List<VmDevice> managedAndPluggedBootableDevices = Arrays.stream(bootableDevices)
+                .flatMap(Collection::stream)
                 .filter(VmDevice::isManaged)
                 .collect(Collectors.toList());
         BootSequence bootSequence = vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence();
@@ -613,13 +627,6 @@ public class LibvirtVmXmlBuilder {
                 managedAndPluggedBootableDevices,
                 vm.getInterfaces(),
                 VmDeviceCommonUtils.extractDiskVmElements(vm));
-
-        writeInterfaces(writer, interfaceDevices, vm);
-        writeDisks(writer, diskDevices, vm);
-        writeCdRom(writer, cdromDevices, vm);
-        // TODO floppy
-
-        writer.writeEndElement();
     }
 
     private void writeLease(XmlTextWriter writer, VM vm) {
@@ -652,7 +659,7 @@ public class LibvirtVmXmlBuilder {
     private void writeDisks(XmlTextWriter writer, List<VmDevice> devices, VM vm) {
         Map<VmDeviceId, VmDevice> deviceIdToDevice = devices.stream()
                 .collect(Collectors.toMap(VmDevice::getId, dev -> dev));
-        for (Disk disk : getSortedDisks(vm)) {
+        for (Disk disk : vmInfoBuildUtils.getSortedDisks(vm)) {
             VmDevice device = deviceIdToDevice.get(new VmDeviceId(disk.getId(), vm.getId()));
             if (device.isManaged()) {
                 writeManagedDisk(writer, device, vm, disk);
@@ -662,22 +669,18 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeConsole(XmlTextWriter writer, VmDevice device, VM vm) {
-        //  <console type='pty'>
-        //    <target type='serial' port='0'/>
-        //  </console>
-        //
-        //  or:
-        //
-        //  <console type='pty'>
-        //    <target type='virtio' port='0'/>
-        //  </console>
-        //
-        //  or
-        //
-        //  <console type='unix'>
-        //    <source mode='bind' path='/path/to/${vmid}.sock'>
-        //    <target type='virtio' port='0'/>
-        //  </console>
+        // <console type='pty'>
+        //   <target type='serial' port='0'/>
+        // </console>
+        // or:
+        // <console type='pty'>
+        //   <target type='virtio' port='0'/>
+        // </console>
+        // or:
+        // <console type='unix'>
+        //   <source mode='bind' path='/path/to/${vmid}.sock'>
+        //   <target type='virtio' port='0'/>
+        // </console>
         writer.writeStartElement("console");
 
         String path = getSerialConsolePath(device, vm);
@@ -758,17 +761,15 @@ public class LibvirtVmXmlBuilder {
         if (serialConsolePath == null) {
             return;
         }
-        //  <serial type='pty'>
-        //     <target port='0'>
-        //  </serial>
-        //
-        //  or
-        //
-        //  <serial type='unix'>
-        //     <source mode='bind'
-        //        path='/var/run/ovirt-vmconsole-console/${VMID}.sock'/>
-        //     <target port='0'/>
-        //  </serial>
+        // <serial type='pty'>
+        //    <target port='0'>
+        // </serial>
+        // or:
+        // <serial type='unix'>
+        //    <source mode='bind'
+        //      path='/var/run/ovirt-vmconsole-console/${VMID}.sock'/>
+        //    <target port='0'/>
+        // </serial>
         writer.writeStartElement("serial");
 
         if (!path.isEmpty()) {
@@ -862,7 +863,7 @@ public class LibvirtVmXmlBuilder {
         //   <listen type='address' address='0'/>
         //   <clipboard copypaste='no'/>
         // </graphics>
-        // OR
+        // or:
         // <graphics type='vnc' port='5900' autoport='yes' listen='0'
         //           keymap='en-us' passwdValidTo='1970-01-01T00:00:01'>
         //   <listen type='address' address='0'/>
@@ -953,6 +954,10 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
+    /**
+     * TODO:
+     * add qemu_drive_cache configurable like in VDSM?
+     */
     private void writeManagedDisk(XmlTextWriter writer, VmDevice device, VM vm, Disk disk) {
         // <disk type='file' device='disk' snapshot='no'>
         //   <driver name='qemu' type='qcow2' cache='none'/>
@@ -963,6 +968,147 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("disk");
         writer.writeAttributeString("snapshot", "no");
 
+        DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
+
+        writeGeneralDiskAttributes(writer, device, disk, dve);
+        writeDiskTarget(writer, dve);
+        writeDiskSource(writer, disk);
+        writeDiskDriver(writer, device, disk, dve, vm);
+
+        if (disk.getDiskStorageType() != DiskStorageType.LUN) {
+            writer.writeElement("serial", disk.getId().toString());
+        }
+
+        if (device.getReadOnly()) {
+            writer.writeElement("readonly");
+        }
+
+        if (disk.isShareable()) { // TODO: fix
+            writer.writeElement("shareable");
+        }
+
+        // TODO: index of the first bootable disk
+
+        writeAliasAndAddress(writer, device);
+        writeBootOrder(writer, device.getBootOrder());
+
+        writer.writeEndElement();
+    }
+
+    private void writeDiskDriver(XmlTextWriter writer, VmDevice device, Disk disk, DiskVmElement dve, VM vm) {
+        writer.writeStartElement("driver");
+        switch (disk.getDiskStorageType()) {
+        case IMAGE:
+            DiskImage diskImage = (DiskImage) disk;
+            writer.writeAttributeString("name", "qemu");
+            writer.writeAttributeString("io", "threads");
+            writer.writeAttributeString("type", diskImage.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
+            if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
+                writer.writeAttributeString("discard", "unmap");
+            }
+            if (device.getSpecParams().containsKey("pinToIoThread")) {
+                writer.writeAttributeString("iothread", device.getSpecParams().get("pinToIoThread").toString());
+            }
+            writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
+            break;
+
+        case LUN:
+            writer.writeAttributeString("name", "qemu");
+            writer.writeAttributeString("io", "native");
+            writer.writeAttributeString("type", "raw");
+            if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
+                writer.writeAttributeString("discard", "unmap");
+            }
+            if (device.getSpecParams().containsKey("pinToIoThread")) {
+                writer.writeAttributeString("iothread", device.getSpecParams().get("pinToIoThread").toString());
+            }
+            writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
+            break;
+
+        case CINDER:
+            // TODO
+            break;
+        }
+        if (device.getSnapshotId() != null) {
+            /**
+            Force the cache to be writethrough, which is qemu's default.
+            This is done to ensure that we don't ever use cache=none for
+            transient disks, since we create them in /var/run/vdsm which
+            may end up on tmpfs and don't support O_DIRECT, and qemu uses
+            O_DIRECT when cache=none and hence hotplug might fail with
+            error that one can take eternity to debug the reason behind it!
+             */
+            writer.writeAttributeString("cache", "writethrough");
+        } else {
+            switch (dve.getDiskInterface()) {
+            case VirtIO:
+                // TODO: if custom property is set...
+            default:
+                writer.writeAttributeString("cache", "none");
+            }
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeDiskSource(XmlTextWriter writer, Disk disk) {
+        writer.writeStartElement("source");
+        switch (disk.getDiskStorageType()) {
+        case IMAGE:
+            DiskImage diskImage = (DiskImage) disk;
+            writer.writeAttributeString(
+                    "file",
+                    String.format("/rhev/data-center/%s/%s/images/%s/%s",
+                            diskImage.getStoragePoolId(),
+                            diskImage.getStorageIds().get(0),
+                            diskImage.getId(),
+                            diskImage.getImageId()));
+            // TODO target, (qos)cache, auth, floppy-readonly, iotune...
+            break;
+
+        case LUN:
+            LunDisk lunDisk = (LunDisk) disk;
+            writer.writeAttributeString(
+                    "file",
+                    String.format("/dev/mapper/%s",
+                            lunDisk.getLun().getLUNId()));
+            break;
+
+        case CINDER:
+            // TODO
+            break;
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeDiskTarget(XmlTextWriter writer, DiskVmElement dve) {
+        writer.writeStartElement("target");
+        switch (dve.getDiskInterface()) {
+        case IDE:
+            writer.writeAttributeString("dev", "hda"); // TODO: device name
+            writer.writeAttributeString("bus", "ide");
+            break;
+        case VirtIO:
+            writer.writeAttributeString("dev", "sda"); // TODO: device name
+            writer.writeAttributeString("bus", "virtio");
+
+            // TODO: index
+            break;
+        case VirtIO_SCSI:
+            writer.writeAttributeString("dev", "sda"); // TODO: device name
+            writer.writeAttributeString("bus", "scsi");
+
+            // TODO address
+            break;
+        case SPAPR_VSCSI:
+            // TODO address, name
+            break;
+        default:
+            log.error("Unsupported interface type, ISCSI interface type is not supported.");
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeGeneralDiskAttributes(XmlTextWriter writer, VmDevice device, Disk disk, DiskVmElement dve) {
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             writer.writeAttributeString("type", "file"); // TODO type of storage domain
@@ -974,8 +1120,6 @@ public class LibvirtVmXmlBuilder {
             // TODO
             break;
         }
-
-        DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
 
         switch (dve.getDiskInterface()) {
         case IDE:
@@ -998,118 +1142,6 @@ public class LibvirtVmXmlBuilder {
         case SPAPR_VSCSI:
             break;
         }
-
-        switch (dve.getDiskInterface()) {
-        case IDE:
-            writer.writeStartElement("target");
-            writer.writeAttributeString("dev", "hda"); // TODO: device name
-            writer.writeAttributeString("bus", "ide");
-            writer.writeEndElement();
-            break;
-        case VirtIO:
-            writer.writeStartElement("target");
-            writer.writeAttributeString("dev", "sda"); // TODO: device name
-            writer.writeAttributeString("bus", "virtio");
-            writer.writeEndElement();
-
-            // TODO: index
-            break;
-        case VirtIO_SCSI:
-            writer.writeStartElement("target");
-            writer.writeAttributeString("dev", "sda"); // TODO: device name
-            writer.writeAttributeString("bus", "scsi");
-            writer.writeEndElement();
-
-            // TODO address
-            break;
-        case SPAPR_VSCSI:
-            // TODO address, name
-            break;
-        default:
-            log.error("Unsupported interface type, ISCSI interface type is not supported.");
-        }
-
-        switch (disk.getDiskStorageType()) {
-        case IMAGE:
-            DiskImage diskImage = (DiskImage) disk;
-
-            writer.writeStartElement("source");
-            writer.writeAttributeString("file", String.format("/rhev/data-center/%s/%s/images/%s/%s",
-                    diskImage.getStoragePoolId(),
-                    diskImage.getStorageIds().get(0),
-                    diskImage.getId(),
-                    diskImage.getImageId()));
-            writer.writeEndElement();
-
-            writer.writeStartElement("driver");
-            writer.writeAttributeString("name", "qemu");
-            writer.writeAttributeString("io", "threads");
-            writer.writeAttributeString("type", diskImage.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
-            if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
-                writer.writeAttributeString("discard", "unmap");
-            }
-            if (device.getSpecParams().containsKey("pinToIoThread")) {
-                writer.writeAttributeString("iothread", device.getSpecParams().get("pinToIoThread").toString());
-            }
-            writer.writeAttributeString("propagateErrors", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
-            writer.writeEndElement();
-
-            writer.writeElement("serial", diskImage.getId().toString());
-
-            // TODO target, (qos)cache, auth, floppy-readonly, serial, iotune...
-            break;
-
-        case LUN:
-            LunDisk lunDisk = (LunDisk) disk;
-
-            writer.writeStartElement("source");
-            writer.writeAttributeString("file", String.format("/dev/mapper/%s", lunDisk.getLun().getLUNId()));
-            writer.writeEndElement();
-
-            writer.writeStartElement("driver");
-            writer.writeAttributeString("name", "qemu");
-            writer.writeAttributeString("io", "native");
-            writer.writeAttributeString("type", "raw");
-            if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
-                writer.writeAttributeString("discard", "unmap");
-            }
-            if (device.getSpecParams().containsKey("pinToIoThread")) {
-                writer.writeAttributeString("iothread", device.getSpecParams().get("pinToIoThread").toString());
-            }
-            writer.writeAttributeString("propagateErrors", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
-            writer.writeEndElement();
-
-            break;
-
-        case CINDER:
-            // TODO
-            break;
-        }
-
-        if (device.getReadOnly()) {
-            writer.writeElement("readonly", null);
-        }
-
-        if (disk.isShareable()) { // TODO: fix
-            writer.writeElement("shareable", null);
-        }
-
-        // TODO: index of first bootable disk
-
-        writeAliasAndAddress(writer, device);
-        writeBootOrder(writer, device.getBootOrder());
-
-        writer.writeEndElement();
-    }
-
-    private List<Disk> getSortedDisks(VM vm) {
-        // order first by drive numbers and then order by boot for the bootable
-        // drive to be first (important for IDE to be index 0) !
-        List<Disk> diskImages = new ArrayList<>(vm.getDiskMap().values());
-        Collections.sort(diskImages, new DiskByDiskAliasComparator());
-        Collections.sort(diskImages,
-                Collections.reverseOrder(new DiskByBootAndSnapshotComparator(vm.getId())));
-        return diskImages;
     }
 
     private void writeCdRom(XmlTextWriter writer, List<VmDevice> devices, VM vm) {
@@ -1146,7 +1178,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("bus", cdInterface);
         writer.writeEndElement();
 
-        writer.writeElement("readonly", null);
+        writer.writeElement("readonly");
 
         writeAliasAndAddress(writer, device);
 
