@@ -124,9 +124,9 @@ public class MemoryStorageHandlerTest {
     }
 
     private void initComparators() {
-        List<? extends Comparator<StorageDomain>> comparators = Arrays.asList(
-                new SmallestStorageDomainComparator(validStorageDomain2),
-                new BiggestStorageDomainComparator(validStorageDomain3));
+        List<Comparator<StorageDomain>> comparators = Arrays.asList(
+                Comparator.comparing((StorageDomain sd) -> sd.equals(validStorageDomain2)),
+                Comparator.comparing((StorageDomain sd) -> sd.equals(validStorageDomain3)).reversed());
         doReturn(comparators).when(memoryStorageHandler).getStorageDomainComparators(anyList());
     }
 
@@ -158,66 +158,5 @@ public class MemoryStorageHandlerTest {
     private void sortStorageDomains(List<StorageDomain> domainsInPool, List<StorageDomain> expectedSortedList) {
         memoryStorageHandler.sortStorageDomains(domainsInPool, vmDisks);
         assertEquals(domainsInPool, expectedSortedList);
-    }
-
-    private abstract static class StorageDomainAbstractComparator implements Comparator<StorageDomain> {
-
-        private StorageDomain storageDomain;
-
-        public StorageDomainAbstractComparator(StorageDomain storageDomain) {
-            this.storageDomain = storageDomain;
-        }
-
-        @Override
-        public int compare(StorageDomain storageDomain, StorageDomain storageDomain2) {
-            if (storageDomain.equals(storageDomain2)) {
-                return 0;
-            }
-            else if (storageDomain.equals(this.storageDomain)){
-                return equalsToFirstStorageDomain();
-            }
-            else if (storageDomain2.equals(this.storageDomain)){
-                return equalsToSecondStorageDomain();
-            }
-            return 0;
-        }
-
-        protected abstract int equalsToFirstStorageDomain();
-
-        protected abstract int equalsToSecondStorageDomain();
-    }
-
-    private static class BiggestStorageDomainComparator extends StorageDomainAbstractComparator {
-
-        public BiggestStorageDomainComparator(StorageDomain storageDomain) {
-            super(storageDomain);
-        }
-
-        @Override
-        protected int equalsToFirstStorageDomain() {
-            return -1;
-        }
-
-        @Override
-        protected int equalsToSecondStorageDomain() {
-            return 1;
-        }
-    }
-
-    private static class SmallestStorageDomainComparator extends StorageDomainAbstractComparator {
-
-        public SmallestStorageDomainComparator(StorageDomain storageDomain) {
-            super(storageDomain);
-        }
-
-        @Override
-        protected int equalsToFirstStorageDomain() {
-            return 1;
-        }
-
-        @Override
-        protected int equalsToSecondStorageDomain() {
-            return -1;
-        }
     }
 }
