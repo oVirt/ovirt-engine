@@ -11,7 +11,7 @@ public class MemorySizeParser implements Parser<Integer> {
 
     @Override
     public Integer parse(CharSequence text) throws ParseException {
-        MatchResult match = RegExp.compile("^(\\d*)\\s*(\\w*)$").exec(text.toString()); //$NON-NLS-1$
+        MatchResult match = RegExp.compile("^(\\d+)\\s*(\\w*)$").exec(text.toString().trim()); //$NON-NLS-1$
         if (match == null) {
             return 0;
         }
