@@ -765,6 +765,10 @@ select fn_db_update_config_value('IPTablesConfigForVirt',
 
 # migration
 -A INPUT -p tcp -m multiport --dports 49152:49216 -j ACCEPT
+
+# OVN host tunnels
+-A INPUT -p udp --dport 6081 -j ACCEPT
+-A OUTPUT -p udp --dport 6081 -j ACCEPT
 ', 'general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_update_config_value('MinimalETLVersion','4.1.0','general');
