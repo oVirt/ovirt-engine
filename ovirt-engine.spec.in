@@ -244,6 +244,15 @@ Requires:	ovirt-imageio-proxy
 Requires:	ovirt-web-ui
 Requires:	ovirt-js-dependencies
 
+# Metrics stuff
+Requires:	collectd
+Requires:	collectd-postgresql
+Requires:	collectd-disk
+Requires:	collectd-write_http
+Requires:	fluentd
+Requires:	rubygem-fluent-plugin-rewrite-tag-filter
+Requires:	rubygem-fluent-plugin-secure-forward
+
 %if 0%{?rhel}
 Requires:	yum-plugin-versionlock
 %endif
