@@ -77,6 +77,7 @@ rpmbuild \
 
 # Store any relevant artifacts in exported-artifacts for the ci system to
 # archive
-[[ -d exported-artifacts ]] || mkdir -p exported-artifacts
+rm -rf exported-artifacts
+mkdir -p exported-artifacts
 find output -iname \*rpm -exec mv "{}" exported-artifacts/ \;
 mv ./*tar.gz exported-artifacts/
