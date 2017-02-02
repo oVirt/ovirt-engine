@@ -2,11 +2,14 @@ package org.ovirt.engine.core.bll.numa.vm;
 
 import static java.lang.Integer.min;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -71,6 +74,69 @@ public class NumaValidator {
             return new ValidationResult(EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS,
                     String.format("$numaNodes %d", numaNodeCount),
                     String.format("$cpus %d", cpuCores));
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * Check if every CPU is assigned to at most one virtual numa node
+     *
+     * @param cpuCores    number of virtual cpu cores
+     * @param vmNumaNodes list of virtual numa nodes
+     * @return the validation result
+     */
+    private ValidationResult checkVmNumaCpuAssignment(int cpuCores, List<VmNumaNode> vmNumaNodes) {
+        List<Integer> cpuIds = vmNumaNodes.stream()
+                .flatMap(node -> node.getCpuIds().stream())
+                .collect(Collectors.toList());
+
+        if (cpuIds.isEmpty()) {
+            return ValidationResult.VALID;
+        }
+
+        int minId = Collections.min(cpuIds);
+        int maxId = Collections.max(cpuIds);
+
+        if (minId < 0 || maxId >= cpuCores) {
+            return new ValidationResult(EngineMessage.VM_NUMA_NODE_INVALID_CPU_ID,
+                    String.format("$cpuIndex %d", (minId < 0) ? minId : maxId),
+                    String.format("$cpuIndexMax %d", cpuCores - 1));
+        }
+
+        List<Integer> duplicateIds = cpuIds.stream()
+                .collect(Collectors.groupingBy(
+                        Function.identity(),
+                        Collectors.counting()))
+                .entrySet().stream()
+                .filter(a -> a.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        if (!duplicateIds.isEmpty()) {
+            return new ValidationResult(EngineMessage.VM_NUMA_NODE_DUPLICATE_CPU_IDS,
+                    String.format("$cpuIndexes %s", duplicateIds.stream()
+                            .map(i -> i.toString())
+                            .collect(Collectors.joining(", "))));
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * Check if the total memory of numa nodes is less or equal to the total VM memory
+     *
+     * @param vm to check
+     * @param vmNumaNodes list of virtual numa nodes
+     * @return the validation result
+     */
+    private ValidationResult checkVmNumaTotalMemory(long totalVmMemory, List<VmNumaNode> vmNumaNodes) {
+        long totalNumaNodeMem = vmNumaNodes.stream()
+                .mapToLong(VmNumaNode::getMemTotal)
+                .sum();
+
+        if (totalNumaNodeMem > totalVmMemory) {
+            return new ValidationResult(EngineMessage.VM_NUMA_NODE_MEMORY_ERROR);
         }
 
         return ValidationResult.VALID;
@@ -146,6 +212,16 @@ public class NumaValidator {
         }
 
         validationResult = checkVmNumaIndexContinuity(vmNumaNodes);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        validationResult = checkVmNumaCpuAssignment(vm.getNumOfCpus(), vmNumaNodes);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        validationResult = checkVmNumaTotalMemory(vm.getVmMemSizeMb(), vmNumaNodes);
         if (!validationResult.isValid()) {
             return validationResult;
         }
