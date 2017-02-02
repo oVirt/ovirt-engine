@@ -130,6 +130,9 @@ rpmbuild \
     -D "${RPM_BUILD_MODE} 1" \
     --rebuild output/*.src.rpm
 
-# Store any relevant artifacts in exported-artifacts for the ci system to
+# Move any relevant artifacts to exported-artifacts for the ci system to
 # archive
-[[ -d exported-artifacts ]] || mkdir -p exported-artifacts
+rm -rf exported-artifacts
+mkdir -p exported-artifacts
+find output -iname \*rpm -exec mv "{}" exported-artifacts/ \;
+mv ./*tar.gz exported-artifacts/
