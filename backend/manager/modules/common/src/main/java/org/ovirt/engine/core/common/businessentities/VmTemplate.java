@@ -47,6 +47,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private HashMap<Guid, DiskImage> diskTemplateMap;
 
+    @EditableVmTemplateField
     private double actualDiskSize;
 
     private VmEntityType templateType;
