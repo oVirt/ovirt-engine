@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainNumberOfVmDisksComparator;
@@ -20,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,9 @@ import org.slf4j.LoggerFactory;
 public class MemoryStorageHandler {
 
     private static final Logger log = LoggerFactory.getLogger(MemoryStorageHandler.class);
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     /**
      * Returns a <code>StorageDomain</code> in the given <code>StoragePool</code> that has
@@ -47,8 +51,7 @@ public class MemoryStorageHandler {
      */
     public StorageDomain findStorageDomainForMemory(Guid storagePoolId, List<DiskImage> memoryDisks,
             Collection<DiskImage> vmDisks, VM vmForLogging) {
-        List<StorageDomain> domainsInPool =
-                DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(storagePoolId);
+        List<StorageDomain> domainsInPool = storageDomainDao.getAllForStoragePool(storagePoolId);
         StorageDomain storageDomainForMemory = findStorageDomainForMemory(domainsInPool, memoryDisks, vmDisks);
         if (storageDomainForMemory != null) {
             updateDisksStorage(storageDomainForMemory, memoryDisks);
