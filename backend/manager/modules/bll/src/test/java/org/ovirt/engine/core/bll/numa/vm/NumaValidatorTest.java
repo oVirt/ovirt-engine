@@ -57,6 +57,7 @@ public class NumaValidatorTest {
         vm.setDedicatedVmForVdsList(Collections.singletonList(Guid.newGuid()));
         vm.setNumOfSockets(1);
         vm.setCpuPerSocket(2);
+        vm.setVmMemSizeMb(4000);
         vm.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
         vm.setNumaTuneMode(NumaTuneMode.INTERLEAVE);
         vm.setvNumaNodeList(vmNumaNodes);
@@ -208,6 +209,35 @@ public class NumaValidatorTest {
         vm.setCpuPerSocket(1);
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
                 EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS);
+    }
+
+    @Test
+    public void shouldDetectDuplicateCpuAssignment() {
+        vmNumaNodes.get(0).setCpuIds(Collections.singletonList(0));
+        vmNumaNodes.get(1).setCpuIds(Collections.singletonList(0));
+        assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
+                EngineMessage.VM_NUMA_NODE_DUPLICATE_CPU_IDS);
+    }
+
+    @Test
+    public void shouldDetectInvalidCpuIndex() {
+        vmNumaNodes.get(0).setCpuIds(Collections.singletonList(vm.getNumOfCpus() + 1));
+        assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
+                EngineMessage.VM_NUMA_NODE_INVALID_CPU_ID);
+    }
+
+    @Test
+    public void shouldDetectNegativeCpuIndex() {
+        vmNumaNodes.get(0).setCpuIds(Collections.singletonList(-1));
+        assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
+                EngineMessage.VM_NUMA_NODE_INVALID_CPU_ID);
+    }
+
+    @Test
+    public void shouldDetectMoreNumaMemoryThanVmMemory() {
+        vm.setVmMemSizeMb(1000);
+        assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
+                EngineMessage.VM_NUMA_NODE_MEMORY_ERROR);
     }
 
     private void assertValidationFailure(ValidationResult validationResult, EngineMessage engineMessage) {

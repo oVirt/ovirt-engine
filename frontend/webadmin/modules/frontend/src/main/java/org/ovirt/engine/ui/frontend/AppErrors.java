@@ -2465,6 +2465,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VM_NUMA_NODE_NON_CONTINUOUS_INDEX();
 
+    String VM_NUMA_NODE_DUPLICATE_CPU_IDS();
+
+    String VM_NUMA_NODE_INVALID_CPU_ID();
+
     String VAR__DETAIL__NOT_HE_HOST();
 
     String VAR__DETAIL__NOT_ENOUGH_HE_SPARES();
