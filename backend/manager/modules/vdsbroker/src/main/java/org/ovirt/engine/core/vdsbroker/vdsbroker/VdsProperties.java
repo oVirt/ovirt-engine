@@ -196,6 +196,7 @@ public final class VdsProperties {
     public static final String image_group_id = "imageID";
     public static final String size = "size";
     public static final String lun_guid = "lunGUID";
+    public static final String compat_version = "qcow2_compat";
 
     // Iso/Floppy related properties
     public static final String iso_list = "isolist";

@@ -19,6 +19,7 @@ public class ConvertVmParameters extends VmOperationParameterBase {
     private Guid clusterId;
     private String virtioIsoName;
     private OriginType originType;
+    private String compatVersion;
 
     public ConvertVmParameters() {
     }
@@ -113,5 +114,13 @@ public class ConvertVmParameters extends VmOperationParameterBase {
 
     public void setOriginType(OriginType originType) {
         this.originType = originType;
+    }
+
+    public String getCompatVersion() {
+        return this.compatVersion;
+    }
+
+    public void setCompatVersion(String compatVersion) {
+        this.compatVersion = compatVersion;
     }
 }

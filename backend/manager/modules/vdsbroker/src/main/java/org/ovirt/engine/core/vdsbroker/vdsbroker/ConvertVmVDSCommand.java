@@ -32,6 +32,9 @@ public class ConvertVmVDSCommand<T extends ConvertVmVDSParameters> extends VdsBr
         map.put(VdsProperties.vm_name, getParameters().getVmName());
         map.put(VdsProperties.PoolId, getParameters().getStoragePoolId().toString());
         map.put(VdsProperties.DomainId, getParameters().getStorageDomainId().toString());
+        if (getParameters().getCompatVersion() != null) {
+            map.put(VdsProperties.compat_version, getParameters().getCompatVersion());
+        }
         map.put(VdsProperties.vm_disks, getDisksProperties());
         // Currently we send global volume format and type for all disks:
         for (DiskImage diskImage : getParameters().getDisks()) {

@@ -191,6 +191,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         parameters.setStoragePoolId(getStoragePoolId());
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setVirtioIsoPath(getVirtioIsoPath());
+        parameters.setCompatVersion(getParameters().getCompatVersion());
         return parameters;
     }
 

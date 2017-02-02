@@ -63,6 +63,8 @@ implements QuotaStorageDependent {
     private static final Pattern VMWARE_DISK_NAME_PATTERN = Pattern.compile("\\[.*?\\] .*/(.*).vmdk");
     private static final Pattern DISK_NAME_PATTERN = Pattern.compile(".*/([^.]+).*");
 
+    private static final String VDSM_COMPAT_VERSION_1_1 = "1.1";
+
     @Inject
     private DiskProfileHelper diskProfileHelper;
 
@@ -379,12 +381,22 @@ implements QuotaStorageDependent {
         parameters.setOriginType(getVm().getOrigin());
         parameters.setDisks(getDisks());
         parameters.setStoragePoolId(getStoragePoolId());
+        parameters.setCompatVersion(getCompatVersion());
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());
         parameters.setClusterId(getClusterId());
         parameters.setVirtioIsoName(getParameters().getVirtioIsoName());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
+    }
+
+    private String getCompatVersion() {
+        int version = Integer.parseInt(getStoragePool().getStoragePoolFormatType().getValue());
+        // compat version 1.1 supported from storage version 4
+        if (version >= 4 && getVm().getOrigin() != OriginType.KVM) {
+            return VDSM_COMPAT_VERSION_1_1;
+        }
+        return null;
     }
 
     @Override

@@ -17,6 +17,7 @@ public class ConvertVmVDSParameters extends VdsIdVDSCommandParametersBase {
     private Guid storageDomainId;
     private Guid vmId;
     private String virtioIsoPath;
+    private String compatVersion;
 
     public ConvertVmVDSParameters() {
     }
@@ -92,6 +93,14 @@ public class ConvertVmVDSParameters extends VdsIdVDSCommandParametersBase {
         this.virtioIsoPath = virtioIsoPath;
     }
 
+    public String getCompatVersion() {
+        return this.compatVersion;
+    }
+
+    public void setCompatVersion(String compatVersion) {
+        this.compatVersion = compatVersion;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         ToStringBuilder builder = super.appendAttributes(tsb)
@@ -101,7 +110,8 @@ public class ConvertVmVDSParameters extends VdsIdVDSCommandParametersBase {
                 .append("vmName", getVmName())
                 .append("storageDomainId", getStorageDomainId())
                 .append("storagePoolId", getStoragePoolId())
-                .append("virtioIsoPath", getVirtioIsoPath());
+                .append("virtioIsoPath", getVirtioIsoPath())
+                .append("compatVersion", getCompatVersion());
         for (int i=0; i<getDisks().size(); ++i) {
             builder.append(String.format("Disk%d", i), getDisks().get(i).getId());
         }
