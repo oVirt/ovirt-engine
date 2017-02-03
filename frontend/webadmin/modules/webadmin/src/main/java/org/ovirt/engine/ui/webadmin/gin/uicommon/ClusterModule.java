@@ -31,7 +31,9 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterWarningsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.NewHostNetworkQosModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterWarningsPopupPresenterWidget;
@@ -149,7 +151,8 @@ public class ClusterModule extends AbstractGinModule {
             final Provider<NewClusterNetworkPopupPresenterWidget> popupProvider,
             final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider,
             final Provider<ClusterListModel<Void>> mainModelProvider,
-            final Provider<ClusterNetworkListModel> modelProvider) {
+            final Provider<ClusterNetworkListModel> modelProvider,
+            final Provider<HostNetworkQosPopupPresenterWidget> addQosPopupProvider) {
         SearchableDetailTabModelProvider<Network, ClusterListModel<Void>, ClusterNetworkListModel> result =
                 new SearchableDetailTabModelProvider<Network, ClusterListModel<Void>, ClusterNetworkListModel>(
                         eventBus, defaultConfirmPopupProvider) {
@@ -158,7 +161,9 @@ public class ClusterModule extends AbstractGinModule {
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterNetworkListModel source,
                             UICommand lastExecutedCommand,
                             Model windowModel) {
-                        if (lastExecutedCommand == getModel().getNewNetworkCommand()) {
+                        if (windowModel instanceof NewHostNetworkQosModel) {
+                            return addQosPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getNewNetworkCommand()) {
                             return popupProvider.get();
                         } else if (lastExecutedCommand == getModel().getManageCommand()) {
                             return managePopupProvider.get();
