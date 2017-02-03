@@ -503,7 +503,6 @@ select fn_db_add_config_value('vdsTimeout','180','general');
 --Handling Virtual Machine Domain Name
 select fn_db_add_config_value('VM32BitMaxMemorySizeInMB','20480','general');
 select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','4194304','4.2');
-select fn_db_add_config_value_for_versions_up_to('VMPpc64BitMaxMemorySizeInMB','1048576','4.2');
 select fn_db_add_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
 select fn_db_add_config_value('VmGracefulShutdownTimeout','30','general');
 --Number of subsequent failures in VM creation in a pool before giving up and stop creating new VMs
