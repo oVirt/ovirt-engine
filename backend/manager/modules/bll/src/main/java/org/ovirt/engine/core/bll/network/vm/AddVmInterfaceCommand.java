@@ -140,9 +140,9 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        List<VmNic> interfaces = vmNicDao.getAllForVm(getParameters().getVmId());
+        List<VmNic> preexistingVmNics = vmNicDao.getAllForVm(getParameters().getVmId());
 
-        if (!uniqueInterfaceName(interfaces)) {
+        if (!uniqueInterfaceName(preexistingVmNics)) {
             return false;
         }
 
@@ -150,11 +150,17 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        // check that not exceeded PCI and IDE limit
-        List<VmNic> allInterfaces = new ArrayList<>(interfaces);
+        List<VmNic> allInterfaces = new ArrayList<>(preexistingVmNics);
         allInterfaces.add(getInterface());
 
+        // check that not exceeded PCI and IDE limit
         if (!pciAndIdeWithinLimit(getVm(), allInterfaces)) {
+            return false;
+        }
+
+        String macAddressOfInterface = getMacAddress();
+        boolean macAddressIsNotEmpty = macAddressOfInterface != null && !macAddressOfInterface.isEmpty();
+        if (macAddressIsNotEmpty && duplicateMacExists(allInterfaces)) {
             return false;
         }
 
@@ -168,7 +174,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        if (StringUtils.isNotEmpty(getMacAddress())) {
+        if (StringUtils.isNotEmpty(macAddressOfInterface)) {
             if (!validate(macAvailable())) {
                 return false;
             }

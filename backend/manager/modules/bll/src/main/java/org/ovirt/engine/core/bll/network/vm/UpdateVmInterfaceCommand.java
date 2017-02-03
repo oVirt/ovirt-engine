@@ -261,6 +261,12 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
+        String macAddressOfInterface = getMacAddress();
+        boolean macAddressIsNotEmpty = macAddressOfInterface != null && !macAddressOfInterface.isEmpty();
+        if (macAddressIsNotEmpty && duplicateMacExists(allInterfaces)) {
+            return false;
+        }
+
         if (!validate(vmTemplateEmpty())) {
             return false;
         }
