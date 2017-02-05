@@ -72,8 +72,13 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
             getVDSReturnValue().setSucceeded(true);
             executeVDSCommand();
         } catch (RuntimeException ex) {
-            setVdsRuntimeError(ex);
+            setVdsRuntimeErrorAndReport(ex);
         }
+    }
+
+    protected void setVdsRuntimeErrorAndReport(RuntimeException ex) {
+        setVdsRuntimeError(ex);
+        logException(ex);
     }
 
     protected void setVdsRuntimeError(RuntimeException ex) {
@@ -91,8 +96,6 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
                 getVDSReturnValue().setVdsError(((VDSExceptionBase) vdsExp.getCause()).getVdsError());
             }
         }
-
-        logException(ex);
     }
 
     private void logException(RuntimeException ex) {
