@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -197,14 +198,11 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
      */
     private void removeStatelessVmUnmanagedDevices() {
         if (getVm().isStateless() || isRunOnce()) {
-            final List<VmDevice> vmDevices = vmDeviceDao.getUnmanagedDevicesByVmId(getVmId());
-
-            for (VmDevice device : vmDevices) {
-                // do not remove device if appears in white list
-                if (!VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice())) {
-                    vmDeviceDao.remove(device.getId());
-                }
-            }
+            List<VmDevice> unmanagedVmDevices = vmDeviceDao.getUnmanagedDevicesByVmId(getVmId());
+            vmDeviceDao.removeAllInBatch(unmanagedVmDevices.stream()
+                    // do not remove device if appears in white list
+                    .filter(device -> !VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice()))
+                    .collect(Collectors.toList()));
         }
     }
 
