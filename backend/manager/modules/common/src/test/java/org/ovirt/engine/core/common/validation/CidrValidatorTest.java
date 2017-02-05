@@ -2,9 +2,6 @@ package org.ovirt.engine.core.common.validation;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -43,8 +40,8 @@ public class CidrValidatorTest {
     }
 
     @Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] data() {
+        return new Object[][] {
                 // Bad Format
                 { null, false, false },
                 { "", false, false },
@@ -103,7 +100,7 @@ public class CidrValidatorTest {
                 { "255.0.0.0/8", true, true },
                 { "248.0.0.0/5", true, true },
                 { "128.0.0.0/1", true, true },
-        });
+        };
     }
 
 }

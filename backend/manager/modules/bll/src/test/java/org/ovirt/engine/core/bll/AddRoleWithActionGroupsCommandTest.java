@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,13 +24,13 @@ public class AddRoleWithActionGroupsCommandTest {
      * 2. Whether or not the role should be inheritable
      */
     @Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]
+    public static Object[][] data() {
+        return new Object[][]
         { { false, Collections.emptyList() },
                 { false, Collections.singletonList(ActionGroup.CREATE_VM) },
                 { true, Collections.singletonList(ActionGroup.CONFIGURE_ENGINE) },
                 { true, Arrays.asList(ActionGroup.CONFIGURE_ENGINE, ActionGroup.CREATE_VM) },
-        });
+        };
     }
 
     private boolean shouldBeInheritable;

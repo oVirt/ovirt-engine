@@ -3,8 +3,6 @@ package org.ovirt.engine.core.bll.common.comparator;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.Before;
@@ -43,8 +41,8 @@ public class NumericSuffixNormalizerTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> normalizationParameters() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] normalizationParameters() {
+        return new Object[][] {
                 { null, null, null, null },
                 { null, "", null, "" },
                 { "", "", "", "" },
@@ -68,6 +66,6 @@ public class NumericSuffixNormalizerTest {
                 { "abc01", "abc0123", "abc0001", "abc0123" },
                 { "abc", "abc123", "abc", "abc123" },
                 { "abc123", "abc", "abc123", "abc" },
-        });
+        };
     }
 }

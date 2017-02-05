@@ -2,8 +2,6 @@ package org.ovirt.engine.core.common.validation;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Random;
 
 import org.junit.Test;
@@ -48,10 +46,10 @@ public class MaskValidatorTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> namesParams() {
+    public static Object[][] namesParams() {
          Random random = new Random();
 
-        return Arrays.asList(new Object[][] {
+        return new Object[][] {
 
                 // Bad Format
                 { null, false, random.nextBoolean(), false }, //$NON-NLS-1$
@@ -89,7 +87,7 @@ public class MaskValidatorTest {
                 { "7", false, random.nextBoolean(), true }, //$NON-NLS-1$
                 { "/7", false, random.nextBoolean(), true }, //$NON-NLS-1$
 
-        });
+        };
     }
 
 }

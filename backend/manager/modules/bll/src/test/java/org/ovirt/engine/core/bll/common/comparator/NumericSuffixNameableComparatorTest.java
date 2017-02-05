@@ -5,9 +5,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,8 +44,8 @@ public class NumericSuffixNameableComparatorTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> comparisonParameters() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] comparisonParameters() {
+        return new Object[][] {
                 { null, null, 0 },
                 { null, "", -1 },
                 { "", "", 0 },
@@ -72,7 +69,7 @@ public class NumericSuffixNameableComparatorTest {
                 { "abc01", "abc0123", -1 },
                 { "abc", "abc123", -1 },
                 { "abc123", "abc", 1 },
-        });
+        };
     }
 
     private static class MyNameable implements Nameable {

@@ -2,8 +2,6 @@ package org.ovirt.engine.core.common.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -34,8 +32,8 @@ public class IPAddressPatternTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> ipAddressParams() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] ipAddressParams() {
+        return new Object[][] {
                 { "0.0.0.0", true },
                 { "1.1.1.1", true },
                 { "255.255.255.255", true },
@@ -74,7 +72,7 @@ public class IPAddressPatternTest {
                 { "10.10.-1.10", false },
                 { "10.10.10.-1", false },
                 { " ", false },
-        });
+        };
     }
 
     private static class IPAdress {

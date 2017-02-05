@@ -3,8 +3,6 @@ package org.ovirt.engine.core.common;
 import static org.junit.Assert.assertEquals;
 import static org.junit.runners.Parameterized.Parameters;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 import org.junit.Test;
@@ -27,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 public class VdcActionUtilsTest {
 
     @Parameters
-    public static Collection<Object[]> data() {
+    public static Object[][] data() {
         VM upVm = new VM();
         upVm.setStatus(VMStatus.Up);
 
@@ -46,7 +44,7 @@ public class VdcActionUtilsTest {
         StorageDomain downStorageDomain = new StorageDomain();
         downStorageDomain.setStatus(StorageDomainStatus.Inactive);
 
-        return Arrays.asList(new Object[][] {
+        return new Object[][] {
                 { upVm, VdcActionType.MigrateVm, true },
                 { downVm, VdcActionType.MigrateVm, false },
                 { upVds, VdcActionType.RefreshHostCapabilities, true },
@@ -54,7 +52,7 @@ public class VdcActionUtilsTest {
                 { upStorageDomain, VdcActionType.DeactivateStorageDomainWithOvfUpdate, true },
                 { downStorageDomain, VdcActionType.DeactivateStorageDomainWithOvfUpdate, false },
                 { new StoragePool(), VdcActionType.UpdateStoragePool, true }
-        });
+        };
     }
 
     public VdcActionUtilsTest(BusinessEntityWithStatus<?, ?> toTest, VdcActionType action, boolean result) {

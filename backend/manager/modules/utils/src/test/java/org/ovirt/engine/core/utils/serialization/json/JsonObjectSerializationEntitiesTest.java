@@ -7,8 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -57,7 +55,7 @@ public class JsonObjectSerializationEntitiesTest {
     }
 
     @Parameters
-    public static Collection<Object[]> data() {
+    public static Object[] data() {
         RandomUtils random = RandomUtils.instance();
         VdsStatic vdsStatic = new VdsStatic(random.nextString(10),
                                     random.nextString(10),
@@ -70,25 +68,19 @@ public class JsonObjectSerializationEntitiesTest {
                                     random.nextBoolean(),
                                     random.nextEnum(VDSType.class),
                                     Guid.newGuid());
-        Object[][] data =
-                new Object[][] {
-                        { vdsStatic },
-                        { randomVdsDynamic() },
-                        { randomVdsStatistics() },
-                        { new VdsSpmIdMap(Guid.newGuid(), Guid.newGuid(), random.nextInt()) },
-                        { randomStorageDomainStatic() },
-                        { new StorageDomainDynamic(random.nextInt(), Guid.newGuid(), random.nextInt()) },
-                        { randomStoragePool() },
-                        { new StoragePoolIsoMap(Guid.newGuid(),
-                                Guid.newGuid(),
-                                random.nextEnum(StorageDomainStatus.class)) },
-                        { randomRole() },
-                        { new IdContainerClass<>(new VdsSpmIdMap(Guid.newGuid(),
-                                Guid.newGuid(),
-                                random.nextInt())) },
-                        { new IdContainerClass<>(Guid.newGuid()) }
-                };
-        return Arrays.asList(data);
+        return new Object[] {
+                vdsStatic,
+                randomVdsDynamic(),
+                randomVdsStatistics(),
+                new VdsSpmIdMap(Guid.newGuid(), Guid.newGuid(), random.nextInt()),
+                randomStorageDomainStatic(),
+                new StorageDomainDynamic(random.nextInt(), Guid.newGuid(), random.nextInt()),
+                randomStoragePool(),
+                new StoragePoolIsoMap(Guid.newGuid(), Guid.newGuid(), random.nextEnum(StorageDomainStatus.class)),
+                randomRole(),
+                new IdContainerClass<>(new VdsSpmIdMap(Guid.newGuid(), Guid.newGuid(), random.nextInt())),
+                new IdContainerClass<>(Guid.newGuid())
+        };
     }
 
     private static StoragePool randomStoragePool() {

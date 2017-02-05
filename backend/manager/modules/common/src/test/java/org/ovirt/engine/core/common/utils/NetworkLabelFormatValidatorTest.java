@@ -3,7 +3,6 @@ package org.ovirt.engine.core.common.utils;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,8 +36,8 @@ public class NetworkLabelFormatValidatorTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> ipAddressParams() {
-        return Arrays.asList(new Object[][] {
+    public static Object[] ipAddressParams() {
+        return new Object[][] {
                 { Collections.emptySet(), true },
                 { null, true },
                 { Collections.singleton("abc"), true },
@@ -48,7 +47,7 @@ public class NetworkLabelFormatValidatorTest {
                 { Collections.singleton(" "), false },
                 { Collections.singleton("abc*"), false },
                 { new HashSet<>(Arrays.asList("aaa", "abc*")), false }
-        });
+        };
     }
 
     private static class NetworkLabelContainer {

@@ -20,9 +20,6 @@ import static org.ovirt.engine.core.common.businessentities.VDSStatus.Reboot;
 import static org.ovirt.engine.core.common.businessentities.VDSStatus.Unassigned;
 import static org.ovirt.engine.core.common.businessentities.VDSStatus.Up;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,8 +45,8 @@ public class PollVmStatsRefresherTest {
     public final MockConfigRule mcr = new MockConfigRule();
 
     @Parameterized.Parameters(name = "status {0} is monitoring needed - {1}")
-    public static Collection<Object[]>data() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] data() {
+        return new Object[][] {
                 // host status              is monitoring needed
                 { Up,                       true},
                 { NonResponsive,            true },
@@ -67,7 +64,7 @@ public class PollVmStatsRefresherTest {
                 { PendingApproval,          false },
                 { InstallingOS,             false },
                 { Kdumping,                 false },
-        });
+        };
     }
 
     public PollVmStatsRefresherTest(VDSStatus status, boolean monitoringNeeded) {

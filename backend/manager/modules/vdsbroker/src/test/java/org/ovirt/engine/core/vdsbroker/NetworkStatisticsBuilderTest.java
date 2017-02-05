@@ -2,9 +2,6 @@ package org.ovirt.engine.core.vdsbroker;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -113,8 +110,8 @@ public class NetworkStatisticsBuilderTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> parameters() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] parameters() {
+        return new Object[][] {
 
                 // everything's supported and reported, and rate should be 100Mbps (10%)
                 {   anyDouble(),  anyDouble(), 12500000L, 1000L, anyDouble(),  anyDouble(), 12500000L, 1000L, 0D, anyInt(),
@@ -187,7 +184,7 @@ public class NetworkStatisticsBuilderTest {
                     100D,         anyDouble(), 24999000L,        100D,         anyDouble(), 24999000L,        1D, 0,
                     100D,         null,        25000000L, 1000L, 100D,         null,        25000000L, 1000L, 1D, 0
                 }
-        });
+        };
     }
 
     private static double anyDouble() {

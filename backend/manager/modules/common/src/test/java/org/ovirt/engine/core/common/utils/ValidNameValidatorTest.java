@@ -2,8 +2,6 @@ package org.ovirt.engine.core.common.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -40,8 +38,8 @@ public class ValidNameValidatorTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> namesParams() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] namesParams() {
+        return new Object[][] {
                 { "abc", true },
                 { "123", true },
                 { "abc123", true },
@@ -53,7 +51,7 @@ public class ValidNameValidatorTest {
                 { " abc", false },
                 { "abc cde", false },
                 { "abc*", false }
-        });
+        };
     }
 
     private static class ValidNameContainer {

@@ -4,9 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,7 +67,7 @@ public class DiskVmElementDiscardSupportValidatorTest {
     }
 
     @Parameters
-    public static Collection<Object[]> data() {
+    public static Object[][] data() {
         ValidationResult passDiscardNotSupportedByDiskInterface = new ValidationResult(
                 EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE,
                 getDiskAliasVarReplacement());
@@ -86,7 +83,7 @@ public class DiskVmElementDiscardSupportValidatorTest {
 
         // disk, isPassDiscard, diskInterface, lunDiscardMaxSize, storageType,
         // sdSupportsDiscard, diskWipeAfterDelete, sdSupportsDiscardZeroesData, expectedResult.
-        return Arrays.asList(new Object[][] {
+        return new Object[][] {
                 // isPassDiscard == false
                 {new DiskImage(), false, null, null, null,
                         null, null, null, ValidationResult.VALID},
@@ -170,7 +167,7 @@ public class DiskVmElementDiscardSupportValidatorTest {
                         null, null, null, passDiscardNotSupportedByCinder},
                 {new CinderDisk(), true, DiskInterface.IDE, null, null,
                         null, null, null, passDiscardNotSupportedByCinder},
-        });
+        };
     }
 
     @Test

@@ -2,9 +2,6 @@ package org.ovirt.engine.core.common.businessentities.comparators;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -41,8 +38,8 @@ public class LexoNumericComparatorTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> comparisonParameters() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] comparisonParameters() {
+        return new Object[][] {
                 { false, null, null, 0 },
                 { false, null, "", -1 },
                 { false, "", "", 0 },
@@ -103,6 +100,6 @@ public class LexoNumericComparatorTest {
                 { true, "Abc1234567891234de", "abc123456789123de", -1 },
                 { false, "abc123456789123de", "abc123456789123fg", -1 },
                 { false, "abc123456789123de", "abc123456789123def", -1 }
-        });
+        };
     }
 }

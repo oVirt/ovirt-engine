@@ -2,9 +2,6 @@ package org.ovirt.engine.core.config.entity.helper;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -28,8 +25,8 @@ public class MacAddressPoolRangesValueHelperTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> ipAddressParams() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] ipAddressParams() {
+        return new Object[][] {
                 { "00:00:00:00:00:00-00:00:00:00:00:FF", true },
                 { "00:1A:4A:16:88:FD-00:1A:4A:16:88:FD", true },
                 { "AA:AA:AA:AA:AA:AA-AA:AA:AA:AA:AA:AB", true },
@@ -48,6 +45,6 @@ public class MacAddressPoolRangesValueHelperTest {
                 { null, false },
                 { "", false },
                 { " ", false },
-        });
+        };
     }
 }

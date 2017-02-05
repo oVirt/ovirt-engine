@@ -3,8 +3,6 @@ package org.ovirt.engine.core.common.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -64,8 +62,8 @@ public class MacAddressPatternTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> ipAddressParams() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] ipAddressParams() {
+        return new Object[][] {
                          { "aa:aa:aa:aa:aa:aa", true, ALL_GROUPS, null },
                          { "AA:AA:AA:AA:AA:AA", true, ALL_GROUPS, null },
                          { "ff:ff:ff:ff:ff:ff", false, ALL_GROUPS, VmNic.VALIDATION_VM_NETWORK_MAC_ADDRESS_MULTICAST },
@@ -78,6 +76,6 @@ public class MacAddressPatternTest {
                          { "00:00:00:00:00:001", false, ALL_GROUPS, VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID },
                          { "01:00:00:00:00:00", false, ALL_GROUPS, VmNic.VALIDATION_VM_NETWORK_MAC_ADDRESS_MULTICAST },
                          { "02:00:00:00:XX:XX", false, ALL_GROUPS, VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID },
-        });
+        };
     }
 }

@@ -6,8 +6,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Random;
 
 import org.junit.Test;
@@ -98,8 +96,8 @@ public class SubnetMaskValidationTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> namesParams() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] namesParams() {
+        return new Object[][] {
 
                 // Bad Format
                 { null, false, true }, //$NON-NLS-1$
@@ -147,10 +145,7 @@ public class SubnetMaskValidationTest {
                 { "/31", false, false }, //$NON-NLS-1$
                 { "2", false, false }, //$NON-NLS-1$
                 { "/2", false, false }, //$NON-NLS-1$
-
-
-
-        });
+        };
     }
 
 }

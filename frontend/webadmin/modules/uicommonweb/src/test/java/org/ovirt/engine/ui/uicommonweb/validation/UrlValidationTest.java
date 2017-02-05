@@ -5,9 +5,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,8 +43,8 @@ public class UrlValidationTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> comparisonParameters() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] comparisonParameters() {
+        return new Object[][] {
                 { null, false },
                 { "", false }, //$NON-NLS-1$
                 { "http://", false }, //$NON-NLS-1$
@@ -66,7 +63,7 @@ public class UrlValidationTest {
                 { "http://www.redhat.com:80", true }, //$NON-NLS-1$
                 { "http://www.redhat.com:80/main", true }, //$NON-NLS-1$
                 { "http://www.redhat.com:80/main/index.html", true } //$NON-NLS-1$
-        });
+        };
     }
 
 }

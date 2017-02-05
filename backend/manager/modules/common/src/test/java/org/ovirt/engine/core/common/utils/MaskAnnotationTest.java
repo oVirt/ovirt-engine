@@ -2,8 +2,6 @@ package org.ovirt.engine.core.common.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -78,9 +76,8 @@ public class MaskAnnotationTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> namesParams() {
-
-        return Arrays.asList(new Object[][] {
+    public static Object[][] namesParams() {
+        return new Object[][] {
                 // Bad Format
                 { "a.a.a.a", false, false },
                 { "//32", false, false },
@@ -92,8 +89,7 @@ public class MaskAnnotationTest {
                 // valid mask
                 { "255.255.255.0", true, true },
                 { "15", true, true }
-        });
-
+        };
     }
 
     private static class MaskContainer {

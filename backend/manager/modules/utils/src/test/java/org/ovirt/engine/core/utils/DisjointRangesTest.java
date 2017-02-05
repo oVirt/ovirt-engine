@@ -24,8 +24,8 @@ public class DisjointRangesTest {
     private final List<LongRange> expectedRanges;
 
     @Parameterized.Parameters
-    public static List<Object[]> parameters() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] parameters() {
+        return new Object[][] {
                 { Collections.<LongRange>emptyList(), Collections.<LongRange>emptyList() },
                 { Collections.singletonList(pair(1, 2)), Collections.singletonList(pair(1, 2)) },
                 { Arrays.asList(pair(1, 2), pair(3, 4)), Arrays.asList(pair(1, 2), pair(3, 4)) },
@@ -37,8 +37,7 @@ public class DisjointRangesTest {
                 { Arrays.asList(pair(1, 2), pair(5, 6), pair(9, 11), pair(3, 12)), Arrays.asList(pair(1, 2), pair(3, 12)) },
                 { Arrays.asList(pair(1, 2), pair(5, 6), pair(9, 11), pair(3, 8)), Arrays.asList(pair(1, 2), pair(3, 8), pair(9, 11)) },
                 { Arrays.asList(pair(1, 3), pair(5, 6), pair(9, 11), pair(-1, 8)), Arrays.asList(pair(-1, 8), pair(9, 11)) }
-
-        });
+        };
     }
 
 

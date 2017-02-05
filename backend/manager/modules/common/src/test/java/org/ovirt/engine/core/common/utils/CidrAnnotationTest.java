@@ -2,8 +2,6 @@ package org.ovirt.engine.core.common.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -78,9 +76,9 @@ public class CidrAnnotationTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> namesParams() {
+    public static Object[][] namesParams() {
 
-        return Arrays.asList(new Object[][] {
+        return new Object[][] {
                 // Bad Format
                 { "a.a.a.a", false, false },
 
@@ -89,8 +87,7 @@ public class CidrAnnotationTest {
 
                 // valid CIDR
                 { "255.255.255.255/32", true, true },
-        });
-
+        };
     }
 
     private static class CidrContainer {

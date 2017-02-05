@@ -2,9 +2,6 @@ package org.ovirt.engine.core.common.queries;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,15 +19,8 @@ public class ConfigurationValuesTest {
     }
 
     @Parameters
-    public static Collection<Object[]> data() {
-        ConfigurationValues[] allValues = ConfigurationValues.values();
-        int numValues = allValues.length;
-        Object[][] params = new Object[numValues][1];
-        for (int i = 0; i < numValues; ++i) {
-            params[i][0] = allValues[i];
-        }
-
-        return Arrays.asList(params);
+    public static Object[] data() {
+        return ConfigurationValues.values();
     }
 
     @Test

@@ -2,9 +2,6 @@ package org.ovirt.engine.core.config.entity.helper;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -32,8 +29,8 @@ public class MtuValueHelperTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> ipAddressParams() {
-        return Arrays.asList(new Object[][] {
+    public static Object[][] ipAddressParams() {
+        return new Object[][] {
                 { "0", true },
                 { "68", true },
                 { "1500", true },
@@ -50,6 +47,6 @@ public class MtuValueHelperTest {
                 { null, false },
                 { "", false },
                 { " ", false },
-        });
+        };
     }
 }

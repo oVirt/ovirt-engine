@@ -5,8 +5,6 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 import org.junit.Test;
@@ -37,8 +35,8 @@ public class GetImagesListByStoragePoolIdQueryTest
     private Guid storageDomainId;
 
     @Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{ { ImageFileType.ISO }, { ImageFileType.Floppy } });
+    public static Object[] data() {
+        return new ImageFileType[] { ImageFileType.ISO, ImageFileType.Floppy };
     }
 
     public GetImagesListByStoragePoolIdQueryTest(ImageFileType expectedType) {
