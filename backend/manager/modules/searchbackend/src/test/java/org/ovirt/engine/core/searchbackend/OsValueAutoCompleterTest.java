@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,9 +31,8 @@ public class OsValueAutoCompleterTest {
     }
 
     @DataPoints
-    public static Map.Entry<Integer, String>[] data() {
-        Map.Entry[] arr = completionMap.entrySet().toArray(new Map.Entry[] {});
-        return (Map.Entry<Integer, String>[]) arr;
+    public static Set<Map.Entry<Integer, String>> data() {
+        return completionMap.entrySet();
     }
 
     @Before

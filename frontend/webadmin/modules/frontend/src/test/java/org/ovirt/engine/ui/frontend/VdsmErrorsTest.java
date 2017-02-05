@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.frontend;
 
+import java.util.List;
+
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -10,7 +12,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 public class VdsmErrorsTest extends AbstractConstantsWithLookupTestCase {
 
     @DataPoints
-    public static String[] vdsmErrors = methodNames(VdsmErrors.class);
+    public static List<String> vdsmErrors = methodNames(VdsmErrors.class);
 
     @DataPoint
     public static Class<? extends Enum<?>> vdsmErrorsClass = EngineError.class;

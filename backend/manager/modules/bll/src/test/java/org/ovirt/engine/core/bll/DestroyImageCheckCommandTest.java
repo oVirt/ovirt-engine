@@ -29,7 +29,7 @@ public class DestroyImageCheckCommandTest {
     public static final List<Guid> ALL_VOLUMES = Arrays.asList(Guid.newGuid(), Guid.newGuid(), Guid.newGuid());
 
     @DataPoints
-    public static List[] getFailedVolumes() {
+    public static List<List<Guid>> getFailedVolumes() {
         List<List<Guid>> result = new LinkedList<>();
 
         // All the single guids
@@ -47,7 +47,7 @@ public class DestroyImageCheckCommandTest {
         // All the volumes
         result.add(ALL_VOLUMES);
 
-        return result.toArray(new List[result.size()]);
+        return result;
     }
 
     @Theory

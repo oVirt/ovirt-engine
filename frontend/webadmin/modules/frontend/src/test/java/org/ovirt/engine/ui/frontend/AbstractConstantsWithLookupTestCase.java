@@ -9,7 +9,7 @@ import org.junit.experimental.theories.Theory;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public class AbstractConstantsWithLookupTestCase {
-    protected static String[] methodNames(Class<? extends ConstantsWithLookup> constantsClass) {
+    protected static List<String> methodNames(Class<? extends ConstantsWithLookup> constantsClass) {
         List<String> names = new LinkedList<>();
 
         for (Method m : constantsClass.getMethods()) {
@@ -18,7 +18,7 @@ public class AbstractConstantsWithLookupTestCase {
             }
         }
 
-        return names.toArray(new String[names.size()]);
+        return names;
     }
 
     @Theory

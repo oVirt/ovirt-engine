@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.utils;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -17,7 +19,7 @@ import org.ovirt.engine.core.compat.Version;
 @RunWith(Theories.class)
 public class VersionStorageFormatUtilTest {
     @DataPoints
-    public static final Version[] versions = Version.ALL.toArray(new Version[Version.ALL.size()]);
+    public static final List<Version> versions = Version.ALL;
 
     @Theory
     public void versionHasMatchingFormat(Version v) {
