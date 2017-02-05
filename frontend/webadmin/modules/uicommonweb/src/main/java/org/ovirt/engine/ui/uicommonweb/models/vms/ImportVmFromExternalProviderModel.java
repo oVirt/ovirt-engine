@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -58,6 +59,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     private ListModel<String> iso;
     private EntityModel<Boolean> attachDrivers;
     private String winWithoutVirtioMessage;
+    private boolean sourceIsNotKvm;
 
     protected ImportVmFromExternalProviderModel(VmImportGeneralModel vmImportGeneralModel, VmImportDiskListModel importDiskListModel,
             VmImportInterfaceListModel vmImportInterfaceListModel, final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota) {
@@ -68,23 +70,9 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         setStorage(new ListModel<StorageDomain>());
         setAllocation(new ListModel<VolumeType>());
         getAllocation().setItems(Arrays.asList(VolumeType.Sparse, VolumeType.Preallocated));
+        sourceIsNotKvm = true;
         setIso(new ListModel<String>());
-        getIso().setIsChangeable(false);
         setAttachDrivers(new EntityModel<>(false));
-        getAttachDrivers().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getIso().setIsChangeable(getAttachDrivers().getEntity());
-                updateWindowsWarningMessage();
-            }
-        });
-
-        getIso().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateWindowsWarningMessage();
-            }
-        });
 
         vmImportGeneralModel.getOperatingSystems().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
@@ -108,8 +96,8 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         boolean someDriverSelected = !StringUtils.isEmpty(getIso().getSelectedItem());
         boolean isWindows = AsyncDataProvider.getInstance().isWindowsOsType(selectedOS);
 
-        if (isWindows && (!attachDrivers || !someDriverSelected)) {
-            setWinWithoutVirtioMessage(ConstantsManager.getInstance()
+        if (isWindows && sourceIsNotKvm &&  (!attachDrivers || !someDriverSelected)) {
+                setWinWithoutVirtioMessage(ConstantsManager.getInstance()
                     .getConstants().missingVirtioDriversForWindows());
         }
     }
@@ -135,6 +123,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         .setIsDefault(true)
         .setIsCancel(true));
 
+        initIsoAndAttachDriversFields(externalVms);
         setTargetArchitecture(externalVms);
         withDataCenterLoaded(dataCenterId, new AsyncCallback<StoragePool>() {
 
@@ -148,6 +137,32 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
                 }, externalVms);
             }
         });
+    }
+
+    private void initIsoAndAttachDriversFields(final List<VM> externalVms) {
+        sourceIsNotKvm = externalVms != null && externalVms.size() > 0 && externalVms.get(0).getOrigin() != OriginType.KVM;
+
+        getIso().setIsAvailable(sourceIsNotKvm);
+        getAttachDrivers().setIsAvailable(sourceIsNotKvm);
+        if (sourceIsNotKvm) {
+            setAttachDrivers(new EntityModel<>(false));
+            getIso().setIsChangeable(false);
+
+            getAttachDrivers().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+                @Override
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                    getIso().setIsChangeable(getAttachDrivers().getEntity());
+                    updateWindowsWarningMessage();
+                }
+            });
+
+            getIso().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+                @Override
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                    updateWindowsWarningMessage();
+                }
+            });
+        }
     }
 
     private void withDataCenterLoaded(Guid dataCenterId, final AsyncCallback<StoragePool> callback) {
