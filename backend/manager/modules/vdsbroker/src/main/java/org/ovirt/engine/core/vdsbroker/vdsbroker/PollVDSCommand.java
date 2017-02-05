@@ -29,9 +29,17 @@ public class PollVDSCommand<P extends VdsIdVDSCommandParametersBase> extends Fut
     protected void proceedProxyReturnValue() {
         try {
             super.proceedProxyReturnValue();
-        } catch (VDSNetworkException ignored) {
-            log.debug("VDSNetworkException was caught and ignored", ignored);
+        } catch (VDSNetworkException e) {
+            handleException(e, "VDSNetworkException was caught");
+        } catch (VDSRecoveringException e) {
+            handleException(e, "it's in recovery mode");
         }
+    }
+
+    private void handleException(VDSExceptionBase e, String reason) {
+        setVdsRuntimeError(e);
+        final String msg = String.format("Failed to poll host %s - %s.", getParameters().getVdsId(), reason);
+        log.debug(msg, e);
     }
 
     /**
@@ -39,6 +47,6 @@ public class PollVDSCommand<P extends VdsIdVDSCommandParametersBase> extends Fut
      * it as an audit log
      */
     @Override
-    protected void logToAudit(){
+    protected void logToAudit() {
     }
 }

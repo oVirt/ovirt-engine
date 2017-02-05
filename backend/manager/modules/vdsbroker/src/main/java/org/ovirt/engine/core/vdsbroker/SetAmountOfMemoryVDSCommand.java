@@ -23,7 +23,7 @@ public class SetAmountOfMemoryVDSCommand <P extends SetAmountOfMemoryVDSCommand.
             status = getBroker().hotplugMemory(buildData());
             proceedProxyReturnValue();
         } catch (RuntimeException e) {
-            setVdsRuntimeError(e);
+            setVdsRuntimeErrorAndReport(e);
             // prevent exception handler from rethrowing an exception
             getVDSReturnValue().setExceptionString(null);
         }

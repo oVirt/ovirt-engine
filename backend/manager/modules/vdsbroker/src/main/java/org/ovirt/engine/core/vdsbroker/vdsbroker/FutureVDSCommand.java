@@ -72,12 +72,12 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
             httpTask.cancel(true);
             VDSNetworkException ex = new VDSNetworkException("Timeout during xml-rpc call");
             ex.setVdsError(new VDSError(EngineError.VDS_NETWORK_ERROR, "Timeout during xml-rpc call"));
-            setVdsRuntimeError(ex);
+            setVdsRuntimeErrorAndReport(ex);
             log.error("Timeout waiting for VDSM response: {}", e.getMessage());
             log.debug("Exception", e);
             throw e;
         } catch (VDSNetworkException e) {
-            setVdsRuntimeError(e);
+            setVdsRuntimeErrorAndReport(e);
             if (isPolicyResetMessage(e.getVdsError().getMessage())) {
                 log.info("Policy reset required for network reconfiguration");
             } else {
@@ -87,7 +87,7 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
         } catch (Exception e) {
             log.error("Error: {}", e.getMessage());
             log.error("Exception", e);
-            setVdsRuntimeError(e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e));
+            setVdsRuntimeErrorAndReport(e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e));
         }
         return getVDSReturnValue();
     }
