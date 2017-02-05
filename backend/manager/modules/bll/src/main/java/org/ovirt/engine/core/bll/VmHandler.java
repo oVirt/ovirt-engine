@@ -1224,6 +1224,9 @@ public class VmHandler implements BackendService {
      * compatibility version of target cluster.
      */
     public static void updateMaxMemorySize(VmBase vmBase, Version effectiveCompatibilityVersion) {
+        if (vmBase == null) {
+            return;
+        }
         final int maxOfMaxMemorySize =
                 VmCommonUtils.maxMemorySizeWithHotplugInMb(vmBase.getOsId(), effectiveCompatibilityVersion);
         if (vmBase.getMaxMemorySizeMb() == 0 || vmBase.getMaxMemorySizeMb() > maxOfMaxMemorySize) {
