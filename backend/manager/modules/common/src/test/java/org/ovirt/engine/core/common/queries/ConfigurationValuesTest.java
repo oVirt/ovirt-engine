@@ -5,20 +5,15 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 /** A test case for the {@link ConfigurationValues} class */
 @RunWith(Parameterized.class)
 public class ConfigurationValuesTest {
 
-    /** The tested value */
-    private ConfigurationValues value;
+    @Parameterized.Parameter
+    public ConfigurationValues value;
 
-    public ConfigurationValuesTest(ConfigurationValues value) {
-        this.value = value;
-    }
-
-    @Parameters
+    @Parameterized.Parameters
     public static Object[] data() {
         return ConfigurationValues.values();
     }

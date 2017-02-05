@@ -22,23 +22,15 @@ public class MacAddressPatternTest {
     private static final Class<?>[] CREATE_GROUP = { CreateEntity.class };
     private static final Class<?>[] UPDATE_GROUP = { UpdateEntity.class };
 
-    private Validator validator;
-    private String address;
-    private boolean validMacAddress;
-    private Class<?>[] groups;
-    private String message;
-
-    public MacAddressPatternTest(String address, boolean validMacAddress, Class<?>[] groups, String message) {
-
-        assert validMacAddress == (message == null);
-
-        this.address = address;
-        this.validMacAddress = validMacAddress;
-        this.groups = groups;
-        this.message = message;
-
-        validator = ValidationUtils.getValidator();
-    }
+    private Validator validator = ValidationUtils.getValidator();
+    @Parameterized.Parameter(0)
+    public String address;
+    @Parameterized.Parameter(1)
+    public boolean validMacAddress;
+    @Parameterized.Parameter(2)
+    public Class<?>[] groups;
+    @Parameterized.Parameter(3)
+    public String message;
 
     @Test
     public void checkIPAdress() {

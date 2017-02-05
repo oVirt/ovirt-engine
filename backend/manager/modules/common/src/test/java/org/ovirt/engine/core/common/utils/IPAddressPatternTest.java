@@ -15,15 +15,11 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class IPAddressPatternTest {
 
-    private Validator validator;
-    private String address;
-    private boolean expectedResult;
-
-    public IPAddressPatternTest(String address, Boolean expectedResult) {
-        this.address = address;
-        this.expectedResult = expectedResult;
-        validator = ValidationUtils.getValidator();
-    }
+    private Validator validator = ValidationUtils.getValidator();
+    @Parameterized.Parameter(0)
+    public String address;
+    @Parameterized.Parameter(1)
+    public boolean expectedResult;
 
     @Test
     public void checkIPAdress() {

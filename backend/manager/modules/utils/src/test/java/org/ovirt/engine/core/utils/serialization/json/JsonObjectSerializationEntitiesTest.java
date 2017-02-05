@@ -17,7 +17,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -45,16 +44,13 @@ import org.ovirt.engine.core.utils.RandomUtils;
  */
 @RunWith(Parameterized.class)
 public class JsonObjectSerializationEntitiesTest {
-    private final BusinessEntity<?> entity;
+    @Parameterized.Parameter
+    public BusinessEntity<?> entity;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
-    public JsonObjectSerializationEntitiesTest(BusinessEntity<?> entity) {
-        this.entity = entity;
-    }
-
-    @Parameters
+    @Parameterized.Parameters
     public static Object[] data() {
         RandomUtils random = RandomUtils.instance();
         VdsStatic vdsStatic = new VdsStatic(random.nextString(10),

@@ -9,12 +9,8 @@ import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class UriTest {
-
-    private String uriCandidate;
-
-    public UriTest(String uriCandidate) {
-        this.uriCandidate = uriCandidate;
-    }
+    @Parameterized.Parameter
+    public String uriCandidate;
 
     @Test
     public void runTest() {

@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -20,26 +19,19 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 
 @RunWith(Parameterized.class)
 public class StorageDomainValidatorFreeSpaceTest {
-    private DiskImage disk;
-    private StorageDomain sd;
+    @Parameterized.Parameter(0)
+    public DiskImage disk;
+    @Parameterized.Parameter(1)
+    public StorageDomain sd;
 
-    private boolean isValidForCloned;
-    private boolean isValidForNew;
-    private boolean isValidForSnapshots;
+    @Parameterized.Parameter(2)
+    public boolean isValidForCloned;
+    @Parameterized.Parameter(3)
+    public boolean isValidForNew;
+    @Parameterized.Parameter(4)
+    public boolean isValidForSnapshots;
 
-    public StorageDomainValidatorFreeSpaceTest(DiskImage disk,
-            StorageDomain sd,
-            boolean isValidForCloned,
-            boolean isValidForNew,
-            boolean isValidForSnapshots) {
-        this.disk = disk;
-        this.sd = sd;
-        this.isValidForCloned = isValidForCloned;
-        this.isValidForNew = isValidForNew;
-        this.isValidForSnapshots = isValidForSnapshots;
-    }
-
-    @Parameters
+    @Parameterized.Parameters
     public static Collection<Object[]> createParams() {
         List<Object[]> params = new ArrayList<>();
 

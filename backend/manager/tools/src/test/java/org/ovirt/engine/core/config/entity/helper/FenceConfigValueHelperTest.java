@@ -10,22 +10,17 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 @RunWith(Parameterized.class)
 public class FenceConfigValueHelperTest {
 
-    private FenceConfigValueHelper validator;
-    private String fenceAgentMapping;
-    private String fenceAgentDefault;
-    private String vdsFenceOptionMapping;
-    private String vdsFenceType;
-    private boolean expectedResult;
-
-    public FenceConfigValueHelperTest(String fenceAgentMapping, String fenceAgentDefault, String vdsFenceOptionMapping, String vdsFenceType, Boolean expectedResult) {
-
-        this.fenceAgentMapping = fenceAgentMapping;
-        this.fenceAgentDefault = fenceAgentDefault;
-        this.vdsFenceOptionMapping = vdsFenceOptionMapping;
-        this.vdsFenceType = vdsFenceType;
-        this.expectedResult = expectedResult;
-        validator = new FenceConfigValueHelper();
-    }
+    private FenceConfigValueHelper validator = new FenceConfigValueHelper();
+    @Parameterized.Parameter(0)
+    public String fenceAgentMapping;
+    @Parameterized.Parameter(1)
+    public String fenceAgentDefault;
+    @Parameterized.Parameter(2)
+    public String vdsFenceOptionMapping;
+    @Parameterized.Parameter(3)
+    public String vdsFenceType;
+    @Parameterized.Parameter(4)
+    public boolean expectedResult;
 
     @Test
     public void validateFenceAgentMappingConfig() {

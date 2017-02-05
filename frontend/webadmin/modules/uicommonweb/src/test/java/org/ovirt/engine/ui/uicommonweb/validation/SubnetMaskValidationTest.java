@@ -15,16 +15,12 @@ import org.ovirt.engine.core.common.validation.MaskValidator;
 
 @RunWith(Parameterized.class)
 public class SubnetMaskValidationTest {
-
-    private final String mask;
-    private final boolean isMaskValid;
-    private final boolean isPrefixAllowed;
-
-    public SubnetMaskValidationTest(String mask, boolean isMaskValid, boolean isPrefixAllowed) {
-        this.mask = mask;
-        this.isMaskValid = isMaskValid;
-        this.isPrefixAllowed = isPrefixAllowed;
-    }
+    @Parameterized.Parameter(0)
+    public String mask;
+    @Parameterized.Parameter(1)
+    public boolean isMaskValid;
+    @Parameterized.Parameter(2)
+    public boolean isPrefixAllowed;
 
     private SubnetMaskValidation createUnderTest(boolean isPrefixAllowed) {
         SubnetMaskValidation underTest = spy(new SubnetMaskValidation(isPrefixAllowed));

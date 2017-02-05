@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.utils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.runners.Parameterized.Parameters;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,15 +22,12 @@ public class XmlUtilsTest {
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
-    private int level;
-    private String value;
+    @Parameterized.Parameter(0)
+    public int level;
+    @Parameterized.Parameter(1)
+    public String value;
 
-    public XmlUtilsTest(int level, String value) {
-        this.level = level;
-        this.value = value;
-    }
-
-    @Parameters
+    @Parameterized.Parameters
     public static List<Object[]> data() {
         List<Object[]> params = new ArrayList<>();
         // XmlUtils.getXYZValue support recursive searching from a depth of 2 and above, e.g.:

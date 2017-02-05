@@ -17,13 +17,10 @@ import org.ovirt.engine.core.common.validation.annotation.ValidName;
 public class ValidNameValidatorTest {
 
     private Validator validator;
-    private String name;
-    private boolean expectedResult;
-
-    public ValidNameValidatorTest(String name, boolean expectedResult) {
-        this.name = name;
-        this.expectedResult = expectedResult;
-    }
+    @Parameterized.Parameter(0)
+    public String name;
+    @Parameterized.Parameter(1)
+    public boolean expectedResult;
 
     @Before
     public void setup() throws Exception {

@@ -9,15 +9,11 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class MacAddressPoolRangesValueHelperTest {
 
-    private MacAddressPoolRangesValueHelper validator;
-    private String ranges;
-    private boolean expectedResult;
-
-    public MacAddressPoolRangesValueHelperTest(String ranges, Boolean expectedResult) {
-        this.ranges = ranges;
-        this.expectedResult = expectedResult;
-        validator = new MacAddressPoolRangesValueHelper();
-    }
+    private MacAddressPoolRangesValueHelper validator = new MacAddressPoolRangesValueHelper();
+    @Parameterized.Parameter(0)
+    public String ranges;
+    @Parameterized.Parameter(1)
+    public boolean expectedResult;
 
     @Test
     public void validateRanges() {

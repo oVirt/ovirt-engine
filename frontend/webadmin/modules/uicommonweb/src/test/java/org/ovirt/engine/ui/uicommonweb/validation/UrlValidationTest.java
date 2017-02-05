@@ -20,13 +20,10 @@ public class UrlValidationTest {
 
     private UriHostAddressValidation hostValidation;
 
-    private String url;
-    private boolean expectedResult;
-
-    public UrlValidationTest(String url, boolean expectedResult) {
-        this.url = url;
-        this.expectedResult = expectedResult;
-    }
+    @Parameterized.Parameter(0)
+    public String url;
+    @Parameterized.Parameter(1)
+    public boolean expectedResult;
 
     @Before
     public void setup() {

@@ -17,18 +17,13 @@ import org.ovirt.engine.core.common.validation.annotation.Mask;
 @RunWith(Parameterized.class)
 public class MaskAnnotationTest {
 
-    private final String mask;
-    private final boolean isValidMaskFormat;
-    private final boolean isValidMaskValue;
+    @Parameterized.Parameter(0)
+    public String mask;
+    @Parameterized.Parameter(1)
+    public boolean isValidMaskFormat;
+    @Parameterized.Parameter(2)
+    public boolean isValidMaskValue;
     private Validator validator;
-
-    public MaskAnnotationTest(String mask,
-            boolean isValidMaskFormat,
-            boolean isValidMaskValue) {
-        this.mask = mask;
-        this.isValidMaskFormat = isValidMaskFormat;
-        this.isValidMaskValue = isValidMaskValue;
-    }
 
     @Before
     public void setup() throws Exception {

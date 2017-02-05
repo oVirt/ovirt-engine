@@ -11,15 +11,11 @@ import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
 @RunWith(Parameterized.class)
 public class MtuValueHelperTest {
 
-    private MtuValueHelper validator;
-    private String values;
-    private boolean expectedResult;
-
-    public MtuValueHelperTest(String values, Boolean expectedResult) {
-        this.values = values;
-        this.expectedResult = expectedResult;
-        validator = new MtuValueHelper();
-    }
+    private MtuValueHelper validator = new MtuValueHelper();
+    @Parameterized.Parameter(0)
+    public String values;
+    @Parameterized.Parameter(1)
+    public boolean expectedResult;
 
     @Test
     public void validateRanges() {

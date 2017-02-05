@@ -33,8 +33,10 @@ import org.ovirt.engine.core.vdsbroker.VdsManager;
 @RunWith(Parameterized.class)
 public class PollVmStatsRefresherTest {
 
-    private final VDSStatus status;
-    private final boolean monitoringNeeded;
+    @Parameterized.Parameter(0)
+    public VDSStatus status;
+    @Parameterized.Parameter(1)
+    public boolean monitoringNeeded;
 
     private PollVmStatsRefresher underTest;
 
@@ -65,11 +67,6 @@ public class PollVmStatsRefresherTest {
                 { InstallingOS,             false },
                 { Kdumping,                 false },
         };
-    }
-
-    public PollVmStatsRefresherTest(VDSStatus status, boolean monitoringNeeded) {
-        this.status = status;
-        this.monitoringNeeded = monitoringNeeded;
     }
 
     @Before

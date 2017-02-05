@@ -17,18 +17,13 @@ import org.ovirt.engine.core.common.validation.annotation.Cidr;
 @RunWith(Parameterized.class)
 public class CidrAnnotationTest {
 
-    private final String cidr;
-    private final boolean validCidrFormatExpectedResult;
-    private final boolean validNetworkAddressExpectedResult;
+    @Parameterized.Parameter(0)
+    public String cidr;
+    @Parameterized.Parameter(1)
+    public boolean validCidrFormatExpectedResult;
+    @Parameterized.Parameter(2)
+    public boolean validNetworkAddressExpectedResult;
     private Validator validator;
-
-    public CidrAnnotationTest(String cidr,
-            boolean validCidrFormatExpectedResult,
-            boolean validNetworkAddressExpectedResult) {
-        this.cidr = cidr;
-        this.validCidrFormatExpectedResult = validCidrFormatExpectedResult;
-        this.validNetworkAddressExpectedResult = validNetworkAddressExpectedResult;
-    }
 
     @Before
     public void setup() throws Exception {

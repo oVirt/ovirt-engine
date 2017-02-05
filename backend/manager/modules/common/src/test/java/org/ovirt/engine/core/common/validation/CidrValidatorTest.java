@@ -5,21 +5,15 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class CidrValidatorTest {
-    private final String cidr;
-    private final boolean validCidrFormatExpectedResult;
-    private final boolean validNetworkAddressExpectedResult;
-
-    public CidrValidatorTest(String cidr,
-            boolean validCidrFormatExpectedResult,
-            boolean validNetworkAddressExpectedResult) {
-        this.cidr = cidr;
-        this.validCidrFormatExpectedResult = validCidrFormatExpectedResult;
-        this.validNetworkAddressExpectedResult = validNetworkAddressExpectedResult;
-    }
+    @Parameterized.Parameter(0)
+    public String cidr;
+    @Parameterized.Parameter(1)
+    public boolean validCidrFormatExpectedResult;
+    @Parameterized.Parameter(2)
+    public boolean validNetworkAddressExpectedResult;
 
     @Test
     public void checkCidrFormatValidation() {
@@ -39,7 +33,7 @@ public class CidrValidatorTest {
                 CidrValidator.getInstance().isCidrNetworkAddressValid(cidr));
     }
 
-    @Parameters
+    @Parameterized.Parameters
     public static Object[][] data() {
         return new Object[][] {
                 // Bad Format

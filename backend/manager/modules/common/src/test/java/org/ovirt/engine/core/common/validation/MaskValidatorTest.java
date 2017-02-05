@@ -11,17 +11,14 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class MaskValidatorTest {
 
-    private final String mask;
-    private final boolean isNetmaskValidFormat;
-    private final boolean isNetmaskValidValue;
-    private final boolean isPrefixValid;
-
-    public MaskValidatorTest(String mask, boolean isNetmaskValidFormat, boolean isMaskValid, boolean isPrefixValid) {
-        this.mask = mask;
-        this.isNetmaskValidFormat = isNetmaskValidFormat;
-        this.isNetmaskValidValue = isMaskValid;
-        this.isPrefixValid = isPrefixValid;
-    }
+    @Parameterized.Parameter(0)
+    public String mask;
+    @Parameterized.Parameter(1)
+    public boolean isNetmaskValidFormat;
+    @Parameterized.Parameter(2)
+    public boolean isNetmaskValidValue;
+    @Parameterized.Parameter(3)
+    public boolean isPrefixValid;
 
     @Test
     public void checkNetmaskFormatValidation() {

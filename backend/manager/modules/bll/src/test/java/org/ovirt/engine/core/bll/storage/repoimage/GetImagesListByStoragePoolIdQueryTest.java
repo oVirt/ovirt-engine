@@ -10,7 +10,6 @@ import java.util.Collections;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -31,16 +30,13 @@ public class GetImagesListByStoragePoolIdQueryTest
     @Mock
     private StoragePoolDao storagePoolDaoMock;
 
-    private ImageFileType expectedType;
+    @Parameterized.Parameter
+    public ImageFileType expectedType;
     private Guid storageDomainId;
 
-    @Parameters
+    @Parameterized.Parameters
     public static Object[] data() {
         return new ImageFileType[] { ImageFileType.ISO, ImageFileType.Floppy };
-    }
-
-    public GetImagesListByStoragePoolIdQueryTest(ImageFileType expectedType) {
-        this.expectedType = expectedType;
     }
 
     @Override

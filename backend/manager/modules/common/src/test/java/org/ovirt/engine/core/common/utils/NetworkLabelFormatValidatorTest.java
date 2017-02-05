@@ -18,15 +18,11 @@ import org.ovirt.engine.core.common.validation.annotation.ValidNetworkLabelForma
 @RunWith(Parameterized.class)
 public class NetworkLabelFormatValidatorTest {
 
-    private Validator validator;
-    private boolean expectedResult;
-    private Set<String> labels;
-
-    public NetworkLabelFormatValidatorTest(Set<String> labels, boolean expectedResult) {
-        this.labels = labels;
-        this.expectedResult = expectedResult;
-        validator = ValidationUtils.getValidator();
-    }
+    private Validator validator = ValidationUtils.getValidator();
+    @Parameterized.Parameter(1)
+    public boolean expectedResult;
+    @Parameterized.Parameter(0)
+    public Set<String> labels;
 
     @Test
     public void checkNetworkLabelFormat() {

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.runners.Parameterized.Parameters;
 
 import java.util.Collections;
 
@@ -24,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 @RunWith(Parameterized.class)
 public class VdcActionUtilsTest {
 
-    @Parameters
+    @Parameterized.Parameters
     public static Object[][] data() {
         VM upVm = new VM();
         upVm.setStatus(VMStatus.Up);
@@ -55,22 +54,17 @@ public class VdcActionUtilsTest {
         };
     }
 
-    public VdcActionUtilsTest(BusinessEntityWithStatus<?, ?> toTest, VdcActionType action, boolean result) {
-        this.toTest = toTest;
-        this.action = action;
-        this.result = result;
-    }
-
     /** The object to test. */
-    private BusinessEntityWithStatus<?, ?> toTest;
+    @Parameterized.Parameter(0)
+    public BusinessEntityWithStatus<?, ?> toTest;
 
     /** The action to test */
-    private VdcActionType action;
+    @Parameterized.Parameter(1)
+    public VdcActionType action;
 
-    /**
-     * The expected result.
-     */
-    private boolean result;
+    /** The expected result. */
+    @Parameterized.Parameter(2)
+    public boolean result;
 
     @Test
     public void canExecute() {

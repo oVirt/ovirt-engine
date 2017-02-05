@@ -16,17 +16,14 @@ public class NumericSuffixNormalizerTest {
 
     private NumericSuffixNormalizer underTest;
 
-    private final String str1;
-    private final String str2;
-    private final String expected1;
-    private final String expected2;
-
-    public NumericSuffixNormalizerTest(String str1, String str2, String expected1, String expected2) {
-        this.str1 = str1;
-        this.str2 = str2;
-        this.expected1 = expected1;
-        this.expected2 = expected2;
-    }
+    @Parameterized.Parameter(0)
+    public String str1;
+    @Parameterized.Parameter(1)
+    public String str2;
+    @Parameterized.Parameter(2)
+    public String expected1;
+    @Parameterized.Parameter(3)
+    public String expected2;
 
     @Before
     public void setUp() {

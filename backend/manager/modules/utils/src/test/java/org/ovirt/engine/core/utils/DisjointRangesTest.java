@@ -20,8 +20,10 @@ public class DisjointRangesTest {
     @Rule
     public final RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
-    private List<LongRange> inputRanges;
-    private final List<LongRange> expectedRanges;
+    @Parameterized.Parameter(0)
+    public List<LongRange> inputRanges;
+    @Parameterized.Parameter(1)
+    public List<LongRange> expectedRanges;
 
     @Parameterized.Parameters
     public static Object[][] parameters() {
@@ -43,13 +45,6 @@ public class DisjointRangesTest {
 
     private static LongRange pair(long from, long to) {
         return new LongRange(from, to);
-    }
-
-    public DisjointRangesTest(List<LongRange> inputRanges,
-            List<LongRange> expectedRanges) {
-
-        this.inputRanges = inputRanges;
-        this.expectedRanges = expectedRanges;
     }
 
     @Test
