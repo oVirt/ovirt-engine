@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfUpdateProcessHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -592,4 +593,13 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         }
         return jobProperties;
     }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionSubjects = new ArrayList<>();
+        permissionSubjects.addAll(super.getPermissionCheckSubjects());
+        permissionSubjects.add(new PermissionSubject(getVmId(), VdcObjectType.VM, getActionType().getActionGroup()));
+        return permissionSubjects;
+    }
+
 }
