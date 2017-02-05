@@ -19,7 +19,15 @@ import org.junit.runner.RunWith;
 public class OsValueAutoCompleterTest {
 
     private OsValueAutoCompleter completer;
-    public static Map<Integer, String> completionMap;
+    public static Map<Integer, String> completionMap = new HashMap<>();
+    static {
+        completionMap.put(0, "other");
+        completionMap.put(1, "rhel_x");
+        completionMap.put(2, "rhel_x_y");
+        completionMap.put(3, "windows_2008");
+        completionMap.put(4, "windows_2008_R2");
+        completionMap.put(5, "windows_2008_R2x64");
+    }
 
     @DataPoints
     public static Map.Entry<Integer, String>[] data() {
@@ -29,13 +37,6 @@ public class OsValueAutoCompleterTest {
 
     @Before
     public void setup() {
-        completionMap = new HashMap<>();
-        completionMap.put(0, "other");
-        completionMap.put(1, "rhel_x");
-        completionMap.put(2, "rhel_x_y");
-        completionMap.put(3, "windows_2008");
-        completionMap.put(4, "windows_2008_R2");
-        completionMap.put(5, "windows_2008_R2x64");
         completer = new OsValueAutoCompleter(completionMap);
     }
 
