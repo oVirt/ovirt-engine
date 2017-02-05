@@ -19,7 +19,7 @@ public class SetNumberOfCpusVDSCommand<P extends SetNumberOfCpusVDSCommand.Param
                     String.valueOf(getParameters().getNumberOfCpus()));
             proceedProxyReturnValue();
         } catch (RuntimeException e) {
-            setVdsRuntimeError(e);
+            setVdsRuntimeErrorAndReport(e);
             // prevent exception handler from rethrowing an exception
             getVDSReturnValue().setExceptionString(null);
         }
