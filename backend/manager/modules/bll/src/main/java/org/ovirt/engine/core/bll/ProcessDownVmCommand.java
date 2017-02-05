@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
@@ -197,29 +196,13 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
      * Remove VM's unmanaged devices that are created during run-once or stateless run.
      */
     private void removeStatelessVmUnmanagedDevices() {
-        if (getVm().isStateless() || isRunOnce()) {
+        if (getVm().isStateless() || getVm().isRunOnce()) {
             List<VmDevice> unmanagedVmDevices = vmDeviceDao.getUnmanagedDevicesByVmId(getVmId());
             vmDeviceDao.removeAllInBatch(unmanagedVmDevices.stream()
                     // do not remove device if appears in white list
                     .filter(device -> !VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice()))
                     .collect(Collectors.toList()));
         }
-    }
-
-    /**
-     * This method checks if we are stopping a VM that was started by run-once In such case we will may have 2 devices,
-     * one managed and one unmanaged for CD or Floppy This is not supported currently by libvirt that allows only one
-     * CD/Floppy This code should be removed if libvirt will support in future multiple CD/Floppy
-     */
-    private boolean isRunOnce() {
-        List<VmDevice> cdList =
-                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
-                        getVmId(), VmDeviceGeneralType.DISK, VmDeviceType.CDROM.getName());
-        List<VmDevice> floppyList =
-                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
-                        getVmId(), VmDeviceGeneralType.DISK, VmDeviceType.FLOPPY.getName());
-
-        return cdList.size() > 1 || floppyList.size() > 1;
     }
 
     /**
