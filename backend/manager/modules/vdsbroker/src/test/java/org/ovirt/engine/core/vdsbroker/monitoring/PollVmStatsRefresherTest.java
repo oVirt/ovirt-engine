@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.ovirt.engine.core.common.businessentities.VDSStatus.Connecting;
@@ -77,7 +77,7 @@ public class PollVmStatsRefresherTest {
 
     @Test
     public void testMonitoringNeededByStatus() {
-        assertTrue(underTest.isMonitoringNeeded(status) == monitoringNeeded);
+        assertEquals(underTest.isMonitoringNeeded(status), monitoringNeeded);
     }
 
 }
