@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.InitializationType;
@@ -20,14 +21,21 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
     @Inject
     private VmDao vmDao;
 
+    private final VM vm;
+    private boolean windows;
+
     public CreateVDSCommand(P parameters) {
         super(parameters);
+        this.vm = parameters.getVm();
+    }
+
+    @PostConstruct
+    private void init() {
+        this.windows = SimpleDependencyInjector.getInstance().get(OsRepository.class).isWindows(vm.getVmOsId());
     }
 
     @Override
     protected void executeVmCommand() {
-        final VM vm = getParameters().getVm();
-
         if (!resourceManager.addAsyncRunningVm(vm.getId())) {
             log.info("Vm Running failed - vm '{}'({}) already running", vm.getName(), vm.getId());
             getVDSReturnValue().setReturnValue(vm.getStatus());
@@ -63,30 +71,30 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
     }
 
     private VDSReturnValue runCreateVDSCommand() {
-        final VM vm = getParameters().getVm();
-        if (isSysprepUsed(vm)) {
+        if (isSysprepUsed()) {
             // use answer file to run after sysprep.
             CreateVDSCommandParameters createVmFromSysPrepParam =
                     new CreateVDSCommandParameters(getParameters().getVdsId(), vm);
             createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
             return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromSysPrep, createVmFromSysPrepParam);
-        } else if (isCloudInitUsed(vm)) {
-            return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromCloudInit, getParameters());
-        } else {
-            // normal run.
-            return resourceManager.runVdsCommand(VDSCommandType.CreateBroker, getParameters());
         }
+
+        if (isCloudInitUsed()) {
+            return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromCloudInit, getParameters());
+        }
+
+        // normal run.
+        return resourceManager.runVdsCommand(VDSCommandType.CreateBroker, getParameters());
     }
 
-    private boolean isSysprepUsed(VM vm) {
+    private boolean isSysprepUsed() {
         return vm.getInitializationType() == InitializationType.Sysprep
-                && SimpleDependencyInjector.getInstance().get(OsRepository.class).isWindows(vm.getVmOsId())
+                && windows
                 && (vm.getFloppyPath() == null || "".equals(vm.getFloppyPath()));
     }
 
-    private boolean isCloudInitUsed(VM vm) {
-        return vm.getInitializationType() == InitializationType.CloudInit
-                && !SimpleDependencyInjector.getInstance().get(OsRepository.class).isWindows(vm.getVmOsId());
+    private boolean isCloudInitUsed() {
+        return vm.getInitializationType() == InitializationType.CloudInit && !windows;
     }
 
     private void handleCommandResult(VDSReturnValue vdsReturnValue) {
