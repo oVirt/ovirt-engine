@@ -43,6 +43,9 @@ public class IconUtils {
     private static List<Guid> extractIconIds(Collection<VM> vms, boolean smallIcons, boolean largeIcons) {
         final List<Guid> result = new ArrayList<>();
         for (VM vm: vms) {
+            if (vm == null) {
+                continue;
+            }
             if (smallIcons) {
                 result.add(vm.getStaticData().getSmallIconId());
             }
