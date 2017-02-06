@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSGenericException;
 
@@ -28,32 +27,38 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
     @Override
     protected void executeVmCommand() {
         final VM vm = getParameters().getVm();
-        vm.setLastStartTime(new Date());
-        if (canExecute() && resourceManager.addAsyncRunningVm(vm.getId())) {
-            VDSReturnValue vdsReturnValue = null;
-            try {
-                vdsReturnValue = runCreateVDSCommand();
-                if (vdsReturnValue.getSucceeded()) {
-                    if (!getParameters().isRunInUnknownStatus()) {
-                        vmDao.saveIsInitialized(vm.getId(), true);
-                        vm.setStopReason(null);
-                        vm.setInitialized(true);
-                        vm.setRunOnVds(getParameters().getVdsId());
-                        vmManager.update(vm.getDynamicData());
-                    }
-                } else {
-                    handleCommandResult(vdsReturnValue);
-                    resourceManager.removeAsyncRunningVm(getParameters().getVmId());
-                }
-            } catch (Exception e) {
-                log.error("Failed to create VM: {}", e.getMessage());
-                log.error("Exception", e);
-                if (vdsReturnValue != null && !vdsReturnValue.getSucceeded()) {
-                    resourceManager.removeAsyncRunningVm(getParameters().getVmId());
-                }
-                throw new RuntimeException(e);
-            }
+
+        if (!resourceManager.addAsyncRunningVm(vm.getId())) {
+            log.info("Vm Running failed - vm '{}'({}) already running", vm.getName(), vm.getId());
+            getVDSReturnValue().setReturnValue(vm.getStatus());
+            return;
         }
+
+        vm.setLastStartTime(new Date());
+        VDSReturnValue vdsReturnValue = null;
+        try {
+            vdsReturnValue = runCreateVDSCommand();
+            if (vdsReturnValue.getSucceeded()) {
+                if (!getParameters().isRunInUnknownStatus()) {
+                    vmDao.saveIsInitialized(vm.getId(), true);
+                    vm.setStopReason(null);
+                    vm.setInitialized(true);
+                    vm.setRunOnVds(getParameters().getVdsId());
+                    vmManager.update(vm.getDynamicData());
+                }
+            } else {
+                handleCommandResult(vdsReturnValue);
+                resourceManager.removeAsyncRunningVm(getParameters().getVmId());
+            }
+        } catch (Exception e) {
+            log.error("Failed to create VM: {}", e.getMessage());
+            log.error("Exception", e);
+            if (vdsReturnValue != null && !vdsReturnValue.getSucceeded()) {
+                resourceManager.removeAsyncRunningVm(getParameters().getVmId());
+            }
+            throw new RuntimeException(e);
+        }
+
         getVDSReturnValue().setReturnValue(vm.getStatus());
     }
 
@@ -82,18 +87,6 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
     private boolean isCloudInitUsed(VM vm) {
         return vm.getInitializationType() == InitializationType.CloudInit
                 && !SimpleDependencyInjector.getInstance().get(OsRepository.class).isWindows(vm.getVmOsId());
-    }
-
-    private boolean canExecute() {
-        Guid guid = getParameters().getVm().getId();
-        String vmName = getParameters().getVm().getName();
-
-        if (resourceManager.isVmDuringInitiating(getParameters().getVm().getId())) {
-            log.info("Vm Running failed - vm '{}'({}) already running", vmName, guid);
-            return false;
-        }
-
-        return true;
     }
 
     private void handleCommandResult(VDSReturnValue vdsReturnValue) {
