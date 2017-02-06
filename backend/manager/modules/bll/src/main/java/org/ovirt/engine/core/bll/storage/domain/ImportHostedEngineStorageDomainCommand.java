@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -172,26 +171,23 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
      * For File based storage only, we need to save the connection in DB. It is implicitly called for SAN domains.
      */
     private void addStorageServerConnection() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                StorageServerConnections connection = heStorageDomain.getStorageStaticData().getConnection();
-                connection.setId(Guid.newGuid().toString());
-                if (heStorageDomain.getStorageType() == StorageType.GLUSTERFS) {
-                    // The use of the vfs type is mainly used for posix Storage Domains, usually,
-                    // adding a posix SD will have a defined vfs type configured by the user,
-                    // for this specific Gluster Storage Domain the user does not indicate the vfs type,
-                    // and that is the reason why it is done only for Gluster
-                    connection.setVfsType(StorageType.GLUSTERFS.name().toLowerCase());
-                }
-                storageServerConnectionDao.save(connection);
-                // make sure the storage domain object is full for the rest of the flow
-                heStorageDomain.setStorage(connection.getId());
-                setSucceeded(true);
-                getCompensationContext().snapshotEntity(connection);
-                getCompensationContext().stateChanged();
-                return null;
+        TransactionSupport.executeInNewTransaction(() -> {
+            StorageServerConnections connection = heStorageDomain.getStorageStaticData().getConnection();
+            connection.setId(Guid.newGuid().toString());
+            if (heStorageDomain.getStorageType() == StorageType.GLUSTERFS) {
+                // The use of the vfs type is mainly used for posix Storage Domains, usually,
+                // adding a posix SD will have a defined vfs type configured by the user,
+                // for this specific Gluster Storage Domain the user does not indicate the vfs type,
+                // and that is the reason why it is done only for Gluster
+                connection.setVfsType(StorageType.GLUSTERFS.name().toLowerCase());
             }
+            storageServerConnectionDao.save(connection);
+            // make sure the storage domain object is full for the rest of the flow
+            heStorageDomain.setStorage(connection.getId());
+            setSucceeded(true);
+            getCompensationContext().snapshotEntity(connection);
+            getCompensationContext().stateChanged();
+            return null;
         });
     }
 
