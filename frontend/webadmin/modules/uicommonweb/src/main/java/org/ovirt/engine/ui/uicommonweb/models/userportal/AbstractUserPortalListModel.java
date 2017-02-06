@@ -186,8 +186,9 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
                             final List<Pair<Object, VM>> poolsPairs =
                                     Linq.zip(Collections.<Object>unmodifiableList(filteredPools),
                                             poolRepresentants);
-                            final List<Pair<Object, VM>> all = Linq.concat(vmPairs, poolsPairs);
-                            final List<VM> vmsAndPoolRepresentants = Linq.concat(vms, poolRepresentants);
+                            final List<Pair<Object, VM>> nonNullPools = filterNonNullPools(poolsPairs);
+                            final List<Pair<Object, VM>> all = Linq.concat(vmPairs, nonNullPools);
+                            final List<VM> vmsAndPoolRepresentants = extractVms(all);
                             IconUtils.prefetchIcons(vmsAndPoolRepresentants, true, fetchLargeIcons(),
                                     new IconCache.IconsCallback() {
                                         @Override
@@ -198,6 +199,38 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
                         }
                     });
         }
+    }
+
+    /**
+     * @param vmsAndPools List of pairs of these types: (VM, null) or (VmPool, VM representative)
+     * @return all VMs from the input
+     */
+    private List<VM> extractVms(List<Pair<Object, VM>> vmsAndPools) {
+        final ArrayList<VM> result = new ArrayList<>();
+        for (Pair<Object, VM> vmOrPool : vmsAndPools) {
+            if (vmOrPool.getFirst() instanceof VM) {
+                result.add((VM) vmOrPool.getFirst());
+                continue;
+            }
+            if (vmOrPool.getSecond() != null) {
+                result.add(vmOrPool.getSecond());
+            }
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @param poolsWithRepresentatives list of pairs of (VmPool; VM representative if exists, otherwise null)
+     * @return only pools with existing representatives
+     */
+    List<Pair<Object, VM>> filterNonNullPools(List<Pair<Object, VM>> poolsWithRepresentatives) {
+        return Collections.unmodifiableList(new ArrayList<>(Linq.where(poolsWithRepresentatives,
+                new Linq.IPredicate<Pair<Object, VM>>() {
+                    @Override public boolean match(Pair<Object, VM> poolAndVm) {
+                        return poolAndVm.getSecond() != null;
+                    }
+                })));
     }
 
     private void finishSearch(List<Pair<Object, VM>> vmOrPoolAndPoolRepresentants) {
