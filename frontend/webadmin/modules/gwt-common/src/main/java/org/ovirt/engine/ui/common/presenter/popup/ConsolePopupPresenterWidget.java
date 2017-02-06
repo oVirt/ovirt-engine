@@ -1,9 +1,11 @@
 package org.ovirt.engine.ui.common.presenter.popup;
 
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
@@ -62,6 +64,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         HasValueChangeHandlers<Boolean> getRdpPluginImplRadioButton();
 
         HasValueChangeHandlers<Boolean> getSpiceProxyEnabledCheckBox();
+        HasEnabledWithHints getEnableUsbAutoshare();
 
         HasClickHandlers getConsoleClientResourcesAnchor();
 
@@ -246,6 +249,14 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                     }
                 }
         ));
+
+        final boolean enableUsbAutoshareEnabled =
+                model.getVmConsoles().getVm().getUsbPolicy() == UsbPolicy.ENABLED_NATIVE;
+        if (enableUsbAutoshareEnabled) {
+            getView().getEnableUsbAutoshare().setEnabled(true);
+        } else {
+            getView().getEnableUsbAutoshare().disable(constants.enableUsbSupportNotAvailable());
+        }
     }
 
 
