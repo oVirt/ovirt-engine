@@ -125,7 +125,9 @@ public class AffinityGroupMapper {
             if (model.isSetPositive()) {
                 entity.setVmAffinityRule(model.isPositive()
                         ? EntityAffinityRule.POSITIVE : EntityAffinityRule.NEGATIVE);
-            } else {
+                //Default to DISABLED for new entities,
+                //but do not touch existing values when no change is requested
+            } else if (entity.getVmAffinityRule() == null) {
                 entity.setVmAffinityRule(EntityAffinityRule.DISABLED);
             }
 
