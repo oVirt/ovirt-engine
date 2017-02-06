@@ -65,6 +65,24 @@ CREATE OR REPLACE FUNCTION DeleteHostedEngineHosts()
   RETURNS void AS
 $procedure$
 BEGIN
+    UPDATE vm_dynamic
+        SET migrating_to_vds = NULL
+        WHERE migrating_to_vds IN (
+            SELECT vds_id
+                FROM vds_statistics
+                    WHERE ha_score IS NOT NULL AND ha_configured
+        );
+    UPDATE vm_dynamic
+        SET
+            run_on_vds = NULL,
+            status = 0, -- 0=Down
+            exit_status = 0, -- 0=Normal
+            exit_reason = 6 -- 6=AdminShutdown
+        WHERE run_on_vds IN (
+            SELECT vds_id
+                FROM vds_statistics
+                    WHERE ha_score IS NOT NULL AND ha_configured
+        );
     PERFORM deletevds(vds_id)
         FROM (
             SELECT vds_id
