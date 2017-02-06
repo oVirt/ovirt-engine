@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.WidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
@@ -837,5 +838,10 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @Override
     public HasValueChangeHandlers<Boolean> getVncNativeImplRadioButton() {
         return vncNativeImplRadioButton.asRadioButton();
+    }
+
+    @Override
+    public HasEnabledWithHints getEnableUsbAutoshare() {
+        return enableUsbAutoshare;
     }
 }
