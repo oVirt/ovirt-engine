@@ -307,38 +307,6 @@ public class SnapshotsManager {
                 snapshotType, vm, true, memoryVolume, null, compensationContext);
     }
 
-    /**
-     * Add a new snapshot, saving it to the DB (with compensation). The VM's current configuration (including Disks &
-     * NICs) will be saved in the snapshot.<br>
-     * The snapshot is created in status {@link SnapshotStatus#LOCKED} by default.
-     *
-     * @param snapshotId
-     *            The ID for the snapshot.
-     * @param description
-     *            The snapshot description.
-     * @param snapshotType
-     *            The snapshot type.
-     * @param vm
-     *            The VM to save in configuration.
-     * @param memoryVolume
-     *            the volume in which the snapshot's memory is stored
-     * @param disks
-     *            The disks contained in the snapshot
-     * @param compensationContext
-     *            Context for saving compensation details.
-     * @return the added snapshot
-     */
-    public Snapshot addSnapshot(Guid snapshotId,
-                                String description,
-                                SnapshotType snapshotType,
-                                VM vm,
-                                String memoryVolume,
-                                List<DiskImage> disks,
-                                final CompensationContext compensationContext) {
-        return addSnapshot(snapshotId, description, SnapshotStatus.LOCKED,
-                snapshotType, vm, true, memoryVolume, disks, compensationContext);
-    }
-
     /**addSnapshot
      * Save snapshot to DB with compensation data.
      *

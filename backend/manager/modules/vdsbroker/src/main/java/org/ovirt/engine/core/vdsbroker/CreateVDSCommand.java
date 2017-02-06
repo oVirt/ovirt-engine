@@ -1,13 +1,10 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.InitializationType;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -16,7 +13,6 @@ import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSGenericException;
 
@@ -24,8 +20,6 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
 
     @Inject
     private VmDao vmDao;
-    @Inject
-    private SnapshotDao snapshotDao;
 
     public CreateVDSCommand(P parameters) {
         super(parameters);
@@ -96,12 +90,6 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
 
         if (resourceManager.isVmDuringInitiating(getParameters().getVm().getId())) {
             log.info("Vm Running failed - vm '{}'({}) already running", vmName, guid);
-            return false;
-        }
-
-        List<Snapshot> snapshots = snapshotDao.getAll(guid);
-        if (!snapshots.isEmpty() && SnapshotStatus.LOCKED == snapshots.get(snapshots.size() - 1).getStatus()) {
-            log.info("VM Running failed - VM '{}'({}) - cannot run VM when VM during Snapshot", vmName, guid);
             return false;
         }
 
