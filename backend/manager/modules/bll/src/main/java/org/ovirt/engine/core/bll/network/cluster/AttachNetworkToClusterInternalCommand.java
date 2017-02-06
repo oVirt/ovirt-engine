@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -112,7 +111,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
             HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(this.networkAttachmentDao,
                 host.getId(),
                 interfaceDao.getAllInterfacesForVds(host.getId()),
-                Collections.<NetworkAttachment> emptyList(),
+                Collections.emptyList(),
                 clusterNetworks);
             persister.persistNetworkAttachments();
         }
