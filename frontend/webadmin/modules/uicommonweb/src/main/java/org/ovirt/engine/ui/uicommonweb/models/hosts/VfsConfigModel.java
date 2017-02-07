@@ -37,7 +37,6 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         allNetworksAllowed.setSelectedItem(vfsConfig.isAllNetworksAllowed() ? AllNetworksSelector.allNetworkAllowed
                 : AllNetworksSelector.specificNetworks);
 
-        dcLabels.removeAll(vfsConfig.getNetworkLabels());
         labelsModel = new VfsNicLabelModel(new ArrayList<>(vfsConfig.getNetworkLabels()), dcLabels);
         initNetworks(allClusterNetworks);
     }

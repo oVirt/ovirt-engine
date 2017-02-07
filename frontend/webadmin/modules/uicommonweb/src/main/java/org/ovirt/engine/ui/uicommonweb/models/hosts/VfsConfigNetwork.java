@@ -22,7 +22,7 @@ public class VfsConfigNetwork extends EntityModel<Network> {
     }
 
     public String getLabelViaAttached() {
-        return labelModel.computeSelecetedLabels().contains(getEntity().getLabel()) ? getEntity().getLabel()
+        return labelModel.computeSelectedLabels().contains(getEntity().getLabel()) ? getEntity().getLabel()
                 : null;
     }
 
