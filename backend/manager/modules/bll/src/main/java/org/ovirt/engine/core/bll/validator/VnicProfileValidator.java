@@ -140,10 +140,17 @@ public class VnicProfileValidator {
         return vnicProfileNotUsedByVms();
     }
 
-    public ValidationResult passthroughProfileContainsSupportedProperties() {
+    public ValidationResult passthroughProfileContainsSupportedProperties(boolean useDefaultNetworkFilterId) {
+        boolean nullValuedNetworkFilterWillBeUsed =
+                vnicProfile.getNetworkFilterId() == null && !useDefaultNetworkFilterId;
+
+        boolean conditionOccurs = vnicProfile.isPassthrough()
+                && (vnicProfile.isPortMirroring()
+                    || vnicProfile.getNetworkQosId() != null
+                    || !nullValuedNetworkFilterWillBeUsed
+                    );
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES)
-                .when(vnicProfile.isPassthrough() && (vnicProfile.isPortMirroring()
-                        || vnicProfile.getNetworkQosId() != null));
+                .when(conditionOccurs);
     }
 
     public boolean validateCustomProperties(List<String> messages) {
@@ -223,4 +230,5 @@ public class VnicProfileValidator {
     private Guid getNetworkFilterId() {
         return vnicProfile.getNetworkFilterId();
     }
+
 }

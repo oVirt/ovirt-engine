@@ -382,28 +382,42 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void passthroughProfileContainsPortMirroring() {
-        passthroughProfileContainsSupportedPropertiesTest(true, true, null);
-        assertThat(validator.passthroughProfileContainsSupportedProperties(),
+        passthroughProfileContainsSupportedPropertiesTest(true, true, null, null);
+        assertThat(validator.passthroughProfileContainsSupportedProperties(false),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES));
     }
 
     @Test
     public void passthroughProfileContainsQos() {
-        passthroughProfileContainsSupportedPropertiesTest(true, false, DEFAULT_GUID);
-        assertThat(validator.passthroughProfileContainsSupportedProperties(),
+        passthroughProfileContainsSupportedPropertiesTest(true, false, DEFAULT_GUID, null);
+        assertThat(validator.passthroughProfileContainsSupportedProperties(false),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES));
     }
 
     @Test
-    public void passthroughProfileValidProprerties() {
-        passthroughProfileContainsSupportedPropertiesTest(true, false, null);
-        assertThat(validator.passthroughProfileContainsSupportedProperties(), isValid());
+    public void passthroughProfileContainsFilterId() {
+        passthroughProfileContainsSupportedPropertiesTest(true, false, DEFAULT_GUID, INVALID_NETWORK_FILTER_ID);
+        assertThat(validator.passthroughProfileContainsSupportedProperties(false),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES));
+    }
+
+    @Test
+    public void passthroughProfileDoesNotContainFilterIdButDefaultWillBeUsed() {
+        passthroughProfileContainsSupportedPropertiesTest(true, false, DEFAULT_GUID, null);
+        assertThat(validator.passthroughProfileContainsSupportedProperties(true),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES));
+    }
+
+    @Test
+    public void passthroughProfileValidProperties() {
+        passthroughProfileContainsSupportedPropertiesTest(true, false, null, null);
+        assertThat(validator.passthroughProfileContainsSupportedProperties(false), isValid());
     }
 
     @Test
     public void nonPassthroughProfileContainsPortMirroringAndQos() {
-        passthroughProfileContainsSupportedPropertiesTest(false, true, DEFAULT_GUID);
-        assertThat(validator.passthroughProfileContainsSupportedProperties(), isValid());
+        passthroughProfileContainsSupportedPropertiesTest(false, true, DEFAULT_GUID, VALID_NETWORK_FILTER_ID);
+        assertThat(validator.passthroughProfileContainsSupportedProperties(false), isValid());
     }
 
     @Test
@@ -463,9 +477,11 @@ public class VnicProfileValidatorTest {
 
     private void passthroughProfileContainsSupportedPropertiesTest(boolean passthrough,
             boolean portMirroring,
-            Guid qosId) {
+            Guid qosId,
+            Guid networkFilterId) {
         when(vnicProfile.isPassthrough()).thenReturn(passthrough);
         when(vnicProfile.isPortMirroring()).thenReturn(portMirroring);
         when(vnicProfile.getNetworkQosId()).thenReturn(qosId);
+        when(vnicProfile.getNetworkFilterId()).thenReturn(networkFilterId);
     }
 }
