@@ -271,7 +271,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             hostNicVfsConfig.setNetworks(networks);
 
             // Labels
-            hostNicVfsConfig.setNetworkLabels(vfsConfigModel.getLabelsModel().computeSelecetedLabels());
+            hostNicVfsConfig.setNetworkLabels(vfsConfigModel.getLabelsModel().computeSelectedLabels());
         }
     }
 

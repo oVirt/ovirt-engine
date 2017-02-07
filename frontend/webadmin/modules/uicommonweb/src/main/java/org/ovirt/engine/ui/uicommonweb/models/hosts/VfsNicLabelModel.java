@@ -52,7 +52,7 @@ public class VfsNicLabelModel extends ListModel<ListModel<String>> {
         this.originalLabels = originalLabels;
     }
 
-    public Set<String> computeSelecetedLabels() {
+    public Set<String> computeSelectedLabels() {
         Set<String> selectedLabels = new HashSet<>();
         for (ListModel<String> labelModel : getItems()) {
             selectedLabels.add(labelModel.getSelectedItem());
