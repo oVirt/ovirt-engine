@@ -110,4 +110,7 @@ public abstract class AbstractCheckboxColumn<T> extends AbstractColumn<T, Boolea
         return null;
     }
 
+    protected boolean isMultipleSelectionAllowed() {
+        return multipleSelectionAllowed;
+    }
 }

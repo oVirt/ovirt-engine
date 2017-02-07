@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -20,6 +21,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
+
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -323,7 +325,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     }
 
-    private static final class MigrationNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
+    private static final class MigrationNetworkIndicatorCheckboxColumn extends InitiallySetNetworkRoleIndicatorCheckboxColumn {
         private MigrationNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
                 MigrationNetworkIndicatorFieldUpdater migrationNetworkIndicatorFieldUpdater) {
             super(multipleSelectionAllowed, migrationNetworkIndicatorFieldUpdater);
@@ -336,7 +338,13 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         @Override
         protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
-            return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
+            return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal()
+                    && !isUnsetRoleProhibited(clusterNetworkModel);
+        }
+
+        @Override
+        protected boolean isRoleSet(NetworkCluster originalNetworkCluster) {
+            return originalNetworkCluster.isMigration();
         }
     }
 
@@ -352,13 +360,11 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         networks.asEditor().flush().setMigrationNetwork(clusterNetworkModel, value);
     }
 
-    private static final class ManagementNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
-        private final boolean multiCluster;
+    private static final class ManagementNetworkIndicatorCheckboxColumn extends InitiallySetNetworkRoleIndicatorCheckboxColumn {
 
         private ManagementNetworkIndicatorCheckboxColumn(boolean multiCluster,
                 ManagementNetworkIndicatorFieldUpdater managementNetworkIndicatorFieldUpdater) {
             super(multiCluster, managementNetworkIndicatorFieldUpdater);
-            this.multiCluster = multiCluster;
         }
 
         @Override
@@ -369,12 +375,12 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         @Override
         protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
             return clusterNetworkModel.isAttached() && clusterNetworkModel.isRequired() && !clusterNetworkModel.isExternal() &&
-                    !(multiCluster && isManagementOriginally(clusterNetworkModel));
+                    !isUnsetRoleProhibited(clusterNetworkModel);
         }
 
-        private boolean isManagementOriginally(ClusterNetworkModel clusterNetworkModel) {
-            return clusterNetworkModel.getOriginalNetworkCluster() != null
-                    && clusterNetworkModel.getOriginalNetworkCluster().isManagement();
+        @Override
+        protected boolean isRoleSet(NetworkCluster originalNetworkCluster) {
+            return originalNetworkCluster.isManagement();
         }
     }
 
@@ -390,7 +396,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         networks.asEditor().flush().setManagementNetwork(clusterNetworkModel, value);
     }
 
-    private static final class GlusterNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
+    private static final class GlusterNetworkIndicatorCheckboxColumn extends InitiallySetNetworkRoleIndicatorCheckboxColumn {
         private GlusterNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
                 GlusterNetworkIndicatorFieldUpdater glusterNetworkIndicatorFieldUpdater) {
             super(multipleSelectionAllowed, glusterNetworkIndicatorFieldUpdater);
@@ -403,9 +409,14 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         @Override
         protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
-            return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
+            return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal()
+                    && !isUnsetRoleProhibited(clusterNetworkModel);
         }
 
+        @Override
+        protected boolean isRoleSet(NetworkCluster originalNetworkCluster) {
+            return originalNetworkCluster.isGluster();
+        }
     }
 
     private final class GlusterNetworkIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {
@@ -432,7 +443,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         networks.asEditor().flush().setDisplayNetwork(clusterNetworkModel, value);
     }
 
-    private static final class DisplayNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
+    private static final class DisplayNetworkIndicatorCheckboxColumn extends InitiallySetNetworkRoleIndicatorCheckboxColumn {
         private DisplayNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
                 DisplayNetworkIndicatorFieldUpdater displayNetworkIndicatorFieldUpdater) {
             super(multipleSelectionAllowed, displayNetworkIndicatorFieldUpdater);
@@ -445,7 +456,39 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         @Override
         protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
-            return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
+            return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal()
+                    && !isUnsetRoleProhibited(clusterNetworkModel);
         }
+
+        @Override
+        protected boolean isRoleSet(NetworkCluster originalNetworkCluster) {
+            return originalNetworkCluster.isDisplay();
+        }
+    }
+
+    private abstract static class InitiallySetNetworkRoleIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
+        private InitiallySetNetworkRoleIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
+                FieldUpdater<ClusterNetworkModel, Boolean> fieldUpdater) {
+            super(multipleSelectionAllowed, fieldUpdater);
+        }
+
+        protected boolean isUnsetRoleProhibited(ClusterNetworkModel clusterNetworkModel) {
+            return isMultipleSelectionAllowed() && isRoleSet(clusterNetworkModel);
+        }
+
+        @Override
+        protected String getDisabledMessage(ClusterNetworkModel clusterNetworkModel) {
+            if (isUnsetRoleProhibited(clusterNetworkModel)) {
+                return constants.unsetInitiallySetNetworkRoleIsNotAllowed();
+            }
+            return super.getDisabledMessage(clusterNetworkModel);
+        }
+
+        private boolean isRoleSet(ClusterNetworkModel clusterNetworkModel) {
+            final NetworkCluster originalNetworkCluster = clusterNetworkModel.getOriginalNetworkCluster();
+            return originalNetworkCluster != null && isRoleSet(originalNetworkCluster);
+        }
+
+        protected abstract boolean isRoleSet(NetworkCluster originalNetworkCluster);
     }
 }
