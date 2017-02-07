@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -54,7 +53,7 @@ public class DetachNetworkToClusterCommand<T extends AttachNetworkToClusterParam
         runInternalAction(
                 VdcActionType.PropagateLabeledNetworksToClusterHosts,
                 new ManageNetworkClustersParameters(
-                        Collections.<NetworkCluster>emptyList(),
+                        Collections.emptyList(),
                         new ArrayList<>(Collections.singleton(attachNetworkToClusterParameter.getNetworkCluster()))));
     }
 
