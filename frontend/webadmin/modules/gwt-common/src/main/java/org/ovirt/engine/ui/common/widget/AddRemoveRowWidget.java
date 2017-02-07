@@ -175,6 +175,10 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         return model;
     }
 
+    public M getModel() {
+        return model;
+    }
+
     private void cleanContentPanel() {
         for (int i = 0; i < contentPanel.getWidgetCount(); i++) {
             Widget widget = contentPanel.getWidget(i);

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -23,6 +24,7 @@ public class VfsNicLabelModel extends ListModel<ListModel<String>> {
 
     private List<String> originalLabels;
     private Collection<String> suggestedLabels;
+    private Collection<String> suggestedLabelsCache;
 
     protected void initLabelModels() {
         Collections.sort(originalLabels, new LexoNumericComparator());
@@ -34,6 +36,7 @@ public class VfsNicLabelModel extends ListModel<ListModel<String>> {
             items.add(labelModel);
         }
         setItems(items);
+        suggestedLabelsCache = new TreeSet<>(suggestedLabels);
     }
 
     public Collection<String> getSuggestedLabels() {
@@ -77,5 +80,13 @@ public class VfsNicLabelModel extends ListModel<ListModel<String>> {
             res &= labelModel.getIsValid();
         }
         setIsValid(res);
+    }
+
+    public void updateSuggestedLabels() {
+        suggestedLabels = new TreeSet<>(suggestedLabelsCache);
+        suggestedLabels.removeAll(computeSelectedLabels());
+        for (ListModel<String> labelModel : getItems()) {
+            labelModel.setItems(suggestedLabels, labelModel.getSelectedItem());
+        }
     }
 }
