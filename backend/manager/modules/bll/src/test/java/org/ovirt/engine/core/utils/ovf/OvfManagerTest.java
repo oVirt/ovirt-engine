@@ -103,14 +103,13 @@ public class OvfManagerTest {
 
         when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
-        when(osRepository.getOsIdByUniqueName(anyString())).thenAnswer(invocation-> {
-            for (Map.Entry<Integer, String> entry : osIdsToNames.entrySet()) {
-                if (invocation.getArguments()[0].equals(entry.getValue())) {
-                    return entry.getKey();
-                }
-            }
-            return 0;
-        });
+        when(osRepository.getOsIdByUniqueName(anyString())).thenAnswer(
+                invocation-> osIdsToNames.entrySet()
+                        .stream()
+                        .filter(k -> invocation.getArguments()[0].equals(k.getValue()))
+                        .map(Map.Entry::getKey)
+                        .findFirst()
+                        .orElse(0));
         when(osRepository.getGraphicsAndDisplays(eq(DEFAULT_OS_ID), any(Version.class))).thenReturn(gndDefaultOs);
         when(osRepository.getGraphicsAndDisplays(eq(EXISTING_OS_ID), any(Version.class))).thenReturn(gndExistingOs);
 
