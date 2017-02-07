@@ -30,6 +30,7 @@ public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends V
     @Override
     protected boolean validate() {
         VnicProfileValidator validator = createVnicProfileValidator();
+        boolean useDefaultNetworkFilterId = getParameters().isUseDefaultNetworkFiterId();
 
         return validate(validator.vnicProfileIsSet())
                 && validate(validator.networkExists())
@@ -38,8 +39,8 @@ public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends V
                 && validate(validator.vnicProfileNameNotUsed())
                 && validate(validator.portMirroringNotSetIfExternalNetwork())
                 && validator.validateCustomProperties(getReturnValue().getValidationMessages())
-                && validate(validator.passthroughProfileContainsSupportedProperties())
-                && validate(validator.validUseDefaultNetworkFilterFlag(getParameters().isUseDefaultNetworkFiterId()))
+                && validate(validator.passthroughProfileContainsSupportedProperties(useDefaultNetworkFilterId))
+                && validate(validator.validUseDefaultNetworkFilterFlag(useDefaultNetworkFilterId))
                 && validate(validator.validNetworkFilterId());
     }
 
