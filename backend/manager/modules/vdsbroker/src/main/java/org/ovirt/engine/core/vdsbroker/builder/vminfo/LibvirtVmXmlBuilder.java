@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -47,7 +46,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
@@ -83,8 +81,6 @@ public class LibvirtVmXmlBuilder {
     private static final int LIBVIRT_PORT_AUTOSELECT = -1;
 
     @Inject
-    private VdsDynamicDao vdsDynamicDao;
-    @Inject
     private VmDeviceDao vmDeviceDao;
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
@@ -101,12 +97,10 @@ public class LibvirtVmXmlBuilder {
 
     private Map<String, Object> createInfo;
     private VM vm;
-    private Guid vdsId;
 
-    public LibvirtVmXmlBuilder(Map<String, Object> createInfo, VM vm, Guid vdsId) {
+    public LibvirtVmXmlBuilder(Map<String, Object> createInfo, VM vm) {
         this.createInfo = createInfo;
         this.vm = vm;
-        this.vdsId = vdsId;
     }
 
     @PostConstruct
@@ -260,24 +254,20 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeSystemInfo() {
-        String osName = "";
-        String osVersion = "";
-
-        VdsDynamic vdsDynamic = vdsDynamicDao.get(vdsId);
-        String hostOs = vdsDynamic.getHostOs();
-        if (hostOs != null && !hostOs.isEmpty()) {
-            String[] hostOsElements = hostOs.split("-");
-            if (hostOsElements.length > 0) {
-                osName = hostOsElements[0].trim();
-            }
-            if (hostOsElements.length > 1) {
-                osVersion += hostOsElements[1].trim();
-            }
-            if (hostOsElements.length > 2) {
-                osVersion += "-" + hostOsElements[2].trim();
-            }
+        if (vm.getClusterArch().getFamily() != ArchitectureType.x86) {
+            return;
         }
-
+        /**
+         <sysinfo type="smbios">
+          <system>
+            <entry name="manufacturer">Fedora</entry>
+            <entry name="product">Virt-Manager</entry>
+            <entry name="version">0.8.2-3.fc14</entry>
+            <entry name="serial">32dfcb37-5af1-552b-357c-be8c3aa38310</entry>
+            <entry name="uuid">c7a5fdbd-edaf-9455-926a-d65c16db1809</entry>
+          </system>
+         </sysinfo>
+         */
         writer.writeStartElement("sysinfo");
         writer.writeAttributeString("type", "smbios");
 
@@ -290,17 +280,17 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("entry");
         writer.writeAttributeString("name", "product");
-        writer.writeRaw(osName);
+        writer.writeRaw("OS-NAME:");
         writer.writeEndElement();
 
         writer.writeStartElement("entry");
         writer.writeAttributeString("name", "version");
-        writer.writeRaw(osVersion);
+        writer.writeRaw("OS-VERSION:");
         writer.writeEndElement();
 
         writer.writeStartElement("entry");
         writer.writeAttributeString("name", "serial");
-        writer.writeRaw(vdsDynamic.getHardwareUUID());
+        writer.writeRaw("SERIAL:");
         writer.writeEndElement();
 
         writer.writeStartElement("entry");
