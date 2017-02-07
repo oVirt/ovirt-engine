@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -20,11 +21,11 @@ import java.util.function.Function;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -54,7 +55,6 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -75,31 +75,23 @@ public class OvfManagerTest {
     private static final int MIN_ENTITY_NAME_LENGTH = 3;
     private static final int MAX_ENTITY_NAME_LENGTH = 30;
 
-    @Mock
-    private OsRepository osRepository;
-
-    @Mock
-    private OvfVmIconDefaultsProvider iconDefaultsProvider;
-
-    @Mock
-    private ClusterDao clusterDao;
-
     @ClassRule
     public static MockConfigRule mockConfigRule = new MockConfigRule();
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
 
     @Spy
     private OvfManager manager = new OvfManager();
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUpClass() {
+        OsRepository osRepository = mock(OsRepository.class);
+        OvfVmIconDefaultsProvider iconDefaultsProvider = mock(OvfVmIconDefaultsProvider.class);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
-        injectorRule.bind(ClusterDao.class, clusterDao);
         final HashMap<Integer, String> osIdsToNames = new HashMap<>();
         osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");
         osIdsToNames.put(EXISTING_OS_ID, "os_name_b");
@@ -109,7 +101,6 @@ public class OvfManagerTest {
         final List<Pair<GraphicsType, DisplayType>> gndExistingOs = new ArrayList<>();
         gndExistingOs.add(new Pair<>(GraphicsType.SPICE, DisplayType.cirrus));
 
-        doNothing().when(manager).updateBootOrderOnDevices(any(VmBase.class), anyBoolean());
         when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
         when(osRepository.getOsIdByUniqueName(anyString())).thenAnswer(invocation-> {
@@ -128,6 +119,11 @@ public class OvfManagerTest {
             put(EXISTING_OS_ID, new VmIconIdSizePair(SMALL_ICON_ID, LARGE_ICON_ID));
         }});
 
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        doNothing().when(manager).updateBootOrderOnDevices(any(VmBase.class), anyBoolean());
     }
 
     private static void assertVm(VM vm, VM newVm, long expectedDbGeneration) {
