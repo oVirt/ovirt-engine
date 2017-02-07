@@ -114,10 +114,10 @@ public class OvfManagerTest {
         when(osRepository.getGraphicsAndDisplays(eq(DEFAULT_OS_ID), any(Version.class))).thenReturn(gndDefaultOs);
         when(osRepository.getGraphicsAndDisplays(eq(EXISTING_OS_ID), any(Version.class))).thenReturn(gndExistingOs);
 
-        when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{
-            put(DEFAULT_OS_ID, new VmIconIdSizePair(SMALL_DEFAULT_ICON_ID, LARGE_DEFAULT_ICON_ID));
-            put(EXISTING_OS_ID, new VmIconIdSizePair(SMALL_ICON_ID, LARGE_ICON_ID));
-        }});
+        Map<Integer, VmIconIdSizePair> iconDefaults = new HashMap<>();
+        iconDefaults.put(DEFAULT_OS_ID, new VmIconIdSizePair(SMALL_DEFAULT_ICON_ID, LARGE_DEFAULT_ICON_ID));
+        iconDefaults.put(EXISTING_OS_ID, new VmIconIdSizePair(SMALL_ICON_ID, LARGE_ICON_ID));
+        when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(iconDefaults);
 
     }
 
