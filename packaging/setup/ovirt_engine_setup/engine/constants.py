@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2014-2016 Red Hat, Inc.
+# Copyright (C) 2014-2017 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -424,6 +424,7 @@ class Const(object):
             DEK.DUMPER: EngineDBEnv.DUMPER,
             DEK.FILTER: EngineDBEnv.FILTER,
             DEK.RESTORE_JOBS: EngineDBEnv.RESTORE_JOBS,
+            DEK.INVALID_CONFIG_ITEMS: EngineDBEnv.INVALID_CONFIG_ITEMS,
         }
 
     @classproperty
@@ -539,6 +540,18 @@ class EngineDBEnv(object):
     )
     def ENGINE_VACUUM_FULL(self):
         return 'OVESETUP_DB/engineVacuumFull'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def FIX_DB_CONFIGURATION(self):
+        return 'OVESETUP_DB/fixDbConfiguration'
+
+    @osetupattrs(
+        answerfile=False,
+    )
+    def INVALID_CONFIG_ITEMS(self):
+        return 'OVESETUP_DB/invalidConfigItems'
 
 
 @util.export

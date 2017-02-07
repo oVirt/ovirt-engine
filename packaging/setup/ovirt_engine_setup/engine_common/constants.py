@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2015 Red Hat, Inc.
+# Copyright (C) 2013-2017 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -206,6 +206,7 @@ class DBEnvKeysConst(object):
     DUMPER = 'dumper'
     FILTER = 'filter'
     RESTORE_JOBS = 'restoreJobs'
+    INVALID_CONFIG_ITEMS = 'invalidConfigItems'
 
     REQUIRED_KEYS = (
         HOST,
@@ -288,6 +289,8 @@ class ProvisioningEnv(object):
     POSTGRES_PG_HBA = 'OVESETUP_PROVISIONING/postgresPgHba'
     POSTGRES_PG_VERSION = 'OVESETUP_PROVISIONING/postgresPgVersion'
     POSTGRES_SERVICE = 'OVESETUP_PROVISIONING/postgresService'
+    POSTGRES_EXTRA_CONFIG_ITEMS =\
+        'OVESETUP_PROVISIONING/postgresExtraConfigItems'
     POSTGRES_MAX_CONN = 'OVESETUP_PROVISIONING/postgresMaxConn'
     POSTGRES_LISTEN_ADDRESS = 'OVESETUP_PROVISIONING/postgresListenAddress'
     POSTGRES_LC_MESSAGES = 'OVESETUP_PROVISIONING/postgresLCMessages'

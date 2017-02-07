@@ -21,14 +21,12 @@
 
 import gettext
 
-
 from otopi import util
 
 from ovirt_engine_setup.constants import classproperty
 from ovirt_engine_setup.constants import osetupattrs
 from ovirt_engine_setup.constants import osetupattrsclass
 from ovirt_engine_setup.engine_common import constants as oengcommcons
-
 
 DEK = oengcommcons.DBEnvKeysConst
 
@@ -64,6 +62,7 @@ class Const(object):
             DEK.DUMPER: DWHDBEnv.DUMPER,
             DEK.FILTER: DWHDBEnv.FILTER,
             DEK.RESTORE_JOBS: DWHDBEnv.RESTORE_JOBS,
+            DEK.INVALID_CONFIG_ITEMS: DWHDBEnv.INVALID_CONFIG_ITEMS
         }
 
     SERVICE_NAME = 'ovirt-engine-dwhd'
@@ -149,6 +148,12 @@ class DWHDBEnv(object):
     )
     def RESTORE_JOBS(self):
         return 'OVESETUP_DWH_DB/restoreJobs'
+
+    @osetupattrs(
+        answerfile=False,
+    )
+    def INVALID_CONFIG_ITEMS(self):
+        return 'OVESETUP_DWH_DB/invalidConfigItems'
 
     CONNECTION = 'OVESETUP_DWH_DB/connection'
     STATEMENT = 'OVESETUP_DWH_DB/statement'
