@@ -3230,5 +3230,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String storageDRMinuteLabel();
 
     String storageDRGeoRepSessionLabel();
+
+    String unsetInitiallySetNetworkRoleIsNotAllowed();
 }
 
