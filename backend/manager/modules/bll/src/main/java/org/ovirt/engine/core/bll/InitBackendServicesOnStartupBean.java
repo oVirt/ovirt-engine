@@ -63,6 +63,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             serviceLoader.load(EngineBackupAwarenessManager.class);
             CommandCoordinatorUtil.initAsyncTaskManager();
             serviceLoader.load(CommandCallbacksPoller.class);
+            serviceLoader.load(DataCenterCompatibilityChecker.class);
             serviceLoader.load(ResourceManager.class);
             serviceLoader.load(IrsProxyManager.class);
             OvfDataUpdater.getInstance().initOvfDataUpdater();
