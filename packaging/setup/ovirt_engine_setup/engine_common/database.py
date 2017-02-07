@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2015 Red Hat, Inc.
+# Copyright (C) 2013-2017 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ from ovirt_engine import util as outil
 
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine_common import constants as oengcommcons
-from ovirt_engine_setup.engine_common.constants import ProvisioningEnv
+
 from ovirt_setup_lib import hostname as osetuphostname
 from ovirt_setup_lib import dialog
 
@@ -44,8 +44,31 @@ def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+AT_MOST_EXPECTED = _('{key} required to be at most {expected}')
+AT_LEAST_EXPECTED = _('{key} required to be at least {expected}')
+PG_CONF_MSG = _(
+    "Please set:\n"
+    "{keys}\n"
+    "in postgresql.conf on '{pg_host}'. "
+    "Its location is usually /var/lib/pgsql/data , or "
+    "somewhere under /etc/postgresql* ."
+)
+
+
 def _ind_env(inst, keykey):
     return inst.environment[inst._dbenvkeys[keykey]]
+
+
+def getInvalidConfigItemsMessage(invalid_config_items):
+    return PG_CONF_MSG.format(
+        keys='\n'.join(
+            [
+                ' {key} = {expected}'.format(**e)
+                for e in invalid_config_items
+            ]
+        ),
+        pg_host=invalid_config_items[0]['pg_host'],
+    )
 
 
 @util.export
@@ -817,24 +840,11 @@ class OvirtUtils(base.Base):
             expected.replace('-', ''),
         )
 
-    @staticmethod
-    def _error_message(key, current, expected, format_str, name, pg_host):
-        return format_str.format(
-            key=key,
-            current=current,
-            expected=expected,
-            name=name,
-            pg_host=pg_host,
-        )
-
-    _PG_CONF_MSG = _(
-        'Please fix {key} in postgresql.conf on {pg_host} before you '
-        'continue. Its location is usually /var/lib/pgsql/data , or '
-        'somewhere under /etc/postgresql* .'
-    )
-
     def _pg_conf_info(self):
-        return (
+        return self.environment.get(
+            oengcommcons.ProvisioningEnv.POSTGRES_EXTRA_CONFIG_ITEMS,
+            ()
+        ) + (
             {
                 'key': 'server_encoding',
                 'expected': 'UTF8',
@@ -858,11 +868,8 @@ class OvirtUtils(base.Base):
                 ),
                 'check_on_use': True,
                 'needed_on_create': True,
-                'error_msg': '{specific}{pg_conf_msg}'.format(
-                    specific=_(
-                        '{name} requires {key} to be at least {expected}. '
-                    ),
-                    pg_conf_msg=self._PG_CONF_MSG,
+                'error_msg': '{specific}'.format(
+                    specific=AT_LEAST_EXPECTED,
                 )
             },
             {
@@ -883,11 +890,10 @@ class OvirtUtils(base.Base):
                 'ok': self._lower_equal_no_dash,
                 'check_on_use': True,
                 'needed_on_create': True,
-                'error_msg': '{specific}{pg_conf_msg}'.format(
+                'error_msg': '{specific}'.format(
                     specific=_(
                         '{name} requires {key} to be {expected}. '
                     ),
-                    pg_conf_msg=self._PG_CONF_MSG,
                 ),
             },
             {
@@ -915,76 +921,6 @@ class OvirtUtils(base.Base):
                     "Please use a Postgresql server of version '{expected}'."
                 ),
             },
-            {
-                'key': 'autovacuum_vacuum_scale_factor',
-                'expected': self.environment[
-                    ProvisioningEnv.PG_AUTOVACUUM_VACUUM_SCALE_FACTOR
-                ],
-                'ok': lambda key, current, expected: (
-                    float(current) <= float(expected)
-                ),
-                'check_on_use': True,
-                'needed_on_create': True,
-                'error_msg': '{specific}{pg_conf_msg}'.format(
-                    specific=_(
-                        '{name} requires {key} to be at most {expected}. '
-                    ),
-                    pg_conf_msg=self._PG_CONF_MSG,
-                )
-            },
-            {
-                'key': 'autovacuum_analyze_scale_factor',
-                'expected': self.environment[
-                    ProvisioningEnv.PG_AUTOVACUUM_ANALYZE_SCALE_FACTOR
-                ],
-                'ok': lambda key, current, expected: (
-                    float(current) <= float(expected)
-                ),
-                'check_on_use': True,
-                'needed_on_create': True,
-                'error_msg': '{specific}{pg_conf_msg}'.format(
-                    specific=_(
-                        '{name} requires {key} to be at most {expected}. '
-                    ),
-                    pg_conf_msg=self._PG_CONF_MSG,
-                )
-            },
-            {
-                'key': 'autovacuum_max_workers',
-                'expected': self.environment[
-                    ProvisioningEnv.PG_AUTOVACUUM_MAX_WORKERS
-                ],
-                'ok': lambda key, current, expected: (
-                    int(current) >= int(expected)
-                ),
-                'check_on_use': True,
-                'needed_on_create': True,
-                'error_msg': '{specific}{pg_conf_msg}'.format(
-                    specific=_(
-                        '{name} requires {key} to be at least {expected}. '
-                    ),
-                    pg_conf_msg=self._PG_CONF_MSG,
-                )
-            },
-            {
-                'key': 'maintenance_work_mem',
-                'expected': self.environment[
-                    ProvisioningEnv.PG_AUTOVACUUM_MAINTENANCE_WORK_MEM
-                ],
-                'useQueryForValue': True,
-                'ok': lambda key, current, expected: (
-                    int(current) >= int(expected)
-                ),
-                'check_on_use': True,
-                'needed_on_create': True,
-                'error_msg': '{specific}{pg_conf_msg}'.format(
-                    specific=_(
-                        '{name} requires {key} to be at least {expected}. '
-                    ),
-                    pg_conf_msg=self._PG_CONF_MSG,
-                )
-            },
-
         )
 
     _RE_KEY_VALUE = re.compile(
@@ -1000,11 +936,21 @@ class OvirtUtils(base.Base):
         """,
     )
 
-    def _checkDbConf(self, environment, name):
+    def validateDbConf(self, name, environment=None):
+        '''
+
+        :param environment: db environment
+        :param name: db name
+        :return: A set of invalid config items. i.e an empty set implies the db
+                 settings are valid.
+        '''
+        if environment is None:
+            environment = self._environment
         statement = Statement(
             environment=environment,
             dbenvkeys=self._dbenvkeys,
         )
+        invalid_config_items = []
         for item in [
             i for i in self._pg_conf_info() if i['check_on_use']
         ]:
@@ -1030,16 +976,15 @@ class OvirtUtils(base.Base):
                     current,
                     expected,
                 )
-                raise RuntimeError(
-                    self._error_message(
-                        key=key,
-                        current=current,
-                        expected=expected,
-                        format_str=item['error_msg'],
-                        name=name,
-                        pg_host=environment[self._dbenvkeys[DEK.HOST]]
-                    )
-                )
+                invalid_config_items.append({
+                    'key': key,
+                    'current': current,
+                    'expected': expected,
+                    'format_str': item['error_msg'],
+                    'name': name,
+                    'pg_host': self._environment[self._dbenvkeys[DEK.HOST]]
+                })
+        return invalid_config_items
 
     def getUpdatedPGConf(self, content):
         needUpdate = True
@@ -1243,7 +1188,14 @@ class OvirtUtils(base.Base):
             if interactive:
                 try:
                     self.tryDatabaseConnect(dbenv)
-                    self._checkDbConf(environment=dbenv, name=name)
+                    invalid_config_items = self.validateDbConf(name, dbenv)
+                    if invalid_config_items:
+                        self.logger.error(
+                            getInvalidConfigItemsMessage(
+                                invalid_config_items
+                            )
+                        )
+                        continue
                     self.environment.update(dbenv)
                     connectionValid = True
                 except RuntimeError as e:
@@ -1267,7 +1219,18 @@ class OvirtUtils(base.Base):
             self.logger.debug('database connection failed', exc_info=True)
 
         if not _ind_env(self, DEK.NEW_DATABASE):
-            self._checkDbConf(environment=dbenv, name=name)
+                invalid_config_items = self.validateDbConf(name, dbenv)
+                if (
+                    invalid_config_items and
+                    DEK.INVALID_CONFIG_ITEMS in self._dbenvkeys
+                ):
+                    # If DEK.INVALID_CONFIG_ITEMS is not in self._dbenvkeys,
+                    # it probably means that this component is not interested
+                    # in invalid items. This can be removed once all components
+                    # add it, currently dwh.
+                    self.environment[
+                        self._dbenvkeys[DEK.INVALID_CONFIG_ITEMS]
+                    ] = invalid_config_items
 
     def replaced_localhost(self, replacement=None):
         return (

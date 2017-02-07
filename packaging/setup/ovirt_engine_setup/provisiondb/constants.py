@@ -46,6 +46,7 @@ class Defaults(object):
     DEFAULT_DB_DUMPER = 'pg_custom'
     DEFAULT_DB_RESTORE_JOBS = 2
     DEFAULT_DB_FILTER = None
+    DEFAULT_DB_INVALID_CONFIG_ITEMS = None
 
 
 @util.export
@@ -83,6 +84,7 @@ class Const(object):
             DEK.DUMPER: Defaults.DEFAULT_DB_DUMPER,
             DEK.FILTER: Defaults.DEFAULT_DB_FILTER,
             DEK.RESTORE_JOBS: Defaults.DEFAULT_DB_RESTORE_JOBS,
+            DEK.INVALID_CONFIG_ITEMS: Defaults.DEFAULT_DB_INVALID_CONFIG_ITEMS,
         }
 
 
