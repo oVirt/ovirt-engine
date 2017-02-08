@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 
 public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
@@ -82,7 +83,11 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
 
     @Spy
+    @InjectMocks
     private OvfHelper ovfHelper;
+
+    @Mock
+    private OvfManager ovfManager;
 
     @BeforeClass
     public static void setUpInjections() {

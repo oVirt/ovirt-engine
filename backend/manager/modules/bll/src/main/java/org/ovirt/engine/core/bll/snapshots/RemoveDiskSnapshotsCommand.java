@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -64,6 +66,9 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     private static final Logger log = LoggerFactory.getLogger(RemoveDiskSnapshotsCommand.class);
     private List<DiskImage> images;
     private StorageDomainValidator storageDomainValidator;
+
+    @Inject
+    private OvfManager ovfManager;
 
     public RemoveDiskSnapshotsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -380,7 +385,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 lockVmSnapshotsWithWait(getVm());
                 for (CinderDisk cinderDisk : cinderDisks) {
                     snapshotWithoutImage = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
-                            snapshot, cinderDisk.getImageId(), new OvfManager());
+                            snapshot, cinderDisk.getImageId(), ovfManager);
                 }
                 snapshotDao.update(snapshotWithoutImage);
                 if (getSnapshotsEngineLock() != null) {

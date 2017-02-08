@@ -53,11 +53,8 @@ public class OvfHelper {
     @Inject
     private VmHandler vmHandler;
 
+    @Inject
     private OvfManager ovfManager;
-
-    public OvfHelper() {
-        ovfManager = new OvfManager();
-    }
 
     /**
      * parses a given ovf to a vm, intialized with images and interfaces.

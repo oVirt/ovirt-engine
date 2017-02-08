@@ -113,6 +113,9 @@ public class SnapshotsManager {
     @Inject
     private VmHandler vmHandler;
 
+    @Inject
+    private OvfManager ovfManager;
+
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
      * The snapshot is created in status {@link SnapshotStatus#OK} by default.
@@ -405,7 +408,7 @@ public class SnapshotsManager {
         for (DiskImage image : disks) {
             image.setStorageIds(null);
         }
-        return new OvfManager().exportVm(vm, new ArrayList<>(disks), ClusterUtils.getCompatibilityVersion(vm));
+        return ovfManager.exportVm(vm, new ArrayList<>(disks), ClusterUtils.getCompatibilityVersion(vm));
     }
 
     private void populateDisksWithVmData(List<? extends Disk> disks, Guid vmId) {
@@ -560,7 +563,7 @@ public class SnapshotsManager {
             VM tempVM = new VM();
             ArrayList<DiskImage> images = new ArrayList<>();
             ArrayList<VmNetworkInterface> interfaces = new ArrayList<>();
-            new OvfManager().importVm(configuration, tempVM, images, interfaces);
+            ovfManager.importVm(configuration, tempVM, images, interfaces);
             for (DiskImage diskImage : images) {
                 DiskImage dbImage = getDiskImageDao().getSnapshotById(diskImage.getImageId());
                 if (dbImage != null) {

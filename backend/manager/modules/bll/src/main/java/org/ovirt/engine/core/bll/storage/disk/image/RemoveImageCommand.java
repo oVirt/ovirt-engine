@@ -42,6 +42,9 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     @Inject
     private PostDeleteActionHandler postDeleteActionHandler;
 
+    @Inject
+    protected OvfManager ovfManager;
+
     public RemoveImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -243,7 +246,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 Snapshot snapshot = snapshotDao.get(vmSnapshotId);
                 Snapshot updated =
                         ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
-                                snapshotDisk.getImageId(), new OvfManager());
+                                snapshotDisk.getImageId(), ovfManager);
                 if (updated != null) {
                     result.add(updated);
                 }

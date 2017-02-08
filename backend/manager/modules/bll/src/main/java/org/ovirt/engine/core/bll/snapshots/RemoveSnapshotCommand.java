@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
@@ -62,6 +64,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends VmCommand<T>
         implements QuotaStorageDependent {
     private List<DiskImage> _sourceImages = null;
+
+    @Inject
+    private OvfManager ovfManager;
 
     public RemoveSnapshotCommand(T parameters, CommandContext context) {
         super(parameters, context);
@@ -283,7 +288,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
                 if (imagesParams.getTaskGroupSuccess()) {
                     snapshot = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
-                            snapshot, imagesParams.getImageId(), new OvfManager());
+                            snapshot, imagesParams.getImageId(), ovfManager);
                 } else {
                     log.error("Could not delete image '{}' from snapshot '{}'",
                             imagesParams.getImageId(), getParameters().getSnapshotId());

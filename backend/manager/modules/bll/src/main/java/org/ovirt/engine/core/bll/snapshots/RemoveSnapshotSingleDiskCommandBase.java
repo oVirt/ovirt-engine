@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
@@ -31,6 +33,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
 
+    @Inject
+    protected OvfManager ovfManager;
 
     protected RemoveSnapshotSingleDiskCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -238,7 +242,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
 
             TransactionSupport.executeInNewTransaction(() -> {
                 Snapshot s = snapshotDao.get(snapshotId);
-                s = ImagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage, new OvfManager());
+                s = ImagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage, ovfManager);
                 snapshotDao.update(s);
                 return null;
             });
@@ -255,7 +259,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
 
             TransactionSupport.executeInNewTransaction(() -> {
                 Snapshot s = snapshotDao.get(snapshotId);
-                s = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(s, imageId, new OvfManager());
+                s = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(s, imageId, ovfManager);
                 snapshotDao.update(s);
                 return null;
             });

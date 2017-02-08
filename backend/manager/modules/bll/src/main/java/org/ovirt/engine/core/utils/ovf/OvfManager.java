@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -29,6 +31,7 @@ import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class OvfManager {
 
     private Logger log = LoggerFactory.getLogger(OvfManager.class);

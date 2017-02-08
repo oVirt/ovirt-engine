@@ -84,6 +84,9 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     @Inject
     private VmOverheadCalculator vmOverheadCalculator;
 
+    @Inject
+    private OvfManager ovfManager;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -280,7 +283,6 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
     private boolean updateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
         HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary = new HashMap<>();
-        OvfManager ovfManager = new OvfManager();
         ArrayList<DiskImage> AllVmImages = new ArrayList<>();
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         if (interfaces != null) {

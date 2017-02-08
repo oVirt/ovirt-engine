@@ -55,11 +55,8 @@ public class OvfUpdateProcessHelper {
     @Inject
     private ResourceManager resourceManager;
 
-    private final OvfManager ovfManager;
-
-    public OvfUpdateProcessHelper() {
-        this.ovfManager = new OvfManager();
-    }
+    @Inject
+    private OvfManager ovfManager;
 
     /**
      * Adds the given vm metadata to the given map

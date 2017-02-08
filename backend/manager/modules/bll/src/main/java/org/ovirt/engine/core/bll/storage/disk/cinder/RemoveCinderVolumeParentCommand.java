@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameters> extends RemoveImageCommand<T> implements SerialChildExecutingCommand {
@@ -109,7 +108,7 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
             Snapshot snapshot = snapshotDao.get(vmSnapshotId);
             if (snapshot != null) {
                 updated = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
-                        lastCinderVolume.getImageId(), new OvfManager());
+                        lastCinderVolume.getImageId(), ovfManager);
             }
         }
         return updated;
