@@ -77,7 +77,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
 
         doNothing().when(ovfManager).updateBootOrderOnDevices(any(VmBase.class), anyBoolean());
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
     }
 
     @Test

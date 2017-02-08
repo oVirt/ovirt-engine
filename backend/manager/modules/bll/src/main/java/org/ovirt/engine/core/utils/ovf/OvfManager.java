@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -35,9 +34,9 @@ import org.slf4j.LoggerFactory;
 public class OvfManager {
 
     private Logger log = LoggerFactory.getLogger(OvfManager.class);
-    private OvfVmIconDefaultsProvider iconDefaultsProvider = SimpleDependencyInjector.getInstance().get(
-            OvfVmIconDefaultsProvider.class);
 
+    @Inject
+    private OvfVmIconDefaultsProvider iconDefaultsProvider;
     @Inject
     private ClusterDao clusterDao;
     @Inject

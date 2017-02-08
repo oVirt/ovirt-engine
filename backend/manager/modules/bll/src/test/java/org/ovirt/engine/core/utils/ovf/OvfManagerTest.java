@@ -26,6 +26,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -80,15 +82,16 @@ public class OvfManagerTest {
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
+    @InjectMocks
     @Spy
     private OvfManager manager = new OvfManager();
+    @Mock
+    private OvfVmIconDefaultsProvider iconDefaultsProvider;
 
     @BeforeClass
     public static void setUpClass() {
         OsRepository osRepository = mock(OsRepository.class);
-        OvfVmIconDefaultsProvider iconDefaultsProvider = mock(OvfVmIconDefaultsProvider.class);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
         final HashMap<Integer, String> osIdsToNames = new HashMap<>();
         osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");
         osIdsToNames.put(EXISTING_OS_ID, "os_name_b");
@@ -109,17 +112,16 @@ public class OvfManagerTest {
                         .orElse(0));
         when(osRepository.getGraphicsAndDisplays(eq(DEFAULT_OS_ID), any(Version.class))).thenReturn(gndDefaultOs);
         when(osRepository.getGraphicsAndDisplays(eq(EXISTING_OS_ID), any(Version.class))).thenReturn(gndExistingOs);
-
-        Map<Integer, VmIconIdSizePair> iconDefaults = new HashMap<>();
-        iconDefaults.put(DEFAULT_OS_ID, new VmIconIdSizePair(SMALL_DEFAULT_ICON_ID, LARGE_DEFAULT_ICON_ID));
-        iconDefaults.put(EXISTING_OS_ID, new VmIconIdSizePair(SMALL_ICON_ID, LARGE_ICON_ID));
-        when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(iconDefaults);
-
     }
 
     @Before
     public void setUp() throws Exception {
         doNothing().when(manager).updateBootOrderOnDevices(any(VmBase.class), anyBoolean());
+
+        Map<Integer, VmIconIdSizePair> iconDefaults = new HashMap<>();
+        iconDefaults.put(DEFAULT_OS_ID, new VmIconIdSizePair(SMALL_DEFAULT_ICON_ID, LARGE_DEFAULT_ICON_ID));
+        iconDefaults.put(EXISTING_OS_ID, new VmIconIdSizePair(SMALL_ICON_ID, LARGE_ICON_ID));
+        when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(iconDefaults);
     }
 
     private static void assertVm(VM vm, VM newVm, long expectedDbGeneration) {
