@@ -980,8 +980,11 @@ public abstract class AbstractDiskModel extends DiskModel {
                 updateStorageDomains(datacenter);
                 break;
             default:
-                updateHosts(datacenter);
                 break;
+        }
+
+        if (performUpdateHosts()) {
+            updateHosts(datacenter);
         }
     }
 
@@ -1207,5 +1210,9 @@ public abstract class AbstractDiskModel extends DiskModel {
                 return  getCinderDisk().getStorageIds().get(0);
         }
         return null;
+    }
+
+    protected boolean performUpdateHosts() {
+        return getDiskStorageType().getEntity() == DiskStorageType.LUN;
     }
 }

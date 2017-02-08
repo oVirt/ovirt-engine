@@ -337,7 +337,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
                     getStorageDomain().setIsChangeable(limitToStorageDomainId == null);
                     getDataCenter().setIsChangeable(limitToStorageDomainId == null);
-                    getHost().setIsChangeable(false);
                     getStorageType().setIsChangeable(false);
                 }
 
@@ -359,9 +358,19 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 public int getMinimumDiskSize() {
                     return Math.max(getImageInfoModel().getActualSize(), getImageInfoModel().getVirtualSize());
                 }
+
+                @Override
+                protected boolean performUpdateHosts() {
+                    return true;
+                }
             });
         } else {
-            setDiskModel(new ReadOnlyDiskModel());
+            setDiskModel(new ReadOnlyDiskModel() {
+                @Override
+                protected boolean performUpdateHosts() {
+                    return true;
+                }
+            });
             setImageId(resumeUploadDisk.getImageId());
             getDiskModel().setDisk(resumeUploadDisk);
             getDiskModel().getDiskInterface().setIsAvailable(false);
@@ -386,6 +395,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
         getDiskModel().getStorageDomain().getSelectedItemChangedEvent().addListener(this);
         getDiskModel().getVolumeType().setIsAvailable(false);
+
+        getDiskModel().getHost().setIsAvailable(true);
 
         imageInfoModel = new ImageInfoModel();
     }
@@ -534,6 +545,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 AsyncDataProvider.getInstance().getUploadImageUiInactivityTimeoutInSeconds(),
                 diskParameters);
         parameters.setTransferSize(getImageSize());
+        parameters.setVdsId(getDiskModel().getHost().getSelectedItem().getId());
 
         return parameters;
     }
@@ -1206,5 +1218,4 @@ public class UploadImageModel extends Model implements ICommandTarget {
     public ImageInfoModel getImageInfoModel() {
         return imageInfoModel;
     }
-
 }
