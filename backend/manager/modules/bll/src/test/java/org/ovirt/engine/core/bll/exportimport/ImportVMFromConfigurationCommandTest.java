@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.exportimport;
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -44,13 +43,11 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
-import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 
 public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private Guid vmId = Guid.newGuid();
@@ -93,16 +90,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     public static void setUpInjections() {
         // init the injector with the osRepository instance
         OsRepository osRepository = mock(OsRepository.class);
-        OvfVmIconDefaultsProvider iconDefaultsProvider = mock(OvfVmIconDefaultsProvider.class);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
-        final int osId = 0;
-        when(osRepository.isBalloonEnabled(anyInt(), any())).thenReturn(true);
-        when(osRepository.isSoundDeviceEnabled(anyInt(), any())).thenReturn(true);
-        when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(Collections.singletonMap(osId, new VmIconIdSizePair(
-                Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"),
-                Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b"))
-        ));
     }
 
     @Before
