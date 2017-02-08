@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
+import org.ovirt.engine.ui.common.widget.HasCellClickHandlers;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmDevicesListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
@@ -16,6 +17,7 @@ import com.google.inject.Inject;
 
 public class SubTabVirtualMachineVmDevicesView extends AbstractSubTabTableWidgetView<VM, VmDevice, VmListModel<Void>, VmDevicesListModel<VM>>
         implements SubTabVirtualMachineVmDevicePresenter.ViewDef {
+
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineVmDevicesView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
@@ -28,5 +30,10 @@ public class SubTabVirtualMachineVmDevicesView extends AbstractSubTabTableWidget
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());
+    }
+
+    @Override
+    public HasCellClickHandlers<VmDevice> getHotUnplugColumn() {
+        return ((VmDevicesListModelTable) getModelBoundTableWidget()).getHotUnplugColumn();
     }
 }

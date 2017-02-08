@@ -1661,6 +1661,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String serialConsoleOptionsVmPopup();
 
+    String hotUnplug();
+
     String headlessModeVmPopup();
 
     String headlessModeExplanation();

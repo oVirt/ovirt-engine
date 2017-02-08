@@ -407,6 +407,8 @@ public interface UIMessages extends Messages {
 
     String uploadImageQemuCompatUnsupported(String compat, String storageFormatType);
 
+    String memoryHotUnplugConfirmation(int memorySizeMb, String vmName);
+
     String nullOperationUnmanagedNetwork(String networkName);
 
     String nullOperationOutOfSyncNetwork(String networkName);

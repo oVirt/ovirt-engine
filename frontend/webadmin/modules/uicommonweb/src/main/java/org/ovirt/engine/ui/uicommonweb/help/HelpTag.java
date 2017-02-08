@@ -504,6 +504,8 @@ public enum HelpTag {
 
     template_not_found_on_export_domain("template_not_found_on_export_domain", HelpTagType.WEBADMIN, "VMs Tab > Export VM(s) > Confirm VM's Template not on Export Domain"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    memory_hot_unplug("memory_hot_unplug", HelpTagType.UNKNOWN, "VMs Tab > VM Devices subtab > Confirm memory hot unplug"), //$NON-NLS-1$ //$NON-NLS-2$
+
     base_template_not_found_on_export_domain("base_template_not_found_on_export_domain", HelpTagType.WEBADMIN, "Templates Tab > Export Template Version(s) > Confirm Base Template not on Export Domain"), //$NON-NLS-1$ //$NON-NLS-2$
 
     templates("templates", HelpTagType.UNKNOWN), //$NON-NLS-1$

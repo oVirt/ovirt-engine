@@ -2051,6 +2051,8 @@ public interface UIConstants extends Constants {
 
     String noManagedGlusterVolumeMessage();
 
+    String memoryHotUnplug();
+
     String discardIsNotSupportedByUnderlyingStorage();
 
     String theUnderlyingStorageDoesNotSupportDiscardWhenWipeAfterDeleteIsEnabled();

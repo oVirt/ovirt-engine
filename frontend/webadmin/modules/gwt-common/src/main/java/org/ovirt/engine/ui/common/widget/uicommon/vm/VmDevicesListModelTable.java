@@ -6,15 +6,19 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.widget.HasCellClickHandlers;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.VmDeviceGeneralTypeColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
+
 import com.google.gwt.event.shared.EventBus;
 
 public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDevice, VmDevicesListModel<VM>> {
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+
+    private HotUnplugColumn hotUnplugColumn;
 
     public VmDevicesListModelTable(
             SearchableTableModelProvider<VmDevice, VmDevicesListModel<VM>> modelProvider,
@@ -33,6 +37,8 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
         addPluggedColumn();
         addManagedColumn();
         addSpecParamsColumn();
+        addHotUnplugColumn();
+
     }
 
     private void addGeneralTypeColumn() {
@@ -121,6 +127,15 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
         };
         specParamsColumn.makeSortable();
         getTable().addColumn(specParamsColumn , constants.deviceSpecParamsAlias(), "300px"); //$NON-NLS-1$
+    }
+
+    private void addHotUnplugColumn() {
+        hotUnplugColumn = new HotUnplugColumn();
+        getTable().addColumn(hotUnplugColumn , constants.hotUnplug(), "83px"); //$NON-NLS-1$
+    }
+
+    public HasCellClickHandlers<VmDevice> getHotUnplugColumn() {
+        return hotUnplugColumn;
     }
 
 }
