@@ -77,7 +77,7 @@
 
     </ui:style>
 
-    <d:SimpleDialogPanel width="700px" height="480px">
+    <d:SimpleDialogPanel width="700px" height="550px">
         <d:content>
             <g:FlowPanel>
                 <!-- Should be re-enabled once uploading from URI is supported -->
