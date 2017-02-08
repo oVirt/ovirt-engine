@@ -156,14 +156,14 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
     private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
         List<VdcActionParametersBase> parameters = new ArrayList<>();
-        List<StorageDomainModel> storageDomains = getSelectedItems();
+        List<DiskModel> disks =
+                getSelectedItems() != null ? Linq.<DiskModel> cast(getSelectedItems()) : new ArrayList<DiskModel>();
 
-        for (StorageDomainModel storageDomainModel : storageDomains) {
-            for (DiskImage diskModel: storageDomainModel.getDisks()) {
+        for (DiskModel diskModel: disks) {
                 RemoveDiskParameters params =
-                    new RemoveDiskParameters(diskModel.getId(), storageDomainModel.getStorageDomain().getId());
+                    new RemoveDiskParameters(diskModel.getDisk().getId(),
+                                             diskModel.getStorageDomain().getSelectedItem().getId());
                 parameters.add(params);
-            }
         }
 
         model.startProgress();
@@ -176,7 +176,7 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
                         localModel.stopProgress();
                         cancel();
                     }
-                }, this);
+                }, model);
 
         cancel();
     }
