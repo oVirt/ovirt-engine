@@ -10,27 +10,48 @@ import org.ovirt.engine.core.vdsbroker.jsonrpc.JsonRpcVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 
 public class TransportFactory {
-    public static IIrsServer createIrsServer(String hostname, int port, int clientTimeOut, int connectionTimeOut,
-            int clientRetries, int heartbeat) {
-        return new JsonRpcIIrsServer(JsonRpcUtils.createStompClient(hostname, port, connectionTimeOut, clientTimeOut,
-                clientRetries, heartbeat, Config.getValue(ConfigValues.EncryptHostCommunication),
-                Config.getValue(ConfigValues.VdsmSSLProtocol), Config.getValue(ConfigValues.EventProcessingPoolSize),
-                Config.getValue(ConfigValues.IrsRequestQueueName), Config.getValue(ConfigValues.IrsResponseQueueName),
-                null));
+    public static IIrsServer createIrsServer(
+            String hostname, int port, int clientTimeOut, int connectionTimeOut, int clientRetries, int heartbeat) {
+        return new JsonRpcIIrsServer(
+                JsonRpcUtils.createStompClient(
+                        hostname,
+                        port,
+                        connectionTimeOut,
+                        clientTimeOut,
+                        clientRetries,
+                        heartbeat,
+                        Config.getValue(ConfigValues.EncryptHostCommunication),
+                        Config.getValue(ConfigValues.VdsmSSLProtocol),
+                        Config.getValue(ConfigValues.EventProcessingPoolSize),
+                        Config.getValue(ConfigValues.IrsRequestQueueName),
+                        Config.getValue(ConfigValues.IrsResponseQueueName),
+                        null));
     }
 
-    public static IVdsServer createVdsServer(String hostname, int port, int clientTimeOut, int connectionTimeOut,
-            int clientRetries, int heartbeat) {
+    public static IVdsServer createVdsServer(
+            String hostname, int port, int clientTimeOut, int connectionTimeOut, int clientRetries, int heartbeat) {
 
-        HttpClient client = HttpUtils.getConnection(connectionTimeOut, clientRetries,
+        HttpClient client = HttpUtils.getConnection(
+                connectionTimeOut,
+                clientRetries,
                 Config.getValue(ConfigValues.VdsMaxConnectionsPerHost),
                 Config.getValue(ConfigValues.MaxTotalConnections));
 
         String eventQueue = Config.getValue(ConfigValues.EventQueueName);
-        return new JsonRpcVdsServer(JsonRpcUtils.createStompClient(hostname, port, connectionTimeOut, clientTimeOut,
-                clientRetries, heartbeat, Config.getValue(ConfigValues.EncryptHostCommunication),
-                Config.getValue(ConfigValues.VdsmSSLProtocol), Config.getValue(ConfigValues.EventProcessingPoolSize),
-                Config.getValue(ConfigValues.VdsRequestQueueName), Config.getValue(ConfigValues.VdsResponseQueueName),
-                eventQueue), client);
+        return new JsonRpcVdsServer(
+                JsonRpcUtils.createStompClient(
+                        hostname,
+                        port,
+                        connectionTimeOut,
+                        clientTimeOut,
+                        clientRetries,
+                        heartbeat,
+                        Config.getValue(ConfigValues.EncryptHostCommunication),
+                        Config.getValue(ConfigValues.VdsmSSLProtocol),
+                        Config.getValue(ConfigValues.EventProcessingPoolSize),
+                        Config.getValue(ConfigValues.VdsRequestQueueName),
+                        Config.getValue(ConfigValues.VdsResponseQueueName),
+                        eventQueue)
+                , client);
     }
 }
