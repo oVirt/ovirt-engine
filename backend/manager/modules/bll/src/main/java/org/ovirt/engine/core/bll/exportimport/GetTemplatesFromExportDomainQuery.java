@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQueryParameters>
@@ -34,11 +33,10 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
 
     @Override
     protected Map<VmTemplate, List<DiskImage>> buildFromOVFs(List<String> ovfList) {
-        OvfManager ovfManager = new OvfManager();
         Map<VmTemplate, List<DiskImage>> templateDisksMap = new HashMap<>();
         for (String ovf : ovfList) {
             try {
-                if (ovfManager.isOvfTemplate(ovf)) {
+                if (ovfHelper.isOvfTemplate(ovf)) {
                     VmTemplate vmTemplate = ovfHelper.readVmTemplateFromOvf(ovf);
                     List<DiskImage> templateDisks = new ArrayList<>(vmTemplate.getDiskTemplateMap().values());
                     templateDisksMap.put(vmTemplate, templateDisks);
