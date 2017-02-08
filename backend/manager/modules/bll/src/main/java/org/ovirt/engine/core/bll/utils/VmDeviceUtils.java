@@ -1730,7 +1730,13 @@ public class VmDeviceUtils {
                         device.setVmId(vm.getId());
                     }
                     if (device.getDeviceId() == null) {
-                        device.setDeviceId(Guid.newGuid());
+                        if (device.getType() == VmDeviceGeneralType.RNG) {
+                            // only one RNG device allowed
+                            VmDevice rng = VmDeviceCommonUtils.findVmDeviceByType(vmManagedDeviceMap, update.getType());
+                            device.setDeviceId(rng.getDeviceId());
+                        } else {
+                            device.setDeviceId(Guid.newGuid());
+                        }
                     }
                 }
 
