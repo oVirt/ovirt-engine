@@ -84,7 +84,7 @@
                     </g:HorizontalPanel>
                     <e:ListModelListBoxEditor ui:field="diskProfileEditor" addStyleNames="{style.boxEditor}" label="{constants.diskProfileVmDiskPopup}" />
                     <e:ListModelListBoxEditor ui:field="quotaEditor" addStyleNames="{style.boxEditor}" label="{constants.quotaVmDiskPopup}" />
-                    <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.boxEditor}" />
+                    <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.boxEditor}" label="{constants.hostVmDiskPopup}" />
                     <e:ListModelListBoxEditor ui:field="storageTypeEditor" addStyleNames="{style.boxEditor}" label="{constants.storageTypeVmDiskPopup}" />
                 </g:VerticalPanel>
                 <g:VerticalPanel>
