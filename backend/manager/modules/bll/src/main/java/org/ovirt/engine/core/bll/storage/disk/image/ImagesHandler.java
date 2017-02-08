@@ -742,10 +742,6 @@ public final class ImagesHandler {
         return prepareSnapshotConfigWithAlternateImage(snapshot, imageId, null);
     }
 
-    public static Snapshot prepareSnapshotConfigWithoutImageSingleImage(Snapshot snapshot, Guid imageId, OvfManager ovfManager) {
-        return prepareSnapshotConfigWithAlternateImage(snapshot, imageId, null, ovfManager);
-    }
-
     public static Snapshot prepareSnapshotConfigWithAlternateImage(Snapshot snapshot, Guid oldImageId, DiskImage newImage) {
         return prepareSnapshotConfigWithAlternateImage(snapshot, oldImageId, newImage, new OvfManager());
     }

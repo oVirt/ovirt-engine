@@ -115,7 +115,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         doReturn(disk2).when(cmd).getDiskImage();
         doReturn(disk2).when(cmd).getImage();
         doReturn(disk2.getId()).when(cmd).getImageId();
-        Snapshot actual = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snap, disk2.getImageId(), ovfManager);
+        Snapshot actual = ImagesHandler.prepareSnapshotConfigWithAlternateImage(snap, disk2.getImageId(), null, ovfManager);
         String actualOvf = actual.getVmConfiguration();
 
         ArrayList<DiskImage> actualImages = new ArrayList<>();
