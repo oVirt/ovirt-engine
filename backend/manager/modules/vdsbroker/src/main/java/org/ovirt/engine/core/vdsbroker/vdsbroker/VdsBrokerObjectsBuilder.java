@@ -534,7 +534,12 @@ public class VdsBrokerObjectsBuilder {
         }
         if (struct.containsKey(VdsProperties.exit_reason)) {
             String exitReasonStr = struct.get(VdsProperties.exit_reason).toString();
-            vm.setExitReason(VmExitReason.forValue(Integer.parseInt(exitReasonStr)));
+            VmExitReason exitReason = VmExitReason.forValue(Integer.parseInt(exitReasonStr));
+            if (exitReason == null) {
+                log.warn("Illegal exit reason: %s, replacing with Unknown", exitReasonStr);
+                exitReason = VmExitReason.Unknown;
+            }
+            vm.setExitReason(exitReason);
         }
 
         // if monitorResponse returns negative it means its erroneous
