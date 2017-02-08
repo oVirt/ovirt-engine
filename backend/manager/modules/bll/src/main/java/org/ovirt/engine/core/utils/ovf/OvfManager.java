@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
@@ -26,7 +27,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +38,14 @@ public class OvfManager {
     private OvfVmIconDefaultsProvider iconDefaultsProvider = SimpleDependencyInjector.getInstance().get(
             OvfVmIconDefaultsProvider.class);
 
-    private ClusterDao clusterDao = Injector.get(ClusterDao.class);
-    private DiskVmElementDao diskVmElementDao = Injector.get(DiskVmElementDao.class);
-    private VmNetworkInterfaceDao vmNetworkInterfaceDao = Injector.get(VmNetworkInterfaceDao.class);
-
-    private CpuFlagsManagerHandler cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+    @Inject
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     public String exportVm(VM vm, List<DiskImage> images, Version version) {
         updateBootOrderOnDevices(vm.getStaticData(), false);

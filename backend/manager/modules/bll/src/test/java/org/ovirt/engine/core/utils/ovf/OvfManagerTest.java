@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
@@ -80,8 +79,6 @@ public class OvfManagerTest {
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
 
     @Spy
     private OvfManager manager = new OvfManager();

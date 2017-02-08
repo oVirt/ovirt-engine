@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
@@ -57,9 +56,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
 
     @Mock
     private OvfVmIconDefaultsProvider iconDefaultsProvider;
-
-    @Mock
-    private ClusterDao clusterDao;
 
     @Spy
     @InjectMocks
@@ -82,7 +78,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         doNothing().when(ovfManager).updateBootOrderOnDevices(any(VmBase.class), anyBoolean());
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
-        injectorRule.bind(ClusterDao.class, clusterDao);
     }
 
     @Test
