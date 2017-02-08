@@ -351,7 +351,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         updateBootableFrom(currentDisks != null ? currentDisks : new ArrayList<DiskModel>());
     }
 
-    private void commonInitialize() {
+    protected void commonInitialize() {
         super.initialize();
 
         // Create and set commands
