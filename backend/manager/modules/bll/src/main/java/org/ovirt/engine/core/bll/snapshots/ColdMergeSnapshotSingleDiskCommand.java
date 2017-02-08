@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -114,7 +115,8 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
             lockVmSnapshotsWithWait(getVm());
             Snapshot snapshot = snapshotDao.get(getParameters().getVmSnapshotId());
             Snapshot snapshotWithoutImage =
-                    ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId());
+                    ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId(),
+                            new OvfManager());
             snapshotDao.update(snapshotWithoutImage);
             if (getSnapshotsEngineLock() != null) {
                 lockManager.releaseLock(getSnapshotsEngineLock());

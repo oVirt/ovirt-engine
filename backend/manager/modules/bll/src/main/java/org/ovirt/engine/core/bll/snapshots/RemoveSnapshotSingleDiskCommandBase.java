@@ -255,7 +255,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
 
             TransactionSupport.executeInNewTransaction(() -> {
                 Snapshot s = snapshotDao.get(snapshotId);
-                s = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(s, imageId);
+                s = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(s, imageId, new OvfManager());
                 snapshotDao.update(s);
                 return null;
             });

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -99,7 +100,8 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
             lockVmSnapshotsWithWait(getVm());
             Snapshot snapshot = snapshotDao.get(getParameters().getVmSnapshotId());
             Snapshot snapshotWithoutImage =
-                    ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId());
+                    ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId(),
+                            new OvfManager());
             snapshotDao.update(snapshotWithoutImage);
             if (getSnapshotsEngineLock() != null) {
                 lockManager.releaseLock(getSnapshotsEngineLock());

@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -242,7 +243,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 Snapshot snapshot = snapshotDao.get(vmSnapshotId);
                 Snapshot updated =
                         ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
-                                snapshotDisk.getImageId());
+                                snapshotDisk.getImageId(), new OvfManager());
                 if (updated != null) {
                     result.add(updated);
                 }

@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -379,7 +380,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 lockVmSnapshotsWithWait(getVm());
                 for (CinderDisk cinderDisk : cinderDisks) {
                     snapshotWithoutImage = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
-                            snapshot, cinderDisk.getImageId());
+                            snapshot, cinderDisk.getImageId(), new OvfManager());
                 }
                 snapshotDao.update(snapshotWithoutImage);
                 if (getSnapshotsEngineLock() != null) {

@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -282,7 +283,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
                 if (imagesParams.getTaskGroupSuccess()) {
                     snapshot = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
-                            snapshot, imagesParams.getImageId());
+                            snapshot, imagesParams.getImageId(), new OvfManager());
                 } else {
                     log.error("Could not delete image '{}' from snapshot '{}'",
                             imagesParams.getImageId(), getParameters().getSnapshotId());
