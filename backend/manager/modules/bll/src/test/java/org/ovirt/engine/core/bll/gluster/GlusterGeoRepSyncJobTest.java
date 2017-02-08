@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessi
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.StorageDomainDRDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
@@ -66,6 +68,9 @@ public class GlusterGeoRepSyncJobTest {
     @Mock
     private GlusterVolumeDao volumeDao;
 
+    @Mock
+    private StorageDomainDRDao storageDomainDRDao;
+
     private GlusterGeoRepSyncJob syncJob;
 
     @Mock
@@ -86,12 +91,14 @@ public class GlusterGeoRepSyncJobTest {
         doReturn(vdsDao).when(syncJob).getVdsDao();
         doReturn(geoRepDao).when(syncJob).getGeoRepDao();
         doReturn(volumeDao).when(syncJob).getVolumeDao();
+        doReturn(storageDomainDRDao).when(syncJob).getStorageDomainDRDao();
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getVolume()).when(volumeDao).getByName(any(Guid.class), any(String.class));
         doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));
         doReturn(getServer()).when(glusterUtil).getRandomUpServer(any(Guid.class));
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
         doReturn(getSessions(2, true)).when(geoRepDao).getGeoRepSessionsInCluster(CLUSTER_GUID);
+        doReturn(Collections.emptyList()).when(storageDomainDRDao).getWithGeoRepSession(any(Guid.class));
     }
 
     @Test

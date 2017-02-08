@@ -19,6 +19,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.dao.StorageDomainDRDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -134,6 +136,13 @@ public abstract class GlusterJob {
         return DbFacade.getInstance().getNetworkDao();
     }
 
+    protected StorageDomainDRDao getStorageDomainDRDao() {
+        return DbFacade.getInstance().getStorageDomainDRDao();
+    }
+
+    protected StorageDomainStaticDao getStorageDomainStaticDao() {
+        return DbFacade.getInstance().getStorageDomainStaticDao();
+    }
     /**
      * Acquires a lock on the cluster with given id and locking group {@link LockingGroup#GLUSTER}
      *
