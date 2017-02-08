@@ -12,6 +12,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
@@ -25,20 +27,26 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.utils.timer.DBSchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GlusterGeoRepSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterGeoRepSyncJob.class);
-
+    private final DBSchedulerUtilQuartzImpl schedulerUtil;
     private static final GlusterGeoRepSyncJob instance = new GlusterGeoRepSyncJob();
     private static final GeoRepSessionStatus[] overridableStatuses = { GeoRepSessionStatus.ACTIVE,
             GeoRepSessionStatus.INITIALIZING,
             GeoRepSessionStatus.CREATED
     };
+
+    private GlusterGeoRepSyncJob() {
+        schedulerUtil = Injector.get(DBSchedulerUtilQuartzImpl.class);
+    }
 
     public void init() {
         log.info("Gluster georeplication monitoring has been initialized");
@@ -294,6 +302,26 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
             log.info("geo-rep session '{}' detected removed for volume '{}'",
                     session.getSessionKey(),
                     session.getMasterVolumeName());
+            // check if geo-rep session is reference by a DR schedule
+            List<StorageDomainDR> storageDRs = getStorageDomainDRDao().getWithGeoRepSession(session.getId());
+            for (StorageDomainDR storageDR: storageDRs) {
+                //delete and log deletion of storage DR - the schedule needs to be deleted as well
+                log.info("Geo-rep session '{}'- for volume '{}' that has been deleted from CLI "
+                        + "has associated DR sync schedules which will be removed",
+                        session.getSessionKey(),
+                        session.getMasterVolumeName());
+                if (storageDR.getJobId() != null) {
+                    schedulerUtil.deleteJob(storageDR.getJobId());
+                }
+                getStorageDomainDRDao().remove(storageDR.getStorageDomainId(), storageDR.getGeoRepSessionId());
+                StorageDomainStatic storageDomain = getStorageDomainStaticDao().get(storageDR.getStorageDomainId());
+                logGeoRepMessage(AuditLogType.STORAGE_DOMAIN_DR_DELETED, clusterId, new HashMap<String, String>() {
+                    {
+                        put("storageDomainName", storageDomain.getName());
+                        put("geoRepSessionKey", session.getSessionKey());
+                    }
+                });
+            }
             getGeoRepDao().remove(session.getId());
             logGeoRepMessage(AuditLogType.GLUSTER_GEOREP_SESSION_DELETED_FROM_CLI, clusterId, session);
         }
