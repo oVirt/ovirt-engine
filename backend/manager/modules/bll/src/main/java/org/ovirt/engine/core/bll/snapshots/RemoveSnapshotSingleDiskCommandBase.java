@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
@@ -237,7 +238,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
 
             TransactionSupport.executeInNewTransaction(() -> {
                 Snapshot s = snapshotDao.get(snapshotId);
-                s = ImagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage);
+                s = ImagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage, new OvfManager());
                 snapshotDao.update(s);
                 return null;
             });

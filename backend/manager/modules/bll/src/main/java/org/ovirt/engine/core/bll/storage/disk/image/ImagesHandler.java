@@ -739,11 +739,7 @@ public final class ImagesHandler {
      * Prepare a single {@link org.ovirt.engine.core.common.businessentities.Snapshot} object representing a snapshot of a given VM without the given disk.
      */
     public static Snapshot prepareSnapshotConfigWithoutImageSingleImage(Snapshot snapshot, Guid imageId) {
-        return prepareSnapshotConfigWithAlternateImage(snapshot, imageId, null);
-    }
-
-    public static Snapshot prepareSnapshotConfigWithAlternateImage(Snapshot snapshot, Guid oldImageId, DiskImage newImage) {
-        return prepareSnapshotConfigWithAlternateImage(snapshot, oldImageId, newImage, new OvfManager());
+        return prepareSnapshotConfigWithAlternateImage(snapshot, imageId, null, new OvfManager());
     }
 
     /**
