@@ -1166,7 +1166,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
         for (Disk disk : disks) {
             if (!(disk instanceof DiskImage)
                     || disk.getImageTransferPhase() == null
-                    || !disk.getImageTransferPhase().canBeCancelled()) {
+                    || !disk.getImageTransferPhase().canBeCancelled()
+                    || isImageUploadViaAPI((DiskImage) disk)) {
                 return false;
             }
         }
@@ -1180,7 +1181,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
         for (Disk disk : disks) {
             if (!(disk instanceof DiskImage)
                     || disk.getImageTransferPhase() == null
-                    || !disk.getImageTransferPhase().canBePaused()) {
+                    || !disk.getImageTransferPhase().canBePaused()
+                    || isImageUploadViaAPI((DiskImage) disk)) {
                 return false;
             }
         }
@@ -1192,7 +1194,13 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 && disks.size() == 1
                 && disks.get(0) instanceof DiskImage
                 && disks.get(0).getImageTransferPhase() != null
-                && disks.get(0).getImageTransferPhase().canBeResumed();
+                && disks.get(0).getImageTransferPhase().canBeResumed()
+                && !isImageUploadViaAPI((DiskImage) disks.get(0));
+    }
+
+    private static boolean isImageUploadViaAPI(DiskImage diskImage) {
+        return diskImage.getImageTransferPhase() == ImageTransferPhase.TRANSFERRING
+                && diskImage.getImageTransferBytesTotal() == 0;
     }
 
     public ImageInfoModel getImageInfoModel() {
