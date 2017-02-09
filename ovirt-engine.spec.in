@@ -1098,6 +1098,7 @@ fi
 %{_bindir}/engine-backup
 %{_mandir}/man8/engine-backup.*
 %{engine_data}/bin/engine-backup.sh
+%{engine_data}/bin/engine-migrate-he.py
 
 %changelog
 * Thu Feb 23 2017 Rafael Martins <rmartins@redhat.com> - 4.0.7.3-1
