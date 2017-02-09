@@ -79,7 +79,7 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
             paramsByClusterId.put(clusterId, new ManageNetworkClustersParameters(
                     networkAttachments,
                     networkDetachments,
-                    Collections.<NetworkCluster>emptyList()));
+                    Collections.emptyList()));
         }
 
         for (Entry<Guid, List<NetworkCluster>> singleClusterAttachments: detachmentByClusterId.entrySet()) {
@@ -89,9 +89,9 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
                 paramsByClusterId.put(
                         clusterId,
                         new ManageNetworkClustersParameters(
-                                Collections.<NetworkCluster>emptyList(),
+                                Collections.emptyList(),
                                 networkDetachments,
-                                Collections.<NetworkCluster>emptyList()));
+                                Collections.emptyList()));
             }
         }
 
