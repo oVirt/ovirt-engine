@@ -33,6 +33,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
     public static final String TYPE = "TYPE";
     public static final String ARCHITECTURE = "ARCHITECTURE";
     public static final String HA_SCORE = "HA_SCORE";
+    public static final String SPM_ID = "SPM_ID";
 
     public VdsConditionFieldAutoCompleter() {
         super();
@@ -60,6 +61,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         verbs.add(ARCHITECTURE);
         verbs.add(UPDATE_AVAILABLE);
         verbs.add(HA_SCORE);
+        verbs.add(SPM_ID);
         buildCompletions();
         verbs.add("ID");
         // Building the types dict
@@ -88,6 +90,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         getTypeDictionary().put(ARCHITECTURE, ArchitectureType.class);
         getTypeDictionary().put(UPDATE_AVAILABLE, Boolean.class);
         getTypeDictionary().put(HA_SCORE, Integer.class);
+        getTypeDictionary().put(SPM_ID, Integer.class);
         // building the ColumnName Dict
         columnNameDict.put(NAME, "vds_name");
         columnNameDict.put(COMMENT, "free_text_comment");
@@ -114,6 +117,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         columnNameDict.put(ARCHITECTURE, "architecture");
         columnNameDict.put(UPDATE_AVAILABLE, "is_update_available");
         columnNameDict.put(HA_SCORE, "ha_score");
+        columnNameDict.put(SPM_ID, "vds_spm_id");
         // Building the validation dict
         buildBasicValidationTable();
     }
