@@ -364,31 +364,6 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
     }
 
-    @Override
-    protected void updateRngDevice(Guid templateId) {
-        if (!getParameters().isUpdateRngDevice()) {
-            final Version newClusterVersion = getEffectiveCompatibilityVersion() != null
-                    ? getEffectiveCompatibilityVersion()
-                    : Version.getLast();
-            rngDeviceUtils.handleUrandomRandomChange(
-                    getParameters().getClusterLevelChangeFromVersion(),
-                    newClusterVersion,
-                    templateId,
-                    cloneContextAndDetachFromParent(),
-                    false);
-            return;
-        }
-        super.updateRngDevice(templateId);
-    }
-
-    protected Version getEffectiveCompatibilityVersion() {
-        return getParameters().getVmTemplateData().getCustomCompatibilityVersion() != null
-                ? getParameters().getVmTemplateData().getCustomCompatibilityVersion()
-                : getCluster() != null
-                        ? getCluster().getCompatibilityVersion()
-                        : null;
-    }
-
     private void checkTrustedService() {
         if (getCluster() == null) {
             return;

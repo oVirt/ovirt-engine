@@ -23,7 +23,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 @HostedEngineUpdate(groups = { UpdateEntity.class })
-public class VmManagementParametersBase extends VmOperationParameterBase implements HasGraphicsDevices, HasVmIcon {
+public class VmManagementParametersBase extends VmOperationParameterBase
+        implements HasGraphicsDevices, HasVmIcon, HasRngDevice {
 
     private static final long serialVersionUID = -7695630335738521510L;
 
