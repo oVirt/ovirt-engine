@@ -164,6 +164,7 @@ public class NfsStorageModel extends FileStorageModel {
         versionItems.add(new EntityModel<>(constants.nfsVersion3(), NfsVersion.V3));
         versionItems.add(new EntityModel<>(constants.nfsVersion4(), NfsVersion.V4));
         versionItems.add(new EntityModel<>(constants.nfsVersion41(), NfsVersion.V4_1));
+        versionItems.add(new EntityModel<>(constants.nfsVersion42(), NfsVersion.V4_2));
         getVersion().setItems(versionItems);
 
         setRetransmissions(new EntityModel<Short>());

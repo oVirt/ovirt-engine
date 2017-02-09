@@ -1405,6 +1405,8 @@ public interface UIConstants extends Constants {
 
     String nfsVersion41();
 
+    String nfsVersion42();
+
     String shareableDiskNotSupported();
 
     String shareableDiskNotSupportedByConfiguration();
