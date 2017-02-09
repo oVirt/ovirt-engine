@@ -309,21 +309,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
     }
 
-    private boolean updateRngDevice() {
-        if (getParameters().isUpdateRngDevice()) {
-            return changeRngDevice();
+    private void updateRngDevice() {
+        if (!getParameters().isUpdateRngDevice()) {
+            return;
         }
-        // if rng is not updated, check random <-> urandom change
-        rngDeviceUtils.handleUrandomRandomChange(
-                getParameters().getClusterLevelChangeFromVersion(),
-                getEffectiveCompatibilityVersion(),
-                getVmId(),
-                cloneContextAndDetachFromParent(),
-                true);
-        return true;
-    }
 
-    private boolean changeRngDevice() {
         VdcQueryReturnValue query =
                 runInternalQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(getParameters().getVmId()));
 
@@ -347,9 +337,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (rngCommandResult != null && !rngCommandResult.getSucceeded()) {
-            return false;
+            log.error("Updating RNG device of VM {} ({}) failed. Old RNG device = {}. New RNG device = {}.",
+                    getVm().getName(),
+                    getVm().getId(),
+                    rngDevs.isEmpty() ? null : rngDevs.get(0),
+                    getParameters().getRngDevice());
         }
-        return true;
     }
 
     private void updateDeviceAddresses() {

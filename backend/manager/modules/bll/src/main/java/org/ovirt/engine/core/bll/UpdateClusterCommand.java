@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,11 +21,13 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.HasRngDevice;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
@@ -56,6 +59,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -90,6 +94,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Inject
     private ResourceManager resourceManager;
+
+    @Inject
+    private RngDeviceUtils rngDeviceUtils;
 
     private List<VDS> allForCluster;
     private Cluster oldCluster;
@@ -260,6 +267,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             updateParams.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
             upgradeGraphicsDevices(vm, updateParams);
 
+            updateRngDeviceIfNecessary(vm.getId(), vm.getCustomCompatibilityVersion(), updateParams);
+
             VdcReturnValueBase result = runInternalAction(
                     VdcActionType.UpdateVm,
                     updateParams,
@@ -273,6 +282,27 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         return true;
     }
 
+    /**
+     * This can be dropped together with support of 4.0 compatibility level.
+     */
+    private void updateRngDeviceIfNecessary(
+            Guid vmBaseId,
+            Version customCompatibilityLevel,
+            HasRngDevice updateParameters) {
+        final Version oldEffectiveVersion = CompatibilityVersionUtils.getEffective(
+                customCompatibilityLevel,
+                () -> oldCluster.getCompatibilityVersion());
+        final Version newEffectiveVersion = CompatibilityVersionUtils.getEffective(
+                customCompatibilityLevel,
+                () -> getCluster().getCompatibilityVersion());
+        final Optional<VmRngDevice> updatedDeviceOptional = rngDeviceUtils.createUpdatedRngDeviceIfNecessary(
+                oldEffectiveVersion, newEffectiveVersion, vmBaseId, cloneContext());
+        if (updatedDeviceOptional.isPresent()) {
+            updateParameters.setUpdateRngDevice(true);
+            updateParameters.setRngDevice(updatedDeviceOptional.get());
+        }
+    }
+
     private boolean updateTemplates() {
         for (VmTemplate template : templatesLockedForUpdate) {
             // the object was loaded in before command execution started and thus the value may be outdated
@@ -281,6 +311,11 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             // Locking by UpdateVmTemplate is disabled since templates are already locked in #getExclusiveLocks method.
             parameters.setLockProperties(LockProperties.create(LockProperties.Scope.None));
             parameters.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
+
+            updateRngDeviceIfNecessary(template.getId(), template.getCustomCompatibilityVersion(), parameters);
+            if (!parameters.isUpdateRngDevice()) {
+                continue;
+            }
 
             final VdcReturnValueBase result = runInternalAction(
                     VdcActionType.UpdateVmTemplate,

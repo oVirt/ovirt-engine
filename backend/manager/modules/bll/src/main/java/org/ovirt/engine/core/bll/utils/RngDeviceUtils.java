@@ -1,14 +1,13 @@
 package org.ovirt.engine.core.bll.utils;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.action.RngDeviceParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -21,33 +20,38 @@ public class RngDeviceUtils {
     @Inject
     private BackendInternal backend;
 
-    public void handleUrandomRandomChange(Version oldClusterVersion,
-            Version newClusterVersion,
+    /**
+     * It returns rng device of vm-like entity specified by {@code vmBaseId} if the entity already has an rng device
+     * and it is necessary to change it in order to accommodate random -> urandom transition (i.e. if effective
+     * compatibility havel has changed and the change crossed {@link VmRngDevice.Source#FIRST_URANDOM_VERSION} border).
+     * @param oldCompatibilityVersion old effective compatibility version
+     * @param newCompatibilityVersion new effective compatibility version
+     */
+    public Optional<VmRngDevice> createUpdatedRngDeviceIfNecessary(Version oldCompatibilityVersion,
+            Version newCompatibilityVersion,
             Guid vmBaseId,
-            CommandContext commandContext,
-            boolean isVm) {
-        if (oldClusterVersion == null) {
-            return;
+            CommandContext commandContext) {
+        if (oldCompatibilityVersion == null) {
+            return Optional.empty();
         }
         final boolean updatePotentiallyRequired =
-                VmRngDevice.Source.urandomRandomUpdateRequired(oldClusterVersion, newClusterVersion);
+                VmRngDevice.Source.urandomRandomUpdateRequired(oldCompatibilityVersion, newCompatibilityVersion);
         if (!updatePotentiallyRequired) {
-            return;
+            return Optional.empty();
         }
         final List<VmRngDevice> rngDevices =
                 backend.runInternalQuery(
                         VdcQueryType.GetRngDevice, new IdQueryParameters(vmBaseId), commandContext.getEngineContext())
                         .getReturnValue();
         if (rngDevices.isEmpty()) {
-            return;
+            return Optional.empty();
         }
         final VmRngDevice rngDevice = rngDevices.get(0);
         final VmRngDevice.Source oldSource = rngDevice.getSource();
-        rngDevice.updateSourceByVersion(newClusterVersion);
+        rngDevice.updateSourceByVersion(newCompatibilityVersion);
         if (rngDevice.getSource().equals(oldSource)) {
-            return;
+            return Optional.empty();
         }
-        final RngDeviceParameters params = new RngDeviceParameters(rngDevice, isVm);
-        backend.runInternalAction(VdcActionType.UpdateRngDevice, params, commandContext);
+        return Optional.of(rngDevice);
     }
 }
