@@ -9,7 +9,8 @@ public enum NfsVersion {
     AUTO("auto"),
     V3("3"),
     V4("4"),
-    V4_1("4.1");
+    V4_1("4.1"),
+    V4_2("4.2");
 
     private final String version;
     private static final Map<String, NfsVersion> mappings = new HashMap<>();
