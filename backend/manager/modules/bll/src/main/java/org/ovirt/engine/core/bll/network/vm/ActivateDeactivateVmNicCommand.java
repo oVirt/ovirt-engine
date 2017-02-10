@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -285,6 +286,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private void clearPassthroughData(String vfToUse) {
+
         if (vfToUse != null) {
             networkDeviceHelper.setVmIdOnVfs(getVdsId(), null, Collections.singleton(vfToUse));
         }
@@ -306,7 +308,12 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         for (VmDevice vmDevice : allVmDevices) {
             if (!vmDeviceToHotplug.getId().equals(vmDevice.getId())){
                 Map<String, String> deviceAddressMap = StringMapUtils.string2Map(vmDevice.getAddress());
-                if(deviceAddressMap.equals(addressMapToHotplug)) {
+                boolean duplicatedAddress = deviceAddressMap.equals(addressMapToHotplug);
+
+                boolean ambiguousInterfaceState = StringUtils.isEmpty(vmDevice.getAddress()) && vmDevice.isPlugged()
+                        && VmDeviceGeneralType.INTERFACE.equals(vmDevice.getType());
+
+                if(duplicatedAddress || ambiguousInterfaceState) {
                     return true;
                 }
             }
