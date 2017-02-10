@@ -331,7 +331,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("TLSv1.2")
     VdsmSSLProtocol,
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("TLSv1")
+    @DefaultValueAttribute("TLSv1.2")
     ExternalCommunicationProtocol,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("jms.queue.requests")
