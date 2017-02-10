@@ -9,47 +9,41 @@
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-    <ui:style>
-        .panel {
-            padding: 2px;
-        }
-    </ui:style>
-
     <d:SimpleDialogPanel header="{constants.configurePopupTitle}" height="600px" width="1060px">
         <d:content>
             <t:DialogTabPanel height="100%" width="100%">
                 <t:tab>
                     <t:DialogTab ui:field="rolesTab">
                         <t:content>
-                            <g:SimplePanel addStyleNames="{style.panel}" ui:field="rolesTabPanel" />
+                            <g:SimplePanel ui:field="rolesTabPanel" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
                     <t:DialogTab ui:field="systemPermissionsTab">
                         <t:content>
-                            <g:SimplePanel addStyleNames="{style.panel}" ui:field="systemPermissionTabPanel" />
+                            <g:SimplePanel ui:field="systemPermissionTabPanel" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
                     <t:DialogTab ui:field="clusterPoliciesTab">
                         <t:content>
-                            <g:SimplePanel addStyleNames="{style.panel}" ui:field="clusterPoliciesTabPanel" />
+                            <g:SimplePanel ui:field="clusterPoliciesTabPanel" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
                     <t:DialogTab ui:field="instanceTypesTab">
                         <t:content>
-                            <g:SimplePanel addStyleNames="{style.panel}" ui:field="instanceTypesTabPanel" />
+                            <g:SimplePanel ui:field="instanceTypesTabPanel" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
                     <t:DialogTab ui:field="macPoolsTab">
                         <t:content>
-                            <g:SimplePanel addStyleNames="{style.panel}" ui:field="macPoolsTabPanel" />
+                            <g:SimplePanel ui:field="macPoolsTabPanel" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

@@ -40,42 +40,44 @@
         .treeRow {
             padding: 5px 0px 0px 0px;
         }
+
+        .container {
+            width: 100%;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="650px" height="500px">
         <d:content>
-            <b:Container>
+            <b:Container addStyleNames="{style.container}">
                 <b:Row>
-                    <b:Column size="LG_5">
+                    <b:Column size="SM_5">
                         <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="LG_5">
+                    <b:Column size="SM_5">
                         <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" usePatternFly="true" />
                     </b:Column>
                 </b:Row>
                 <b:Row addStyleNames="{style.accountBorder}">
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                         <g:Label ui:field="accountTypeLabel" />
                         <g:RadioButton name="accountTypeRadioButton" ui:field="userRadioButtonEditor" addStyleNames="{style.radioButton}"/>
                         <g:RadioButton name="accountTypeRadioButton" ui:field="adminRadioButtonEditor" addStyleNames="{style.radioButton}"/>
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                         <g:Label ui:field="explanationLabel" />
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                         <g:Button ui:field="expandAllButton" addStyleNames="{style.expandAllButton}"/>
                         <g:Button ui:field="collapseAllButton" addStyleNames="{style.collapseAllButton}"/>
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="LG_12" addStyleNames="{style.treeRow}">
-                        <g:ScrollPanel addStyleNames="{style.treeScrollPanel}">
-                            <we:EntityModelCellTree ui:field="tree"/>
-                        </g:ScrollPanel>
+                    <b:Column size="SM_12" addStyleNames="{style.treeRow}">
+                        <we:EntityModelCellTree ui:field="tree"/>
                     </b:Column>
                 </b:Row>
             </b:Container>

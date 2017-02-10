@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -25,13 +24,10 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.inject.Inject;
 
 public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<ManagePolicyUnitModel> implements ManagePolicyUnitPopupPresenterWidget.ViewDef {
-
-    interface Driver extends UiCommonEditorDriver<ManagePolicyUnitModel, ManagePolicyUnitPopupView> {
-    }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ManagePolicyUnitPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -41,13 +37,9 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final Driver driver = GWT.create(Driver.class);
-
     @UiField
-    @Ignore
-    ScrollPanel policyUnitTableContainer;
+    FlowPanel policyUnitTableContainer;
 
-    @Ignore
     ListModelObjectCellTable<PolicyUnit, ListModel> policyUnitTable;
 
     private ManagePolicyUnitModel model;
@@ -60,7 +52,6 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
         super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        driver.initialize(this);
         initTable();
     }
 
@@ -137,16 +128,15 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
     public void edit(ManagePolicyUnitModel model) {
         this.model = model;
         policyUnitTable.asEditor().edit(model.getPolicyUnits());
-        driver.edit(model);
     }
 
     @Override
     public ManagePolicyUnitModel flush() {
-        return driver.flush();
+        return model;
     }
 
     @Override
     public void cleanup() {
-        driver.cleanup();
+        model.cleanup();
     }
 }

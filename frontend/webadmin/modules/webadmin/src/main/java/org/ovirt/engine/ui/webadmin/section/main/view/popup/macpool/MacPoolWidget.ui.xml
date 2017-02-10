@@ -12,11 +12,6 @@
     .macRangesLabel {
       font-weight: bold;
     }
-
-    .macRangeHeight {
-        height: 75px;
-    }
-
   </ui:style>
 
   <g:FlowPanel>
@@ -30,7 +25,7 @@
     </b:Row>
     <b:Row>
         <b:Column size="LG_12">
-            <m:MacRangeWidget ui:field="macRanges" addStyleNames="{style.macRangeHeight}" />
+            <m:MacRangeWidget ui:field="macRanges" />
         </b:Column>
     </b:Row>
   </g:FlowPanel>

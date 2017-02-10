@@ -1,34 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
-    <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field="resources" type="org.ovirt.engine.ui.webadmin.ApplicationResources" />
+    <ui:with field="constants" type="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
+
     <ui:style>
-        .labelStyle {
-            vertical-align: bottom;
-            height: 30px;
-            line-height: 25px;
-            margin-right: 5px;
+        .container {
+            width: 100%;
+        }
+
+        .gridHeight {
+            height: 415px;
         }
 
         .imageStyle {
-            vertical-align: bottom;
             position: relative;
-            top: -5px;
+            top: -2px;
             margin-right: 5px;
             margin-left: 15px;
         }
     </ui:style>
 
-    <g:VerticalPanel>
-        <g:HorizontalPanel>
-            <g:Label ui:field="showLabel" addStyleNames="{style.labelStyle} rv_showLabel_pfly_fix"/>
-            <g:RadioButton name="rolesRadioButton" ui:field="allRolesRadioButton" addStyleNames="rv_radio_pfly_fix"/>
-            <g:Image resource='{resources.adminImage}' addStyleNames="{style.imageStyle}"/>
-            <g:RadioButton name="rolesRadioButton" ui:field="adminRolesRadioButton" addStyleNames="rv_radio_pfly_fix"/>
-            <g:Image resource='{resources.userImage}' addStyleNames="{style.imageStyle}"/>
-            <g:RadioButton name="rolesRadioButton" ui:field="userRolesRadioButton" addStyleNames="rv_radio_pfly_fix"/>
-        </g:HorizontalPanel>
-        <g:SimplePanel ui:field="rolesTabContent" height="495px" />
-    </g:VerticalPanel>
-
+    <b:Container addStyleNames="{style.container}">
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:Label text="{constants.showRolesLabel}" />
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:RadioButton name="rolesRadioButton" ui:field="allRolesRadioButton" text="{constants.allRolesLabel}" />
+                <g:Image resource="{resources.adminImage}" addStyleNames="{style.imageStyle}" />
+                <g:RadioButton name="rolesRadioButton" ui:field="adminRolesRadioButton" text="{constants.adminRolesLabel}" />
+                <g:Image resource="{resources.userImage}" addStyleNames="{style.imageStyle}" />
+                <g:RadioButton name="rolesRadioButton" ui:field="userRolesRadioButton" text="{constants.userRolesLabel}" />
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:SimplePanel ui:field="rolesTabContent" addStyleNames="{style.gridHeight}"/>
+            </b:Column>
+        </b:Row>
+    </b:Container>
 </ui:UiBinder>

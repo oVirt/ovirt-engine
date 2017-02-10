@@ -9,18 +9,19 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyPopupView.WidgetStyle;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class PolicyUnitPanel extends FocusPanel {
     public static final String FILTER = "Filter"; //$NON-NLS-1$
@@ -71,28 +72,24 @@ public class PolicyUnitPanel extends FocusPanel {
                     event.setData("Text", lastDragData); //$NON-NLS-1$
                     // show a ghost of the widget under cursor.
                     NativeEvent nativeEvent = event.getNativeEvent();
-                    int x = nativeEvent.getClientX() - sourcePanel.getAbsoluteLeft();
-                    int y = nativeEvent.getClientY() - sourcePanel.getAbsoluteTop();
-                    event.getDataTransfer().setDragImage(sourcePanel.getElement(), x, y);
+                    int x = nativeEvent.getClientX() - sourcePanel.getWidget().getAbsoluteLeft();
+                    int y = nativeEvent.getClientY() - sourcePanel.getWidget().getAbsoluteTop();
+                    event.getDataTransfer().setDragImage(sourcePanel.getWidget().getElement(), x, y);
                 }
             }, DragStartEvent.getType());
         }
     }
 
     public void initWidget() {
-        HorizontalPanel panel = new HorizontalPanel();
-        Panel namePanel = getNamePanel(policyUnit);
+        FlowPanel namePanel = getNamePanel(policyUnit);
         if (!used) {
-            panel.setStyleName(style.unusedPolicyUnitStyle());
-            panel.add(namePanel);
+            namePanel.setStyleName(style.unusedPolicyUnitStyle());
         } else {
-            Panel policyUnitLablePanel = new SimplePanel();
-            policyUnitLablePanel.add(namePanel);
-            policyUnitLablePanel.setStyleName(style.usedFilterPolicyUnitStyle());
-            Label label = new Label();
-            label.setStyleName(style.positionLabelStyle());
-            panel.add(label);
+            namePanel.setStyleName(style.usedFilterPolicyUnitStyle());
             if (position != 0) {
+                Label label = new Label();
+                label.setStyleName(style.positionLabelStyle());
+                namePanel.add(label);
                 String labelText = null;
                 if (position <= -1) {
                     labelText = constants.firstFilter();
@@ -100,32 +97,36 @@ public class PolicyUnitPanel extends FocusPanel {
                     labelText = constants.lastFilter();
                 }
                 label.setText(labelText);
+                Widget text = namePanel.getWidget(0);
+                text.getElement().getStyle().setFloat(Style.Float.LEFT);
+                text.getElement().getStyle().setPaddingRight(5, Unit.PX);
             }
-            panel.setWidth("100%"); //$NON-NLS-1$
-            panel.add(policyUnitLablePanel);
         }
         if (!policyUnit.isEnabled()) {
-            panel.getElement().getStyle().setOpacity(0.5);
+            namePanel.getElement().getStyle().setOpacity(0.5);
         }
-        setWidget(panel);
+        setWidget(namePanel);
     }
 
-    protected Panel getNamePanel(PolicyUnit policyUnit) {
-        HorizontalPanel panel = new HorizontalPanel();
+    protected FlowPanel getNamePanel(PolicyUnit policyUnit) {
+        FlowPanel panel = new FlowPanel();
         Label label = new Label(policyUnit.getName());
         if (!policyUnit.isInternal()) {
             Label extLabel = new Label(constants.externalPolicyUnitLabel());
             extLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+            extLabel.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+            extLabel.getElement().getStyle().setPaddingRight(5, Unit.PX);
+            extLabel.getElement().getStyle().setFloat(Style.Float.LEFT);
             panel.add(extLabel);
-
         }
         panel.add(label);
+
         if (!policyUnit.isEnabled()) {
             Label disabledLabel = new Label(constants.disabledPolicyUnit());
             disabledLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+            disabledLabel.getElement().getStyle().setPaddingLeft(5, Unit.PX);
             panel.add(disabledLabel);
         }
-        panel.setSpacing(2);
         return panel;
     }
 

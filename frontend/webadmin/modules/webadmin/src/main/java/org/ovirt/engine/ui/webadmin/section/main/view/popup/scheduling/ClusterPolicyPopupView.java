@@ -21,7 +21,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ClusterPolicyPopupPresenterWidget;
@@ -105,7 +104,6 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     FlowPanel clusterPolicyPropertiesZone;
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
-    private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
@@ -117,7 +115,6 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-        localize();
     }
 
     private void initPanels() {
@@ -136,11 +133,6 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
 
     private void initListBoxEditors() {
         loadBalanceListEditor = new ListModelListBoxOnlyEditor<>(new NameRenderer<PolicyUnit>());
-    }
-
-    private void localize() {
-        nameEditor.setLabel(constants.clusterPolicyNameLabel());
-        descriptionEditor.setLabel(constants.clusterPolicyDescriptionLabel());
     }
 
     public boolean showClusterPolicyPropertiesZone(final NewClusterPolicyModel model) {

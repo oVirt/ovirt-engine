@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -25,11 +26,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.inject.Inject;
 
@@ -46,9 +45,6 @@ public class RoleView extends Composite {
 
     @UiField
     RadioButton userRolesRadioButton;
-
-    @UiField
-    Label showLabel;
 
     private SimpleActionTable<Role> table;
     private SimpleActionTable<Permission> permissionTable;
@@ -72,7 +68,6 @@ public class RoleView extends Composite {
         this.clientStorage = clientStorage;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
 
         initRolesFilterRadioButtons();
         initSplitLayoutPanel();
@@ -134,14 +129,7 @@ public class RoleView extends Composite {
 
     }
 
-    private void localize() {
-        allRolesRadioButton.setText(constants.allRolesLabel());
-        adminRolesRadioButton.setText(constants.adminRolesLabel());
-        userRolesRadioButton.setText(constants.userRolesLabel());
-        showLabel.setText(constants.showRolesLabel());
-    }
-
-    interface ViewUiBinder extends UiBinder<VerticalPanel, RoleView> {
+    interface ViewUiBinder extends UiBinder<Container, RoleView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 

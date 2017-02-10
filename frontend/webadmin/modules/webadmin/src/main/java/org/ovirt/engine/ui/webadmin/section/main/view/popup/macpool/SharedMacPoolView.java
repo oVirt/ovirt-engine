@@ -87,7 +87,7 @@ public class SharedMacPoolView extends Composite {
 
     private SplitLayoutPanel createRootPanel() {
         SplitLayoutPanel rootPanel = new SplitLayoutPanel();
-        rootPanel.setHeight("495px"); //$NON-NLS-1$
+        rootPanel.setHeight("470px"); //$NON-NLS-1$
         rootPanel.setWidth("100%"); //$NON-NLS-1$
         return rootPanel;
     }

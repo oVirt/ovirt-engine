@@ -24,13 +24,12 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.inject.Inject;
 
 public class ClusterPolicyView extends Composite {
 
-    interface ViewUiBinder extends UiBinder<VerticalPanel, ClusterPolicyView> {
+    interface ViewUiBinder extends UiBinder<SimplePanel, ClusterPolicyView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 

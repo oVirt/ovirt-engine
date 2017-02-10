@@ -1,191 +1,187 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels"
-    xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
+    xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:with field='constants'
-        type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
-    <ui:style
-        type="org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyPopupView.WidgetStyle">
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyPopupView.WidgetStyle">
         .sectionLabel {
-        font-weight: bold;
-        font-size: 15px;
-        margin-top: 2px;
-        margin-bottom: 1px;
-        margin-left: 5px;
-        width: 100%;
+            font-weight: bold;
+            font-size: 15px;
+            float: left;
+            line-height: 30px;
         }
+
         .labelStyle {
-        font-size: 11px;
-        margin-left: 10px;
-        line-height: 25px;
+            font-size: 11px;
+            margin-left: 10px;
+            line-height: 30px;
+            float: left;
         }
+
         .panelHeaderLabelStyle {
-        margin-left: 30%;
+            margin-left: 30%;
         }
-        .policyListPanel{
-        background-color:
-        #F6F6F6;
-        width: 97%;
-        height: 100px;
-        margin: 5px 5px 5px
-        5px;
+
+        .policyListPanel {
+            background-color: #F6F6F6;
+            width: 100%;
+            height: 100px;
         }
-        .separator {
-        background-color: #CED8DF;
-        width: 100%;
-        height: 100%;
-        }
+
         .unusedPolicyUnitStyle {
-        height: 20px;
-        width: 94%;
-        background-color:
-        white;
-        border: 1px solid
-        black;
-        margin: 4px;
-        cursor: move;
+            width: 100%;
+            line-height: 28px;
+            background-color: white;
+            border: 1px solid black;
+            margin-top: 2px;
+            cursor: move;
+            padding-left: 5px;
         }
+
         .unusedPolicyUnitStyle:HOVER {
-        box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
-        cursor: move;
+            box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
+            cursor: move;
         }
+
         .usedFilterPolicyUnitStyle {
-        height: 20px;
-        width: 240px;
-        background-color: #CED8DF;
-        border: 1px
-        solid
-        black;
-        margin: 4px;
-        cursor: move;
+            line-height: 28px;
+            width: 100%;
+            background-color: #CED8DF;
+            border: 1px solid black;
+            cursor: move;
+            margin-top: 2px;
+            padding-left: 5px;
         }
+
         .usedFilterPolicyUnitStyle:HOVER {
-        box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
+            box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
         }
+
         .positionLabelStyle {
-        height:
-        20px;
-        width: 52px;
-        margin: 4px;
+            line-height: 28px;
+            padding-left: 5px;
         }
+
         .iconInfoStyle {
-        margin-left: 10px;
+            margin-left: 10px;
+            line-height: 30px;
+            float: left;
         }
+
         .externalLabel {
-        line-height: 30px;
-        font-weight: bold;
+            line-height: 30px;
+            font-weight: bold;
         }
-        .separatorStyle {
-        margin: 5px;
-        width: 100%;
+
+        .separator {
+            border-top: 1px solid #F1F1F1;
+            margin-top: 15px;
+        }
+
+        .container {
+            width: 100%;
         }
     </ui:style>
 
     <d:SimpleDialogPanel width="760px" height="650px">
         <d:content>
-            <g:VerticalPanel>
-                <g:FlowPanel>
-                    <g:HorizontalPanel>
-                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
-                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
-                    </g:HorizontalPanel>
-                    <g:HorizontalPanel>
-                        <g:Label addStyleNames="{style.sectionLabel}"
-                            text="{constants.clusterPolicyFilterLabel}" />
-                        <g:Label addStyleNames="{style.labelStyle} cppv_labelStyle_pfly_fix"
-                            text="{constants.clusterPolicyExplanationMessage}" />
-                        <d:InfoIcon ui:field="filterInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
-                    </g:HorizontalPanel>
-                    <g:HTML>
-                        <hr class='{style.separatorStyle}' />
-                    </g:HTML>
-                    <g:HorizontalPanel height="100px" width="100%">
-                        <g:Cell width="50%" height="100%">
-                            <g:VerticalPanel width="100%" height="100%">
-                                <g:Label addStyleNames="{style.panelHeaderLabelStyle}"
-                                    text="{constants.enabledFilters}" />
-                                <p:PolicyUnitListPanel ui:field="usedFilterPanel"
-                                    styleName="{style.policyListPanel}" />
-                            </g:VerticalPanel>
-                        </g:Cell>
-                        <g:Cell width="1%" height="100%">
-                            <g:HTMLPanel styleName="{style.separator}">
-                            </g:HTMLPanel>
-                        </g:Cell>
-                        <g:Cell width="50%" height="100%">
-                            <g:VerticalPanel width="100%" height="100%">
-                                <g:Label addStyleNames="{style.panelHeaderLabelStyle}"
-                                    text="{constants.disabledFilters}" />
-                                <p:PolicyUnitListPanel ui:field="unusedFilterPanel"
-                                    styleName="{style.policyListPanel}" />
-                            </g:VerticalPanel>
-                        </g:Cell>
-                    </g:HorizontalPanel>
-                    <g:HorizontalPanel>
-                        <g:Label addStyleNames="{style.sectionLabel}"
-                            text="{constants.clusterPolicyFunctionLabel}" />
-                        <g:Label addStyleNames="{style.labelStyle} cppv_labelStyle_pfly_fix"
-                            text="{constants.clusterPolicyExplanationMessage}" />
-                        <d:InfoIcon ui:field="functionInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
-                    </g:HorizontalPanel>
-                    <g:HTML>
-                        <hr class='{style.separatorStyle}' />
-                    </g:HTML>
-                    <g:HorizontalPanel height="100px" width="100%">
-                        <g:Cell width="50%" height="100%">
-                            <g:VerticalPanel width="100%" height="100%">
-                                <g:Label addStyleNames="{style.panelHeaderLabelStyle}"
-                                    text="{constants.enabledFunctions}" />
-                                <p:PolicyUnitListPanel ui:field="usedFunctionPanel"
-                                    styleName="{style.policyListPanel}" />
-                            </g:VerticalPanel>
-                        </g:Cell>
-                        <g:Cell width="1%" height="100%">
-                            <g:HTMLPanel styleName="{style.separator}">
-                            </g:HTMLPanel>
-                        </g:Cell>
-                        <g:Cell width="50%" height="100%">
-                            <g:VerticalPanel width="100%" height="100%">
-                                <g:Label addStyleNames="{style.panelHeaderLabelStyle}"
-                                    text="{constants.disabledFunctions}" />
-                                <p:PolicyUnitListPanel ui:field="unusedFunctionPanel"
-                                    styleName="{style.policyListPanel}" />
-                            </g:VerticalPanel>
-                        </g:Cell>
-                    </g:HorizontalPanel>
-                    <g:HorizontalPanel>
-                        <g:Label addStyleNames="{style.sectionLabel}"
-                            text="{constants.clusterPolicyLoadBalancerLabel}" />
-                        <d:InfoIcon ui:field="loadBalancingInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
-                    </g:HorizontalPanel>
-                    <g:HTML>
-                        <hr class='{style.separatorStyle}' />
-                    </g:HTML>
-                    <g:HorizontalPanel>
-                    <e:ListModelListBoxOnlyEditor
-                        ui:field="loadBalanceListEditor" />
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <b:Column size="SM_6">
+                        <b:Row>
+                            <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.clusterPolicyNameLabel}" usePatternFly="true" labelColSize="SM_2" widgetColSize="SM_10" />
+                        </b:Row>
+                    </b:Column>
+                    <b:Column size="SM_6">
+                        <b:Row>
+                            <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.clusterPolicyDescriptionLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                        </b:Row>
+                    </b:Column>
+                </b:Row>
+                <b:Row addStyleNames="{style.separator}">
+                    <b:Column size="SM_12">
+                        <g:Label addStyleNames="{style.sectionLabel}" text="{constants.clusterPolicyFilterLabel}" />
+                        <g:Label addStyleNames="{style.labelStyle}" text="{constants.clusterPolicyExplanationMessage}" />
+                        <d:InfoIcon ui:field="filterInfoIcon" addStyleNames="{style.iconInfoStyle}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_6">
+                       <g:Label addStyleNames="{style.panelHeaderLabelStyle}" text="{constants.enabledFilters}" />
+                    </b:Column>
+                    <b:Column size="SM_6">
+                       <g:Label addStyleNames="{style.panelHeaderLabelStyle}" text="{constants.disabledFilters}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_6">
+                       <p:PolicyUnitListPanel ui:field="usedFilterPanel" styleName="{style.policyListPanel}" />
+                    </b:Column>
+                    <b:Column size="SM_6">
+                       <p:PolicyUnitListPanel ui:field="unusedFilterPanel" styleName="{style.policyListPanel}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row addStyleNames="{style.separator}">
+                    <b:Column size="SM_12">
+                        <g:Label addStyleNames="{style.sectionLabel}" text="{constants.clusterPolicyFunctionLabel}" />
+                        <g:Label addStyleNames="{style.labelStyle}" text="{constants.clusterPolicyExplanationMessage}" />
+                        <d:InfoIcon ui:field="functionInfoIcon" addStyleNames="{style.iconInfoStyle}"/>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_6">
+                        <g:Label addStyleNames="{style.panelHeaderLabelStyle}" text="{constants.enabledFunctions}" />
+                    </b:Column>
+                    <b:Column size="SM_6">
+                        <g:Label addStyleNames="{style.panelHeaderLabelStyle}" text="{constants.disabledFunctions}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_6">
+                        <p:PolicyUnitListPanel ui:field="usedFunctionPanel" styleName="{style.policyListPanel}" />
+                    </b:Column>
+                    <b:Column size="SM_6">
+                        <p:PolicyUnitListPanel ui:field="unusedFunctionPanel" styleName="{style.policyListPanel}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row addStyleNames="{style.separator}">
+                    <b:Column size="SM_12">
+                        <g:Label addStyleNames="{style.sectionLabel}" text="{constants.clusterPolicyLoadBalancerLabel}" />
+                        <d:InfoIcon ui:field="loadBalancingInfoIcon" addStyleNames="{style.iconInfoStyle}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_6">
+                        <e:ListModelListBoxOnlyEditor ui:field="loadBalanceListEditor" usePatternFly="true" />
+                    </b:Column>
+                    <b:Column size="SM_6">
                         <g:Label ui:field="externalLabel" addStyleNames="{style.externalLabel}"/>
-                    </g:HorizontalPanel>
-                </g:FlowPanel>
+                    </b:Column>
+                </b:Row>
                 <g:FlowPanel ui:field="clusterPolicyPropertiesZone">
-                    <g:HorizontalPanel>
-                        <g:Label addStyleNames="{style.sectionLabel}"
-                            text="{constants.clusterPolicyPropertiesLabel}" />
-                        <d:InfoIcon ui:field="propertiesInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
-                    </g:HorizontalPanel>
-                    <g:HTML>
-                        <hr class='{style.separatorStyle}' />
-                    </g:HTML>
-                    <g:ScrollPanel height="100px">
-                        <k:KeyValueWidget ui:field="customPropertiesSheetEditor" />
-                    </g:ScrollPanel>
+                    <b:Row addStyleNames="{style.separator}">
+                        <b:Column size="SM_12">
+                            <g:Label addStyleNames="{style.sectionLabel}" text="{constants.clusterPolicyPropertiesLabel}" />
+                            <d:InfoIcon ui:field="propertiesInfoIcon" addStyleNames="{style.iconInfoStyle}" />
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="SM_12">
+                            <k:KeyValueWidget ui:field="customPropertiesSheetEditor" usePatternFly="true" />
+                        </b:Column>
+                    </b:Row>
                 </g:FlowPanel>
-            </g:VerticalPanel>
+            </b:Container>
         </d:content>
     </d:SimpleDialogPanel>
 

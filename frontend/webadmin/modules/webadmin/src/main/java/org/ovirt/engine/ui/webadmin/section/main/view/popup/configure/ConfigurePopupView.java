@@ -72,14 +72,11 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
 
-        roleView.setWidth("100%"); //$NON-NLS-1$
-        roleView.addStyleName("cpv_roleView_pfly_fix"); //$NON-NLS-1$
         rolesTabPanel.add(roleView);
 
         clusterPolicyView.setWidth("100%"); //$NON-NLS-1$
         clusterPoliciesTabPanel.add(clusterPolicyView);
 
-        systemPermissionTabPanel.setWidth("100%"); //$NON-NLS-1$
         systemPermissionTabPanel.add(systemPermissionView);
 
         instanceTypesView.setWidth("100%"); //$NON-NLS-1$
