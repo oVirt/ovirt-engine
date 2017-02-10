@@ -177,12 +177,16 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
         setWindow(model);
 
         model.getStorageDomain().setEntity(storageDomain);
-        // TBD if glusterVolumeId is null - show error
+
         model.startProgress();
         AsyncDataProvider.getInstance().getGlusterGeoRepSessionsForStorageDomain(new AsyncQuery<>(new AsyncCallback<List<GlusterGeoRepSession>>() {
             @Override
             public void onSuccess(List<GlusterGeoRepSession> geoRepSessions) {
                 model.getGeoRepSession().setItems(geoRepSessions);
+                //show error if there are no associated geoRepSessions
+                if (geoRepSessions.isEmpty()) {
+                    model.setMessage(ConstantsManager.getInstance().getConstants().noGeoRepSessionForGlusterVolume());
+                }
                 model.stopProgress();
             }
         }), storageDomain.getId());

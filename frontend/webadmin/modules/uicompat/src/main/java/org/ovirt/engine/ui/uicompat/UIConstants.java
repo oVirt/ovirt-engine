@@ -2052,5 +2052,8 @@ public interface UIConstants extends Constants {
     String discardIsNotSupportedByUnderlyingStorage();
 
     String theUnderlyingStorageDoesNotSupportDiscardWhenWipeAfterDeleteIsEnabled();
+
+    String noGeoRepSessionForGlusterVolume();
+
 }
 
