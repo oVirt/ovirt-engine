@@ -59,8 +59,7 @@ public class LabelFilterPolicyUnit extends PolicyUnitImpl {
             }
         }
 
-        return hosts.stream()
-                .filter(new TagMatcher(objectToTags, vm)).collect(Collectors.<VDS>toList());
+        return hosts.stream().filter(new TagMatcher(objectToTags, vm)).collect(Collectors.toList());
     }
 
     static class TagMatcher implements Predicate<VDS> {
