@@ -1,18 +1,27 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
+import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
@@ -31,6 +40,7 @@ public class VmManager {
     private int minAllocatedMem;
     private int numOfCpus;
     private Version clusterCompatibilityVersion;
+    private ArchitectureType clusterArchitecture;
     private Guid leaseStorageDomainId;
 
     private final ReentrantLock lock;
@@ -48,6 +58,15 @@ public class VmManager {
 
     private boolean coldReboot;
 
+    /**
+     * vmOverhead contains the last known VM memory impact incl. QEMU overhead prediction.
+     *
+     * The value is computed (and persisted for future use)
+     */
+    private Integer vmMemoryWithOverheadInMB;
+
+    @Inject
+    private VmDeviceDao vmDeviceDao;
     @Inject
     private VmDynamicDao vmDynamicDao;
     @Inject
@@ -58,6 +77,8 @@ public class VmManager {
     private VmStaticDao vmStaticDao;
     @Inject
     private ClusterDao clusterDao;
+    @Inject
+    private VmOverheadCalculator vmOverheadCalculator;
 
     VmManager(Guid vmId) {
         this.vmId = vmId;
@@ -83,8 +104,26 @@ public class VmManager {
         memSizeMb = vmStatic.getMemSizeMb();
         minAllocatedMem = vmStatic.getMinAllocatedMem();
         numOfCpus = vmStatic.getNumOfCpus();
-        clusterCompatibilityVersion = clusterDao.get(vmStatic.getClusterId()).getCompatibilityVersion();
+        final Cluster cluster = clusterDao.get(vmStatic.getClusterId());
+        clusterCompatibilityVersion = cluster.getCompatibilityVersion();
+        clusterArchitecture = cluster.getArchitecture();
         leaseStorageDomainId = vmStatic.getLeaseStorageDomainId();
+
+        vmMemoryWithOverheadInMB = estimateOverhead(vmStatic);
+    }
+
+    private int estimateOverhead(VmStatic vmStatic) {
+        // Prepare VM object using the available bits and pieces
+        VM compose = new VM(vmStatic, new VmDynamic(), new VmStatistics(),
+                clusterArchitecture, clusterCompatibilityVersion);
+
+        // Load device list, TODO ignores unmanaged devices for now
+        Map<Guid, VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmId).stream()
+                .filter(VmDevice::isManaged)
+                .collect(Collectors.toMap(d -> d.getId().getDeviceId(), Function.identity()));
+        vmStatic.setManagedDeviceMap(devices);
+
+        return vmOverheadCalculator.getTotalRequiredMemoryInMb(compose);
     }
 
     public void lock() {
@@ -115,6 +154,16 @@ public class VmManager {
     public void update(VmStatic vmStatic) {
         vmStaticDao.update(vmStatic);
         updateStaticFields(vmStatic);
+    }
+
+    /**
+     * getVmOverheadInMB returns the currently cached value of predicted QEMU overhead for this VM
+     *
+     * @return the amount of RAM needed for VM including QEMU overhead
+     *         (devices, buffers, caches, ..)
+     */
+    public Integer getVmMemoryWithOverheadInMB() {
+        return vmMemoryWithOverheadInMB;
     }
 
     public int getConvertOperationProgress() {
@@ -224,6 +273,14 @@ public class VmManager {
 
     public Version getClusterCompatibilityVersion() {
         return clusterCompatibilityVersion;
+    }
+
+    public ArchitectureType getClusterArchitecture() {
+        return clusterArchitecture;
+    }
+
+    public void setClusterArchitecture(ArchitectureType clusterArchitecture) {
+        this.clusterArchitecture = clusterArchitecture;
     }
 
     public Guid getLeaseStorageDomainId() {

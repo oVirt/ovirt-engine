@@ -43,6 +43,7 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -682,9 +683,9 @@ public class HostMonitoring {
             // we shouldn't include them as committed.
             if (vm != null && vm.getStatus() != VMStatus.WaitForLaunch &&
                     vm.getStatus() != VMStatus.Down) {
-                memCommited += resourceManager.getVmManager(vm.getId()).getMemSizeMb();
-                memCommited += host.getGuestOverhead();
-                vmsCoresCount += resourceManager.getVmManager(vm.getId()).getNumOfCpus();
+                final VmManager vmManager = resourceManager.getVmManager(vm.getId());
+                memCommited += vmManager.getVmMemoryWithOverheadInMB();
+                vmsCoresCount += vmManager.getNumOfCpus();
             }
         }
 

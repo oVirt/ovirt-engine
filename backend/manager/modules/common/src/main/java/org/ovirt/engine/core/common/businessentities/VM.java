@@ -73,6 +73,16 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         storagePoolId = Guid.Empty;
     }
 
+    public VM(VmStatic vmStatic,
+            VmDynamic vmDynamic,
+            VmStatistics vmStatistics,
+            ArchitectureType clusterArch,
+            Version clusterCompatibilityVersion) {
+        this(vmStatic, vmDynamic, vmStatistics);
+        this.clusterArch = clusterArch;
+        this.clusterCompatibilityVersion = clusterCompatibilityVersion;
+    }
+
     public VmPauseStatus getVmPauseStatus() {
         return this.vmDynamic.getPauseStatus();
     }
