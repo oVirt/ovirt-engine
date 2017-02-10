@@ -156,9 +156,11 @@ public class StorageDRPopupView extends
         minsEditor.setVisible(frequency != StorageSyncSchedule.Frequency.NONE);
     }
 
-    public void setMessage(String msg, Label errorLabel) {
-        errorLabel.setText(msg);
-        errorLabel.setVisible(!msg.isEmpty());
+    @Override
+    public void setMessage(String msg) {
+        super.setMessage(msg);
+        errorMsgLabel.setText(msg);
+        errorMsgLabel.setVisible(true);
     }
 
     @Override

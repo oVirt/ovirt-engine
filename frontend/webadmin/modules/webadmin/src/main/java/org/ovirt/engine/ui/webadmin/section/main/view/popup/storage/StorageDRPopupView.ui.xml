@@ -21,7 +21,7 @@
      }
 
      .errorMsgLabel {
-         color: #CD2127;
+         color: #FF0000;
          margin-top: 20px;
          margin-left: 5px;
      }
@@ -32,7 +32,7 @@
 <d:SimpleDialogPanel width="550px" height="420px">
   <d:content>
     <g:FlowPanel addStyleNames="{style.content}">
-      <g:Label ui:field="errorMsgLabel" />
+      <g:Label ui:field="errorMsgLabel" addStyleNames="{style.errorMsgLabel}" />
       <e:ListModelListBoxEditor ui:field="geoRepSessionEditor" />
       <e:ListModelListBoxEditor ui:field="frequencyEditor" />
       <e:ListModelCheckBoxGroupEditor ui:field="daysEditor" />
