@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
@@ -605,7 +606,8 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
                 else {
                     cModel.stopProgress();
                     if (!result.getReturnValue().getSucceeded()) {
-                        cModel.setActionConfirmationMessage(result.getReturnValue().getFault().getMessage());
+                        //cModel.setActionConfirmationMessage(result.getReturnValue().getFault().getMessage());
+                        setErrorMessage(result.getReturnValue(), cModel);
                     } else {
                         setWindow(null);
                     }
@@ -614,5 +616,17 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         },
         this,
         false);
+    }
+
+    private void setErrorMessage(VdcReturnValueBase result, GlusterVolumeGeoRepActionConfirmationModel cModel) {
+        String errorMessage = ""; //$NON-NLS-1$
+        if (result == null) {
+            errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
+        } else if (!result.getSucceeded()) {
+            errorMessage = result.isValid() ?
+                    result.getFault().getMessage() :
+                    result.getValidationMessages().get(0);
+        }
+        cModel.setActionConfirmationMessage(errorMessage);
     }
 }
