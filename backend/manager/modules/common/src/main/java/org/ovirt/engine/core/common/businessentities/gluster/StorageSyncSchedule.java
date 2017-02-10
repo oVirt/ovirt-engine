@@ -132,13 +132,14 @@ public class StorageSyncSchedule implements Serializable{
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(frequency.name());
-        switch(frequency) {
+
+        switch (frequency) {
         case WEEKLY:
             sb.append(" on ").append(toDaysCron());
-            sb.append(" at ").append(hour).append(":").append(mins);
+            sb.append(" at ").append(StringFormat.format("%02d", hour)).append(":").append(StringFormat.format("%02d", mins));
             break;
         case DAILY:
-            sb.append(" at ").append(hour).append(":").append(mins);
+            sb.append(" at ").append(StringFormat.format("%02d", hour)).append(":").append(StringFormat.format("%02d", mins));
             break;
         case NONE:
         }
