@@ -134,6 +134,8 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
                     brick -> addressSet.add(brick.getNetworkId() != null && !brick.getNetworkAddress().isEmpty()
                             ? brick.getNetworkAddress() : brick.getServerName()));
             String firstHost = (String) addressSet.toArray()[0];
+            // we don't want the firstHost repeated in backup-volfile-servers
+            addressSet.remove(firstHost);
             connection.setConnection(firstHost + StorageConstants.GLUSTER_VOL_SEPARATOR + glusterVolume.getName());
             String mountOptions = StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION
                     + KEY_VALUE_SEPARATOR + StringUtils.join(addressSet.toArray(), ':');

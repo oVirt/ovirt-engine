@@ -1,10 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -14,6 +20,10 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 @SuppressWarnings("unused")
 public class GlusterStorageModel extends PosixStorageModel {
@@ -38,7 +48,45 @@ public class GlusterStorageModel extends PosixStorageModel {
                 getGlusterVolumes().setSelectedItem(null);
             }
         }));
+        getGlusterVolumes().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                volumeSelectedItemChanged();
+            }
+        });
+        getLinkGlusterVolume().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                volumeSelectedItemChanged();
+            }
+        });
     }
+
+    private void volumeSelectedItemChanged() {
+        GlusterVolumeEntity volume = getGlusterVolumes().getSelectedItem();
+        Boolean useLinkGlusterVolume = getLinkGlusterVolume().getEntity();
+        String mountOptions = ""; //$NON-NLS-1$
+        if (volume == null || !useLinkGlusterVolume) {
+            return;
+        }
+        Set<String> addressSet = new LinkedHashSet<>();
+        for (GlusterBrickEntity brick : volume.getBricks()) {
+            addressSet.add(brick.getNetworkId() != null && !brick.getNetworkAddress().isEmpty()
+                    ? brick.getNetworkAddress() : brick.getServerName());
+        }
+        List<String> addressList = new ArrayList<>();
+        addressList.addAll(addressSet);
+        if (addressList.size() >= 1) {
+            // the first server is already used to mount volume
+            addressList.remove(0);
+        }
+        if (addressList.size() > 0) {
+            mountOptions = StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION
+                    + "=" + StringUtils.join(addressList, ":"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        getMountOptions().setEntity(mountOptions);
+    }
+
 
     @Override
     public StorageType getType() {
@@ -83,6 +131,12 @@ public class GlusterStorageModel extends PosixStorageModel {
         } else {
             return super.validate();
         }
+    }
+
+    @Override
+    protected void prepareConnectionForEditing(StorageServerConnections connection) {
+        super.prepareConnectionForEditing(connection);
+        getLinkGlusterVolume().setEntity(connection.getGlusterVolumeId() != null);
     }
 
 
