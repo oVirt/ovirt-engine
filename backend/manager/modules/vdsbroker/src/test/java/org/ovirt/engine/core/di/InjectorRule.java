@@ -18,13 +18,13 @@ import org.junit.runner.Description;
 
 public class InjectorRule extends TestWatcher {
 
-    private static final Map<Class, Object> beansCache = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Object> beansCache = new ConcurrentHashMap<>();
 
     private static volatile boolean cdiInitialized = false;
 
     public InjectorRule() {
         if (!cdiInitialized) {
-            TestCDIProvider testCDIProvider = new TestCDIProvider();
+            TestCDIProvider<Object> testCDIProvider = new TestCDIProvider<>();
             CDI.setCDIProvider(() -> testCDIProvider);
             cdiInitialized = true;
         }
