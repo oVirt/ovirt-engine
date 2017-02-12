@@ -112,9 +112,6 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         doReturn(createGetVGInfoReturnValue(luns)).when(getQuery()).
                 executeGetVGInfo(any(GetVGInfoVDSCommandParameters.class));
 
-        doReturn(createGetStorageDomainInfoReturnValue()).when(getQuery()).
-                executeHSMGetStorageDomainInfo(any(HSMGetStorageDomainInfoVDSCommandParameters.class));
-
         // Execute query
         getQuery().executeQueryCommand();
 
@@ -140,9 +137,6 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
 
         doReturn(createGetDeviceListReturnValue(luns)).when(getQuery()).
                 executeGetDeviceList(any(GetDeviceListQueryParameters.class));
-
-        doReturn(createGetVGInfoReturnValue(luns)).when(getQuery()).
-                executeGetVGInfo(any(GetVGInfoVDSCommandParameters.class));
 
         // Execute query
         getQuery().executeQueryCommand();
@@ -190,19 +184,13 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
     @Test
     public void testFcpNotFoundUnregisteredDomain() {
         when(getQueryParameters().getStorageType()).thenReturn(StorageType.FCP);
-        when(getQueryParameters().getStorageServerConnections()).thenReturn(getConnections());
         when(getQueryParameters().getVdsId()).thenReturn(Guid.newGuid());
         List<LUNs> luns = getLUNs(existingStorageDomainId, existingVgId);
 
         doReturn(Collections.emptyList()).when(lunDao).getAll();
-        doReturn(createSuccessVdcReturnValue()).when(getQuery()).
-                executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
 
         doReturn(createGetDeviceListReturnValue(luns)).when(getQuery()).
                 executeGetDeviceList(any(GetDeviceListQueryParameters.class));
-
-        doReturn(createGetVGInfoReturnValue(luns)).when(getQuery()).
-                executeGetVGInfo(any(GetVGInfoVDSCommandParameters.class));
 
         // Execute query
         getQuery().executeQueryCommand();
