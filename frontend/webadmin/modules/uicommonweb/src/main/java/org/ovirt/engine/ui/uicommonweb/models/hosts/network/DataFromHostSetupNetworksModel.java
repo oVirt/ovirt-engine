@@ -26,6 +26,8 @@ public class DataFromHostSetupNetworksModel {
 
     private Map<Guid, Guid> networkIdToExistingAttachmentId;
 
+    private Map<String, CreateOrUpdateBond> originalBondsByName;
+
     public Set<String> getNetworksToSync() {
         return networksToSync;
     }
@@ -91,6 +93,22 @@ public class DataFromHostSetupNetworksModel {
         }
     }
 
+    public void addBondToParameters(CreateOrUpdateBond bond) {
+        if (bond.getId() != null) {
+            throw new IllegalArgumentException("When adding a bond to the parameters its id should be null"); //$NON-NLS-1$
+        }
+
+        CreateOrUpdateBond originalBondWithTheSameName =
+                originalBondsByName.get(bond.getName());
+
+        if (originalBondWithTheSameName != null) {
+            bond.setId(originalBondWithTheSameName.getId());
+            removedBonds.remove(originalBondWithTheSameName.getId());
+        }
+
+        bonds.add(bond);
+    }
+
     public void removeLabelFromParameters(NicLabel nicLabel) {
         labels.remove(nicLabel);
 
@@ -109,5 +127,9 @@ public class DataFromHostSetupNetworksModel {
 
     public void setNetworkIdToExistingAttachmentId(Map<Guid, Guid> networkIdToExistingAttachmentId) {
         this.networkIdToExistingAttachmentId = networkIdToExistingAttachmentId;
+    }
+
+    public void setOriginalBondsByName(Map<String, CreateOrUpdateBond> originalBondsByName) {
+        this.originalBondsByName = originalBondsByName;
     }
 }
