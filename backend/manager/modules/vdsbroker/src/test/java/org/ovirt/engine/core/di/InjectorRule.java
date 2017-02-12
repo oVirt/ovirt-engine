@@ -39,7 +39,7 @@ public class InjectorRule extends TestWatcher {
         beansCache.put(pureClsType, instance);
     }
 
-    private class TestCDIProvider<T> extends CDI<T> {
+    private static class TestCDIProvider<T> extends CDI<T> {
 
         @Override
         public BeanManager getBeanManager() {
@@ -87,7 +87,7 @@ public class InjectorRule extends TestWatcher {
         }
     }
 
-    private class SimpleInstanceIdGenerator<T> implements Instance<T> {
+    private static class SimpleInstanceIdGenerator<T> implements Instance<T> {
 
         private final T value;
 
