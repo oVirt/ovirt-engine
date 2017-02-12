@@ -47,7 +47,7 @@ public class CompatibilityVersionFilterPolicyUnit extends PolicyUnitImpl {
         // find compatible hosts
         List<VDS> hostsToRunOn = new ArrayList<>();
         for (VDS host : hosts) {
-            if (host.getSupportedENGINESVersionsSet().contains(vmCustomCompatibilityVersion)) {
+            if (host.getSupportedClusterVersionsSet().contains(vmCustomCompatibilityVersion)) {
                 hostsToRunOn.add(host);
                 log.debug("Host {} wasn't filtered out as it supports the VM required compatibility version({})",
                         host.getName(),
@@ -57,11 +57,11 @@ public class CompatibilityVersionFilterPolicyUnit extends PolicyUnitImpl {
                         "Host {} was filtered out as it doesn't support the VM required compatibility-version ({}). Host supported compatibility-versions are: {}.",
                         host.getName(),
                         vmCustomCompatibilityVersion,
-                        host.getSupportedEngines());
+                        host.getSupportedClusterLevels());
                 messages.addMessage(host.getId(),
                         String.format("$vmCompatibilityVersions %1$s", vmCustomCompatibilityVersion));
                 messages.addMessage(host.getId(),
-                        String.format("$hostCompatibilityVersions %1$s", host.getSupportedEngines()));
+                        String.format("$hostCompatibilityVersions %1$s", host.getSupportedClusterLevels()));
                 messages.addMessage(host.getId(),
                         EngineMessage.VAR__DETAIL__UNSUPPORTED_COMPATIBILITY_VERSION.toString());
             }
