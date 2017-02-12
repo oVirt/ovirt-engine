@@ -202,14 +202,12 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
             failsWith(engineMessage, ReplacementUtils.getVariableAssignmentString(engineMessage, network.getName())));
     }
 
-    private NetworkAttachment createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol bootProtocol,
-            String address,
-            String netmask) {
+    private NetworkAttachment createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol bootProtocol) {
 
         IpConfiguration ipConfiguration = new IpConfiguration();
         IPv4Address primaryAddress = new IPv4Address();
-        primaryAddress.setAddress(address);
-        primaryAddress.setNetmask(netmask);
+        primaryAddress.setAddress(null);
+        primaryAddress.setNetmask(null);
         primaryAddress.setBootProtocol(bootProtocol);
         ipConfiguration.getIPv4Addresses().add(primaryAddress);
 
@@ -278,8 +276,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     public void testBootProtocolSetForRoleNetworkWhenIpConfigurationIsNull() {
         Network network = createNetwork();
 
-        NetworkAttachment attachment =
-                createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol.NONE, null, null);
+        NetworkAttachment attachment = createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol.NONE);
         attachment.setNetworkId(network.getId());
 
         doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(
@@ -305,8 +302,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     public void testBootProtocolSetForRoleNetworkWhenBootProtocolIsNone() {
         Network network = createNetwork();
 
-        NetworkAttachment attachment =
-            createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol.NONE, null, null);
+        NetworkAttachment attachment = createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol.NONE);
         attachment.setNetworkId(network.getId());
 
 
@@ -325,8 +321,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     public void testBootProtocolSetForRoleNetworkWhenBootProtocolIsDhcp() {
         Network network = createNetwork();
 
-        NetworkAttachment attachment =
-            createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol.DHCP, null, null);
+        NetworkAttachment attachment = createNetworkAttachmentWithIpv4Configuration(Ipv4BootProtocol.DHCP);
         attachment.setNetworkId(network.getId());
 
         doTestBootProtocolSetForRoleNetworkWhenNullValuedIpConfiguration(true,
