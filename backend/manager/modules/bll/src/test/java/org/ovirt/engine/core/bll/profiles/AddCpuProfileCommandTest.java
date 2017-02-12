@@ -44,7 +44,7 @@ public class AddCpuProfileCommandTest extends BaseCommandTest{
 
     @Mock
     private static BackendInternal backend;
-    @Mock
+
     private static CpuProfileParameters parameters;
 
     @Before
