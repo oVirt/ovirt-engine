@@ -80,11 +80,7 @@ public class GetIscsiBondByIdQueryTest extends
 
     @Test
     public void testExecuteQueryWithNotExistingIscsiBond() {
-        IscsiBond iscsiBond = new IscsiBond();
-        iscsiBond.setId(Guid.newGuid());
-
         when(getQueryParameters().getId()).thenReturn(iscsiBondId);
-        when(iscsiBondDao.get(Guid.newGuid())).thenReturn(iscsiBond);
 
         getQuery().executeQueryCommand();
         IscsiBond result = getQuery().getQueryReturnValue().getReturnValue();
