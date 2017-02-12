@@ -2,19 +2,15 @@ package org.ovirt.engine.core.bll.profiles;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -23,11 +19,10 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.profiles.ProfilesDao;
+import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddCpuProfileCommandTest extends BaseCommandTest{
@@ -37,55 +32,26 @@ public class AddCpuProfileCommandTest extends BaseCommandTest{
     private static final String CORRELATION_ID = "C0RR3LAT10N1D";
 
     @Mock
-    private ProfilesDao<CpuProfile> cpuProfilesDao;
-
-    private static AddCpuProfileCommand addCpuProfileCommand;
-    private static CommandContext commandContext;
+    private CpuProfileDao cpuProfilesDao;
 
     @Mock
-    private static BackendInternal backend;
+    private BackendInternal backend;
 
-    private static CpuProfileParameters parameters;
+    private CpuProfileParameters parameters = createParameters();
+    private CommandContext commandContext = CommandContext.createContext(parameters.getSessionId());
 
-    @Before
-    public void setUp() {
-        createParameters();
-        createCommandContext();
-        createCommand();
-        mockBackend();
-    }
+    @InjectMocks
+    @Spy
+    private AddCpuProfileCommand addCpuProfileCommand = new AddCpuProfileCommand(parameters, commandContext);
 
-    private void createParameters() {
+    private static CpuProfileParameters createParameters() {
         CpuProfile cpuProfile = CpuProfileHelper.createCpuProfile(CLUSTER_ID, PROFILE_NAME);
 
-        parameters = new CpuProfileParameters(cpuProfile);
+        CpuProfileParameters parameters = new CpuProfileParameters(cpuProfile);
         parameters.setCorrelationId(CORRELATION_ID);
         parameters.setAddPermissions(true);
         parameters.setSessionId(SESSION_ID);
-    }
-
-    private void createCommandContext() {
-        commandContext = CommandContext.createContext(parameters.getSessionId());
-    }
-
-    private void createCommand() {
-        AddCpuProfileCommand addCpuProfileCommandInstance = new AddCpuProfileCommand(parameters, commandContext) {
-            @Override
-            protected BackendInternal getBackend() {
-                return backend;
-            }
-        };
-
-        addCpuProfileCommand = spy(addCpuProfileCommandInstance);
-        doReturn(cpuProfilesDao).when(addCpuProfileCommand).getProfileDao();
-        doReturn(commandContext).when(addCpuProfileCommand).getContext();
-    }
-
-    private void mockBackend() {
-        VdcReturnValueBase addCpuProfileReturnValue = mock(VdcReturnValueBase.class);
-        when(addCpuProfileReturnValue.getSucceeded()).thenReturn(true);
-
-        when(backend.runAction(any(VdcActionType.class), any(CpuProfileParameters.class))).thenReturn(addCpuProfileReturnValue);
+        return parameters;
     }
 
     @Test
