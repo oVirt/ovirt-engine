@@ -121,7 +121,5 @@ public class GetUnregisteredDisksQueryTest
         doReturn(storageDomainId).when(getQuery()).getStorageDomainId();
 
         when(diskImageDaoMock.getAllSnapshotsForStorageDomain(eq(storageDomainId))).thenReturn(existingDiskImages);
-        StorageDomain storageDomain = new StorageDomain();
-        when(storageDomainDaoMock.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
     }
 }
