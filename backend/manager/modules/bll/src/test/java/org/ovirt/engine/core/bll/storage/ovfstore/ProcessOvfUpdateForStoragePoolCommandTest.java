@@ -28,7 +28,6 @@ import java.util.stream.IntStream;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -65,7 +64,6 @@ import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
-import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
@@ -121,9 +119,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.StorageDomainOvfStoreCount, 1),
             mockConfig(ConfigValues.OvfItemsCountPerUpdate, ITEMS_COUNT_PER_UPDATE)
     );
-
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
 
     @Before
     public void setUp() {

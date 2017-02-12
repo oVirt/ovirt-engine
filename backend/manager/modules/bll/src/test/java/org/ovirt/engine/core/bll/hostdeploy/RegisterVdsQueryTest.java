@@ -3,19 +3,14 @@ package org.ovirt.engine.core.bll.hostdeploy;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
-import org.ovirt.engine.core.di.InjectorRule;
 
 /**
  * A test case for {@link RegisterVdsQuery}.
  */
 public class RegisterVdsQueryTest extends AbstractUserQueryTest<RegisterVdsParameters, RegisterVdsQuery<RegisterVdsParameters>> {
-
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
 
     /**
      * A test for checking whether {@link RegisterVdsQuery#getStrippedVdsUniqueId()} method returns a valid VDS id which

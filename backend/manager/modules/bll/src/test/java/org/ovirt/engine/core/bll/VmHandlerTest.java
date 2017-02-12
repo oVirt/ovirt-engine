@@ -9,11 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -28,23 +24,13 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(MockitoJUnitRunner.class)
 public class VmHandlerTest {
-
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
-    @Mock
-    CpuFlagsManagerHandler cpuFlagsManagerHandler;
-
     private VmHandler vmHandler = new VmHandler();
 
     @Before
     public void setUp() {
-        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         vmHandler.init();
     }
 

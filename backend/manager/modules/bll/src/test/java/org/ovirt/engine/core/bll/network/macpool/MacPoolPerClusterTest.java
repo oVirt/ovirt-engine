@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,14 +31,10 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
-import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MacPoolPerClusterTest extends DbDependentTestBase {
     private static final String SESSION_ID = "session id";
-
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
