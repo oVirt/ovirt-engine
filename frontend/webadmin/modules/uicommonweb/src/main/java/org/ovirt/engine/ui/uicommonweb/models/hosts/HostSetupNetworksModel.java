@@ -1268,6 +1268,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         .add(CreateOrUpdateBond.fromBond((Bond) nic));
             }
         }
+
+        hostSetupNetworksParametersData.setOriginalBondsByName(Entities.entitiesByName(hostSetupNetworksParametersData.getBonds()));
     }
 
     private void initNicLabelsParameters() {

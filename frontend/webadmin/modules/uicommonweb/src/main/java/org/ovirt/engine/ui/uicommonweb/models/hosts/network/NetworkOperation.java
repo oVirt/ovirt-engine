@@ -177,7 +177,7 @@ public enum NetworkOperation {
                     CreateOrUpdateBond bond = (CreateOrUpdateBond) params[0];
                     bond.getSlaves().add(nic1Model.getName());
                     bond.getSlaves().add(nic2Model.getName());
-                    dataFromHostSetupNetworksModel.getBonds().add(bond);
+                    dataFromHostSetupNetworksModel.addBondToParameters(bond);
                 }
             };
         }
@@ -221,7 +221,7 @@ public enum NetworkOperation {
                         slaves.add(slaveModel.getName());
                     }
                     bond.getSlaves().addAll(slaves);
-                    dataFromHostSetupNetworksModel.getBonds().add(bond);
+                    dataFromHostSetupNetworksModel.addBondToParameters(bond);
                 }
             };
         }

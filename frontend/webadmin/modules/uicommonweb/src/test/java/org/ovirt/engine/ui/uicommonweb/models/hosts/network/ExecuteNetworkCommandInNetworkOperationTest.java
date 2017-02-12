@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -266,6 +267,8 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      */
     @Test
     public void testBreakingNewlyCreatedBond() throws Exception {
+        initOrginalBondNameToIdMap();
+
         NetworkOperation.BOND_WITH.getTarget().executeNetworkCommand(
                 networkInterfaceModelOfNicA,
                 networkInterfaceModelOfNicB,
@@ -326,6 +329,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         NetworkAttachment attachment = createAttachmentOnNetworkModelAndUpdateParams(networkInterfaceModelOfNicA,
                 logicalNetworkModelOfNetworkA);
         initNetworkIdToExistingAttachmentIdMap(attachment);
+        initOrginalBondNameToIdMap();
 
         when(networkInterfaceModelOfNicA.getItems())
                 .thenReturn(Collections.singletonList(logicalNetworkModelOfNetworkA));
@@ -369,6 +373,10 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         dataFromHostSetupNetworksModel.setNetworkIdToExistingAttachmentId(networkIdToExistingAttachmentId);
     }
 
+    private void initOrginalBondNameToIdMap(CreateOrUpdateBond... bonds) {
+        dataFromHostSetupNetworksModel.setOriginalBondsByName(Entities.entitiesByName(Arrays.asList(bonds)));
+    }
+
     /*
      * At the beginning there was bond. It was broken into two nics, but they get back together in the end.
      */
@@ -377,6 +385,8 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
                 Collections.<LogicalNetworkModel> emptyList());
+
+        initOrginalBondNameToIdMap(CreateOrUpdateBond.fromBond(existingBond));
 
         NetworkOperation.BREAK_BOND.getTarget().executeNetworkCommand(
                 bondNetworkInterfaceModelA,
@@ -395,8 +405,8 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
 
         assertThat(dataFromHostSetupNetworksModel.getBonds().size(), is(1));
         CreateOrUpdateBond newOrModifiedBond = dataFromHostSetupNetworksModel.getBonds().iterator().next();
-        assertBond(newOrModifiedBond, null, Arrays.asList(nicA, nicB));
-        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(1));
+        assertBond(newOrModifiedBond, existingBondId, Arrays.asList(nicA, nicB));
+        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(0));
     }
 
     /*
@@ -509,11 +519,27 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
     }
 
     /*
-     * At the beginning there was two bonds (one with NetworkAttachment), which, after being introduced to each other,
-     * formed a firm bond adopting NetworkAttachment as their own.
+     * Two existing bonds are joined. The newly created bond will have a new name.
      */
     @Test
-    public void testJoiningBonds() throws Exception {
+    public void testJoiningBondsNotReusingName() throws Exception {
+        joinBondsTest(false);
+    }
+
+    /*
+     * Two existing bonds are joined. The newly created bond will have the same name as one of the bonds if was created
+     * from.
+     */
+    @Test
+    public void testJoiningBondsReusingName() throws Exception {
+        joinBondsTest(true);
+    }
+
+    /*
+     * At the beginning there were two bonds (one with NetworkAttachment), which, after being introduced to each other,
+     * formed a firm bond adopting NetworkAttachment as their own.
+     */
+    private void joinBondsTest(boolean resusingName) {
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
                 Collections.<LogicalNetworkModel> emptyList());
@@ -523,6 +549,9 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         Bond bondB = createBond(Guid.newGuid(), "bondB", Arrays.asList(nicC, nicD)).toBond(); //$NON-NLS-1$
         addBondToParamsAndModel(bondB, bondNetworkInterfaceModelB, Collections.singletonList(logicalNetworkModelOfNetworkA));
 
+        initOrginalBondNameToIdMap(bondNetworkInterfaceModelA.getCreateOrUpdateBond(),
+                bondNetworkInterfaceModelB.getCreateOrUpdateBond());
+
         when(bondNetworkInterfaceModelA.getItems())
                 .thenReturn(Collections.singletonList(logicalNetworkModelOfNetworkA));
         when(bondNetworkInterfaceModelA.getSlaves()).thenReturn(Arrays.asList(networkInterfaceModelOfNicA,
@@ -531,6 +560,10 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         when(bondNetworkInterfaceModelB.getItems()).thenReturn(Collections.<LogicalNetworkModel> emptyList());
         when(bondNetworkInterfaceModelB.getSlaves())
                 .thenReturn(Arrays.asList(networkInterfaceModelOfNicC, networkInterfaceModelOfNicD));
+
+        if (resusingName) {
+            newlyCreatedBond.setName(existingBondName);
+        }
 
         NetworkOperation.JOIN_BONDS.getTarget().executeNetworkCommand(
                 bondNetworkInterfaceModelA,
@@ -549,10 +582,10 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
 
         assertThat(dataFromHostSetupNetworksModel.getBonds().size(), is(1));
         CreateOrUpdateBond newOrModifiedBond = dataFromHostSetupNetworksModel.getBonds().iterator().next();
-        assertBond(newOrModifiedBond, null, Arrays.asList(nicA, nicB, nicC, nicD));
+        assertBond(newOrModifiedBond, resusingName ? existingBondId : null, Arrays.asList(nicA, nicB, nicC, nicD));
 
-        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(2));
-        assertThat("id mismatch", dataFromHostSetupNetworksModel.getRemovedBonds().contains(existingBondId), is(true)); //$NON-NLS-1$
+        assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(resusingName ? 1 : 2));
+        assertThat("id mismatch", dataFromHostSetupNetworksModel.getRemovedBonds().contains(existingBondId), is(resusingName ? false : true)); //$NON-NLS-1$
         assertThat("id mismatch", dataFromHostSetupNetworksModel.getRemovedBonds().contains(bondB.getId()), is(true)); //$NON-NLS-1$
     }
 
