@@ -31,9 +31,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
-import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetGlusterVolumeProfileInfoQueryTest extends
@@ -45,13 +43,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     private GlusterVolumeProfileParameters params;
 
     @Mock
-    private VdsDao vdsDao;
-
-    @Mock
     private GlusterUtil glusterUtils;
-
-    @Mock
-    private GlusterVolumeDao volumeDao;
 
     @Mock
     private GlusterBrickDao brickDao;
@@ -82,8 +74,6 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     }
 
     private void mockDependencies() {
-        doReturn(Collections.singletonList(getVds(VDSStatus.Up))).when(vdsDao).getAllForClusterWithStatus(CLUSTER_ID,
-                VDSStatus.Up);
         doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
         doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getUpServer(CLUSTER_ID);
         doReturn("test-vol").when(getQuery()).getGlusterVolumeName(VOLUME_ID);
