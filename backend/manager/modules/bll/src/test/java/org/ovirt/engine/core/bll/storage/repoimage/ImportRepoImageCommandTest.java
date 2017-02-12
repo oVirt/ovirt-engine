@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 
 /** A test case for {@link ImportRepoImageCommand} */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest {
 
     @Spy

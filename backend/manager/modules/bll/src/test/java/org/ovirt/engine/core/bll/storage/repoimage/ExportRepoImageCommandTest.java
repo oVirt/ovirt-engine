@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
@@ -24,7 +24,7 @@ import org.ovirt.engine.core.dao.VmDao;
 
 
 /** A test case for {@link ExportRepoImageCommand} */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest {
 
     @Mock

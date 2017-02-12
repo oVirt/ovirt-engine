@@ -6,11 +6,11 @@ import static org.mockito.Mockito.doReturn;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Silent.class)
 public class StopGeoRepSessionCommandTest extends GeoRepSessionCommandTest<StopGeoRepSessionCommand> {
 
     @Override
