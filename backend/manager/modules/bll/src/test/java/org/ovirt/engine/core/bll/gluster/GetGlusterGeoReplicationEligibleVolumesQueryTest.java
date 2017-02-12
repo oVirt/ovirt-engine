@@ -8,6 +8,8 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
@@ -58,19 +61,9 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     }
 
     private boolean checkEquals(List<GlusterVolumeEntity> actual, List<GlusterVolumeEntity> expected) {
-        boolean equals = false;
-        for(GlusterVolumeEntity aVolume : actual) {
-            for(GlusterVolumeEntity eVolume : expected) {
-                if(aVolume.getId().equals(eVolume.getId())) {
-                    equals = true;
-                    break;
-                }
-            }
-            if(!equals) {
-                break;
-            }
-        }
-        return equals;
+        Set<Guid> actualSet = actual.stream().map(BusinessEntity::getId).collect(Collectors.toSet());
+        Set<Guid> expectedSet = expected.stream().map(BusinessEntity::getId).collect(Collectors.toSet());
+        return actualSet.equals(expectedSet);
     }
 
     @Test
