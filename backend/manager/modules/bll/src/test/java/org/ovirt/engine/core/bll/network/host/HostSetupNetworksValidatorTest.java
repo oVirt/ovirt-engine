@@ -1478,7 +1478,16 @@ public class HostSetupNetworksValidatorTest {
 
     @Test
     public void validateBondOptionsForNewAttachementWithOutOfSyncVmNetworOverridden() {
-        validateValidBondsForAllBondModes(false, true, false, true);
+        NetworkAttachment modifiedAttachment = createNetworkAttachment(new Network());
+
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+            .setParams(new ParametersBuilder().addRemovedNetworkAttachments(modifiedAttachment))
+            .build();
+
+        assertThat(validator.modifiedAttachmentNotRemoved(modifiedAttachment),
+                failsWith(EngineMessage.NETWORK_ATTACHMENT_IN_BOTH_LISTS,
+                        ReplacementUtils.createSetVariableString("NETWORK_ATTACHMENT_IN_BOTH_LISTS_ENTITY",
+                                modifiedAttachment.getId().toString())));
     }
 
     private void validateValidBondsForAllBondModes(boolean isValidForAllModes,
@@ -1528,6 +1537,33 @@ public class HostSetupNetworksValidatorTest {
                     ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, networkName)
             ));
         }
+    }
+
+    @Test
+    public void testBondNotUpdatedAndRemovedSimultaneouslyValid() {
+        HostSetupNetworksParameters params = new ParametersBuilder().addBonds(CreateOrUpdateBond.fromBond(bond))
+                .addRemovedBonds(Guid.newGuid())
+                .build();
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+                .setParams(params)
+                .build();
+
+        assertThat(validator.bondNotUpdatedAndRemovedSimultaneously(), isValid());
+    }
+
+    @Test
+    public void testBondNotUpdatedAndRemovedSimultaneouslyNotValid() {
+        HostSetupNetworksParameters params = new ParametersBuilder().addBonds(CreateOrUpdateBond.fromBond(bond))
+                .addRemovedBonds(bond.getId())
+                .build();
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+                .setParams(params)
+                .build();
+
+        EngineMessage engineMessage = EngineMessage.BONDS_UPDATED_AND_REMOVED_SIMULTANEOUSLY;
+        assertThat(validator.bondNotUpdatedAndRemovedSimultaneously(), failsWith(engineMessage,
+                ReplacementUtils.getListVariableAssignmentString(engineMessage,
+                        Collections.singletonList(bond.getName()))));
     }
 
     private void testValidateQosNotPartiallyConfigured(boolean networkAttachment1HasQos,

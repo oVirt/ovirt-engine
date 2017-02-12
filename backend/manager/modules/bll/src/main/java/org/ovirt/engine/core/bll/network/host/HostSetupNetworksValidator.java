@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -157,6 +158,7 @@ public class HostSetupNetworksValidator {
         vr = skipValidation(vr) ? vr : validRemovedNetworkAttachments();
         vr = skipValidation(vr) ? vr : validNewOrModifiedBonds();
         vr = skipValidation(vr) ? vr : validRemovedBonds(attachmentsToConfigure);
+        vr = skipValidation(vr) ? vr : bondNotUpdatedAndRemovedSimultaneously();
         vr = skipValidation(vr) ? vr : attachmentsDontReferenceSameNetworkDuplicately(attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : networksUniquelyConfiguredOnHost(attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : validateNetworkExclusiveOnNics(attachmentsToConfigure);
@@ -436,6 +438,24 @@ public class HostSetupNetworksValidator {
         List<NetworkAttachment> result = new ArrayList<>(networkAttachmentsMap.values());
         result.addAll(newAttachments);
         return result;
+    }
+
+    public ValidationResult bondNotUpdatedAndRemovedSimultaneously() {
+
+        List<String> bondsUpdatedAndRemovedSimultaneously = params.getCreateOrUpdateBonds()
+                .stream()
+                .filter(bond -> params.getRemovedBonds().contains(bond.getId()))
+                .map(CreateOrUpdateBond::getName)
+                .collect(Collectors.toList());
+
+        if (CollectionUtils.isNotEmpty(bondsUpdatedAndRemovedSimultaneously)) {
+            EngineMessage engineMessage = EngineMessage.BONDS_UPDATED_AND_REMOVED_SIMULTANEOUSLY;
+            return new ValidationResult(engineMessage,
+                    ReplacementUtils.getListVariableAssignmentString(engineMessage,
+                            bondsUpdatedAndRemovedSimultaneously));
+        }
+
+        return ValidationResult.VALID;
     }
 
     ValidationResult validNewOrModifiedBonds() {
