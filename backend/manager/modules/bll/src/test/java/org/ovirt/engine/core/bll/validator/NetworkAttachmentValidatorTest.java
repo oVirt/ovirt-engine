@@ -20,19 +20,15 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
-import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -45,13 +41,8 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
     private static final Guid CLUSTER_ID = Guid.newGuid();
-    private static final BusinessEntityMap<VdsNetworkInterface> EMPTY_NICS_MAP =
-            new BusinessEntityMap<>(Collections.emptyList());
     private static final String HOST_NAME = "hostName";
-    private static final String NIC_NAME = "nicName";
     private static final String NETWORK_NAME = "networkName";
-    private static final String IPV4_ADDRESS = "any IPv4 Address";
-    private static final String IPV6_ADDRESS = "any IPv6 Address";
 
     @Mock
     private NetworkDao networkDaoMock;
@@ -221,23 +212,6 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         primaryAddress.setNetmask(netmask);
         primaryAddress.setBootProtocol(bootProtocol);
         ipConfiguration.getIPv4Addresses().add(primaryAddress);
-
-        NetworkAttachment attachment = new NetworkAttachment();
-        attachment.setIpConfiguration(ipConfiguration);
-
-        return attachment;
-    }
-
-    private NetworkAttachment createNetworkAttachmentWithIpv6Configuration(Ipv6BootProtocol bootProtocol,
-            String address,
-            Integer prefix) {
-
-        IpConfiguration ipConfiguration = new IpConfiguration();
-        IpV6Address primaryAddress = new IpV6Address();
-        primaryAddress.setAddress(address);
-        primaryAddress.setPrefix(prefix);
-        primaryAddress.setBootProtocol(bootProtocol);
-        ipConfiguration.getIpV6Addresses().add(primaryAddress);
 
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setIpConfiguration(ipConfiguration);
