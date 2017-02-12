@@ -147,10 +147,10 @@ public class VdsBrokerObjectsBuilder {
         try {
             vm.setClusterArch(parseArchitecture(struct));
         } catch (IllegalArgumentException ex) {
-            log.warn("Illegal architecture type: %s, replacing with x86_64", struct.get(VdsProperties.vm_arch));
+            log.warn("Illegal architecture type: {}, replacing with x86_64", struct.get(VdsProperties.vm_arch));
             vm.setClusterArch(ArchitectureType.x86_64);
         } catch (NullPointerException ex) {
-            log.warn("null architecture type, replacing with x86_64, %s", vm);
+            log.warn("null architecture type, replacing with x86_64, {}", vm);
             vm.setClusterArch(ArchitectureType.x86_64);
         }
 
@@ -536,7 +536,7 @@ public class VdsBrokerObjectsBuilder {
             String exitReasonStr = struct.get(VdsProperties.exit_reason).toString();
             VmExitReason exitReason = VmExitReason.forValue(Integer.parseInt(exitReasonStr));
             if (exitReason == null) {
-                log.warn("Illegal exit reason: %s, replacing with Unknown", exitReasonStr);
+                log.warn("Illegal exit reason: {}, replacing with Unknown", exitReasonStr);
                 exitReason = VmExitReason.Unknown;
             }
             vm.setExitReason(exitReason);
