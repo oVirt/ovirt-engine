@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -36,8 +35,6 @@ import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -263,10 +260,6 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
         List<BaseDisk> baseDisks = Collections.singletonList(new BaseDisk());
         when(baseDiskDao.getDisksByAlias(anyString())).thenReturn(baseDisks);
-        // remove disk
-        when(backend.runInternalAction(
-                eq(VdcActionType.RemoveDisk),
-                any(VdsActionParameters.class))).thenReturn(successfulReturnValue());
         // Data center
         StoragePool pool = new StoragePool();
         pool.setStatus(StoragePoolStatus.Up);
@@ -275,8 +268,6 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
         // compensation
         CompensationContext compensationContext = mock(CompensationContext.class);
         when(cmd.getCompensationContext()).thenReturn(compensationContext);
-        doNothing().when(compensationContext).snapshotEntity(any(BusinessEntity.class));
-        doNothing().when(compensationContext).stateChanged();
         when(cmd.getContext()).thenReturn(new CommandContext(new EngineContext()));
     }
 
