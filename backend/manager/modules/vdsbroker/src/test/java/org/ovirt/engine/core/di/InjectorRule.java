@@ -24,8 +24,7 @@ public class InjectorRule extends TestWatcher {
 
     public InjectorRule() {
         if (!cdiInitialized) {
-            TestCDIProvider<Object> testCDIProvider = new TestCDIProvider<>();
-            CDI.setCDIProvider(() -> testCDIProvider);
+            CDI.setCDIProvider(TestCDIProvider::new);
             cdiInitialized = true;
         }
     }
