@@ -12,16 +12,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 
@@ -46,15 +43,9 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
     @Mock
     private NetworkDao networkDaoMocked;
     @Mock
-    private HostNetworkQosDao hostNetworkQosDaoMocked;
-    @Mock
     private Network networkMocked;
     @Mock
-    private HostNetworkQos hostNetworkQos;
-    @Mock
     private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
-    @Mock
-    private NetworkAttachmentDao networkAttachmentDao;
 
     @Test
     public void testExecuteQueryCommand() {
@@ -64,7 +55,6 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
         setupVdsDao();
         setupVdsNetworkInterfaceDao();
         setupNetworkDao();
-        setupHostNetworkQosDao();
 
         PairQueryable<VdsNetworkInterface, VDS> vdsInterfaceVdsPair =
                 new PairQueryable<>(vdsNetworkInterface, vds);
@@ -84,11 +74,6 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
     private void setupVdsNetworkInterfaceDao() {
         List<VdsNetworkInterface> expectedVdsNetworkInterface = Collections.singletonList(vdsNetworkInterface);
         when(interfaceDaoMocked.getVdsInterfacesByNetworkId(networkId)).thenReturn(expectedVdsNetworkInterface);
-    }
-
-    private void setupHostNetworkQosDao() {
-        when(networkMocked.getQosId()).thenReturn(qosId);
-        when(hostNetworkQosDaoMocked.get(networkMocked.getQosId())).thenReturn(hostNetworkQos);
     }
 
     private void setupNetworkDao() {
