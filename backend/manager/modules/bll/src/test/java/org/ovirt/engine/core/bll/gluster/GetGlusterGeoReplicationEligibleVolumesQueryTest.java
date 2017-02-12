@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,7 +17,6 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
@@ -52,30 +50,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
         doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(any(Guid.class), anyString());
         doReturn(getExpectedVolumes()).when(getQuery()).getAllGlusterVolumesWithMasterCompatibleVersion(baseTest.getMASTER_VOLUME_ID());
         baseTest.setupMock(geoRepUtil, geoRepDao, clusterDao);
-        doReturn(getClustersByServiceAndCompatibilityVersion()).when(clusterDao).getClustersByServiceAndCompatibilityVersion(true, false, baseTest.getCLUSTER_COMPATIBILITY_VERSION().getValue());
-        doReturn(getVolumesByClusterId()).when(volumeDao).getByClusterId(baseTest.getSLAVE_CLUSTER_ID());
         doReturn(baseTest.getMasterVolume()).when(volumeDao).getById(baseTest.getMASTER_VOLUME_ID());
-    }
-
-    private List<GlusterVolumeEntity> getVolumesByClusterId() {
-        List<GlusterVolumeEntity> volumeInCluster = new ArrayList<>();
-
-        volumeInCluster.add(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_1_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 10000L, 0L)));
-        volumeInCluster.add(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_2_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.DOWN, new GlusterVolumeSizeInfo(4000L, 0L, 0L)));
-        volumeInCluster.add(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_3_ID(), baseTest.getMASTER_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L)));
-        volumeInCluster.add(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_4_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.UP, null));
-
-        return volumeInCluster;
-    }
-
-    private List<Cluster> getClustersByServiceAndCompatibilityVersion() {
-        List<Cluster> possiblyEligibleClusters = new ArrayList<>();
-
-        Cluster possiblyEligibleCluster = new Cluster();
-        possiblyEligibleCluster.setId(baseTest.getSLAVE_CLUSTER_ID());
-
-        possiblyEligibleClusters.add(possiblyEligibleCluster);
-        return possiblyEligibleClusters;
     }
 
     private List<GlusterVolumeEntity> getExpectedVolumes() {
