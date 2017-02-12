@@ -20,13 +20,8 @@ public class InjectorRule extends TestWatcher {
 
     private static final Map<Class<?>, Object> beansCache = new ConcurrentHashMap<>();
 
-    private static volatile boolean cdiInitialized = false;
-
-    public InjectorRule() {
-        if (!cdiInitialized) {
-            CDI.setCDIProvider(TestCDIProvider::new);
-            cdiInitialized = true;
-        }
+    static {
+        CDI.setCDIProvider(TestCDIProvider::new);
     }
 
     @Override
