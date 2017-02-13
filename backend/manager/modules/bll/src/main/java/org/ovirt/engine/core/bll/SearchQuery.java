@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -42,6 +44,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -49,6 +53,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.TimeSpan;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DbGroupDao;
@@ -335,7 +340,16 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<StoragePool> searchStoragePool() {
-        return genericSearch(storagePoolDao, true);
+        Optional<Version> retVal = Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels).stream()
+                .max((v1, v2) -> v1.compareTo(v2));
+        List<StoragePool> dataCenters = genericSearch(storagePoolDao, true);
+        if (retVal.isPresent()) {
+            dataCenters.stream()
+                    .forEach(dataCenter -> dataCenter.setStoragePoolCompatibilityLevelUpgradeNeeded(
+                            retVal.get().compareTo(dataCenter.getCompatibilityVersion()) > 0)
+                    );
+        }
+        return dataCenters;
     }
 
     private List<StorageDomain> searchStorageDomain() {

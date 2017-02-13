@@ -284,6 +284,7 @@ public final class Cloner {
         obj.setLVER(instance.getLVER());
         obj.setRecoveryMode(instance.getRecoveryMode());
         obj.setSpmVdsId(instance.getSpmVdsId());
+        obj.setStoragePoolCompatibilityLevelUpgradeNeeded(instance.isStoragePoolCompatibilityLevelUpgradeNeeded());
         obj.setCompatibilityVersion(instance.getCompatibilityVersion());
 
         return obj;

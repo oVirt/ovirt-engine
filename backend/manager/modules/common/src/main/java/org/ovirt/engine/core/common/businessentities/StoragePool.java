@@ -51,6 +51,8 @@ public class StoragePool implements IVdcQueryable, BusinessEntityWithStatus<Guid
 
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
+    private boolean storagePoolCompatibilityLevelUpgradeNeeded;
+
     /**
      * Unique mac pool over whole data center. Data center DOES NOT have mac pool associated, only its clusters have.
      * When updating DC, setting this will set mac pool for all its clusters. When getting DC, this property
@@ -245,6 +247,14 @@ public class StoragePool implements IVdcQueryable, BusinessEntityWithStatus<Guid
 
     public void setMacPoolId(Guid macPoolId) {
         this.macPoolId = macPoolId;
+    }
+
+    public boolean isStoragePoolCompatibilityLevelUpgradeNeeded() {
+        return storagePoolCompatibilityLevelUpgradeNeeded;
+    }
+
+    public void setStoragePoolCompatibilityLevelUpgradeNeeded(boolean storagePoolCompatibilityLevelUpgradeNeeded) {
+        this.storagePoolCompatibilityLevelUpgradeNeeded = storagePoolCompatibilityLevelUpgradeNeeded;
     }
 
     @Override
