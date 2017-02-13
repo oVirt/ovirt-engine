@@ -28,25 +28,8 @@ public class VmCpuCountHelper {
         return clusterArchitecture == null ? null : clusterArchitecture.getFamily();
     }
 
-    /**
-     * Computes the maximum allowed number of vCPUs that can be assigned
-     * to a VM according to the specified compatibility level.
-     *
-     * @param vm The VM for which we want to know the maximum
-     * @param compatibilityVersion The compatibility level
-     * @param architecture Architecture family of the VM
-     * @return The maximum supported number of vCPUs
-     */
-    private static Integer calcMaxVCpu(VmBase vm, Version compatibilityVersion, ArchitectureType architecture) {
-        Integer maxSockets = Config.<Integer>getValue(
-                ConfigValues.MaxNumOfVmSockets,
-                compatibilityVersion.getValue());
-        Integer maxVCpus = Config.<Integer>getValue(
-                ConfigValues.MaxNumOfVmCpus,
-                compatibilityVersion.getValue());
-
-        int threadsPerCore = vm.getThreadsPerCpu();
-        int cpuPerSocket = vm.getCpuPerSocket();
+    static Integer calcMaxVCpu(ArchitectureType architecture, Integer maxSockets, Integer maxVCpus,
+                                      int threadsPerCore, int cpuPerSocket) {
         if (architecture == null || architecture == ArchitectureType.x86) {
             // As described in https://bugzilla.redhat.com/1406243#c13, the
             // maximum number of vCPUs is limited by thread and core numbers on
@@ -84,6 +67,28 @@ public class VmCpuCountHelper {
      * to a VM according to the specified compatibility level.
      *
      * @param vm The VM for which we want to know the maximum
+     * @param compatibilityVersion The compatibility level
+     * @param architecture Architecture family of the VM
+     * @return The maximum supported number of vCPUs
+     */
+    private static Integer calcMaxVCpu(VmBase vm, Version compatibilityVersion, ArchitectureType architecture) {
+        Integer maxSockets = Config.<Integer>getValue(
+                ConfigValues.MaxNumOfVmSockets,
+                compatibilityVersion.getValue());
+        Integer maxVCpus = Config.<Integer>getValue(
+                ConfigValues.MaxNumOfVmCpus,
+                compatibilityVersion.getValue());
+
+        int threadsPerCore = vm.getThreadsPerCpu();
+        int cpuPerSocket = vm.getCpuPerSocket();
+        return calcMaxVCpu(architecture, maxSockets, maxVCpus, threadsPerCore, cpuPerSocket);
+    }
+
+    /**
+     * Computes the maximum allowed number of vCPUs that can be assigned
+     * to a VM according to the specified compatibility level.
+     *
+     * @param vm                   The VM for which we want to know the maximum
      * @param compatibilityVersion The compatibility level
      * @return The maximum supported number of vCPUs
      */
