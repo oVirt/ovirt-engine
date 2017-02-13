@@ -25,7 +25,7 @@ import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 /**
  * UserPortal {@code Ginjector} extension interface.
  */
-public interface ClientGinjectorExtension extends UserPortalGinUiBinderWidgets {
+public interface ClientGinjectorExtension {
 
     // Core GWTP components
 

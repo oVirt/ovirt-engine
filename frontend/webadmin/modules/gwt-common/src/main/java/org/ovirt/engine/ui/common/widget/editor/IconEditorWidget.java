@@ -3,14 +3,11 @@ package org.ovirt.engine.ui.common.widget.editor;
 import java.util.List;
 import java.util.Objects;
 
-import javax.inject.Inject;
-
 import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditor;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidget;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconWithOsDefault;
@@ -85,8 +82,6 @@ public class IconEditorWidget extends AbstractValidatedWidget
     @UiField
     protected Alert errorMessage;
 
-    protected final CommonApplicationTemplates templates;
-
     /**
      * current value, the visible image <br/>
      * in dataUri format
@@ -122,11 +117,9 @@ public class IconEditorWidget extends AbstractValidatedWidget
      */
     private ValidationResult validationResult;
 
-    @Inject
-    public IconEditorWidget(CommonApplicationConstants constants,
-                            CommonApplicationTemplates templates,
-                            CommonApplicationResources resources) {
-        this.templates = templates;
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+
+    public IconEditorWidget() {
         uploadInfoIcon = new InfoIcon(
                 SafeHtmlUtils.fromTrustedString(constants.iconLimitationsIconVmPopup()));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -234,7 +227,7 @@ public class IconEditorWidget extends AbstractValidatedWidget
     }
 
     /**
-     * There is FileUpload#click() method since GWT 2.7.0.
+     * TODO-GWT There is FileUpload#click() method since GWT 2.7.0.
      */
     native void clickElement(Element element) /*-{
         element.click();
