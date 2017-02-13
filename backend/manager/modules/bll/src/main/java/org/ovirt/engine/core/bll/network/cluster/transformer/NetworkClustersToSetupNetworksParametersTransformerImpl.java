@@ -141,9 +141,9 @@ final class NetworkClustersToSetupNetworksParametersTransformerImpl
                 final List<Network> detachHostNetworks = entry.getValue();
                 parameters.add(builder.buildParameters(
                         hostId,
-                        Collections.<Network>emptyList(),
+                        Collections.emptyList(),
                         detachHostNetworks,
-                        Collections.<String, VdsNetworkInterface>emptyMap()));
+                        Collections.emptyMap()));
             }
         }
         return parameters;
