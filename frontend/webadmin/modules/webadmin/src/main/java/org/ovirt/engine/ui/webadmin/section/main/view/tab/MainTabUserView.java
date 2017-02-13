@@ -196,6 +196,11 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         inputSearchStringPrefix = searchPatternDiskTypeClause
                 .replace(inputSearchStringPrefix, empty).trim();
 
+        String[] prefixSplit = inputSearchStringPrefix.split(colon);
+        if (prefixSplit.length > 1 && !prefixSplit[prefixSplit.length - 1].isEmpty()) {
+            // We have a tag or bookmark or something in the prefix already, add an ' and ' to the prefix.
+            inputSearchStringPrefix += " and "; //$NON-NLS-1$
+        }
         inputSearchStringPrefix += VdcUserConditionFieldAutoCompleter.TYPE.toLowerCase()
                 + " = " + userType.name().toLowerCase() + space; //$NON-NLS-1$
         commonModelProvider.get().setSearchStringPrefix(inputSearchStringPrefix);
