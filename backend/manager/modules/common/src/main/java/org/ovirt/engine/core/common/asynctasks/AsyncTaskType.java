@@ -16,7 +16,9 @@ public enum AsyncTaskType {
     downloadImageFromStream,
     prepareMerge,
     finalizeMerge,
-    notSupported;
+    notSupported,
+    addVmLease,
+    removeVmLease;
 
     public int getValue() {
         return this.ordinal();

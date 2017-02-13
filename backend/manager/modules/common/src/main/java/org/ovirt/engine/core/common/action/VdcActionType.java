@@ -333,6 +333,10 @@ public enum VdcActionType {
     ScheduleGlusterStorageSync(1038, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     FenceVolumeJob(1039, QuotaDependency.STORAGE),
 
+    // Leases
+    AddVmLease(1040, QuotaDependency.NONE),
+    RemoveVmLease(1041, QuotaDependency.NONE),
+
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),
     RemoveEventSubscription(1101, false, QuotaDependency.NONE),

@@ -63,6 +63,7 @@ public final class CommandsFactory {
             "org.ovirt.engine.core.bll.storage.domain",
             "org.ovirt.engine.core.bll.storage.dr",
             "org.ovirt.engine.core.bll.storage.export",
+            "org.ovirt.engine.core.bll.storage.lease",
             "org.ovirt.engine.core.bll.storage.lsm",
             "org.ovirt.engine.core.bll.storage.ovfstore",
             "org.ovirt.engine.core.bll.storage.pool",
