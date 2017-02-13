@@ -1713,6 +1713,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     private void preSavePhase3() {
         final UnitVmModel model = (UnitVmModel) getWindow();
         final String name = model.getName().getEntity();
+
+        if (!model.getIsNew() && model.getNumaEnabled().getEntity() &&
+                (!model.getMemSize().getEntity().equals(getcurrentVm().getMemSizeMb()) ||
+                !model.getTotalCPUCores().getEntity().equals(Integer.toString(getcurrentVm().getNumOfCpus())) )) {
+            model.setNumaChanged(true);
+        }
+
         validateVm(model, name);
     }
 
