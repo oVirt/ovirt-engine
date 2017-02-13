@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
+import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,12 @@ public class PollVDSCommand<P extends VdsIdVDSCommandParametersBase> extends Fut
         }
     }
 
-    private void handleException(VDSExceptionBase e, String reason) {
+    @Override
+    protected void handleTransportRunTimeException(TransportRunTimeException e) {
+        handleException(e, "failed to create connection to the host");
+    }
+
+    private void handleException(RuntimeException e, String reason) {
         setVdsRuntimeError(e);
         final String msg = String.format("Failed to poll host %s - %s.", getParameters().getVdsId(), reason);
         log.debug(msg, e);

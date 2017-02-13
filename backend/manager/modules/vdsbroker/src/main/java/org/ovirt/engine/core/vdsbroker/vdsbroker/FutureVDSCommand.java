@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
+import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 
 /**
  * This class is used for the non-blocking VDSM API. It uses Future API to fetch the response from the actual http
@@ -84,12 +85,22 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
                 log.error("Error: {}", e.getMessage());
                 log.error("Exception", e);
             }
+        } catch (TransportRunTimeException e) {
+            handleTransportRunTimeException(e);
         } catch (Exception e) {
-            log.error("Error: {}", e.getMessage());
-            log.error("Exception", e);
-            setVdsRuntimeErrorAndReport(e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e));
+            handleGenericException(e);
         }
         return getVDSReturnValue();
+    }
+
+    private void handleGenericException(Exception e) {
+        log.error("Error: {}", e.getMessage());
+        log.error("Exception", e);
+        setVdsRuntimeErrorAndReport(e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e));
+    }
+
+    protected void handleTransportRunTimeException(TransportRunTimeException e) {
+        handleGenericException(e);
     }
 
     private void checkTimeout() throws TimeoutException {
