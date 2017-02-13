@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.utils.pm;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
@@ -104,5 +107,11 @@ public class FenceConfigHelper {
     public static String getValidatorExample(String key) {
         init();
         return keyValidatorExampleMap.get(key);
+    }
+
+    public static Set<String> getValidFenceAgentTypes(String clusterCompatibilityVersion) {
+       return new HashSet<>(Arrays.asList(FenceConfigHelper.getFenceConfigurationValue(
+               ConfigValues.VdsFenceType.name(),
+               clusterCompatibilityVersion).split(COMMA)));
     }
 }
