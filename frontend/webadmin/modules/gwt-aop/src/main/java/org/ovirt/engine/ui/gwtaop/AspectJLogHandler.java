@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.gwtextension;
+package org.ovirt.engine.ui.gwtaop;
 
 import org.aspectj.bridge.AbortException;
 import org.aspectj.bridge.IMessage;

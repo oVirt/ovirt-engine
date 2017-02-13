@@ -8,9 +8,10 @@
   </parent>
   <artifactId>webadmin-modules</artifactId>
   <packaging>pom</packaging>
-  <name>oVirt Modules - ui</name>
-  <description>parent POM for all oVirt modules</description>
+  <name>oVirt UI Modules</name>
+  <description>parent POM for all oVirt UI modules</description>
   <modules>
+    <module>gwt-aop</module>
     <module>gwt-extension</module>
     <module>uicompat</module>
     <module>frontend</module>
@@ -165,10 +166,10 @@
               <artifactId>gwt-servlet</artifactId>
               <version>${gwt.version}</version>
             </dependency>
-            <!-- Add gwt-extension aspects to GWT compiler classpath -->
+            <!-- Add gwt-aop aspects to GWT compiler classpath -->
             <dependency>
               <groupId>${engine.groupId}</groupId>
-              <artifactId>gwt-extension</artifactId>
+              <artifactId>gwt-aop</artifactId>
               <version>${engine.version}</version>
             </dependency>
           </dependencies>
@@ -183,16 +184,10 @@
             <copyWebapp>true</copyWebapp>
             <strict>true</strict>
             <compileSourcesArtifacts>
-              <!--
-                TODO adding gwt-extension source-jar to GWT compiler classpath causes
-                AspectJ Load Time Weaver to apply gwt-extension's META-INF/aop.xml twice;
-                we should extract AOP stuff out of gwt-extension into a separate project
-                to avoid that.
-              -->
               <compileSourcesArtifact>${engine.groupId}:gwt-extension</compileSourcesArtifact>
               <compileSourcesArtifact>${engine.groupId}:uicommonweb</compileSourcesArtifact>
             </compileSourcesArtifacts>
-            <!-- Why asm is excluded? -->
+            <!-- TODO Why asm is excluded? -->
             <runClasspathExcludes>
               <runClasspathExclude>asm-3.3.jar</runClasspathExclude>
             </runClasspathExcludes>

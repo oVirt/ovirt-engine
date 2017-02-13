@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.gwtextension;
+package org.ovirt.engine.ui.gwtaop;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,10 +55,6 @@ public class DontPrune {
             Matcher matcher = dontPrunePattern.matcher(typeName);
 
             if (matcher.matches()) {
-                // logger.log(TreeLogger.SPAM,"Type \"" + typeName + "\" matched and won't be pruned!");
-                // TODO: Too verbose, needs to be logged by a standard GWT logger in a SPAM level
-                // System.out.println("Type \"" + typeName + "\" matched and won't be pruned!");
-
                 // Following line causes GWT compiler to crash on NPE with gwt-jackson:
                 // analyzer.traverseFromInstantiationOf(type);
                 analyzer.traverseFromReferenceTo(type);

@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.gwtextension;
+package org.ovirt.engine.ui.gwtaop;
 
 import java.io.OutputStream;
 import java.util.logging.ConsoleHandler;

@@ -119,6 +119,7 @@
         <configuration>
           <extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
           <debugSuspend>false</debugSuspend>
+          <superDevMode>false</superDevMode>
         </configuration>
       </plugin>
       <plugin>
