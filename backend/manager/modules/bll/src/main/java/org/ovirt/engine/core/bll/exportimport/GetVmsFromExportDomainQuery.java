@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.exportimport;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -15,6 +17,9 @@ import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryParameters>
         extends GetAllFromExportDomainQuery<List<VM>, P> {
 
+    @Inject
+    private OvfHelper ovfHelper;
+
     public GetVmsFromExportDomainQuery(P parameters) {
         this(parameters, null);
     }
@@ -25,7 +30,6 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
 
     @Override
     protected List<VM> buildFromOVFs(List<String> ovfList) {
-        OvfHelper ovfHelper = new OvfHelper();
         List<VM> vms = new ArrayList<>();
 
         for (String ovf : ovfList) {
