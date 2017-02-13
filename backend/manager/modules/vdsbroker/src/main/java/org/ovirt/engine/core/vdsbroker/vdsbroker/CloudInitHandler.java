@@ -14,6 +14,9 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.utils.JsonHelper;
+import org.ovirt.engine.core.utils.network.vm.VmInitNetworkIpInfoFetcher;
+import org.ovirt.engine.core.utils.network.vm.VmInitNetworkIpv4InfoFetcher;
+import org.ovirt.engine.core.utils.network.vm.VmInitNetworkIpv6InfoFetcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
@@ -134,17 +137,7 @@ public class CloudInitHandler {
                     output.append("auto ").append(iface.getName()).append("\n");
                 }
 
-                output.append("iface " + iface.getName() + " inet "
-                        + iface.getBootProtocol().getDisplayName() + "\n");
-                if (StringUtils.isNotEmpty(iface.getIp())) {
-                    output.append("  address " + iface.getIp() + "\n");
-                }
-                if (StringUtils.isNotEmpty(iface.getNetmask())) {
-                    output.append("  netmask " + iface.getNetmask() + "\n");
-                }
-                if (StringUtils.isNotEmpty(iface.getGateway())) {
-                    output.append("  gateway " + iface.getGateway() + "\n");
-                }
+                storeIpv4(iface, output);
 
                 // As of cloud-init 0.7.1, you can't set DNS servers without also setting NICs
                 if (vmInit.getDnsServers() != null) {
@@ -158,6 +151,8 @@ public class CloudInitHandler {
                         .append(" ").append(vmInit.getDnsSearch());
                     output.append("\n");
                 }
+
+                storeIpv6(iface, output);
             }
         }
 
@@ -170,6 +165,30 @@ public class CloudInitHandler {
 
             // Cloud-init will translate this as needed for ifcfg-based systems
             storeNextFile(CloudInitFileMode.NETWORK, "/etc/network/interfaces", interfaces.getBytes("US-ASCII"));
+        }
+    }
+
+    private void storeIpv4(VmInitNetwork iface, StringBuilder output) {
+        storeIp("inet", new VmInitNetworkIpv4InfoFetcher(iface), output);
+    }
+
+    private void storeIpv6(VmInitNetwork iface, StringBuilder output) {
+        storeIp("inet6", new VmInitNetworkIpv6InfoFetcher(iface), output);
+    }
+
+    private void storeIp(String ipStack, VmInitNetworkIpInfoFetcher ipInfoFetcher, StringBuilder output) {
+        output.append(String.format("iface %s %s %s%n",
+                ipInfoFetcher.fetchName(),
+                ipStack,
+                ipInfoFetcher.fetchBootProtocol()));
+        if (StringUtils.isNotEmpty(ipInfoFetcher.fetchIp())) {
+            output.append(String.format("  address %s%n", ipInfoFetcher.fetchIp()));
+        }
+        if (StringUtils.isNotEmpty(ipInfoFetcher.fetchNetmask())) {
+            output.append(String.format("  netmask %s%n", ipInfoFetcher.fetchNetmask()));
+        }
+        if (StringUtils.isNotEmpty(ipInfoFetcher.fetchGateway())) {
+            output.append(String.format("  gateway %s%n", ipInfoFetcher.fetchGateway()));
         }
     }
 
@@ -261,4 +280,5 @@ public class CloudInitHandler {
         Yaml yaml = new Yaml(options);
         return yaml.dump(input);
     }
+
 }
