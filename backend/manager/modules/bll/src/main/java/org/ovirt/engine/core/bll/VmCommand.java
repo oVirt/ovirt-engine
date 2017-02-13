@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -45,7 +46,6 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
-import org.ovirt.engine.core.common.vdscommands.VmLeaseVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.GuidUtils;
 
@@ -455,13 +455,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             return true;
         }
 
-        return runVdsCommand(
-                VDSCommandType.RemoveVmLease,
-                new VmLeaseVDSParameters(
-                        getVm().getStoragePoolId(),
-                        leaseStorageDomainId,
-                        vmId)
-                ).getSucceeded();
+        return runInternalActionWithTasksContext(
+                VdcActionType.RemoveVmLease,
+                new VmLeaseParameters(getStoragePoolId(), leaseStorageDomainId, vmId)
+        ).getSucceeded();
     }
 
     protected boolean shouldAddLease(VmStatic vm) {
@@ -479,13 +476,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             return true;
         }
 
-        return runVdsCommand(
-                VDSCommandType.AddVmLease,
-                new VmLeaseVDSParameters(
-                        getStoragePoolId(),
-                        leaseStorageDomainId,
-                        vmId)
-                ).getSucceeded();
+        return runInternalActionWithTasksContext(
+                VdcActionType.AddVmLease,
+                new VmLeaseParameters(getStoragePoolId(), leaseStorageDomainId, vmId)
+        ).getSucceeded();
     }
 
 }

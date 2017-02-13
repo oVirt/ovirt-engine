@@ -15,6 +15,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StorageStatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmLeaseTaskInfoReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VolumeListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturn;
@@ -643,7 +644,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
     }
 
     @Override
-    public StatusOnlyReturn addVmLease(String leaseUUID, String sdUUID) {
+    public VmLeaseTaskInfoReturn addVmLease(String leaseUUID, String sdUUID) {
         HashMap<String, Object> leaseDict = new HashMap<>();
         leaseDict.put("lease_id", leaseUUID);
         leaseDict.put("sd_id", sdUUID);
@@ -653,11 +654,11 @@ public class JsonRpcIIrsServer implements IIrsServer {
                           .withParameter("lease", leaseDict)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturn(response);
+        return new VmLeaseTaskInfoReturn(response);
     }
 
     @Override
-    public StatusOnlyReturn removeVmLease(String leaseUUID, String sdUUID) {
+    public VmLeaseTaskInfoReturn removeVmLease(String leaseUUID, String sdUUID) {
         HashMap<String, Object> leaseDict = new HashMap<>();
         leaseDict.put("lease_id", leaseUUID);
         leaseDict.put("sd_id", sdUUID);
@@ -667,7 +668,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .withParameter("lease", leaseDict)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturn(response);
+        return new VmLeaseTaskInfoReturn(response);
     }
 
 }

@@ -107,7 +107,7 @@ public interface IIrsServer {
 
     OneUuidReturn finalizeMerge(String spUUID, Map<String, Object> subchainInfo);
 
-    StatusOnlyReturn addVmLease(String leaseUUID, String sdUUID);
+    VmLeaseTaskInfoReturn addVmLease(String leaseUUID, String sdUUID);
 
-    StatusOnlyReturn removeVmLease(String leaseUUID, String sdUUID);
+    VmLeaseTaskInfoReturn removeVmLease(String leaseUUID, String sdUUID);
 }
