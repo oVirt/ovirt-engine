@@ -86,6 +86,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div id=\"{2}\" style=\"text-align: center;\" data-status=\"{3}\">{0}{1}</div>")
     SafeHtml statusWithAlertTemplate(SafeHtml statusImage, SafeHtml alertImage, String id, String status);
 
+    @Template("<i class= \"fa {0}\" style= \"font-size:16px;color:orange;\"></i>")
+    SafeHtml iconTypeAlertTemplate(String css);
+
     @Template("<div id=\"{1}\" style=\"text-align: center;\" data-status=\"{2}\">{0}</div>")
     SafeHtml statusTemplate(SafeHtml statusImage, String id, String status);
 

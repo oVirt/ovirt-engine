@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetails
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.DcAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DcStatusColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -47,6 +48,10 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         DcStatusColumn statusIconColumn = new DcStatusColumn();
         statusIconColumn.setContextMenuTitle(constants.statusIconDc());
         getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
+
+        DcAdditionalStatusColumn additionalStatusColumn = new DcAdditionalStatusColumn();
+        additionalStatusColumn.setContextMenuTitle(constants.additionalStatusDataCenter());
+        getTable().addColumn(additionalStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<StoragePool> nameColumn = new AbstractTextColumn<StoragePool>() {
             @Override

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -31,6 +32,10 @@ public abstract class EntityAdditionalStatusColumn<S> extends AbstractSafeHtmlCo
     protected SafeHtml getImageSafeHtml(ImageResource imageResource) {
         return SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.
                 create(imageResource).getHTML());
+    }
+
+    protected SafeHtml getImageSafeHtml(IconType iconType) {
+        return AssetProvider.getTemplates().iconTypeAlertTemplate(iconType.getCssName());
     }
 
     protected abstract SafeHtml getEntityValue(S s);

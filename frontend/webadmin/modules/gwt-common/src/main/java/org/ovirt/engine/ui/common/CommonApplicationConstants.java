@@ -1509,6 +1509,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String noWatchdogLabel();
 
+    String clusterLevelUpgradeNeeded();
+
     String deviceGeneralType();
 
     String deviceType();
