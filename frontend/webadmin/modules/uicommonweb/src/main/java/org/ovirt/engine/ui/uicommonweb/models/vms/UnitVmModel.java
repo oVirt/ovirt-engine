@@ -2566,7 +2566,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void memSize_EntityChanged(Object sender, EventArgs args) {
         behavior.updateMinAllocatedMemory();
         if (getMemSize().getEntity() != null) {
-            setNumaChanged(true);
             maxMemorySize.setEntity(VmCommonUtils.getMaxMemorySizeDefault(getMemSize().getEntity()));
         }
     }
@@ -2576,7 +2575,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         removeCPUListeners();
 
         behavior.totalCpuCoresChanged();
-        setNumaChanged(true);
 
         // start listening again
         addCPUListeners();
