@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -20,6 +19,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTasksService;
@@ -67,6 +67,7 @@ public class GlusterTasksSyncJobTest {
     @Mock
     private GlusterTaskUtils taskUtils;
 
+    @Spy
     private GlusterTasksSyncJob tasksSyncJob;
 
     @ClassRule
@@ -74,7 +75,6 @@ public class GlusterTasksSyncJobTest {
 
     @Before
     public void init() {
-        tasksSyncJob = spy(GlusterTasksSyncJob.getInstance());
         doReturn(clusterDao).when(tasksSyncJob).getClusterDao();
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(provider).when(tasksSyncJob).getProvider();

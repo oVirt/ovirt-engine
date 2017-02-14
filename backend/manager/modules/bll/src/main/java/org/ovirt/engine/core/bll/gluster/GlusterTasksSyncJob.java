@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
@@ -47,16 +49,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class GlusterTasksSyncJob extends GlusterJob  {
     private static final Logger log = LoggerFactory.getLogger(GlusterTasksSyncJob.class);
 
-    private static GlusterTasksSyncJob instance = new GlusterTasksSyncJob();
-
     private final GlusterTasksService provider = new GlusterTasksService();
-
-    public static GlusterTasksSyncJob getInstance() {
-        return instance;
-    }
 
     public GlusterTasksService getProvider() {
         return provider;

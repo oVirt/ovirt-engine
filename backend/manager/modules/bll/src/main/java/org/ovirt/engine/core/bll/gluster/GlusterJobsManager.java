@@ -65,7 +65,7 @@ public class GlusterJobsManager {
                 getRefreshRate(ConfigValues.GlusterRefreshRateLight),
                 TimeUnit.SECONDS);
 
-        scheduler.scheduleAFixedDelayJob(GlusterTasksSyncJob.getInstance(),
+        scheduler.scheduleAFixedDelayJob(Injector.get(GlusterTasksSyncJob.class),
                 "gluster_async_task_poll_event",
                 new Class[0] ,
                 new Class [0],
