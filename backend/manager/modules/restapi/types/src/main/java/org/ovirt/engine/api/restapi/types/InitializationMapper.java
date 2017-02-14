@@ -8,8 +8,12 @@ import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.NicConfiguration;
 import org.ovirt.engine.api.model.NicConfigurations;
+import org.ovirt.engine.api.utils.IntegerParser;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
+import org.ovirt.engine.core.utils.network.vm.VmInitNetworkIpInfoFetcher;
+import org.ovirt.engine.core.utils.network.vm.VmInitNetworkIpv4InfoFetcher;
+import org.ovirt.engine.core.utils.network.vm.VmInitNetworkIpv6InfoFetcher;
 
 public class InitializationMapper {
     @Mapping(from = NicConfiguration.class, to = VmInitNetwork.class)
@@ -41,6 +45,23 @@ public class InitializationMapper {
             }
         }
 
+        if (model.isSetIpv6BootProtocol()) {
+            entity.setIpv6BootProtocol(Ipv6BootProtocolMapper.map(model.getBootProtocol()));
+        }
+
+        if (model.isSetIpv6()) {
+            if (model.getIpv6().isSetAddress()) {
+                entity.setIpv6Address(model.getIpv6().getAddress());
+            }
+            if (model.getIpv6().isSetNetmask()) {
+                entity.setIpv6Prefix((int) IntegerParser.parseUnsignedInt(model.getIpv6().getNetmask()));
+            }
+
+            if (model.getIpv6().isSetGateway()) {
+                entity.setIpv6Gateway(model.getIpv6().getGateway());
+            }
+        }
+
         return entity;
     }
 
@@ -50,16 +71,33 @@ public class InitializationMapper {
 
         model.setName(entity.getName());
         model.setOnBoot(entity.getStartOnBoot());
+
+        populateModelWithIpv4Details(entity, model);
+        populateModelWithIpv6Details(entity, model);
+
+        return model;
+    }
+
+    private static void populateModelWithIpv4Details(VmInitNetwork entity, NicConfiguration model) {
         if (entity.getBootProtocol() != null) {
             model.setBootProtocol(Ipv4BootProtocolMapper.map(entity.getBootProtocol()));
         }
-        Ip ip = new Ip();
-        model.setIp(ip);
-        ip.setAddress(entity.getIp());
-        ip.setNetmask(entity.getNetmask());
-        ip.setGateway(entity.getGateway());
+        model.setIp(createIpModel(new VmInitNetworkIpv4InfoFetcher(entity)));
+    }
 
-        return model;
+    private static void populateModelWithIpv6Details(VmInitNetwork entity, NicConfiguration model) {
+        if (entity.getIpv6BootProtocol() != null) {
+            model.setIpv6BootProtocol(Ipv6BootProtocolMapper.map(entity.getIpv6BootProtocol()));
+        }
+        model.setIpv6(createIpModel(new VmInitNetworkIpv6InfoFetcher(entity)));
+    }
+
+    private static Ip createIpModel(VmInitNetworkIpInfoFetcher ipInfoFetcher) {
+        Ip ip = new Ip();
+        ip.setAddress(ipInfoFetcher.fetchIp());
+        ip.setNetmask(ipInfoFetcher.fetchNetmask());
+        ip.setGateway(ipInfoFetcher.fetchGateway());
+        return ip;
     }
 
     @Mapping(from = Initialization.class, to = VmInit.class)
