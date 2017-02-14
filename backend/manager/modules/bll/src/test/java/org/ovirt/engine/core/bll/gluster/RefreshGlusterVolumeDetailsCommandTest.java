@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -61,8 +60,6 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
         doReturn(getDistributedVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getDistributedVolume(volumeId2)).when(volumeDao).getById(volumeId2);
         doReturn(syncJob).when(cmd).getSyncJobInstance();
-        doNothing().when(syncJob).refreshVolumeDetails(any(VDS.class), any(GlusterVolumeEntity.class));
-
     }
 
     private VDS getVds(VDSStatus status) {
