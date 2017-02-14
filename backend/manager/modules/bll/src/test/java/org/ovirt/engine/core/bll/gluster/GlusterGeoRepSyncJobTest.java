@@ -18,7 +18,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -84,7 +83,6 @@ public class GlusterGeoRepSyncJobTest {
     @Before
     public void init() {
         syncJob = spy(GlusterGeoRepSyncJob.getInstance());
-        MockitoAnnotations.initMocks(this);
         syncJob.setLogUtil(logUtil);
 
         injectorRule.bind(LockManager.class, lockManager);
