@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -235,14 +234,12 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         Map<String, GlusterGeoRepSessionConfiguration> sessionKeyConfigMap =
                 prepareMapOfGeoRepSessionConfigs(sessionConfigList);
         existingKeyConfigMap.keySet().removeAll(sessionKeyConfigMap.keySet());
-        Iterator<Map.Entry<String, GlusterGeoRepSessionConfiguration>> mapIterator =
-                existingKeyConfigMap.entrySet().iterator();
-        while (mapIterator.hasNext()) {
+        existingKeyConfigMap.keySet().forEach(key -> {
             GlusterGeoRepSessionConfiguration config = new GlusterGeoRepSessionConfiguration();
             config.setId(session.getId());
-            config.setKey(mapIterator.next().getKey());
+            config.setKey(key);
             getGeoRepDao().updateConfig(config);
-        }
+        });
     }
 
     private Map<String, GlusterGeoRepSessionConfiguration> prepareMapOfGeoRepSessionConfigs(List<GlusterGeoRepSessionConfiguration> existingConfigs) {
