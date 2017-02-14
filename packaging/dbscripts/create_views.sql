@@ -82,8 +82,19 @@ SELECT images.image_guid AS image_guid,
     base_disks.disk_storage_type AS disk_storage_type,
     base_disks.cinder_volume_type AS cinder_volume_type,
     base_disks.last_alignment_scan AS last_alignment_scan,
-    storage_domains_ovf_info.ovf_disk_id IS NOT NULL AS ovf_store,
-    COALESCE(memory_snap.memory_metadata_disk_id, memory_snap.memory_dump_disk_id) IS NOT NULL AS memory_image,
+    EXISTS (
+        SELECT 1
+        FROM storage_domains_ovf_info
+        WHERE images.image_group_id = storage_domains_ovf_info.ovf_disk_id
+        ) AS ovf_store,
+    EXISTS (
+        SELECT 1
+        FROM snapshots
+        WHERE images.image_group_id IN (
+                snapshots.memory_metadata_disk_id,
+                snapshots.memory_dump_disk_id
+                )
+        ) AS memory_image,
     image_transfers.phase AS image_transfer_phase,
     image_transfers.bytes_sent AS image_transfer_bytes_sent,
     image_transfers.bytes_total AS image_transfer_bytes_total
@@ -100,10 +111,6 @@ LEFT JOIN storage_domain_static
     ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
 LEFT JOIN snapshots snap
     ON images.vm_snapshot_id = snap.snapshot_id
-LEFT JOIN snapshots memory_snap
-    ON images.image_group_id IN (memory_snap.memory_metadata_disk_id, memory_snap.memory_dump_disk_id)
-LEFT JOIN storage_domains_ovf_info
-    ON storage_domains_ovf_info.ovf_disk_id = images.image_group_id
 LEFT JOIN quota
     ON image_storage_domain_map.quota_id = quota.id
 LEFT JOIN disk_profiles
