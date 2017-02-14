@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -31,17 +33,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class GlusterServiceSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterServiceSyncJob.class);
-    private static final GlusterServiceSyncJob instance = new GlusterServiceSyncJob();
     private final Map<String, GlusterService> serviceNameMap = new HashMap<>();
-
-    private GlusterServiceSyncJob() {
-    }
-
-    public static GlusterServiceSyncJob getInstance() {
-        return instance;
-    }
 
     @OnTimerMethodAnnotation("refreshGlusterServices")
     public void refreshGlusterServices() {

@@ -57,7 +57,7 @@ public class GlusterJobsManager {
                 getRefreshRate(ConfigValues.GlusterRefreshRateHooks),
                 TimeUnit.SECONDS);
 
-        scheduler.scheduleAFixedDelayJob(GlusterServiceSyncJob.getInstance(),
+        scheduler.scheduleAFixedDelayJob(Injector.get(GlusterServiceSyncJob.class),
                 "refreshGlusterServices",
                 new Class[0],
                 new Object[0],

@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -25,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -63,6 +63,8 @@ public class GlusterServiceSyncJobTest {
     private static final String SERVICE3_NAME = "service3";
     private List<GlusterClusterService> existingClusterServices;
     private Map<String, GlusterService> serviceNameMap;
+
+    @Spy
     private GlusterServiceSyncJob syncJob;
 
     @ClassRule
@@ -96,7 +98,6 @@ public class GlusterServiceSyncJobTest {
     }
 
     private void setupCommonMock() {
-        syncJob = spy(GlusterServiceSyncJob.getInstance());
         syncJob.setLogUtil(logUtil);
 
         doReturn(serverServiceDao).when(syncJob).getGlusterServerServiceDao();
