@@ -142,16 +142,14 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
                         fetchedSnapshot.getSnapshotName(),
                         volume.getName(),
                         cluster.getName());
+                Map<String, String> customValues = new HashMap<>();
+                customValues.put("snapName", fetchedSnapshot.getSnapshotName());
+                customValues.put(GlusterConstants.VOLUME_NAME, volume.getName());
                 logUtil.logAuditMessage(clusterId,
                         volume,
                         null,
                         AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DETECTED_NEW,
-                        new HashMap<String, String>() {
-                            {
-                                put("snapName", fetchedSnapshot.getSnapshotName());
-                                put(GlusterConstants.VOLUME_NAME, volume.getName());
-                            }
-                        });
+                        customValues);
             } else if (correspondingExistingSnapshot.getStatus() != fetchedSnapshot.getStatus()) {
                 correspondingExistingSnapshot.setStatus(fetchedSnapshot.getStatus());
                 updatedSnapshots.add(correspondingExistingSnapshot);
@@ -168,16 +166,14 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
                         existingSnapshot.getSnapshotName(),
                         volume.getName(),
                         cluster.getName());
+                Map<String, String> customValues = new HashMap<>();
+                customValues.put("snapName", existingSnapshot.getSnapshotName());
+                customValues.put(GlusterConstants.VOLUME_NAME, volume.getName());
                 logUtil.logAuditMessage(clusterId,
                         volume,
                         null,
                         AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DELETED_FROM_CLI,
-                        new HashMap<String, String>() {
-                            {
-                                put("snapName", existingSnapshot.getSnapshotName());
-                                put(GlusterConstants.VOLUME_NAME, volume.getName());
-                            }
-                        });
+                        customValues);
             }
         }
 
@@ -251,16 +247,14 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
                     paramName,
                     paramValue,
                     cluster.getName());
+            Map<String, String> customValues = new HashMap<>();
+            customValues.put("snapConfigName", paramName);
+            customValues.put("snapConfigValue", paramValue);
             logUtil.logAuditMessage(cluster.getId(),
                     null,
                     null,
                     AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CLUSTER_CONFIG_DETECTED_NEW,
-                    new HashMap<String, String>() {
-                        {
-                            put("snapConfigName", paramName);
-                            put("snapConfigValue", paramValue);
-                        }
-                    });
+                    customValues);
         } else if (!existingParamDetail.getParamValue().equals(paramValue)) {
             getGlusterVolumeSnapshotConfigDao().updateConfigByClusterIdAndName(cluster.getId(),
                     paramName,
@@ -288,17 +282,16 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
                     paramValue,
                     cluster.getName(),
                     volume.getName());
+
+            Map<String, String> customValues = new HashMap<>();
+            customValues.put("snapConfigName", paramName);
+            customValues.put("snapConfigValue", paramValue);
+            customValues.put(GlusterConstants.VOLUME_NAME, volume.getName());
             logUtil.logAuditMessage(cluster.getId(),
                     volume,
                     null,
                     AuditLogType.GLUSTER_VOLUME_SNAPSHOT_VOLUME_CONFIG_DETECTED_NEW,
-                    new HashMap<String, String>() {
-                        {
-                            put("snapConfigName", paramName);
-                            put("snapConfigValue", paramValue);
-                            put(GlusterConstants.VOLUME_NAME, volume.getName());
-                        }
-                    });
+                    customValues);
         } else if (!existingParamDetail.getParamValue().equals(paramValue)) {
             getGlusterVolumeSnapshotConfigDao().updateConfigByVolumeIdAndName(cluster.getId(),
                     volume.getId(),
