@@ -59,11 +59,8 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     @Inject
     private ExecutionHandler executionHandler;
 
-    private final GlusterTasksService provider = new GlusterTasksService();
-
-    public GlusterTasksService getProvider() {
-        return provider;
-    }
+    @Inject
+    private GlusterTasksService provider;
 
     @OnTimerMethodAnnotation("gluster_async_task_poll_event")
     public void updateGlusterAsyncTasks() {
@@ -76,7 +73,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                 continue;
             }
             try {
-                Map<Guid, GlusterAsyncTask> runningTasks = getProvider().getTaskListForCluster(cluster.getId());
+                Map<Guid, GlusterAsyncTask> runningTasks = provider.getTaskListForCluster(cluster.getId());
                 if (runningTasks != null) {
                     updateTasksInCluster(cluster, runningTasks);
                     tasksFromClustersMap.put(cluster.getId(), runningTasks.keySet());
@@ -291,7 +288,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             return;
         }
         //Populate the list of tasks that need to be monitored from database
-        List<Guid> taskListInDB = getProvider().getMonitoredTaskIDsInDB();
+        List<Guid> taskListInDB = provider.getMonitoredTaskIDsInDB();
         if (taskListInDB == null || taskListInDB.isEmpty()) {
             return;
         }

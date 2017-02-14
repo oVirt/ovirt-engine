@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class GlusterTasksService {
     private static final Logger log = LoggerFactory.getLogger(GlusterTasksService.class);
 

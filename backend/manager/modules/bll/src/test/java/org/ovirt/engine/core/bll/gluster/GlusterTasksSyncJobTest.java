@@ -78,7 +78,6 @@ public class GlusterTasksSyncJobTest {
     @Before
     public void init() {
         doReturn(getClusters()).when(clusterDao).getAll();
-        doReturn(provider).when(tasksSyncJob).getProvider();
         doReturn(taskUtils).when(tasksSyncJob).getGlusterTaskUtils();
     }
 
