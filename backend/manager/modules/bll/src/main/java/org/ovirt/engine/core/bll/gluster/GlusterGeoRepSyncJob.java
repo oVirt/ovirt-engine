@@ -47,10 +47,6 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         schedulerUtil = Injector.get(DBSchedulerUtilQuartzImpl.class);
     }
 
-    public void init() {
-        log.info("Gluster georeplication monitoring has been initialized");
-    }
-
     public static GlusterGeoRepSyncJob getInstance() {
         return instance;
     }
