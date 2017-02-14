@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
@@ -69,7 +68,6 @@ public class StorageDeviceSyncJobTest {
 
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
         syncJob.setLogUtil(logUtil);
         doReturn(storageDeviceDao).when(syncJob).getStorageDeviceDao();
         doReturn(clusterDao).when(syncJob).getClusterDao();
