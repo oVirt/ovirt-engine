@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -26,7 +29,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.DBSchedulerUtilQuartzImpl;
@@ -34,22 +36,17 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class GlusterGeoRepSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterGeoRepSyncJob.class);
-    private final DBSchedulerUtilQuartzImpl schedulerUtil;
-    private static final GlusterGeoRepSyncJob instance = new GlusterGeoRepSyncJob();
+
+    @Inject
+    private DBSchedulerUtilQuartzImpl schedulerUtil;
+
     private static final GeoRepSessionStatus[] overridableStatuses = { GeoRepSessionStatus.ACTIVE,
             GeoRepSessionStatus.INITIALIZING,
             GeoRepSessionStatus.CREATED
     };
-
-    private GlusterGeoRepSyncJob() {
-        schedulerUtil = Injector.get(DBSchedulerUtilQuartzImpl.class);
-    }
-
-    public static GlusterGeoRepSyncJob getInstance() {
-        return instance;
-    }
 
     @OnTimerMethodAnnotation("gluster_georep_poll_event")
     public void discoverGeoRepData() {

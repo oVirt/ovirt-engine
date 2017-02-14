@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -18,6 +17,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -72,6 +72,7 @@ public class GlusterGeoRepSyncJobTest {
     @Mock
     private StorageDomainDRDao storageDomainDRDao;
 
+    @Spy
     private GlusterGeoRepSyncJob syncJob;
 
     @Mock
@@ -82,7 +83,6 @@ public class GlusterGeoRepSyncJobTest {
 
     @Before
     public void init() {
-        syncJob = spy(GlusterGeoRepSyncJob.getInstance());
         syncJob.setLogUtil(logUtil);
 
         injectorRule.bind(LockManager.class, lockManager);

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -33,6 +35,9 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
     private GlusterVolumeEntity slaveVolume;
     private Set<VDS> remoteServersSet;
     private VDS slaveHost;
+
+    @Inject
+    private GlusterGeoRepSyncJob glusterGeoRepSyncJob;
 
     public CreateGlusterVolumeGeoRepSessionCommand(GlusterVolumeGeoRepSessionParameters params, CommandContext context) {
         super(params, context);
@@ -154,7 +159,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
                                 getParameters().isForce()));
                 succeeded = evaluateReturnValue(AuditLogType.GLUSTER_GEOREP_SESSION_CREATE_FAILED, createVdsReturnValue);
                 if (succeeded) {
-                    GlusterGeoRepSyncJob.getInstance().refreshGeoRepDataForVolume(getGlusterVolume());
+                    glusterGeoRepSyncJob.refreshGeoRepDataForVolume(getGlusterVolume());
                 }
             }
         }

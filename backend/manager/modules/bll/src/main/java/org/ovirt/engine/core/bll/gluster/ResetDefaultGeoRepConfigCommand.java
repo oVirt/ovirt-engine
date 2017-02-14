@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionConfigParameters;
@@ -13,6 +15,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepConfigVdsParameters;
 
 public class ResetDefaultGeoRepConfigCommand extends GeoRepSessionCommandBase<GlusterVolumeGeoRepSessionConfigParameters> {
+
+    @Inject
+    private GlusterGeoRepSyncJob glusterGeoRepSyncJob;
 
     public ResetDefaultGeoRepConfigCommand(GlusterVolumeGeoRepSessionConfigParameters params, CommandContext context) {
         super(params, context);
@@ -36,7 +41,7 @@ public class ResetDefaultGeoRepConfigCommand extends GeoRepSessionCommandBase<Gl
                                 getParameters().getConfigKey(),
                                 null,
                                 session.getUserName()));
-        GlusterGeoRepSyncJob.getInstance().updateDiscoveredSessionConfig(getCluster(), session);
+        glusterGeoRepSyncJob.updateDiscoveredSessionConfig(getCluster(), session);
         setSucceeded(returnValue.getSucceeded());
         if (!getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_GEOREP_CONFIG_SET_DEFAULT_FAILED, returnValue.getVdsError()

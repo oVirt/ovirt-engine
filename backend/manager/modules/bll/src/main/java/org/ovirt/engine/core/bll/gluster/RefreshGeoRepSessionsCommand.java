@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -11,6 +13,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
  */
 @NonTransactiveCommandAttribute
 public class RefreshGeoRepSessionsCommand<T extends GlusterVolumeParameters> extends GlusterVolumeCommandBase<T> {
+
+    @Inject
+    private GlusterGeoRepSyncJob glusterGeoRepSyncJob;
 
     public RefreshGeoRepSessionsCommand(T params, CommandContext commandContext) {
         super(params, commandContext);
@@ -35,13 +40,9 @@ public class RefreshGeoRepSessionsCommand<T extends GlusterVolumeParameters> ext
         return super.validate();
     }
 
-    protected GlusterGeoRepSyncJob getSyncJobInstance() {
-        return GlusterGeoRepSyncJob.getInstance();
-    }
-
     @Override
     protected void executeCommand() {
-        getSyncJobInstance().refreshGeoRepDataForVolume(getGlusterVolume());
+        glusterGeoRepSyncJob.refreshGeoRepDataForVolume(getGlusterVolume());
         setSucceeded(true);
 
     }
