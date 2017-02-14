@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1112,7 +1111,7 @@ public class GlusterSyncJob extends GlusterJob {
         }
 
         if (current == null || current.isEmpty()) {
-            return Arrays.asList(newValue);
+            return Collections.singletonList(newValue);
         }
 
         if (limit == 0) {
