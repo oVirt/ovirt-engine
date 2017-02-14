@@ -317,6 +317,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED();
 
+    String ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED_WITH_HA_OFF();
+
     String VM_PINNING_FORMAT_INVALID();
 
     String VM_PINNING_VCPU_DOES_NOT_EXIST();

@@ -707,6 +707,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (shouldAddLease(getParameters().getVmStaticData())) {
+            if (!getParameters().getVmStaticData().isAutoStartup()) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED_WITH_HA_OFF);
+            }
             if (!FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED);
             }
