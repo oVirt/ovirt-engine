@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -13,6 +15,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
  */
 @NonTransactiveCommandAttribute
 public class RefreshGlusterHooksCommand<T extends GlusterClusterParameters> extends GlusterCommandBase<T> {
+    @Inject
+    private GlusterHookSyncJob glusterHookSyncJob;
 
     public RefreshGlusterHooksCommand(T params, CommandContext commandContext) {
         super(params, commandContext);
@@ -44,13 +48,9 @@ public class RefreshGlusterHooksCommand<T extends GlusterClusterParameters> exte
         return true;
     }
 
-    protected GlusterHookSyncJob getSyncJobInstance() {
-        return GlusterHookSyncJob.getInstance();
-    }
-
     @Override
     protected void executeCommand() {
-        getSyncJobInstance().refreshHooksInCluster(getCluster(), true);
+        glusterHookSyncJob.refreshHooksInCluster(getCluster(), true);
         setSucceeded(true);
 
     }

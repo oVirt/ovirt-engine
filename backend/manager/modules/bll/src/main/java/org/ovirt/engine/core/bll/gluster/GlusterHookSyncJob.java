@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -31,14 +33,9 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class GlusterHookSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterHookSyncJob.class);
-
-    private static final GlusterHookSyncJob instance = new GlusterHookSyncJob();
-
-    public static GlusterHookSyncJob getInstance() {
-        return instance;
-    }
 
     @OnTimerMethodAnnotation("refreshHooks")
     public void refreshHooks() {

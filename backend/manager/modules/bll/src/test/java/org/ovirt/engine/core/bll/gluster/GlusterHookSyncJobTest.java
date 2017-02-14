@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -58,6 +59,7 @@ public class GlusterHookSyncJobTest {
     @Mock
     private ClusterDao clusterDao;
 
+    @Spy
     private GlusterHookSyncJob hookSyncJob;
     private GlusterAuditLogUtil logUtil;
 
@@ -77,8 +79,6 @@ public class GlusterHookSyncJobTest {
     }
 
     private void initMocks() {
-
-        hookSyncJob = spy(GlusterHookSyncJob.getInstance());
         logUtil = spy(GlusterAuditLogUtil.getInstance());
         hookSyncJob.setLogUtil(logUtil);
         doReturn(glusterUtil).when(hookSyncJob).getGlusterUtil();

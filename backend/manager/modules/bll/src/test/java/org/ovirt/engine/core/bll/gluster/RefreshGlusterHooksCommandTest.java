@@ -43,7 +43,6 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
 
     public void setupMocks() {
         when(clusterDao.get(CLUSTER_ID)).thenReturn(getCluster());
-        doReturn(hookSyncJob).when(cmd).getSyncJobInstance();
     }
 
     private Cluster getCluster() {
