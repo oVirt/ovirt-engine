@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
@@ -47,9 +46,6 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
     @InjectMocks
     private RefreshGlusterVolumeDetailsCommand cmd =
             new RefreshGlusterVolumeDetailsCommand(new GlusterVolumeParameters(), null);
-
-    @Mock
-    private ClusterDao clusterDao;
 
     @Mock
     private GlusterSyncJob syncJob;
