@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPre
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ClusterAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -52,6 +53,10 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<Clus
         };
         nameColumn.makeSortable(ClusterConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$
+
+        ClusterAdditionalStatusColumn additionalStatusColumn = new ClusterAdditionalStatusColumn();
+        additionalStatusColumn.setContextMenuTitle(constants.additionalStatusCluster());
+        getTable().addColumn(additionalStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         CommentColumn<Cluster> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn,

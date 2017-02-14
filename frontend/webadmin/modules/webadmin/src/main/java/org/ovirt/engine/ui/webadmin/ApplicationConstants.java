@@ -1092,6 +1092,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String additionalStatusHost();
 
+    String additionalStatusCluster();
+
     String additionalStatusDataCenter();
 
     String vmsCount();

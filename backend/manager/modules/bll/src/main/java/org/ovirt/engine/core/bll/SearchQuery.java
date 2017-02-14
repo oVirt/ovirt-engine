@@ -339,7 +339,16 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<Cluster> searchClusters() {
-        return genericSearch(clusterDao, true);
+        Optional<Version> retVal = Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels).stream()
+                .max((v1, v2) -> v1.compareTo(v2));
+        List<Cluster> clusters = genericSearch(clusterDao, true);
+        if (retVal.isPresent()) {
+            clusters.stream()
+                    .forEach(cluster -> cluster.setClusterCompatibilityLevelUpgradeNeeded(
+                            retVal.get().compareTo(cluster.getCompatibilityVersion()) > 0)
+                    );
+        }
+        return clusters;
     }
 
     private List<StoragePool> searchStoragePool() {
