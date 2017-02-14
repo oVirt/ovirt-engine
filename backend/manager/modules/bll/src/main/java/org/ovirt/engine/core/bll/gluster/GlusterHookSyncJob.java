@@ -314,13 +314,13 @@ public class GlusterHookSyncJob extends GlusterJob {
         //reinitialize conflict status as we are going to calculate conflicts again.
         Integer conflictStatus = 0;
         if (!hook.getChecksum().equals(fetchedHook.getChecksum())) {
-            conflictStatus = conflictStatus | CONTENT_CONFLICT.getValue();
+            conflictStatus |= CONTENT_CONFLICT.getValue();
         }
         if (!hook.getContentType().equals(fetchedHook.getContentType())) {
-            conflictStatus = conflictStatus | CONTENT_CONFLICT.getValue();
+            conflictStatus |= CONTENT_CONFLICT.getValue();
         }
         if (!hook.getStatus().equals(fetchedHook.getStatus())) {
-            conflictStatus = conflictStatus | STATUS_CONFLICT.getValue();
+            conflictStatus |= STATUS_CONFLICT.getValue();
         }
         return conflictStatus;
     }
