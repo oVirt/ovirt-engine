@@ -98,7 +98,7 @@ public class GlusterJobsManager {
                 getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepStatusInSecs),
                 TimeUnit.SECONDS);
 
-        scheduler.scheduleAFixedDelayJob(GlusterSnapshotSyncJob.getInstance(),
+        scheduler.scheduleAFixedDelayJob(Injector.get(GlusterSnapshotSyncJob.class),
                 "gluster_snapshot_poll_event",
                 new Class[0],
                 new Class[0],

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -28,13 +30,9 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class GlusterSnapshotSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterSnapshotSyncJob.class);
-    private static final GlusterSnapshotSyncJob instance = new GlusterSnapshotSyncJob();
-
-    public static GlusterSnapshotSyncJob getInstance() {
-        return instance;
-    }
 
     @OnTimerMethodAnnotation("gluster_snapshot_poll_event")
     public void refreshSnapshotData() {

@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -71,6 +71,7 @@ public class GlusterSnapshotSyncJobTest {
     @Mock
     private ClusterDao clusterDao;
 
+    @Spy
     private GlusterSnapshotSyncJob syncJob;
 
     @Mock
@@ -84,7 +85,6 @@ public class GlusterSnapshotSyncJobTest {
 
     @Before
     public void init() {
-        syncJob = spy(GlusterSnapshotSyncJob.getInstance());
         syncJob.setLogUtil(logUtil);
 
         doReturn(clusterDao).when(syncJob).getClusterDao();

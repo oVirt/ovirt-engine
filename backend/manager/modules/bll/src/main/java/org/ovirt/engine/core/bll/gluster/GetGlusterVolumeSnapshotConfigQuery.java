@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -12,6 +14,9 @@ public class GetGlusterVolumeSnapshotConfigQuery<P extends GlusterVolumeQueriesP
     public GetGlusterVolumeSnapshotConfigQuery(P parameters) {
         super(parameters);
     }
+
+    @Inject
+    private GlusterSnapshotSyncJob glusterSnapshotSyncJob;
 
     private Pair<List<GlusterVolumeSnapshotConfig>, List<GlusterVolumeSnapshotConfig>> getConfigPair(List<GlusterVolumeSnapshotConfig> configs) {
         List<GlusterVolumeSnapshotConfig> clusterCfgs = new ArrayList<>();
@@ -37,8 +42,7 @@ public class GetGlusterVolumeSnapshotConfigQuery<P extends GlusterVolumeQueriesP
         if (configs != null && configs.size() > 0) {
             getQueryReturnValue().setReturnValue(getConfigPair(configs));
         } else {
-            GlusterSnapshotSyncJob.getInstance()
-                    .refreshSnapshotConfigInCluster(clusterDao.get(getParameters().getClusterId()));
+            glusterSnapshotSyncJob.refreshSnapshotConfigInCluster(clusterDao.get(getParameters().getClusterId()));
             // fetch the configuration again after sync
             configs = glusterVolumeSnapshotConfigDao.getConfigByClusterId(getParameters().getClusterId());
             getQueryReturnValue().setReturnValue(getConfigPair(configs));
