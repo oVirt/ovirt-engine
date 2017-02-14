@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -53,16 +55,14 @@ public class GlusterSnapshotScheduleJob implements Serializable {
             log.error("Error while creating snapshot for volume '{}': {}",
                     volume.getName(),
                     returnValue.getExecuteFailedMessages().toString());
+            Map<String, String> customValues = new HashMap<>();
+            customValues.put(GlusterConstants.VOLUME_SNAPSHOT_NAME, snapshot.getSnapshotName());
+            customValues.put(GlusterConstants.VOLUME_NAME, volume.getName());
             logUtil.logAuditMessage(volume.getClusterId(),
                     volume,
                     null,
                     AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED,
-                    new HashMap<String, String>() {
-                        {
-                            put(GlusterConstants.VOLUME_SNAPSHOT_NAME, snapshot.getSnapshotName());
-                            put(GlusterConstants.VOLUME_NAME, volume.getName());
-                        }
-                    });
+                    customValues);
         }
 
         // Check if next schedule available, and if not delete the scheduling details from DB
@@ -75,11 +75,7 @@ public class GlusterSnapshotScheduleJob implements Serializable {
                     volume,
                     null,
                     AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SCHEDULE_DELETED,
-                    new HashMap<String, String>() {
-                        {
-                            put(GlusterConstants.VOLUME_NAME, volume.getName());
-                        }
-                    });
+                    Collections.singletonMap(GlusterConstants.VOLUME_NAME, volume.getName()));
         }
     }
 
