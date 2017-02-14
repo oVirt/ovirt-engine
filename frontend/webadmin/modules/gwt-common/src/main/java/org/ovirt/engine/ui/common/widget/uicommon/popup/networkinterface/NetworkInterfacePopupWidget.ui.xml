@@ -47,8 +47,8 @@
                     <ge:EntityModelCheckBoxEditor ui:field="enableManualMacCheckbox" label="{constants.customMacNetworkInterfacePopup}" usePatternFly="true" />
                 </b:Column>
                 <b:Column size="SM_6">
-                    <ge:StringEntityModelTextBoxEditor ui:field="MACEditor" usePatternFly="true" />
-                    <g:Label ui:field="macExample" addStyleNames="{style.macExample}" text="{constants.exampleInterfacePopup} 00:14:4a:23:67:55" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="MACEditor" usePatternFly="true" removeFormGroup="true" />
+                    <g:Label ui:field="macExample" addStyleNames="{style.macExample} form-group" text="{constants.exampleInterfacePopup} 00:14:4a:23:67:55" />
                 </b:Column>
             </b:Row>
             <b:Row>
