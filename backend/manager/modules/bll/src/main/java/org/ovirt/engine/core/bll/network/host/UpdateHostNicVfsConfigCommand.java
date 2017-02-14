@@ -54,9 +54,8 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
         if (wasNumOfVfsChanged()) {
             shouldRefreshHost = true;
             String deviceName = networkDeviceHelper.getPciDeviceNameByNic(getNic());
-            VDSReturnValue returnValue = null;
             try {
-                returnValue = runVdsCommand(VDSCommandType.HostDevChangeNumVfs,
+                VDSReturnValue returnValue = runVdsCommand(VDSCommandType.HostDevChangeNumVfs,
                         new HostDevChangeNumVfsVDSParameters(getVdsId(), deviceName, getNumOfVfs()));
                 result = returnValue.getSucceeded();
             } catch (EngineException e) {
