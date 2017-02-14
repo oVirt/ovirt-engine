@@ -305,19 +305,17 @@ public abstract class OvfReader implements IOvfBuilder {
     public VmNetworkInterface getNetworkInterface(XmlNode node) {
         // prior to 3.0 the instanceId is int , in 3.1 and on this is Guid
         String str = selectSingleNode(node, "rasd:InstanceId", _xmlNS).innerText;
-        final Guid guid;
-        VmNetworkInterface iface;
         if (!StringUtils.isNumeric(str)) { // 3.1 and above OVF format
-            guid = new Guid(str);
-            iface = interfaces.stream().filter(i -> i.getId().equals(guid)).findFirst().orElse(null);
+            final Guid guid = new Guid(str);
+            VmNetworkInterface iface = interfaces.stream().filter(i -> i.getId().equals(guid)).findFirst().orElse(null);
             if (iface == null) {
                 iface = new VmNetworkInterface();
                 iface.setId(guid);
             }
+            return iface;
         } else { // 3.0 and below OVF format
-            iface = new VmNetworkInterface();
+            return new VmNetworkInterface();
         }
-        return iface;
     }
 
     /**
