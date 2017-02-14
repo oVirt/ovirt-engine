@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.HostDevChangeNumVfsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -46,8 +45,8 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
             oldVfsConfig.setAllNetworksAllowed(isAllNetworksAllowed());
 
             if (isAllNetworksAllowed()) {
-                oldVfsConfig.setNetworks(Collections.<Guid> emptySet());
-                oldVfsConfig.setNetworkLabels(Collections.<String> emptySet());
+                oldVfsConfig.setNetworks(Collections.emptySet());
+                oldVfsConfig.setNetworkLabels(Collections.emptySet());
             }
         }
 
