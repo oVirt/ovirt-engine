@@ -344,16 +344,6 @@ public class GlusterSyncJob extends GlusterJob {
         return null;
     }
 
-    private List<String> getVdsIps(VDS vds) {
-        List<String> vdsIps = new ArrayList<>();
-        for (VdsNetworkInterface iface : getInterfaceDao().getAllInterfacesForVds(vds.getId())) {
-            if (iface.getIpv4Address() != null) {
-                vdsIps.add(iface.getIpv4Address());
-            }
-        }
-        return vdsIps;
-    }
-
     private List<GlusterServerInfo> fetchServers(Cluster cluster, VDS upServer, List<VDS> existingServers) {
         // Create a copy of the existing servers as the fetchServer method can potentially remove elements from it
         List<VDS> tempServers = new ArrayList<>(existingServers);
