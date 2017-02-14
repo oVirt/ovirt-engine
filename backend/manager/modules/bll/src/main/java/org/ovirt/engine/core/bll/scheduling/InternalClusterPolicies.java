@@ -70,7 +70,7 @@ public class InternalClusterPolicies {
                 .addFilters(CompatibilityVersionFilterPolicyUnit.class)
                 .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
 
-                .addFunction(1, EvenDistributionCPUWeightPolicyUnit.class)
+                .addFunction(2, EvenDistributionCPUWeightPolicyUnit.class)
                 .addFunction(1, EvenDistributionMemoryWeightPolicyUnit.class)
                 .addFunction(99, PreferredHostsWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
@@ -104,7 +104,7 @@ public class InternalClusterPolicies {
                 .addFilters(CompatibilityVersionFilterPolicyUnit.class)
                 .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
 
-                .addFunction(1, EvenDistributionCPUWeightPolicyUnit.class)
+                .addFunction(2, EvenDistributionCPUWeightPolicyUnit.class)
                 .addFunction(1, EvenDistributionMemoryWeightPolicyUnit.class)
                 .addFunction(99, PreferredHostsWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
@@ -139,7 +139,7 @@ public class InternalClusterPolicies {
                 .addFilters(CompatibilityVersionFilterPolicyUnit.class)
                 .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
 
-                .addFunction(1, PowerSavingCPUWeightPolicyUnit.class)
+                .addFunction(2, PowerSavingCPUWeightPolicyUnit.class)
                 .addFunction(1, PowerSavingMemoryWeightPolicyUnit.class)
                 .addFunction(99, PreferredHostsWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
@@ -175,7 +175,7 @@ public class InternalClusterPolicies {
                 .addFilters(CompatibilityVersionFilterPolicyUnit.class)
                 .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
 
-                .addFunction(1, EvenGuestDistributionWeightPolicyUnit.class)
+                .addFunction(2, EvenGuestDistributionWeightPolicyUnit.class)
                 .addFunction(99, PreferredHostsWeightPolicyUnit.class)
                 .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
