@@ -236,11 +236,10 @@ public class GlusterTaskUtils {
     }
     @SuppressWarnings("serial")
     private void logMessage(Guid clusterId, GlusterVolumeEntity volume, final String action, final String status, AuditLogType logType) {
-        logUtil.logAuditMessage(clusterId, volume, null, logType, new HashMap<String, String>(){
-            {
-                put("action", action);
-                put("status", status);
-            }});
+        Map<String, String> customValues = new HashMap<>();
+        customValues.put("action", action);
+        customValues.put("status", status);
+        logUtil.logAuditMessage(clusterId, volume, null, logType, customValues);
     }
 
     public String getSummaryMessage(GlusterVolumeTaskStatusDetail statusSummary) {
