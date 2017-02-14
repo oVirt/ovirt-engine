@@ -38,6 +38,9 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
     @Inject
     private VdsDao vdsDao;
 
+    @Inject
+    private GlusterDBUtils glusterDBUtils;
+
     public GetGlusterVolumeAdvancedDetailsQuery(P params) {
         super(params);
     }
@@ -61,7 +64,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
                 List<GlusterServerService> serviceList = advancedDetails.getServiceInfo();
                 if (serviceList != null) {
                     for (GlusterServerService service : serviceList) {
-                        String hostName = GlusterDBUtils.getInstance().getHostNameOrIP(service.getGlusterHostUuid());
+                        String hostName = glusterDBUtils.getHostNameOrIP(service.getGlusterHostUuid());
                         if (hostName != null) {
                             service.setHostName(hostName);
                         }

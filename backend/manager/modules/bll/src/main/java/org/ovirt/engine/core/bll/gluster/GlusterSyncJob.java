@@ -79,6 +79,8 @@ public class GlusterSyncJob extends GlusterJob {
     private AuditLogDirector auditLogDirector;
     @Inject
     private BackendInternal backend;
+    @Inject
+    private GlusterDBUtils glusterDBUtils;
 
     /**
      * Refreshes details of all volume across all clusters being managed in the engine. It can end up doing the
@@ -859,7 +861,7 @@ public class GlusterSyncJob extends GlusterJob {
 
         if (existingVolume.getStatus() != fetchedVolume.getStatus()) {
             existingVolume.setStatus(fetchedVolume.getStatus());
-            GlusterDBUtils.getInstance().updateVolumeStatus(existingVolume.getId(), fetchedVolume.getStatus());
+            glusterDBUtils.updateVolumeStatus(existingVolume.getId(), fetchedVolume.getStatus());
             logUtil.logVolumeMessage(existingVolume,
                     fetchedVolume.getStatus() == GlusterStatus.UP ? AuditLogType.GLUSTER_VOLUME_STARTED_FROM_CLI
                             : AuditLogType.GLUSTER_VOLUME_STOPPED_FROM_CLI);

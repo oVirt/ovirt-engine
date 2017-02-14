@@ -64,7 +64,6 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
         GlusterBrickValidator brickValidator = spy(cmd.getBrickValidator());
         doReturn(brickValidator).when(cmd).getBrickValidator();
         doReturn(brickDao).when(brickValidator).getGlusterBrickDao();
-        doReturn(dbUtils).when(cmd).getDbUtils();
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getVolumeWithRemoveBricksTask(volumeWithRemoveBricksTask)).when(volumeDao)
                 .getById(volumeWithRemoveBricksTask);

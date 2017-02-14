@@ -130,8 +130,6 @@ public class AddVdsCommandTest {
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)
                 : Collections.emptySet());
 
-        when(command.getGlusterDBUtils()).thenReturn(glusterDBUtils);
-
         when(clusterUtils.hasServers(any(Guid.class))).thenReturn(clusterHasServers);
         when(vdsDaoMock.getAllForCluster(any(Guid.class))).thenReturn(mockVdsInDb(clusterHasServers ? VDSStatus.Maintenance
                 : VDSStatus.Initializing));

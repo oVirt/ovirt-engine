@@ -25,6 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 import org.slf4j.Logger;
@@ -260,7 +261,7 @@ public class GlusterVolumeStatusReturn extends StatusReturn {
         String glusterHostUuid = (String) brick.get(HOST_UUID);
         if (!StringUtils.isEmpty(glusterHostUuid)) {
             GlusterServer glusterServer =
-                    GlusterDBUtils.getInstance().getServerByUuid(Guid.createGuidFromString(glusterHostUuid));
+                    Injector.get(GlusterDBUtils.class).getServerByUuid(Guid.createGuidFromString(glusterHostUuid));
             if (glusterServer == null) {
                 log.warn("Could not update brick '{}' to volume '{}' - server uuid '{}' not found",
                         brickName, volume.getName(), glusterHostUuid);

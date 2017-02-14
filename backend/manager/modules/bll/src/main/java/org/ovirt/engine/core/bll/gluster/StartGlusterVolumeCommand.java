@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeActionVDSParameters;
-import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 /**
  * BLL command to start a Gluster volume
@@ -59,7 +58,7 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
                                                 getGlusterVolumeName(), getParameters().isForceAction()));
         setSucceeded(returnValue.getSucceeded());
         if(getSucceeded()) {
-            GlusterDBUtils.getInstance().updateVolumeStatus(getParameters().getVolumeId(), GlusterStatus.UP);
+            glusterDBUtils.updateVolumeStatus(getParameters().getVolumeId(), GlusterStatus.UP);
             /* Refresh volume details once the volume is started.
              * A specific requirement for this was user might create a volume for the sake of using it for geo-replication.
              * However, for suggesting volumes eligible for session creation, the size information of the volume is very important.

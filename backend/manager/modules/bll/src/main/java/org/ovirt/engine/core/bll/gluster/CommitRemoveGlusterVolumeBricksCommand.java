@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBricksVDSParameters;
-import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 /**
  * BLL command to commit bricks removal asynchronous task started on a gluster volume
@@ -79,7 +78,7 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
 
         addCustomValue(GlusterConstants.NO_OF_BRICKS, String.valueOf(getParameters().getBricks().size()));
         endStepJobCommitted();
-        getDbUtils().removeBricksFromVolumeInDb(volume,
+        glusterDBUtils.removeBricksFromVolumeInDb(volume,
                 getParameters().getBricks(),
                 getParameters().getReplicaCount());
         glusterVolumeDao.updateVolumeTask(volume.getId(), null);
@@ -110,9 +109,5 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
     @Override
     public BackendInternal getBackend() {
         return super.getBackend();
-    }
-
-    public GlusterDBUtils getDbUtils() {
-        return GlusterDBUtils.getInstance();
     }
 }

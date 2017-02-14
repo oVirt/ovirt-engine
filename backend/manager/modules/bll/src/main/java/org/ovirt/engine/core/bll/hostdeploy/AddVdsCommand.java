@@ -51,7 +51,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.uutils.ssh.ConstraintByteArrayOutputStream;
@@ -477,7 +476,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 Set<String> peers = glusterUtil.getPeers(sshclient);
                 if (peers.size() > 0) {
                     for(String peer : peers) {
-                        if(getGlusterDBUtils().serverExists(clusterId, peer)) {
+                        if(glusterDBUtils.serverExists(clusterId, peer)) {
                             // peer present in cluster. so server being added is valid.
                             return true;
                         }
@@ -496,10 +495,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
         return true;
-    }
-
-    protected GlusterDBUtils getGlusterDBUtils() {
-        return GlusterDBUtils.getInstance();
     }
 
     @Override

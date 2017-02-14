@@ -27,6 +27,9 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
     @Inject
     private GlusterUtil glusterUtil;
 
+    @Inject
+    private GlusterDBUtils glusterDBUtils;
+
     public GetAddedGlusterServersQuery(P params) {
         super(params);
     }
@@ -67,11 +70,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
         return serversAndFingerprint;
     }
 
-    protected GlusterDBUtils getDbUtils() {
-        return GlusterDBUtils.getInstance();
-    }
-
     public boolean serverExists(GlusterServerInfo glusterServer) {
-        return getDbUtils().serverExists(glusterServer.getUuid());
+        return glusterDBUtils.serverExists(glusterServer.getUuid());
     }
 }

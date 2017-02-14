@@ -84,6 +84,9 @@ public class GlusterUtil {
     @Inject
     private GlusterAuditLogUtil glusterAuditLogUtil;
 
+    @Inject
+    private GlusterDBUtils glusterDBUtils;
+
     /**
      * Returns a server that is in {@link VDSStatus#Up} status.<br>
      * This server is chosen randomly from all the Up servers.
@@ -369,8 +372,8 @@ public class GlusterUtil {
 
         // Alert
         boolean limitReached =
-                checkHardLimit ? GlusterDBUtils.getInstance().isVolumeSnapshotHardLimitReached(volume.getId())
-                        : GlusterDBUtils.getInstance().isVolumeSnapshotSoftLimitReached(volume.getId());
+                checkHardLimit ? glusterDBUtils.isVolumeSnapshotHardLimitReached(volume.getId())
+                        : glusterDBUtils.isVolumeSnapshotSoftLimitReached(volume.getId());
         if (limitReached) {
             glusterAuditLogUtil.logAuditMessage(volume.getClusterId(),
                     volume,
@@ -398,11 +401,11 @@ public class GlusterUtil {
     }
 
     public void checkAndRemoveVolumeSnapshotLimitsAlert(final GlusterVolumeEntity volume) {
-        if (!GlusterDBUtils.getInstance().isVolumeSnapshotSoftLimitReached(volume.getId())) {
+        if (!glusterDBUtils.isVolumeSnapshotSoftLimitReached(volume.getId())) {
             AlertDirector.removeVolumeAlert(volume.getId(), AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED);
         }
 
-        if (!GlusterDBUtils.getInstance().isVolumeSnapshotHardLimitReached(volume.getId())) {
+        if (!glusterDBUtils.isVolumeSnapshotHardLimitReached(volume.getId())) {
             AlertDirector.removeVolumeAlert(volume.getId(), AuditLogType.GLUSTER_VOLUME_SNAPSHOT_HARD_LIMIT_REACHED);
         }
     }

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 
@@ -29,6 +30,9 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
 
     @Inject
     protected GlusterSyncJob glusterSyncJob;
+
+    @Inject
+    protected GlusterDBUtils glusterDBUtils;
 
     public GlusterVolumeCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);

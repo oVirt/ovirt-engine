@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ public final class GlusterVolumesListReturn extends StatusReturn {
     private static final String HOST_UUID = "hostUuid";
 
     private static final Logger log = LoggerFactory.getLogger(GlusterVolumesListReturn.class);
-    private static final GlusterDBUtils dbUtils = GlusterDBUtils.getInstance();
+    private static final GlusterDBUtils dbUtils = Injector.get(GlusterDBUtils.class);
 
     private Guid clusterId;
     private final Map<Guid, GlusterVolumeEntity> volumes = new HashMap<>();

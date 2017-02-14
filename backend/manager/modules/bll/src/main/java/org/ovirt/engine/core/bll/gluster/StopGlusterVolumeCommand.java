@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeActionVDSParameters;
-import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 /**
  * BLL command to stop a Gluster volume
@@ -79,7 +78,7 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
                                                 getGlusterVolumeName(), getParameters().isForceAction()));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
-            GlusterDBUtils.getInstance().updateVolumeStatus(getParameters().getVolumeId(), GlusterStatus.DOWN);
+            glusterDBUtils.updateVolumeStatus(getParameters().getVolumeId(), GlusterStatus.DOWN);
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_STOP_FAILED, returnValue.getVdsError().getMessage());
             return;

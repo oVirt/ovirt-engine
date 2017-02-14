@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -18,13 +20,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
+@Singleton
 public class GlusterDBUtils {
-    private static GlusterDBUtils instance = new GlusterDBUtils();
-
-    public static GlusterDBUtils getInstance() {
-        return instance;
-    }
-
     private DbFacade getDbFacade() {
         return DbFacade.getInstance();
     }

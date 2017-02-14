@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParam
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDao;
-import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -111,7 +110,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         if (getCluster().supportsGlusterService()) {
-            if (getGlusterDbUtils().hasBricks(getVdsId())) {
+            if (glusterDBUtils.hasBricks(getVdsId())) {
                 addValidationMessage(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 return false;
             }
@@ -374,10 +373,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private ClusterUtils getClusterUtils() {
         return ClusterUtils.getInstance();
-    }
-
-    private GlusterDBUtils getGlusterDbUtils() {
-        return GlusterDBUtils.getInstance();
     }
 
     private Cluster getSourceCluster() {

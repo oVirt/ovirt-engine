@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.validation.group.gluster.RemoveBrick;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBricksVDSParameters;
-import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 /**
  * BLL command to Remove Bricks from Gluster volume
@@ -79,9 +78,7 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
                                 getGlusterVolumeName(), getParameters().getBricks(), replicaCount, true));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
-            GlusterDBUtils.getInstance().removeBricksFromVolumeInDb(getGlusterVolume(),
-                    getParameters().getBricks(),
-                    replicaCount);
+            glusterDBUtils.removeBricksFromVolumeInDb(getGlusterVolume(), getParameters().getBricks(), replicaCount);
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_FAILED, returnValue.getVdsError().getMessage());
             return;

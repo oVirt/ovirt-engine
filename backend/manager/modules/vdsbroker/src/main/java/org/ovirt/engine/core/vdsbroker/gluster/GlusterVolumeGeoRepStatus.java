@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +90,7 @@ public class GlusterVolumeGeoRepStatus extends StatusReturn {
     }
 
     private GlusterDBUtils getDbUtils() {
-        return GlusterDBUtils.getInstance();
+        return Injector.get(GlusterDBUtils.class);
     }
 
     @SuppressWarnings("unchecked")

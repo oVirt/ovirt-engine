@@ -64,6 +64,9 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     @Inject
     private GlusterTaskUtils glusterTaskUtils;
 
+    @Inject
+    private GlusterDBUtils glusterDBUtils;
+
     @OnTimerMethodAnnotation("gluster_async_task_poll_event")
     public void updateGlusterAsyncTasks() {
         log.debug("Refreshing gluster tasks list");
@@ -211,7 +214,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                         String hostnameOrIp = brickParts[0];
                         String brickDir = brickParts[1];
                         GlusterBrickEntity brickEntity = new GlusterBrickEntity();
-                        VdsStatic server = GlusterDBUtils.getInstance().getServer(cluster.getId(), hostnameOrIp);
+                        VdsStatic server = glusterDBUtils.getServer(cluster.getId(), hostnameOrIp);
                         if (server == null) {
                             log.warn("Could not find server '{}' in cluster '{}'", hostnameOrIp, cluster.getId());
                         } else {

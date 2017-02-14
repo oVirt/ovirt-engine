@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -60,6 +59,9 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     @Mock
     private GlusterUtil glusterUtils;
 
+    @Mock
+    private GlusterDBUtils dbUtils;
+
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
@@ -102,9 +104,6 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     }
 
     private void setupMock() throws Exception {
-        GlusterDBUtils dbUtils = mock(GlusterDBUtils.class);
-
-        doReturn(dbUtils).when(getQuery()).getDbUtils();
         doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getUpServer(CLUSTER_ID);
 
         VDSReturnValue returnValue = getVDSReturnValue();
