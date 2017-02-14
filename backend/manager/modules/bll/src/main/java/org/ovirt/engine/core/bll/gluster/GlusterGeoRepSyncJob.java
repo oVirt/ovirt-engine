@@ -315,12 +315,10 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                 }
                 getStorageDomainDRDao().remove(storageDR.getStorageDomainId(), storageDR.getGeoRepSessionId());
                 StorageDomainStatic storageDomain = getStorageDomainStaticDao().get(storageDR.getStorageDomainId());
-                logGeoRepMessage(AuditLogType.STORAGE_DOMAIN_DR_DELETED, clusterId, new HashMap<String, String>() {
-                    {
-                        put("storageDomainName", storageDomain.getName());
-                        put("geoRepSessionKey", session.getSessionKey());
-                    }
-                });
+                Map<String, String> customValues = new HashMap<>();
+                customValues.put("storageDomainName", storageDomain.getName());
+                customValues.put("geoRepSessionKey", session.getSessionKey());
+                logGeoRepMessage(AuditLogType.STORAGE_DOMAIN_DR_DELETED, clusterId, customValues);
             }
             getGeoRepDao().remove(session.getId());
             logGeoRepMessage(AuditLogType.GLUSTER_GEOREP_SESSION_DELETED_FROM_CLI, clusterId, session);
@@ -328,26 +326,22 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
     }
 
     private void logGeoRepMessage(AuditLogType logType, Guid clusterId, final GlusterGeoRepSession session) {
-        logUtil.logAuditMessage(clusterId, null, null,
-                logType,
-                new HashMap<String, String>() {
-                    {
-                        put(GlusterConstants.VOLUME_NAME, session.getMasterVolumeName());
-                        put("geoRepSessionKey", session.getSessionKey());
-                    }
-                });
+        Map<String, String> customValues = new HashMap<>();
+        customValues.put(GlusterConstants.VOLUME_NAME, session.getMasterVolumeName());
+        customValues.put("geoRepSessionKey", session.getSessionKey());
+        logUtil.logAuditMessage(clusterId, null, null, logType, customValues);
     }
 
-    private void logGeoRepMessage(AuditLogType logType, Guid clusterId, final HashMap<String, String> customVars) {
+    private void logGeoRepMessage(AuditLogType logType, Guid clusterId, final Map<String, String> customVars) {
         logUtil.logAuditMessage(clusterId, null, null,
                 logType, customVars);
     }
 
-    private HashMap<String, String> getOptionChangedCustomVars(final GlusterGeoRepSession session,
+    private Map<String, String> getOptionChangedCustomVars(final GlusterGeoRepSession session,
             String key,
             String value,
             String oldValue) {
-        HashMap<String, String> keyValMap = new HashMap<>();
+        Map<String, String> keyValMap = new HashMap<>();
         keyValMap.put(GlusterConstants.VOLUME_NAME, session.getMasterVolumeName());
         keyValMap.put("geoRepSessionKey", session.getSessionKey());
         keyValMap.put("key", key);
