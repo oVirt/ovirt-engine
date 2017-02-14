@@ -20,7 +20,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTasksService;
@@ -97,7 +96,6 @@ public class GlusterTasksSyncJobTest {
 
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
         tasksSyncJob = spy(GlusterTasksSyncJob.getInstance());
         taskUtils = spy(GlusterTaskUtils.getInstance());
         doNothing().when(logUtil).logClusterMessage(any(Guid.class),
