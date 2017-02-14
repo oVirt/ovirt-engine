@@ -27,7 +27,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
@@ -83,6 +85,8 @@ public class GlusterSyncJobTest {
     @Rule
     public InjectorRule injectorRule = new InjectorRule();
 
+    @Spy
+    @InjectMocks
     private GlusterSyncJob glusterManager;
     private GlusterAuditLogUtil logUtil;
 
@@ -151,7 +155,6 @@ public class GlusterSyncJobTest {
     @Before
     public void before() {
         injectorRule.bind(TransactionManager.class, transactionManager);
-        glusterManager = spy(GlusterSyncJob.getInstance());
     }
 
     private void createObjects() {

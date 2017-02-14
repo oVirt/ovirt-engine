@@ -10,6 +10,9 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -68,27 +71,14 @@ import org.slf4j.LoggerFactory;
  * GlusterFS. This helps to make sure that any changes done on Gluster servers using the Gluster CLI are propagated to
  * engine as well.
  */
+@Singleton
 public class GlusterSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterSyncJob.class);
-    private static volatile GlusterSyncJob instance = null;
-    private final AuditLogDirector auditLogDirector;
-    private final BackendInternal backend;
 
-    private GlusterSyncJob() {
-        backend = Injector.get(BackendInternal.class);
-        auditLogDirector = Injector.get(AuditLogDirector.class);
-    }
-
-    public static GlusterSyncJob getInstance() {
-        if (instance == null) {
-            synchronized (GlusterSyncJob.class) {
-                if (instance == null) {
-                    instance = new GlusterSyncJob();
-                }
-            }
-        }
-        return instance;
-    }
+    @Inject
+    private AuditLogDirector auditLogDirector;
+    @Inject
+    private BackendInternal backend;
 
     /**
      * Refreshes details of all volume across all clusters being managed in the engine. It can end up doing the

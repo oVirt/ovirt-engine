@@ -65,7 +65,7 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
              * However, for suggesting volumes eligible for session creation, the size information of the volume is very important.
              * Having the user to wait for the sync job to sync the volume detail might not be appropriate.
              */
-            GlusterSyncJob.getInstance().refreshVolumeDetails(upServer, glusterVolumeDao.getById(getParameters().getVolumeId()));
+            glusterSyncJob.refreshVolumeDetails(upServer, glusterVolumeDao.getById(getParameters().getVolumeId()));
             /* GlusterSyncJob.getInstance().refreshVolumeDetails(upServer, getGlusterVolume());
              * will not suffice bcoz, getGlusterVolume fetches new volume only if its not yet been fetched from db and hence, refreshVolumeDetails figures out
              * that the info about volume-bricks are stale and hence attempts a update and correspondingly raises events for brick state change.

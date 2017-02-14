@@ -27,6 +27,9 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
     @Inject
     protected GlusterOptionDao glusterOptionDao;
 
+    @Inject
+    protected GlusterSyncJob glusterSyncJob;
+
     public GlusterVolumeCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
         setGlusterVolumeId(getParameters().getVolumeId());

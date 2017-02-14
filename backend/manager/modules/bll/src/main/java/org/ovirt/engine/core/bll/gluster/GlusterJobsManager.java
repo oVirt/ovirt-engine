@@ -25,7 +25,7 @@ public class GlusterJobsManager {
 
         SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
 
-        scheduler.scheduleAFixedDelayJob(GlusterSyncJob.getInstance(),
+        scheduler.scheduleAFixedDelayJob(Injector.get(GlusterSyncJob.class),
                 "refreshLightWeightData",
                 new Class[0],
                 new Object[0],
@@ -33,7 +33,7 @@ public class GlusterJobsManager {
                 getRefreshRate(ConfigValues.GlusterRefreshRateLight),
                 TimeUnit.SECONDS);
 
-        scheduler.scheduleAFixedDelayJob(GlusterSyncJob.getInstance(),
+        scheduler.scheduleAFixedDelayJob(Injector.get(GlusterSyncJob.class),
                 "refreshHeavyWeightData",
                 new Class[0],
                 new Object[0],
@@ -41,7 +41,7 @@ public class GlusterJobsManager {
                 getRefreshRate(ConfigValues.GlusterRefreshRateHeavy),
                 TimeUnit.SECONDS);
 
-        scheduler.scheduleAFixedDelayJob(GlusterSyncJob.getInstance(),
+        scheduler.scheduleAFixedDelayJob(Injector.get(GlusterSyncJob.class),
                 "refreshSelfHealInfo",
                 new Class[0],
                 new Object[0],

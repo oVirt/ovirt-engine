@@ -44,14 +44,10 @@ public class RefreshGlusterVolumeDetailsCommand extends GlusterVolumeCommandBase
         return true;
     }
 
-    protected GlusterSyncJob getSyncJobInstance() {
-        return GlusterSyncJob.getInstance();
-    }
-
     @Override
     protected void executeCommand() {
 
-        getSyncJobInstance().refreshVolumeDetails(upServer, getGlusterVolume());
+        glusterSyncJob.refreshVolumeDetails(upServer, getGlusterVolume());
         setSucceeded(true);
 
     }
