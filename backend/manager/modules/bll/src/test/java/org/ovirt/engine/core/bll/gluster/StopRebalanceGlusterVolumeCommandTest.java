@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
@@ -54,6 +55,8 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
     protected BackendInternal backend;
     @Mock
     protected VDSBrokerFrontend vdsBrokerFrontend;
+    @Spy
+    private GlusterTaskUtils glusterTaskUtils;
 
     private final Guid volumeWithRebalanceTask = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     private final Guid volumeWithRebalanceTaskCompleted = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");

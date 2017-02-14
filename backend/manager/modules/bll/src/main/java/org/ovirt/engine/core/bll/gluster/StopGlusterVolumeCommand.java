@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
@@ -22,6 +24,8 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
  */
 @NonTransactiveCommandAttribute
 public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeActionParameters> {
+    @Inject
+    private GlusterTaskUtils glusterTaskUtils;
 
     public StopGlusterVolumeCommand(GlusterVolumeActionParameters params, CommandContext context) {
         super(params, context);
@@ -53,13 +57,13 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
             return false;
         }
 
-        if (getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REBALANCE)
-                && getGlusterTaskUtils().isTaskStatus(volume, JobExecutionStatus.STARTED)) {
+        if (glusterTaskUtils.isTaskOfType(volume, GlusterTaskType.REBALANCE)
+                && glusterTaskUtils.isTaskStatus(volume, JobExecutionStatus.STARTED)) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REBALANCE_IN_PROGRESS);
         }
 
-        if (getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK)
-                && getGlusterTaskUtils().isTaskStatus(volume, JobExecutionStatus.STARTED)) {
+        if (glusterTaskUtils.isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK)
+                && glusterTaskUtils.isTaskStatus(volume, JobExecutionStatus.STARTED)) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REMOVE_BRICK_IN_PROGRESS);
         }
 
@@ -89,9 +93,5 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
         } else {
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_STOP_FAILED : errorType;
         }
-    }
-
-    public GlusterTaskUtils getGlusterTaskUtils() {
-        return GlusterTaskUtils.getInstance();
     }
 }

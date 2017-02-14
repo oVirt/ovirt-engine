@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -29,6 +31,8 @@ public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseC
     protected BackendInternal backend;
     @Mock
     protected VDSBrokerFrontend vdsBrokerFrontend;
+    @Spy
+    private GlusterTaskUtils glusterTaskUtils;
 
     protected final Guid volumeWithRemoveBricksTask = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     protected final Guid volumeWithoutAsyncTask = new Guid("000000000000-0000-0000-0000-00000003");

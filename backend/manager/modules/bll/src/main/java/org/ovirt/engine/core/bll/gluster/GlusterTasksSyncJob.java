@@ -62,6 +62,9 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     @Inject
     private GlusterTasksService provider;
 
+    @Inject
+    private GlusterTaskUtils glusterTaskUtils;
+
     @OnTimerMethodAnnotation("gluster_async_task_poll_event")
     public void updateGlusterAsyncTasks() {
         log.debug("Refreshing gluster tasks list");
@@ -97,7 +100,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             if (steps.isEmpty()) {
                 createJobForTaskFromCLI(cluster, task);
             }
-            getGlusterTaskUtils().updateSteps(cluster, task, steps);
+            glusterTaskUtils.updateSteps(cluster, task, steps);
         }
     }
 
@@ -155,7 +158,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     private Guid addAsyncTaskStep(Cluster cluster, GlusterAsyncTask task, StepEnum step, Guid execStepId) {
         VdcReturnValueBase result;
         result = backendInternal.runInternalAction(VdcActionType.AddInternalStep,
-                new AddStepParameters(execStepId, getGlusterTaskUtils().getTaskMessage(cluster, step, task), step));
+                new AddStepParameters(execStepId, glusterTaskUtils.getTaskMessage(cluster, step, task), step));
 
         if (!result.getSucceeded()) {
             //log and return
@@ -180,7 +183,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     private Guid addJob(Cluster cluster, GlusterAsyncTask task, VdcActionType actionType, final GlusterVolumeEntity vol) {
 
         VdcReturnValueBase result = backendInternal.runInternalAction(VdcActionType.AddInternalJob,
-                new AddInternalJobParameters(ExecutionMessageDirector.resolveJobMessage(actionType, getGlusterTaskUtils().getMessageMap(cluster, task)),
+                new AddInternalJobParameters(ExecutionMessageDirector.resolveJobMessage(actionType, glusterTaskUtils.getMessageMap(cluster, task)),
                         actionType, true, VdcObjectType.GlusterVolume, vol.getId()) );
         if (!result.getSucceeded()) {
             //log and return
@@ -272,10 +275,6 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         return GlusterAuditLogUtil.getInstance();
     }
 
-    public GlusterTaskUtils getGlusterTaskUtils() {
-        return GlusterTaskUtils.getInstance();
-    }
-
     /**
      * This method cleans the tasks in DB which the gluster CLI is no longer
      * aware of.
@@ -333,12 +332,12 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                 step.markStepEnded(JobExecutionStatus.UNKNOWN);
                 step.setStatus(JobExecutionStatus.UNKNOWN);
                 step.setDescription(ExecutionMessageDirector.resolveStepMessage(step.getStepType(), values));
-                getGlusterTaskUtils().endStepJob(step);
+                glusterTaskUtils.endStepJob(step);
                 if (vol != null) {
                     logTaskStoppedFromCLI(step, vol);
                 }
             }
-            getGlusterTaskUtils().releaseVolumeLock(taskId);
+            glusterTaskUtils.releaseVolumeLock(taskId);
         }
 
     }

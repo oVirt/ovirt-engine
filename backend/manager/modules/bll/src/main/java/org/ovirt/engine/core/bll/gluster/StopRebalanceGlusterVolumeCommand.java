@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
@@ -21,6 +23,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParamete
 
 @NonTransactiveCommandAttribute
 public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<GlusterVolumeRebalanceParameters> {
+    @Inject
+    private GlusterTaskUtils glusterTaskUtils;
 
     public StopRebalanceGlusterVolumeCommand(GlusterVolumeRebalanceParameters params, CommandContext commandContext) {
         super(params, commandContext);
@@ -40,8 +44,8 @@ public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<G
             return false;
         }
 
-        if (!getGlusterTaskUtils().isTaskOfType(glusterVolume, GlusterTaskType.REBALANCE)
-                || !getGlusterTaskUtils().isTaskStatus(glusterVolume, JobExecutionStatus.STARTED)) {
+        if (!glusterTaskUtils.isTaskOfType(glusterVolume, GlusterTaskType.REBALANCE)
+                || !glusterTaskUtils.isTaskStatus(glusterVolume, JobExecutionStatus.STARTED)) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REBALANCE_NOT_STARTED);
         }
         return true;
@@ -71,8 +75,8 @@ public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<G
         if (stepStatus != null) {
             endStepJob(stepStatus,
                     getStepMessageMap(stepStatus,
-                            GlusterTaskUtils.getInstance().getSummaryMessage(rebalanceStatusEntity.getStatusSummary())),
-                    GlusterTaskUtils.getInstance().isTaskSuccess(stepStatus));
+                            glusterTaskUtils.getSummaryMessage(rebalanceStatusEntity.getStatusSummary())),
+                    glusterTaskUtils.isTaskSuccess(stepStatus));
 
         } else {
             endStepJob(JobExecutionStatus.ABORTED, getStepMessageMap(JobExecutionStatus.ABORTED, null), false);

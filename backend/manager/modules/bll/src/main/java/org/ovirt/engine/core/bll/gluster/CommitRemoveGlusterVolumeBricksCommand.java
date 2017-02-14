@@ -49,8 +49,8 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
             return false;
         }
 
-        if (!getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK)
-                || !getGlusterTaskUtils().isTaskStatus(volume, JobExecutionStatus.FINISHED)) {
+        if (!glusterTaskUtils.isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK)
+                || !glusterTaskUtils.isTaskStatus(volume, JobExecutionStatus.FINISHED)) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_FINISHED);
         }
 

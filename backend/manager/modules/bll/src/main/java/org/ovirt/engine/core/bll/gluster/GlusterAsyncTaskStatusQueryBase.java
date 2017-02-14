@@ -33,6 +33,9 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
     @Inject
     protected VdsDao vdsDao;
 
+    @Inject
+    protected GlusterTaskUtils glusterTaskUtils;
+
     public GlusterAsyncTaskStatusQueryBase(P params) {
         super(params);
     }
@@ -67,10 +70,6 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
         updateHostIP(taskStatus);
         taskStatus.sort();
         return taskStatus;
-    }
-
-    public GlusterTaskUtils getGlusterTaskUtils() {
-        return GlusterTaskUtils.getInstance();
     }
 
     private void updateHostIP(GlusterVolumeTaskStatusEntity taskStatus) {
@@ -117,12 +116,12 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
             // if step has already ended, do not update status.
             if (stepsList != null && !stepsList.isEmpty() && stepsList.get(0).getEndTime() != null) {
                 asyncTask.setStatus(status.getStatusSummary().getStatus());
-                asyncTask.setMessage(GlusterTaskUtils.getInstance().getSummaryMessage(status.getStatusSummary()));
-                getGlusterTaskUtils().updateSteps(clusterDao.get(clusterId), asyncTask, stepsList);
+                asyncTask.setMessage(glusterTaskUtils.getSummaryMessage(status.getStatusSummary()));
+                glusterTaskUtils.updateSteps(clusterDao.get(clusterId), asyncTask, stepsList);
 
                 // release the volume lock if the task is completed
-                if (getGlusterTaskUtils().hasTaskCompleted(asyncTask)) {
-                    getGlusterTaskUtils().releaseLock(volume.getId());
+                if (glusterTaskUtils.hasTaskCompleted(asyncTask)) {
+                    glusterTaskUtils.releaseLock(volume.getId());
                 }
             }
 

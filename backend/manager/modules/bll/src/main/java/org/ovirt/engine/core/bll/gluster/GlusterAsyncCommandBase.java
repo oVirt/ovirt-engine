@@ -35,6 +35,9 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
     @Inject
     private JobRepository jobRepository;
 
+    @Inject
+    protected GlusterTaskUtils glusterTaskUtils;
+
     public GlusterAsyncCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
     }
@@ -123,11 +126,6 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         setLock(lock);
         freeLock();
     }
-
-    public GlusterTaskUtils getGlusterTaskUtils() {
-        return GlusterTaskUtils.getInstance();
-    }
-
 
     public GlusterBrickValidator getBrickValidator() {
         return new GlusterBrickValidator();

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
@@ -22,6 +24,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBrick
 
 @NonTransactiveCommandAttribute
 public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBase<GlusterVolumeRemoveBricksParameters> {
+    @Inject
+    private GlusterTaskUtils glusterTaskUtils;
 
     public StopRemoveGlusterVolumeBricksCommand(GlusterVolumeRemoveBricksParameters params, CommandContext commandContext) {
         super(params, commandContext);
@@ -46,8 +50,8 @@ public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBas
             return false;
         }
 
-        if (!getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK)
-                || !(getGlusterTaskUtils().isTaskStatus(volume, JobExecutionStatus.STARTED) || getGlusterTaskUtils().isTaskStatus(volume,
+        if (!glusterTaskUtils.isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK)
+                || !(glusterTaskUtils.isTaskStatus(volume, JobExecutionStatus.STARTED) || glusterTaskUtils.isTaskStatus(volume,
                         JobExecutionStatus.FINISHED))) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_STARTED);
         }
@@ -77,7 +81,7 @@ public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBas
 
         GlusterVolumeTaskStatusEntity rebalanceStatusEntity =
                 (GlusterVolumeTaskStatusEntity) returnValue.getReturnValue();
-        endStepJobAborted(GlusterTaskUtils.getInstance().getSummaryMessage(rebalanceStatusEntity.getStatusSummary()));
+        endStepJobAborted(glusterTaskUtils.getSummaryMessage(rebalanceStatusEntity.getStatusSummary()));
         releaseVolumeLock();
         getReturnValue().setActionReturnValue(rebalanceStatusEntity);
     }

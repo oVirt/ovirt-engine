@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.gluster.GlusterTasksSyncJob;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -39,9 +41,8 @@ import org.ovirt.engine.core.utils.lock.LockManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class GlusterTaskUtils {
-    private static GlusterTaskUtils instance;
-
     private static final GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
     private static final String REBALANCE_IN_PROGRESS = "IN PROGRESS";
     private static final String REMOVE_BRICK_FAILED = "MIGRATION FAILED";
@@ -57,17 +58,6 @@ public class GlusterTaskUtils {
     }
 
     private static final Logger log = LoggerFactory.getLogger(GlusterTasksSyncJob.class);
-
-    private GlusterTaskUtils() {
-    }
-
-    public static GlusterTaskUtils getInstance() {
-        if (instance == null) {
-            instance = new GlusterTaskUtils();
-        }
-
-        return instance;
-    }
 
     public boolean isTaskOfType(GlusterTaskSupport supportObj, GlusterTaskType type) {
         return supportObj.getAsyncTask() != null && supportObj.getAsyncTask().getType() == type;
