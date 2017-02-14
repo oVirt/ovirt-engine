@@ -87,8 +87,6 @@ public class GlusterSnapshotSyncJobTest {
 
     @Before
     public void init() {
-        syncJob.setLogUtil(logUtil);
-
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getValidCluster()).when(clusterDao).get(any(Guid.class));
         doReturn(getVolumes()).when(volumeDao).getByClusterId(CLUSTER_ID_1);

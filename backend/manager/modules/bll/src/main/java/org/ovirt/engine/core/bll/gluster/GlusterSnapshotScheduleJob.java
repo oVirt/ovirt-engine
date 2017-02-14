@@ -32,7 +32,9 @@ public class GlusterSnapshotScheduleJob implements Serializable {
     private static final long serialVersionUID = 2355384696827317365L;
 
     private static final Logger log = LoggerFactory.getLogger(GlusterSnapshotScheduleJob.class);
-    private GlusterAuditLogUtil logUtil = getLogUtil();
+
+    @Inject
+    private GlusterAuditLogUtil logUtil;
 
     @Inject
     private GlusterVolumeSnapshotScheduleDao glusterVolumeSnapshotScheduleDao;
@@ -90,9 +92,5 @@ public class GlusterSnapshotScheduleJob implements Serializable {
                     AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SCHEDULE_DELETED,
                     Collections.singletonMap(GlusterConstants.VOLUME_NAME, volume.getName()));
         }
-    }
-
-    protected GlusterAuditLogUtil getLogUtil() {
-        return GlusterAuditLogUtil.getInstance();
     }
 }

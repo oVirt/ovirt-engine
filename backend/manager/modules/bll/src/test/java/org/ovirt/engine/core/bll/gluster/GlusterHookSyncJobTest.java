@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -63,6 +62,8 @@ public class GlusterHookSyncJobTest {
     @InjectMocks
     @Spy
     private GlusterHookSyncJob hookSyncJob;
+
+    @Spy
     private GlusterAuditLogUtil logUtil;
 
     @ClassRule
@@ -77,8 +78,6 @@ public class GlusterHookSyncJobTest {
     }
 
     private void initMocks() {
-        logUtil = spy(GlusterAuditLogUtil.getInstance());
-        hookSyncJob.setLogUtil(logUtil);
         doReturn(getServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[0]);
         doReturn(Collections.emptyList()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[1]);
         doNothing().when(logUtil).logAuditMessage(any(), any(), any(), any(), anyMap());

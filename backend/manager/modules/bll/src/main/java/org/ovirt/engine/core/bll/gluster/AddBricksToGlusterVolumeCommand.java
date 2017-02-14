@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
@@ -37,6 +39,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeBricksActionParameters> {
+    @Inject
+    private GlusterAuditLogUtil logUtil;
 
     public AddBricksToGlusterVolumeCommand(GlusterVolumeBricksActionParameters params, CommandContext commandContext) {
         super(params, commandContext);
@@ -273,7 +277,6 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
     }
 
     private void logAuditMessages(List<GlusterBrickEntity> bricks) {
-        GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
         for (final GlusterBrickEntity brick : bricks) {
             logUtil.logAuditMessage(null,
                     null,

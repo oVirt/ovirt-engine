@@ -54,7 +54,9 @@ public class GlusterTaskUtils {
     @Inject
     private LockManager lockManager;
 
-    private static final GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
+    @Inject
+    private GlusterAuditLogUtil logUtil;
+
     private static final String REBALANCE_IN_PROGRESS = "IN PROGRESS";
     private static final String REMOVE_BRICK_FAILED = "MIGRATION FAILED";
     private static final String REMOVE_BRICK_IN_PROGRESS = "MIGRATION IN PROGRESS";

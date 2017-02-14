@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
@@ -88,6 +87,8 @@ public class GlusterSyncJobTest {
     @Spy
     @InjectMocks
     private GlusterSyncJob glusterManager;
+
+    @Mock
     private GlusterAuditLogUtil logUtil;
 
     private static final String OPTION_AUTH_ALLOW = "auth.allow";
@@ -241,8 +242,6 @@ public class GlusterSyncJobTest {
 
     @SuppressWarnings("unchecked")
     private void setupMocks() throws Exception {
-        logUtil = spy(GlusterAuditLogUtil.getInstance());
-        glusterManager.setLogUtil(logUtil);
         mockDaos();
 
         doReturn(existingServer1).when(glusterUtil).getUpServer(any());

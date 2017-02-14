@@ -81,6 +81,9 @@ public class GlusterUtil {
     @Inject
     private BackendInternal backend;
 
+    @Inject
+    private GlusterAuditLogUtil glusterAuditLogUtil;
+
     /**
      * Returns a server that is in {@link VDSStatus#Up} status.<br>
      * This server is chosen randomly from all the Up servers.
@@ -369,7 +372,7 @@ public class GlusterUtil {
                 checkHardLimit ? GlusterDBUtils.getInstance().isVolumeSnapshotHardLimitReached(volume.getId())
                         : GlusterDBUtils.getInstance().isVolumeSnapshotSoftLimitReached(volume.getId());
         if (limitReached) {
-            GlusterAuditLogUtil.getInstance().logAuditMessage(volume.getClusterId(),
+            glusterAuditLogUtil.logAuditMessage(volume.getClusterId(),
                     volume,
                     null,
                     logType,

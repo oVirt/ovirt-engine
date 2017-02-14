@@ -81,8 +81,6 @@ public class GlusterGeoRepSyncJobTest {
 
     @Before
     public void init() {
-        syncJob.setLogUtil(logUtil);
-
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getVolume()).when(volumeDao).getByName(any(Guid.class), anyString());
         doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));

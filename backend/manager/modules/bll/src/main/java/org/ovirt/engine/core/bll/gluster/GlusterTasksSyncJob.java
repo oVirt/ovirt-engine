@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTasksService;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddInternalJobParameters;
@@ -252,7 +251,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             logType = AuditLogType.UNASSIGNED;
             break;
         }
-        getGlusterLogUtil().logAuditMessage(cluster.getId(), vol, null, logType, values);
+        logUtil.logAuditMessage(cluster.getId(), vol, null, logType, values);
     }
 
     private void logTaskStoppedFromCLI(Step step, GlusterVolumeEntity vol) {
@@ -268,11 +267,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             logType = AuditLogType.UNASSIGNED;
             break;
         }
-        getGlusterLogUtil().logAuditMessage(vol.getClusterId(), vol, null, logType, null);
-    }
-
-    protected GlusterAuditLogUtil getGlusterLogUtil() {
-        return GlusterAuditLogUtil.getInstance();
+        logUtil.logAuditMessage(vol.getClusterId(), vol, null, logType, null);
     }
 
     /**

@@ -70,7 +70,6 @@ public class StorageDeviceSyncJobTest {
 
     @Before
     public void init() {
-        syncJob.setLogUtil(logUtil);
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getAllUpServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUID_3_6);
         doReturn(getStorageDevices(HOST_ID_WITH_NEW_DEVICES)).when(storageDeviceDao)

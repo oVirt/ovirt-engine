@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -17,16 +19,9 @@ import org.ovirt.engine.core.di.Injector;
  * cluster, volume, or server. While the AuditLogDirector is sufficient for logging from regular BLL commands, this
  * class can be used for creating audit logs from other places, e.g. GlusterManager
  */
+@Singleton
 public class GlusterAuditLogUtil {
-    private static final GlusterAuditLogUtil instance = new GlusterAuditLogUtil();
     private final AuditLogDirector auditLogDirector = new AuditLogDirector();
-
-    private GlusterAuditLogUtil() {
-    }
-
-    public static GlusterAuditLogUtil getInstance() {
-        return instance;
-    }
 
     public void logVolumeMessage(final GlusterVolumeEntity volume, final AuditLogType logType) {
         logAuditMessage(volume.getClusterId(), volume, null, logType, Collections.emptyMap());

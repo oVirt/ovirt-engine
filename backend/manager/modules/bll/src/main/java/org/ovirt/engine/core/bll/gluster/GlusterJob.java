@@ -112,15 +112,8 @@ public abstract class GlusterJob {
     @Inject
     protected GlusterUtil glusterUtil;
 
-    protected GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
-
-    /**
-     * Required so that the log util can be mocked in the JUnit test
-     */
-    protected void setLogUtil(GlusterAuditLogUtil logUtil) {
-        this.logUtil = logUtil;
-    }
-
+    @Inject
+    protected GlusterAuditLogUtil logUtil;
 
     @SuppressWarnings("unchecked")
     protected List<GlusterServerInfo> fetchServers(VDS upServer) {
