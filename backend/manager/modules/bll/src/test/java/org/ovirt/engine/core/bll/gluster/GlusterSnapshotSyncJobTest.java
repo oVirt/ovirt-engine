@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -99,8 +98,6 @@ public class GlusterSnapshotSyncJobTest {
         doReturn(getVolumes()).when(volumeDao).getByClusterId(CLUSTER_ID_1);
         doReturn(getServer()).when(glusterUtil).getRandomUpServer(any(Guid.class));
         doReturn(engineLock).when(syncJob).acquireVolumeSnapshotLock(any(Guid.class));
-        doNothing().when(glusterUtil).alertVolumeSnapshotLimitsReached(any(GlusterVolumeEntity.class));
-        doNothing().when(glusterUtil).checkAndRemoveVolumeSnapshotLimitsAlert(any(GlusterVolumeEntity.class));
     }
 
     @Test
