@@ -89,11 +89,6 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeEndElement();
 
         }
-        for (VmNetworkInterface iface : vmBase.getInterfaces()) {
-            _writer.writeStartElement("Nic");
-            _writer.writeAttributeString(OVF_URI, "id", iface.getId().toString());
-            _writer.writeEndElement();
-        }
         _writer.writeEndElement();
     }
 
