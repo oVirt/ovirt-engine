@@ -22,6 +22,8 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
     @Inject
     private DBSchedulerUtilQuartzImpl schedulerUtil;
     @Inject
+    private GlusterSnapshotScheduleJob glusterSnapshotScheduleJob;
+    @Inject
     protected GlusterVolumeSnapshotScheduleDao glusterVolumeSnapshotScheduleDao;
 
     public ScheduleGlusterVolumeSnapshotCommandBase(T params, CommandContext commandContext) {
@@ -88,7 +90,7 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
             throw new RuntimeException("Unable to form cron expression for schedule. Invalid scheduling details.");
         }
 
-        return getDbSchedulUtil().scheduleACronJob(new GlusterSnapshotScheduleJob(),
+        return getDbSchedulUtil().scheduleACronJob(glusterSnapshotScheduleJob,
                 "onTimer",
                 new Class[] { String.class, String.class, String.class, String.class, Boolean.class },
                 new Object[] { upServer.getId().toString(), getGlusterVolumeId().toString(),

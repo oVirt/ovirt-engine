@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class GlusterSnapshotScheduleJob implements Serializable {
     private static final long serialVersionUID = 2355384696827317365L;
 
