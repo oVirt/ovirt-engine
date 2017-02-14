@@ -298,6 +298,7 @@ public final class Cloner {
         obj.setComment(instance.getComment());
         obj.setCpuName(instance.getCpuName());
 
+        obj.setClusterCompatibilityLevelUpgradeNeeded(instance.isClusterCompatibilityLevelUpgradeNeeded());
         obj.setCompatibilityVersion(instance.getCompatibilityVersion());
         obj.setMigrateOnError(instance.getMigrateOnError());
         obj.setTransparentHugepages(instance.getTransparentHugepages());

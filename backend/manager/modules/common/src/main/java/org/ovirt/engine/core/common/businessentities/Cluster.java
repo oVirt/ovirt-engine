@@ -130,6 +130,8 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
 
     private boolean ksmMergeAcrossNumaNodes;
 
+    private boolean clusterCompatibilityLevelUpgradeNeeded;
+
     /**
      * How max sum of bandwidths of both outgoing and incoming migrations on one host are limited
      */
@@ -553,6 +555,14 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
 
     public void setRequiredSwitchTypeForCluster(SwitchType requiredSwitchTypeForCluster) {
         this.requiredSwitchTypeForCluster = requiredSwitchTypeForCluster;
+    }
+
+    public boolean isClusterCompatibilityLevelUpgradeNeeded() {
+        return clusterCompatibilityLevelUpgradeNeeded;
+    }
+
+    public void setClusterCompatibilityLevelUpgradeNeeded(boolean clusterCompatibilityLevelUpgradeNeeded) {
+        this.clusterCompatibilityLevelUpgradeNeeded = clusterCompatibilityLevelUpgradeNeeded;
     }
 
     @Override
