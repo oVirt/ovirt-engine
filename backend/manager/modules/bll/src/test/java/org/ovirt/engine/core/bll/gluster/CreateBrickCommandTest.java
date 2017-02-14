@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -37,6 +38,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
+    @InjectMocks
     @Spy
     private CreateBrickCommand cmd = new CreateBrickCommand(new CreateBrickParameters(), null);
 
@@ -125,7 +127,6 @@ public class CreateBrickCommandTest extends BaseCommandTest {
         doReturn(vds).when(cmd).getVds();
         doReturn(status).when(vds).getStatus();
         mockIsGlusterEnabled(true);
-        doReturn(glusterUtil).when(cmd).getGlusterUtil();
     }
 
     private void mockIsGlusterEnabled(boolean glusterService) {

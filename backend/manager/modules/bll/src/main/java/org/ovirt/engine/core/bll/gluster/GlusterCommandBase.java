@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -40,6 +42,9 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     protected AuditLogType errorType;
     protected VDS upServer;
     private Network glusterNetwork;
+
+    @Inject
+    protected GlusterUtil glusterUtil;
 
     public GlusterCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
@@ -90,11 +95,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
      * @return One of the servers in up status
      */
     protected VDS getUpServer() {
-        return getGlusterUtils().getRandomUpServer(getClusterId());
-    }
-
-    protected GlusterUtil getGlusterUtils() {
-        return GlusterUtil.getInstance();
+        return glusterUtil.getRandomUpServer(getClusterId());
     }
 
     @Override

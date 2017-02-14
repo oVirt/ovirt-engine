@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.naming.AuthenticationException;
 
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -44,7 +43,7 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
 
         try {
             Map<String, String> serverFingerPrintMap =
-                    getGlusterUtil().getPeers(getParameters().getServerName(),
+                    glusterUtil.getPeers(getParameters().getServerName(),
                             USER,
                             getParameters().getPassword(),
                             getParameters().getFingerprint());
@@ -74,10 +73,6 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    protected GlusterUtil getGlusterUtil() {
-        return GlusterUtil.getInstance();
     }
 
     /*

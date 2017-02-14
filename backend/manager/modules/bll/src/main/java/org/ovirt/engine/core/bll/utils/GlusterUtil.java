@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.inject.Singleton;
 import javax.naming.AuthenticationException;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -57,22 +58,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+@Singleton
 public class GlusterUtil {
-    private static GlusterUtil instance = new GlusterUtil();
     private static final Logger log = LoggerFactory.getLogger(GlusterUtil.class);
     private static final int SSH_PORT = 22;
     private static final String PEER = "peer";
     private static final String HOST_NAME = "hostname";
     private static final String STATE = "state";
     private static final int PEER_IN_CLUSTER = 3;
-
-    private GlusterUtil() {
-
-    }
-
-    public static GlusterUtil getInstance() {
-        return instance;
-    }
 
     /**
      * Returns a server that is in {@link VDSStatus#Up} status.<br>

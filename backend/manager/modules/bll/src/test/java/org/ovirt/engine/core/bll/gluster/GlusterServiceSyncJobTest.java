@@ -102,7 +102,6 @@ public class GlusterServiceSyncJobTest {
     private void setupCommonMock() {
         syncJob.setLogUtil(logUtil);
 
-        doReturn(glusterUtil).when(syncJob).getGlusterUtil();
         doReturn(serviceNameMap).when(syncJob).getServiceNameMap();
 
         doReturn(Collections.singletonList(createCluster())).when(clusterDao).getAll();

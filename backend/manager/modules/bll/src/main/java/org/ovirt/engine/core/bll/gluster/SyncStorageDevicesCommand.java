@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.SyncGlusterStorageDevicesParameter;
@@ -71,9 +70,4 @@ public class SyncStorageDevicesCommand<T extends SyncGlusterStorageDevicesParame
         return getSucceeded() ? AuditLogType.SYNC_STORAGE_DEVICES_IN_HOST
                 : AuditLogType.SYNC_STORAGE_DEVICES_IN_HOST_FAILED;
     }
-
-    protected GlusterUtil getGlusterUtil() {
-        return GlusterUtil.getInstance();
-    }
-
 }

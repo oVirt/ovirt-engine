@@ -87,7 +87,6 @@ public class GlusterGeoRepSyncJobTest {
         doReturn(getVolume()).when(volumeDao).getByName(any(Guid.class), anyString());
         doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));
         doReturn(getServer()).when(glusterUtil).getRandomUpServer(any(Guid.class));
-        doReturn(glusterUtil).when(syncJob).getGlusterUtil();
         doReturn(getSessions(2, true)).when(geoRepDao).getGeoRepSessionsInCluster(CLUSTER_GUID);
         doReturn(Collections.emptyList()).when(storageDomainDRDao).getWithGeoRepSession(any(Guid.class));
     }

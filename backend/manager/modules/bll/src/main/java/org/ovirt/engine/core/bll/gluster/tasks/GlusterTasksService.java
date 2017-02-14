@@ -33,8 +33,11 @@ public class GlusterTasksService {
     @Inject
     private VDSBrokerFrontend vdsBrokerFrontend;
 
+    @Inject
+    private GlusterUtil glusterUtil;
+
     public Map<Guid, GlusterAsyncTask> getTaskListForCluster(Guid id) {
-        VDS upServer = GlusterUtil.getInstance().getRandomUpServer(id);
+        VDS upServer = glusterUtil.getRandomUpServer(id);
         if (upServer == null) {
             log.info("No up server in cluster");
             return null;

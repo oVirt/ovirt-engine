@@ -74,7 +74,7 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
                     continue;
                 }
 
-                VDS slaveUpServer = getGlusterUtils().getRandomUpServer(slaveVolume.getClusterId());
+                VDS slaveUpServer = glusterUtil.getRandomUpServer(slaveVolume.getClusterId());
                 if (slaveUpServer == null) {
                     handleVdsError(AuditLogType.GLUSTER_VOLUME_ALL_SNAPSHOTS_DELETE_FAILED,
                             EngineError.NoUpServerFoundInRemoteCluster.name());
@@ -92,14 +92,14 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
                         return;
                     }
                     // Check and remove soft limit alert for the volume
-                    getGlusterUtils().checkAndRemoveVolumeSnapshotLimitsAlert(slaveVolume);
+                    glusterUtil.checkAndRemoveVolumeSnapshotLimitsAlert(slaveVolume);
                 }
             }
         }
 
         deleteAllGlusterVolumeSnapshots(getUpServer().getId(), getGlusterVolumeName(), snapshots);
         // Check and remove soft limit alert for the volume
-        getGlusterUtils().checkAndRemoveVolumeSnapshotLimitsAlert(getGlusterVolume());
+        glusterUtil.checkAndRemoveVolumeSnapshotLimitsAlert(getGlusterVolume());
     }
 
     @Override

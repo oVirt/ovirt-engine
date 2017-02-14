@@ -42,7 +42,7 @@ public class StorageDeviceSyncJob extends GlusterJob {
         // for every cluster that supports disk provisioning
         for (Cluster cluster : clusters) {
             if (supportsGlusterDiskProvisioning(cluster)) {
-                refreshStorageDevicesFromServers(getGlusterUtil().getAllUpServers(cluster.getId()));
+                refreshStorageDevicesFromServers(glusterUtil.getAllUpServers(cluster.getId()));
             }
         }
     }

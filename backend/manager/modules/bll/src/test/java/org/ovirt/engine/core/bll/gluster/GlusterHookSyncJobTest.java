@@ -79,7 +79,6 @@ public class GlusterHookSyncJobTest {
     private void initMocks() {
         logUtil = spy(GlusterAuditLogUtil.getInstance());
         hookSyncJob.setLogUtil(logUtil);
-        doReturn(glusterUtil).when(hookSyncJob).getGlusterUtil();
         doReturn(getServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[0]);
         doReturn(Collections.emptyList()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[1]);
         doNothing().when(logUtil).logAuditMessage(any(), any(), any(), any(), anyMap());

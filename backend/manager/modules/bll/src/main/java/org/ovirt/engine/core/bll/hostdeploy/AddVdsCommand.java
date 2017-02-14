@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -330,7 +329,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         if (isGlusterSupportEnabled() && clusterHasNonInitializingServers()) {
             // allow simultaneous installation of hosts, but if a host has completed install, only
             // allow addition of another host if it can be peer probed to cluster.
-            VDS upServer = getGlusterUtil().getUpServer(getClusterId());
+            VDS upServer = glusterUtil.getUpServer(getClusterId());
             if (upServer == null) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
             }
@@ -475,7 +474,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         if (isGlusterSupportEnabled() && clusterHasServers()) {
             try {
                 // Must not allow adding a server that already is part of another gluster cluster
-                Set<String> peers = getGlusterUtil().getPeers(sshclient);
+                Set<String> peers = glusterUtil.getPeers(sshclient);
                 if (peers.size() > 0) {
                     for(String peer : peers) {
                         if(getGlusterDBUtils().serverExists(clusterId, peer)) {
@@ -501,10 +500,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     protected GlusterDBUtils getGlusterDBUtils() {
         return GlusterDBUtils.getInstance();
-    }
-
-    protected GlusterUtil getGlusterUtil() {
-        return GlusterUtil.getInstance();
     }
 
     @Override

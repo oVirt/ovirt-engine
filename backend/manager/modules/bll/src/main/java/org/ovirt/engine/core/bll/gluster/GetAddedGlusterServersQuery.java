@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -22,6 +24,8 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
  * Query to get Added Gluster Servers with/without server ssh key fingerprint
  */
 public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private GlusterUtil glusterUtil;
 
     public GetAddedGlusterServersQuery(P params) {
         super(params);
@@ -31,7 +35,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
     @SuppressWarnings("unchecked")
     protected void executeQueryCommand() {
         Map<String, String> glusterServers = new HashMap<>();
-        VDS upServer = getGlusterUtils().getUpServer(getParameters().getClusterId());
+        VDS upServer = glusterUtil.getUpServer(getParameters().getClusterId());
 
         if(upServer != null ) {
             VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterServersList,
@@ -69,9 +73,5 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
 
     public boolean serverExists(GlusterServerInfo glusterServer) {
         return getDbUtils().serverExists(glusterServer.getUuid());
-    }
-
-    public GlusterUtil getGlusterUtils() {
-        return GlusterUtil.getInstance();
     }
 }

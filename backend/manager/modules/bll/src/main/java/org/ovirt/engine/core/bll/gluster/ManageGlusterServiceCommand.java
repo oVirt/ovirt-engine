@@ -103,7 +103,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
          * On a server level change, this validation leads to chicken-egg if glusterd is not running
          */
         if (!Guid.isNullOrEmpty(getClusterId()) && Guid.isNullOrEmpty(getParameters().getServerId())
-                && getGlusterUtils().getAllUpServers(getClusterId()).size() == 0) {
+                && glusterUtil.getAllUpServers(getClusterId()).size() == 0) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SERVERS_FOR_CLUSTER);
         }
 
@@ -131,7 +131,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
     }
 
     private List<Callable<Pair<VDS, VDSReturnValue>>> getCallableVdsCmdList() {
-        List<VDS> servers = getGlusterUtils().getAllUpServers(getClusterId());
+        List<VDS> servers = glusterUtil.getAllUpServers(getClusterId());
         final List<String> serviceList = getServiceList();
         List<Callable<Pair<VDS, VDSReturnValue>>> commandList = new ArrayList<>();
         for (final VDS upServer : servers) {

@@ -74,7 +74,6 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     }
 
     private void mockDependencies() {
-        doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
         doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getUpServer(CLUSTER_ID);
         doReturn("test-vol").when(getQuery()).getGlusterVolumeName(VOLUME_ID);
         doReturn(getBrick()).when(brickDao).getById(any(Guid.class));

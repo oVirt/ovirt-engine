@@ -57,6 +57,9 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     @Mock
     private BackendInternal backendInternal;
 
+    @Mock
+    private GlusterUtil glusterUtils;
+
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
@@ -99,10 +102,8 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     }
 
     private void setupMock() throws Exception {
-        GlusterUtil glusterUtils = mock(GlusterUtil.class);
         GlusterDBUtils dbUtils = mock(GlusterDBUtils.class);
 
-        doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
         doReturn(dbUtils).when(getQuery()).getDbUtils();
         doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getUpServer(CLUSTER_ID);
 

@@ -245,7 +245,6 @@ public class GlusterSyncJobTest {
         glusterManager.setLogUtil(logUtil);
         mockDaos();
 
-        doReturn(glusterUtil).when(glusterManager).getGlusterUtil();
         doReturn(existingServer1).when(glusterUtil).getUpServer(any());
         doReturn(existingServer1).when(glusterUtil).getRandomUpServer(any());
 

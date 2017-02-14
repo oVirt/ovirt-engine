@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -97,7 +96,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
         // Perform volume bricks on server and up server null check
         if (returnValue && isGlusterEnabled()) {
-            upServer = getGlusterUtils().getUpServer(getClusterId());
+            upServer = glusterUtil.getUpServer(getClusterId());
             if (!getParameters().isForceAction()) {
                 // fail if host has bricks on a volume
                 if (hasVolumeBricksOnServer()) {
@@ -197,17 +196,13 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         glusterHooksDao.removeAllInCluster(getClusterId());
     }
 
-    public GlusterUtil getGlusterUtils() {
-        return GlusterUtil.getInstance();
-    }
-
     public ClusterUtils getClusterUtils() {
         return ClusterUtils.getInstance();
     }
 
     private void glusterHostRemove() {
         if (clusterHasMultipleHosts() && !hasVolumeBricksOnServer()) {
-            try (EngineLock lock = getGlusterUtils().acquireGlusterLockWait(getClusterId())) {
+            try (EngineLock lock = glusterUtil.acquireGlusterLockWait(getClusterId())) {
                 VDSReturnValue returnValue =
                         runVdsCommand(
                                 VDSCommandType.RemoveGlusterServer,
@@ -226,7 +221,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                     if (returnValue.getVdsError().getCode() == EngineError.GlusterHostRemoveFailedException) {
                         List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer);
                         if (glusterServers != null) {
-                            if (!getGlusterUtils().isHostExists(glusterServers, getVds())) {
+                            if (!glusterUtil.isHostExists(glusterServers, getVds())) {
                                 setSucceeded(true);
                             }
                         }

@@ -43,6 +43,9 @@ public class GlusterSnapshotScheduleJob implements Serializable {
     @Inject
     private BackendInternal backend;
 
+    @Inject
+    private GlusterUtil glusterUtil;
+
     public GlusterSnapshotScheduleJob() {
     }
 
@@ -78,7 +81,7 @@ public class GlusterSnapshotScheduleJob implements Serializable {
 
         // Check if next schedule available, and if not delete the scheduling details from DB
         GlusterVolumeSnapshotSchedule schedule = glusterVolumeSnapshotScheduleDao.getByVolumeId(volume.getId());
-        Date endDate = GlusterUtil.getInstance().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
+        Date endDate = glusterUtil.convertDate(schedule.getEndByDate(), schedule.getTimeZone());
         if (endDate != null && endDate.before(new Date())) {
             glusterVolumeSnapshotScheduleDao.removeByVolumeId(volume.getId());
             logUtil.logAuditMessage(volume.getClusterId(),

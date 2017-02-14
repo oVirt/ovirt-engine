@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -181,10 +180,6 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
             remoteServers.add(vdsDao.get(currentBrick.getServerId()));
         }
         return remoteServers;
-    }
-
-    protected GlusterUtil getGlusterUtil() {
-        return GlusterUtil.getInstance();
     }
 
     @Override

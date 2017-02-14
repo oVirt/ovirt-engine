@@ -6,7 +6,6 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -54,13 +53,13 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
         }
 
-        if (!GlusterUtil.getInstance().isVolumeThinlyProvisioned(volume)) {
+        if (!glusterUtil.isVolumeThinlyProvisioned(volume)) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_THINLY_PROVISIONED);
         }
 
         // Validate the scheduling dates (start and end by dates)
-        Date convertedStartDate = getGlusterUtils().convertDate(schedule.getStartDate(), schedule.getTimeZone());
-        Date convertedEndByDate = getGlusterUtils().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
+        Date convertedStartDate = glusterUtil.convertDate(schedule.getStartDate(), schedule.getTimeZone());
+        Date convertedEndByDate = glusterUtil.convertDate(schedule.getEndByDate(), schedule.getTimeZone());
 
         if (schedule.getRecurrence() != null
                 && schedule.getRecurrence() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN
@@ -75,17 +74,15 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
     protected String scheduleJob() {
         // convert the execution time to engine time zone
         if (schedule.getExecutionTime() != null) {
-            Time convertedTime =
-                    GlusterUtil.getInstance()
-                            .convertTime(schedule.getExecutionTime(), schedule.getTimeZone());
+            Time convertedTime = glusterUtil.convertTime(schedule.getExecutionTime(), schedule.getTimeZone());
             schedule.setExecutionTime(convertedTime);
         }
 
         // convert the start date and end by date to the given timezone
-        Date convertedStartDate = getGlusterUtils().convertDate(schedule.getStartDate(), schedule.getTimeZone());
-        Date convertedEndByDate = getGlusterUtils().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
+        Date convertedStartDate = glusterUtil.convertDate(schedule.getStartDate(), schedule.getTimeZone());
+        Date convertedEndByDate = glusterUtil.convertDate(schedule.getEndByDate(), schedule.getTimeZone());
 
-        String cronExpression = GlusterUtil.getInstance().getCronExpression(schedule);
+        String cronExpression = glusterUtil.getCronExpression(schedule);
         if (cronExpression == null) {
             throw new RuntimeException("Unable to form cron expression for schedule. Invalid scheduling details.");
         }
@@ -105,11 +102,6 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
 
     protected boolean getForce() {
         return force;
-    }
-
-    @Override
-    protected GlusterUtil getGlusterUtils() {
-        return super.getGlusterUtils();
     }
 
     protected DBSchedulerUtilQuartzImpl getDbSchedulUtil() {

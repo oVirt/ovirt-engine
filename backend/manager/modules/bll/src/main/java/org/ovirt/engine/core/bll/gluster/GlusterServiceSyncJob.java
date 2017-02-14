@@ -51,7 +51,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
         for (Cluster cluster : clusters) {
             if (supportsGlusterServicesFeature(cluster)) {
                 try {
-                    List<VDS> serversList = getGlusterUtil().getAllUpServers(cluster.getId());
+                    List<VDS> serversList = glusterUtil.getAllUpServers(cluster.getId());
 
                     // If there are no servers in the cluster, set the status as unknown
                     if (serversList.isEmpty()) {

@@ -55,6 +55,9 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
     @Inject
     protected ClusterDao clusterDao;
 
+    @Inject
+    protected GlusterUtil glusterUtil;
+
     protected GlusterQueriesCommandBase(P parameters) {
         super(parameters);
     }
@@ -67,12 +70,8 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
         return glusterVolumeDao.getById(volumeId).getName();
     }
 
-    protected GlusterUtil getGlusterUtils() {
-        return GlusterUtil.getInstance();
-    }
-
     protected Guid getUpServerId(Guid clusterId) {
-        VDS vds = getGlusterUtils().getUpServer(clusterId);
+        VDS vds = glusterUtil.getUpServer(clusterId);
         if (vds == null) {
             throw new RuntimeException("No up server found");
         }
@@ -80,7 +79,7 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
     }
 
     protected Guid getRandomUpServerId(Guid clusterId) {
-        VDS vds = getGlusterUtils().getRandomUpServer(clusterId);
+        VDS vds = glusterUtil.getRandomUpServer(clusterId);
         if (vds == null) {
             throw new RuntimeException("No up server found");
         }

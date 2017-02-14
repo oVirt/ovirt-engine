@@ -124,7 +124,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
                 glusterVolumeSnapshotDao.removeByName(volume.getId(), snapshotName);
 
                 // Sync the new bricks of the volume immediately
-                VDS upServer = getGlusterUtils().getRandomUpServer(volume.getClusterId());
+                VDS upServer = glusterUtil.getRandomUpServer(volume.getClusterId());
                 VDSReturnValue volDetailsRetVal =
                         runVdsCommand(VDSCommandType.GetGlusterVolumeInfo,
                                 new GlusterVolumeInfoVDSParameters(upServer.getId(),
@@ -159,7 +159,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
                 continue;
             }
 
-            VDS slaveUpServer = getGlusterUtils().getRandomUpServer(slaveVolume.getClusterId());
+            VDS slaveUpServer = glusterUtil.getRandomUpServer(slaveVolume.getClusterId());
             if (slaveUpServer == null) {
                 handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESTORE_FAILED,
                         EngineError.NoUpServerFoundInRemoteCluster.name());

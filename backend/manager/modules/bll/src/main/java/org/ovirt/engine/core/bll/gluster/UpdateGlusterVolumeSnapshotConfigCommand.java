@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -185,9 +184,5 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
         } else {
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CONFIG_UPDATE_FAILED : errorType;
         }
-    }
-
-    protected GlusterUtil getGlusterUtil() {
-        return GlusterUtil.getInstance();
     }
 }

@@ -193,7 +193,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                     succeeded =
                             evaluateReturnValue(errorType,
                                     runVdsCommand(VDSCommandType.CreateGlusterVolumeGeoRepSession,
-                                            new GlusterVolumeGeoRepSessionVDSParameters(getGlusterUtils().getRandomUpServer(masterVolume.getClusterId())
+                                            new GlusterVolumeGeoRepSessionVDSParameters(glusterUtil.getRandomUpServer(masterVolume.getClusterId())
                                                     .getId(),
                                                     currentSession.getMasterVolumeName(),
                                                     currentSession.getSlaveHostName(),

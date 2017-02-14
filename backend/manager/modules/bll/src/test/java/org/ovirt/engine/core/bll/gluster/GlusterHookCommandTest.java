@@ -76,7 +76,6 @@ public abstract class GlusterHookCommandTest<T extends GlusterHookCommandBase<? 
 
     public void setupMocks(boolean hookFound, GlusterHookEntity hookEntity) {
         when(glusterUtils.getAllUpServers(CLUSTER_ID)).thenReturn(getGlusterServers());
-        doReturn(glusterUtils).when(cmd).getGlusterUtils();
         doReturn(clusterUtils).when(cmd).getClusterUtils();
         if (hookFound) {
             when(hooksDao.getById(HOOK_ID)).thenReturn(hookEntity);

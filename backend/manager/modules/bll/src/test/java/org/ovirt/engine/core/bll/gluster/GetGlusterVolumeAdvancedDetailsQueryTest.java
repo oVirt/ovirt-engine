@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -49,6 +48,8 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     private static final Guid SERVER_ID = Guid.newGuid();
     private static final String SERVER_NAME = "server1";
     private GlusterVolumeAdvancedDetails expectedVolumeAdvancedDetails;
+
+    @Mock
     private GlusterUtil glusterUtils;
 
     @Mock
@@ -155,8 +156,6 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     }
 
     private void setupMock() {
-        glusterUtils = mock(GlusterUtil.class);
-
         when(volumeDao.getById(VOLUME_ID)).thenReturn(getVolume());
         when(brickDao.getById(BRICK_ID)).thenReturn(getBrick());
 
@@ -201,7 +200,6 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     public void testQueryForNullBrickId() {
         doReturn(VOLUME_ID).when(getQueryParameters()).getVolumeId();
         doReturn(null).when(getQueryParameters()).getBrickId();
-        doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
         doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getRandomUpServer(CLUSTER_ID);
 
         getQuery().executeQueryCommand();

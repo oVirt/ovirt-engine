@@ -129,7 +129,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
         } else {
             // if copying from one of the servers, all servers other than source server
             // need to be updated with hook content
-            for (final VDS server : getGlusterUtils().getAllUpServers(entity.getClusterId())) {
+            for (final VDS server : glusterUtil.getAllUpServers(entity.getClusterId())) {
                 if (!server.getId().equals(getParameters().getSourceServerId())) {
                     serverIdsToUpdate.add(server.getId());
                 }

@@ -62,7 +62,7 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
     }
 
     protected List<VDS> getAllUpServers(Guid clusterId) {
-        return getGlusterUtils().getAllUpServers(clusterId);
+        return glusterUtil.getAllUpServers(clusterId);
     }
 
     protected void updateServerHookStatusInDb(Guid hookId, Guid serverId, GlusterHookStatus status) {

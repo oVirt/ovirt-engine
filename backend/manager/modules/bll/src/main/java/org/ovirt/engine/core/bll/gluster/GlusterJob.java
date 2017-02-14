@@ -109,6 +109,9 @@ public abstract class GlusterJob {
     @Inject
     private VDSBrokerFrontend resourceManager;
 
+    @Inject
+    protected GlusterUtil glusterUtil;
+
     protected GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
 
     /**
@@ -173,9 +176,5 @@ public abstract class GlusterJob {
                         EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED)), null);
         lockManager.acquireLockWait(lock);
         return lock;
-    }
-
-    protected GlusterUtil getGlusterUtil() {
-        return GlusterUtil.getInstance();
     }
 }

@@ -67,8 +67,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     private final Guid stoppedServiceId1 = Guid.newGuid();
     private final Guid stoppedServiceId2 = Guid.newGuid();
 
-    private void prepareMocks(ManageGlusterServiceCommand command) {
-        doReturn(glusterUtils).when(command).getGlusterUtils();
+    private void prepareMocks() {
         doReturn(getUpServers()).when(glusterUtils).getAllUpServers(any(Guid.class));
     }
 
@@ -177,14 +176,14 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     @Test
     public void validateSucceedsWithStartActionType() {
         cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START);
-        prepareMocks(cmd);
+        prepareMocks();
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateSucceedsWithStopActionType() {
         cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
-        prepareMocks(cmd);
+        prepareMocks();
         assertFalse(cmd.validate());
     }
 
@@ -193,7 +192,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
         cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
         cmd.getParameters().setClusterId(Guid.newGuid());
         cmd.setClusterId(cmd.getParameters().getClusterId());
-        prepareMocks(cmd);
+        prepareMocks();
         assertTrue(cmd.validate());
     }
 
@@ -204,7 +203,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
         cmd.getParameters().setServerId(Guid.newGuid());
         cmd.setClusterId(cmd.getParameters().getClusterId());
         cmd.setVdsId(cmd.getParameters().getServerId());
-        prepareMocks(cmd);
+        prepareMocks();
         assertTrue(cmd.validate());
     }
 
@@ -212,12 +211,12 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     public void validateFailsOnNull() {
         cmd.getParameters().setServiceType(ServiceType.NFS);
         cmd.getParameters().setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START);
-        prepareMocks(cmd);
+        prepareMocks();
         assertFalse(cmd.validate());
     }
 
     private void setUpMockUpForStart() {
-        prepareMocks(cmd);
+        prepareMocks();
         when(serviceDao.getByServiceType(any(ServiceType.class))).thenReturn(getGlusterServiceListByServiceType(ServiceType.GLUSTER_SWIFT,
                 GlusterServiceStatus.STOPPED));
         doReturn(getGlusterServerServicesByServerIdAndServiceType(Guid.newGuid(),
@@ -228,7 +227,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     }
 
     private void setUpMockUpForStop() {
-        prepareMocks(cmd);
+        prepareMocks();
         when(serviceDao.getByServiceType(any(ServiceType.class))).thenReturn(getGlusterServiceListByServiceType(ServiceType.GLUSTER_SWIFT,
                 GlusterServiceStatus.RUNNING));
         doReturn(getGlusterServerServicesByServerIdAndServiceType(Guid.newGuid(),
@@ -239,7 +238,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     }
 
     private void setUpMockUpForRestart() {
-        prepareMocks(cmd);
+        prepareMocks();
         when(serviceDao.getByServiceType(any(ServiceType.class))).thenReturn(getGlusterServiceListByServiceType(ServiceType.GLUSTER_SWIFT,
                 GlusterServiceStatus.RUNNING));
         doReturn(getGlusterServerServicesByServerIdAndServiceType(Guid.newGuid(),

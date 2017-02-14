@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -66,6 +65,7 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
     @Mock
     private GlusterServerDao glusterServerDao;
 
+    @Mock
     private GlusterUtil glusterUtils;
 
     @Before
@@ -175,8 +175,6 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
     }
 
     private void setupMock() {
-        glusterUtils = mock(GlusterUtil.class);
-
         doReturn(CLUSTER_ID).when(getQueryParameters()).getClusterId();
         doReturn(VOLUME_ID).when(getQueryParameters()).getVolumeId();
         when(volumeDao.getById(VOLUME_ID)).thenReturn(getVolume());
@@ -195,7 +193,6 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
     @Test
     public void testQueryForStatusDetails() {
         doReturn(VOLUME_ID).when(getQueryParameters()).getVolumeId();
-        doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
         when(vdsDao.get(SERVER_ID)).thenReturn(getVds(VDSStatus.Up));
         when(glusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
 

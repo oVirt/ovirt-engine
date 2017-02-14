@@ -112,7 +112,7 @@ public class GlusterSyncJob extends GlusterJob {
         log.debug("Refreshing Gluster lightweight Data for cluster '{}'", cluster.getName());
 
         List<VDS> existingServers = vdsDao.getAllForCluster(cluster.getId());
-        VDS upServer = getGlusterUtil().getUpServer(cluster.getId());
+        VDS upServer = glusterUtil.getUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No server UP in cluster '{}'. Can't refresh it's data at this point.", cluster.getName());
             return;
@@ -174,7 +174,7 @@ public class GlusterSyncJob extends GlusterJob {
                             "Server '{}' has been removed directly using the gluster CLI. Removing it from engine as well.",
                             server.getName());
                     logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
-                    try (EngineLock lock = getGlusterUtil().acquireGlusterLockWait(server.getId())) {
+                    try (EngineLock lock = glusterUtil.acquireGlusterLockWait(server.getId())) {
                         removeServerFromDb(server);
                         // if last but one server, reset alternate probed address for last server
                         checkAndResetKnownAddress(existingServers, server);
@@ -890,7 +890,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void refreshClusterHeavyWeightData(Cluster cluster) {
-        VDS upServer = getGlusterUtil().getRandomUpServer(cluster.getId());
+        VDS upServer = glusterUtil.getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No server UP in cluster '{}'. Can't refresh it's data at this point.", cluster.getName());
             return;
@@ -1057,7 +1057,7 @@ public class GlusterSyncJob extends GlusterJob {
      */
     public void refreshSelfHealData(Cluster cluster) {
 
-        VDS upServer = getGlusterUtil().getRandomUpServer(cluster.getId());
+        VDS upServer = glusterUtil.getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No server UP in cluster '{}'. Can't refresh self heal data at this point.", cluster.getName());
             return;

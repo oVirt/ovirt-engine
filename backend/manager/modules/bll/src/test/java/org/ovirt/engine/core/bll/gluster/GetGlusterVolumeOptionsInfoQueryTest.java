@@ -66,7 +66,6 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
         returnValue.setReturnValue(expected);
         doReturn(returnValue).when(getQuery()).runVdsCommand(eq(VDSCommandType.GetGlusterVolumeOptionsInfo),
                 any(VDSParametersBase.class));
-        doReturn(glusterUtils).when(getQuery()).getGlusterUtils();
         when(glusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
     }
 

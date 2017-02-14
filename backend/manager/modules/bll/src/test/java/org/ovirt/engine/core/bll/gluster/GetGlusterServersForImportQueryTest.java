@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -40,6 +39,9 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     @Mock
     private VdsStaticDao vdsStaticDao;
 
+    @Mock
+    private GlusterUtil glusterUtil;
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -52,9 +54,6 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
 
     private void setupMock() throws AuthenticationException, IOException {
         doReturn(getVdsStatic()).when(vdsStaticDao).getByHostName(EXISTING_SERVER);
-
-        GlusterUtil glusterUtil = mock(GlusterUtil.class);
-        doReturn(glusterUtil).when(getQuery()).getGlusterUtil();
 
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
         EXPECTED_MAP.put(SERVER_NAME2, FINGER_PRINT2);

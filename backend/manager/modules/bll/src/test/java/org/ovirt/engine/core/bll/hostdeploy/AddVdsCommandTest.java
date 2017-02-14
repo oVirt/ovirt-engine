@@ -127,7 +127,6 @@ public class AddVdsCommandTest {
     private void setupGlusterMock(boolean clusterHasServers, VDS upServer, boolean hasPeers) throws Exception {
         setupCommonMock(true);
 
-        when(command.getGlusterUtil()).thenReturn(glusterUtil);
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)
                 : Collections.emptySet());
 

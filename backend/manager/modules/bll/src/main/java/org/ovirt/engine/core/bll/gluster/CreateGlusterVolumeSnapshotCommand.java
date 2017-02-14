@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -74,7 +73,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                     continue;
                 }
 
-                VDS slaveUpServer = getGlusterUtils().getRandomUpServer(slaveVolume.getClusterId());
+                VDS slaveUpServer = glusterUtil.getRandomUpServer(slaveVolume.getClusterId());
                 if (slaveUpServer == null) {
                     handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED,
                             "No up server found in slave cluster of geo-rep session");
@@ -127,7 +126,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                     glusterVolumeSnapshotDao.save(slaveVolumeSnapshot);
 
                     // check if the snapshot soft limit reached now for the volume and alert
-                    getGlusterUtils().alertVolumeSnapshotLimitsReached(slaveVolume);
+                    glusterUtil.alertVolumeSnapshotLimitsReached(slaveVolume);
                 }
             }
         }
@@ -167,7 +166,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             glusterVolumeSnapshotDao.save(createdSnapshot);
             addCustomValue(GlusterConstants.VOLUME_SNAPSHOT_NAME, createdSnapshot.getSnapshotName());
             // check if the snapshot soft limit reached now for the volume and alert
-            getGlusterUtils().alertVolumeSnapshotLimitsReached(getGlusterVolume());
+            glusterUtil.alertVolumeSnapshotLimitsReached(getGlusterVolume());
         }
 
         // Resume the snapshot paused sessions by engine
@@ -207,7 +206,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS);
         }
 
-        if (!GlusterUtil.getInstance().isVolumeThinlyProvisioned(volume)) {
+        if (!glusterUtil.isVolumeThinlyProvisioned(volume)) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_THINLY_PROVISIONED);
         }
 

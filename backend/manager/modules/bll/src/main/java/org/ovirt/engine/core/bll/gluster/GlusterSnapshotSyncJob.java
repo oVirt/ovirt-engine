@@ -68,7 +68,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             return;
         }
 
-        final VDS upServer = getGlusterUtil().getRandomUpServer(cluster.getId());
+        final VDS upServer = glusterUtil.getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.info("No UP server found in cluster '{}' for snapshot monitoring", cluster.getName());
             return;
@@ -83,11 +83,11 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             List<GlusterVolumeEntity> volumes = volumeDao.getByClusterId(cluster.getId());
             for (final GlusterVolumeEntity volume : volumes) {
                 // check if the snapshot soft limit reached for the volume and alert
-                getGlusterUtil().alertVolumeSnapshotLimitsReached(volume);
+                glusterUtil.alertVolumeSnapshotLimitsReached(volume);
 
                 // Check and remove soft limit alert for the volume.
                 // It might have fallen below the soft limit as part of deletions of snapshots
-                getGlusterUtil().checkAndRemoveVolumeSnapshotLimitsAlert(volume);
+                glusterUtil.checkAndRemoveVolumeSnapshotLimitsAlert(volume);
             }
         } else {
             log.error("VDS Error {}", returnValue.getVdsError().getMessage());
@@ -100,7 +100,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             return;
         }
 
-        final VDS upServer = getGlusterUtil().getRandomUpServer(cluster.getId());
+        final VDS upServer = glusterUtil.getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.info("No UP server found in cluster '{}' for snapshot configurations monitoring", cluster.getName());
             return;

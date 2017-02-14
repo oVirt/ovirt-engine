@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -25,6 +26,8 @@ import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
 @Singleton
 public class GlusterGeoRepUtil {
+    @Inject
+    private GlusterUtil glusterUtil;
 
     public Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> getEligibilityPredicates(final GlusterVolumeEntity masterVolume) {
         Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> eligibilityPredicates = new HashMap<>();
@@ -89,7 +92,7 @@ public class GlusterGeoRepUtil {
     }
 
     public Guid getUpServerId(Guid clusterId) {
-        VDS randomUpServer = GlusterUtil.getInstance().getRandomUpServer(clusterId);
+        VDS randomUpServer = glusterUtil.getRandomUpServer(clusterId);
         return randomUpServer == null ? null : randomUpServer.getId();
     }
 

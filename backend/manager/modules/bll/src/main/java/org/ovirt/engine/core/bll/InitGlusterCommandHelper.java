@@ -51,6 +51,8 @@ public class InitGlusterCommandHelper {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
+    @Inject
+    private GlusterUtil glusterUtil;
 
     @Inject
     public InitGlusterCommandHelper(ResourceManager resourceManager,
@@ -114,7 +116,7 @@ public class InitGlusterCommandHelper {
        // If "gluster peer probe" and "gluster peer status" are executed simultaneously, the results
        // are unpredictable. Hence locking the cluster to ensure the sync job does not lead to race
        // condition.
-        try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(vds.getClusterId())) {
+        try (EngineLock lock = glusterUtil.acquireGlusterLockWait(vds.getClusterId())) {
             Map<String, String> customLogValues = new HashMap<>();
             List<VDS> vdsList = vdsDao.getAllForClusterWithStatus(vds.getClusterId(), VDSStatus.Up);
             // If the cluster already having Gluster servers, get an up server
@@ -136,7 +138,7 @@ public class InitGlusterCommandHelper {
                         setNonOperational(vds, NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
                         return false;
                     }
-                    else if (!getGlusterUtil().isHostExists(glusterServers, vds)) {
+                    else if (!glusterUtil.isHostExists(glusterServers, vds)) {
                         if (!glusterPeerProbe(vds, upServer.getId(), vds.getHostName())) {
                             customLogValues.put("Command", "gluster peer probe " + vds.getHostName());
                             setNonOperational(vds, NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
@@ -154,7 +156,7 @@ public class InitGlusterCommandHelper {
                                 return true;
                             }
                             List<GlusterServerInfo> newGlusterServers = getGlusterPeers(newUpServer.getId());
-                            if (!getGlusterUtil().isHostExists(newGlusterServers, vds)) {
+                            if (!glusterUtil.isHostExists(newGlusterServers, vds)) {
                                 log.info("Failed to find host '{}' in gluster peer list from '{}' on attempt {}",
                                         vds, newUpServer, ++retries);
                                 // if num of attempts done
@@ -178,10 +180,6 @@ public class InitGlusterCommandHelper {
             }
             return true;
         }
-    }
-
-    private GlusterUtil getGlusterUtil() {
-        return GlusterUtil.getInstance();
     }
 
     private void saveGlusterHostUuid(VDS vds, Guid addedServerUuid) {
