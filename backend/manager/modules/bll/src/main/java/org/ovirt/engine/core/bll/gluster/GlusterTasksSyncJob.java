@@ -60,10 +60,6 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         return instance;
     }
 
-    public void init() {
-        log.info("Gluster task manager has been initialized");
-    }
-
     public GlusterTasksService getProvider() {
         return provider;
     }
