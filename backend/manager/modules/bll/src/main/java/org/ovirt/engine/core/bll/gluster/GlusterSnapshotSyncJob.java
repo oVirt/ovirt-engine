@@ -32,10 +32,6 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterSnapshotSyncJob.class);
     private static final GlusterSnapshotSyncJob instance = new GlusterSnapshotSyncJob();
 
-    public void init() {
-        log.info("Gluster snapshot monitoring has been initialized");
-    }
-
     public static GlusterSnapshotSyncJob getInstance() {
         return instance;
     }
