@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.view.popup.numa;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.presenter.popup.numa.UpdatedVnumaEvent;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
 import com.google.gwt.event.dom.client.DragOverEvent;
@@ -75,12 +76,18 @@ public class DragTargetScrollPanel extends Composite implements HasHandlers {
 
     @UiHandler("container")
     void onPanelDragDrop(DropEvent event) {
-        Guid vmGuid = Guid.createGuidFromString(event.getData("VM_GID")); //$NON-NLS-1$
-        boolean pinned = Boolean.valueOf(event.getData("PINNED")); //$NON-NLS-1$
-        int vNumaNodeIndex = Integer.parseInt(event.getData("INDEX")); //$NON-NLS-1$
-        container.removeStyleName(style.dragOver());
-        event.preventDefault();
-        UpdatedVnumaEvent.fire(this, vmGuid, pinned, vNumaNodeIndex, pNumaNodeIndex);
+        String vmGid = event.getData("VM_GID"); //$NON-NLS-1$
+
+        if (StringUtils.isNotEmpty(vmGid)) {
+            Guid vmGuid = Guid.createGuidFromString(vmGid);
+            boolean pinned = Boolean.valueOf(event.getData("PINNED")); //$NON-NLS-1$
+            int vNumaNodeIndex = Integer.parseInt(event.getData("INDEX")); //$NON-NLS-1$
+            container.removeStyleName(style.dragOver());
+            event.preventDefault();
+            UpdatedVnumaEvent.fire(this, vmGuid, pinned, vNumaNodeIndex, pNumaNodeIndex);
+        } else {
+            container.removeStyleName(style.dragOver());
+        }
     }
 
     private Pair<Guid, Pair<Boolean, Integer>> parseDropString(String dropString) {
