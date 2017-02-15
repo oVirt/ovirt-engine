@@ -44,11 +44,6 @@ public class GlusterTasksService {
         }
     }
 
-    public GlusterAsyncTask getTask(Guid taskId) {
-        //Get the cluster associated with task and see if host is UP
-        return null;
-    }
-
     /**
      * Gets the list of stored tasks in database where the job is not ended
      */
