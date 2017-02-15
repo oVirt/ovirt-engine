@@ -89,9 +89,6 @@ public class GlusterSnapshotSyncJobTest {
     public void init() {
         syncJob.setLogUtil(logUtil);
 
-        doReturn(volumeDao).when(syncJob).getGlusterVolumeDao();
-        doReturn(snapshotDao).when(syncJob).getGlusterVolumeSnapshotDao();
-        doReturn(snapshotConfigDao).when(syncJob).getGlusterVolumeSnapshotConfigDao();
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
 
         doReturn(getClusters()).when(clusterDao).getAll();

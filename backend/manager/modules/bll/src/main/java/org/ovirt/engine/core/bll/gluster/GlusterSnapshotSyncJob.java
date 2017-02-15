@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -21,8 +22,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -33,6 +32,12 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class GlusterSnapshotSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterSnapshotSyncJob.class);
+
+    @Inject
+    private GlusterVolumeSnapshotDao volumeSnapshotDao;
+
+    @Inject
+    private GlusterVolumeSnapshotConfigDao volumeSnapshotConfigDao;
 
     @OnTimerMethodAnnotation("gluster_snapshot_poll_event")
     public void refreshSnapshotData() {
@@ -75,7 +80,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             addOrUpdateSnapshots(cluster.getId(), (ArrayList<GlusterVolumeSnapshotEntity>) returnValue.getReturnValue());
 
             // check if the snapshot soft limit reached for a volume and alert
-            List<GlusterVolumeEntity> volumes = getGlusterVolumeDao().getByClusterId(cluster.getId());
+            List<GlusterVolumeEntity> volumes = volumeDao.getByClusterId(cluster.getId());
             for (final GlusterVolumeEntity volume : volumes) {
                 // check if the snapshot soft limit reached for the volume and alert
                 getGlusterUtil().alertVolumeSnapshotLimitsReached(volume);
@@ -119,8 +124,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         }
 
         Cluster cluster = clusterDao.get(clusterId);
-        List<GlusterVolumeSnapshotEntity> existingSnapshots =
-                getGlusterVolumeSnapshotDao().getAllByClusterId(clusterId);
+        List<GlusterVolumeSnapshotEntity> existingSnapshots = volumeSnapshotDao.getAllByClusterId(clusterId);
         Map<Guid, GlusterVolumeSnapshotEntity> existingSnapshotsMap = new HashMap<>();
         for (GlusterVolumeSnapshotEntity existingSnapshot : existingSnapshots) {
             existingSnapshotsMap.put(existingSnapshot.getId(), existingSnapshot);
@@ -134,7 +138,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             GlusterVolumeSnapshotEntity correspondingExistingSnapshot =
                     existingSnapshotsMap.get(fetchedSnapshot.getId());
             if (correspondingExistingSnapshot == null) {
-                final GlusterVolumeEntity volume = getGlusterVolumeDao().getById(fetchedSnapshot.getVolumeId());
+                final GlusterVolumeEntity volume = volumeDao.getById(fetchedSnapshot.getVolumeId());
                 newlyAddedSnapshots.add(fetchedSnapshot);
                 log.debug("Detected new gluster volume snapshot '{}' for volume '{}' on cluster: '{}'",
                         fetchedSnapshot.getSnapshotName(),
@@ -158,7 +162,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             GlusterVolumeSnapshotEntity correspondingFetchedSnapshot =
                     fetchedSnapshotsMap.get(existingSnapshot.getId());
             if (correspondingFetchedSnapshot == null) {
-                final GlusterVolumeEntity volume = getGlusterVolumeDao().getById(existingSnapshot.getVolumeId());
+                final GlusterVolumeEntity volume = volumeDao.getById(existingSnapshot.getVolumeId());
                 deletedSnapshots.add(existingSnapshot);
                 log.debug("Gluster volume snapshot '{}' detected removed for volume '{}' on cluster: '{}'",
                         existingSnapshot.getSnapshotName(),
@@ -204,7 +208,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
 
         Map<String, Map<String, String>> volumeConfigs = configInfo.getVolumeConfigOptions();
         for (Map.Entry<String, Map<String, String>> entry : volumeConfigs.entrySet()) {
-            GlusterVolumeEntity volume = getGlusterVolumeDao().getByName(clusterId, entry.getKey());
+            GlusterVolumeEntity volume = volumeDao.getByName(clusterId, entry.getKey());
             if (volume == null) {
                 continue;
             }
@@ -237,10 +241,9 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         param.setParamName(paramName);
         param.setParamValue(paramValue);
         GlusterVolumeSnapshotConfig existingParamDetail =
-                getGlusterVolumeSnapshotConfigDao().getConfigByClusterIdAndName(cluster.getId(),
-                        paramName);
+                volumeSnapshotConfigDao.getConfigByClusterIdAndName(cluster.getId(), paramName);
         if (existingParamDetail == null) {
-            getGlusterVolumeSnapshotConfigDao().save(param);
+            volumeSnapshotConfigDao.save(param);
             log.debug("Detected new gluster volume snapshot configuration '{}' with value '{}' for cluster: '{}'",
                     paramName,
                     paramValue,
@@ -254,9 +257,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
                     AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CLUSTER_CONFIG_DETECTED_NEW,
                     customValues);
         } else if (!existingParamDetail.getParamValue().equals(paramValue)) {
-            getGlusterVolumeSnapshotConfigDao().updateConfigByClusterIdAndName(cluster.getId(),
-                    paramName,
-                    paramValue);
+            volumeSnapshotConfigDao.updateConfigByClusterIdAndName(cluster.getId(), paramName, paramValue);
         }
     }
 
@@ -270,11 +271,9 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         cfg.setParamName(paramName);
         cfg.setParamValue(paramValue);
         GlusterVolumeSnapshotConfig existingParamDetail =
-                getGlusterVolumeSnapshotConfigDao().getConfigByVolumeIdAndName(cluster.getId(),
-                        volume.getId(),
-                        paramName);
+                volumeSnapshotConfigDao.getConfigByVolumeIdAndName(cluster.getId(), volume.getId(), paramName);
         if (existingParamDetail == null) {
-            getGlusterVolumeSnapshotConfigDao().save(cfg);
+            volumeSnapshotConfigDao.save(cfg);
             log.debug("Detected new gluster volume snapshot configuration '{}' with value '{}' for volume: '{}' on cluster '{}'",
                     paramName,
                     paramValue,
@@ -291,19 +290,16 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
                     AuditLogType.GLUSTER_VOLUME_SNAPSHOT_VOLUME_CONFIG_DETECTED_NEW,
                     customValues);
         } else if (!existingParamDetail.getParamValue().equals(paramValue)) {
-            getGlusterVolumeSnapshotConfigDao().updateConfigByVolumeIdAndName(cluster.getId(),
-                    volume.getId(),
-                    paramName,
-                    paramValue);
+            volumeSnapshotConfigDao.updateConfigByVolumeIdAndName(cluster.getId(), volume.getId(), paramName, paramValue);
         }
     }
 
     private void saveNewSnapshots(List<GlusterVolumeSnapshotEntity> snapshots) {
-        getGlusterVolumeSnapshotDao().saveAll(snapshots);
+        volumeSnapshotDao.saveAll(snapshots);
     }
 
     private void updateSnapshots(List<GlusterVolumeSnapshotEntity> snapshots) {
-        getGlusterVolumeSnapshotDao().updateAllInBatch(snapshots);
+        volumeSnapshotDao.updateAllInBatch(snapshots);
     }
 
     private void deleteSnapshots(List<GlusterVolumeSnapshotEntity> snaphosts) {
@@ -311,22 +307,10 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         for (GlusterVolumeSnapshotEntity snapshot : snaphosts) {
             deletedIds.add(snapshot.getId());
         }
-        getGlusterVolumeSnapshotDao().removeAll(deletedIds);
+        volumeSnapshotDao.removeAll(deletedIds);
     }
 
     private boolean supportsGlusterSnapshotFeature(Cluster cluster) {
         return cluster.supportsGlusterService();
-    }
-
-    protected GlusterVolumeDao getGlusterVolumeDao() {
-        return DbFacade.getInstance().getGlusterVolumeDao();
-    }
-
-    protected GlusterVolumeSnapshotDao getGlusterVolumeSnapshotDao() {
-        return DbFacade.getInstance().getGlusterVolumeSnapshotDao();
-    }
-
-    protected GlusterVolumeSnapshotConfigDao getGlusterVolumeSnapshotConfigDao() {
-        return DbFacade.getInstance().getGlusterVolumeSnapshotConfigDao();
     }
 }
