@@ -70,19 +70,11 @@ public class GlusterTaskUtils {
     }
 
     public boolean isTaskOfType(GlusterTaskSupport supportObj, GlusterTaskType type) {
-        if (supportObj.getAsyncTask() != null && supportObj.getAsyncTask().getType() == type) {
-            return true;
-        }
-
-        return false;
+        return supportObj.getAsyncTask() != null && supportObj.getAsyncTask().getType() == type;
     }
 
     public boolean isTaskStatus(GlusterTaskSupport supportObj, JobExecutionStatus status) {
-        if (supportObj.getAsyncTask() != null && supportObj.getAsyncTask().getStatus() == status) {
-            return true;
-        }
-
-        return false;
+        return supportObj.getAsyncTask() != null && supportObj.getAsyncTask().getStatus() == status;
     }
 
     /**
@@ -138,12 +130,9 @@ public class GlusterTaskUtils {
 
     public boolean hasTaskCompleted(GlusterAsyncTask task) {
         // Remove brick task is marked completed only if committed or aborted.
-        if (JobExecutionStatus.ABORTED == task.getStatus() ||
+        return JobExecutionStatus.ABORTED == task.getStatus() ||
                 (JobExecutionStatus.FINISHED == task.getStatus() && task.getType() != GlusterTaskType.REMOVE_BRICK)
-                || JobExecutionStatus.FAILED == task.getStatus()) {
-            return true;
-        }
-        return false;
+                || JobExecutionStatus.FAILED == task.getStatus();
     }
 
     public String getTaskMessage(Cluster cluster, StepEnum stepType, GlusterAsyncTask task) {
