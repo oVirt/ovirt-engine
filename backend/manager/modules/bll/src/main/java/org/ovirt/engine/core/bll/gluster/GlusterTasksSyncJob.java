@@ -56,6 +56,9 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     @Inject
     private BackendInternal backendInternal;
 
+    @Inject
+    private ExecutionHandler executionHandler;
+
     private final GlusterTasksService provider = new GlusterTasksService();
 
     public GlusterTasksService getProvider() {
@@ -144,9 +147,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
         Guid asyncStepId = addAsyncTaskStep(cluster, task, step, execStepId);
         Step asyncStep = stepDao.get(asyncStepId);
-        ExecutionHandler.getInstance().updateStepExternalId(asyncStep,
-                task.getTaskId(),
-                ExternalSystemType.GLUSTER);
+        executionHandler.updateStepExternalId(asyncStep, task.getTaskId(), ExternalSystemType.GLUSTER);
         updateVolumeBricksAndLock(cluster, task, vol);
     }
 
