@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -32,10 +33,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.slf4j.Logger;
@@ -43,6 +42,18 @@ import org.slf4j.LoggerFactory;
 
 @Singleton
 public class GlusterTaskUtils {
+    @Inject
+    private ExecutionHandler executionHandler;
+
+    @Inject
+    private GlusterVolumeDao volumeDao;
+
+    @Inject
+    private JobRepository jobRepository;
+
+    @Inject
+    private LockManager lockManager;
+
     private static final GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
     private static final String REBALANCE_IN_PROGRESS = "IN PROGRESS";
     private static final String REMOVE_BRICK_FAILED = "MIGRATION FAILED";
@@ -74,7 +85,7 @@ public class GlusterTaskUtils {
      *            ID of the cluster on which the lock is to be released
      */
     public void releaseLock(Guid clusterId) {
-        getLockManager().releaseLock(getEngineLock(clusterId));
+        lockManager.releaseLock(getEngineLock(clusterId));
     }
 
     /**
@@ -89,7 +100,7 @@ public class GlusterTaskUtils {
 
     public void releaseVolumeLock(Guid taskId) {
         // get volume associated with task
-        GlusterVolumeEntity vol = getVolumeDao().getVolumeByGlusterTask(taskId);
+        GlusterVolumeEntity vol = volumeDao.getVolumeByGlusterTask(taskId);
 
         if (vol != null) {
             // release lock on volume
@@ -101,9 +112,9 @@ public class GlusterTaskUtils {
     }
 
     public void endStepJob(Step step) {
-        getJobRepository().updateStep(step);
-        ExecutionContext finalContext = ExecutionHandler.getInstance().createFinalizingContext(step.getId());
-        ExecutionHandler.getInstance().endTaskStepAndJob(finalContext, isTaskSuccess(step.getStatus()));
+        jobRepository.updateStep(step);
+        ExecutionContext finalContext = executionHandler.createFinalizingContext(step.getId());
+        executionHandler.endTaskStepAndJob(finalContext, isTaskSuccess(step.getStatus()));
     }
 
     public boolean isTaskSuccess(JobExecutionStatus status) {
@@ -190,17 +201,17 @@ public class GlusterTaskUtils {
                 endStepJob(step);
                 releaseVolumeLock(task.getTaskId());
             } else {
-                getJobRepository().updateStep(step);
+                jobRepository.updateStep(step);
             }
         }
     }
 
     public void logEventMessage(GlusterAsyncTask task, JobExecutionStatus oldStatus, Cluster cluster) {
-        GlusterVolumeEntity volume = getVolumeDao().getVolumeByGlusterTask(task.getTaskId());
+        GlusterVolumeEntity volume = volumeDao.getVolumeByGlusterTask(task.getTaskId());
         if ( volume == null){
             if(task.getTaskParameters() != null) {
                 String volName = task.getTaskParameters().getVolumeName();
-                volume = getVolumeDao().getByName(cluster.getId(), volName);
+                volume = volumeDao.getByName(cluster.getId(), volName);
             }
             else {
                 return;
@@ -213,17 +224,6 @@ public class GlusterTaskUtils {
         }
     }
 
-    public GlusterVolumeDao getVolumeDao() {
-        return DbFacade.getInstance().getGlusterVolumeDao();
-    }
-
-    public JobRepository getJobRepository() {
-        return Injector.get(JobRepository.class);
-    }
-
-    public LockManager getLockManager() {
-        return Injector.get(LockManager.class);
-    }
     @SuppressWarnings("serial")
     private void logMessage(Guid clusterId, GlusterVolumeEntity volume, final String action, final String status, AuditLogType logType) {
         Map<String, String> customValues = new HashMap<>();
