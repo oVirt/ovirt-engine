@@ -40,10 +40,6 @@ public class GlusterAuditLogUtil {
                 Collections.emptyMap());
     }
 
-    public void logClusterMessage(final Guid clusterId, final AuditLogType logType) {
-        logAuditMessage(clusterId, null, null, logType, Collections.emptyMap());
-    }
-
     public void logAuditMessage(final Guid clusterId,
             final GlusterVolumeEntity volume,
             final VDS server,
