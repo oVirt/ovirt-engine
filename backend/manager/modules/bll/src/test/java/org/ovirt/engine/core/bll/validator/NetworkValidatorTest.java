@@ -10,6 +10,7 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -265,8 +266,12 @@ public class NetworkValidatorTest {
                 getSingletonNamedNetworkList(DEFAULT_NETWORK_NAME, DEFAULT_GUID));
     }
 
-    private static Matcher<ValidationResult> failsWithNetworkInUse() {
+    private static Matcher<ValidationResult> failsWithOneNetworkInUse() {
         return failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE);
+    }
+
+    private static Matcher<ValidationResult> failsWithManyNetworkInUse() {
+        return failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_MANY_USES);
     }
 
     private void networkNotUsedByVmsTest(Matcher<ValidationResult> matcher, List<VM> vms) {
@@ -280,11 +285,22 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkInUseByVms() throws Exception {
+    public void networkInUseByOneVm() throws Exception {
         VM vm = mock(VM.class);
         when(vm.getName()).thenReturn(NAMEABLE_NAME);
 
-        networkNotUsedByVmsTest(failsWithNetworkInUse(), Collections.singletonList(vm));
+        networkNotUsedByVmsTest(failsWithOneNetworkInUse(), Collections.singletonList(vm));
+    }
+
+    @Test
+    public void networkInUseByManyVms() throws Exception {
+        VM vm1 = mock(VM.class);
+        when(vm1.getName()).thenReturn(NAMEABLE_NAME+1);
+
+        VM vm2 = mock(VM.class);
+        when(vm2.getName()).thenReturn(NAMEABLE_NAME+2);
+
+        networkNotUsedByVmsTest(failsWithManyNetworkInUse(), Arrays.asList(vm1, vm2));
     }
 
     private void networkNotUsedByHostsTest(Matcher<ValidationResult> matcher, List<VDS> hosts) {
@@ -300,11 +316,22 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkInUseByHosts() throws Exception {
+    public void networkInUseByOneHost() throws Exception {
         VDS host = mock(VDS.class);
         when(host.getName()).thenReturn(NAMEABLE_NAME);
 
-        networkNotUsedByHostsTest(failsWithNetworkInUse(), Collections.singletonList(host));
+        networkNotUsedByHostsTest(failsWithOneNetworkInUse(), Collections.singletonList(host));
+    }
+
+    @Test
+    public void networkInUseByManyHosts() throws Exception {
+        VDS host1 = mock(VDS.class);
+        when(host1.getName()).thenReturn(NAMEABLE_NAME+1);
+
+        VDS host2 = mock(VDS.class);
+        when(host2.getName()).thenReturn(NAMEABLE_NAME+2);
+
+        networkNotUsedByHostsTest(failsWithManyNetworkInUse(), Arrays.asList(host1, host2));
     }
 
     private void networkNotUsedByTemplatesTest(Matcher<ValidationResult> matcher, List<VmTemplate> templates) {
@@ -320,11 +347,22 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkInUseByTemplates() throws Exception {
+    public void networkInUseByOneTemplate() throws Exception {
         VmTemplate template = mock(VmTemplate.class);
         when(template.getName()).thenReturn(NAMEABLE_NAME);
 
-        networkNotUsedByTemplatesTest(failsWithNetworkInUse(), Collections.singletonList(template));
+        networkNotUsedByTemplatesTest(failsWithOneNetworkInUse(), Collections.singletonList(template));
+    }
+
+    @Test
+    public void networkInUseByManyTemplates() throws Exception {
+        VmTemplate template1 = mock(VmTemplate.class);
+        when(template1.getName()).thenReturn(NAMEABLE_NAME+1);
+
+        VmTemplate template2 = mock(VmTemplate.class);
+        when(template2.getName()).thenReturn(NAMEABLE_NAME+2);
+
+        networkNotUsedByTemplatesTest(failsWithManyNetworkInUse(), Arrays.asList(template1, template2));
     }
 
     @Test
