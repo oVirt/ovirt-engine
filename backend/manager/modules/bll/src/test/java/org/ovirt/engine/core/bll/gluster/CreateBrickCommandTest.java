@@ -47,14 +47,14 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 RaidType.RAID0,
                 null,
                 null, Collections.singletonList(getStorageDevice("sda", null))), null));
-        prepareMocks(cmd, VDSStatus.Up);
+        prepareMocks(VDSStatus.Up);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsForCluster() {
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters(), null));
-        prepareMocks(cmd, VDSStatus.Up);
+        prepareMocks(VDSStatus.Up);
         mockIsGlusterEnabled(false);
         assertFalse(cmd.validate());
 
@@ -65,7 +65,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
     @Test
     public void validateFailsForVdsNonUp() {
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters(), null));
-        prepareMocks(cmd, VDSStatus.Down);
+        prepareMocks(VDSStatus.Down);
         assertFalse(cmd.validate());
 
         doReturn(VDSStatus.Error).when(vds).getStatus();
@@ -83,7 +83,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 RaidType.RAID0,
                 null,
                 null, Collections.emptyList()), null));
-        prepareMocks(cmd, VDSStatus.Up);
+        prepareMocks(VDSStatus.Up);
         assertFalse(cmd.validate());
     }
 
@@ -97,7 +97,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 RaidType.RAID0,
                 null,
                 null, Collections.singletonList(storageDevice)), null));
-        prepareMocks(cmd, VDSStatus.Up);
+        prepareMocks(VDSStatus.Up);
         assertFalse(cmd.validate());
     }
 
@@ -113,16 +113,16 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 RaidType.RAID0,
                 null,
                 null, Arrays.asList(storageDevice1, storageDevice2)), null));
-        prepareMocks(cmd, VDSStatus.Up);
+        prepareMocks(VDSStatus.Up);
         assertFalse(cmd.validate());
     }
 
-    protected <T extends CreateBrickCommand> void prepareMocks(T command, VDSStatus status) {
-        when(command.getCluster()).thenReturn(cluster);
-        doReturn(vds).when(command).getVds();
+    protected void prepareMocks(VDSStatus status) {
+        when(cmd.getCluster()).thenReturn(cluster);
+        doReturn(vds).when(cmd).getVds();
         doReturn(status).when(vds).getStatus();
         mockIsGlusterEnabled(true);
-        doReturn(glusterUtil).when(command).getGlusterUtil();
+        doReturn(glusterUtil).when(cmd).getGlusterUtil();
     }
 
     private void mockIsGlusterEnabled(boolean glusterService) {
