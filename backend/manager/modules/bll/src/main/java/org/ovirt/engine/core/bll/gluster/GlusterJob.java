@@ -38,7 +38,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
@@ -104,6 +103,9 @@ public abstract class GlusterJob {
     @Inject
     protected StorageDomainDRDao storageDomainDRDao;
 
+    @Inject
+    private LockManager lockManager;
+
     protected GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
 
     /**
@@ -132,7 +134,7 @@ public abstract class GlusterJob {
      *            ID of the cluster on which the lock is to be acquired
      */
     protected void acquireLock(Guid clusterId) {
-        getLockManager().acquireLockWait(getEngineLock(clusterId));
+        lockManager.acquireLockWait(getEngineLock(clusterId));
     }
 
     /**
@@ -142,7 +144,7 @@ public abstract class GlusterJob {
      *            ID of the cluster on which the lock is to be released
      */
     protected void releaseLock(Guid clusterId) {
-        getLockManager().releaseLock(getEngineLock(clusterId));
+        lockManager.releaseLock(getEngineLock(clusterId));
     }
 
     /**
@@ -158,7 +160,7 @@ public abstract class GlusterJob {
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_GEOREP,
                         EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED)), null);
-        getLockManager().acquireLockWait(lock);
+        lockManager.acquireLockWait(lock);
         return lock;
     }
 
@@ -166,15 +168,11 @@ public abstract class GlusterJob {
         EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_SNAPSHOT,
                         EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED)), null);
-        getLockManager().acquireLockWait(lock);
+        lockManager.acquireLockWait(lock);
         return lock;
     }
 
     protected GlusterUtil getGlusterUtil() {
         return GlusterUtil.getInstance();
-    }
-
-    protected LockManager getLockManager() {
-        return Injector.get(LockManager.class);
     }
 }

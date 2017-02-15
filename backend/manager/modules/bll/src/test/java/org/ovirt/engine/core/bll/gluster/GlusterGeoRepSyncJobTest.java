@@ -41,16 +41,12 @@ import org.ovirt.engine.core.dao.StorageDomainDRDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
 @RunWith(Silent.class)
 public class GlusterGeoRepSyncJobTest {
     private static final Guid CLUSTER_GUID = new Guid("CC111111-1111-1111-1111-111111111111");
-
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private LockManager lockManager;
@@ -86,8 +82,6 @@ public class GlusterGeoRepSyncJobTest {
     @Before
     public void init() {
         syncJob.setLogUtil(logUtil);
-
-        injectorRule.bind(LockManager.class, lockManager);
 
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getVolume()).when(volumeDao).getByName(any(Guid.class), anyString());
