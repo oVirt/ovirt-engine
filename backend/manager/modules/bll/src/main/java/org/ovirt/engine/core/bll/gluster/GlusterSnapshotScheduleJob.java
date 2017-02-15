@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -35,12 +34,21 @@ public class GlusterSnapshotScheduleJob implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(GlusterSnapshotScheduleJob.class);
     private GlusterAuditLogUtil logUtil = getLogUtil();
 
+    @Inject
+    private GlusterVolumeSnapshotScheduleDao glusterVolumeSnapshotScheduleDao;
+
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
+
+    @Inject
+    private BackendInternal backend;
+
     public GlusterSnapshotScheduleJob() {
     }
 
     @OnTimerMethodAnnotation("onTimer")
     public void onTimer(String serverId, String volumeId, String snapshotNamePrefix, String description, boolean force) {
-        final GlusterVolumeEntity volume = getGlusterVolumeDao().getById(new Guid(volumeId));
+        final GlusterVolumeEntity volume = glusterVolumeDao.getById(new Guid(volumeId));
         if (volume == null) {
             log.error("Error while creating volume snapshot. Volume is null.");
             return;
@@ -52,7 +60,7 @@ public class GlusterSnapshotScheduleJob implements Serializable {
         snapshot.setSnapshotName(snapshotNamePrefix);
         snapshot.setDescription(description);
 
-        VdcReturnValueBase returnValue = getBackend().runInternalAction(VdcActionType.CreateGlusterVolumeSnapshot,
+        VdcReturnValueBase returnValue = backend.runInternalAction(VdcActionType.CreateGlusterVolumeSnapshot,
                 new CreateGlusterVolumeSnapshotParameters(snapshot, force));
         if (!returnValue.getSucceeded()) {
             log.error("Error while creating snapshot for volume '{}': {}",
@@ -69,29 +77,16 @@ public class GlusterSnapshotScheduleJob implements Serializable {
         }
 
         // Check if next schedule available, and if not delete the scheduling details from DB
-        GlusterVolumeSnapshotSchedule schedule =
-                getGlusterVolumeSnapshotScheduleDao().getByVolumeId(volume.getId());
+        GlusterVolumeSnapshotSchedule schedule = glusterVolumeSnapshotScheduleDao.getByVolumeId(volume.getId());
         Date endDate = GlusterUtil.getInstance().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
         if (endDate != null && endDate.before(new Date())) {
-            getGlusterVolumeSnapshotScheduleDao().removeByVolumeId(volume.getId());
+            glusterVolumeSnapshotScheduleDao.removeByVolumeId(volume.getId());
             logUtil.logAuditMessage(volume.getClusterId(),
                     volume,
                     null,
                     AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SCHEDULE_DELETED,
                     Collections.singletonMap(GlusterConstants.VOLUME_NAME, volume.getName()));
         }
-    }
-
-    protected GlusterVolumeSnapshotScheduleDao getGlusterVolumeSnapshotScheduleDao() {
-        return DbFacade.getInstance().getGlusterVolumeSnapshotScheduleDao();
-    }
-
-    protected GlusterVolumeDao getGlusterVolumeDao() {
-        return DbFacade.getInstance().getGlusterVolumeDao();
-    }
-
-    protected BackendInternal getBackend() {
-        return Backend.getInstance();
     }
 
     protected GlusterAuditLogUtil getLogUtil() {
