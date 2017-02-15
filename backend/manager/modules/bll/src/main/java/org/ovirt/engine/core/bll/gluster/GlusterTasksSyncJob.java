@@ -9,10 +9,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTasksService;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -53,14 +53,13 @@ import org.slf4j.LoggerFactory;
 public class GlusterTasksSyncJob extends GlusterJob  {
     private static final Logger log = LoggerFactory.getLogger(GlusterTasksSyncJob.class);
 
+    @Inject
+    private BackendInternal backendInternal;
+
     private final GlusterTasksService provider = new GlusterTasksService();
 
     public GlusterTasksService getProvider() {
         return provider;
-    }
-
-    public BackendInternal getBackend() {
-        return Backend.getInstance();
     }
 
     @OnTimerMethodAnnotation("gluster_async_task_poll_event")
@@ -157,7 +156,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
     private Guid addAsyncTaskStep(Cluster cluster, GlusterAsyncTask task, StepEnum step, Guid execStepId) {
         VdcReturnValueBase result;
-        result = getBackend().runInternalAction(VdcActionType.AddInternalStep,
+        result = backendInternal.runInternalAction(VdcActionType.AddInternalStep,
                 new AddStepParameters(execStepId, getGlusterTaskUtils().getTaskMessage(cluster, step, task), step));
 
         if (!result.getSucceeded()) {
@@ -170,7 +169,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
     private Guid addExecutingStep(Guid jobId) {
         VdcReturnValueBase result;
-        result = getBackend().runInternalAction(VdcActionType.AddInternalStep,
+        result = backendInternal.runInternalAction(VdcActionType.AddInternalStep,
                 new AddStepParameters(jobId, ExecutionMessageDirector.resolveStepMessage(StepEnum.EXECUTING, null), StepEnum.EXECUTING));
         if (!result.getSucceeded()) {
             //log and return
@@ -182,7 +181,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
     private Guid addJob(Cluster cluster, GlusterAsyncTask task, VdcActionType actionType, final GlusterVolumeEntity vol) {
 
-        VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddInternalJob,
+        VdcReturnValueBase result = backendInternal.runInternalAction(VdcActionType.AddInternalJob,
                 new AddInternalJobParameters(ExecutionMessageDirector.resolveJobMessage(actionType, getGlusterTaskUtils().getMessageMap(cluster, task)),
                         actionType, true, VdcObjectType.GlusterVolume, vol.getId()) );
         if (!result.getSucceeded()) {
