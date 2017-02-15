@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -11,6 +10,7 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.CreateBrickParameters;
@@ -37,23 +37,24 @@ public class CreateBrickCommandTest extends BaseCommandTest {
     /**
      * The command under test.
      */
-    private CreateBrickCommand cmd;
+    @Spy
+    private CreateBrickCommand cmd = new CreateBrickCommand(new CreateBrickParameters(), null);
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
+        doReturn(new CreateBrickParameters(HOST_ID,
                 "brick1",
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Collections.singletonList(getStorageDevice("sda"))), null));
+                null, Collections.singletonList(getStorageDevice("sda"))))
+                .when(cmd).getParameters();
         prepareMocks(VDSStatus.Up);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsForCluster() {
-        cmd = spy(new CreateBrickCommand(new CreateBrickParameters(), null));
         prepareMocks(VDSStatus.Up);
         mockIsGlusterEnabled(false);
         assertFalse(cmd.validate());
@@ -64,7 +65,6 @@ public class CreateBrickCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsForVdsNonUp() {
-        cmd = spy(new CreateBrickCommand(new CreateBrickParameters(), null));
         prepareMocks(VDSStatus.Down);
         assertFalse(cmd.validate());
 
@@ -77,12 +77,13 @@ public class CreateBrickCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsForNoStorageDevice() {
-        cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
+        doReturn(new CreateBrickParameters(HOST_ID,
                 "brick1",
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Collections.emptyList()), null));
+                null, Collections.emptyList()))
+                .when(cmd).getParameters();
         prepareMocks(VDSStatus.Up);
         assertFalse(cmd.validate());
     }
@@ -91,12 +92,13 @@ public class CreateBrickCommandTest extends BaseCommandTest {
     public void validateFailsForDeviceAlreadyInUse() {
         StorageDevice storageDevice = getStorageDevice("sda");
         storageDevice.setCanCreateBrick(false);
-        cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
+        doReturn(new CreateBrickParameters(HOST_ID,
                 "brick1",
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Collections.singletonList(storageDevice)), null));
+                null, Collections.singletonList(storageDevice)))
+                .when(cmd).getParameters();
         prepareMocks(VDSStatus.Up);
         assertFalse(cmd.validate());
     }
@@ -107,12 +109,13 @@ public class CreateBrickCommandTest extends BaseCommandTest {
         StorageDevice storageDevice2 = getStorageDevice("sdb");
         storageDevice2.setDevType("SDA");
 
-        cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
+        doReturn(new CreateBrickParameters(HOST_ID,
                 "brick1",
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Arrays.asList(storageDevice1, storageDevice2)), null));
+                null, Arrays.asList(storageDevice1, storageDevice2)))
+                .when(cmd).getParameters();
         prepareMocks(VDSStatus.Up);
         assertFalse(cmd.validate());
     }
