@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -63,8 +64,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
 
     @Override
     protected void executeCommand() {
-        final List<LUNs> lunsFromVgInfo = (List<LUNs>) runVdsCommand(VDSCommandType.GetVGInfo,
-                new GetVGInfoVDSCommandParameters(getVds().getId(), getStorageDomain().getStorage())).getReturnValue();
+        final List<LUNs> lunsFromVgInfo = getLunsFromVgInfo();
         final List<LUNs> lunsFromDb = lunDao.getAllForVolumeGroup(getStorageDomain().getStorage());
 
         Map<Consumer<List<LUNs>>, List<LUNs>> lunsToUpdateInDb = getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb);
@@ -81,6 +81,17 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         }
 
         setSucceeded(true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<LUNs> getLunsFromVgInfo() {
+        GetVGInfoVDSCommandParameters params = new GetVGInfoVDSCommandParameters(getParameters().getVdsId(),
+                getStorageDomain().getStorage());
+        if (getParameters().getVdsId() == null) {
+            return (List<LUNs>) VdsCommandsHelper.runVdsCommandWithoutFailover(
+                    VDSCommandType.GetVGInfo, params, getStoragePoolId(), null).getReturnValue();
+        }
+        return (List<LUNs>) runVdsCommand(VDSCommandType.GetVGInfo, params).getReturnValue();
     }
 
     protected void refreshLunsConnections(List<LUNs> lunsFromVgInfo) {
