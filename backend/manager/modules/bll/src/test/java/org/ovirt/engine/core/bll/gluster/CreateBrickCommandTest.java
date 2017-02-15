@@ -46,7 +46,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Collections.singletonList(getStorageDevice("sda", null))), null));
+                null, Collections.singletonList(getStorageDevice("sda"))), null));
         prepareMocks(VDSStatus.Up);
         assertTrue(cmd.validate());
     }
@@ -89,7 +89,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsForDeviceAlreadyInUse() {
-        StorageDevice storageDevice = getStorageDevice("sda", null);
+        StorageDevice storageDevice = getStorageDevice("sda");
         storageDevice.setCanCreateBrick(false);
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
                 "brick1",
@@ -103,8 +103,8 @@ public class CreateBrickCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsForDifferentStorageDevice() {
-        StorageDevice storageDevice1 = getStorageDevice("sda", null);
-        StorageDevice storageDevice2 = getStorageDevice("sdb", null);
+        StorageDevice storageDevice1 = getStorageDevice("sda");
+        StorageDevice storageDevice2 = getStorageDevice("sdb");
         storageDevice2.setDevType("SDA");
 
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
@@ -129,7 +129,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
         when(cluster.supportsGlusterService()).thenReturn(glusterService);
     }
 
-    private StorageDevice getStorageDevice(String name, Guid id) {
+    private StorageDevice getStorageDevice(String name) {
         StorageDevice storageDevice = new StorageDevice();
         storageDevice.setCanCreateBrick(true);
         storageDevice.setDescription("Test Device" + name);
@@ -137,11 +137,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
         storageDevice.setDevType("SCSI");
         storageDevice.setName(name);
         storageDevice.setSize(10000L);
-        if (id == null) {
-            storageDevice.setId(Guid.newGuid());
-        } else {
-            storageDevice.setId(id);
-        }
+        storageDevice.setId(Guid.newGuid());
         return storageDevice;
     }
 }
