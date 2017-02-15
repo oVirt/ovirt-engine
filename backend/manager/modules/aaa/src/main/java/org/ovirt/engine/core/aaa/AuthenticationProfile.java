@@ -32,7 +32,7 @@ public class AuthenticationProfile {
      *     authenticated
      */
     public AuthenticationProfile(ExtensionProxy authn, String authzName, ExtensionProxy mapper) {
-        Properties config = authn.getContext().<Properties> get(Base.ContextKeys.CONFIGURATION);
+        Properties config = authn.getContext().get(Base.ContextKeys.CONFIGURATION);
         this.name = config.getProperty(Authn.ConfigKeys.PROFILE_NAME);
         this.authzName = authzName;
         this.authn = authn;
@@ -59,7 +59,7 @@ public class AuthenticationProfile {
     }
 
     public String getAuthnName() {
-        return authn.getContext().<String>get(Base.ContextKeys.INSTANCE_NAME);
+        return authn.getContext().get(Base.ContextKeys.INSTANCE_NAME);
     }
 
     public String getAuthzName() {
