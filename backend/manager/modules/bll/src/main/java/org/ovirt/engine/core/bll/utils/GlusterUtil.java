@@ -16,12 +16,12 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.naming.AuthenticationException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -43,9 +43,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
+import org.ovirt.engine.core.dao.AuditLogDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -66,6 +68,18 @@ public class GlusterUtil {
     private static final String HOST_NAME = "hostname";
     private static final String STATE = "state";
     private static final int PEER_IN_CLUSTER = 3;
+
+    @Inject
+    private VdsDao vdsDao;
+
+    @Inject
+    private GlusterServerDao glusterServerDao;
+
+    @Inject
+    private AuditLogDao auditLogDao;
+
+    @Inject
+    private BackendInternal backend;
 
     /**
      * Returns a server that is in {@link VDSStatus#Up} status.<br>
@@ -96,8 +110,7 @@ public class GlusterUtil {
     }
 
     public List<VDS> getAllUpServers(Guid clusterId) {
-        return DbFacade.getInstance()
-                .getVdsDao().getAllForClusterWithStatusAndPeerStatus(clusterId, VDSStatus.Up, PeerStatus.CONNECTED);
+        return vdsDao.getAllForClusterWithStatusAndPeerStatus(clusterId, VDSStatus.Up, PeerStatus.CONNECTED);
     }
 
 
@@ -228,7 +241,7 @@ public class GlusterUtil {
         VdcQueryReturnValue returnValue;
         Map<String, String> fingerprints = new HashMap<>();
         for (String server : servers) {
-            returnValue = getBackendInstance().
+            returnValue = backend.
                     runInternalQuery(VdcQueryType.GetServerSSHKeyFingerprint,
                             new ServerParameters(server), null);
             if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
@@ -254,10 +267,6 @@ public class GlusterUtil {
         }
     }
 
-    public BackendInternal getBackendInstance() {
-        return Backend.getInstance();
-    }
-
     protected SSHClient getSSHClient() {
         return new EngineSSHClient();
     }
@@ -273,7 +282,7 @@ public class GlusterUtil {
     }
 
     public boolean isHostExists(List<GlusterServerInfo> glusterServers, VDS server) {
-        GlusterServer glusterServer = DbFacade.getInstance().getGlusterServerDao().getByServerId(server.getId());
+        GlusterServer glusterServer = glusterServerDao.getByServerId(server.getId());
         if (glusterServer != null) {
             for (GlusterServerInfo glusterServerInfo : glusterServers) {
                 if (glusterServerInfo.getUuid().equals(glusterServer.getGlusterServerUuid())) {
@@ -346,10 +355,7 @@ public class GlusterUtil {
                 checkHardLimit ? AuditLogType.GLUSTER_VOLUME_SNAPSHOT_HARD_LIMIT_REACHED
                         : AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED;
 
-        List<AuditLog> limitAlerts =
-                DbFacade.getInstance()
-                        .getAuditLogDao()
-                        .getByVolumeIdAndType(volume.getId(), logType.getValue());
+        List<AuditLog> limitAlerts = auditLogDao.getByVolumeIdAndType(volume.getId(), logType.getValue());
         if (!limitAlerts.isEmpty()) {
             for (AuditLog alert : limitAlerts) {
                 if (!alert.isDeleted()) {
