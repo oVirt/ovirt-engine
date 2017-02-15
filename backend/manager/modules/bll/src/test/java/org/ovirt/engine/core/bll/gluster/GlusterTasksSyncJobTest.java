@@ -108,7 +108,6 @@ public class GlusterTasksSyncJobTest {
         doReturn(stepDao).when(tasksSyncJob).getStepDao();
         doReturn(volumeDao).when(tasksSyncJob).getVolumeDao();
         doReturn(volumeDao).when(taskUtils).getVolumeDao();
-        doReturn(jobRepository).when(tasksSyncJob).getJobRepository();
         doReturn(jobRepository).when(taskUtils).getJobRepository();
         doReturn(backend).when(tasksSyncJob).getBackend();
         doReturn(taskUtils).when(tasksSyncJob).getGlusterTaskUtils();
