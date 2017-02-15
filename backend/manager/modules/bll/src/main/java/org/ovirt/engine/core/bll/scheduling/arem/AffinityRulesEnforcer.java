@@ -291,6 +291,13 @@ public class AffinityRulesEnforcer {
      */
     private boolean isVmMigrationValid(Cluster cluster, VM candidateVm) {
 
+        if (candidateVm.isHostedEngine()) {
+            log.debug("VM {} is NOT a viable candidate for solving the affinity group violation situation"
+                            + " since its a hosted engine VM.",
+                    candidateVm.getId());
+            return false;
+        }
+
         List<Guid> vdsBlackList =
                 candidateVm.getRunOnVds() == null ?
                         Collections.emptyList() : Arrays.asList(candidateVm.getRunOnVds());
