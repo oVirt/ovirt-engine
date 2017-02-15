@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
@@ -16,7 +18,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.StorageDomainDRDao;
@@ -43,6 +44,66 @@ import org.ovirt.engine.core.utils.lock.LockManager;
 
 public abstract class GlusterJob {
 
+    @Inject
+    protected VdsDao vdsDao;
+
+    @Inject
+    protected VdsStaticDao vdsStaticDao;
+
+    @Inject
+    protected VdsDynamicDao vdsDynamicDao;
+
+    @Inject
+    protected VdsStatisticsDao vdsStatisticsDao;
+
+    @Inject
+    protected ClusterDao clusterDao;
+
+    @Inject
+    protected NetworkDao networkDao;
+
+    @Inject
+    protected InterfaceDao interfaceDao;
+
+    @Inject
+    protected StepDao stepDao;
+
+    @Inject
+    protected GlusterVolumeDao volumeDao;
+
+    @Inject
+    protected GlusterOptionDao optionDao;
+
+    @Inject
+    protected GlusterBrickDao brickDao;
+
+    @Inject
+    protected GlusterHooksDao hooksDao;
+
+    @Inject
+    protected GlusterServiceDao serviceDao;
+
+    @Inject
+    protected GlusterServerServiceDao serverServiceDao;
+
+    @Inject
+    protected GlusterClusterServiceDao clusterServiceDao;
+
+    @Inject
+    protected GlusterServerDao serverDao;
+
+    @Inject
+    protected GlusterGeoRepDao geoRepDao;
+
+    @Inject
+    protected StorageDeviceDao storageDeviceDao;
+
+    @Inject
+    protected StorageDomainStaticDao storageDomainStaticDao;
+
+    @Inject
+    protected StorageDomainDRDao storageDomainDRDao;
+
     protected GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
 
     /**
@@ -64,85 +125,6 @@ public abstract class GlusterJob {
         return Backend.getInstance().getResourceManager().runVdsCommand(commandType, params);
     }
 
-    protected VdsStatisticsDao getVdsStatisticsDao() {
-        return DbFacade.getInstance().getVdsStatisticsDao();
-    }
-
-    protected VdsStaticDao getVdsStaticDao() {
-        return DbFacade.getInstance().getVdsStaticDao();
-    }
-
-    protected VdsDynamicDao getVdsDynamicDao() {
-        return DbFacade.getInstance().getVdsDynamicDao();
-    }
-
-    protected InterfaceDao getInterfaceDao() {
-        return DbFacade.getInstance().getInterfaceDao();
-    }
-
-    protected ClusterDao getClusterDao() {
-        return DbFacade.getInstance().getClusterDao();
-    }
-
-    protected VdsDao getVdsDao() {
-        return DbFacade.getInstance().getVdsDao();
-    }
-
-    protected GlusterVolumeDao getVolumeDao() {
-        return DbFacade.getInstance().getGlusterVolumeDao();
-    }
-
-    protected GlusterOptionDao getOptionDao() {
-        return DbFacade.getInstance().getGlusterOptionDao();
-    }
-
-    protected GlusterBrickDao getBrickDao() {
-        return DbFacade.getInstance().getGlusterBrickDao();
-    }
-
-    protected GlusterHooksDao getHooksDao() {
-        return DbFacade.getInstance().getGlusterHooksDao();
-    }
-
-    protected GlusterServiceDao getGlusterServiceDao() {
-        return DbFacade.getInstance().getGlusterServiceDao();
-    }
-
-    protected GlusterServerServiceDao getGlusterServerServiceDao() {
-        return DbFacade.getInstance().getGlusterServerServiceDao();
-    }
-
-    protected GlusterClusterServiceDao getGlusterClusterServiceDao() {
-        return DbFacade.getInstance().getGlusterClusterServiceDao();
-    }
-
-    protected GlusterServerDao getGlusterServerDao() {
-        return DbFacade.getInstance().getGlusterServerDao();
-    }
-
-    protected StepDao getStepDao() {
-        return DbFacade.getInstance().getStepDao();
-    }
-
-    protected GlusterGeoRepDao getGeoRepDao() {
-        return DbFacade.getInstance().getGlusterGeoRepDao();
-    }
-
-    protected StorageDeviceDao getStorageDeviceDao() {
-        return DbFacade.getInstance().getStorageDeviceDao();
-    }
-
-    protected NetworkDao getNetworkDao() {
-        return DbFacade.getInstance().getNetworkDao();
-    }
-
-    protected StorageDomainDRDao getStorageDomainDRDao() {
-        return DbFacade.getInstance().getStorageDomainDRDao();
-    }
-
-    protected StorageDomainStaticDao getStorageDomainStaticDao() {
-        return DbFacade.getInstance().getStorageDomainStaticDao();
-    }
     /**
      * Acquires a lock on the cluster with given id and locking group {@link LockingGroup#GLUSTER}
      *

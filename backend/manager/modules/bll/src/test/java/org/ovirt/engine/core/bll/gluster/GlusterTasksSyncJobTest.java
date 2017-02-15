@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -67,6 +68,7 @@ public class GlusterTasksSyncJobTest {
     @Mock
     private GlusterTaskUtils taskUtils;
 
+    @InjectMocks
     @Spy
     private GlusterTasksSyncJob tasksSyncJob;
 
@@ -75,11 +77,8 @@ public class GlusterTasksSyncJobTest {
 
     @Before
     public void init() {
-        doReturn(clusterDao).when(tasksSyncJob).getClusterDao();
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(provider).when(tasksSyncJob).getProvider();
-        doReturn(stepDao).when(tasksSyncJob).getStepDao();
-        doReturn(volumeDao).when(tasksSyncJob).getVolumeDao();
         doReturn(taskUtils).when(tasksSyncJob).getGlusterTaskUtils();
     }
 

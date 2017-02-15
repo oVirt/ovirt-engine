@@ -348,17 +348,6 @@ public class GlusterSyncJobTest {
     }
 
     private void mockDaos() {
-        doReturn(volumeDao).when(glusterManager).getVolumeDao();
-        doReturn(brickDao).when(glusterManager).getBrickDao();
-        doReturn(optionDao).when(glusterManager).getOptionDao();
-        doReturn(vdsDao).when(glusterManager).getVdsDao();
-        doReturn(vdsStatisticsDao).when(glusterManager).getVdsStatisticsDao();
-        doReturn(vdsStaticDao).when(glusterManager).getVdsStaticDao();
-        doReturn(vdsDynamicDao).when(glusterManager).getVdsDynamicDao();
-        doReturn(clusterDao).when(glusterManager).getClusterDao();
-        doReturn(glusterServerDao).when(glusterManager).getGlusterServerDao();
-        doReturn(networkDao).when(glusterManager).getNetworkDao();
-
         doReturn(Collections.singletonList(existingCluster)).when(clusterDao).getAll();
         doReturn(existingCluster).when(clusterDao).get(any());
         doReturn(existingServers).when(vdsDao).getAllForCluster(CLUSTER_ID);

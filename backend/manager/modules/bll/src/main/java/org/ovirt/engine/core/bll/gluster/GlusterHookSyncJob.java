@@ -40,7 +40,7 @@ public class GlusterHookSyncJob extends GlusterJob {
     @OnTimerMethodAnnotation("refreshHooks")
     public void refreshHooks() {
         log.debug("Refreshing hooks list");
-        List<Cluster> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = clusterDao.getAll();
 
         for (Cluster cluster : clusters) {
             refreshHooksInCluster(cluster, false);
@@ -86,7 +86,7 @@ public class GlusterHookSyncJob extends GlusterJob {
     private void addOrUpdateHooks(Guid clusterId,  List<Pair<VDS, VDSReturnValue>> pairResults ) {
 
         try {
-            List<GlusterHookEntity> existingHooks = getHooksDao().getByClusterId(clusterId);
+            List<GlusterHookEntity> existingHooks = hooksDao.getByClusterId(clusterId);
             List<Callable<Pair<GlusterHookEntity, VDSReturnValue>>> contentTasksList = new ArrayList<>();
 
             Map<String, GlusterHookEntity> existingHookMap = new HashMap<>();
@@ -130,7 +130,7 @@ public class GlusterHookSyncJob extends GlusterJob {
                     if (existingHook != null) {
                         updateHookServerMap(existingHookServersMap, existingHook.getId(), server);
 
-                        GlusterServerHook serverHook = getHooksDao().getGlusterServerHook(existingHook.getId(), server.getId());
+                        GlusterServerHook serverHook = hooksDao.getGlusterServerHook(existingHook.getId(), server.getId());
 
                         Integer conflictStatus = getConflictStatus(existingHook, fetchedHook);
                         //aggregate conflicts across hooks
@@ -182,12 +182,12 @@ public class GlusterHookSyncJob extends GlusterJob {
 
             //Add new server hooks
             for (GlusterServerHook serverHook: newServerHooks) {
-                getHooksDao().saveGlusterServerHook(serverHook);
+                hooksDao.saveGlusterServerHook(serverHook);
             }
 
             //Update existing server hooks
             for (GlusterServerHook serverHook: updatedServerHooks) {
-                getHooksDao().updateGlusterServerHook(serverHook);
+                hooksDao.updateGlusterServerHook(serverHook);
             }
 
             syncExistingHooks(existingHookMap, existingHookServersMap, existingHookConflictMap, upServers);
@@ -200,7 +200,7 @@ public class GlusterHookSyncJob extends GlusterJob {
                 GlusterHookEntity hook = existingHookMap.get(key);
                 hook.addMissingConflict();
                 logMessage(hook.getClusterId(), hook.getHookKey(), AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED);
-                getHooksDao().updateGlusterHookConflictStatus(hook.getId(), hook.getConflictStatus());
+                hooksDao.updateGlusterHookConflictStatus(hook.getId(), hook.getConflictStatus());
             }
         } catch (Exception e) {
             log.error("Exception in sync", e);
@@ -212,7 +212,7 @@ public class GlusterHookSyncJob extends GlusterJob {
     private void saveNewHooks(Map<String, GlusterHookEntity> newHookMap,
             List<Callable<Pair<GlusterHookEntity, VDSReturnValue>>> contentTasksList) {
         for (GlusterHookEntity hook: newHookMap.values()) {
-            getHooksDao().save(hook);
+            hooksDao.save(hook);
         }
         //retrieve and update hook content
         saveHookContent(contentTasksList);
@@ -234,7 +234,7 @@ public class GlusterHookSyncJob extends GlusterJob {
                 continue;
             }
             final String content = (String)pairResult.getSecond().getReturnValue();
-            getHooksDao().updateGlusterHookContent(hook.getId(), hook.getChecksum(), content);
+            hooksDao.updateGlusterHookContent(hook.getId(), hook.getChecksum(), content);
         }
 
     }
@@ -258,10 +258,10 @@ public class GlusterHookSyncJob extends GlusterJob {
                 missingServerHook.setHookId(entry.getKey());
                 missingServerHook.setServerId(missingServer.getId());
                 missingServerHook.setStatus(GlusterHookStatus.MISSING);
-                getHooksDao().saveOrUpdateGlusterServerHook(missingServerHook);
+                hooksDao.saveOrUpdateGlusterServerHook(missingServerHook);
             }
             //get the hook from database, as we don't have the hookkey for it
-            GlusterHookEntity hookEntity = getHooksDao().getById(entry.getKey());
+            GlusterHookEntity hookEntity = hooksDao.getById(entry.getKey());
             if (existingHookMap.get(hookEntity.getHookKey()) != null) {
                 //if it was an already existing hook, get the hook with
                 //updated conflict values from map
@@ -279,7 +279,7 @@ public class GlusterHookSyncJob extends GlusterJob {
                 log.debug("Conflict change detected for hook '{}' in cluster '{}' ",
                         hook.getHookKey(), hook.getClusterId());
                 logMessage(hook.getClusterId(), hook.getHookKey(), AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED);
-                getHooksDao().updateGlusterHookConflictStatus(hook.getId(), hook.getConflictStatus());
+                hooksDao.updateGlusterHookConflictStatus(hook.getId(), hook.getConflictStatus());
             }
         }
     }

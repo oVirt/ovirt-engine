@@ -92,7 +92,7 @@ public class GlusterSyncJob extends GlusterJob {
     @OnTimerMethodAnnotation("refreshLightWeightData")
     public void refreshLightWeightData() {
         log.debug("Refreshing Gluster Data [lightweight]");
-        List<Cluster> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = clusterDao.getAll();
 
         for (Cluster cluster : clusters) {
             if (cluster.supportsGlusterService()) {
@@ -111,7 +111,7 @@ public class GlusterSyncJob extends GlusterJob {
     private void refreshClusterData(Cluster cluster) {
         log.debug("Refreshing Gluster lightweight Data for cluster '{}'", cluster.getName());
 
-        List<VDS> existingServers = getVdsDao().getAllForCluster(cluster.getId());
+        List<VDS> existingServers = vdsDao.getAllForCluster(cluster.getId());
         VDS upServer = getGlusterUtil().getUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No server UP in cluster '{}'. Can't refresh it's data at this point.", cluster.getName());
@@ -216,26 +216,26 @@ public class GlusterSyncJob extends GlusterJob {
             for (VDS server : servers) {
                 // set the known address on the remaining server.
                 if (!Objects.equals(server.getId(), removedServer.getId())) {
-                    getGlusterServerDao().updateKnownAddresses(server.getId(), null);
+                    serverDao.updateKnownAddresses(server.getId(), null);
                 }
             }
         }
     }
 
     private void updateStatusAndpeerProbeOtherIface(Network glusterNetwork, VDS host, GlusterServerInfo fetchedServerInfo) {
-        GlusterServer glusterServer = getGlusterServerDao().get(host.getId());
+        GlusterServer glusterServer = serverDao.get(host.getId());
         if (glusterServer == null) {
             return;
         }
         if (glusterServer.getPeerStatus() == PeerStatus.DISCONNECTED
                 && fetchedServerInfo.getStatus() == PeerStatus.CONNECTED) {
            //change the status to indicate that host is now part of cluster
-            getGlusterServerDao().updatePeerStatus(host.getId(), PeerStatus.CONNECTED);
+            serverDao.updatePeerStatus(host.getId(), PeerStatus.CONNECTED);
         }
         if (glusterNetwork == null || host.getStatus() != VDSStatus.Up) {
             return;
         }
-        List<VdsNetworkInterface> interfaces = getInterfaceDao().getAllInterfacesForVds(host.getId());
+        List<VdsNetworkInterface> interfaces = interfaceDao.getAllInterfacesForVds(host.getId());
         for (VdsNetworkInterface iface : interfaces) {
             if (glusterNetwork.getName().equals(iface.getNetworkName()) &&
                     StringUtils.isNotBlank(iface.getIpv4Address())
@@ -245,7 +245,7 @@ public class GlusterSyncJob extends GlusterJob {
                 if (upServer != null) {
                     boolean peerProbed = glusterPeerProbeAdditionalInterface(upServer.getId(), iface.getIpv4Address());
                     if (peerProbed) {
-                        getGlusterServerDao().addKnownAddress(host.getId(), iface.getIpv4Address());
+                        serverDao.addKnownAddress(host.getId(), iface.getIpv4Address());
                     }
                 } else {
                     log.warn("probe could not be done for server '{}' as no alternate UP server found", host.getHostName());
@@ -256,7 +256,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private Network findGlusterNetwork(Guid clusterId) {
-        List<Network> allNetworksInCluster = getNetworkDao().getAllForCluster(clusterId);
+        List<Network> allNetworksInCluster = networkDao.getAllForCluster(clusterId);
 
         for (Network network : allNetworksInCluster) {
             if (network.getCluster().isGluster()) {
@@ -268,7 +268,7 @@ public class GlusterSyncJob extends GlusterJob {
 
     private VDS getAlternateUpServerInCluster(Guid clusterId, Guid vdsId) {
         List<VDS> vdsList =
-                getVdsDao().getAllForClusterWithStatusAndPeerStatus(clusterId, VDSStatus.Up, PeerStatus.CONNECTED);
+                vdsDao.getAllForClusterWithStatusAndPeerStatus(clusterId, VDSStatus.Up, PeerStatus.CONNECTED);
         // If the cluster already having Gluster servers, get an up server
         if (vdsList.isEmpty()) {
             return null;
@@ -324,7 +324,7 @@ public class GlusterSyncJob extends GlusterJob {
      */
     private GlusterServerInfo findGlusterServer(VDS server, List<GlusterServerInfo> fetchedServers) {
         // compare gluster host uuid stored in server with the ones fetched from list
-        GlusterServer glusterServer = getGlusterServerDao().getByServerId(server.getId());
+        GlusterServer glusterServer = serverDao.getByServerId(server.getId());
         for (GlusterServerInfo fetchedServer : fetchedServers) {
             if (fetchedServer.getUuid().equals(glusterServer.getGlusterServerUuid())) {
                 return fetchedServer;
@@ -373,7 +373,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private boolean isSameServer(VDS upServer, GlusterServerInfo server) {
-        GlusterServer glusterUpServer = getGlusterServerDao().getByServerId(upServer.getId());
+        GlusterServer glusterUpServer = serverDao.getByServerId(upServer.getId());
         return glusterUpServer.getGlusterServerUuid().equals(server.getUuid());
     }
 
@@ -401,7 +401,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void setNonOperational(VDS server) {
-        Cluster cluster = getClusterDao().get(server.getClusterId());
+        Cluster cluster = clusterDao.get(server.getClusterId());
         if (!cluster.supportsVirtService()) {
             SetNonOperationalVdsParameters nonOpParams =
                     new SetNonOperationalVdsParameters(server.getId(),
@@ -411,7 +411,7 @@ public class GlusterSyncJob extends GlusterJob {
                     nonOpParams,
                     ExecutionHandler.createInternalJobContext());
         }
-        getGlusterServerDao().updatePeerStatus(server.getId(), PeerStatus.DISCONNECTED);
+        serverDao.updatePeerStatus(server.getId(), PeerStatus.DISCONNECTED);
         logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_STATUS_DISCONNECTED);
     }
 
@@ -479,7 +479,7 @@ public class GlusterSyncJob extends GlusterJob {
 
     private void removeDeletedVolumes(Guid clusterId, Map<Guid, GlusterVolumeEntity> volumesMap) {
         List<Guid> idsToRemove = new ArrayList<>();
-        for (GlusterVolumeEntity volume : getVolumeDao().getByClusterId(clusterId)) {
+        for (GlusterVolumeEntity volume : volumeDao.getByClusterId(clusterId)) {
             if (!volumesMap.containsKey(volume.getId())) {
                 idsToRemove.add(volume.getId());
                 log.debug("Volume '{}' has been removed directly using the gluster CLI. Removing it from engine as well.",
@@ -488,16 +488,16 @@ public class GlusterSyncJob extends GlusterJob {
 
                 // Set the gluster cli schedule enabled flag back to true
                 if (Config.<String> getValue(ConfigValues.GlusterMetaVolumeName).equalsIgnoreCase(volume.getName())) {
-                    Cluster cluster = getClusterDao().get(clusterId);
+                    Cluster cluster = clusterDao.get(clusterId);
                     cluster.setGlusterCliBasedSchedulingOn(true);
-                    getClusterDao().update(cluster);
+                    clusterDao.update(cluster);
                 }
             }
         }
 
         if (!idsToRemove.isEmpty()) {
             try {
-                getVolumeDao().removeAll(idsToRemove);
+                volumeDao.removeAll(idsToRemove);
             } catch (Exception e) {
                 log.error("Error while removing volumes from database!", e);
             }
@@ -505,13 +505,13 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void updateExistingAndNewVolumes(Guid clusterId, Map<Guid, GlusterVolumeEntity> volumesMap) {
-        Cluster cluster = getClusterDao().get(clusterId);
+        Cluster cluster = clusterDao.get(clusterId);
 
         for (Entry<Guid, GlusterVolumeEntity> entry : volumesMap.entrySet()) {
             GlusterVolumeEntity volume = entry.getValue();
             log.debug("Analyzing volume '{}'", volume.getName());
 
-            GlusterVolumeEntity existingVolume = getVolumeDao().getById(entry.getKey());
+            GlusterVolumeEntity existingVolume = volumeDao.getById(entry.getKey());
             if (existingVolume == null) {
                 try {
                     createVolume(volume);
@@ -592,7 +592,7 @@ public class GlusterSyncJob extends GlusterJob {
         }
         log.debug("Volume '{}' has been created directly using the gluster CLI. Creating it in engine as well.",
                 volume.getName());
-        getVolumeDao().save(volume);
+        volumeDao.save(volume);
     }
 
     private void updateVolume(GlusterVolumeEntity existingVolume, GlusterVolumeEntity fetchedVolume) {
@@ -612,7 +612,7 @@ public class GlusterSyncJob extends GlusterJob {
             log.info("Adding transport type(s) '{}' to volume '{}'",
                     addedTransportTypes,
                     existingVolume.getName());
-            getVolumeDao().addTransportTypes(existingVolume.getId(), addedTransportTypes);
+            volumeDao.addTransportTypes(existingVolume.getId(), addedTransportTypes);
         }
 
         Collection<TransportType> removedTransportTypes =
@@ -621,7 +621,7 @@ public class GlusterSyncJob extends GlusterJob {
             log.info("Removing transport type(s) '{}' from volume '{}'",
                     removedTransportTypes,
                     existingVolume.getName());
-            getVolumeDao().removeTransportTypes(existingVolume.getId(), removedTransportTypes);
+            volumeDao.removeTransportTypes(existingVolume.getId(), removedTransportTypes);
         }
     }
 
@@ -654,7 +654,7 @@ public class GlusterSyncJob extends GlusterJob {
         }
         if (!idsToRemove.isEmpty()) {
             try {
-                getBrickDao().removeAll(idsToRemove);
+                brickDao.removeAll(idsToRemove);
             } catch (Exception e) {
                 log.error("Error while removing bricks from database: {}", e.getMessage());
                 log.debug("Exception", e);
@@ -674,7 +674,7 @@ public class GlusterSyncJob extends GlusterJob {
                             fetchedBrick.getQualifiedName(),
                             existingVolume.getName());
                     fetchedBrick.setStatus(existingVolume.isOnline() ? GlusterStatus.UP : GlusterStatus.DOWN);
-                    getBrickDao().save(fetchedBrick);
+                    brickDao.save(fetchedBrick);
                     logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
                             AuditLogType.GLUSTER_VOLUME_BRICK_ADDED_FROM_CLI,
                             Collections.singletonMap(GlusterConstants.BRICK, fetchedBrick.getQualifiedName()));
@@ -686,14 +686,14 @@ public class GlusterSyncJob extends GlusterJob {
                             existingBrick.getQualifiedName(),
                             existingBrick.getBrickOrder(),
                             fetchedBrick.getBrickOrder());
-                    getBrickDao().updateBrickOrder(existingBrick.getId(), fetchedBrick.getBrickOrder());
+                    brickDao.updateBrickOrder(existingBrick.getId(), fetchedBrick.getBrickOrder());
                 }
                 // update network id, if different
                 if (!Objects.equals(existingBrick.getNetworkId(), fetchedBrick.getNetworkId())) {
                     log.info("Network address for brick '{}' detected as  '{}'. Updating engine DB accordingly.",
                             existingBrick.getQualifiedName(),
                             fetchedBrick.getNetworkAddress());
-                    getBrickDao().updateBrickNetworkId(existingBrick.getId(), fetchedBrick.getNetworkId());
+                    brickDao.updateBrickNetworkId(existingBrick.getId(), fetchedBrick.getNetworkId());
                 }
             }
         }
@@ -730,7 +730,7 @@ public class GlusterSyncJob extends GlusterJob {
         }
         if (!idsToRemove.isEmpty()) {
             try {
-                getOptionDao().removeAll(idsToRemove);
+                optionDao.removeAll(idsToRemove);
             } catch (Exception e) {
                 log.error("Error while removing options of volume '{}' from database: {}",
                         fetchedVolume.getName(),
@@ -781,7 +781,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void saveNewOptions(GlusterVolumeEntity volume, Collection<GlusterVolumeOptionEntity> entities) {
-        getOptionDao().saveAll(entities);
+        optionDao.saveAll(entities);
         for (final GlusterVolumeOptionEntity entity : entities) {
             Map<String, String> customValues = new HashMap<>();
             customValues.put(GlusterConstants.OPTION_KEY, entity.getKey());
@@ -796,7 +796,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void updateExistingOptions(final GlusterVolumeEntity volume, Collection<GlusterVolumeOptionEntity> entities) {
-        getOptionDao().updateAll("UpdateGlusterVolumeOption", entities);
+        optionDao.updateAll("UpdateGlusterVolumeOption", entities);
         for (final GlusterVolumeOptionEntity entity : entities) {
             Map<String, String> customValues = new HashMap<>();
             customValues.put(GlusterConstants.OPTION_KEY, entity.getKey());
@@ -846,7 +846,7 @@ public class GlusterSyncJob extends GlusterJob {
 
         if (changed) {
             log.info("Updating volume '{}' with fetched properties.", existingVolume.getName());
-            getVolumeDao().updateGlusterVolume(existingVolume);
+            volumeDao.updateGlusterVolume(existingVolume);
             logUtil.logVolumeMessage(existingVolume, AuditLogType.GLUSTER_VOLUME_PROPERTIES_CHANGED_FROM_CLI);
             if (volumeTypeUnSupported) {
                 logUtil.logAuditMessage(fetchedVolume.getClusterId(),
@@ -875,7 +875,7 @@ public class GlusterSyncJob extends GlusterJob {
     public void refreshHeavyWeightData() {
         log.debug("Refreshing Gluster Data [heavyweight]");
 
-        for (Cluster cluster : getClusterDao().getAll()) {
+        for (Cluster cluster : clusterDao.getAll()) {
             if (cluster.supportsGlusterService()) {
                 try {
                     refreshClusterHeavyWeightData(cluster);
@@ -896,7 +896,7 @@ public class GlusterSyncJob extends GlusterJob {
             return;
         }
 
-        for (GlusterVolumeEntity volume : getVolumeDao().getByClusterId(cluster.getId())) {
+        for (GlusterVolumeEntity volume : volumeDao.getByClusterId(cluster.getId())) {
             log.debug("Refreshing brick statuses for volume '{}' of cluster '{}'",
                     volume.getName(),
                     cluster.getName());
@@ -931,9 +931,9 @@ public class GlusterSyncJob extends GlusterJob {
         }
         if (volumeAdvancedDetails.getCapacityInfo() != null) {
             if (volume.getAdvancedDetails().getCapacityInfo() == null) {
-                getVolumeDao().addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
+                volumeDao.addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
             } else {
-                getVolumeDao().updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
+                volumeDao.updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
             }
         }
 
@@ -961,15 +961,15 @@ public class GlusterSyncJob extends GlusterJob {
         }
 
         if (!brickPropertiesToAdd.isEmpty()) {
-            getBrickDao().addBrickProperties(brickPropertiesToAdd);
+            brickDao.addBrickProperties(brickPropertiesToAdd);
         }
 
         if (!brickPropertiesToUpdate.isEmpty()) {
-            getBrickDao().updateBrickProperties(brickPropertiesToUpdate);
+            brickDao.updateBrickProperties(brickPropertiesToUpdate);
         }
 
         if (!bricksToUpdate.isEmpty()) {
-            getBrickDao().updateBrickStatuses(bricksToUpdate);
+            brickDao.updateBrickStatuses(bricksToUpdate);
         }
     }
 
@@ -1015,15 +1015,15 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void removeVdsStatisticsFromDb(VDS server) {
-        getVdsStatisticsDao().remove(server.getId());
+        vdsStatisticsDao.remove(server.getId());
     }
 
     private void removeVdsStaticFromDb(VDS server) {
-        getVdsStaticDao().remove(server.getId());
+        vdsStaticDao.remove(server.getId());
     }
 
     private void removeVdsDynamicFromDb(VDS server) {
-        getVdsDynamicDao().remove(server.getId());
+        vdsDynamicDao.remove(server.getId());
     }
 
     /**
@@ -1035,7 +1035,7 @@ public class GlusterSyncJob extends GlusterJob {
     public void refreshSelfHealInfo() {
         log.debug("Refreshing Gluster Self Heal Data");
 
-        for (Cluster cluster : getClusterDao().getAll()) {
+        for (Cluster cluster : clusterDao.getAll()) {
             if (supportsGlusterSelfHealMonitoring(cluster)) {
                 try {
                     refreshSelfHealData(cluster);
@@ -1063,7 +1063,7 @@ public class GlusterSyncJob extends GlusterJob {
             return;
         }
 
-        for (GlusterVolumeEntity volume : getVolumeDao().getByClusterId(cluster.getId())) {
+        for (GlusterVolumeEntity volume : volumeDao.getByClusterId(cluster.getId())) {
             log.debug("Refreshing self heal status for volume '{}' of cluster '{}'",
                     volume.getName(),
                     cluster.getName());
@@ -1091,7 +1091,7 @@ public class GlusterSyncJob extends GlusterJob {
                     addToHistory(brick.getUnSyncedEntriesTrend(), healInfo.get(brick.getId()), usageHistoryLimit));
         }
 
-        getBrickDao().updateUnSyncedEntries(volume.getBricks());
+        brickDao.updateUnSyncedEntries(volume.getBricks());
     }
 
     private List<Integer> addToHistory(List<Integer> current, Integer newValue, int limit) {

@@ -23,6 +23,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
@@ -64,6 +65,7 @@ public class GlusterServiceSyncJobTest {
     private List<GlusterClusterService> existingClusterServices;
     private Map<String, GlusterService> serviceNameMap;
 
+    @InjectMocks
     @Spy
     private GlusterServiceSyncJob syncJob;
 
@@ -100,9 +102,6 @@ public class GlusterServiceSyncJobTest {
     private void setupCommonMock() {
         syncJob.setLogUtil(logUtil);
 
-        doReturn(serverServiceDao).when(syncJob).getGlusterServerServiceDao();
-        doReturn(clusterServiceDao).when(syncJob).getGlusterClusterServiceDao();
-        doReturn(clusterDao).when(syncJob).getClusterDao();
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
         doReturn(serviceNameMap).when(syncJob).getServiceNameMap();
 

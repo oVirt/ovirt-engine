@@ -42,7 +42,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
 
     public void refreshSnapshotList() {
         // get all clusters
-        List<Cluster> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = clusterDao.getAll();
 
         for (Cluster cluster : clusters) {
             refreshSnapshotsInCluster(cluster);
@@ -51,7 +51,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
 
     public void refreshSnapshotConfig() {
         // get all clusters
-        List<Cluster> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = clusterDao.getAll();
 
         for (Cluster cluster : clusters) {
             refreshSnapshotConfigInCluster(cluster);
@@ -118,7 +118,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             fetchedSnapshotsMap.put(fetchedSnapshot.getId(), fetchedSnapshot);
         }
 
-        Cluster cluster = getClusterDao().get(clusterId);
+        Cluster cluster = clusterDao.get(clusterId);
         List<GlusterVolumeSnapshotEntity> existingSnapshots =
                 getGlusterVolumeSnapshotDao().getAllByClusterId(clusterId);
         Map<Guid, GlusterVolumeSnapshotEntity> existingSnapshotsMap = new HashMap<>();
@@ -188,7 +188,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
     }
 
     private void addOrUpdateSnapshotsConfig(Guid clusterId, GlusterSnapshotConfigInfo configInfo) {
-        Cluster cluster = getClusterDao().get(clusterId);
+        Cluster cluster = clusterDao.get(clusterId);
         try (EngineLock lock = acquireVolumeSnapshotLock(clusterId)) {
             for (Map.Entry<String, String> entry : configInfo.getClusterConfigOptions().entrySet()) {
                 if (entry.getValue() != null) {

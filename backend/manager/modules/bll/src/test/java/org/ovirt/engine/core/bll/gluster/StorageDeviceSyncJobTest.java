@@ -18,6 +18,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
@@ -57,6 +58,7 @@ public class StorageDeviceSyncJobTest {
     @Mock
     private ClusterDao clusterDao;
 
+    @InjectMocks
     @Spy
     private StorageDeviceSyncJob syncJob;
 
@@ -69,8 +71,6 @@ public class StorageDeviceSyncJobTest {
     @Before
     public void init() {
         syncJob.setLogUtil(logUtil);
-        doReturn(storageDeviceDao).when(syncJob).getStorageDeviceDao();
-        doReturn(clusterDao).when(syncJob).getClusterDao();
         doReturn(glusterUtil).when(syncJob).getGlusterUtil();
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getAllUpServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUID_3_6);

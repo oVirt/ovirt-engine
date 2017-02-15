@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -71,6 +72,7 @@ public class GlusterSnapshotSyncJobTest {
     @Mock
     private ClusterDao clusterDao;
 
+    @InjectMocks
     @Spy
     private GlusterSnapshotSyncJob syncJob;
 
@@ -87,7 +89,6 @@ public class GlusterSnapshotSyncJobTest {
     public void init() {
         syncJob.setLogUtil(logUtil);
 
-        doReturn(clusterDao).when(syncJob).getClusterDao();
         doReturn(volumeDao).when(syncJob).getGlusterVolumeDao();
         doReturn(snapshotDao).when(syncJob).getGlusterVolumeSnapshotDao();
         doReturn(snapshotConfigDao).when(syncJob).getGlusterVolumeSnapshotConfigDao();

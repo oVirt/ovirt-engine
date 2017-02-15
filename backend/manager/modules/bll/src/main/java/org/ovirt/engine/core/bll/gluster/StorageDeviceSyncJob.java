@@ -38,7 +38,7 @@ public class StorageDeviceSyncJob extends GlusterJob {
     @OnTimerMethodAnnotation("gluster_storage_device_pool_event")
     public void refreshStorageDevices() {
         // get all clusters
-        List<Cluster> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = clusterDao.getAll();
         // for every cluster that supports disk provisioning
         for (Cluster cluster : clusters) {
             if (supportsGlusterDiskProvisioning(cluster)) {
@@ -91,7 +91,7 @@ public class StorageDeviceSyncJob extends GlusterJob {
         Set<String> deviceUuidsFromVdsm = new HashSet<>();
         Set<String> deviceNamesFromVdsm = new HashSet<>();
 
-        List<StorageDevice> storageDevicesInDb = getStorageDeviceDao().getStorageDevicesInHost(vds.getId());
+        List<StorageDevice> storageDevicesInDb = storageDeviceDao.getStorageDevicesInHost(vds.getId());
         Map<String, StorageDevice> nameToDeviceMap = new HashMap<>();
         Map<String, StorageDevice> deviceUuidToDeviceMap = new HashMap<>();
 
@@ -140,7 +140,7 @@ public class StorageDeviceSyncJob extends GlusterJob {
                 log.debug("detected new storage device '{}' for host '{}'",
                         storageDevice.getName(),
                         vds.getName());
-                getStorageDeviceDao().save(storageDevice);
+                storageDeviceDao.save(storageDevice);
                 logStorageDeviceMessage(AuditLogType.NEW_STORAGE_DEVICE_DETECTED,
                         vds,
                         storageDevice);
@@ -161,10 +161,10 @@ public class StorageDeviceSyncJob extends GlusterJob {
         }
 
         if (!storageDevicesToUpdate.isEmpty()) {
-            getStorageDeviceDao().updateAllInBatch(storageDevicesToUpdate);
+            storageDeviceDao.updateAllInBatch(storageDevicesToUpdate);
         }
         if (!storageDevicesToDelete.isEmpty()) {
-            getStorageDeviceDao().removeAllInBatch(storageDevicesToDelete);
+            storageDeviceDao.removeAllInBatch(storageDevicesToDelete);
         }
 
     }

@@ -46,7 +46,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
             populateServiceMap();
         }
 
-        List<Cluster> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = clusterDao.getAll();
 
         for (Cluster cluster : clusters) {
             if (supportsGlusterServicesFeature(cluster)) {
@@ -78,12 +78,11 @@ public class GlusterServiceSyncJob extends GlusterJob {
 
     private Map<String, GlusterServiceStatus> updateGlusterServicesStatusForStoppedServer(VDS server) {
         Map<String, GlusterServiceStatus> retMap = new HashMap<>();
-        List<GlusterServerService> serviceList =
-                getGlusterServerServiceDao().getByServerId(server.getId());
+        List<GlusterServerService> serviceList = serverServiceDao.getByServerId(server.getId());
         for (GlusterServerService service : serviceList) {
             retMap.put(service.getServiceName(), GlusterServiceStatus.UNKNOWN);
             service.setStatus(GlusterServiceStatus.UNKNOWN);
-            getGlusterServerServiceDao().update(service);
+            serverServiceDao.update(service);
         }
         return retMap;
     }
@@ -169,7 +168,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
     }
 
     private Map<ServiceType, GlusterClusterService> getClusterServiceMap(Cluster cluster) {
-        List<GlusterClusterService> clusterServices = getGlusterClusterServiceDao().getByClusterId(cluster.getId());
+        List<GlusterClusterService> clusterServices = clusterServiceDao.getByClusterId(cluster.getId());
         if (clusterServices == null) {
             clusterServices = new ArrayList<>();
         }
@@ -241,7 +240,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
                     }
                 }
                 if (servicesToUpdate.size() > 0) {
-                    getGlusterServerServiceDao().updateAll(servicesToUpdate);
+                    serverServiceDao.updateAll(servicesToUpdate);
                 }
             } finally {
                 releaseLock(server.getId());
@@ -259,12 +258,12 @@ public class GlusterServiceSyncJob extends GlusterJob {
             serviceStatusMap.put(existingService.getServiceName(), existingService.getStatus());
         }
 
-        getGlusterServerServiceDao().updateAll(existingServices);
+        serverServiceDao.updateAll(existingServices);
         return serviceStatusMap;
     }
 
     private Map<Guid, GlusterServerService> getExistingServicesMap(VDS server) {
-        List<GlusterServerService> existingServices = getGlusterServerServiceDao().getByServerId(server.getId());
+        List<GlusterServerService> existingServices = serverServiceDao.getByServerId(server.getId());
         Map<Guid, GlusterServerService> existingServicesMap = new HashMap<>();
         if (existingServices != null) {
             for (GlusterServerService service : existingServices) {
@@ -277,7 +276,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
     @SuppressWarnings("serial")
     private void insertServerService(VDS server, final GlusterServerService fetchedService) {
         fetchedService.setId(Guid.newGuid());
-        getGlusterServerServiceDao().save(fetchedService);
+        serverServiceDao.save(fetchedService);
         log.info("Service '{}' was not mapped to server '{}'. Mapped it now.",
                 fetchedService.getServiceName(),
                 server.getHostName());
@@ -293,7 +292,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
             final GlusterServiceStatus newStatus) {
         final GlusterServiceStatus oldStatus = clusterService.getStatus();
         clusterService.setStatus(newStatus);
-        getGlusterClusterServiceDao().update(clusterService);
+        clusterServiceDao.update(clusterService);
         log.info("Status of service type '{}' changed on cluster '{}' from '{}' to '{}'.",
                 clusterService.getServiceType().name(),
                 clusterService.getClusterId(),
@@ -319,7 +318,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
         clusterService.setServiceType(serviceType);
         clusterService.setStatus(status);
 
-        getGlusterClusterServiceDao().save(clusterService);
+        clusterServiceDao.save(clusterService);
 
         log.info("Service type '{}' not mapped to cluster '{}'. Mapped it now.",
                 serviceType,
@@ -342,7 +341,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
     }
 
     private void populateServiceMap() {
-        List<GlusterService> services = getGlusterServiceDao().getAll();
+        List<GlusterService> services = serviceDao.getAll();
         for (GlusterService service : services) {
             getServiceNameMap().put(service.getServiceName(), service);
         }

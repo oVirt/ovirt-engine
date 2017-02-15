@@ -66,7 +66,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     @OnTimerMethodAnnotation("gluster_async_task_poll_event")
     public void updateGlusterAsyncTasks() {
         log.debug("Refreshing gluster tasks list");
-        List<Cluster> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = clusterDao.getAll();
 
         Map<Guid, Set<Guid>> tasksFromClustersMap = new HashMap<>();
         for (Cluster cluster : clusters) {
@@ -93,7 +93,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             Guid taskId = entry.getKey();
             final GlusterAsyncTask task =  entry.getValue();
 
-            List<Step> steps = getStepDao().getStepsByExternalId(taskId);
+            List<Step> steps = stepDao.getStepsByExternalId(taskId);
 
             if (steps.isEmpty()) {
                 createJobForTaskFromCLI(cluster, task);
@@ -131,7 +131,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         }
 
         String volumeName = task.getTaskParameters().getVolumeName();
-        GlusterVolumeEntity vol = getVolumeDao().getByName(cluster.getId(), volumeName);
+        GlusterVolumeEntity vol = volumeDao.getByName(cluster.getId(), volumeName);
 
         if (vol == null) {
             log.info("Volume '{}' does not exist yet for task detected from CLI '{}', not adding to engine",
@@ -144,7 +144,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         Guid execStepId = addExecutingStep(jobId);
 
         Guid asyncStepId = addAsyncTaskStep(cluster, task, step, execStepId);
-        Step asyncStep = getStepDao().get(asyncStepId);
+        Step asyncStep = stepDao.get(asyncStepId);
         ExecutionHandler.getInstance().updateStepExternalId(asyncStep,
                 task.getTaskId(),
                 ExternalSystemType.GLUSTER);
@@ -199,7 +199,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             acquireLock(vol.getId());
 
             //update volume with task id
-            getVolumeDao().updateVolumeTask(vol.getId(), task.getTaskId());
+            volumeDao.updateVolumeTask(vol.getId(), task.getTaskId());
 
             if (GlusterTaskType.REMOVE_BRICK == task.getType()) {
                 //update bricks associated with task id
@@ -223,7 +223,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                             brickEntities.add(brickEntity);
                         }
                     }
-                    getBrickDao().updateAllBrickTasksByHostIdBrickDirInBatch(brickEntities);
+                    brickDao.updateAllBrickTasksByHostIdBrickDirInBatch(brickEntities);
                 }
             }
             logTaskStartedFromCLI(cluster, task, vol);
@@ -309,7 +309,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         log.debug("Tasks to be cleaned up in db '{}'", tasksNotRunning);
 
         for (Guid taskId: tasksNotRunning) {
-            GlusterVolumeEntity vol= getVolumeDao().getVolumeByGlusterTask(taskId);
+            GlusterVolumeEntity vol= volumeDao.getVolumeByGlusterTask(taskId);
             if (vol != null
                     && (vol.getStatus() != GlusterStatus.UP || !runningTasksInClusterMap.keySet()
                             .contains(vol.getClusterId()))) {
@@ -321,7 +321,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
             //Volume is up, but gluster does not know of task
             //will mark job ended with status unknown.
-            List<Step> steps = getStepDao().getStepsByExternalId(taskId);
+            List<Step> steps = stepDao.getStepsByExternalId(taskId);
             Map<String, String> values = new HashMap<>();
             values.put(GlusterConstants.CLUSTER, vol == null ? "" :vol.getClusterName());
             values.put(GlusterConstants.VOLUME, vol == null ? "" : vol.getName());

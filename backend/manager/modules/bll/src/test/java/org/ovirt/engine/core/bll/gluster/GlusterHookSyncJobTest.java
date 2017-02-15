@@ -18,6 +18,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
@@ -59,6 +60,7 @@ public class GlusterHookSyncJobTest {
     @Mock
     private ClusterDao clusterDao;
 
+    @InjectMocks
     @Spy
     private GlusterHookSyncJob hookSyncJob;
     private GlusterAuditLogUtil logUtil;
@@ -67,10 +69,6 @@ public class GlusterHookSyncJobTest {
     public static MockConfigRule mcr = new MockConfigRule();
 
     private void mockDaos() {
-
-        doReturn(clusterDao).when(hookSyncJob).getClusterDao();
-        doReturn(hooksDao).when(hookSyncJob).getHooksDao();
-
         List<Cluster> clusters = new ArrayList<>();
         clusters.add(createCluster(0));
         clusters.add(createCluster(1)); //to check for empty cluster

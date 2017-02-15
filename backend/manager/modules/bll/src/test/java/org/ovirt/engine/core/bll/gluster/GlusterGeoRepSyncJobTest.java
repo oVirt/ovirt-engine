@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
@@ -72,6 +73,7 @@ public class GlusterGeoRepSyncJobTest {
     @Mock
     private StorageDomainDRDao storageDomainDRDao;
 
+    @InjectMocks
     @Spy
     private GlusterGeoRepSyncJob syncJob;
 
@@ -87,11 +89,6 @@ public class GlusterGeoRepSyncJobTest {
 
         injectorRule.bind(LockManager.class, lockManager);
 
-        doReturn(clusterDao).when(syncJob).getClusterDao();
-        doReturn(vdsDao).when(syncJob).getVdsDao();
-        doReturn(geoRepDao).when(syncJob).getGeoRepDao();
-        doReturn(volumeDao).when(syncJob).getVolumeDao();
-        doReturn(storageDomainDRDao).when(syncJob).getStorageDomainDRDao();
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getVolume()).when(volumeDao).getByName(any(Guid.class), anyString());
         doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));
