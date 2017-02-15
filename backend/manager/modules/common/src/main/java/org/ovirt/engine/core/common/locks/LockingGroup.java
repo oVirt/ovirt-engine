@@ -44,6 +44,8 @@ public enum LockingGroup {
     HOST_DEVICES,
     VM_DISK_HOT_PLUG,
     VM_POOL,
-    VM_POOL_NAME;
+    VM_POOL_NAME,
+    /** This group is used when examining whether the last VM is detached from the pool */
+    VM_POOL_DETACH;
 
 }
