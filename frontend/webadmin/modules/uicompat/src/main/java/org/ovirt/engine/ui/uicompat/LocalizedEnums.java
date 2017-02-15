@@ -265,6 +265,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___HOST_UPDATES_ARE_AVAILABLE();
 
+    String AuditLogType___HOST_UPDATES_ARE_AVAILABLE_WITH_PACKAGES();
+
     String AuditLogType___USER_VDS_MAINTENANCE();
 
     String AuditLogType___USER_VDS_MAINTENANCE_MANUAL_HA();
