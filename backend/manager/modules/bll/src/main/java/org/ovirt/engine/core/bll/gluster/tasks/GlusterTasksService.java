@@ -48,9 +48,7 @@ public class GlusterTasksService {
      * Gets the list of stored tasks in database where the job is not ended
      */
     public List<Guid> getMonitoredTaskIDsInDB() {
-      List<Guid> externalIds = DbFacade.getInstance().getStepDao().
-                getExternalIdsForRunningSteps(ExternalSystemType.GLUSTER);
-        return externalIds;
+        return DbFacade.getInstance().getStepDao().getExternalIdsForRunningSteps(ExternalSystemType.GLUSTER);
     }
 
     private VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase params) {
