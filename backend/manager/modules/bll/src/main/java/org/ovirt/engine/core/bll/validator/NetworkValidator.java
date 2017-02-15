@@ -260,7 +260,7 @@ public class NetworkValidator {
         return templates;
     }
 
-    public boolean canNetworkCompatabilityBeDecreased() {
+    public boolean canNetworkCompatibilityBeDecreased() {
         return mtuValid().isValid();
     }
 

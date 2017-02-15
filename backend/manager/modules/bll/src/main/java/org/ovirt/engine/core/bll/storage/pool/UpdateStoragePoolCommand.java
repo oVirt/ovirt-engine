@@ -226,7 +226,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     NetworkValidator validator = getNetworkValidator(network);
                     validator.setDataCenter(getStoragePool());
                     if (!getManagementNetworkUtil().isManagementNetwork(network.getId())
-                            || !validator.canNetworkCompatabilityBeDecreased()) {
+                            || !validator.canNetworkCompatibilityBeDecreased()) {
                         return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
                     }
                 }

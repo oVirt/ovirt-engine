@@ -328,7 +328,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     private void setupNetworkValidator(boolean valid) {
         NetworkValidator validator = mock(NetworkValidator.class);
-        when(validator.canNetworkCompatabilityBeDecreased()).thenReturn(valid);
+        when(validator.canNetworkCompatibilityBeDecreased()).thenReturn(valid);
         when(cmd.getNetworkValidator(any())).thenReturn(validator);
     }
 
