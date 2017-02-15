@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,42 +17,39 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 @Singleton
 public class GlusterDBUtils {
-    private DbFacade getDbFacade() {
-        return DbFacade.getInstance();
-    }
+    @Inject
+    private GlusterBrickDao glusterBrickDao;
 
-    private GlusterBrickDao getGlusterBrickDao() {
-        return getDbFacade().getGlusterBrickDao();
-    }
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
 
-    private GlusterVolumeDao getGlusterVolumeDao() {
-        return getDbFacade().getGlusterVolumeDao();
-    }
+    @Inject
+    private GlusterServerDao glusterServerDao;
 
-    private GlusterServerDao getGlusterServerDao() {
-        return getDbFacade().getGlusterServerDao();
-    }
+    @Inject
+    private GlusterVolumeSnapshotConfigDao glusterVolumeSnapshotConfigDao;
 
-    private GlusterVolumeSnapshotConfigDao getGlusterVolumeSnapshotConfigDao() {
-        return getDbFacade().getGlusterVolumeSnapshotConfigDao();
-    }
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+
+    @Inject
+    private InterfaceDao interfaceDao;
 
     public boolean hasBricks(Guid serverId) {
-        return getGlusterBrickDao().getGlusterVolumeBricksByServerId(serverId).size() > 0;
+        return glusterBrickDao.getGlusterVolumeBricksByServerId(serverId).size() > 0;
     }
 
     /**
      * Update status of all bricks of the given volume to the new status
      */
     public void updateBricksStatuses(Guid volumeId, GlusterStatus newStatus) {
-        for (GlusterBrickEntity brick : getGlusterBrickDao().getBricksOfVolume(volumeId)) {
-            getGlusterBrickDao().updateBrickStatus(brick.getId(), newStatus);
+        for (GlusterBrickEntity brick : glusterBrickDao.getBricksOfVolume(volumeId)) {
+            glusterBrickDao.updateBrickStatus(brick.getId(), newStatus);
         }
     }
 
@@ -60,17 +58,9 @@ public class GlusterDBUtils {
      * as well.
      */
     public void updateVolumeStatus(Guid volumeId, GlusterStatus newStatus) {
-        getGlusterVolumeDao().updateVolumeStatus(volumeId, newStatus);
+        glusterVolumeDao.updateVolumeStatus(volumeId, newStatus);
         // When a volume goes UP or DOWN, all it's bricks should also be updated with the new status.
         updateBricksStatuses(volumeId, newStatus);
-    }
-
-    private VdsStaticDao getVdsStaticDao() {
-        return DbFacade.getInstance().getVdsStaticDao();
-    }
-
-    private InterfaceDao getInterfaceDao() {
-        return DbFacade.getInstance().getInterfaceDao();
     }
 
     public boolean serverExists(Guid clusterId, String hostnameOrIp) {
@@ -88,7 +78,7 @@ public class GlusterDBUtils {
      * @return GlusterServer object for the said server if found, else null
      */
     public GlusterServer getServerByUuid(Guid uuid) {
-        return getGlusterServerDao().getByGlusterServerUuid(uuid);
+        return glusterServerDao.getByGlusterServerUuid(uuid);
     }
 
     /**
@@ -98,7 +88,7 @@ public class GlusterDBUtils {
      */
     public VdsStatic getServer(Guid clusterId, String hostnameOrIp) {
         // first check for hostname
-        VdsStatic server = getVdsStaticDao().getByHostName(hostnameOrIp);
+        VdsStatic server = vdsStaticDao.getByHostName(hostnameOrIp);
         if (server != null) {
             return server.getClusterId().equals(clusterId) ? server : null;
         }
@@ -107,14 +97,14 @@ public class GlusterDBUtils {
         List<VdsNetworkInterface> ifaces;
         try {
             ifaces =
-                    getInterfaceDao().getAllInterfacesWithIpAddress(clusterId,
+                    interfaceDao.getAllInterfacesWithIpAddress(clusterId,
                             InetAddress.getByName(hostnameOrIp).getHostAddress());
             switch (ifaces.size()) {
             case 0:
                 // not found
                 return null;
             case 1:
-                return getVdsStaticDao().get(ifaces.get(0).getVdsId());
+                return vdsStaticDao.get(ifaces.get(0).getVdsId());
             default:
                 // multiple servers in the DB having this ip address!
                 throw new RuntimeException("There are multiple servers in DB having same IP address " + hostnameOrIp);
@@ -127,7 +117,7 @@ public class GlusterDBUtils {
     public void removeBricksFromVolumeInDb(GlusterVolumeEntity volume,
             List<GlusterBrickEntity> brickList,
             int volumeReplicaCount) {
-        getGlusterBrickDao().removeAllInBatch(brickList);
+        glusterBrickDao.removeAllInBatch(brickList);
 
         // Update volume type and replica/stripe count
         if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE
@@ -140,28 +130,28 @@ public class GlusterDBUtils {
                             ? volume.getReplicaCount()
                             : volumeReplicaCount;
             volume.setReplicaCount(replicaCount);
-            getGlusterVolumeDao().updateGlusterVolume(volume);
+            glusterVolumeDao.updateGlusterVolume(volume);
         }
 
         if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE
                 && volume.getStripeCount() == (volume.getBricks().size() - brickList.size())) {
             volume.setVolumeType(GlusterVolumeType.STRIPE);
-            getGlusterVolumeDao().updateGlusterVolume(volume);
+            glusterVolumeDao.updateGlusterVolume(volume);
         }
 
         if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE
                 && (volume.getStripeCount() * volume.getReplicaCount()) == (volume.getBricks().size() - brickList.size())) {
             volume.setVolumeType(GlusterVolumeType.STRIPED_REPLICATE);
-            getGlusterVolumeDao().updateGlusterVolume(volume);
+            glusterVolumeDao.updateGlusterVolume(volume);
         }
     }
 
     public String getHostNameOrIP(Guid glusterHostUuid) {
         String hostName = null;
         if (glusterHostUuid != null) {
-            GlusterServer glusterServer = getGlusterServerDao().getByGlusterServerUuid(glusterHostUuid);
+            GlusterServer glusterServer = glusterServerDao.getByGlusterServerUuid(glusterHostUuid);
             if(glusterServer != null) {
-                VdsStatic vds = getVdsStaticDao().get(glusterServer.getId());
+                VdsStatic vds = vdsStaticDao.get(glusterServer.getId());
                 if(vds != null) {
                     hostName = vds.getHostName();
                 }
@@ -171,15 +161,15 @@ public class GlusterDBUtils {
     }
 
     public GlusterBrickEntity getGlusterBrickByServerUuidAndBrickDir(Guid serverId, String brickDir) {
-        return getGlusterBrickDao().getBrickByServerIdAndDirectory(serverId, brickDir);
+        return glusterBrickDao.getBrickByServerIdAndDirectory(serverId, brickDir);
     }
 
     public boolean isVolumeSnapshotSoftLimitReached(Guid volumeId) {
-        GlusterVolumeEntity volume = getGlusterVolumeDao().getById(volumeId);
+        GlusterVolumeEntity volume = glusterVolumeDao.getById(volumeId);
 
         if (volume != null) {
             GlusterVolumeSnapshotConfig config =
-                    getGlusterVolumeSnapshotConfigDao().getConfigByClusterIdAndName(volume.getClusterId(),
+                    glusterVolumeSnapshotConfigDao.getConfigByClusterIdAndName(volume.getClusterId(),
                             "snap-max-soft-limit");
 
             if (config != null) {
@@ -198,11 +188,11 @@ public class GlusterDBUtils {
     }
 
     public boolean isVolumeSnapshotHardLimitReached(Guid volumeId) {
-        GlusterVolumeEntity volume = getGlusterVolumeDao().getById(volumeId);
+        GlusterVolumeEntity volume = glusterVolumeDao.getById(volumeId);
 
         if (volume != null) {
             GlusterVolumeSnapshotConfig config =
-                    getGlusterVolumeSnapshotConfigDao().getConfigByVolumeIdAndName(volume.getClusterId(),
+                    glusterVolumeSnapshotConfigDao.getConfigByVolumeIdAndName(volume.getClusterId(),
                             volumeId,
                             "snap-max-hard-limit");
 
