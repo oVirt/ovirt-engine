@@ -1129,6 +1129,9 @@ fi
 %{engine_data}/setup/ansible
 
 %changelog
+* Wed Feb 15 2017 Lev Veyde <lveyde@redhat.com> - 4.1.1.2-1
+- Bump version to 4.1.1.2
+
 * Tue Feb 14 2017 Lev Veyde <lveyde@redhat.com> - 4.1.1.1-1
 - Bump version to 4.1.1.1
 
