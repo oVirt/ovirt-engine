@@ -290,7 +290,7 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("entry");
         writer.writeAttributeString("name", "serial");
-        writer.writeRaw("SERIAL:");
+        writer.writeRaw("HOST-SERIAL:");
         writer.writeEndElement();
 
         writer.writeStartElement("entry");
