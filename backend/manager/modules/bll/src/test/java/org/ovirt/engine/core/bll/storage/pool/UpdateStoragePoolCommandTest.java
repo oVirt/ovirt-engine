@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
+import static org.apache.commons.collections.CollectionUtils.isEqualCollection;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -33,13 +35,16 @@ import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -261,6 +266,58 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
                 (EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS))
                 .when(poolValidator).isNotLocalfsWithDefaultCluster();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS);
+    }
+
+    @Test
+    public void syncLunsForStorageDomainsNoActiveDomain() {
+        List<StorageDomain> storageDomains = Arrays.asList(
+                createStorageDomainForSyncLuns(StorageType.ISCSI, StorageDomainStatus.Maintenance, false),
+                createStorageDomainForSyncLuns(StorageType.ISCSI, StorageDomainStatus.Locked, false));
+        assertTrue(cmd.syncLunsForStorageDomains(storageDomains).isEmpty());
+    }
+
+    @Test
+    public void syncLunsForStorageDomainsNoBlockDomain() {
+        List<StorageDomain> storageDomains = Arrays.asList(
+                createStorageDomainForSyncLuns(StorageType.NFS, StorageDomainStatus.Active, false),
+                createStorageDomainForSyncLuns(StorageType.GLANCE, StorageDomainStatus.Active, false));
+        assertTrue(cmd.syncLunsForStorageDomains(storageDomains).isEmpty());
+    }
+
+    @Test
+    public void syncLunsForStorageDomainsNoDomain() {
+        assertTrue(cmd.syncLunsForStorageDomains(Collections.emptyList()).isEmpty());
+    }
+
+    @Test
+    public void syncLunsForStorageDomainsWithFailedToSyncDomains() {
+        StorageDomain failedToSyncStorageDomain1 =
+                createStorageDomainForSyncLuns(StorageType.ISCSI, StorageDomainStatus.Active, false);
+        StorageDomain failedToSyncStorageDomain2 =
+                createStorageDomainForSyncLuns(StorageType.FCP, StorageDomainStatus.Active, false);
+        List<StorageDomain> storageDomains = Arrays.asList(failedToSyncStorageDomain1, failedToSyncStorageDomain2,
+                createStorageDomainForSyncLuns(StorageType.ISCSI, StorageDomainStatus.Active, true));
+        assertTrue(isEqualCollection(cmd.syncLunsForStorageDomains(storageDomains),
+                Arrays.asList(failedToSyncStorageDomain1.getId(), failedToSyncStorageDomain2.getId())));
+    }
+
+    @Test
+    public void syncLunsForStorageDomainsAllActiveBlockDomainsWereSynced() {
+        List<StorageDomain> storageDomains = Arrays.asList(
+                createStorageDomainForSyncLuns(StorageType.ISCSI, StorageDomainStatus.Active, true),
+                createStorageDomainForSyncLuns(StorageType.FCP, StorageDomainStatus.Locked, false),
+                createStorageDomainForSyncLuns(StorageType.FCP, StorageDomainStatus.Active, true));
+        assertTrue(cmd.syncLunsForStorageDomains(storageDomains).isEmpty());
+    }
+
+    private StorageDomain createStorageDomainForSyncLuns(StorageType storageType, StorageDomainStatus status,
+            boolean canSync) {
+        StorageDomain domain = new StorageDomain();
+        domain.setId(Guid.newGuid());
+        domain.setStorageType(storageType);
+        domain.setStatus(status);
+        doReturn(new Pair<>(canSync, domain.getId())).when(cmd).syncDomainLuns(eq(domain));
+        return domain;
     }
 
     private void newPoolNameIsAlreadyTaken() {
