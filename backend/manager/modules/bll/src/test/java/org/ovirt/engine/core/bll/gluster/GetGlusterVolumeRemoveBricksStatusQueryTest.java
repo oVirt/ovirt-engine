@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
@@ -216,11 +215,9 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
 
     private void setupMock() {
         glusterUtils = mock(GlusterUtil.class);
-        GlusterTaskUtils taskUtils = mock(GlusterTaskUtils.class);
 
         doReturn(CLUSTER_ID).when(getQueryParameters()).getClusterId();
         doReturn(VOLUME_ID).when(getQueryParameters()).getVolumeId();
-        doReturn(taskUtils).when(getQuery()).getGlusterTaskUtils();
         when(volumeDao.getById(VOLUME_ID)).thenReturn(getVolume());
         when(stepDao.getStepsByExternalId(any(Guid.class))).thenReturn(getStepsList());
         when(glusterServerDao.getByGlusterServerUuid(any(Guid.class))).thenReturn(getGlusterServer());
