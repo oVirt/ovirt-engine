@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -21,7 +22,8 @@ import org.ovirt.engine.core.di.Injector;
  */
 @Singleton
 public class GlusterAuditLogUtil {
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public void logVolumeMessage(final GlusterVolumeEntity volume, final AuditLogType logType) {
         logAuditMessage(volume.getClusterId(), volume, null, logType, Collections.emptyMap());
