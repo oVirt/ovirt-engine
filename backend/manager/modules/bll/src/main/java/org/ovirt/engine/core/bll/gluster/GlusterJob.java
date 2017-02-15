@@ -5,13 +5,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -106,6 +106,9 @@ public abstract class GlusterJob {
     @Inject
     private LockManager lockManager;
 
+    @Inject
+    private VDSBrokerFrontend resourceManager;
+
     protected GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
 
     /**
@@ -124,7 +127,7 @@ public abstract class GlusterJob {
     }
 
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase params) {
-        return Backend.getInstance().getResourceManager().runVdsCommand(commandType, params);
+        return resourceManager.runVdsCommand(commandType, params);
     }
 
     /**
