@@ -58,12 +58,18 @@ public class VmCpuCountHelper {
                         cpuPerSocket, threadsPerCore);
             } else {
                 int apicIdLimit = (int) Math.pow(2, 8 - oneSocketBitWidth);
-                maxVCpus = Math.min(maxVCpus, cpuPerSocket * threadsPerCore * Math.min(maxSockets, apicIdLimit));
-                if (maxVCpus == 256) {
+                int apicVCpusLimit = cpuPerSocket * threadsPerCore * Math.min(maxSockets, apicIdLimit);
+                if (apicVCpusLimit == 256) {
                     // Using the maximum 8-bit value may be unsafe under certain circumstances, see
                     // https://bugzilla.redhat.com/1406243#c17
                     // Note that maxVCpus must match the socket and thread counts.
-                    maxVCpus -= cpuPerSocket * threadsPerCore;
+                    apicVCpusLimit -= cpuPerSocket * threadsPerCore;
+                }
+                if (maxVCpus < apicVCpusLimit) {
+                    // The value must be multiplication of cpuPerSocket * threadsPerCore.
+                    maxVCpus = (maxVCpus / (cpuPerSocket * threadsPerCore)) * (cpuPerSocket * threadsPerCore);
+                } else {
+                    maxVCpus = apicVCpusLimit;
                 }
             }
         } else {
