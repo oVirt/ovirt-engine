@@ -59,7 +59,7 @@ import org.w3c.dom.NodeList;
 
 public class GlusterUtil {
     private static GlusterUtil instance = new GlusterUtil();
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(GlusterUtil.class);
     private static final int SSH_PORT = 22;
     private static final String PEER = "peer";
     private static final String HOST_NAME = "hostname";
