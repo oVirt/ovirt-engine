@@ -249,17 +249,15 @@ public class GlusterTaskUtils {
         formatSize.setMinimumFractionDigits(2);
         Pair<SizeConverter.SizeUnit, Double> sizeMoved =
                 SizeConverter.autoConvert(statusSummary.getTotalSizeMoved(), SizeUnit.BYTES);
-        StringBuilder builder = new StringBuilder();
-        builder.append("Files [scanned: ")
-                .append(statusSummary.getFilesScanned())
-                .append(", moved: ")
-                .append(statusSummary.getFilesMoved())
-                .append(", failed: ")
-                .append(statusSummary.getFilesFailed())
-                .append(", Total size moved: ")
-                .append(new StringBuilder(formatSize.format(sizeMoved.getSecond().doubleValue()))
-                        .append(" ")
-                        .append(sizeMoved.getFirst().toString()));
-        return builder.toString();
+        return "Files [scanned: " +
+                statusSummary.getFilesScanned() +
+                ", moved: " +
+                statusSummary.getFilesMoved() +
+                ", failed: " +
+                statusSummary.getFilesFailed() +
+                ", Total size moved: " +
+                formatSize.format(sizeMoved.getSecond().doubleValue()) +
+                " " +
+                sizeMoved.getFirst();
     }
 }
