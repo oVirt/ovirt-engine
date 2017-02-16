@@ -33,7 +33,7 @@ while getopts ":aAft:v" opt; do
         ;;
         v) VERBOSE=1
         ;;
-        \?) usage && exit 1
+        \?) usage && exit
         ;;
         :) die "-$OPTARG requires an argument"
         ;;
