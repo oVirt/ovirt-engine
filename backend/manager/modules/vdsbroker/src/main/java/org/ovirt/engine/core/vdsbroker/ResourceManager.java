@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -370,9 +369,7 @@ public class ResourceManager implements BackendService {
     private <P extends VDSParametersBase, T extends VDSCommandBase<P>> T instantiateInjectedCommand(P parameters,
             Constructor<T> constructor) throws Exception {
         T cmd = constructor.newInstance(new Object[] { parameters });
-        InjectionTarget injectionTarget =
-                beanManager.createInjectionTarget(beanManager.createAnnotatedType(cmd.getClass()));
-        injectionTarget.inject(cmd, beanManager.createCreationalContext(null));
+        Injector.injectMembers(cmd);
         return cmd;
     }
 
