@@ -207,12 +207,12 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void initSliders() {
-        clusterThresholdSlider = new Slider(2, 0, 100, 80, MIN_COLOR);
+        clusterThresholdSlider = new Slider(2, 1, 100, 80, MIN_COLOR);
         clusterThresholdSlider.setSliderValueChange(THRESHOLD_CLUSTER, this);
         clusterGraceSlider = new Slider(2, 101, 200, 120, MAX_COLOR);
         clusterGraceSlider.setSliderValueChange(GRACE_CLUSTER, this);
 
-        storageThresholdSlider = new Slider(2, 0, 100, 80, MIN_COLOR);
+        storageThresholdSlider = new Slider(2, 1, 100, 80, MIN_COLOR);
         storageThresholdSlider.setSliderValueChange(THRESHOLD_STORAGE, this);
         storageGraceSlider = new Slider(2, 101, 200, 120, MAX_COLOR);
         storageGraceSlider.setSliderValueChange(GRACE_STORAGE, this);
