@@ -11,8 +11,4 @@
   <packaging>jar</packaging>
 
   <name>Utilities to extend java.logging framework</name>
-
-  <build>
-    <finalName>${project.artifactId}</finalName>
-  </build>
 </project>
