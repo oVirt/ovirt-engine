@@ -55,11 +55,6 @@
             line-height: 16px;
             color: #333;
         }
-        .imageFileUploadInput {
-            float: right;
-            width: 460px;
-            margin-left: 10px;
-        }
 
         /* The following styles are applied within the application code */
         .imageUriEditor {
@@ -70,6 +65,13 @@
             width: 460px;
         }
 
+        .fileUploadButton {
+            margin: 0 10px;
+        }
+
+        .fileUploadLabel {
+            margin: 3px 10px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="700px" height="550px">
@@ -83,7 +85,9 @@
 
                 <g:FlowPanel addStyleNames="{style.optionsPanel}" height="130px">
                     <g:HorizontalPanel ui:field="imageFileUploadPanel">
-                        <g:FileUpload ui:field="imageFileUpload" addStyleNames="{style.imageFileUploadInput}" />
+                        <g:FileUpload ui:field="imageFileUpload" visible="false" />
+                        <d:SimpleDialogButton addStyleNames="{style.fileUploadButton}" ui:field="imageFileUploadButton" text="{constants.uploadImageChooseFile}" />
+                        <g:Label addStyleNames="{style.fileUploadLabel}" ui:field="imageFileUploadLabel" text="{constants.uploadImageNoFileChosen}" />
                     </g:HorizontalPanel>
 
                     <s:ImageInfoForm ui:field="imageInfoForm"/>

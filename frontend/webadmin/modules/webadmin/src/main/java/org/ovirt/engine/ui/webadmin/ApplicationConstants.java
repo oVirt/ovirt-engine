@@ -236,6 +236,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String uploadImageResume();
 
+    String uploadImageChooseFile();
+
+    String uploadImageNoFileChosen();
+
     String storageTypeShared();
 
     String storageTypeLocal();

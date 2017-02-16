@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
+import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDiskPopupWidget;
@@ -18,6 +19,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.UploadImagePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -66,6 +68,13 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
 
     @UiField
     FileUpload imageFileUpload;
+
+    @UiField
+    SimpleDialogButton imageFileUploadButton;
+
+    @UiField
+    @Ignore
+    Label imageFileUploadLabel;
 
     @UiField
     @Ignore
@@ -187,6 +196,20 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
             }
         });
         model.getImageInfoModel().initialize(model.getImageFileUploadElement());
+
+        // Add image upload click handler and label updater
+        imageFileUploadButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                imageFileUpload.getElement().<InputElement>cast().click();
+            }
+        });
+        imageFileUpload.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent event) {
+                imageFileUploadLabel.setText(imageFileUpload.getFilename());
+            }
+        });
     }
 
     private void handleImageUploadBrowserSupport(final UploadImageModel model) {
