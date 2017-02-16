@@ -39,406 +39,12 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public class VmInitModel extends Model {
 
-    private boolean isWindowsOS = false;
-    public boolean getHostnameEnabled() {
-        if (isWindowsOS) {
-            return !StringHelper.isNullOrEmpty(getWindowsHostname().getEntity());
-        } else {
-            return !StringHelper.isNullOrEmpty(getHostname().getEntity());
-        }
-    }
-    public boolean getDomainEnabled() {
-        if (isWindowsOS) {
-            return !StringHelper.isNullOrEmpty(getSysprepDomain().getSelectedItem());
-        }
-        return false;
-    }
-
-    private ListModel<Map.Entry<String, String>> windowsSysprepTimeZone;
-
-    public ListModel<Map.Entry<String, String>> getWindowsSysprepTimeZone() {
-        return windowsSysprepTimeZone;
-    }
-
-    public void setWindowsSysprepTimeZone(ListModel<Map.Entry<String, String>> windowsSysprepTimeZone) {
-        this.windowsSysprepTimeZone = windowsSysprepTimeZone;
-    }
-
-    private EntityModel<Boolean> windowsSysprepTimeZoneEnabled;
-
-    public EntityModel<Boolean> getWindowsSysprepTimeZoneEnabled() {
-        return windowsSysprepTimeZoneEnabled;
-    }
-
-    public void setWindowsSysprepTimeZoneEnabled(EntityModel<Boolean> windowsSysprepTimeZoneEnabled) {
-        this.windowsSysprepTimeZoneEnabled = windowsSysprepTimeZoneEnabled;
-    }
-
-    private EntityModel<String> windowsHostname;
-    public EntityModel<String> getWindowsHostname() {
-        return windowsHostname;
-    }
-    private void setWindowsHostname(EntityModel<String> value) {
-        windowsHostname = value;
-    }
-
-    private EntityModel<String> sysprepOrgName;
-    public EntityModel<String> getSysprepOrgName() {
-        return sysprepOrgName;
-    }
-    private void setSysprepOrgName(EntityModel<String> value) {
-        sysprepOrgName = value;
-    }
-
-    private EntityModel<String> hostname;
-    public EntityModel<String> getHostname() {
-        return hostname;
-    }
-
-    private void setHostname(EntityModel<String> value) {
-        hostname = value;
-    }
-
-    private ListModel<String> sysprepDomain;
-    public ListModel<String> getSysprepDomain() {
-        return sysprepDomain;
-    }
-
-    private void setSysprepDomain(ListModel<String> value) {
-        sysprepDomain = value;
-    }
-
-    private EntityModel<String> inputLocale;
-    public EntityModel<String> getInputLocale() {
-        return inputLocale;
-    }
-    private void setInputLocale(EntityModel<String> value) {
-        inputLocale = value;
-    }
-
-    private EntityModel<String> uiLanguage;
-    public EntityModel<String> getUiLanguage() {
-        return uiLanguage;
-    }
-    private void setUiLanguage(EntityModel<String> value) {
-        uiLanguage = value;
-    }
-
-    private EntityModel<String> systemLocale;
-    public EntityModel<String> getSystemLocale() {
-        return systemLocale;
-    }
-    private void setSystemLocale(EntityModel<String> value) {
-        systemLocale = value;
-    }
-
-    private EntityModel<String> userLocale;
-    public EntityModel<String> getUserLocale() {
-        return userLocale;
-    }
-    private void setUserLocale(EntityModel<String> value) {
-        userLocale = value;
-    }
-
-    private EntityModel<String> userName;
-    public EntityModel<String> getUserName() {
-        return userName;
-    }
-    private void setUserName(EntityModel<String> value) {
-        userName = value;
-    }
-
-    private EntityModel<String> activeDirectoryOU;
-    public EntityModel<String> getActiveDirectoryOU() {
-        return activeDirectoryOU;
-    }
-
-    private void setActiveDirectoryOU(EntityModel<String> value) {
-        activeDirectoryOU = value;
-    }
-
-    private EntityModel<String> customScript;
-    public EntityModel<String> getCustomScript() {
-        return customScript;
-    }
-    private void setCustomScript(EntityModel<String> value) {
-        customScript = value;
-    }
-
-    private EntityModel<String> sysprepScript;
-    public EntityModel<String> getSysprepScript() {
-        return sysprepScript;
-    }
-    private void setSysprepScript(EntityModel<String> value) {
-        sysprepScript = value;
-    }
-
-    public boolean getAuthorizedKeysEnabled() {
-        return !StringHelper.isNullOrEmpty(getCloudInitRootPassword().getEntity());
-    }
-
-    private EntityModel<String> authorizedKeys;
-    public EntityModel<String> getAuthorizedKeys() {
-        return authorizedKeys;
-    }
-    private void setAuthorizedKeys(EntityModel<String> value) {
-        authorizedKeys = value;
-    }
-
-
-    private EntityModel<Boolean> regenerateKeysEnabled;
-    public EntityModel<Boolean> getRegenerateKeysEnabled() {
-        return regenerateKeysEnabled;
-    }
-    private void setRegenerateKeysEnabled(EntityModel<Boolean> value) {
-        regenerateKeysEnabled = value;
-    }
-
-
-    private EntityModel<Boolean> timeZoneEnabled;
-    public EntityModel<Boolean> getTimeZoneEnabled() {
-        return timeZoneEnabled;
-    }
-    private void setTimeZoneEnabled(EntityModel<Boolean> value) {
-        timeZoneEnabled = value;
-    }
-
-    private ListModel<Map.Entry<String, String>> timeZoneList;
-    public ListModel<Map.Entry<String, String>>  getTimeZoneList() {
-        return timeZoneList;
-    }
-    private void setTimeZoneList(ListModel<Map.Entry<String, String>>  value) {
-        timeZoneList = value;
-    }
-
-    public boolean getSysprepPasswordEnabled() {
-        return !StringHelper.isNullOrEmpty(getSysprepAdminPassword().getEntity());
-    }
-
-    public boolean getRootPasswordEnabled() {
-        return !StringHelper.isNullOrEmpty(getCloudInitRootPassword().getEntity());
-    }
-
-    private EntityModel<String> cloudInitRootPassword;
-    public EntityModel<String> getCloudInitRootPassword() {
-        return cloudInitRootPassword;
-    }
-    private void setCloudInitRootPassword(EntityModel<String> value) {
-        cloudInitRootPassword = value;
-    }
-
-    private EntityModel<String> cloudInitRootPasswordVerification;
-    public EntityModel<String> getCloudInitRootPasswordVerification() {
-        return cloudInitRootPasswordVerification;
-    }
-    private void setCloudInitRootPasswordVerification(EntityModel<String> value) {
-        cloudInitRootPasswordVerification = value;
-    }
-
-    private EntityModel<Boolean> cloudInitPasswordSet;
-    public EntityModel<Boolean> getCloudInitPasswordSet() {
-        return cloudInitPasswordSet;
-    }
-
-    private void setCloudInitPasswordSet(EntityModel<Boolean> value) {
-        cloudInitPasswordSet = value;
-    }
-
-
-    private EntityModel<String> sysprepAdminPassword;
-    public EntityModel<String> getSysprepAdminPassword() {
-        return sysprepAdminPassword;
-    }
-    private void setSysprepAdminPassword(EntityModel<String> value) {
-        sysprepAdminPassword = value;
-    }
-
-
-    private EntityModel<String> sysprepAdminPasswordVerification;
-    public EntityModel<String> getSysprepAdminPasswordVerification() {
-        return sysprepAdminPasswordVerification;
-    }
-    private void setSysprepAdminPasswordVerification(EntityModel<String> value) {
-        sysprepAdminPasswordVerification = value;
-    }
-
-    private EntityModel<Boolean> sysprepPasswordSet;
-    public EntityModel<Boolean> getSysprepPasswordSet() {
-        return sysprepPasswordSet;
-    }
-
-    private void setSysprepPasswordSet(EntityModel<Boolean> value) {
-        sysprepPasswordSet = value;
-    }
-
-
-    private EntityModel<Boolean> networkEnabled;
-    public EntityModel<Boolean> getNetworkEnabled() {
-        return networkEnabled;
-    }
-    private void setNetworkEnabled(EntityModel<Boolean> value) {
-        networkEnabled = value;
-    }
-
-    private EntityModel<String> networkSelectedName;
-    public EntityModel<String> getNetworkSelectedName() {
-        return networkSelectedName;
-    }
-    private void setNetworkSelectedName(EntityModel<String> value) {
-        networkSelectedName = value;
-    }
-
-    private ListModel<String> networkList;
-    public ListModel<String> getNetworkList() {
-        return networkList;
-    }
-    private void setNetworkList(ListModel<String> value) {
-        networkList = value;
-    }
-
-    private UICommand addNetworkCommand;
-    public UICommand getAddNetworkCommand() {
-        return addNetworkCommand;
-    }
-    private void setAddNetworkCommand(UICommand value) {
-        addNetworkCommand = value;
-    }
-
-    private UICommand removeNetworkCommand;
-    public UICommand getRemoveNetworkCommand() {
-        return removeNetworkCommand;
-    }
-    private void setRemoveNetworkCommand(UICommand value) {
-        removeNetworkCommand = value;
-    }
-
-    private ListModel<Ipv4BootProtocol> ipv4BootProtocolList;
-
-    public ListModel<Ipv4BootProtocol> getIpv4BootProtocolList() {
-        return ipv4BootProtocolList;
-    }
-
-    private void setIpv4BootProtocolList(ListModel<Ipv4BootProtocol> value) {
-        ipv4BootProtocolList = value;
-    }
-
-    private EntityModel<String> networkIpAddress;
-    public EntityModel<String> getNetworkIpAddress() {
-        return networkIpAddress;
-    }
-    private void setNetworkIpAddress(EntityModel<String> value) {
-        networkIpAddress = value;
-    }
-
-    private EntityModel<String> networkNetmask;
-    public EntityModel<String> getNetworkNetmask() {
-        return networkNetmask;
-    }
-    private void setNetworkNetmask(EntityModel<String> value) {
-        networkNetmask = value;
-    }
-
-    private EntityModel<String> networkGateway;
-    public EntityModel<String> getNetworkGateway() {
-        return networkGateway;
-    }
-    private void setNetworkGateway(EntityModel<String> value) {
-        networkGateway = value;
-    }
-
-    private EntityModel<Boolean> networkStartOnBoot;
-    public EntityModel<Boolean> getNetworkStartOnBoot() {
-        return networkStartOnBoot;
-    }
-    private void setNetworkStartOnBoot(EntityModel<Boolean> value) {
-        networkStartOnBoot = value;
-    }
-
-    private EntityModel<String> dnsServers;
-    public EntityModel<String> getDnsServers() {
-        return dnsServers;
-    }
-    public void setDnsServers(EntityModel<String> dnsServers) {
-        this.dnsServers = dnsServers;
-    }
-
-    private EntityModel<String> dnsSearchDomains;
-    public EntityModel<String> getDnsSearchDomains() {
-        return dnsSearchDomains;
-    }
-    public void setDnsSearchDomains(EntityModel<String> dnsSearchDomains) {
-        this.dnsSearchDomains = dnsSearchDomains;
-    }
-
-
-    private EntityModel<Boolean> attachmentEnabled;
-    public EntityModel<Boolean> getAttachmentEnabled() {
-        return attachmentEnabled;
-    }
-    private void setAttachmentEnabled(EntityModel<Boolean> value) {
-        attachmentEnabled = value;
-    }
-
-    private EntityModel<? extends Object> attachmentSelectedPath;
-    public EntityModel getAttachmentSelectedPath() {
-        return attachmentSelectedPath;
-    }
-    private void setAttachmentSelectedPath(EntityModel value) {
-        attachmentSelectedPath = value;
-    }
-
-    private ListModel<? extends Object> attachmentList;
-    public ListModel getAttachmentList() {
-
-        return attachmentList;
-    }
-    private void setAttachmentList(ListModel value) {
-        attachmentList = value;
-    }
-
-    private UICommand addAttachmentCommand;
-    public UICommand getAddAttachmentCommand() {
-        return addAttachmentCommand;
-    }
-    private void setAddAttachmentCommand(UICommand value) {
-        addAttachmentCommand = value;
-    }
-
-    private UICommand removeAttachmentCommand;
-    public UICommand getRemoveAttachmentCommand() {
-        return removeAttachmentCommand;
-    }
-    private void setRemoveAttachmentCommand(UICommand value) {
-        removeAttachmentCommand = value;
-    }
-
-    private ListModel attachmentType;
-    public ListModel getAttachmentType() {
-        return attachmentType;
-    }
-    private void setAttachmentType(ListModel value) {
-        attachmentType = value;
-    }
-
-    private EntityModel<? extends Object> attachmentContent;
-    public EntityModel getAttachmentContent() {
-        return attachmentContent;
-    }
-    private void setAttachmentContent(EntityModel value) {
-        attachmentContent = value;
-    }
-
-
     private static final String rootPasswordMatchMessage;
     private static final String dnsServerListMessage;
     private static final String newNetworkText;
     private static final String newAttachmentText;
     private static final String base64Message;
     private static final String base64Regex;
-
-    private SortedMap<String, VmInitNetwork> networkMap;
-    private Set<String> startOnBootNetworkNames;
-    private String lastSelectedNetworkName;
 
     static {
         rootPasswordMatchMessage = ConstantsManager.getInstance().getConstants().cloudInitRootPasswordMatchMessage();
@@ -448,6 +54,61 @@ public class VmInitModel extends Model {
         base64Message = ConstantsManager.getInstance().getConstants().cloudInitBase64Message();
         base64Regex = "^[a-zA-Z0-9+/_\\r\\n-](=){0,2}$"; //$NON-NLS-1$
     }
+
+    private ListModel<Map.Entry<String, String>> windowsSysprepTimeZone;
+    private EntityModel<Boolean> windowsSysprepTimeZoneEnabled;
+    private EntityModel<String> windowsHostname;
+    private EntityModel<String> sysprepOrgName;
+    private ListModel<String> sysprepDomain;
+    private EntityModel<String> hostname;
+    private EntityModel<String> inputLocale;
+    private EntityModel<String> uiLanguage;
+    private EntityModel<String> systemLocale;
+    private EntityModel<String> userLocale;
+    private EntityModel<String> userName;
+    private EntityModel<String> activeDirectoryOU;
+    private EntityModel<String> customScript;
+    private EntityModel<String> sysprepScript;
+    private EntityModel<String> authorizedKeys;
+    private EntityModel<Boolean> regenerateKeysEnabled;
+    private EntityModel<Boolean> timeZoneEnabled;
+    private ListModel<Map.Entry<String, String>> timeZoneList;
+    private EntityModel<String> cloudInitRootPassword;
+    private EntityModel<String> cloudInitRootPasswordVerification;
+    private EntityModel<Boolean> cloudInitPasswordSet;
+    private EntityModel<String> sysprepAdminPassword;
+    private EntityModel<String> sysprepAdminPasswordVerification;
+    private EntityModel<Boolean> sysprepPasswordSet;
+    private EntityModel<Boolean> networkEnabled;
+    private EntityModel<String> networkSelectedName;
+    private ListModel<String> networkList;
+    private UICommand addNetworkCommand;
+    private UICommand removeNetworkCommand;
+    private ListModel<Ipv4BootProtocol> ipv4BootProtocolList;
+    private EntityModel<String> networkIpAddress;
+    private EntityModel<String> networkNetmask;
+    private EntityModel<String> networkGateway;
+    private EntityModel<Boolean> networkStartOnBoot;
+    private EntityModel<String> dnsServers;
+    private EntityModel<String> dnsSearchDomains;
+    private EntityModel<Boolean> attachmentEnabled;
+    private EntityModel<? extends Object> attachmentSelectedPath;
+    private ListModel<? extends Object> attachmentList;
+    private UICommand addAttachmentCommand;
+    private UICommand removeAttachmentCommand;
+    private ListModel attachmentType;
+    private EntityModel<? extends Object> attachmentContent;
+
+    private boolean isWindowsOS = false;
+    private SortedMap<String, VmInitNetwork> networkMap;
+    private Set<String> startOnBootNetworkNames;
+    private String lastSelectedNetworkName;
+    private String currentDomain = null;
+    /**
+     * Do not automatically change guest's hostname when the user already did manually
+     */
+    private boolean canAutoSetHostname = true;
+    private boolean disableOnHostnameChanged = false;
 
     public VmInitModel() {
 
@@ -461,7 +122,7 @@ public class VmInitModel extends Model {
         setSystemLocale(new EntityModel<String>());
         setUserLocale(new EntityModel<String>());
         setSysprepScript(new EntityModel<String>());
-        setActiveDirectoryOU(new EntityModel());
+        setActiveDirectoryOU(new EntityModel<String>());
 
         setHostname(new EntityModel<String>());
         setAuthorizedKeys(new EntityModel<String>());
@@ -978,7 +639,6 @@ public class VmInitModel extends Model {
         }
     }
 
-
     /* === Network === */
 
     private void networkList_SelectedItemChanged() {
@@ -1071,7 +731,6 @@ public class VmInitModel extends Model {
         isWindowsOS = AsyncDataProvider.getInstance().isWindowsOsType(selectedItem);
     }
 
-    private String currentDomain = null;
     protected void updateSysprepDomain(String domain) {
         // Can't use domain since onSuccess is async call and it have
         // a different stack call.
@@ -1089,12 +748,6 @@ public class VmInitModel extends Model {
             }
         }));
     }
-
-    /**
-     * Do not automatically change guest's hostname when the user already did manually
-     */
-    private boolean canAutoSetHostname = true;
-    private boolean disableOnHostnameChanged = false;
 
     public void autoSetHostname(String hostName) {
         if (canAutoSetHostname) {
@@ -1114,5 +767,376 @@ public class VmInitModel extends Model {
     private void addHostnameListeners() {
         getHostname().getEntityChangedEvent().addListener(this);
         getWindowsHostname().getEntityChangedEvent().addListener(this);
+    }
+
+    public boolean getHostnameEnabled() {
+        if (isWindowsOS) {
+            return !StringHelper.isNullOrEmpty(getWindowsHostname().getEntity());
+        } else {
+            return !StringHelper.isNullOrEmpty(getHostname().getEntity());
+        }
+    }
+    public boolean getDomainEnabled() {
+        if (isWindowsOS) {
+            return !StringHelper.isNullOrEmpty(getSysprepDomain().getSelectedItem());
+        }
+        return false;
+    }
+
+    public ListModel<Map.Entry<String, String>> getWindowsSysprepTimeZone() {
+        return windowsSysprepTimeZone;
+    }
+
+    public void setWindowsSysprepTimeZone(ListModel<Map.Entry<String, String>> windowsSysprepTimeZone) {
+        this.windowsSysprepTimeZone = windowsSysprepTimeZone;
+    }
+
+    public EntityModel<Boolean> getWindowsSysprepTimeZoneEnabled() {
+        return windowsSysprepTimeZoneEnabled;
+    }
+
+    public void setWindowsSysprepTimeZoneEnabled(EntityModel<Boolean> windowsSysprepTimeZoneEnabled) {
+        this.windowsSysprepTimeZoneEnabled = windowsSysprepTimeZoneEnabled;
+    }
+
+    public EntityModel<String> getWindowsHostname() {
+        return windowsHostname;
+    }
+
+    private void setWindowsHostname(EntityModel<String> value) {
+        windowsHostname = value;
+    }
+
+    public EntityModel<String> getSysprepOrgName() {
+        return sysprepOrgName;
+    }
+
+    private void setSysprepOrgName(EntityModel<String> value) {
+        sysprepOrgName = value;
+    }
+
+    public EntityModel<String> getHostname() {
+        return hostname;
+    }
+
+    private void setHostname(EntityModel<String> value) {
+        hostname = value;
+    }
+
+    public ListModel<String> getSysprepDomain() {
+        return sysprepDomain;
+    }
+
+    private void setSysprepDomain(ListModel<String> value) {
+        sysprepDomain = value;
+    }
+
+    public EntityModel<String> getInputLocale() {
+        return inputLocale;
+    }
+
+    private void setInputLocale(EntityModel<String> value) {
+        inputLocale = value;
+    }
+
+    public EntityModel<String> getUiLanguage() {
+        return uiLanguage;
+    }
+
+    private void setUiLanguage(EntityModel<String> value) {
+        uiLanguage = value;
+    }
+
+    public EntityModel<String> getSystemLocale() {
+        return systemLocale;
+    }
+
+    private void setSystemLocale(EntityModel<String> value) {
+        systemLocale = value;
+    }
+
+    public EntityModel<String> getUserLocale() {
+        return userLocale;
+    }
+
+    private void setUserLocale(EntityModel<String> value) {
+        userLocale = value;
+    }
+
+    public EntityModel<String> getUserName() {
+        return userName;
+    }
+
+    private void setUserName(EntityModel<String> value) {
+        userName = value;
+    }
+
+    public EntityModel<String> getActiveDirectoryOU() {
+        return activeDirectoryOU;
+    }
+
+    private void setActiveDirectoryOU(EntityModel<String> value) {
+        activeDirectoryOU = value;
+    }
+
+    public EntityModel<String> getCustomScript() {
+        return customScript;
+    }
+    private void setCustomScript(EntityModel<String> value) {
+        customScript = value;
+    }
+
+    public EntityModel<String> getSysprepScript() {
+        return sysprepScript;
+    }
+
+    private void setSysprepScript(EntityModel<String> value) {
+        sysprepScript = value;
+    }
+
+    public boolean getAuthorizedKeysEnabled() {
+        return !StringHelper.isNullOrEmpty(getCloudInitRootPassword().getEntity());
+    }
+
+    public EntityModel<String> getAuthorizedKeys() {
+        return authorizedKeys;
+    }
+
+    private void setAuthorizedKeys(EntityModel<String> value) {
+        authorizedKeys = value;
+    }
+
+    public EntityModel<Boolean> getRegenerateKeysEnabled() {
+        return regenerateKeysEnabled;
+    }
+
+    private void setRegenerateKeysEnabled(EntityModel<Boolean> value) {
+        regenerateKeysEnabled = value;
+    }
+
+    public EntityModel<Boolean> getTimeZoneEnabled() {
+        return timeZoneEnabled;
+    }
+
+    private void setTimeZoneEnabled(EntityModel<Boolean> value) {
+        timeZoneEnabled = value;
+    }
+
+    public ListModel<Map.Entry<String, String>>  getTimeZoneList() {
+        return timeZoneList;
+    }
+
+    private void setTimeZoneList(ListModel<Map.Entry<String, String>>  value) {
+        timeZoneList = value;
+    }
+
+    public boolean getSysprepPasswordEnabled() {
+        return !StringHelper.isNullOrEmpty(getSysprepAdminPassword().getEntity());
+    }
+
+    public boolean getRootPasswordEnabled() {
+        return !StringHelper.isNullOrEmpty(getCloudInitRootPassword().getEntity());
+    }
+
+    public EntityModel<String> getCloudInitRootPassword() {
+        return cloudInitRootPassword;
+    }
+
+    private void setCloudInitRootPassword(EntityModel<String> value) {
+        cloudInitRootPassword = value;
+    }
+
+    public EntityModel<String> getCloudInitRootPasswordVerification() {
+        return cloudInitRootPasswordVerification;
+    }
+
+    private void setCloudInitRootPasswordVerification(EntityModel<String> value) {
+        cloudInitRootPasswordVerification = value;
+    }
+
+    public EntityModel<Boolean> getCloudInitPasswordSet() {
+        return cloudInitPasswordSet;
+    }
+
+    private void setCloudInitPasswordSet(EntityModel<Boolean> value) {
+        cloudInitPasswordSet = value;
+    }
+
+    public EntityModel<String> getSysprepAdminPassword() {
+        return sysprepAdminPassword;
+    }
+
+    private void setSysprepAdminPassword(EntityModel<String> value) {
+        sysprepAdminPassword = value;
+    }
+
+    public EntityModel<String> getSysprepAdminPasswordVerification() {
+        return sysprepAdminPasswordVerification;
+    }
+
+    private void setSysprepAdminPasswordVerification(EntityModel<String> value) {
+        sysprepAdminPasswordVerification = value;
+    }
+
+    public EntityModel<Boolean> getSysprepPasswordSet() {
+        return sysprepPasswordSet;
+    }
+
+    private void setSysprepPasswordSet(EntityModel<Boolean> value) {
+        sysprepPasswordSet = value;
+    }
+
+    public EntityModel<Boolean> getNetworkEnabled() {
+        return networkEnabled;
+    }
+
+    private void setNetworkEnabled(EntityModel<Boolean> value) {
+        networkEnabled = value;
+    }
+
+    public EntityModel<String> getNetworkSelectedName() {
+        return networkSelectedName;
+    }
+
+    private void setNetworkSelectedName(EntityModel<String> value) {
+        networkSelectedName = value;
+    }
+
+    public ListModel<String> getNetworkList() {
+        return networkList;
+    }
+
+    private void setNetworkList(ListModel<String> value) {
+        networkList = value;
+    }
+
+    public UICommand getAddNetworkCommand() {
+        return addNetworkCommand;
+    }
+
+    private void setAddNetworkCommand(UICommand value) {
+        addNetworkCommand = value;
+    }
+
+    public UICommand getRemoveNetworkCommand() {
+        return removeNetworkCommand;
+    }
+
+    private void setRemoveNetworkCommand(UICommand value) {
+        removeNetworkCommand = value;
+    }
+
+    public ListModel<Ipv4BootProtocol> getIpv4BootProtocolList() {
+        return ipv4BootProtocolList;
+    }
+
+    private void setIpv4BootProtocolList(ListModel<Ipv4BootProtocol> value) {
+        ipv4BootProtocolList = value;
+    }
+
+    public EntityModel<String> getNetworkIpAddress() {
+        return networkIpAddress;
+    }
+
+    private void setNetworkIpAddress(EntityModel<String> value) {
+        networkIpAddress = value;
+    }
+
+    public EntityModel<String> getNetworkNetmask() {
+        return networkNetmask;
+    }
+
+    private void setNetworkNetmask(EntityModel<String> value) {
+        networkNetmask = value;
+    }
+
+    public EntityModel<String> getNetworkGateway() {
+        return networkGateway;
+    }
+
+    private void setNetworkGateway(EntityModel<String> value) {
+        networkGateway = value;
+    }
+
+    public EntityModel<Boolean> getNetworkStartOnBoot() {
+        return networkStartOnBoot;
+    }
+
+    private void setNetworkStartOnBoot(EntityModel<Boolean> value) {
+        networkStartOnBoot = value;
+    }
+
+    public EntityModel<String> getDnsServers() {
+        return dnsServers;
+    }
+
+    public void setDnsServers(EntityModel<String> dnsServers) {
+        this.dnsServers = dnsServers;
+    }
+
+    public EntityModel<String> getDnsSearchDomains() {
+        return dnsSearchDomains;
+    }
+
+    public void setDnsSearchDomains(EntityModel<String> dnsSearchDomains) {
+        this.dnsSearchDomains = dnsSearchDomains;
+    }
+
+
+    public EntityModel<Boolean> getAttachmentEnabled() {
+        return attachmentEnabled;
+    }
+
+    private void setAttachmentEnabled(EntityModel<Boolean> value) {
+        attachmentEnabled = value;
+    }
+
+    public EntityModel getAttachmentSelectedPath() {
+        return attachmentSelectedPath;
+    }
+
+    private void setAttachmentSelectedPath(EntityModel value) {
+        attachmentSelectedPath = value;
+    }
+
+    public ListModel getAttachmentList() {
+
+        return attachmentList;
+    }
+
+    private void setAttachmentList(ListModel value) {
+        attachmentList = value;
+    }
+
+    public UICommand getAddAttachmentCommand() {
+        return addAttachmentCommand;
+    }
+
+    private void setAddAttachmentCommand(UICommand value) {
+        addAttachmentCommand = value;
+    }
+
+    public UICommand getRemoveAttachmentCommand() {
+        return removeAttachmentCommand;
+    }
+
+    private void setRemoveAttachmentCommand(UICommand value) {
+        removeAttachmentCommand = value;
+    }
+
+    public ListModel getAttachmentType() {
+        return attachmentType;
+    }
+
+    private void setAttachmentType(ListModel value) {
+        attachmentType = value;
+    }
+
+    public EntityModel getAttachmentContent() {
+        return attachmentContent;
+    }
+
+    private void setAttachmentContent(EntityModel value) {
+        attachmentContent = value;
     }
 }
