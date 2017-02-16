@@ -39,20 +39,12 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public class VmInitModel extends Model {
 
-    private static final String rootPasswordMatchMessage;
     private static final String dnsServerListMessage;
     private static final String newNetworkText;
-    private static final String newAttachmentText;
-    private static final String base64Message;
-    private static final String base64Regex;
 
     static {
-        rootPasswordMatchMessage = ConstantsManager.getInstance().getConstants().cloudInitRootPasswordMatchMessage();
         dnsServerListMessage = ConstantsManager.getInstance().getConstants().cloudInitDnsServerListMessage();
         newNetworkText = ""; //$NON-NLS-1$
-        newAttachmentText = ConstantsManager.getInstance().getConstants().cloudInitNewAttachmentItem();
-        base64Message = ConstantsManager.getInstance().getConstants().cloudInitBase64Message();
-        base64Regex = "^[a-zA-Z0-9+/_\\r\\n-](=){0,2}$"; //$NON-NLS-1$
     }
 
     private ListModel<Map.Entry<String, String>> windowsSysprepTimeZone;
