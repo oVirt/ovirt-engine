@@ -157,13 +157,21 @@ public interface CommonApplicationConstants extends Constants {
 
     String cloudInitNetworkSelectLabel();
 
-    String cloudInitNetworkBootProtocolLabel();
+    String cloudInitNetworkIpv4BootProtocolLabel();
 
-    String cloudInitNetworkIpAddressLabel();
+    String cloudInitNetworkIpv6BootProtocolLabel();
 
-    String cloudInitNetworkNetmaskLabel();
+    String cloudInitNetworkIpv4AddressLabel();
 
-    String cloudInitNetworkGatewayLabel();
+    String cloudInitNetworkIpv6AddressLabel();
+
+    String cloudInitNetworkIpv4NetmaskLabel();
+
+    String cloudInitNetworkIpv6PrefixLabel();
+
+    String cloudInitNetworkIpv4GatewayLabel();
+
+    String cloudInitNetworkIpv6GatewayLabel();
 
     String cloudInitNetworkStartOnBootLabel();
 
@@ -211,13 +219,21 @@ public interface CommonApplicationConstants extends Constants {
 
     String cloudInitNetworkToolTip();
 
-    String cloudInitNetworkBootProtocolToolTip();
+    String cloudInitNetworkIpv4BootProtocolToolTip();
 
-    String cloudInitNetworkIpAddressToolTip();
+    String cloudInitNetworkIpv6BootProtocolToolTip();
 
-    String cloudInitNetworkNetmaskToolTip();
+    String cloudInitNetworkIpv4AddressToolTip();
 
-    String cloudInitNetworkGatewayToolTip();
+    String cloudInitNetworkIpv6AddressToolTip();
+
+    String cloudInitNetworkIpv4NetmaskToolTip();
+
+    String cloudInitNetworkIpv6PrefixToolTip();
+
+    String cloudInitNetworkIpv4GatewayToolTip();
+
+    String cloudInitNetworkIpv6GatewayToolTip();
 
     String cloudInitNetworkStartOnBootToolTip();
 

@@ -7,6 +7,7 @@ import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -20,6 +21,7 @@ import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaEditor;
@@ -324,20 +326,40 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @WithElementId
     ListModelListBoxEditor<Ipv4BootProtocol> ipv4BootProtocolEditor;
 
+    @UiField(provided = true)
+    @Path(value = "ipv6BootProtocolList.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Ipv6BootProtocol> ipv6BootProtocolEditor;
+
     @UiField
     @Path(value = "networkIpAddress.entity")
     @WithElementId
-    StringEntityModelTextBoxEditor networkIpAddressEditor;
+    StringEntityModelTextBoxEditor networkIpv4AddressEditor;
 
     @UiField
     @Path(value = "networkNetmask.entity")
     @WithElementId
-    StringEntityModelTextBoxEditor networkNetmaskEditor;
+    StringEntityModelTextBoxEditor networkIpv4NetmaskEditor;
 
     @UiField
     @Path(value = "networkGateway.entity")
     @WithElementId
-    StringEntityModelTextBoxEditor networkGatewayEditor;
+    StringEntityModelTextBoxEditor networkIpv4GatewayEditor;
+
+    @UiField
+    @Path(value = "networkIpv6Address.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor networkIpv6AddressEditor;
+
+    @UiField
+    @Path(value = "networkIpv6Prefix.entity")
+    @WithElementId
+    IntegerEntityModelTextBoxEditor networkIpv6PrefixEditor;
+
+    @UiField
+    @Path(value = "networkIpv6Gateway.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor networkIpv6GatewayEditor;
 
     @UiField (provided = true)
     @Path(value = "networkStartOnBoot.entity")
@@ -426,6 +448,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         });
 
         ipv4BootProtocolEditor = new ListModelListBoxEditor<>(new EnumRenderer<Ipv4BootProtocol>());
+        ipv6BootProtocolEditor = new ListModelListBoxEditor<>(new EnumRenderer<Ipv6BootProtocol>());
     }
 
     void initComboBoxEditors() {
@@ -462,10 +485,16 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         networkLabelSepAddRemove.setText(sep);
         networkRemoveLabel.setText(constants.cloudInitObjectRemoveLabel());
 
-        ipv4BootProtocolEditor.setLabel(constants.cloudInitNetworkBootProtocolLabel());
-        networkIpAddressEditor.setLabel(constants.cloudInitNetworkIpAddressLabel());
-        networkNetmaskEditor.setLabel(constants.cloudInitNetworkNetmaskLabel());
-        networkGatewayEditor.setLabel(constants.cloudInitNetworkGatewayLabel());
+        ipv4BootProtocolEditor.setLabel(constants.cloudInitNetworkIpv4BootProtocolLabel());
+        networkIpv4AddressEditor.setLabel(constants.cloudInitNetworkIpv4AddressLabel());
+        networkIpv4NetmaskEditor.setLabel(constants.cloudInitNetworkIpv4NetmaskLabel());
+        networkIpv4GatewayEditor.setLabel(constants.cloudInitNetworkIpv4GatewayLabel());
+
+        ipv6BootProtocolEditor.setLabel(constants.cloudInitNetworkIpv6BootProtocolLabel());
+        networkIpv6AddressEditor.setLabel(constants.cloudInitNetworkIpv6AddressLabel());
+        networkIpv6PrefixEditor.setLabel(constants.cloudInitNetworkIpv6PrefixLabel());
+        networkIpv6GatewayEditor.setLabel(constants.cloudInitNetworkIpv6GatewayLabel());
+
         dnsServers.setLabel(constants.cloudInitDnsServersLabel());
         dnsSearchDomains.setLabel(constants.cloudInitDnsSearchDomainsLabel());
 
@@ -484,10 +513,17 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         networkListEditor.setWidgetTooltip(constants.cloudInitNetworkToolTip());
         networkNameEditor.setWidgetTooltip(constants.cloudInitNetworkToolTip());
-        ipv4BootProtocolEditor.setWidgetTooltip(constants.cloudInitNetworkBootProtocolToolTip());
-        networkIpAddressEditor.setWidgetTooltip(constants.cloudInitNetworkIpAddressToolTip());
-        networkNetmaskEditor.setWidgetTooltip(constants.cloudInitNetworkNetmaskToolTip());
-        networkGatewayEditor.setWidgetTooltip(constants.cloudInitNetworkGatewayToolTip());
+
+        ipv4BootProtocolEditor.setWidgetTooltip(constants.cloudInitNetworkIpv4BootProtocolToolTip());
+        networkIpv4AddressEditor.setWidgetTooltip(constants.cloudInitNetworkIpv4AddressToolTip());
+        networkIpv4NetmaskEditor.setWidgetTooltip(constants.cloudInitNetworkIpv4NetmaskToolTip());
+        networkIpv4GatewayEditor.setWidgetTooltip(constants.cloudInitNetworkIpv4GatewayToolTip());
+
+        ipv6BootProtocolEditor.setWidgetTooltip(constants.cloudInitNetworkIpv6BootProtocolToolTip());
+        networkIpv6AddressEditor.setWidgetTooltip(constants.cloudInitNetworkIpv6AddressToolTip());
+        networkIpv6PrefixEditor.setWidgetTooltip(constants.cloudInitNetworkIpv6PrefixToolTip());
+        networkIpv6GatewayEditor.setWidgetTooltip(constants.cloudInitNetworkIpv6GatewayToolTip());
+
         networkStartOnBootEditor.setWidgetTooltip(constants.cloudInitNetworkStartOnBootToolTip());
         dnsServers.setWidgetTooltip(constants.cloudInitDnsServersToolTip());
         dnsSearchDomains.setWidgetTooltip(constants.cloudInitDnsSearchDomainsToolTip());
@@ -514,14 +550,22 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     void addStyles() {
         networkListEditor.hideLabel();
         setNetworkDetailsStyle(false);
-        setNetworkStaticDetailsStyle(false);
+        setNetworkIpv4StaticDetailsStyle(false);
+        setNetworkIpv6StaticDetailsStyle(false);
 
         windowsSyspreptimeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
         sysprepDomainEditor.addStyleName(customizableStyle.primaryOption());
+
         ipv4BootProtocolEditor.addStyleName(customizableStyle.primaryOption());
-        networkIpAddressEditor.addStyleName(customizableStyle.primaryOption());
-        networkNetmaskEditor.addStyleName(customizableStyle.primaryOption());
-        networkGatewayEditor.addStyleName(customizableStyle.primaryOption());
+        networkIpv4AddressEditor.addStyleName(customizableStyle.primaryOption());
+        networkIpv4NetmaskEditor.addStyleName(customizableStyle.primaryOption());
+        networkIpv4GatewayEditor.addStyleName(customizableStyle.primaryOption());
+
+        ipv6BootProtocolEditor.addStyleName(customizableStyle.primaryOption());
+        networkIpv6AddressEditor.addStyleName(customizableStyle.primaryOption());
+        networkIpv6PrefixEditor.addStyleName(customizableStyle.primaryOption());
+        networkIpv6GatewayEditor.addStyleName(customizableStyle.primaryOption());
+
         networkStartOnBootEditor.addStyleName(customizableStyle.primaryOption());
 
         windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
@@ -589,10 +633,17 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             networkExpanderContent.removeStyleName(customizableStyle.expanderContent());
             windowsSyspreptimeZoneEnabledEditor.removeStyleName(customizableStyle.primaryOption());
             sysprepDomainEditor.removeStyleName(customizableStyle.primaryOption());
+
             ipv4BootProtocolEditor.removeStyleName(customizableStyle.primaryOption());
-            networkIpAddressEditor.removeStyleName(customizableStyle.primaryOption());
-            networkNetmaskEditor.removeStyleName(customizableStyle.primaryOption());
-            networkGatewayEditor.removeStyleName(customizableStyle.primaryOption());
+            networkIpv4AddressEditor.removeStyleName(customizableStyle.primaryOption());
+            networkIpv4NetmaskEditor.removeStyleName(customizableStyle.primaryOption());
+            networkIpv4GatewayEditor.removeStyleName(customizableStyle.primaryOption());
+
+            ipv6BootProtocolEditor.removeStyleName(customizableStyle.primaryOption());
+            networkIpv6AddressEditor.removeStyleName(customizableStyle.primaryOption());
+            networkIpv6PrefixEditor.removeStyleName(customizableStyle.primaryOption());
+            networkIpv6GatewayEditor.removeStyleName(customizableStyle.primaryOption());
+
             networkStartOnBootEditor.removeStyleName(customizableStyle.primaryOption());
 
             windowsSysprepTimeZoneEditor.removeStyleName(customizableStyle.primaryOption());
@@ -633,10 +684,17 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     }
 
     /* Sets visibility for static networking options */
-    private void setNetworkStaticDetailsStyle(boolean visible) {
-        networkIpAddressEditor.setVisible(visible);
-        networkNetmaskEditor.setVisible(visible);
-        networkGatewayEditor.setVisible(visible);
+    private void setNetworkIpv4StaticDetailsStyle(boolean visible) {
+        networkIpv4AddressEditor.setVisible(visible);
+        networkIpv4NetmaskEditor.setVisible(visible);
+        networkIpv4GatewayEditor.setVisible(visible);
+    }
+
+    /* Sets visibility for static networking options */
+    private void setNetworkIpv6StaticDetailsStyle(boolean visible) {
+        networkIpv6AddressEditor.setVisible(visible);
+        networkIpv6PrefixEditor.setVisible(visible);
+        networkIpv6GatewayEditor.setVisible(visible);
     }
 
     private void setLabelEnabled(Label label, boolean enabled) {
@@ -677,8 +735,16 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         model.getIpv4BootProtocolList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                setNetworkStaticDetailsStyle(model.getIpv4BootProtocolList().getSelectedItem() != null
+                setNetworkIpv4StaticDetailsStyle(model.getIpv4BootProtocolList().getSelectedItem() != null
                         && model.getIpv4BootProtocolList().getSelectedItem() == Ipv4BootProtocol.STATIC_IP);
+            }
+        });
+
+        model.getIpv6BootProtocolList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                setNetworkIpv6StaticDetailsStyle(model.getIpv6BootProtocolList().getSelectedItem() != null
+                        && model.getIpv6BootProtocolList().getSelectedItem() == Ipv6BootProtocol.STATIC_IP);
             }
         });
 

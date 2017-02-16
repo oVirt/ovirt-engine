@@ -199,9 +199,13 @@
               </b:Row>
               <b:Row ui:field="networkOptions">
                 <e:ListModelListBoxEditor ui:field="ipv4BootProtocolEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                <ge:StringEntityModelTextBoxEditor ui:field="networkIpAddressEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                <ge:StringEntityModelTextBoxEditor ui:field="networkNetmaskEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                <ge:StringEntityModelTextBoxEditor ui:field="networkGatewayEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv4AddressEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv4NetmaskEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv4GatewayEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <e:ListModelListBoxEditor ui:field="ipv6BootProtocolEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv6AddressEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:IntegerEntityModelTextBoxEditor ui:field="networkIpv6PrefixEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv6GatewayEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                 <b:Column size="LG_12">
                   <ge:EntityModelCheckBoxEditor ui:field="networkStartOnBootEditor" label="{constants.cloudInitNetworkStartOnBootLabel}" removeFormGroup="true" usePatternFly="true" />
                 </b:Column>

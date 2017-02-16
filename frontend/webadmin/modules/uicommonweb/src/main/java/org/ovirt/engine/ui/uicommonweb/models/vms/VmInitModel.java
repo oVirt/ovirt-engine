@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -27,7 +28,9 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.Ipv4AddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.Ipv6AddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MatchFieldsValidator;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -80,6 +83,10 @@ public class VmInitModel extends Model {
     private EntityModel<String> networkIpAddress;
     private EntityModel<String> networkNetmask;
     private EntityModel<String> networkGateway;
+    private ListModel<Ipv6BootProtocol> ipv6BootProtocolList;
+    private EntityModel<String> networkIpv6Address;
+    private EntityModel<Integer> networkIpv6Prefix;
+    private EntityModel<String> networkIpv6Gateway;
     private EntityModel<Boolean> networkStartOnBoot;
     private EntityModel<String> dnsServers;
     private EntityModel<String> dnsSearchDomains;
@@ -132,14 +139,20 @@ public class VmInitModel extends Model {
         setSysprepPasswordSet(new EntityModel<Boolean>());
         getSysprepPasswordSet().getEntityChangedEvent().addListener(this);
 
-
         setNetworkEnabled(new EntityModel<Boolean>());
         setNetworkSelectedName(new EntityModel<String>());
         setNetworkList(new ListModel<String>());
+
         setIpv4BootProtocolList(new ListModel<Ipv4BootProtocol>());
         setNetworkIpAddress(new EntityModel<String>());
         setNetworkNetmask(new EntityModel<String>());
         setNetworkGateway(new EntityModel<String>());
+
+        setIpv6BootProtocolList(new ListModel<Ipv6BootProtocol>());
+        setNetworkIpv6Address(new EntityModel<String>());
+        setNetworkIpv6Prefix(new EntityModel<Integer>());
+        setNetworkIpv6Gateway(new EntityModel<String>());
+
         setNetworkStartOnBoot(new EntityModel<Boolean>());
 
         setDnsServers(new EntityModel<String>());
@@ -224,6 +237,8 @@ public class VmInitModel extends Model {
 
         getIpv4BootProtocolList().setItems(Arrays.asList(Ipv4BootProtocol.values()));
         getIpv4BootProtocolList().setSelectedItem(Ipv4BootProtocol.NONE);
+        getIpv6BootProtocolList().setItems(Arrays.asList(Ipv6BootProtocol.values()));
+        getIpv6BootProtocolList().setSelectedItem(Ipv6BootProtocol.NONE);
 
         VmInit vmInit = (vm != null) ? vm.getVmInit() : null;
         if (vmInit != null) {
@@ -406,6 +421,9 @@ public class VmInitModel extends Model {
         getNetworkIpAddress().setIsValid(true);
         getNetworkNetmask().setIsValid(true);
         getNetworkGateway().setIsValid(true);
+        getNetworkIpv6Address().setIsValid(true);
+        getNetworkIpv6Prefix().setIsValid(true);
+        getNetworkIpv6Gateway().setIsValid(true);
         boolean dnsIsValid = true;
         getDnsServers().setIsValid(true);
         getDnsSearchDomains().setIsValid(true);
@@ -414,17 +432,32 @@ public class VmInitModel extends Model {
 
             for (Map.Entry<String, VmInitNetwork> entry : networkMap.entrySet()) {
                 String name = entry.getKey();
-                VmInitNetwork params = entry.getValue();
+                VmInitNetwork vmInitNetwork = entry.getValue();
 
-                if (params.getBootProtocol() == Ipv4BootProtocol.STATIC_IP) {
+                if (vmInitNetwork.getBootProtocol() == Ipv4BootProtocol.STATIC_IP) {
                     if (!validateHidden(getNetworkList(), name, null,
                                     new IValidation[] { new VmInitNetworkNameValidation(), new NotEmptyValidation()})
-                            || !validateHidden(getNetworkIpAddress(), params.getIp(), null,
+                            || !validateHidden(getNetworkIpAddress(), vmInitNetwork.getIp(), null,
                                     new IValidation[] { new Ipv4AddressValidation() })
-                            || !validateHidden(getNetworkNetmask(), params.getNetmask(), null,
+                            || !validateHidden(getNetworkNetmask(), vmInitNetwork.getNetmask(), null,
                                     new IValidation[] { new SubnetMaskValidation() })
-                            || !validateHidden(getNetworkGateway(), params.getGateway(), null,
+                            || !validateHidden(getNetworkGateway(), vmInitNetwork.getGateway(), null,
                                     new IValidation[] { new Ipv4AddressValidation(true) })) {
+                        getNetworkList().setSelectedItem(name);
+                        networkIsValid = false;
+                        break;
+                    }
+                }
+
+                if (vmInitNetwork.getIpv6BootProtocol() == Ipv6BootProtocol.STATIC_IP) {
+                    if (!validateHidden(getNetworkList(), name, null,
+                                    new IValidation[] { new VmInitNetworkNameValidation(), new NotEmptyValidation()})
+                            || !validateHidden(getNetworkIpv6Address(), vmInitNetwork.getIpv6Address(), null,
+                                    new IValidation[] { new Ipv6AddressValidation() })
+                            || !validateHidden(getNetworkIpv6Prefix(), vmInitNetwork.getIpv6Prefix(), null,
+                                    new IValidation[] { new IntegerValidation(0, 128) })
+                            || !validateHidden(getNetworkIpv6Gateway(), vmInitNetwork.getIpv6Gateway(), null,
+                                    new IValidation[] { new Ipv6AddressValidation(true) })) {
                         getNetworkList().setSelectedItem(name);
                         networkIsValid = false;
                         break;
@@ -466,8 +499,8 @@ public class VmInitModel extends Model {
     }
 
     /* Validate a shared display element, without having to display each shared value */
-    private boolean validateHidden(Model entity, final String value, final String message, final IValidation[] validations) {
-        EntityModel<String> tmp = new EntityModel<>(value);
+    private <T> boolean validateHidden(Model entity, final T value, final String message, final IValidation[] validations) {
+        EntityModel<T> tmp = new EntityModel<>(value);
         tmp.setIsValid(true);
         tmp.validateEntity(validations);
         if (!tmp.getIsValid()) {
@@ -557,14 +590,19 @@ public class VmInitModel extends Model {
             saveNetworkFields();
             if (!networkMap.isEmpty()) {
                 for (Map.Entry<String, VmInitNetwork> entry : networkMap.entrySet()) {
-                    VmInitNetwork params = entry.getValue();
-                    if (params.getBootProtocol() != Ipv4BootProtocol.STATIC_IP) {
-                        params.setIp(null);
-                        params.setNetmask(null);
-                        params.setGateway(null);
+                    VmInitNetwork vmInitNetwork = entry.getValue();
+                    if (vmInitNetwork.getBootProtocol() != Ipv4BootProtocol.STATIC_IP) {
+                        vmInitNetwork.setIp(null);
+                        vmInitNetwork.setNetmask(null);
+                        vmInitNetwork.setGateway(null);
                     }
-                    params.setStartOnBoot(startOnBootNetworkNames.contains(entry.getKey()));
-                    params.setName(entry.getKey());
+                    if (vmInitNetwork.getIpv6BootProtocol() != Ipv6BootProtocol.STATIC_IP) {
+                        vmInitNetwork.setIpv6Address(null);
+                        vmInitNetwork.setIpv6Prefix(null);
+                        vmInitNetwork.setIpv6Gateway(null);
+                    }
+                    vmInitNetwork.setStartOnBoot(startOnBootNetworkNames.contains(entry.getKey()));
+                    vmInitNetwork.setName(entry.getKey());
                 }
                 vmInit.setNetworks(new ArrayList<>(networkMap.values()));
             }
@@ -653,13 +691,13 @@ public class VmInitModel extends Model {
         String newName = getNetworkSelectedName().getEntity();
 
         if (oldName != null && newName != null && !newName.trim().equals(oldName)) {
-            VmInitNetwork obj = networkMap.get(oldName);
+            VmInitNetwork vmInitNetwork = networkMap.get(oldName);
             newName = newName.trim();
             if (newName.isEmpty() || networkMap.containsKey(newName)) {
                 getNetworkSelectedName().setEntity(oldName);
             } else {
                 networkMap.remove(oldName);
-                networkMap.put(newName, obj);
+                networkMap.put(newName, vmInitNetwork);
                 getNetworkList().setItems(new ArrayList<>(networkMap.keySet()));
                 getNetworkList().setSelectedItem(newName);
             }
@@ -683,12 +721,16 @@ public class VmInitModel extends Model {
     /* Save displayed network properties */
     private void saveNetworkFields() {
         if (lastSelectedNetworkName != null) {
-            VmInitNetwork obj = networkMap.get(lastSelectedNetworkName);
-            if (obj != null) {
-                obj.setBootProtocol(getIpv4BootProtocolList().getSelectedItem());
-                obj.setIp(getNetworkIpAddress().getEntity());
-                obj.setNetmask(getNetworkNetmask().getEntity());
-                obj.setGateway(getNetworkGateway().getEntity());
+            VmInitNetwork vmInitNetwork = networkMap.get(lastSelectedNetworkName);
+            if (vmInitNetwork != null) {
+                vmInitNetwork.setBootProtocol(getIpv4BootProtocolList().getSelectedItem());
+                vmInitNetwork.setIp(getNetworkIpAddress().getEntity());
+                vmInitNetwork.setNetmask(getNetworkNetmask().getEntity());
+                vmInitNetwork.setGateway(getNetworkGateway().getEntity());
+                vmInitNetwork.setIpv6BootProtocol(getIpv6BootProtocolList().getSelectedItem());
+                vmInitNetwork.setIpv6Address(getNetworkIpv6Address().getEntity());
+                vmInitNetwork.setIpv6Prefix(getNetworkIpv6Prefix().getEntity());
+                vmInitNetwork.setIpv6Gateway(getNetworkIpv6Gateway().getEntity());
                 if (getNetworkStartOnBoot().getEntity() != null && getNetworkStartOnBoot().getEntity()) {
                     startOnBootNetworkNames.add(lastSelectedNetworkName);
                 } else {
@@ -701,21 +743,31 @@ public class VmInitModel extends Model {
     /* Update displayed network properties to reflect currently-selected item */
     private void updateNetworkDisplay() {
         String networkName = null;
-        VmInitNetwork obj = null;
+        VmInitNetwork vmInitNetwork = null;
         if (getNetworkList().getSelectedItem() != null) {
             networkName = getNetworkList().getSelectedItem();
-            obj = networkMap.get(networkName);
+            vmInitNetwork = networkMap.get(networkName);
         }
 
-        if (obj == null || obj.getBootProtocol() == null) {
-            getIpv4BootProtocolList().setSelectedItem(Ipv4BootProtocol.NONE);
-        } else {
-            getIpv4BootProtocolList().setSelectedItem(obj.getBootProtocol());
-        }
+        final Ipv4BootProtocol ipv4bootProtocol =
+                vmInitNetwork == null || vmInitNetwork.getBootProtocol() == null
+                        ? Ipv4BootProtocol.NONE
+                        : vmInitNetwork.getBootProtocol();
+        getIpv4BootProtocolList().setSelectedItem(ipv4bootProtocol);
+        final Ipv6BootProtocol ipv6bootProtocol =
+                vmInitNetwork == null || vmInitNetwork.getIpv6BootProtocol() == null
+                        ? Ipv6BootProtocol.NONE
+                        : vmInitNetwork.getIpv6BootProtocol();
+        getIpv6BootProtocolList().setSelectedItem(ipv6bootProtocol);
 
-        getNetworkIpAddress().setEntity(obj == null ? null : obj.getIp());
-        getNetworkNetmask().setEntity(obj == null ? null : obj.getNetmask());
-        getNetworkGateway().setEntity(obj == null ? null : obj.getGateway());
+        getNetworkIpAddress().setEntity(vmInitNetwork == null ? null : vmInitNetwork.getIp());
+        getNetworkNetmask().setEntity(vmInitNetwork == null ? null : vmInitNetwork.getNetmask());
+        getNetworkGateway().setEntity(vmInitNetwork == null ? null : vmInitNetwork.getGateway());
+
+        getNetworkIpv6Address().setEntity(vmInitNetwork == null ? null : vmInitNetwork.getIpv6Address());
+        getNetworkIpv6Prefix().setEntity(vmInitNetwork == null ? null : vmInitNetwork.getIpv6Prefix());
+        getNetworkIpv6Gateway().setEntity(vmInitNetwork == null ? null : vmInitNetwork.getIpv6Gateway());
+
         getNetworkStartOnBoot().setEntity(networkName == null ? null : startOnBootNetworkNames.contains(networkName));
     }
 
@@ -1131,4 +1183,45 @@ public class VmInitModel extends Model {
     private void setAttachmentContent(EntityModel value) {
         attachmentContent = value;
     }
+
+    public ListModel<Ipv6BootProtocol> getIpv6BootProtocolList() {
+        return ipv6BootProtocolList;
+    }
+
+    public void setIpv6BootProtocolList(ListModel<Ipv6BootProtocol> ipv6BootProtocolList) {
+        this.ipv6BootProtocolList = ipv6BootProtocolList;
+    }
+
+    public EntityModel<String> getNetworkIpv6Address() {
+        return networkIpv6Address;
+    }
+
+    public void setNetworkIpv6Address(EntityModel<String> networkIpv6Address) {
+        this.networkIpv6Address = networkIpv6Address;
+    }
+
+    public EntityModel<Integer> getNetworkIpv6Prefix() {
+        return networkIpv6Prefix;
+    }
+
+    public void setNetworkIpv6Prefix(EntityModel<Integer> networkIpv6Prefix) {
+        this.networkIpv6Prefix = networkIpv6Prefix;
+    }
+
+    public EntityModel<String> getNetworkIpv6Gateway() {
+        return networkIpv6Gateway;
+    }
+
+    public void setNetworkIpv6Gateway(EntityModel<String> networkIpv6Gateway) {
+        this.networkIpv6Gateway = networkIpv6Gateway;
+    }
+
+    public SortedMap<String, VmInitNetwork> getNetworkMap() {
+        return networkMap;
+    }
+
+    public void setNetworkMap(SortedMap<String, VmInitNetwork> networkMap) {
+        this.networkMap = networkMap;
+    }
+
 }
