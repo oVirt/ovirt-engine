@@ -30,13 +30,13 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     protected void executeCommand() {
         setQuotaParameter();
         if (getParameters().isCopyPermissions()) {
-            TransactionSupport.executeInNewTransaction(() -> executeAddQutoa());
+            TransactionSupport.executeInNewTransaction(() -> executeAddQuota());
         } else {
-            executeAddQutoa();
+            executeAddQuota();
         }
     }
 
-    private Void executeAddQutoa() {
+    private Void executeAddQuota() {
         quotaDao.save(getQuota());
         if (getParameters().isCopyPermissions()) {
             copyQuotaPermissions();
