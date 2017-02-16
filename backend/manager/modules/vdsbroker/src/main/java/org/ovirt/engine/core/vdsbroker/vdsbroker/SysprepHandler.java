@@ -32,12 +32,16 @@ public final class SysprepHandler {
 
     public static String getSysPrep(VM vm, SysPrepParams sysPrepParams) {
         String sysPrepContent = "";
-        if (vm.getVmInit() != null && !StringUtils.isEmpty(vm.getVmInit().getCustomScript())) {
+        boolean useCustomScript = vm.getVmInit() != null && !StringUtils.isEmpty(vm.getVmInit().getCustomScript());
+        if (useCustomScript) {
             sysPrepContent = vm.getVmInit().getCustomScript();
         } else {
             sysPrepContent = loadFile(osRepository.getSysprepPath(vm.getVmOsId(), null));
         }
-        sysPrepContent = replace(sysPrepContent, "$ProductKey$", osRepository.getProductKey(vm.getVmOsId(), null));
+
+
+        String productKey = osRepository.getProductKey(vm.getVmOsId(), null);
+        sysPrepContent = replaceProductKey(sysPrepContent, productKey, useCustomScript);
 
         String domain = (vm.getVmInit() != null && vm.getVmInit().getDomain() != null) ?
                 vm.getVmInit().getDomain() : "";
@@ -101,6 +105,30 @@ public final class SysprepHandler {
         return sysPrepContent;
     }
 
+    /**
+     * Replaces the ProductKey in the sysprep file if the product key is provided in osinfo.
+     * If the product key is not provided, the whole ProductKey section is removed from the
+     * sysprep file. The reason is that the sysprep operation fails if the sysprep file contains
+     * an empty product key.
+     *
+     * In case the custom script is provided, the product key section is not removed even
+     * the product key itself is not provided.
+     * The reason is that the custom sysprep file can already contain the product key, so the
+     * product key does not need to be provided from osinfo and we don't want to remove it from
+     * the sysprep file.
+     */
+    static String replaceProductKey(String sysPrepContent, String productKey, boolean useCustomScript) {
+        if (StringUtils.isNotEmpty(productKey)) {
+            return replace(sysPrepContent, "$ProductKey$", productKey);
+        }
+
+        if (!useCustomScript) {
+            return replaceMultiline(sysPrepContent, "<ProductKey>.*?</ProductKey>", "");
+        }
+
+        return sysPrepContent;
+    }
+
     private static String populateSysPrepDomainProperties(String sysPrepContent,
             String domain,
             SysPrepParams sysPrepParams) {
@@ -109,7 +137,8 @@ public final class SysprepHandler {
         String adminUserName;
         String adminPassword;
 
-        if (sysPrepParams == null || StringUtils.isEmpty(sysPrepParams.getSysPrepDomainName())) {
+        if (sysPrepParams == null || StringUtils.isEmpty(sysPrepParams
+                .getSysPrepDomainName())) {
             domainName = useDefaultIfNull("domain", domain, "", true);
         } else {
             domainName = sysPrepParams.getSysPrepDomainName();
@@ -131,6 +160,11 @@ public final class SysprepHandler {
         sysPrepContent = replace(sysPrepContent, "$DomainAdminPassword$", adminPassword);
 
         return sysPrepContent;
+    }
+
+    static String replaceMultiline(String sysPrepContent, String pattern, String value) {
+        Pattern p = Pattern.compile(pattern, Pattern.DOTALL);
+        return p.matcher(sysPrepContent).replaceAll(value);
     }
 
     static String replace(String sysPrepContent, String pattern, String value) {
