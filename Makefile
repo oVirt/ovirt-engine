@@ -376,7 +376,7 @@ install_artifacts:
 	# logutils.jar is need only for tools and it's loaded from boot
 	# classpath -> we need to handle it differently than other jars
 	install -dm 0755 "$(DESTDIR)$(PKG_LOGUTILS)"
-	find "$(MAVEN_OUTPUT_DIR)" -name 'logutils.jar' -type f -exec install -m 644 {} "$(DESTDIR)$(PKG_LOGUTILS)" \;
+	find "$(MAVEN_OUTPUT_DIR)" -regex '.*/logutils-[0-9.]*\(-SNAPSHOT\)?.jar$$' -type f -exec install -m 644 {} "$(DESTDIR)$(PKG_LOGUTILS)/logutils.jar" \;
 
 	# extract embedded artifacts as doc
 	# no need to relay on source tree for these
