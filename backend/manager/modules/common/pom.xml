@@ -12,10 +12,6 @@
 
   <name>Common Code</name>
 
-  <properties>
-    <animal.sniffer.gwt.skip>false</animal.sniffer.gwt.skip>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>${engine.groupId}</groupId>
@@ -52,25 +48,6 @@
   </dependencies>
 
   <build>
-
-    <pluginManagement>
-      <plugins>
-
-        <!-- This project needs to use Java 7 because the source is
-             used by the GWT compiler, and it doesn't currently support
-             Java 8: -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.7</source>
-          </configuration>
-        </plugin>
-
-
-      </plugins>
-    </pluginManagement>
-
     <plugins>
 
       <plugin>
@@ -85,6 +62,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
@@ -93,13 +71,12 @@
           <propertyExpansion>checkNoArgConstructor=true</propertyExpansion>
         </configuration>
       </plugin>
-      <plugin>
-        <!--
 
-           The enforcer plugin is used to ban us from using artifacts that will fail
-           the Frontend's gwt compilation.
-
+      <!--
+        The enforcer plugin is used to ban us from using artifacts
+        that will fail the Frontend's GWT compilation.
       -->
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.1.1</version>
@@ -122,6 +99,7 @@
           <fail>true</fail>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
 </project>

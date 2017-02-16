@@ -30,10 +30,6 @@
     <set-property name="gwt.logging.consoleHandler" value="ENABLED" />
     <set-property name="gwt.logging.developmentModeHandler" value="ENABLED" />
     <set-property name="gwt.logging.systemHandler" value="ENABLED" />
-    <set-property name="gwt.logging.firebugHandler" value="DISABLED" />
-    <set-property name="gwt.logging.hasWidgetsHandler" value="DISABLED" />
-    <set-property name="gwt.logging.popupHandler" value="DISABLED" />
-    <set-property name="gwt.logging.simpleRemoteHandler" value="DISABLED" />
 
     <!-- All source code within this module is translatable -->
     <source path="">
@@ -51,12 +47,17 @@
         <when-type-assignable class="org.ovirt.engine.ui.common.idhandler.ElementIdHandler" />
     </generate-with>
 
-    <!-- Exclude non-GWT classes from GIN class loading -->
-    <extend-configuration-property name="gin.classloading.exceptedPackages" value="org.ovirt.engine.ui.gwtextension" />
+    <!--
+        TODO-GWT Using GWT 2.8.0 requires a workaround for GIN 2.1.2:
+        https://github.com/gwtproject/gwt/issues/9311
+    -->
+    <extend-configuration-property name="gin.classloading.exceptedPackages" value="com.google.gwt.core.client,com.google.gwt.core.client.impl" />
 
-    <!-- Use xsiframe linker that combines cross-site friendliness of xs linker
-         with iframe sandboxing of std linker. Note that in GWT 2.7 and better,
-         this is the default linker. -->
+    <!--
+        This linker uses an iframe to hold the code and a script tag to download
+        the code. It combines cross-site friendliness of 'xs' linker with iframe
+        sandboxing of 'std' linker (both of which are now deprecated).
+    -->
     <add-linker name="xsiframe" />
 
 </module>

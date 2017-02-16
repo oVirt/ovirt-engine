@@ -12,10 +12,6 @@
 
   <name>Search Backend</name>
 
-  <properties>
-    <animal.sniffer.gwt.skip>false</animal.sniffer.gwt.skip>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>${engine.groupId}</groupId>
@@ -47,23 +43,6 @@
   </dependencies>
 
   <build>
-
-    <pluginManagement>
-      <plugins>
-
-        <!-- This project needs to use Java 7 because the source is
-             used by the GWT compiler, and it doesn't currently support
-             Java 8: -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.7</source>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
 
       <plugin>

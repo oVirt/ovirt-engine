@@ -8,7 +8,7 @@
 
   <packaging>pom</packaging>
 
-  <name>Extensions API root </name>
+  <name>Extensions API root</name>
   <description>parent POM for extensions API</description>
   <url>http://ovirt.org</url>
   <licenses>
@@ -32,7 +32,11 @@
   </parent>
 
   <properties>
-    <animal.sniffer.gwt.skip>false</animal.sniffer.gwt.skip>
+    <!--
+      Since we don't inherit from Engine root POM, we need to specify
+      common plugin configuration explicitly. Using Java 7 compliance
+      is intentional for oVirt Engine Extensions API root POM.
+    -->
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
