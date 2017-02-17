@@ -291,6 +291,16 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
+    public void oSType_SelectedItemChanged() {
+        super.oSType_SelectedItemChanged();
+
+        Integer osType = getModel().getOSType().getSelectedItem();
+        if (osType != null) {
+            getVirtioScsiUtil().updateVirtioScsiEnabled(vm.getId(), osType);
+        }
+    }
+
+    @Override
     public void defaultHost_SelectedItemChanged() {
     }
 

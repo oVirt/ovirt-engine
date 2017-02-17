@@ -1713,4 +1713,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         return savedCurrentCustomCompatibilityVersion;
     }
 
+    public VirtioScsiUtil getVirtioScsiUtil() {
+        return virtioScsiUtil;
+    }
 }
