@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 
-import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -10,13 +9,14 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.CpuQosParametersMo
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 public class CpuQosWidget extends QosWidget<CpuQos, CpuQosParametersModel> {
 
     interface Driver extends UiCommonEditorDriver<CpuQosParametersModel, CpuQosWidget> {
     }
 
-    interface ViewUiBinder extends UiBinder<Container, CpuQosWidget> {
+    interface ViewUiBinder extends UiBinder<FlowPanel, CpuQosWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 

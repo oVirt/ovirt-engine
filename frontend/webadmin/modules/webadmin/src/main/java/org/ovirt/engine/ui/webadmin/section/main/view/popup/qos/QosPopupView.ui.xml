@@ -12,8 +12,7 @@
 
     <ui:style>
         .topDecorator {
-            background-color: #D3D3D3;
-            padding-top: 15px;
+            border-bottom: 1px solid #D1D1D1;
         }
 
         .container {
@@ -21,24 +20,24 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="600px" height="400px">
+    <d:SimpleDialogPanel width="650px" height="450px">
         <d:content>
-            <g:FlowPanel>
-                <b:Container addStyleNames="{style.topDecorator} {style.container}">
-                    <b:Row>
-                        <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.dataCenterQosPopup}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
-                    </b:Row>
-                    <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.qosName}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
-                    </b:Row>
-                    <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.qosDescription}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
-                    </b:Row>
-                </b:Container>
-                <g:FlowPanel>
-                    <q:QosWidget ui:field="qosWidget" />
-                </g:FlowPanel>
-            </g:FlowPanel>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.dataCenterQosPopup}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                </b:Row>
+                <b:Row>
+                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.qosName}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                </b:Row>
+                <b:Row addStyleNames="{style.topDecorator}">
+                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.qosDescription}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <q:QosWidget ui:field="qosWidget" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
         </d:content>
     </d:SimpleDialogPanel>
 

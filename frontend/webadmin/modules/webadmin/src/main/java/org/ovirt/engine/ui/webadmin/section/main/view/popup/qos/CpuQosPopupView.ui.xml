@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style>
-		.topDecorator {
-			background-color: #D3D3D3;
-			margin: 5px;
-		}
-		.decorator {
-			margin: 5px;
-		}
-	</ui:style>
+    <ui:style>
+        .topDecorator {
+            border-bottom: 1px solid #D1D1D1;
+        }
+    </ui:style>
 
-	<d:SimpleDialogPanel width="400px" height="220px">
-		<d:content>
-			<g:FlowPanel>
-				<g:FlowPanel addStyleNames="{style.topDecorator}">
-					<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
-					<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
-					<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
-				</g:FlowPanel>
-				<ge:IntegerEntityModelTextBoxEditor addStyleNames="{style.decorator}" ui:field="cpuLimitEditor"/>
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <d:SimpleDialogPanel width="400px" height="220px">
+        <d:content>
+            <g:FlowPanel>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row addStyleNames="{style.topDecorator}">
+                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:IntegerEntityModelTextBoxEditor addStyleNames="{style.decorator}" ui:field="cpuLimitEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+            </g:FlowPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

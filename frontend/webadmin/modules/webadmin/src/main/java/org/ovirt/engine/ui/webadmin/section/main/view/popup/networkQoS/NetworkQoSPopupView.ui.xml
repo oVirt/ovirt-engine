@@ -13,8 +13,7 @@
 
     <ui:style>
         .topDecorator {
-            background-color: #D3D3D3;
-            padding-top: 15px;
+            border-bottom: 1px solid #D1D1D1;
         }
 
         .container {
@@ -24,19 +23,19 @@
 
     <d:SimpleDialogPanel width="600px" height="400px">
         <d:content>
-            <g:FlowPanel>
-                <b:Container addStyleNames="{style.topDecorator} {style.container}">
-                    <b:Row>
-                        <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.dataCenterNetworkQoSPopup}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
-                    </b:Row>
-                    <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.networkQoSName}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
-                    </b:Row>
-                </b:Container>
-                <g:FlowPanel>
-                    <n:NetworkQosWidget ui:field="qosWidget" />
-                </g:FlowPanel>
-            </g:FlowPanel>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.dataCenterNetworkQoSPopup}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row addStyleNames="{style.topDecorator}">
+                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.networkQoSName}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <n:NetworkQosWidget ui:field="qosWidget" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
         </d:content>
     </d:SimpleDialogPanel>
 

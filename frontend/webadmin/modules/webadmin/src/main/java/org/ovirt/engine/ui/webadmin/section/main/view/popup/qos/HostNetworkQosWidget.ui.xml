@@ -8,15 +8,9 @@
 
     <ui:with field="constants" type="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
 
-    <ui:style>
-        .container {
-            width: 100%;
-        }
-    </ui:style>
-
-    <b:Container ui:field="mainContainer" addStyleNames="{style.container}">
+    <g:FlowPanel ui:field="mainContainer">
         <b:Row>
-            <b:Column size="LG_12">
+            <b:Column size="SM_12">
                 <l:EnableableFormLabel text="{constants.hostNetworkQosOutLabel}" ui:field="qosOutLabel" />
             </b:Column>
         </b:Row>
@@ -29,6 +23,6 @@
         <b:Row>
             <e:StringEntityModelTextBoxEditor ui:field="outAverageRealtime" label="{constants.hostNetworkQosPopupOutAverageRealtime}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
         </b:Row>
-    </b:Container>
+    </g:FlowPanel>
 
 </ui:UiBinder>

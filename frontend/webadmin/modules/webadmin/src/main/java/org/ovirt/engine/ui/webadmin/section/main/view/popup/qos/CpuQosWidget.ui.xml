@@ -9,18 +9,14 @@
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
     <ui:style>
-        .container {
-            width: 100%;
-        }
-
         .topDecorator {
             margin-top: 15px;
         }
     </ui:style>
 
-    <b:Container ui:field="mainContainer" addStyleNames="{style.container}">
+    <g:FlowPanel ui:field="mainContainer">
         <b:Row>
             <e:IntegerEntityModelTextBoxEditor ui:field="cpuLimitEditor" addStyleNames="{style.topDecorator}" usePatternFly="true" label="{constants.cpuQosCpuLimit}" labelColSize="SM_5" widgetColSize="SM_7" />
         </b:Row>
-    </b:Container>
+    </g:FlowPanel>
 </ui:UiBinder>

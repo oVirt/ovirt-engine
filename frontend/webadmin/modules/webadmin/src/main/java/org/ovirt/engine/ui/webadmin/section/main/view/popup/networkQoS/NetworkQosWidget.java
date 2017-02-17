@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS;
 
-import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -15,6 +14,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQosModel> {
 
@@ -23,7 +23,7 @@ public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQ
 
     private final Driver driver = GWT.create(Driver.class);
 
-    interface ViewUiBinder extends UiBinder<Container, NetworkQosWidget> {
+    interface ViewUiBinder extends UiBinder<FlowPanel, NetworkQosWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -32,7 +32,7 @@ public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQ
     }
 
     @UiField
-    Container mainContainer;
+    FlowPanel mainContainer;
 
     @UiField(provided = true)
     @Path(value = "inbound.enabled.entity")

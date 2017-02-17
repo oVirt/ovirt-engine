@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 
-import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
@@ -9,11 +8,12 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 public abstract class QosWidget<T extends QosBase, P extends QosParametersModel<T>> extends AbstractModelBoundPopupWidget<P> {
 
     @UiField
-    Container mainContainer;
+    FlowPanel mainContainer;
 
     protected UiCommonEditorDriver<P, QosWidget<T, P>> driver;
 

@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 
-import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -12,13 +11,14 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.HostNetworkQosPara
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 public class HostNetworkQosWidget extends QosWidget<HostNetworkQos, HostNetworkQosParametersModel> {
 
     interface Driver extends UiCommonEditorDriver<HostNetworkQosParametersModel, HostNetworkQosWidget> {
     }
 
-    interface WidgetUiBinder extends UiBinder<Container, HostNetworkQosWidget> {
+    interface WidgetUiBinder extends UiBinder<FlowPanel, HostNetworkQosWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 

@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 
-import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -13,13 +12,14 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParametersModel> {
 
     interface Driver extends UiCommonEditorDriver<StorageQosParametersModel, StorageQosWidget> {
     }
 
-    interface ViewUiBinder extends UiBinder<Container, StorageQosWidget> {
+    interface ViewUiBinder extends UiBinder<FlowPanel, StorageQosWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 

@@ -8,13 +8,7 @@
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-    <ui:style>
-        .container {
-            width: 100%;
-        }
-    </ui:style>
-
-    <b:Container ui:field="mainContainer" addStyleNames="{style.container}">
+    <g:FlowPanel ui:field="mainContainer">
         <b:Row>
             <b:Column size="SM_12">
                 <g:Label text="{constants.throughputLabelQosPopup}" />
@@ -77,6 +71,6 @@
                 </b:Row>
             </b:Column>
         </b:Row>
-    </b:Container>
+    </g:FlowPanel>
 
 </ui:UiBinder>
