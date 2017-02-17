@@ -21,7 +21,7 @@ public class InternalAuthn implements Extension {
     public void invoke(ExtMap input, ExtMap output) {
         try {
             if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.LOAD)) {
-                doLoad(input, output);
+                doLoad(input);
             } else if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.INITIALIZE)) {
                 // Do nothing
             } else if (input.get(Base.InvokeKeys.COMMAND).equals(Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS)) {
@@ -58,7 +58,7 @@ public class InternalAuthn implements Extension {
         }
     }
 
-    private void doLoad(ExtMap input, ExtMap output) {
+    private void doLoad(ExtMap input) {
         context = input.get(Base.InvokeKeys.CONTEXT);
         context.<Collection<String>> get(
                 Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS
