@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerServic
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -37,6 +38,12 @@ import org.slf4j.LoggerFactory;
 public class GlusterServiceSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterServiceSyncJob.class);
     private final Map<String, GlusterService> serviceNameMap = new HashMap<>();
+
+    @Override
+    public Collection<GlusterJobSchedulingDetails> getSchedulingDetails() {
+        return Collections.singleton(new GlusterJobSchedulingDetails(
+                "refreshGlusterServices", getRefreshRate(ConfigValues.GlusterRefreshRateLight)));
+    }
 
     @OnTimerMethodAnnotation("refreshGlusterServices")
     public void refreshGlusterServices() {

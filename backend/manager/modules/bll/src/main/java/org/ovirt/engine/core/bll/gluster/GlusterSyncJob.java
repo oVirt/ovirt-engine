@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -81,6 +82,18 @@ public class GlusterSyncJob extends GlusterJob {
     private BackendInternal backend;
     @Inject
     private GlusterDBUtils glusterDBUtils;
+
+    @Override
+    public Collection<GlusterJobSchedulingDetails> getSchedulingDetails() {
+        return Arrays.asList(
+                new GlusterJobSchedulingDetails(
+                        "refreshLightWeightData", getRefreshRate(ConfigValues.GlusterRefreshRateLight)),
+                new GlusterJobSchedulingDetails(
+                        "refreshHeavyWeightData", getRefreshRate(ConfigValues.GlusterRefreshRateHeavy)),
+                new GlusterJobSchedulingDetails(
+                        "refreshSelfHealInfo", getRefreshRate(ConfigValues.GlusterRefreshRateHealInfo))
+                );
+    }
 
     /**
      * Refreshes details of all volume across all clusters being managed in the engine. It can end up doing the

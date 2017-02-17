@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -30,6 +32,12 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class StorageDeviceSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(StorageDeviceSyncJob.class);
+
+    @Override
+    public Collection<GlusterJobSchedulingDetails> getSchedulingDetails() {
+        return Collections.singleton(new GlusterJobSchedulingDetails(
+                "gluster_storage_device_pool_event", getRefreshRate(ConfigValues.GlusterRefreshRateStorageDevices)));
+    }
 
     public void init() {
         log.info("Gluster Storage Device monitoring has been initialized");

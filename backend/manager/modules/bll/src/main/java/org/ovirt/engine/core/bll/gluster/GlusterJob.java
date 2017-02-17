@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -115,6 +118,8 @@ public abstract class GlusterJob {
     @Inject
     protected GlusterAuditLogUtil logUtil;
 
+    public abstract Collection<GlusterJobSchedulingDetails> getSchedulingDetails();
+
     @SuppressWarnings("unchecked")
     protected List<GlusterServerInfo> fetchServers(VDS upServer) {
         VDSReturnValue result = runVdsCommand(VDSCommandType.GlusterServersList, new VdsIdVDSCommandParametersBase(upServer.getId()));
@@ -169,5 +174,9 @@ public abstract class GlusterJob {
                         EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED)), null);
         lockManager.acquireLockWait(lock);
         return lock;
+    }
+
+    protected static int getRefreshRate(ConfigValues refreshRateConfig) {
+        return Config.<Integer> getValue(refreshRateConfig);
     }
 }

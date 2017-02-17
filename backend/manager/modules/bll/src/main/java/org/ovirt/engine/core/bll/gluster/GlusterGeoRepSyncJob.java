@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -47,6 +50,18 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
             GeoRepSessionStatus.INITIALIZING,
             GeoRepSessionStatus.CREATED
     };
+
+    @Override
+    public Collection<GlusterJobSchedulingDetails> getSchedulingDetails() {
+        return Arrays.asList(
+                new GlusterJobSchedulingDetails(
+                        "gluster_georep_poll_event",
+                        getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepDiscoveryInSecs)),
+                new GlusterJobSchedulingDetails(
+                        "gluster_georepstatus_poll_event",
+                        getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepStatusInSecs))
+                );
+    }
 
     @OnTimerMethodAnnotation("gluster_georep_poll_event")
     public void discoverGeoRepData() {

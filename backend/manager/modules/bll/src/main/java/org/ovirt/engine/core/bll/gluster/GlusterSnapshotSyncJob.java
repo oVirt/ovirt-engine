@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotConf
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -38,6 +41,12 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
 
     @Inject
     private GlusterVolumeSnapshotConfigDao volumeSnapshotConfigDao;
+
+    @Override
+    public Collection<GlusterJobSchedulingDetails> getSchedulingDetails() {
+        return Collections.singleton(new GlusterJobSchedulingDetails(
+                "gluster_snapshot_poll_event", getRefreshRate(ConfigValues.GlusterRefreshRateSnapshotDiscovery)));
+    }
 
     @OnTimerMethodAnnotation("gluster_snapshot_poll_event")
     public void refreshSnapshotData() {

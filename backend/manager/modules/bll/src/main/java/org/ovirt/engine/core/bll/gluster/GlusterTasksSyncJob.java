@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -66,6 +68,12 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
     @Inject
     private GlusterDBUtils glusterDBUtils;
+
+    @Override
+    public Collection<GlusterJobSchedulingDetails> getSchedulingDetails() {
+        return Collections.singleton(new GlusterJobSchedulingDetails(
+                "gluster_async_task_poll_event", getRefreshRate(ConfigValues.GlusterRefreshRateTasks)));
+    }
 
     @OnTimerMethodAnnotation("gluster_async_task_poll_event")
     public void updateGlusterAsyncTasks() {

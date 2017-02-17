@@ -4,6 +4,7 @@ import static org.ovirt.engine.core.common.businessentities.gluster.GlusterHookC
 import static org.ovirt.engine.core.common.businessentities.gluster.GlusterHookConflictFlags.STATUS_CONFLICT;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -36,6 +38,12 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class GlusterHookSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterHookSyncJob.class);
+
+    @Override
+    public Collection<GlusterJobSchedulingDetails> getSchedulingDetails() {
+        return Collections.singleton(new GlusterJobSchedulingDetails(
+                "refreshHooks", getRefreshRate(ConfigValues.GlusterRefreshRateHooks)));
+    }
 
     @OnTimerMethodAnnotation("refreshHooks")
     public void refreshHooks() {
