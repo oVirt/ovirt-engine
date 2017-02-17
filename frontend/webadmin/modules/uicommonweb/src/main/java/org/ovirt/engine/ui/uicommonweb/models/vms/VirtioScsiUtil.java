@@ -22,6 +22,20 @@ public class VirtioScsiUtil {
         this.model = model;
     }
 
+    public void updateVirtioScsiEnabled(final Guid vmId, int osId) {
+        this.updateVirtioScsiEnabled(vmId, osId, new VirtioScasiEnablingFinished() {
+            @Override
+            public void beforeUpdates() {
+
+            }
+
+            @Override
+            public void afterUpdates() {
+
+            }
+        });
+    }
+
     public void updateVirtioScsiEnabled(final Guid vmId, int osId, VirtioScasiEnablingFinished finishedCallback) {
         this.finishedCallback = finishedCallback;
 
