@@ -68,8 +68,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             serviceLoader.load(IrsProxyManager.class);
             OvfDataUpdater.getInstance().initOvfDataUpdater();
             StoragePoolStatusHandler.init();
-
-            GlusterJobsManager.init();
+            serviceLoader.load(GlusterJobsManager.class);
 
             try {
                 log.info("Init VM custom properties utilities");

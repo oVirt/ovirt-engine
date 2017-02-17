@@ -2,28 +2,35 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GlusterJobsManager {
+@Singleton
+public class GlusterJobsManager implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(GlusterJobsManager.class);
 
-    public static void init() {
+    @Inject
+    private SchedulerUtilQuartzImpl scheduler;
+
+    @PostConstruct
+    public void init() {
         if (!glusterModeSupported()) {
             log.debug("Gluster mode not supported. Will not schedule jobs for refreshing Gluster data.");
             return;
         }
 
         log.debug("Initializing Gluster Jobs Manager");
-
-        SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
 
         scheduler.scheduleAFixedDelayJob(Injector.get(GlusterSyncJob.class),
                 "refreshLightWeightData",
