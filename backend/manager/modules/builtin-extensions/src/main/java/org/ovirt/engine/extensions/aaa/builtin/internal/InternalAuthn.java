@@ -13,7 +13,6 @@ import org.ovirt.engine.core.uutils.crypto.EnvelopePBE;
 
 public class InternalAuthn implements Extension {
 
-    private ExtMap context;
     private String adminUser;
     private String adminPassword;
 
@@ -59,7 +58,7 @@ public class InternalAuthn implements Extension {
     }
 
     private void doLoad(ExtMap input) {
-        context = input.get(Base.InvokeKeys.CONTEXT);
+        ExtMap context = input.get(Base.InvokeKeys.CONTEXT);
         context.<Collection<String>> get(
                 Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS
                 ).add("config.authn.user.password");
