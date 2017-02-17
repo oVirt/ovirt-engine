@@ -41,7 +41,7 @@ public class InternalAuthn implements Extension {
         output.put(Authn.InvokeKeys.PRINCIPAL, input.get(Authn.InvokeKeys.USER));
         if (
             input.get(Authn.InvokeKeys.USER).equals(adminUser) &&
-            EnvelopePBE.check(adminPassword, input.<String>get(Authn.InvokeKeys.CREDENTIALS))
+            EnvelopePBE.check(adminPassword, input.get(Authn.InvokeKeys.CREDENTIALS))
         ) {
             output.mput(
                     Authn.InvokeKeys.RESULT,
@@ -59,7 +59,7 @@ public class InternalAuthn implements Extension {
     }
 
     private void doLoad(ExtMap input, ExtMap output) {
-        context = input.<ExtMap> get(Base.InvokeKeys.CONTEXT);
+        context = input.get(Base.InvokeKeys.CONTEXT);
         context.<Collection<String>> get(
                 Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS
                 ).add("config.authn.user.password");
@@ -84,7 +84,7 @@ public class InternalAuthn implements Extension {
                 ).mput(
                         Base.ContextKeys.BUILD_INTERFACE_VERSION,
                         Base.INTERFACE_VERSION_CURRENT);
-        Properties config = context.<Properties> get(Base.ContextKeys.CONFIGURATION);
+        Properties config = context.get(Base.ContextKeys.CONFIGURATION);
         adminUser = config.getProperty("config.authn.user.name", "admin");
         adminPassword = config.getProperty("config.authn.user.password");
     }
