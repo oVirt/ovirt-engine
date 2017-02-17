@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -23,14 +23,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTasksService;
-import org.ovirt.engine.core.bll.job.JobRepository;
-import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -69,12 +65,7 @@ public class GlusterTasksSyncJobTest {
     private GlusterTasksService provider;
 
     @Mock
-    private JobRepository jobRepository;
-
     private GlusterTaskUtils taskUtils;
-
-    @Mock
-    private GlusterAuditLogUtil logUtil;
 
     private GlusterTasksSyncJob tasksSyncJob;
 
@@ -84,19 +75,12 @@ public class GlusterTasksSyncJobTest {
     @Before
     public void init() {
         tasksSyncJob = spy(GlusterTasksSyncJob.getInstance());
-        taskUtils = spy(GlusterTaskUtils.getInstance());
         doReturn(clusterDao).when(tasksSyncJob).getClusterDao();
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(provider).when(tasksSyncJob).getProvider();
         doReturn(stepDao).when(tasksSyncJob).getStepDao();
         doReturn(volumeDao).when(tasksSyncJob).getVolumeDao();
-        doReturn(volumeDao).when(taskUtils).getVolumeDao();
-        doReturn(jobRepository).when(taskUtils).getJobRepository();
         doReturn(taskUtils).when(tasksSyncJob).getGlusterTaskUtils();
-        doReturn(logUtil).when(tasksSyncJob).getGlusterLogUtil();
-        doNothing().when(taskUtils).releaseLock(any(Guid.class));
-        doNothing().when(taskUtils).endStepJob(any(Step.class));
-        doNothing().when(taskUtils).logEventMessage(any(GlusterAsyncTask.class), any(JobExecutionStatus.class), any(Cluster.class));
     }
 
     @Test
@@ -105,8 +89,7 @@ public class GlusterTasksSyncJobTest {
         prepareMocks();
 
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(jobRepository, times(1)).updateStep(any(Step.class));
-        verify(taskUtils, times(1)).endStepJob(any(Step.class));
+        verify(taskUtils, times(2)).updateSteps(any(Cluster.class), any(GlusterAsyncTask.class), anyList());
     }
 
     @Test
@@ -116,9 +99,8 @@ public class GlusterTasksSyncJobTest {
         prepareMocks();
 
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(jobRepository, times(1)).updateStep(any(Step.class));
-        //endStepJob will not be called for TASK_GUIDS[3], so times is = 2
-        verify(taskUtils, times(2)).endStepJob(any(Step.class));
+        verify(taskUtils, times(1)).endStepJob(any(Step.class));
+        verify(taskUtils, times(2)).updateSteps(any(Cluster.class), any(GlusterAsyncTask.class), anyList());
     }
 
     @Test
@@ -136,7 +118,6 @@ public class GlusterTasksSyncJobTest {
         tasksSyncJob.updateGlusterAsyncTasks();
         verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[0], null);
         verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[1], null);
-        verify(jobRepository, times(0)).updateStep(any(Step.class));
         verify(taskUtils, times(0)).endStepJob(any(Step.class));
     }
 
@@ -146,7 +127,6 @@ public class GlusterTasksSyncJobTest {
         prepareMocksForTasksFromCLI();
 
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(jobRepository, times(0)).updateStep(any(Step.class));
         verify(taskUtils, times(0)).endStepJob(any(Step.class));
     }
 
@@ -156,7 +136,6 @@ public class GlusterTasksSyncJobTest {
         prepareMocksForTasksFromCLI();
 
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(jobRepository, times(0)).updateStep(any(Step.class));
         verify(taskUtils, times(0)).endStepJob(any(Step.class));
     }
 
@@ -166,8 +145,7 @@ public class GlusterTasksSyncJobTest {
         doReturn(getTasks(JobExecutionStatus.STARTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         prepareMocks();
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(jobRepository, times(2)).updateStep(any(Step.class));
-        verify(taskUtils, times(0)).endStepJob(any(Step.class));
+        verify(taskUtils, times(2)).updateSteps(any(Cluster.class), any(GlusterAsyncTask.class), anyList());
     }
 
     @Test
@@ -175,14 +153,10 @@ public class GlusterTasksSyncJobTest {
         doReturn(getTasks(JobExecutionStatus.ABORTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         prepareMocks();
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(jobRepository, times(0)).updateStep(any(Step.class));
-        verify(taskUtils, times(2)).endStepJob(any(Step.class));
+        verify(taskUtils, times(2)).updateSteps(any(Cluster.class), any(GlusterAsyncTask.class), anyList());
     }
 
     private void prepareMocks() {
-        doReturn(getVolume(0)).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[0]);
-        doReturn(getVolume(1)).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[1]);
-        doReturn(getVolume(1)).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[2]);
         doReturn(getSteps(TASK_GUIDS[0])).when(stepDao).getStepsByExternalId(TASK_GUIDS[0]);
         doReturn(getSteps(TASK_GUIDS[1])).when(stepDao).getStepsByExternalId(TASK_GUIDS[1]);
         doReturn(getSteps(TASK_GUIDS[2])).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);
@@ -209,14 +183,6 @@ public class GlusterTasksSyncJobTest {
         }
         step.setStartTime(stepTime.getTime());
         return step;
-    }
-
-    private GlusterVolumeEntity getVolume(int i) {
-        GlusterVolumeEntity vol = new GlusterVolumeEntity();
-        vol.setStatus(GlusterStatus.UP);
-        vol.setId(VOL_GUIDS[i]);
-        vol.setClusterId(CLUSTER_GUIDS[1]);
-        return vol;
     }
 
     private Map<Guid, GlusterAsyncTask> getTasks() {
