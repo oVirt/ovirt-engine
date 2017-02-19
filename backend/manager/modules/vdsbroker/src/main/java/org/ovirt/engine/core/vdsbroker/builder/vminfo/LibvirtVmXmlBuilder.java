@@ -183,6 +183,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
+    @SuppressWarnings("incomplete-switch")
     private void writeCpu() {
         writer.writeStartElement("cpu");
 
@@ -240,6 +241,7 @@ public class LibvirtVmXmlBuilder {
 
         if (createInfo.containsKey(VdsProperties.VM_NUMA_NODES)) {
             writer.writeStartElement("numa");
+            @SuppressWarnings("unchecked")
             List<Map<String, Object>> createVmNumaNodes = (List<Map<String, Object>>) createInfo.get(VdsProperties.VM_NUMA_NODES);
             for (Map<String, Object> vmNumaNode : createVmNumaNodes) {
                 writer.writeStartElement("cell");
@@ -312,8 +314,10 @@ public class LibvirtVmXmlBuilder {
         //   <memory mode='strict' nodeset='0-1'/>
         //   <memnode cellid='0' mode='strict' nodeset='1'>
         // </numatune>
+        @SuppressWarnings("unchecked")
         Map<String, Object> numaTuneSetting = (Map<String, Object>) createInfo.get(VdsProperties.NUMA_TUNE);
         String nodeSet = (String) numaTuneSetting.get(VdsProperties.NUMA_TUNE_NODESET);
+        @SuppressWarnings("unchecked")
         List<Map<String, String>> memNodes = (List<Map<String, String>>) numaTuneSetting.get(VdsProperties.NUMA_TUNE_MEMNODES);
         if (nodeSet != null || memNodes != null) {
             writer.writeStartElement("numatune");
@@ -610,7 +614,8 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void updateBootOrder(List<VmDevice> ... bootableDevices) {
+    @SafeVarargs
+    private final void updateBootOrder(List<VmDevice> ... bootableDevices) {
         List<VmDevice> managedAndPluggedBootableDevices = Arrays.stream(bootableDevices)
                 .flatMap(Collection::stream)
                 .filter(VmDevice::isManaged)
@@ -1267,6 +1272,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("bandwidth");
             Map<String, Object> map = new HashMap<>();
             vmInfoBuildUtils.addProfileDataToNic(map, vm, device, nic);
+            @SuppressWarnings("unchecked")
             Map<String, String> inboundMap = (Map<String, String>) map.get("inbound");
             if (inboundMap != null && !inboundMap.isEmpty()) {
                 writer.writeStartElement("inbound");
@@ -1275,6 +1281,7 @@ public class LibvirtVmXmlBuilder {
                 writer.writeAttributeString("peak", inboundMap.get("peak"));
                 writer.writeEndElement();
             }
+            @SuppressWarnings("unchecked")
             Map<String, String> outboundMap = (Map<String, String>) map.get("outbound");
             if (outboundMap != null && !outboundMap.isEmpty()) {
                 writer.writeStartElement("outbound");
