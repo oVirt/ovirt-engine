@@ -2,8 +2,10 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
 import java.util.List;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragEnterEvent;
@@ -93,7 +95,7 @@ public abstract class UnassignedNetworksPanel<T extends NetworkItemPanel<?>> ext
         String dragDropEventData = NetworkItemPanel.getDragDropEventData(event, isDrop);
         String type = NetworkItemPanel.getType(dragDropEventData);
         String data = NetworkItemPanel.getData(dragDropEventData);
-        if (data != null) {
+        if (!StringHelper.isNullOrEmpty(data)) {
             if (setupModel.candidateOperation(data, type, null, null, isDrop)) {
                 animatedPanel.getElement().addClassName(style.networkGroupDragOver());
                 // allow drag/drop (look at http://www.w3.org/TR/html5/dnd.html#dndevents)
