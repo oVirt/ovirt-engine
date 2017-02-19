@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.Ipv4AddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.Ipv6AddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -469,7 +470,7 @@ public class VmInitModel extends Model {
                 if (getDnsServers().getEntity() != null) {
                     for (String server : tokenizeString(getDnsServers().getEntity())) {
                         if (!validateHidden(getDnsServers(), server, dnsServerListMessage,
-                                new IValidation[] { new Ipv4AddressValidation() })) {
+                                new IValidation[] { new IpAddressValidation() })) {
                             dnsIsValid = false;
                             break;
                         }
