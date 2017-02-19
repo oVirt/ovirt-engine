@@ -9,6 +9,8 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDeviceFeEntity;
+
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -66,8 +68,8 @@ public class VmDeviceGeneralTypeColumn<T> extends AbstractSafeHtmlColumn<T> {
 
     private VmDevice getDeviceFromObject(T object) {
         VmDevice device = null;
-        if (object instanceof VmDevice) {
-            device = (VmDevice) object;
+        if (object instanceof VmDeviceFeEntity) {
+            device = ((VmDeviceFeEntity) object).getVmDevice();
         } else if (object instanceof PairQueryable && ((PairQueryable) object).getFirst() instanceof VmDevice) {
             device = ((PairQueryable<VmDevice, VM>) object).getFirst();
         }

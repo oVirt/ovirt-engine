@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -11,17 +10,18 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.VmDeviceGeneralTypeColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDeviceFeEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDevice, VmDevicesListModel<VM>> {
+public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDeviceFeEntity, VmDevicesListModel<VM>> {
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private HotUnplugColumn hotUnplugColumn;
 
     public VmDevicesListModelTable(
-            SearchableTableModelProvider<VmDevice, VmDevicesListModel<VM>> modelProvider,
+            SearchableTableModelProvider<VmDeviceFeEntity, VmDevicesListModel<VM>> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
     }
@@ -42,17 +42,17 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
     }
 
     private void addGeneralTypeColumn() {
-        final VmDeviceGeneralTypeColumn<VmDevice> deviceGeneralTypeColumn = new VmDeviceGeneralTypeColumn<>();
+        final VmDeviceGeneralTypeColumn<VmDeviceFeEntity> deviceGeneralTypeColumn = new VmDeviceGeneralTypeColumn<>();
         deviceGeneralTypeColumn.setContextMenuTitle(constants.deviceGeneralType());
         deviceGeneralTypeColumn.makeSortable();
         getTable().addColumn(deviceGeneralTypeColumn, constants.empty(), "30px"); //$NON-NLS-1$
     }
 
     private void addDeviceTypeColumn() {
-        final AbstractTextColumn<VmDevice> deviceTypeColumn = new AbstractTextColumn<VmDevice>() {
+        final AbstractTextColumn<VmDeviceFeEntity> deviceTypeColumn = new AbstractTextColumn<VmDeviceFeEntity>() {
             @Override
-            public String getValue(VmDevice device) {
-                return device.getDevice();
+            public String getValue(VmDeviceFeEntity deviceEntity) {
+                return deviceEntity.getVmDevice().getDevice();
             }
         };
         deviceTypeColumn.makeSortable();
@@ -60,10 +60,10 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
     }
 
     private void addAddressColumn() {
-        final AbstractTextColumn<VmDevice> deviceAddressColumn = new AbstractTextColumn<VmDevice>() {
+        final AbstractTextColumn<VmDeviceFeEntity> deviceAddressColumn = new AbstractTextColumn<VmDeviceFeEntity>() {
             @Override
-            public String getValue(VmDevice device) {
-                return device.getAddress();
+            public String getValue(VmDeviceFeEntity deviceEntity) {
+                return deviceEntity.getVmDevice().getAddress();
             }
         };
         deviceAddressColumn.makeSortable();
@@ -71,14 +71,14 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
     }
 
     private void addReadOnlyColumn() {
-        final AbstractCheckboxColumn<VmDevice> readonlyColumn = new AbstractCheckboxColumn<VmDevice>() {
+        final AbstractCheckboxColumn<VmDeviceFeEntity> readonlyColumn = new AbstractCheckboxColumn<VmDeviceFeEntity>() {
             @Override
-            public Boolean getValue(VmDevice object) {
-                return object.getReadOnly();
+            public Boolean getValue(VmDeviceFeEntity object) {
+                return object.getVmDevice().getReadOnly();
             }
 
             @Override
-            protected boolean canEdit(VmDevice object) {
+            protected boolean canEdit(VmDeviceFeEntity object) {
                 return false;
             }
         };
@@ -87,14 +87,14 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
     }
 
     private void addPluggedColumn() {
-        final AbstractCheckboxColumn<VmDevice> pluggedColumn = new AbstractCheckboxColumn<VmDevice>() {
+        final AbstractCheckboxColumn<VmDeviceFeEntity> pluggedColumn = new AbstractCheckboxColumn<VmDeviceFeEntity>() {
             @Override
-            public Boolean getValue(VmDevice object) {
-                return object.isPlugged();
+            public Boolean getValue(VmDeviceFeEntity object) {
+                return object.getVmDevice().isPlugged();
             }
 
             @Override
-            protected boolean canEdit(VmDevice object) {
+            protected boolean canEdit(VmDeviceFeEntity object) {
                 return false;
             }
         };
@@ -103,14 +103,14 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
     }
 
     private void addManagedColumn() {
-        final AbstractCheckboxColumn<VmDevice> managedColumn = new AbstractCheckboxColumn<VmDevice>() {
+        final AbstractCheckboxColumn<VmDeviceFeEntity> managedColumn = new AbstractCheckboxColumn<VmDeviceFeEntity>() {
             @Override
-            public Boolean getValue(VmDevice object) {
-                return object.isManaged();
+            public Boolean getValue(VmDeviceFeEntity object) {
+                return object.getVmDevice().isManaged();
             }
 
             @Override
-            protected boolean canEdit(VmDevice object) {
+            protected boolean canEdit(VmDeviceFeEntity object) {
                 return false;
             }
         };
@@ -119,10 +119,10 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
     }
 
     private void addSpecParamsColumn() {
-        final AbstractTextColumn<VmDevice> specParamsColumn = new AbstractTextColumn<VmDevice>() {
+        final AbstractTextColumn<VmDeviceFeEntity> specParamsColumn = new AbstractTextColumn<VmDeviceFeEntity>() {
             @Override
-            public String getValue(VmDevice device) {
-                return device.getSpecParams().toString();
+            public String getValue(VmDeviceFeEntity deviceEntity) {
+                return deviceEntity.getVmDevice().getSpecParams().toString();
             }
         };
         specParamsColumn.makeSortable();
@@ -131,10 +131,10 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
 
     private void addHotUnplugColumn() {
         hotUnplugColumn = new HotUnplugColumn();
-        getTable().addColumn(hotUnplugColumn , constants.hotUnplug(), "83px"); //$NON-NLS-1$
+        getTable().addColumn(hotUnplugColumn , constants.hotUnplug(), "98px"); //$NON-NLS-1$
     }
 
-    public HasCellClickHandlers<VmDevice> getHotUnplugColumn() {
+    public HasCellClickHandlers<VmDeviceFeEntity> getHotUnplugColumn() {
         return hotUnplugColumn;
     }
 

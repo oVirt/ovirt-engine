@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.CellClickHandler;
 import org.ovirt.engine.ui.common.widget.HasCellClickHandlers;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDeviceFeEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -35,12 +35,12 @@ public class SubTabVirtualMachineVmDevicePresenter
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VM> {
-        HasCellClickHandlers<VmDevice> getHotUnplugColumn();
+        HasCellClickHandlers<VmDeviceFeEntity> getHotUnplugColumn();
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
-            SearchableDetailModelProvider<VmDevice, VmListModel<Void>, VmDevicesListModel<VM>> modelProvider) {
+            SearchableDetailModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>> modelProvider) {
         return new ModelBoundTabData(constants.virtualMachineVmDevicesSubTabLabel(), 6, modelProvider);
     }
 
@@ -50,7 +50,7 @@ public class SubTabVirtualMachineVmDevicePresenter
             ViewDef view,
             ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<VmDevice, VmListModel<Void>, VmDevicesListModel<VM>> modelProvider,
+            SearchableDetailModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>> modelProvider,
             VirtualMachineMainTabSelectedItems selectedItems) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
@@ -59,9 +59,9 @@ public class SubTabVirtualMachineVmDevicePresenter
     @Override
     public void initializeHandlers() {
         super.initializeHandlers();
-        registerHandler(getView().getHotUnplugColumn().addHandler(new CellClickHandler<VmDevice>() {
+        registerHandler(getView().getHotUnplugColumn().addHandler(new CellClickHandler<VmDeviceFeEntity>() {
                 @Override
-                public void onClick(NativeEvent event, VmDevice vmDevice) {
+                public void onClick(NativeEvent event, VmDeviceFeEntity vmDevice) {
                     getModelProvider().getModel().onHotUnplug(vmDevice);
                 }
         }));

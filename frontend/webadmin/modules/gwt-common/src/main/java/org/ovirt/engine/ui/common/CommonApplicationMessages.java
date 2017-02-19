@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.compat.Version;
+
 import com.google.gwt.i18n.client.Messages;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -167,5 +170,8 @@ public interface CommonApplicationMessages extends Messages {
     String megabytes(String num);
 
     String gigabytes(String num);
+
+    String memoryHotUnplugNotSupportedForCompatibilityVersionAndArchitecture(Version compatibilityVersion,
+            ArchitectureType clusterArch);
 }
 

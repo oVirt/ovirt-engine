@@ -740,12 +740,19 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return Objects.equals(item1, item2);
     }
 
-    protected void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase) {
+    protected void syncSearch(
+            VdcQueryType vdcQueryType,
+            VdcQueryParametersBase vdcQueryParametersBase,
+            AsyncQuery<VdcQueryReturnValue> asyncCallback) {
         vdcQueryParametersBase.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(vdcQueryType, vdcQueryParametersBase, new SetItemsAsyncQuery());
+        Frontend.getInstance().runQuery(vdcQueryType, vdcQueryParametersBase, asyncCallback);
 
         setIsQueryFirstTime(false);
+    }
+
+    protected void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase) {
+        syncSearch(vdcQueryType, vdcQueryParametersBase, new SetItemsAsyncQuery());
     }
 
     public void stopRefresh() {

@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -167,6 +166,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDeviceFeEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
@@ -330,7 +330,7 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel> getSubTabVirtualMachineGuestContainerModelProvider();
 
-    SearchableDetailModelProvider<VmDevice, VmListModel<Void>, VmDevicesListModel<VM>> getSubTabVirtualMachineVmDeviceModelProvider();
+    SearchableDetailModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>> getSubTabVirtualMachineVmDeviceModelProvider();
 
     SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> getSubTabVirtualMachineAffinityGroupModelProvider();
 
