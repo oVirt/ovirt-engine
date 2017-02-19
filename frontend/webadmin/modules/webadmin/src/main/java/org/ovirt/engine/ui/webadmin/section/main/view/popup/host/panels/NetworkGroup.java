@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
@@ -170,7 +171,7 @@ public class NetworkGroup extends FocusPanel {
         String dragDropEventData = NetworkItemPanel.getDragDropEventData(event, isDrop);
         String type = NetworkItemPanel.getType(dragDropEventData);
         String data = NetworkItemPanel.getData(dragDropEventData);
-        if (data != null) {
+        if (!StringHelper.isNullOrEmpty(data)) {
             if (setupModel.candidateOperation(data, type, nicModel.getName(), HostSetupNetworksModel.NIC, isDrop)) {
                 table.getElement().addClassName(style.networkGroupDragOver());
                 // allow drag/drop (look at http://www.w3.org/TR/html5/dnd.html#dndevents)
