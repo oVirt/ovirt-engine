@@ -386,11 +386,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             break;
 
         case REMOVE_STATELESS_IMAGES:
-            removeVmStatlessImages();
+            removeStatlessSnapshot();
             break;
 
         case CREATE_STATELESS_IMAGES:
-            createVmStatelessImages();
+            createStatelessSnapshot();
             break;
 
         case RESUME_HIBERNATE:
@@ -440,7 +440,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return isoDomainListSynchronizer;
     }
 
-    private void createVmStatelessImages() {
+    private void createStatelessSnapshot() {
         warnIfNotAllDisksPermitSnapshots();
 
         log.info("Creating stateless snapshot for VM '{}' ({})",
@@ -510,7 +510,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return Collections.singletonMap(VdcObjectType.VM.name().toLowerCase(), getVmName());
     }
 
-    private void removeVmStatlessImages() {
+    private void removeStatlessSnapshot() {
         runInternalAction(VdcActionType.ProcessDownVm,
                 new ProcessDownVmParameters(getVm().getId(), true),
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
@@ -520,12 +520,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected VMStatus createVm() {
-        final String cdPath = chooseCd();
-        if (StringUtils.isNotEmpty(cdPath)) {
-            log.info("Running VM with attached cd '{}'", cdPath);
-        }
-        updateCurrentCd(cdPath);
-        getVm().setCdPath(cdPathWindowsToLinux(cdPath));
+        updateCdPath();
 
         if (!StringUtils.isEmpty(getParameters().getFloppyPath())) {
             getVm().setFloppyPath(cdPathWindowsToLinux(getParameters().getFloppyPath()));
@@ -679,11 +674,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         fetchVmDisksFromDb();
         // reevaluate boot parameters if VM was executed with 'run once'
         refreshBootParameters(getParameters());
-
-        // Before running the VM we update its devices, as they may
-        // need to be changed due to configuration option change
-        getVmDeviceUtils().updateVmDevicesOnRun(getVm().getStaticData());
-
+        updateVmDevicesOnRun();
         updateGraphicsAndDisplayInfos();
 
         getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
@@ -701,40 +692,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // Clear the first user:
         getVm().setConsoleUserId(null);
 
-        if (getParameters().getInitializationType() == null) {
-            vmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
-            if (!getVm().isInitialized() && getVm().getVmInit() != null) {
-                getVm().setInitializationType(InitializationType.None);
-                if (osRepository.isWindows(getVm().getVmOsId())) {
-                    if (!isPayloadExists(VmDeviceType.FLOPPY)) {
-                        getVm().setInitializationType(InitializationType.Sysprep);
-                    }
-                }
-                else if (getVm().getVmInit() != null) {
-                    if (!isPayloadExists(VmDeviceType.CDROM)) {
-                        getVm().setInitializationType(InitializationType.CloudInit);
-                    }
-                }
-            }
-        } else if (getParameters().getInitializationType() != InitializationType.None) {
-            getVm().setInitializationType(getParameters().getInitializationType());
-            // If the user asked for sysprep/cloud-init via run-once we eliminate
-            // the payload since we can only have one media (Floppy/CDROM) per payload.
-            if (getParameters().getInitializationType() == InitializationType.Sysprep &&
-                    isPayloadExists(VmDeviceType.FLOPPY)) {
-                getVm().setVmPayload(null);
-            } else if (getParameters().getInitializationType() == InitializationType.CloudInit &&
-                    isPayloadExists(VmDeviceType.CDROM)) {
-                getVm().setVmPayload(null);
-            }
-        }
+        updateVmInit();
+
         // if we asked for floppy from Iso Domain we cannot
         // have floppy payload since we are limited to only one floppy device
         if (!StringUtils.isEmpty(getParameters().getFloppyPath()) && isPayloadExists(VmDeviceType.FLOPPY)) {
             getVm().setVmPayload(null);
         }
 
-        vmHandler.updateVmGuestAgentVersion(getVm());
+        updateVmGuestAgentVersion();
 
         // update dynamic cluster-parameters
         if (getVm().getCpuName() == null) { // no run-once data -> use static field or inherit from cluster
@@ -816,6 +782,54 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected void fetchVmDisksFromDb() {
         if (getVm().getDiskMap().isEmpty()) {
             vmHandler.updateDisksFromDb(getVm());
+        }
+    }
+
+    protected void updateVmDevicesOnRun() {
+        // Before running the VM we update its devices, as they may
+        // need to be changed due to configuration option change
+        getVmDeviceUtils().updateVmDevicesOnRun(getVm().getStaticData());
+    }
+
+    protected void updateCdPath() {
+        final String cdPath = chooseCd();
+        if (StringUtils.isNotEmpty(cdPath)) {
+            log.info("Running VM with attached cd '{}'", cdPath);
+        }
+        updateCurrentCd(cdPath);
+        getVm().setCdPath(cdPathWindowsToLinux(cdPath));
+    }
+
+    protected void updateVmGuestAgentVersion() {
+        vmHandler.updateVmGuestAgentVersion(getVm());
+    }
+
+    protected void updateVmInit() {
+        if (getParameters().getInitializationType() == null) {
+            vmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
+            if (!getVm().isInitialized() && getVm().getVmInit() != null) {
+                if (osRepository.isWindows(getVm().getVmOsId())) {
+                    if (!isPayloadExists(VmDeviceType.FLOPPY)) {
+                        getVm().setInitializationType(InitializationType.Sysprep);
+                    }
+                }
+                else {
+                    if (!isPayloadExists(VmDeviceType.CDROM)) {
+                        getVm().setInitializationType(InitializationType.CloudInit);
+                    }
+                }
+            }
+        } else if (getParameters().getInitializationType() != InitializationType.None) {
+            getVm().setInitializationType(getParameters().getInitializationType());
+            // If the user asked for sysprep/cloud-init via run-once we eliminate
+            // the payload since we can only have one media (Floppy/CDROM) per payload.
+            if (getParameters().getInitializationType() == InitializationType.Sysprep &&
+                    isPayloadExists(VmDeviceType.FLOPPY)) {
+                getVm().setVmPayload(null);
+            } else if (getParameters().getInitializationType() == InitializationType.CloudInit &&
+                    isPayloadExists(VmDeviceType.CDROM)) {
+                getVm().setVmPayload(null);
+            }
         }
     }
 

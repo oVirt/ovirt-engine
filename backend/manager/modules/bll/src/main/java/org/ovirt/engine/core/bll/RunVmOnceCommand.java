@@ -44,8 +44,15 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             loadPayload();
         }
 
-        /* if run-once was used then the dynamic vm fields must be updated before running the scheduler filters (which are called via super.Validate->runVmValidator) */
-        earlyUpdateVmDynamicRunOnce();
+        if (getVm() != null) {
+            if (getParameters().getCustomCpuName() != null) {
+                getVm().setCpuName(getParameters().getCustomCpuName());
+            }
+
+            if (getParameters().getCustomEmulatedMachine() != null) {
+                getVm().setEmulatedMachine(getParameters().getCustomEmulatedMachine());
+            }
+        }
     }
 
     @Override
@@ -65,33 +72,14 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             return failValidation(EngineMessage.VM_CANNOT_RUN_ONCE_WITH_ILLEGAL_SYSPREP_PARAM);
         }
 
-        if (getParameters().getVmInit() != null) {
-            if (getParameters().getVmInit().isPasswordAlreadyStored()) {
-                VmBase temp = new VmBase();
-                temp.setId(getParameters().getVmId());
-                vmHandler.updateVmInitFromDB(temp, false);
-                getParameters().getVmInit().setRootPassword(temp.getVmInit().getRootPassword());
-            }
+        if (getParameters().getVmInit() != null && getParameters().getVmInit().isPasswordAlreadyStored()) {
+            VmBase temp = new VmBase();
+            temp.setId(getParameters().getVmId());
+            vmHandler.updateVmInitFromDB(temp, false);
+            getParameters().getVmInit().setRootPassword(temp.getVmInit().getRootPassword());
         }
 
         return true;
-    }
-
-    /**
-     * The function updates the dynamic vm fields with the run-once parameters for fields which are accessed during
-     * the validation process and thus must be updated at an earlier stage than the initVm() stage.
-     */
-    private void earlyUpdateVmDynamicRunOnce() {
-        if(getVm() != null) { // function is called before super.validate(), vm object is not safe yet
-            if (getParameters().getCustomCpuName() != null) {
-                getVm().setCpuName(getParameters().getCustomCpuName());
-            }
-
-            if (getParameters().getCustomEmulatedMachine() != null) {
-                getVm().setEmulatedMachine(getParameters().getCustomEmulatedMachine());
-            }
-        }
-
     }
 
     private void loadPayload() {
@@ -139,12 +127,10 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     protected CreateVDSCommandParameters buildCreateVmParameters() {
         CreateVDSCommandParameters createVmParams = super.buildCreateVmParameters();
 
-        RunVmOnceParams runOnceParams = getParameters();
-
         SysPrepParams sysPrepParams = new SysPrepParams();
-        sysPrepParams.setSysPrepDomainName(runOnceParams.getSysPrepDomainName());
-        sysPrepParams.setSysPrepUserName(runOnceParams.getSysPrepUserName());
-        sysPrepParams.setSysPrepPassword(runOnceParams.getSysPrepPassword());
+        sysPrepParams.setSysPrepDomainName(getParameters().getSysPrepDomainName());
+        sysPrepParams.setSysPrepUserName(getParameters().getSysPrepUserName());
+        sysPrepParams.setSysPrepPassword(getParameters().getSysPrepPassword());
         createVmParams.setSysPrepParams(sysPrepParams);
 
         if (getParameters().getVmInit() != null) {
