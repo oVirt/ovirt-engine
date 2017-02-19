@@ -132,7 +132,7 @@ public class RunVmValidator {
 
         return
                 validateVmProperties(vm, runVmParam.getCustomProperties(), messages) &&
-                validate(validateBootSequence(vm, runVmParam.getBootSequence(), getVmDisks(), activeIsoDomainId), messages) &&
+                validate(validateBootSequence(vm, getVmDisks(), activeIsoDomainId), messages) &&
                 validate(validateDisplayType(), messages) &&
                 validate(new VmValidator(vm).vmNotLocked(), messages) &&
                 validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId()), messages) &&
@@ -238,10 +238,8 @@ public class RunVmValidator {
                         messages);
     }
 
-    protected ValidationResult validateBootSequence(VM vm, BootSequence runOnceBootSequence,
-            List<Disk> vmDisks, Guid activeIsoDomainId) {
-        BootSequence bootSequence = runOnceBootSequence != null ?
-                runOnceBootSequence : vm.getDefaultBootSequence();
+    protected ValidationResult validateBootSequence(VM vm, List<Disk> vmDisks, Guid activeIsoDomainId) {
+        BootSequence bootSequence = vm.getBootSequence();
         // Block from running a VM with no HDD when its first boot device is
         // HD and no other boot devices are configured
         if (bootSequence == BootSequence.C && vmDisks.isEmpty()) {

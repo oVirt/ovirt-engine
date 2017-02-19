@@ -129,7 +129,7 @@ public class RunVmValidatorTest {
 
     @Test
     public void testVmFailNoDisks() {
-        validateResult(runVmValidator.validateBootSequence(new VM(), null, new ArrayList<>(), null),
+        validateResult(runVmValidator.validateBootSequence(new VM(), new ArrayList<>(), null),
                        false,
                        EngineMessage.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
     }
@@ -138,21 +138,25 @@ public class RunVmValidatorTest {
     public void testVmWithDisks() {
         List<Disk> disks = new ArrayList<>();
         disks.add(new DiskImage());
-        validateResult(runVmValidator.validateBootSequence(new VM(), null, disks, null),
+        validateResult(runVmValidator.validateBootSequence(new VM(), disks, null),
                 true,
                 null);
     }
 
     @Test
     public void testNoIsoDomain() {
-        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<>(), null),
+        VM vm = new VM();
+        vm.setBootSequence(BootSequence.CD);
+        validateResult(runVmValidator.validateBootSequence(vm, new ArrayList<>(), null),
                 false,
                 EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
     }
 
     @Test
     public void testNoDiskBootFromIsoDomain() {
-        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<>(), Guid.newGuid()),
+        VM vm = new VM();
+        vm.setBootSequence(BootSequence.CD);
+        validateResult(runVmValidator.validateBootSequence(vm, new ArrayList<>(), Guid.newGuid()),
                 true,
                 null);
     }
@@ -162,7 +166,9 @@ public class RunVmValidatorTest {
         VmNicDao dao = mock(VmNicDao.class);
         doReturn(new ArrayList<VmNic>()).when(dao).getAllForVm(any(Guid.class));
         doReturn(dao).when(runVmValidator).getVmNicDao();
-        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.N, new ArrayList<>(), null),
+        VM vm = new VM();
+        vm.setBootSequence(BootSequence.N);
+        validateResult(runVmValidator.validateBootSequence(vm, new ArrayList<>(), null),
                 false,
                 EngineMessage.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
     }

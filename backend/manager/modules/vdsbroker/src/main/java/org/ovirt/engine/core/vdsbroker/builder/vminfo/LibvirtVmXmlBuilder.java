@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -620,9 +619,8 @@ public class LibvirtVmXmlBuilder {
                 .flatMap(Collection::stream)
                 .filter(VmDevice::isManaged)
                 .collect(Collectors.toList());
-        BootSequence bootSequence = vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence();
         updateVmDevicesBootOrder(
-                bootSequence,
+                vm.getBootSequence(),
                 managedAndPluggedBootableDevices,
                 vm.getInterfaces(),
                 VmDeviceCommonUtils.extractDiskVmElements(vm));

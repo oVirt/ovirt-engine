@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -31,7 +30,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     private static final long serialVersionUID = 3311307677963231320L;
 
-    private BootSequence bootSequence;
     private String diskPath;
     private Boolean runAndPause;
     private boolean acpiEnable;
@@ -69,7 +67,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
         RunVmParams other = (RunVmParams) obj;
         return Objects.equals(getVmId(), other.getVmId())
-                && bootSequence == other.bootSequence
                 && Objects.equals(diskPath, other.diskPath)
                 && Objects.equals(runAndPause, other.runAndPause)
                 && acpiEnable == other.acpiEnable
@@ -89,7 +86,6 @@ public class RunVmParams extends VmOperationParameterBase {
     public int hashCode() {
         return Objects.hash(
                 getVmId(),
-                bootSequence,
                 diskPath,
                 runAndPause,
                 acpiEnable,
@@ -104,14 +100,6 @@ public class RunVmParams extends VmOperationParameterBase {
                 balloonEnabled,
                 cpuShares
         );
-    }
-
-    public BootSequence getBootSequence() {
-        return bootSequence;
-    }
-
-    public void setBootSequence(BootSequence value) {
-        bootSequence = value;
     }
 
     public String getFloppyPath() {

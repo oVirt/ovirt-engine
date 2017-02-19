@@ -495,7 +495,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     public void buildVmBootSequence() {
         // recalculate boot order from source devices and set it to target devices
         VmDeviceCommonUtils.updateVmDevicesBootOrder(
-                vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence(),
+                vm.getBootSequence(),
                 bootableDevices,
                 vm.getInterfaces(),
                 VmDeviceCommonUtils.extractDiskVmElements(vm));

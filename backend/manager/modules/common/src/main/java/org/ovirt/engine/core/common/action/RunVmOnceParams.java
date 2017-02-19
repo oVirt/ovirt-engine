@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmInit;
@@ -32,6 +33,7 @@ public class RunVmOnceParams extends RunVmParams {
     private String initrdUrl;
     private String kernelUrl;
     private String kernelParams;
+    private BootSequence bootSequence;
 
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
             groups = { StartEntity.class }, message = "VALIDATION_VM_INVALID_KEYBOARD_LAYOUT")
@@ -66,7 +68,8 @@ public class RunVmOnceParams extends RunVmParams {
                 kernelParams,
                 bootMenuEnabled,
                 spiceFileTransferEnabled,
-                spiceCopyPasteEnabled
+                spiceCopyPasteEnabled,
+                bootSequence
         );
     }
 
@@ -82,6 +85,7 @@ public class RunVmOnceParams extends RunVmParams {
 
         RunVmOnceParams other = (RunVmOnceParams) obj;
         return super.equals(obj)
+                && bootSequence == other.bootSequence
                 && Objects.equals(sysPrepDomainName, other.sysPrepDomainName)
                 && Objects.equals(sysPrepUserName, other.sysPrepUserName)
                 && Objects.equals(sysPrepPassword, other.sysPrepPassword)
@@ -224,6 +228,14 @@ public class RunVmOnceParams extends RunVmParams {
 
     public void setKernelParams(String value) {
         this.kernelParams = value;
+    }
+
+    public BootSequence getBootSequence() {
+        return bootSequence;
+    }
+
+    public void setBootSequence(BootSequence value) {
+        bootSequence = value;
     }
 
 }

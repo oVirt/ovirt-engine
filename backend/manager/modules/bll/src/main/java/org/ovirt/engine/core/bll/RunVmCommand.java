@@ -133,6 +133,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         needsHostDevices = hostDeviceManager.checkVmNeedsDirectPassthrough(getVm());
         loadVmInit();
         fetchVmDisksFromDb();
+        getVm().setBootSequence(getVm().getDefaultBootSequence());
+        getVm().setRunOnce(false);
     }
 
     @Override
@@ -165,15 +167,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         return getActiveSnapshot().getMemoryVolume();
-    }
-
-    /**
-     * Sets up the command specific boot parameters. This method is not expected to be
-     * extended, however it can be overridden (e.g. the children will not call the super)
-     */
-    protected void refreshBootParameters(RunVmParams runVmParameters) {
-        getVm().setBootSequence(getVm().getDefaultBootSequence());
-        getVm().setRunOnce(false);
     }
 
     /**
@@ -674,8 +667,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         fetchVmDisksFromDb();
-        // reevaluate boot parameters if VM was executed with 'run once'
-        refreshBootParameters(getParameters());
         updateVmDevicesOnRun();
         updateGraphicsAndDisplayInfos();
 

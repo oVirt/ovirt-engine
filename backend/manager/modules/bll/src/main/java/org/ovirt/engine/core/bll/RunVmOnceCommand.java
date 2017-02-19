@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
-import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -62,6 +61,14 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         if (getParameters().getSpiceCopyPasteEnabled() != null) {
             getVm().setSpiceCopyPasteEnabled(getParameters().getSpiceCopyPasteEnabled());
         }
+        if (getParameters().getBootSequence() != null) {
+            getVm().setBootSequence(getParameters().getBootSequence());
+        }
+        getVm().setInitrdUrl(getParameters().getInitrdUrl());
+        getVm().setKernelUrl(getParameters().getKernelUrl());
+        getVm().setKernelParams(getParameters().getKernelParams());
+        getVm().setCustomProperties(getParameters().getCustomProperties());
+        getVm().setRunOnce(true);
     }
 
     @Override
@@ -112,24 +119,6 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             return destIdList;
         }
         return super.getPredefinedVdsIdListToRunOn();
-    }
-
-    /**
-     * Refresh the associated values of the VM boot parameters with the values from the command parameters. The method
-     * is used when VM is reloaded from the DB while its parameters hasn't been persisted (e.g. when running 'as once')
-     */
-    @Override
-    protected void refreshBootParameters(RunVmParams runVmParameters) {
-        getVm().setInitrdUrl(getParameters().getInitrdUrl());
-        getVm().setKernelUrl(getParameters().getKernelUrl());
-        getVm().setKernelParams(getParameters().getKernelParams());
-        getVm().setCustomProperties(runVmParameters.getCustomProperties());
-
-        getVm().setBootSequence((runVmParameters.getBootSequence() != null) ?
-                runVmParameters.getBootSequence() :
-                getVm().getDefaultBootSequence());
-
-        getVm().setRunOnce(true);
     }
 
     @Override
