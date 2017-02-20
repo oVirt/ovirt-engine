@@ -47,7 +47,7 @@ public enum AuditLogType {
     VDS_HIGH_SWAP_USE(535, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.MINUTE.getValue() * 30),
     VDS_LOW_SWAP(536, AuditLogSeverity.WARNING,
-            AuditLogTimeInterval.MINUTE.getValue() * 30),
+            AuditLogTimeInterval.DAY.getValue()),
     VDS_FENCE_STATUS(496),
     VDS_FENCE_STATUS_FAILED(497, AuditLogSeverity.ERROR),
     VDS_APPROVE(498),
