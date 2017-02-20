@@ -135,6 +135,16 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
     }
 
     @Override
+    public void incrementDbGenerationForVms(List<Guid> guids) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_guids", createArrayOfUUIDs(guids));
+        getCallsHandler().executeModification(
+                "IncrementDbGenerationForVms",
+                parameterSource);
+    }
+
+
+    @Override
     public Long getDbGeneration(Guid id) {
         return getCallsHandler().executeRead("GetDbGeneration", SingleColumnRowMapper.newInstance(Long.class),
                 getCustomMapSqlParameterSource().addValue("vm_guid", id));

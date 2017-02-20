@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -53,6 +54,8 @@ public class VmDevicesMonitoringTest {
     private TransactionManager transactionManager;
     @Mock
     private VmDynamicDao vmDynamicDao;
+    @Mock
+    private VmStaticDao vmStaticDao;
     @Mock
     private VmDeviceDao vmDeviceDao;
     @Mock
@@ -83,6 +86,7 @@ public class VmDevicesMonitoringTest {
         doReturn(vmDynamicDao).when(vmDevicesMonitoring).getVmDynamicDao();
         doReturn(vmDeviceDao).when(vmDevicesMonitoring).getVmDeviceDao();
         doReturn(resourceManager).when(vmDevicesMonitoring).getResourceManager();
+        doReturn(vmStaticDao).when(vmDevicesMonitoring).getVmStaticDao();
 
         injectorRule.bind(TransactionManager.class, transactionManager);
     }
@@ -188,14 +192,12 @@ public class VmDevicesMonitoringTest {
         initDevices(
                 getVmDevice(usbControllerId, VM_ID, VmDeviceGeneralType.CONTROLLER, "usb", false),
                 getVmDevice(VIDEO_DEVICE_ID, VM_ID, VmDeviceGeneralType.VIDEO, "cirrus", true),
-                getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true)
-        );
+                getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true));
         initFullList(
                 getDeviceInfo(null, "balloon", "memballoon", null),
                 getDeviceInfo(null, "controller", "virtio-serial", SERIAL_DEVICE_ADDRESS),
                 getDeviceInfo(VIDEO_DEVICE_ID, "video", "cirrus", VIDEO_DEVICE_ADDRESS),
-                getDeviceInfo(CDROM_DEVICE_ID, "disk", "cdrom", CDROM_DEVICE_ADDRESS)
-        );
+                getDeviceInfo(CDROM_DEVICE_ID, "disk", "cdrom", CDROM_DEVICE_ADDRESS));
 
         vmDevicesMonitoring.initDevicesStatuses(1L);
 
@@ -241,8 +243,7 @@ public class VmDevicesMonitoringTest {
                 getDeviceInfo(null, "balloon", "memballoon", null),
                 getDeviceInfo(null, "controller", "virtio-serial", SERIAL_DEVICE_ADDRESS),
                 getDeviceInfo(VIDEO_DEVICE_ID, "video", "cirrus", VIDEO_DEVICE_ADDRESS),
-                getDeviceInfo(CDROM_DEVICE_ID, "disk", "cdrom", CDROM_DEVICE_ADDRESS)
-        );
+                getDeviceInfo(CDROM_DEVICE_ID, "disk", "cdrom", CDROM_DEVICE_ADDRESS));
         change.updateVmFromFullList(vmInfo);
         change.flush();
 
@@ -313,8 +314,7 @@ public class VmDevicesMonitoringTest {
     @Test
     public void testRemoveDevice() {
         initDevices(
-                getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true)
-        );
+                getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true));
         initFullList();
 
         vmDevicesMonitoring.initDevicesStatuses(1L);
@@ -383,8 +383,7 @@ public class VmDevicesMonitoringTest {
     @Test
     public void testIgnoreDeviceChangeBeforeFullList() {
         initDevices(
-                getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true)
-        );
+                getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true));
         initFullList();
 
         vmDevicesMonitoring.initDevicesStatuses(2L);
