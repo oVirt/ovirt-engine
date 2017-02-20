@@ -38,20 +38,20 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
     @Override
     protected void init() {
+        if (getVm() == null) {
+            return;
+        }
+
         super.init();
         // Load payload if user didn't send via run-once
         if (getParameters().getVmPayload() == null) {
             loadPayload();
         }
-
-        if (getVm() != null) {
-            if (getParameters().getCustomCpuName() != null) {
-                getVm().setCpuName(getParameters().getCustomCpuName());
-            }
-
-            if (getParameters().getCustomEmulatedMachine() != null) {
-                getVm().setEmulatedMachine(getParameters().getCustomEmulatedMachine());
-            }
+        if (getParameters().getCustomCpuName() != null) {
+            getVm().setCpuName(getParameters().getCustomCpuName());
+        }
+        if (getParameters().getCustomEmulatedMachine() != null) {
+            getVm().setEmulatedMachine(getParameters().getCustomEmulatedMachine());
         }
     }
 

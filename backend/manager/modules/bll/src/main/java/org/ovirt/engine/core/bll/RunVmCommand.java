@@ -122,15 +122,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void init() {
-        super.init();
-        if (getVm() != null) {
-            setStoragePoolId(getVm().getStoragePoolId());
-            // Load payload from Database (only if none was sent via the parameters)
-            loadPayloadDevice();
-            needsHostDevices = hostDeviceManager.checkVmNeedsDirectPassthrough(getVm());
-            loadVmInit();
-            fetchVmDisksFromDb();
+        if (getVm() == null) {
+            return;
         }
+
+        super.init();
+        setStoragePoolId(getVm().getStoragePoolId());
+        // Load payload from Database (only if none was sent via the parameters)
+        loadPayloadDevice();
+        needsHostDevices = hostDeviceManager.checkVmNeedsDirectPassthrough(getVm());
+        loadVmInit();
+        fetchVmDisksFromDb();
     }
 
     @Override
