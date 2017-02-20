@@ -53,6 +53,15 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         if (getParameters().getCustomEmulatedMachine() != null) {
             getVm().setEmulatedMachine(getParameters().getCustomEmulatedMachine());
         }
+        if (getParameters().getBootMenuEnabled() != null) {
+            getVm().setBootMenuEnabled(getParameters().getBootMenuEnabled());
+        }
+        if (getParameters().getSpiceFileTransferEnabled() != null) {
+            getVm().setSpiceFileTransferEnabled(getParameters().getSpiceFileTransferEnabled());
+        }
+        if (getParameters().getSpiceCopyPasteEnabled() != null) {
+            getVm().setSpiceCopyPasteEnabled(getParameters().getSpiceCopyPasteEnabled());
+        }
     }
 
     @Override
@@ -111,9 +120,9 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
      */
     @Override
     protected void refreshBootParameters(RunVmParams runVmParameters) {
-        getVm().setInitrdUrl(runVmParameters.getInitrdUrl());
-        getVm().setKernelUrl(runVmParameters.getKernelUrl());
-        getVm().setKernelParams(runVmParameters.getKernelParams());
+        getVm().setInitrdUrl(getParameters().getInitrdUrl());
+        getVm().setKernelUrl(getParameters().getKernelUrl());
+        getVm().setKernelParams(getParameters().getKernelParams());
         getVm().setCustomProperties(runVmParameters.getCustomProperties());
 
         getVm().setBootSequence((runVmParameters.getBootSequence() != null) ?
@@ -231,4 +240,5 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
         return permissionList;
     }
+
 }

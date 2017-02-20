@@ -26,6 +26,12 @@ public class RunVmOnceParams extends RunVmParams {
 
     private String customEmulatedMachine;
     private String customCpuName;
+    private Boolean bootMenuEnabled;
+    private Boolean spiceFileTransferEnabled;
+    private Boolean spiceCopyPasteEnabled;
+    private String initrdUrl;
+    private String kernelUrl;
+    private String kernelParams;
 
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
             groups = { StartEntity.class }, message = "VALIDATION_VM_INVALID_KEYBOARD_LAYOUT")
@@ -54,7 +60,13 @@ public class RunVmOnceParams extends RunVmParams {
                 vmInit,
                 destinationVdsId,
                 customEmulatedMachine,
-                customCpuName
+                customCpuName,
+                initrdUrl,
+                kernelUrl,
+                kernelParams,
+                bootMenuEnabled,
+                spiceFileTransferEnabled,
+                spiceCopyPasteEnabled
         );
     }
 
@@ -76,7 +88,13 @@ public class RunVmOnceParams extends RunVmParams {
                 && Objects.equals(vmInit, other.vmInit)
                 && Objects.equals(destinationVdsId, other.destinationVdsId)
                 && Objects.equals(customEmulatedMachine, other.customEmulatedMachine)
-                && Objects.equals(customCpuName, other.customCpuName);
+                && Objects.equals(customCpuName, other.customCpuName)
+                && Objects.equals(initrdUrl, other.initrdUrl)
+                && Objects.equals(kernelUrl, other.kernelUrl)
+                && Objects.equals(kernelParams, other.kernelParams)
+                && Objects.equals(bootMenuEnabled, other.bootMenuEnabled)
+                && Objects.equals(spiceFileTransferEnabled, other.spiceFileTransferEnabled)
+                && Objects.equals(spiceCopyPasteEnabled, other.spiceCopyPasteEnabled);
     }
 
     public void setSysPrepDomainName(String sysPrepDomainName) {
@@ -158,6 +176,54 @@ public class RunVmOnceParams extends RunVmParams {
 
     public void setCustomCpuName(String customCpuName) {
         this.customCpuName = customCpuName == null || customCpuName.trim().isEmpty() ? null : customCpuName;
+    }
+
+    public Boolean getBootMenuEnabled() {
+        return bootMenuEnabled;
+    }
+
+    public void setBootMenuEnabled(Boolean bootMenuEnabled) {
+        this.bootMenuEnabled = bootMenuEnabled;
+    }
+
+    public Boolean getSpiceFileTransferEnabled() {
+        return spiceFileTransferEnabled;
+    }
+
+    public void setSpiceFileTransferEnabled(Boolean spiceFileTransferEnabled) {
+        this.spiceFileTransferEnabled = spiceFileTransferEnabled;
+    }
+
+    public Boolean getSpiceCopyPasteEnabled() {
+        return spiceCopyPasteEnabled;
+    }
+
+    public void setSpiceCopyPasteEnabled(Boolean spiceCopyPasteEnabled) {
+        this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
+    }
+
+    public String getInitrdUrl() {
+        return this.initrdUrl;
+    }
+
+    public void setInitrdUrl(String value) {
+        this.initrdUrl = value;
+    }
+
+    public String getKernelUrl() {
+        return this.kernelUrl;
+    }
+
+    public void setKernelUrl(String value) {
+        this.kernelUrl = value;
+    }
+
+    public String getKernelParams() {
+        return this.kernelParams;
+    }
+
+    public void setKernelParams(String value) {
+        this.kernelParams = value;
     }
 
 }

@@ -42,15 +42,9 @@ public class RunVmParams extends VmOperationParameterBase {
     private DbUser requestingUser;
     private InitializationType initializationType;
     private Boolean runAsStateless;
-    private String initrdUrl;
-    private String kernelUrl;
-    private String kernelParams;
     private VmPayload payload;
     private boolean balloonEnabled;
     private int cpuShares;
-    private Boolean bootMenuEnabled;
-    private Boolean spiceFileTransferEnabled;
-    private Boolean spiceCopyPasteEnabled;
     private boolean runInUnknownStatus;
 
     private RunVmFlow cachedFlow;
@@ -86,15 +80,9 @@ public class RunVmParams extends VmOperationParameterBase {
                 && Objects.equals(requestingUser, other.requestingUser)
                 && initializationType == other.initializationType
                 && Objects.equals(runAsStateless, other.runAsStateless)
-                && Objects.equals(initrdUrl, other.initrdUrl)
-                && Objects.equals(kernelUrl, other.kernelUrl)
-                && Objects.equals(kernelParams, other.kernelParams)
                 && Objects.equals(payload, other.payload)
                 && balloonEnabled == other.balloonEnabled
-                && cpuShares == other.cpuShares
-                && Objects.equals(bootMenuEnabled, other.bootMenuEnabled)
-                && Objects.equals(spiceFileTransferEnabled, other.spiceFileTransferEnabled)
-                && Objects.equals(spiceCopyPasteEnabled, other.spiceCopyPasteEnabled);
+                && cpuShares == other.cpuShares;
     }
 
     @Override
@@ -112,15 +100,9 @@ public class RunVmParams extends VmOperationParameterBase {
                 requestingUser,
                 initializationType,
                 runAsStateless,
-                initrdUrl,
-                kernelUrl,
-                kernelParams,
                 payload,
                 balloonEnabled,
-                cpuShares,
-                bootMenuEnabled,
-                spiceFileTransferEnabled,
-                spiceCopyPasteEnabled
+                cpuShares
         );
     }
 
@@ -204,30 +186,6 @@ public class RunVmParams extends VmOperationParameterBase {
         runAsStateless = value;
     }
 
-    public String getInitrdUrl() {
-        return this.initrdUrl;
-    }
-
-    public void setInitrdUrl(String value) {
-        this.initrdUrl = value;
-    }
-
-    public String getKernelUrl() {
-        return this.kernelUrl;
-    }
-
-    public void setKernelUrl(String value) {
-        this.kernelUrl = value;
-    }
-
-    public String getKernelParams() {
-        return this.kernelParams;
-    }
-
-    public void setKernelParams(String value) {
-        this.kernelParams = value;
-    }
-
     public VmPayload getVmPayload() {
         return this.payload;
     }
@@ -257,30 +215,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setCpuShares(int cpuShares) {
         this.cpuShares = cpuShares;
-    }
-
-    public Boolean getBootMenuEnabled() {
-        return bootMenuEnabled;
-    }
-
-    public void setBootMenuEnabled(Boolean bootMenuEnabled) {
-        this.bootMenuEnabled = bootMenuEnabled;
-    }
-
-    public Boolean getSpiceFileTransferEnabled() {
-        return spiceFileTransferEnabled;
-    }
-
-    public void setSpiceFileTransferEnabled(Boolean spiceFileTransferEnabled) {
-        this.spiceFileTransferEnabled = spiceFileTransferEnabled;
-    }
-
-    public Boolean getSpiceCopyPasteEnabled() {
-        return spiceCopyPasteEnabled;
-    }
-
-    public void setSpiceCopyPasteEnabled(Boolean spiceCopyPasteEnabled) {
-        this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
     }
 
     public RunVmFlow getCachedFlow() {
