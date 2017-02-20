@@ -102,5 +102,33 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         builder.buildVmSerialNumber();
         builder.buildVmNumaProperties();
         builder.buildVmHostDevices();
+
+        switch (getParameters().getInitializationType()) {
+        case Sysprep:
+            String sysPrepContent = SysprepHandler.getSysPrep(
+                    getParameters().getVm(),
+                    getParameters().getSysPrepParams());
+
+            if (!"".equals(sysPrepContent)) {
+                builder.buildSysprepVmPayload(sysPrepContent);
+            }
+            break;
+
+        case CloudInit:
+            CloudInitHandler cloudInitHandler = new CloudInitHandler(getParameters().getVm().getVmInit());
+            Map<String, byte[]> cloudInitContent;
+            try {
+                cloudInitContent = cloudInitHandler.getFileData();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to build cloud-init data:", e);
+            }
+
+            if (cloudInitContent != null && !cloudInitContent.isEmpty()) {
+                builder.buildCloudInitVmPayload(cloudInitContent);
+            }
+            break;
+
+        case None:
+        }
     }
 }

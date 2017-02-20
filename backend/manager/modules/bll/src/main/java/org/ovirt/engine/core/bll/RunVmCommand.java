@@ -118,7 +118,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     public RunVmCommand(T runVmParams, CommandContext commandContext) {
         super(runVmParams, commandContext);
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, runVmParams.getVmId()));
-        initializationType = InitializationType.None;
     }
 
     @Override
@@ -559,7 +558,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected CreateVDSCommandParameters buildCreateVmParameters() {
         CreateVDSCommandParameters parameters  = new CreateVDSCommandParameters(getVdsId(), getVm());
         parameters.setRunInUnknownStatus(getParameters().isRunInUnknownStatus());
-        parameters.setInitializationType(initializationType);
+        if (initializationType == InitializationType.Sysprep
+                && osRepository.isWindows(getVm().getVmOsId())
+                && (getVm().getFloppyPath() == null || "".equals(getVm().getFloppyPath()))) {
+            parameters.setInitializationType(InitializationType.Sysprep);
+        }
+        if (initializationType == InitializationType.CloudInit && !osRepository.isWindows(getVm().getVmOsId())) {
+            parameters.setInitializationType(InitializationType.CloudInit);
+        }
         return parameters;
     }
 

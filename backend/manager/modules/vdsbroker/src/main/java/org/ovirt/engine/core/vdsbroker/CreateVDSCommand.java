@@ -2,14 +2,10 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.Date;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -21,21 +17,13 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
     @Inject
     private VmDao vmDao;
 
-    private final VM vm;
-    private boolean windows;
-
     public CreateVDSCommand(P parameters) {
         super(parameters);
-        this.vm = parameters.getVm();
-    }
-
-    @PostConstruct
-    private void init() {
-        this.windows = SimpleDependencyInjector.getInstance().get(OsRepository.class).isWindows(vm.getVmOsId());
     }
 
     @Override
     protected void executeVmCommand() {
+        VM vm = getParameters().getVm();
         if (!resourceManager.addAsyncRunningVm(vm.getId())) {
             log.info("Vm Running failed - vm '{}'({}) already running", vm.getName(), vm.getId());
             getVDSReturnValue().setReturnValue(vm.getStatus());
@@ -45,7 +33,7 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
         vm.setLastStartTime(new Date());
         VDSReturnValue vdsReturnValue = null;
         try {
-            vdsReturnValue = runCreateVDSCommand();
+            vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.CreateBroker, getParameters());
             if (vdsReturnValue.getSucceeded()) {
                 if (!getParameters().isRunInUnknownStatus()) {
                     vmDao.saveIsInitialized(vm.getId(), true);
@@ -68,33 +56,6 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
         }
 
         getVDSReturnValue().setReturnValue(vm.getStatus());
-    }
-
-    private VDSReturnValue runCreateVDSCommand() {
-        if (isSysprepUsed()) {
-            // use answer file to run after sysprep.
-            CreateVDSCommandParameters createVmFromSysPrepParam =
-                    new CreateVDSCommandParameters(getParameters().getVdsId(), vm);
-            createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
-            return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromSysPrep, createVmFromSysPrepParam);
-        }
-
-        if (isCloudInitUsed()) {
-            return resourceManager.runVdsCommand(VDSCommandType.CreateVmFromCloudInit, getParameters());
-        }
-
-        // normal run.
-        return resourceManager.runVdsCommand(VDSCommandType.CreateBroker, getParameters());
-    }
-
-    private boolean isSysprepUsed() {
-        return getParameters().getInitializationType() == InitializationType.Sysprep
-                && windows
-                && (vm.getFloppyPath() == null || "".equals(vm.getFloppyPath()));
-    }
-
-    private boolean isCloudInitUsed() {
-        return getParameters().getInitializationType() == InitializationType.CloudInit && !windows;
     }
 
     private void handleCommandResult(VDSReturnValue vdsReturnValue) {

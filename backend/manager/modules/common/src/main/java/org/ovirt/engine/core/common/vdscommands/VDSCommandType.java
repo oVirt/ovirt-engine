@@ -7,8 +7,6 @@ public enum VDSCommandType {
     GetStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     Create("org.ovirt.engine.core.vdsbroker"),
     CreateBroker("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    CreateVmFromSysPrep("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    CreateVmFromCloudInit("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DestroyVm("org.ovirt.engine.core.vdsbroker"),
     RebootVm("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     Pause("org.ovirt.engine.core.vdsbroker.vdsbroker"),

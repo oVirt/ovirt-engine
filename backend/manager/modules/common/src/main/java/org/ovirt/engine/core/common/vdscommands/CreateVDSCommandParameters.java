@@ -19,6 +19,7 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     public CreateVDSCommandParameters(Guid vdsId, VM vm) {
         super(vdsId, vm.getId());
         this.vm = vm;
+        initializationType = InitializationType.None;
     }
 
     public VM getVm() {
