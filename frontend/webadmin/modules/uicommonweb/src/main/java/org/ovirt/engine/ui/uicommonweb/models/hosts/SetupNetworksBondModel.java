@@ -81,16 +81,34 @@ public class SetupNetworksBondModel extends Model {
                 }
             }
         });
+        onBondingOptionsSelectionChange();
+        getBondingOptions().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                onBondingOptionsSelectionChange();
+            }
+        });
     }
 
     public boolean validate() {
         getBond().validateSelectedItem(new IValidation[] { new NotEmptyValidation(),
                 new LengthValidation(BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH), new BondNameValidation() });
-
+        getCustomBondEditor().setIsValid(true);
         if (getBondingOptions().getSelectedItem().getKey().equals(CUSTOM_BONDING_MODE)) {
             getCustomBondEditor().validateEntity(new IValidation[] { new KeyValueFormatValidation() });
         }
 
         return getBond().getIsValid() && getCustomBondEditor().getIsValid();
+    }
+
+    private void onBondingOptionsSelectionChange() {
+        Map.Entry<String, EntityModel<String>> pair = getBondingOptions().getSelectedItem();
+        if (CUSTOM_BONDING_MODE.equals(pair.getKey())) { //$NON-NLS-1$
+            customBondEditor.setIsChangeable(true);
+            String entity = pair.getValue().getEntity();
+            customBondEditor.setEntity(entity == null ? "" : entity); //$NON-NLS-1$
+        } else {
+            customBondEditor.setIsChangeable(false);
+        }
     }
 }
