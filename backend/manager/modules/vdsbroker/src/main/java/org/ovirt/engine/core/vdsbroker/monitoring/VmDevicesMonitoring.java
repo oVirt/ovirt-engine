@@ -39,6 +39,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -294,6 +295,9 @@ public class VmDevicesMonitoring implements BackendService {
     private VmDynamicDao vmDynamicDao;
 
     @Inject
+    private VmStaticDao vmStaticDao;
+
+    @Inject
     private VmDeviceDao vmDeviceDao;
 
     private ConcurrentMap<Guid, DevicesStatus> vmDevicesStatuses = new ConcurrentHashMap<>();
@@ -329,6 +333,10 @@ public class VmDevicesMonitoring implements BackendService {
 
     VmDynamicDao getVmDynamicDao() {
         return vmDynamicDao;
+    }
+
+    VmStaticDao getVmStaticDao() {
+        return vmStaticDao;
     }
 
     private static <T> List<T> addToOptionalList(List<T> list, T object) {
@@ -688,6 +696,7 @@ public class VmDevicesMonitoring implements BackendService {
                                 .collect(Collectors.toList()));
                 return null;
             });
+            getVmStaticDao().incrementDbGenerationForVms(change.getVmsToSaveHash());
         }
 
     }

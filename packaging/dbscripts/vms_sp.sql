@@ -899,6 +899,19 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION IncrementDbGenerationForVms(v_vm_guids UUID[])
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE vm_static
+    SET db_generation = db_generation + 1
+    WHERE vm_guid = ANY(v_vm_guids);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 
 Create or replace FUNCTION GetDbGeneration(v_vm_guid UUID)
 RETURNS SETOF BIGINT STABLE
