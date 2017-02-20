@@ -81,6 +81,13 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
      */
     public void incrementDbGeneration(Guid id);
 
+    /**
+     * increment by 1 the generation of the vms/templates with the given guids.
+     *
+     * @param guids - vm/template ids
+     */
+    public void incrementDbGenerationForVms(List<Guid> guids);
+
     List<Guid> getOrderedVmGuidsForRunMultipleActions(List<Guid> guids);
 
     /**
