@@ -88,13 +88,13 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
     }
 
     private boolean isSysprepUsed() {
-        return vm.getInitializationType() == InitializationType.Sysprep
+        return getParameters().getInitializationType() == InitializationType.Sysprep
                 && windows
                 && (vm.getFloppyPath() == null || "".equals(vm.getFloppyPath()));
     }
 
     private boolean isCloudInitUsed() {
-        return vm.getInitializationType() == InitializationType.CloudInit && !windows;
+        return getParameters().getInitializationType() == InitializationType.CloudInit && !windows;
     }
 
     private void handleCommandResult(VDSReturnValue vdsReturnValue) {

@@ -99,6 +99,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private Guid cachedActiveIsoDomainId;
     private boolean needsHostDevices = false;
+    private InitializationType initializationType;
 
     public static final String ISO_PREFIX = "iso://";
     public static final String STATELESS_SNAPSHOT_DESCRIPTION = "stateless snapshot";
@@ -118,6 +119,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     public RunVmCommand(T runVmParams, CommandContext commandContext) {
         super(runVmParams, commandContext);
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, runVmParams.getVmId()));
+        initializationType = InitializationType.None;
     }
 
     @Override
@@ -558,6 +560,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected CreateVDSCommandParameters buildCreateVmParameters() {
         CreateVDSCommandParameters parameters  = new CreateVDSCommandParameters(getVdsId(), getVm());
         parameters.setRunInUnknownStatus(getParameters().isRunInUnknownStatus());
+        parameters.setInitializationType(initializationType);
         return parameters;
     }
 
@@ -793,17 +796,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (!getVm().isInitialized() && getVm().getVmInit() != null) {
                 if (osRepository.isWindows(getVm().getVmOsId())) {
                     if (!isPayloadExists(VmDeviceType.FLOPPY)) {
-                        getVm().setInitializationType(InitializationType.Sysprep);
+                        initializationType = InitializationType.Sysprep;
                     }
                 }
                 else {
                     if (!isPayloadExists(VmDeviceType.CDROM)) {
-                        getVm().setInitializationType(InitializationType.CloudInit);
+                        initializationType = InitializationType.CloudInit;
                     }
                 }
             }
         } else if (getParameters().getInitializationType() != InitializationType.None) {
-            getVm().setInitializationType(getParameters().getInitializationType());
+            initializationType = getParameters().getInitializationType();
             // If the user asked for sysprep/cloud-init via run-once we eliminate
             // the payload since we can only have one media (Floppy/CDROM) per payload.
             if (getParameters().getInitializationType() == InitializationType.Sysprep &&

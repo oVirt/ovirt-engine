@@ -37,8 +37,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     private String vmPoolSpiceProxy;
 
-    private InitializationType initializationType;
-
     private Map<VmDeviceId, Map<String, String>> runtimeDeviceCustomProperties;
 
     private Map<Guid, String> passthroughVnicToVfMap;
@@ -110,7 +108,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.setFloppyPath("");
         this.setDiskSize(0);
         snapshots = new ArrayList<>();
-        initializationType = InitializationType.None;
         runtimeDeviceCustomProperties = new HashMap<>();
         passthroughVnicToVfMap = new HashMap<>();
         vmtCreationDate = new Date(0);
@@ -1231,14 +1228,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     private String cdPath;
     private String floppyPath;
 
-    public InitializationType getInitializationType() {
-        return initializationType;
-    }
-
-    public void setInitializationType(InitializationType value) {
-        initializationType = value;
-    }
-
     public boolean isFirstRun() {
         return vmStatic.isFirstRun();
     }
@@ -1403,7 +1392,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         temp = (long)diskSize;
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((floppyPath == null) ? 0 : floppyPath.hashCode());
-        result = prime * result + ((initializationType == null) ? 0 : initializationType.hashCode());
         result = prime * result + ((privateGuestAgentVersion == null) ? 0 : privateGuestAgentVersion.hashCode());
         result = prime * result + ((runOnVdsName == null) ? 0 : runOnVdsName.hashCode());
         result = prime * result + ((snapshots == null) ? 0 : snapshots.hashCode());
