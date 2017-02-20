@@ -10,11 +10,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.SetupNetworksBondModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
@@ -80,16 +76,6 @@ public class SetupNetworksBondPopupView extends AbstractModelBoundPopupView<Setu
     @Override
     public void edit(final SetupNetworksBondModel object) {
         driver.edit(object);
-
-        updateBondOptions(object.getBondingOptions());
-
-        object.getBondingOptions().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ListModel<Map.Entry<String, EntityModel<String>>> list = (ListModel<Map.Entry<String, EntityModel<String>>>) sender;
-                updateBondOptions(list);
-            }
-        });
     }
 
     @Override
@@ -105,16 +91,5 @@ public class SetupNetworksBondPopupView extends AbstractModelBoundPopupView<Setu
     @Override
     public void focusInput() {
         bondSuggestEditor.setFocus(true);
-    }
-
-    private void updateBondOptions(ListModel<Map.Entry<String, EntityModel<String>>> list) {
-        Map.Entry<String, EntityModel<String>> pair = list.getSelectedItem();
-        if ("custom".equals(pair.getKey())) { //$NON-NLS-1$
-            customBondEditor.setEnabled(true);
-            String entity = pair.getValue().getEntity();
-            customBondEditor.asEditor().getSubEditor().setValue(entity == null ? "" : entity); //$NON-NLS-1$
-        } else {
-            customBondEditor.setEnabled(false);
-        }
     }
 }
