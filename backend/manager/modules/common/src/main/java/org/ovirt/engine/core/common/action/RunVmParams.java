@@ -31,7 +31,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     private String diskPath;
     private Boolean runAndPause;
-    private String customProperties;
     private String floppyPath;
     private InitializationType initializationType;
     private Boolean runAsStateless;
@@ -62,7 +61,6 @@ public class RunVmParams extends VmOperationParameterBase {
         return Objects.equals(getVmId(), other.getVmId())
                 && Objects.equals(diskPath, other.diskPath)
                 && Objects.equals(runAndPause, other.runAndPause)
-                && Objects.equals(customProperties, other.customProperties)
                 && Objects.equals(floppyPath, other.floppyPath)
                 && initializationType == other.initializationType
                 && Objects.equals(runAsStateless, other.runAsStateless)
@@ -76,7 +74,6 @@ public class RunVmParams extends VmOperationParameterBase {
                 getVmId(),
                 diskPath,
                 runAndPause,
-                customProperties,
                 floppyPath,
                 initializationType,
                 runAsStateless,
@@ -131,14 +128,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setVmPayload(VmPayload value) {
         this.payload = value;
-    }
-
-    public String getCustomProperties() {
-        return customProperties;
-    }
-
-    public void setCustomProperties(String customProperties) {
-        this.customProperties = customProperties;
     }
 
     public boolean isBalloonEnabled() {

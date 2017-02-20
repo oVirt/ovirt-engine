@@ -131,7 +131,7 @@ public class RunVmValidator {
         }
 
         return
-                validateVmProperties(vm, runVmParam.getCustomProperties(), messages) &&
+                validateVmProperties(vm, messages) &&
                 validate(validateBootSequence(vm, getVmDisks(), activeIsoDomainId), messages) &&
                 validate(validateDisplayType(), messages) &&
                 validate(new VmValidator(vm).vmNotLocked(), messages) &&
@@ -229,12 +229,10 @@ public class RunVmValidator {
         }
     }
 
-    protected boolean validateVmProperties(VM vm, String runOnceCustomProperties, List<String> messages) {
-        String customProperties = runOnceCustomProperties != null ?
-                runOnceCustomProperties : vm.getCustomProperties();
+    protected boolean validateVmProperties(VM vm, List<String> messages) {
         return getVmPropertiesUtils().validateVmProperties(
                         vm.getCompatibilityVersion(),
-                        customProperties,
+                        vm.getCustomProperties(),
                         messages);
     }
 

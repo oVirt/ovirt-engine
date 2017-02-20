@@ -95,8 +95,9 @@ public class RunVmValidatorTest {
     public void testValidEmptyCustomProerties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_0);
+        vm.setCustomProperties("");
         List<String> messages = new ArrayList<>();
-        assertTrue(runVmValidator.validateVmProperties(vm, "", messages));
+        assertTrue(runVmValidator.validateVmProperties(vm, messages));
         assertTrue(messages.isEmpty());
     }
 
@@ -104,8 +105,9 @@ public class RunVmValidatorTest {
     public void testWrongFormatCustomProerties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_0);
+        vm.setCustomProperties("sap_agent;"); // missing '= true'
         List<String> messages = new ArrayList<>();
-        assertFalse(runVmValidator.validateVmProperties(vm, "sap_agent;", messages)); // missing '= true'
+        assertFalse(runVmValidator.validateVmProperties(vm, messages));
         assertFalse(messages.isEmpty());
     }
 
@@ -113,8 +115,9 @@ public class RunVmValidatorTest {
     public void testNotValidCustomProerties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_0);
+        vm.setCustomProperties("property=value;");
         List<String> messages = new ArrayList<>();
-        assertFalse(runVmValidator.validateVmProperties(vm, "property=value;", messages));
+        assertFalse(runVmValidator.validateVmProperties(vm, messages));
         assertFalse(messages.isEmpty());
     }
 
@@ -122,8 +125,9 @@ public class RunVmValidatorTest {
     public void testValidCustomProerties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_0);
+        vm.setCustomProperties("sap_agent=true;");
         List<String> messages = new ArrayList<>();
-        assertTrue(runVmValidator.validateVmProperties(vm, "sap_agent=true;", messages));
+        assertTrue(runVmValidator.validateVmProperties(vm, messages));
         assertTrue(messages.isEmpty());
     }
 

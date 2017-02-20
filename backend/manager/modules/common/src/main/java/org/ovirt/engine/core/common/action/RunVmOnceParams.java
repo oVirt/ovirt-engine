@@ -34,6 +34,7 @@ public class RunVmOnceParams extends RunVmParams {
     private String kernelUrl;
     private String kernelParams;
     private BootSequence bootSequence;
+    private String customProperties;
 
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
             groups = { StartEntity.class }, message = "VALIDATION_VM_INVALID_KEYBOARD_LAYOUT")
@@ -63,6 +64,7 @@ public class RunVmOnceParams extends RunVmParams {
                 destinationVdsId,
                 customEmulatedMachine,
                 customCpuName,
+                customProperties,
                 initrdUrl,
                 kernelUrl,
                 kernelParams,
@@ -93,6 +95,7 @@ public class RunVmOnceParams extends RunVmParams {
                 && Objects.equals(destinationVdsId, other.destinationVdsId)
                 && Objects.equals(customEmulatedMachine, other.customEmulatedMachine)
                 && Objects.equals(customCpuName, other.customCpuName)
+                && Objects.equals(customProperties, other.customProperties)
                 && Objects.equals(initrdUrl, other.initrdUrl)
                 && Objects.equals(kernelUrl, other.kernelUrl)
                 && Objects.equals(kernelParams, other.kernelParams)
@@ -236,6 +239,14 @@ public class RunVmOnceParams extends RunVmParams {
 
     public void setBootSequence(BootSequence value) {
         bootSequence = value;
+    }
+
+    public String getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(String customProperties) {
+        this.customProperties = customProperties;
     }
 
 }

@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -1205,20 +1204,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return getParameters().getRunAsStateless() != null ?
                 getParameters().getRunAsStateless()
                 : getVm().getVmPoolId() == null && getVm().isStateless();
-    }
-
-    @Override
-    public List<PermissionSubject> getPermissionCheckSubjects() {
-        final List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
-
-        // special permission is needed to use custom properties
-        if (!StringUtils.isEmpty(getParameters().getCustomProperties())) {
-            permissionList.add(new PermissionSubject(getParameters().getVmId(),
-                VdcObjectType.VM,
-                ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
-        }
-
-        return permissionList;
     }
 
     @Override

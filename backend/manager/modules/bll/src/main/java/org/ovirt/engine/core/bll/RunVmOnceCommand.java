@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -215,6 +216,13 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         final List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+
+        // special permission is needed to change custom properties
+        if (!StringUtils.isEmpty(getParameters().getCustomProperties())) {
+            permissionList.add(new PermissionSubject(getParameters().getVmId(),
+                VdcObjectType.VM,
+                ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
+        }
 
         // check, if user can override default target host for VM
         if (getVm() != null) {
