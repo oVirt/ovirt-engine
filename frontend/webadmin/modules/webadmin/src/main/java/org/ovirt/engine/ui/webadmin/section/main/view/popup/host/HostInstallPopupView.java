@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfigura
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.RpmVersion;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -109,6 +110,10 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @Ignore
     @WithElementId("networkProviderWidget")
     HostNetworkProviderWidget networkProviderWidget;
+
+    @UiField
+    @Ignore
+    Label hostedEngineWarningLabel;
 
     @UiField
     @Path(value = "hostedEngineHostModel.selectedItem")
@@ -227,6 +232,8 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         if (model.getVds().isOvirtVintageNode()) {
             networkProviderTab.setVisible(false);
         }
+
+        hostedEngineWarningLabel.setVisible(model.getVds().getClusterCompatibilityVersion().less(Version.v4_0));
     }
 
     private void displayPasswordField(boolean isPasswordVisible) {
