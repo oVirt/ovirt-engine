@@ -584,9 +584,6 @@ public class VmMapper extends VmBaseMapper {
                 }
             }
         }
-        if (vm.isSetCpuShares()) {
-            params.setCpuShares(vm.getCpuShares());
-        }
 
         if (vm.isSetCustomCpuModel()) {
             params.setCustomCpuName(vm.getCustomCpuModel());

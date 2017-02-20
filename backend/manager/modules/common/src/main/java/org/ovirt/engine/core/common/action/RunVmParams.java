@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RunVmParams extends VmOperationParameterBase {
@@ -32,16 +31,12 @@ public class RunVmParams extends VmOperationParameterBase {
 
     private String diskPath;
     private Boolean runAndPause;
-    private Boolean win2kHackEnable;
     private String customProperties;
     private String floppyPath;
-    private String clientIp;
-    private DbUser requestingUser;
     private InitializationType initializationType;
     private Boolean runAsStateless;
     private VmPayload payload;
     private boolean balloonEnabled;
-    private int cpuShares;
     private boolean runInUnknownStatus;
 
     private RunVmFlow cachedFlow;
@@ -67,16 +62,12 @@ public class RunVmParams extends VmOperationParameterBase {
         return Objects.equals(getVmId(), other.getVmId())
                 && Objects.equals(diskPath, other.diskPath)
                 && Objects.equals(runAndPause, other.runAndPause)
-                && Objects.equals(win2kHackEnable, other.win2kHackEnable)
                 && Objects.equals(customProperties, other.customProperties)
                 && Objects.equals(floppyPath, other.floppyPath)
-                && Objects.equals(clientIp, other.clientIp)
-                && Objects.equals(requestingUser, other.requestingUser)
                 && initializationType == other.initializationType
                 && Objects.equals(runAsStateless, other.runAsStateless)
                 && Objects.equals(payload, other.payload)
-                && balloonEnabled == other.balloonEnabled
-                && cpuShares == other.cpuShares;
+                && balloonEnabled == other.balloonEnabled;
     }
 
     @Override
@@ -85,16 +76,12 @@ public class RunVmParams extends VmOperationParameterBase {
                 getVmId(),
                 diskPath,
                 runAndPause,
-                win2kHackEnable,
                 customProperties,
                 floppyPath,
-                clientIp,
-                requestingUser,
                 initializationType,
                 runAsStateless,
                 payload,
-                balloonEnabled,
-                cpuShares
+                balloonEnabled
         );
     }
 
@@ -120,30 +107,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setRunAndPause(Boolean value) {
         runAndPause = value;
-    }
-
-    public Boolean getWin2kHackEnable() {
-        return win2kHackEnable;
-    }
-
-    public void setWin2kHackEnable(Boolean value) {
-        win2kHackEnable = value;
-    }
-
-    public String getClientIp() {
-        return clientIp;
-    }
-
-    public void setClientIp(String value) {
-        clientIp = value;
-    }
-
-    public DbUser getRequestingUser() {
-        return requestingUser;
-    }
-
-    public void setRequestingUser(DbUser value) {
-        requestingUser = value;
     }
 
     public InitializationType getInitializationType() {
@@ -184,13 +147,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setBalloonEnabled(boolean isBalloonEnabled) {
         this.balloonEnabled = isBalloonEnabled;
-    }
-    public int getCpuShares() {
-        return cpuShares;
-    }
-
-    public void setCpuShares(int cpuShares) {
-        this.cpuShares = cpuShares;
     }
 
     public RunVmFlow getCachedFlow() {
