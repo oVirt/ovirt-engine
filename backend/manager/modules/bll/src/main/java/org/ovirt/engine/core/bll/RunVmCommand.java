@@ -671,7 +671,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         updateGraphicsAndDisplayInfos();
 
         getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
-        getVm().setAcpiEnable(getParameters().getAcpiEnable());
 
         // Clear the first user:
         getVm().setConsoleUserId(null);

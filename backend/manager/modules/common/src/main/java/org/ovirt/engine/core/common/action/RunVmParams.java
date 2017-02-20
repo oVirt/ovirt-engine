@@ -32,7 +32,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     private String diskPath;
     private Boolean runAndPause;
-    private boolean acpiEnable;
     private Boolean win2kHackEnable;
     private String customProperties;
     private String floppyPath;
@@ -52,7 +51,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public RunVmParams(Guid vmId) {
         super(vmId);
-        acpiEnable = true;
     }
 
     @Override
@@ -69,7 +67,6 @@ public class RunVmParams extends VmOperationParameterBase {
         return Objects.equals(getVmId(), other.getVmId())
                 && Objects.equals(diskPath, other.diskPath)
                 && Objects.equals(runAndPause, other.runAndPause)
-                && acpiEnable == other.acpiEnable
                 && Objects.equals(win2kHackEnable, other.win2kHackEnable)
                 && Objects.equals(customProperties, other.customProperties)
                 && Objects.equals(floppyPath, other.floppyPath)
@@ -88,7 +85,6 @@ public class RunVmParams extends VmOperationParameterBase {
                 getVmId(),
                 diskPath,
                 runAndPause,
-                acpiEnable,
                 win2kHackEnable,
                 customProperties,
                 floppyPath,
@@ -124,14 +120,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setRunAndPause(Boolean value) {
         runAndPause = value;
-    }
-
-    public boolean getAcpiEnable() {
-        return acpiEnable;
-    }
-
-    public void setAcpiEnable(boolean value) {
-        acpiEnable = value;
     }
 
     public Boolean getWin2kHackEnable() {

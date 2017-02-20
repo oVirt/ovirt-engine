@@ -741,7 +741,6 @@ public abstract class RunOnceModel extends Model {
         params.setFloppyPath(getFloppyImagePath());
         params.setBootMenuEnabled(getBootMenuEnabled().getEntity());
         params.setRunAndPause(getRunAndPause().getEntity());
-        params.setAcpiEnable(true);
         params.setRunAsStateless(getRunAsStateless().getEntity());
         params.setInitializationType(getInitializationType());
         params.setCustomProperties(getCustomPropertySheet().serialize());
