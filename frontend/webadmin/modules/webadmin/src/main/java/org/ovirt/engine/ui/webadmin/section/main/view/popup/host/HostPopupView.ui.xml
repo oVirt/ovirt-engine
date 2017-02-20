@@ -461,10 +461,15 @@
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="hostedEngineTab">
+                    <t:DialogTab ui:field="hostedEngineTab"  label="{constants.hostedEngineLabel}">
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
                                 <b:Row addStyleNames="{style.topElement}">
+                                    <b:Column size="LG_12">
+                                        <g:Label ui:field="hostedEngineWarningLabel" addStyleNames="{style.warningLabel}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
                                     <b:Column size="LG_12">
                                         <g:Label text="{constants.hostedEngineDeploymentAction}" />
                                     </b:Column>

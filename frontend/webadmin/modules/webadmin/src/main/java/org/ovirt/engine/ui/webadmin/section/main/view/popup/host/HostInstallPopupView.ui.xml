@@ -65,6 +65,11 @@
             float: left;
         }
 
+        .warningLabel {
+            color: red;
+            margin-bottom: 10px
+        }
+
     </ui:style>
 
     <d:SimpleDialogPanel width="750px" height="435px">
@@ -132,10 +137,18 @@
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
                                 <b:Row addStyleNames="{style.topElement}">
+                                    <b:Column size="LG_12">
+                                        <g:Label ui:field="hostedEngineWarningLabel"
+                                                 addStyleNames="{style.warningLabel}"
+                                                 text="{constants.hostedEngineDeploymentCompatibilityWarning}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
                                     <e:ListModelRadioGroupEditor ui:field="hostedEngineDeployActionsEditor"
                                                                  usePatternFly="true"
                                                                  label="{constants.hostedEngineDeploymentAction}"
-                                                                 labelColSize="LG_6" widgetColSize="LG_12"/>
+                                                                 labelColSize="SM_6"
+                                                                 widgetColSize="SM_6" />
                                 </b:Row>
                             </b:Container>
                         </t:content>

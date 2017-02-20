@@ -2004,5 +2004,7 @@ public interface UIConstants extends Constants {
     String emptyImagePath();
 
     String kvmBlockDomainWraning();
+
+    String hostedEngineDeploymentCompatibilityWarning();
 }
 

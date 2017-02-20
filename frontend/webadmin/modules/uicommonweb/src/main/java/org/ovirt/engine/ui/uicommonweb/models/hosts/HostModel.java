@@ -606,6 +606,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private HostedEngineHostModel hostedEngineHostModel;
 
+    private EntityModel<String> hostedEngineWarning;
+
+    public EntityModel<String> getHostedEngineWarning() {
+        return hostedEngineWarning;
+    }
+
+    public void setHostedEngineWarning(EntityModel<String> hostedEngineWarning) {
+        this.hostedEngineWarning = hostedEngineWarning;
+    }
+
     public HostModel() {
         setUpdateHostsCommand(new UICommand("", new ICommandTarget() { //$NON-NLS-1$
             @Override
@@ -725,6 +735,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         kernelCmdlineListener = new EnableableEventListener<>(null);
         setCurrentKernelCmdLine(new EntityModel<>(""));
         setHostedEngineHostModel(new HostedEngineHostModel());
+
+        setHostedEngineWarning(new EntityModel<String>(constants.hostedEngineDeploymentCompatibilityWarning()));
     }
 
     private void updatePmModels() {
@@ -1021,6 +1033,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             lastNonNullCpuVendor = newCpuVendor;
             cpuVendorChanged();
         }
+
+        getHostedEngineWarning().setIsAvailable(cluster.getCompatibilityVersion().less(Version.v4_0));
     }
 
     protected abstract void cpuVendorChanged();

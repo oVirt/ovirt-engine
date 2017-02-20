@@ -279,6 +279,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Ignore
     DialogTab hostedEngineTab;
 
+    @UiField
+    @Path(value = "hostedEngineWarning.entity")
+    Label hostedEngineWarningLabel;
+
     @UiField(provided=true)
     @Path(value = "hostedEngineHostModel.actions.selectedItem")
     ListModelRadioGroupEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
@@ -624,8 +628,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         externalDiscoveredHostsEditor.setLabel(constants.discoveredHostsLabel());
         externalHostGroupsEditor.setLabel(constants.hostGroupsLabel());
         externalComputeResourceEditor.setLabel(constants.computeResourceLabel());
-
-        hostedEngineTab.setLabel(constants.hostedEngineLabel());
     }
 
     private void applyModeCustomizations() {
@@ -793,6 +795,17 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         hostedEngineTab.setVisible(object.getIsNew());
         providerSearchFilterLabel.setText(constants.hostPopupProviderSearchFilter());
         nameEditor.setFocus(true);
+
+        object.getHostedEngineWarning().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                EntityModel entity = (EntityModel) sender;
+
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                    hostedEngineWarningLabel.setVisible(entity.getIsAvailable());
+                }
+            }
+        });
     }
 
     private void showDiscoveredHostsWidgets(boolean enabled) {
