@@ -35,7 +35,9 @@ public class InteractiveNextAuthServlet extends HttpServlet {
         if (authStack == null || authStack.isEmpty()) {
             SsoUtils.redirectToErrorPage(request, response,
                     new OAuthException(
-                            SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
+                            SsoUtils.getSsoSession(request).isOpenIdScope() ?
+                                    SsoConstants.ERR_CODE_OPENID_LOGIN_REQUIRED :
+                                    SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
                             ssoContext.getLocalizationUtils().localize(
                                     SsoConstants.APP_ERROR_AUTHENTICATION_REQUIRED,
                                     (Locale) request.getAttribute(SsoConstants.LOCALE))));

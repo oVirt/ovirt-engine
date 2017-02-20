@@ -54,6 +54,10 @@ public class SsoConstants {
     public static final String HTTP_PARAM_ID = "id";
     public static final String HTTP_PARAM_IDS = "ids";
     public static final String HTTP_PARAM_NAMESPACE = "namespace";
+    public static final String HTTP_PARAM_OPENID_DISPLAY = "display";
+    public static final String HTTP_PARAM_OPENID_NONCE = "nonce";
+    public static final String HTTP_PARAM_OPENID_PROMPT = "prompt";
+    public static final String HTTP_PARAM_OPENID_MAX_AGE = "max_age";
     public static final String HTTP_PARAM_TOKEN = "token";
     public static final String HTTP_PARAM_TOKENS = "tokens";
     public static final String HTTP_PARAM_APP_URL = "app_url";
@@ -90,15 +94,16 @@ public class SsoConstants {
     public static final String ERR_CODE_INVALID_GRANT = "invalid_grant";
     public static final String ERR_CODE_UNSUPPORTED_GRANT_TYPE = "unsupported_grant_type";
     public static final String ERR_CODE_INVALID_REQUEST = "invalid_request";
+    public static final String ERR_CODE_INVALID_TOKEN = "invalid_token";
     public static final String ERR_OVIRT_CODE_NOT_AUTHENTICATED = "not_authenticated";
+    public static final String ERR_CODE_OPENID_LOGIN_REQUIRED = "login_required";
     public static final String ERR_CODE_UNAUTHORIZED_CLIENT = "unauthorized_client";
     public static final String ERR_CODE_ACCESS_DENIED = "access_denied";
     public static final String ERR_CODE_INVALID_SCOPE = "invalid_scope";
     public static final String ERR_CODE_SERVER_ERROR = "server_error";
     public static final String ERR_CODE_UNSUPPORTED_GRANT_TYPE_MSG = "The authorization grant type is not supported " +
             "by the authorization server.";
-    public static final String ERR_CODE_INVALID_REQUEST_MSG = "Invalid request, parameter '%s' not found or contains " +
-            "invalid value.";
+    public static final String ERR_CODE_INVALID_REQUEST_MSG = "Missing parameter: '%s'";
     public static final String ERR_CODE_NOT_AUTHENTICATED_MSG = "The user is not authenticated.";
     public static final String ERR_CODE_UNAUTHORIZED_CLIENT_MSG = "The client is not authorized to request an " +
             "authorization. It's required to access the system using FQDN.";

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,11 +30,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.conn.util.InetAddressUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -50,14 +49,6 @@ import org.ovirt.engine.core.uutils.net.HttpClientBuilder;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
 
 public class SsoUtils {
     private static Logger log = LoggerFactory.getLogger(SsoUtils.class);
@@ -128,7 +119,9 @@ public class SsoUtils {
         log.debug("Exception", ex);
         redirectToErrorPageImpl(request,
                 response,
-                new OAuthException(SsoConstants.ERR_CODE_SERVER_ERROR, ex.getMessage(), ex));
+                ex instanceof OAuthException ?
+                        (OAuthException) ex :
+                        new OAuthException(SsoConstants.ERR_CODE_SERVER_ERROR, ex.getMessage(), ex));
     }
 
     public static void redirectToErrorPage(HttpServletRequest request,
@@ -150,9 +143,21 @@ public class SsoUtils {
             if (ssoSession.getStatus() != SsoSession.Status.authenticated) {
                 ssoSession.setStatus(SsoSession.Status.unauthenticated);
             }
-            String redirectUrl = new URLBuilder(getRedirectUrl(request))
-                    .addParameter("error_code", ex.getCode())
-                    .addParameter("error", ex.getMessage()).build();
+            URLBuilder redirectUrlBuilder = new URLBuilder(getRedirectUrl(request));
+            if (ssoSession.isOpenIdScope() ||
+                    scopeAsList(getScopeRequestParameter(request, "")).contains(SsoConstants.OPENID_SCOPE)) {
+                redirectUrlBuilder.addParameter("error", ex.getCode())
+                        .addParameter("error_description", ex.getMessage());
+            } else {
+                redirectUrlBuilder.addParameter("error_code", ex.getCode())
+                        .addParameter("error", ex.getMessage());
+            }
+            String state = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, "");
+            if (StringUtils.isNotEmpty(state)) {
+                redirectUrlBuilder.addParameter("state", state);
+            }
+            response.setStatus(HttpStatus.SC_BAD_REQUEST);
+            String redirectUrl = redirectUrlBuilder.build();
             response.sendRedirect(redirectUrl);
             log.debug("Redirecting back to module: {}", redirectUrl);
         } catch (Exception e) {
@@ -336,8 +341,10 @@ public class SsoUtils {
         // If the session has expired, attempt to extract the session from SsoContext persisted session
         if (ssoSession == null) {
             try {
-                ssoSession = getSsoContext(request).getSsoSessionById(
-                        getFormParameter(request, "sessionIdToken"));
+                String sessionIdToken = SsoUtils.getFormParameter(request, "sessionIdToken");
+                if(StringUtils.isNotEmpty(sessionIdToken)) {
+                    ssoSession = getSsoContext(request).getSsoSessionById(sessionIdToken);
+                }
                 // If the server is restarted the session will be missing from SsoContext
                 if (ssoSession == null) {
                     throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
@@ -601,16 +608,24 @@ public class SsoUtils {
     }
 
     public static void sendJsonData(HttpServletResponse response, Map<String, Object> payload) throws IOException {
-        try (OutputStream os = response.getOutputStream()) {
-            Map<String, Object> ovirtData = (Map<String, Object>) payload.get("ovirt");
-            if (ovirtData != null) {
-                Collection<ExtMap> groupIds = (Collection<ExtMap>) ovirtData.get("group_ids");
-                if (groupIds != null) {
-                    ovirtData.put("group_ids", prepareGroupMembershipsForJson(groupIds));
-                }
+        Map<String, Object> ovirtData = (Map<String, Object>) payload.get("ovirt");
+        if (ovirtData != null) {
+            Collection<ExtMap> groupIds = (Collection<ExtMap>) ovirtData.get("group_ids");
+            if (groupIds != null) {
+                ovirtData.put("group_ids", prepareGroupMembershipsForJson(groupIds));
             }
-            String jsonPayload = getJson(payload);
-            response.setContentType("application/json");
+        }
+        sendJsonData(response, getJson(payload));
+    }
+
+    public static void sendJsonData(HttpServletResponse response, String jsonPayload) throws IOException {
+        sendJsonData(response, jsonPayload, "application/json");
+    }
+
+    public static void sendJsonData(HttpServletResponse response, String jsonPayload, String contentType)
+            throws IOException {
+        try (OutputStream os = response.getOutputStream()) {
+            response.setContentType(contentType);
             byte[] jsonPayloadBytes = jsonPayload.getBytes(StandardCharsets.UTF_8.name());
             response.setContentLength(jsonPayloadBytes.length);
             os.write(jsonPayloadBytes);
@@ -746,41 +761,6 @@ public class SsoUtils {
             }
         }
         return new ArrayList<>(resolvedGroups.values());
-    }
-
-    private static SecureRandom random = new SecureRandom();
-    private static byte[] sharedSecret = new byte[32];
-    static {
-        random.nextBytes(sharedSecret);
-    }
-
-    public static String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId)
-            throws NoSuchAlgorithmException, JOSEException {
-        String serverName = request.getServerName();
-        String issuer = String.format("%s://%s:%s",
-                request.getScheme(),
-                InetAddressUtils.isIPv6Address(serverName) ? String.format("[%s]", serverName) : serverName,
-                request.getServerPort());
-
-        // Compose the JWT claims set
-        JWTClaimsSet jwtClaims = new JWTClaimsSet.Builder()
-                .jwtID(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.ID))
-                .issueTime(new Date(System.currentTimeMillis()))
-                .issuer(issuer)
-                .subject(String.format("%s@%s", ssoSession.getUserId(), ssoSession.getProfile()))
-                .audience(clientId)
-                .claim("sub", String.format("%s@%s", ssoSession.getUserId(), ssoSession.getProfile()))
-                .claim("preferred_username", String.format("%s@%s", ssoSession.getUserId(), ssoSession.getProfile()))
-                .claim("email", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.EMAIL))
-                .claim("name", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.FIRST_NAME))
-                .build();
-
-        // Create HMAC signer
-        JWSSigner signer = new MACSigner(sharedSecret);
-        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), jwtClaims);
-        signedJWT.sign(signer);
-
-        return signedJWT.serialize();
     }
 
     private static Set<String> processGroupMemberships(

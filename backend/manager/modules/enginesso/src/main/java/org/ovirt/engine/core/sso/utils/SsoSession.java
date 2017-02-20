@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.sso.utils;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -43,6 +44,11 @@ public class SsoSession implements Serializable {
     private Set<String> associateClientIds = new TreeSet<>();
     private Stack<InteractiveAuth> authStack;
     private String sessionIdToken;
+    private String openIdDisplay;
+    private boolean openIdScope;
+    private String openIdNonce;
+    private String openIdPrompt;
+    private Date authTime;
 
     public SsoSession() {
         this(null);
@@ -193,6 +199,15 @@ public class SsoSession implements Serializable {
 
     public void setStatus(Status status) {
         this.status = status;
+        if (Status.authenticated == status) {
+            authTime = new Date(System.currentTimeMillis());
+        } else {
+            authTime = null;
+        }
+    }
+
+    public Date getAuthTime() {
+        return authTime;
     }
 
     public String getLoginMessage() {
@@ -273,6 +288,38 @@ public class SsoSession implements Serializable {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getOpenIdDisplay() {
+        return openIdDisplay;
+    }
+
+    public void setOpenIdDisplay(String openIdDisplay) {
+        this.openIdDisplay = openIdDisplay;
+    }
+
+    public boolean isOpenIdScope() {
+        return openIdScope;
+    }
+
+    public void setOpenIdScope(boolean openIdScope) {
+        this.openIdScope = openIdScope;
+    }
+
+    public String getOpenIdNonce() {
+        return openIdNonce;
+    }
+
+    public void setOpenIdNonce(String openIdNonce) {
+        this.openIdNonce = openIdNonce;
+    }
+
+    public String getOpenIdPrompt() {
+        return openIdPrompt;
+    }
+
+    public void setOpenIdPrompt(String openIdPrompt) {
+        this.openIdPrompt = openIdPrompt;
     }
 
     public void cleanup() {

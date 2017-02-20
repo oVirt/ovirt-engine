@@ -100,6 +100,46 @@
         <servlet-class>org.ovirt.engine.core.sso.servlets.StatusServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>OpenIdConfigurationServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.OpenIdConfigurationServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OpenIdConfigurationServlet</servlet-name>
+        <url-pattern>/openid/.well-known/openid-configuration</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OpenIdAuthorizeServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.OpenIdAuthorizeServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OpenIdAuthorizeServlet</servlet-name>
+        <url-pattern>/openid/authorize</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OpenIdUserInfoServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.OpenIdUserInfoServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OpenIdUserInfoServlet</servlet-name>
+        <url-pattern>/openid/userinfo</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>JwksServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.OpenIdJwksServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>JwksServlet</servlet-name>
+        <url-pattern>/openid/jwks</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>StatusServlet</servlet-name>
         <url-pattern>/status</url-pattern>

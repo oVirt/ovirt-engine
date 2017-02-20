@@ -54,7 +54,6 @@ public class OAuthTokenServlet extends HttpServlet {
                     SsoConstants.JSON_GRANT_TYPE,
                     SsoConstants.JSON_GRANT_TYPE);
             String scope = SsoUtils.getScopeRequestParameter(request, "");
-            SsoUtils.validateClientAcceptHeader(request);
 
             switch(grantType) {
                 case "authorization_code":
@@ -64,7 +63,7 @@ public class OAuthTokenServlet extends HttpServlet {
                             clientIdAndSecret[1],
                             scope,
                             null);
-                    issueTokenForAuthCode(request, response, clientIdAndSecret[0], scope);
+                    issueTokenForAuthCode(request, response, clientIdAndSecret[0], clientIdAndSecret[1], scope);
                     break;
                 case "password":
                     handlePasswordGrantType(request, response, scope);
@@ -86,10 +85,17 @@ public class OAuthTokenServlet extends HttpServlet {
 
     }
 
+    private void validateClientAcceptHeader(SsoSession ssoSession, HttpServletRequest request) {
+        if (!SsoUtils.scopeAsList(ssoSession.getScope()).contains(SsoConstants.OPENID_SCOPE)) {
+            SsoUtils.validateClientAcceptHeader(request);
+        }
+    }
+
     private void issueTokenForAuthCode(
             HttpServletRequest request,
             HttpServletResponse response,
             String clientId,
+            String clientSecret,
             String scope) throws Exception {
         log.debug("Entered issueTokenForAuthCode");
         String authCode = SsoUtils.getRequestParameter(request,
@@ -98,8 +104,9 @@ public class OAuthTokenServlet extends HttpServlet {
         String accessToken = ssoContext.getTokenForAuthCode(authCode);
         SsoUtils.validateRequestScope(request, accessToken, scope);
         SsoSession ssoSession = SsoUtils.getSsoSession(request, clientId, accessToken, true);
+        validateClientAcceptHeader(ssoSession, request);
         log.debug("Sending json response");
-        SsoUtils.sendJsonData(response, buildResponse(request, ssoSession, clientId));
+        SsoUtils.sendJsonData(response, buildResponse(request, ssoSession, clientId, clientSecret));
     }
 
     private void handlePasswordGrantType(
@@ -131,6 +138,7 @@ public class OAuthTokenServlet extends HttpServlet {
                             SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED_FOR_USERNAME_PASSWORD,
                             (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
+        validateClientAcceptHeader(ssoSession, request);
         log.debug("Sending json response");
         SsoUtils.sendJsonData(response, buildResponse(ssoSession));
     }
@@ -144,6 +152,7 @@ public class OAuthTokenServlet extends HttpServlet {
         try {
             boolean isOpenIdScope = SsoUtils.scopeAsList(scope).contains(SsoConstants.OPENID_SCOPE);
             String clientId = null;
+            String clientSecret = null;
             if (isOpenIdScope) {
                 String[] clientIdAndSecret = SsoUtils.getClientIdClientSecret(request);
                 SsoUtils.validateClientRequest(request,
@@ -152,6 +161,7 @@ public class OAuthTokenServlet extends HttpServlet {
                         scope,
                         null);
                 clientId = clientIdAndSecret[0];
+                clientSecret = clientIdAndSecret[1];
             }
             credentials = SsoUtils.translateUser(SsoUtils.getRequestParameter(request, "username"),
                     SsoUtils.getRequestParameter(request, "password"),
@@ -170,11 +180,12 @@ public class OAuthTokenServlet extends HttpServlet {
                                 SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED_FOR_USERNAME_PASSWORD,
                                 (Locale) request.getAttribute(SsoConstants.LOCALE)));
             }
+            validateClientAcceptHeader(ssoSession, request);
             SsoUtils.validateRequestScope(request, token, scope);
             log.debug("Sending json response");
             SsoUtils.sendJsonData(response,
                     isOpenIdScope ?
-                            buildResponse(request, ssoSession, clientId) :
+                            buildResponse(request, ssoSession, clientId, clientSecret) :
                             buildResponse(ssoSession));
         } catch (AuthenticationException ex) {
             String profile = "N/A";
@@ -217,6 +228,7 @@ public class OAuthTokenServlet extends HttpServlet {
                                     SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED,
                                     (Locale) request.getAttribute(SsoConstants.LOCALE)));
                 }
+                validateClientAcceptHeader(ssoSession, request);
                 log.debug("Sending json response");
                 SsoUtils.sendJsonData(response, buildResponse(ssoSession));
             } else {
@@ -245,11 +257,12 @@ public class OAuthTokenServlet extends HttpServlet {
     }
 
     private Map<String, Object> buildResponse(HttpServletRequest request,
-            SsoSession ssoSession,
-            String clientId) throws Exception {
+          SsoSession ssoSession,
+          String clientId,
+          String clientSecret) throws Exception {
         Map<String, Object> payload = buildResponse(ssoSession);
         if (SsoUtils.scopeAsList(ssoSession.getScope()).contains(SsoConstants.OPENID_SCOPE)) {
-            payload.put("id_token", SsoUtils.createJWT(request, ssoSession, clientId));
+            payload.put("id_token", OpenIdUtils.createJWT(request, ssoSession, clientId, clientSecret));
         }
         return payload;
     }

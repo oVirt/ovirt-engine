@@ -42,14 +42,7 @@ public class OAuthAuthorizeServlet extends HttpServlet {
             log.debug("Entered AuthorizeServlet QueryString: {}, Parameters : {}",
                     request.getQueryString(),
                     SsoUtils.getRequestParameters(request));
-            String clientId = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_CLIENT_ID);
             String responseType = SsoUtils.getRequestParameter(request, SsoConstants.JSON_RESPONSE_TYPE);
-            String scope = SsoUtils.getScopeRequestParameter(request, "");
-            String state = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, "");
-            String appUrl = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_APP_URL, "");
-            String engineUrl = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_ENGINE_URL, "");
-            String redirectUri = request.getParameter(SsoConstants.HTTP_PARAM_REDIRECT_URI);
-            SsoUtils.validateClientRequest(request, clientId, null, scope, redirectUri);
 
             if (!responseType.equals("code")) {
                 throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
@@ -60,24 +53,27 @@ public class OAuthAuthorizeServlet extends HttpServlet {
                                 responseType,
                                 SsoConstants.JSON_RESPONSE_TYPE));
             }
-
-            login(request, response, clientId, scope, state, appUrl, engineUrl, redirectUri);
+            login(request, response, buildSsoSession(request));
         } catch (Exception ex) {
+            SsoSession ssoSession = SsoUtils.getSsoSession(request, true);
+            String scope = SsoUtils.getScopeRequestParameter(request, "");
+            if (ssoSession.isOpenIdScope() ||
+                    SsoUtils.scopeAsList(scope).contains(SsoConstants.OPENID_SCOPE)) {
+                ssoSession.setRedirectUri(request.getParameter(SsoConstants.HTTP_PARAM_REDIRECT_URI));
+            }
             SsoUtils.redirectToErrorPage(request, response, ex);
         }
     }
 
-    private void login(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            String clientId,
-            String scope,
-            String state,
-            String appUrl,
-            String engineUrl,
-            String redirectUri) throws Exception {
-        log.debug("Entered login queryString: {}", request.getQueryString());
-        String redirectUrl;
+    protected SsoSession buildSsoSession(HttpServletRequest request)
+            throws Exception {
+        String clientId = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_CLIENT_ID);
+        String scope = SsoUtils.getScopeRequestParameter(request, "");
+        String state = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, "");
+        String appUrl = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_APP_URL, "");
+        String engineUrl = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_ENGINE_URL, "");
+        String redirectUri = request.getParameter(SsoConstants.HTTP_PARAM_REDIRECT_URI);
+        validateClientRequest(request, clientId, scope, redirectUri);
 
         // Create the session
         request.getSession(true);
@@ -89,21 +85,39 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         ssoSession.setScope(scope);
         ssoSession.setState(state);
         ssoSession.getHttpSession().setMaxInactiveInterval(-1);
+
         if (StringUtils.isNotEmpty(engineUrl)) {
             ssoSession.setEngineUrl(engineUrl);
         } else {
             ssoSession.setEngineUrl(SsoUtils.getSsoContext(request).getEngineUrl());
         }
 
+        return ssoSession;
+    }
+
+    protected void validateClientRequest(HttpServletRequest request,
+            String clientId,
+            String scope,
+            String redirectUri) {
+        SsoUtils.validateClientRequest(request, clientId, null, scope, redirectUri);
+    }
+
+    private void login(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            SsoSession ssoSession) throws Exception {
+        log.debug("Entered login queryString: {}", request.getQueryString());
+        String redirectUrl;
+
         if (SsoUtils.isUserAuthenticated(request)) {
             log.debug("User is authenticated redirecting to interactive-redirect-to-module");
             redirectUrl = request.getContextPath() + SsoConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI;
-        } else if (SsoUtils.scopeAsList(scope).contains("ovirt-ext=auth:identity")) {
+        } else if (SsoUtils.scopeAsList(ssoSession.getScope()).contains("ovirt-ext=auth:identity")) {
             redirectUrl = new URLBuilder(SsoUtils.getRedirectUrl(request))
                     .addParameter("error_code", SsoConstants.ERR_OVIRT_CODE_NOT_AUTHENTICATED)
                     .addParameter("error", SsoConstants.ERR_CODE_NOT_AUTHENTICATED_MSG).build();
         } else {
-            ssoSession.setAuthStack(getAuthSeq(scope));
+            ssoSession.setAuthStack(getAuthSeq(ssoSession));
             if (ssoSession.getAuthStack().isEmpty()) {
                 throw new OAuthException(SsoConstants.ERR_CODE_ACCESS_DENIED,
                         ssoContext.getLocalizationUtils().localize(
@@ -116,14 +130,19 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         response.sendRedirect(redirectUrl);
     }
 
-    private Stack<InteractiveAuth> getAuthSeq(String scopes) {
+    protected Stack<InteractiveAuth> getAuthSeq(SsoSession ssoSession) {
+        String scopes = ssoSession.getScope();
         String appAuthSeq = ssoContext.getSsoLocalConfig().getProperty("SSO_AUTH_LOGIN_SEQUENCE");
 
         String authSeq = null;
-        for (String scope : SsoUtils.scopeAsList(scopes)) {
-            if (scope.startsWith("ovirt-ext=auth:sequence-priority=")) {
-                String[] tokens = scope.trim().split("=", 3);
-                authSeq = tokens[2];
+        if (!SsoUtils.scopeAsList(scopes).contains("ovirt-ext=auth:sequence-priority=")) {
+            authSeq = "~";
+        } else {
+            for (String scope : SsoUtils.scopeAsList(scopes)) {
+                if (scope.startsWith("ovirt-ext=auth:sequence-priority=")) {
+                    String[] tokens = scope.trim().split("=", 3);
+                    authSeq = tokens[2];
+                }
             }
         }
 
