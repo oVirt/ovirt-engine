@@ -1607,6 +1607,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String hostedEngineLabel();
 
+    String hostedEngineDeploymentCompatibilityWarning();
+
     String hostedEngineDeploymentAction();
 
     String imageFormat();
