@@ -12,8 +12,6 @@
 
         .messagesLabel {
             color: #CD2127;
-            width: 99%;
-            line-height: 18px;
         }
 
         .messagesLabel ul {
@@ -21,22 +19,8 @@
             margin: 0;
         }
 
-        @external obrand_diskTypePanel;
-        .obrand_diskTypePanel {
-            height: 36px;
-            width: 100%;
-            padding-top: 6px;
-            margin-bottom: 6px;
-            color: white;
-            font-weight: bold;
-            display: block;
-        }
-
         .mainPanel {
             width: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
-            height: 517px;
         }
 
         .isPluggedEditor {
@@ -45,19 +29,18 @@
             width: 140px;
         }
 
-        .diskTypeSelection {
-            float: left;
-        }
-
         .attachDiskPanel {
             padding: 2px;
         }
 
+        .header {
+            padding-bottom: 15px;
+        }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.container}">
-        <g:FlowPanel addStyleNames="{style.obrand_diskTypePanel}">
-            <w:RadioButtonsHorizontalPanel ui:field="diskTypePanel" name="diskTypePanel" addStyleNames="{style.diskTypeSelection}"/>
+        <g:FlowPanel addStyleNames="{style.header}">
+            <w:RadioButtonPanel ui:field="diskTypePanel" name="diskTypePanel" dataToggle="BUTTONS" />
             <ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" label="{constants.activateVmDiskPopup}" widgetTooltip="{constants.activateVmDiskPopupToolTip}" />
         </g:FlowPanel>
         <g:FlowPanel ui:field="attachDiskContainer" addStyleNames="{style.mainPanel}">

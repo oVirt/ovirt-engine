@@ -107,6 +107,10 @@ public class DialogTabPanel extends Composite {
         tabContainer.addStyleName(styleName);
     }
 
+    public FlowPanel getBar() {
+        return tabContainer;
+    }
+
     public void setContentStyle(String styleName) {
         tabContent.addStyleName(styleName);
     }

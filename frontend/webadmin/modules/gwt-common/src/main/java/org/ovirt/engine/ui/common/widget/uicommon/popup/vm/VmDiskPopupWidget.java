@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -19,7 +20,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
+import org.ovirt.engine.ui.common.widget.RadioButtonPanel;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
@@ -47,20 +48,20 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDiskModel> {
 
     interface Driver extends UiCommonEditorDriver<AbstractDiskModel, VmDiskPopupWidget> {
     }
 
-    interface ViewUiBinder extends UiBinder<FlowPanel, VmDiskPopupWidget> {
+    interface ViewUiBinder extends UiBinder<Container, VmDiskPopupWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -190,13 +191,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     InfoIcon scsiReservationInfoIcon;
 
     @UiField
-    VerticalPanel createDiskPanel;
-
-    @UiField
     FlowPanel externalDiskPanel;
 
     @UiField
-    RadioButtonsHorizontalPanel diskTypePanel;
+    RadioButtonPanel radioButtonPanel;
 
     @UiField
     Label message;
@@ -316,7 +314,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (disk.getIsModelDisabled().getEntity()) {
                     disableWidget(getWidget());
-                    enableWidget(diskTypePanel);
+                    enableWidget(radioButtonPanel);
                     enableWidget(datacenterEditor);
                     disk.getDefaultCommand().setIsExecutionAllowed(false);
                     disk.setIsChangeable(false);
@@ -329,40 +327,44 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             }
         });
 
-        diskTypePanel.addRadioButton(
-                constants.imageDisk(),
+        radioButtonPanel.addRadioButton(constants.imageDisk(),
                 disk.getDisk() == null || disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE,
                 disk.getIsNew(),
-                new ClickHandler() {
+                new ValueChangeHandler<Boolean>() {
+
                 @Override
-                public void onClick(ClickEvent event) {
-                    disk.getDiskStorageType().setEntity(DiskStorageType.IMAGE);
-                    revealDiskPanel(disk);
+                public void onValueChange(ValueChangeEvent<Boolean> event) {
+                    if (disk.getIsNew()) {
+                        disk.getDiskStorageType().setEntity(DiskStorageType.IMAGE);
+                        revealDiskPanel(disk);
+                    }
                 }
             });
 
-        diskTypePanel.addRadioButton(
-                constants.directLunDisk(),
+        radioButtonPanel.addRadioButton(constants.directLunDisk(),
                 disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.LUN,
                 disk.getIsNew(),
-                new ClickHandler() {
+                new ValueChangeHandler<Boolean>() {
                     @Override
-                    public void onClick(ClickEvent event) {
-                        disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
-                        revealStorageView(disk);
-                        revealDiskPanel(disk);
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        if (disk.getIsNew()) {
+                            disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
+                            revealStorageView(disk);
+                            revealDiskPanel(disk);
+                        }
                     }
                 });
 
-        diskTypePanel.addRadioButton(
-                constants.cinderDisk(),
+        radioButtonPanel.addRadioButton(constants.cinderDisk(),
                 disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.CINDER,
                 disk.getIsNew(),
-                new ClickHandler() {
+                new ValueChangeHandler<Boolean>() {
                     @Override
-                    public void onClick(ClickEvent event) {
-                        disk.getDiskStorageType().setEntity(DiskStorageType.CINDER);
-                        revealDiskPanel(disk);
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        if (disk.getIsNew()) {
+                            disk.getDiskStorageType().setEntity(DiskStorageType.CINDER);
+                            revealDiskPanel(disk);
+                        }
                     }
                 });
 
@@ -399,7 +401,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             fcpStorageModel.getPropertyChangedEvent().clearListeners();
         }
 
-        iscsiStorageView = new IscsiStorageView(false, 115, 214, 244, 275, 142, 55, -67);
+        iscsiStorageView = new IscsiStorageView(false, 196, 304, 244, 275, 142, 55, -67);
+        iscsiStorageView.setBarTop(0, Unit.PX);
         iscsiStorageView.edit(iscsiStorageModel);
 
         fcpStorageView = new FcpStorageView(false, 278, 240);
@@ -426,9 +429,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 String propName = args.propertyName;
                 if ("IsChangable".equals(propName)) { //$NON-NLS-1$
                     if (disk.getDiskStorageType().getIsChangable() && disk.isEditEnabled()) {
-                        enableWidget(diskTypePanel);
+                        enableWidget(radioButtonPanel);
                     } else {
-                        disableWidget(diskTypePanel);
+                        disableWidget(radioButtonPanel);
                     }
                 }
             }
@@ -443,7 +446,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         // Disk type (internal/external) selection panel is visible only when
         // 'Attach disk' mode is enabled or new LunDisk creation is enabled
-        diskTypePanel.setVisible(isNewLunDiskEnabled);
+        radioButtonPanel.setVisible(isNewLunDiskEnabled);
         externalDiskPanel.setVisible(isNewLunDiskEnabled && disk.getDiskStorageType().getEntity() == DiskStorageType.LUN);
 
         aliasEditor.setFocus(!isInVm);

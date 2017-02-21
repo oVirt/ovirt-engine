@@ -7,7 +7,7 @@ import java.util.List;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
+import org.ovirt.engine.ui.common.widget.RadioButtonPanel;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
@@ -39,8 +39,8 @@ import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
 import org.ovirt.engine.ui.webadmin.widget.footer.StatusPanel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -58,7 +58,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     }
 
     @UiField
-    RadioButtonsHorizontalPanel networksOrLabels;
+    RadioButtonPanel networksOrLabels;
 
     @UiField
     Panel networksPanel;
@@ -139,15 +139,15 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         externalNetworkList.setStyle(style);
         labelsList.setStyle(style);
 
-        networksOrLabels.addRadioButton(constants.networksPanel(), true, true, new ClickHandler() {
+        networksOrLabels.addRadioButton(constants.networksPanel(), true, true, new ValueChangeHandler<Boolean>() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
                 onRadioButtonSelection(true);
             }
         });
-        networksOrLabels.addRadioButton(constants.labelsPanel(), false, true, new ClickHandler() {
+        networksOrLabels.addRadioButton(constants.labelsPanel(), false, true, new ValueChangeHandler<Boolean>() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
                 onRadioButtonSelection(false);
             }
         });

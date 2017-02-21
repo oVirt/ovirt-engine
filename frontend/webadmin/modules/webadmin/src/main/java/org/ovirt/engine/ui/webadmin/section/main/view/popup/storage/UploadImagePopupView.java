@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
+import org.ovirt.engine.ui.common.widget.RadioButtonPanel;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -25,6 +25,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -57,7 +59,7 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     Label imageSourceLabel;
 
     @UiField
-    RadioButtonsHorizontalPanel imageSourcePanel;
+    RadioButtonPanel imageSourcePanel;
 
     @UiField
     @Ignore
@@ -161,9 +163,9 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
                 constants.uploadImageSourceLocal(),
                 model.getImageSourceLocalEnabled().getEntity(),
                 true,
-                new ClickHandler() {
+                new ValueChangeHandler<Boolean>() {
                     @Override
-                    public void onClick(ClickEvent event) {
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
                         model.getImageSourceLocalEnabled().setEntity(true);
                         setSourceVisibility(model);
                     }
@@ -172,9 +174,9 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
                 constants.uploadImageSourceRemote(),
                 !model.getImageSourceLocalEnabled().getEntity(),
                 true,
-                new ClickHandler() {
+                new ValueChangeHandler<Boolean>() {
                     @Override
-                    public void onClick(ClickEvent event) {
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
                         model.getImageSourceLocalEnabled().setEntity(false);
                         setSourceVisibility(model);
                     }

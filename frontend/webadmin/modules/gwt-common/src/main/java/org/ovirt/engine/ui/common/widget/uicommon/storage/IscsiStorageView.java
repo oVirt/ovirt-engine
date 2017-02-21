@@ -194,6 +194,10 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         return iscsiTargetToLunView.isDiscoverPanelFocused();
     }
 
+    public void setBarTop(double value, Unit unit) {
+        dialogTabPanel.getBar().getElement().getStyle().setTop(value, unit);
+    }
+
     @Override
     public IscsiStorageModel flush() {
         return driver.flush();

@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
+import org.ovirt.engine.ui.common.widget.RadioButtonPanel;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
@@ -39,8 +39,8 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -78,7 +78,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
     ValidatedPanelWidget attachDiskPanel;
 
     @UiField
-    RadioButtonsHorizontalPanel diskTypePanel;
+    RadioButtonPanel diskTypePanel;
 
     @Ignore
     @WithElementId
@@ -431,11 +431,13 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 constants.imageDisk(),
                 disk.getIsNew() || disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE,
                 disk.getIsNew(),
-                new ClickHandler() {
+                new ValueChangeHandler<Boolean>() {
                     @Override
-                    public void onClick(ClickEvent event) {
-                        disk.getDiskStorageType().setEntity(DiskStorageType.IMAGE);
-                        revealDiskPanel(disk);
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        if (disk.getIsNew()) {
+                            disk.getDiskStorageType().setEntity(DiskStorageType.IMAGE);
+                            revealDiskPanel(disk);
+                        }
                     }
                 });
 
@@ -443,11 +445,13 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 constants.directLunDisk(),
                 !disk.getIsNew() && disk.getDisk().getDiskStorageType() == DiskStorageType.LUN,
                 disk.getIsNew(),
-                new ClickHandler() {
+                new ValueChangeHandler<Boolean>() {
                     @Override
-                    public void onClick(ClickEvent event) {
-                        disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
-                        revealDiskPanel(disk);
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        if (disk.getIsNew()) {
+                            disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
+                            revealDiskPanel(disk);
+                        }
                     }
                 });
 
@@ -455,11 +459,13 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 constants.cinderDisk(),
                 !disk.getIsNew() && disk.getDisk().getDiskStorageType() == DiskStorageType.CINDER,
                 disk.getIsNew(),
-                new ClickHandler() {
+                new ValueChangeHandler<Boolean>() {
                     @Override
-                    public void onClick(ClickEvent event) {
-                        disk.getDiskStorageType().setEntity(DiskStorageType.CINDER);
-                        revealDiskPanel(disk);
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        if (disk.getIsNew()) {
+                            disk.getDiskStorageType().setEntity(DiskStorageType.CINDER);
+                            revealDiskPanel(disk);
+                        }
                     }
                 });
 

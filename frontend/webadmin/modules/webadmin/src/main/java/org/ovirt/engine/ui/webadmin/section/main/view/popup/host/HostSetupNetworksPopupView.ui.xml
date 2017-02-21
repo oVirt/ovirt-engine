@@ -293,7 +293,7 @@
                     </g:Cell>
                     <g:Cell width="30%" height="100%">
                         <g:FlowPanel width="100%">
-                            <c:RadioButtonsHorizontalPanel ui:field="networksOrLabels" name="networksOrLabels" />
+                            <c:RadioButtonPanel ui:field="networksOrLabels" dataToggle="BUTTONS" name="networksOrLabels" />
                             <g:ScrollPanel height="370px">
                                 <g:FlowPanel addStyleNames="ts10 {style.fullWidth}">
                                     <g:FlowPanel ui:field="networksPanel" styleName="{style.fullWidth}">
