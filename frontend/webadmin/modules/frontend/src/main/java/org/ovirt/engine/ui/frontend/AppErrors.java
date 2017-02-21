@@ -615,6 +615,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__TYPE__USER_PROFILE();
 
+    String VAR__TYPE__MEMORY_DEVICE();
+
     String VAR__ACTION__RUN();
 
     String VAR__ACTION__REMOVE();
@@ -2622,6 +2624,12 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_HOST_DEVICE_NOT_FOUND();
 
     String ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE();
+
+    String ACTION_TYPE_FAILED_VM_MEMORY_DEVICE_DOESNT_EXIST();
+
+    String ACTION_TYPE_FAILED_MEMORY_DEVICE_IS_BEING_HOT_UNPLUGGED();
+
+    String ACTION_TYPE_FAILED_MEMORY_HOT_UNPLUG_NOT_SUPPORTED_FOR_COMPAT_VERSION_AND_ARCH();
 
     String VM_ICON_DATAURL_MALFORMED();
 

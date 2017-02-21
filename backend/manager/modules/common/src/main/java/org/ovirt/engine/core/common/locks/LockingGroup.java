@@ -9,6 +9,8 @@ public enum LockingGroup {
     VM,
     TEMPLATE,
     TEMPLATE_NAME,
+    /** locked entity identifier: "deviceId", vmId is omitted */
+    VM_DEVICE,
     DISK,
     VM_DISK_BOOT,
     VM_NAME,

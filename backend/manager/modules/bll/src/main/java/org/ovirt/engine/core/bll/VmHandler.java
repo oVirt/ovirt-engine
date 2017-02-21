@@ -24,6 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -94,6 +95,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
@@ -156,6 +158,12 @@ public class VmHandler implements BackendService {
 
     @Inject
     private DiskVmElementDao diskVmElementDao;
+
+    @Inject
+    private SnapshotDao snapshotDao;
+
+    @Inject
+    private SnapshotsManager snapshotsManager;
 
     private ObjectIdentityChecker updateVmsStatic;
     private OsRepository osRepository;
@@ -1243,5 +1251,38 @@ public class VmHandler implements BackendService {
                     maxOfMaxMemorySize);
             vmBase.setMaxMemorySizeMb(maxMemorySize);
         }
+    }
+
+    /**
+     * @param objectWithEditableDeviceFields object with fields annotated with {@link EditableDeviceOnVmStatusField},
+     *                                       usually a command parameters object
+     */
+    public void createNextRunSnapshot(
+            VM existingVm,
+            VmStatic newVmStatic,
+            Object objectWithEditableDeviceFields,
+            CompensationContext compensationContext) {
+        // first remove existing snapshot
+        Snapshot runSnap = snapshotDao.get(existingVm.getId(), Snapshot.SnapshotType.NEXT_RUN);
+        if (runSnap != null) {
+            snapshotDao.remove(runSnap.getId());
+        }
+
+        final VM newVm = new VM();
+        newVm.setStaticData(newVmStatic);
+
+        // create new snapshot with new configuration
+        snapshotsManager.addSnapshot(Guid.newGuid(),
+                "Next Run configuration snapshot",
+                Snapshot.SnapshotStatus.OK,
+                Snapshot.SnapshotType.NEXT_RUN,
+                newVm,
+                true,
+                StringUtils.EMPTY,
+                Collections.emptyList(),
+                vmDeviceUtils.getVmDevicesForNextRun(existingVm,
+                        objectWithEditableDeviceFields,
+                        existingVm.getDefaultDisplayType()),
+                compensationContext);
     }
 }

@@ -28,6 +28,7 @@ public class VmDeviceCommonUtils {
     static final String NETWORK_CHAR = "N";
     static final String CDROM_CHAR = "D";
     static final String DRIVE_CHAR = "C";
+    public static final String SPEC_PARAM_SIZE = "size";
 
     public static boolean isNetwork(VmDevice device) {
         return device.getType() == VmDeviceGeneralType.INTERFACE;
@@ -423,6 +424,16 @@ public class VmDeviceCommonUtils {
         default:
             return -1;
         }
+    }
+
+    public static Integer getSizeOfMemoryDeviceMb(VmDevice memoryDevice) {
+        if (memoryDevice.getType() != VmDeviceGeneralType.MEMORY) {
+            throw new RuntimeException("Memory device expected but device "
+                    + memoryDevice
+                    + " passed of type "
+                    + memoryDevice.getType());
+        }
+        return (Integer) memoryDevice.getSpecParams().get(SPEC_PARAM_SIZE);
     }
 
 }

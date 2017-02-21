@@ -54,7 +54,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -181,7 +180,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         newVmStatic = getParameters().getVmStaticData();
         if (isRunningConfigurationNeeded()) {
-            createNextRunSnapshot();
+            vmHandler.createNextRunSnapshot(
+                    getVm(), getParameters().getVmStaticData(), getParameters(), getCompensationContext());
         } else if (!updateVmLease()) {
             return;
         }
@@ -306,7 +306,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             setSucceeded(result.getSucceeded());
             setActionReturnValue(VdcActionType.UpdateVmVersion);
         } else {
-            createNextRunSnapshot();
+            vmHandler.createNextRunSnapshot(
+                    getVm(), getParameters().getVmStaticData(), getParameters(), getCompensationContext());
             setSucceeded(true);
         }
     }
@@ -358,31 +359,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             change.updateVm(getVmId(), VmDevicesMonitoring.EMPTY_HASH);
             change.flush();
         }
-    }
-
-    private void createNextRunSnapshot() {
-        // first remove existing snapshot
-        Snapshot runSnap = snapshotDao.get(getVmId(), Snapshot.SnapshotType.NEXT_RUN);
-        if (runSnap != null) {
-            snapshotDao.remove(runSnap.getId());
-        }
-
-        VM vm = new VM();
-        vm.setStaticData(getParameters().getVmStaticData());
-
-        // create new snapshot with new configuration
-        getSnapshotsManager().addSnapshot(Guid.newGuid(),
-                "Next Run configuration snapshot",
-                Snapshot.SnapshotStatus.OK,
-                Snapshot.SnapshotType.NEXT_RUN,
-                vm,
-                true,
-                StringUtils.EMPTY,
-                Collections.emptyList(),
-                getVmDeviceUtils().getVmDevicesForNextRun(getVm(),
-                        getParameters(),
-                        getParameters().getVmStaticData().getDefaultDisplayType()),
-                getCompensationContext());
     }
 
     private void hotSetCpus(VM newVm) {

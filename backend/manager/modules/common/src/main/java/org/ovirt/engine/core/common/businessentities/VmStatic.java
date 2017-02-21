@@ -55,6 +55,8 @@ public class VmStatic extends VmBase {
     public VmStatic(VmStatic vmStatic) {
         this((VmBase)vmStatic);
         vmtGuid = vmStatic.getVmtGuid();
+        originalTemplateGuid = vmStatic.originalTemplateGuid;
+        originalTemplateName = vmStatic.originalTemplateName;
         setInitialized(vmStatic.isInitialized());
         setUseLatestVersion(vmStatic.isUseLatestVersion());
         setInstanceTypeId(vmStatic.getInstanceTypeId());
