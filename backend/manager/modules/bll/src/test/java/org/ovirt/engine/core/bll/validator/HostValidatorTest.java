@@ -308,20 +308,20 @@ public class HostValidatorTest {
     }
 
     @Test
+    public void supportsHostedEngineDeployInVersion36() {
+        when(hostedEngineHelper.isVmManaged()).thenReturn(true);
+        mockCluster(Version.v3_6);
+        assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
+                isValid());
+    }
+
+    @Test
     public void unsupportedHostedEngineDeployWhenNoHostedEngine() {
         when(hostedEngineHelper.isVmManaged()).thenReturn(false);
         mockCluster(Version.v4_0);
         when(host.getClusterId()).thenReturn(Guid.Empty);
         assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE));
-    }
-
-    @Test
-    public void unsupportedHostedEngineDeployWhenClusterLevelIsUnsupported() {
-        mockCluster(Version.v3_6);
-        when(host.getClusterId()).thenReturn(Guid.Empty);
-        assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DEPLOYMENT_UNSUPPORTED));
     }
 
     @Test
