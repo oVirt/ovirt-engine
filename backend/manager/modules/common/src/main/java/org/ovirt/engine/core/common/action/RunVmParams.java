@@ -3,7 +3,6 @@ package org.ovirt.engine.core.common.action;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.InitializationType;
-import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RunVmParams extends VmOperationParameterBase {
@@ -34,7 +33,6 @@ public class RunVmParams extends VmOperationParameterBase {
     private String floppyPath;
     private InitializationType initializationType;
     private Boolean runAsStateless;
-    private VmPayload payload;
     private boolean balloonEnabled;
     private boolean runInUnknownStatus;
 
@@ -64,7 +62,6 @@ public class RunVmParams extends VmOperationParameterBase {
                 && Objects.equals(floppyPath, other.floppyPath)
                 && initializationType == other.initializationType
                 && Objects.equals(runAsStateless, other.runAsStateless)
-                && Objects.equals(payload, other.payload)
                 && balloonEnabled == other.balloonEnabled;
     }
 
@@ -77,7 +74,6 @@ public class RunVmParams extends VmOperationParameterBase {
                 floppyPath,
                 initializationType,
                 runAsStateless,
-                payload,
                 balloonEnabled
         );
     }
@@ -120,14 +116,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setRunAsStateless(Boolean value) {
         runAsStateless = value;
-    }
-
-    public VmPayload getVmPayload() {
-        return this.payload;
-    }
-
-    public void setVmPayload(VmPayload value) {
-        this.payload = value;
     }
 
     public boolean isBalloonEnabled() {

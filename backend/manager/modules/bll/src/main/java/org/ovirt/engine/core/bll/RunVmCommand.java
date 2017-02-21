@@ -741,13 +741,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected void loadPayloadDevice() {
-        if (getParameters().getVmPayload() == null) {
-            VmPayload payload = getVmPayloadByDeviceType(VmDeviceType.CDROM);
-            if (payload != null) {
-                getVm().setVmPayload(payload);
-            } else {
-                getVm().setVmPayload(getVmPayloadByDeviceType(VmDeviceType.FLOPPY));
-            }
+        VmPayload payload = getVmPayloadByDeviceType(VmDeviceType.CDROM);
+        if (payload != null) {
+            getVm().setVmPayload(payload);
+        } else {
+            getVm().setVmPayload(getVmPayloadByDeviceType(VmDeviceType.FLOPPY));
         }
     }
 
@@ -955,18 +953,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return false;
         }
 
-        // check for Vm Payload
-        if (getParameters().getVmPayload() != null) {
-
-            if (checkPayload(getParameters().getVmPayload(), getParameters().getDiskPath()) &&
-                    !StringUtils.isEmpty(getParameters().getFloppyPath()) &&
-                    getParameters().getVmPayload().getDeviceType() == VmDeviceType.FLOPPY) {
-                return failValidation(EngineMessage.VMPAYLOAD_FLOPPY_EXCEEDED);
-            }
-
-            getVm().setVmPayload(getParameters().getVmPayload());
-        }
-
         if (!checkRngDeviceClusterCompatibility()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
         }
@@ -976,25 +962,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         boolean isCloudInitEnabled = (!getVm().isInitialized() && getVm().getVmInit() != null && !isWindowsOs) ||
                 (getParameters().getInitializationType() == InitializationType.CloudInit);
 
-        boolean hasCdromPayload = getParameters().getVmPayload() != null &&
-                getParameters().getVmPayload().getDeviceType() == VmDeviceType.CDROM;
-
-        if ((hasCdromPayload || isCloudInitEnabled) && hasMaximumNumberOfDisks()) {
+        if (isCloudInitEnabled && hasMaximumNumberOfDisks()) {
             return failValidation(EngineMessage.VMPAYLOAD_CDROM_OR_CLOUD_INIT_MAXIMUM_DEVICES);
-        }
-
-        // Note: that we are setting the payload from database in the ctor.
-        //
-        // Checking if the user sent Payload and Sysprep/Cloud-init at the same media -
-        // Currently we cannot use two payloads in the same media (cdrom/floppy)
-        if (getParameters().getInitializationType() != null) {
-           if (getParameters().getInitializationType() == InitializationType.Sysprep && getParameters().getVmPayload() != null &&
-                   getParameters().getVmPayload().getDeviceType() == VmDeviceType.FLOPPY) {
-               return failValidation(EngineMessage.VMPAYLOAD_FLOPPY_WITH_SYSPREP);
-           } else if (getParameters().getInitializationType() == InitializationType.CloudInit && getParameters().getVmPayload() != null &&
-                   getParameters().getVmPayload().getDeviceType() == VmDeviceType.CDROM) {
-               return failValidation(EngineMessage.VMPAYLOAD_CDROM_WITH_CLOUD_INIT);
-           }
         }
 
         if (!vmHandler.isCpuSupported(
