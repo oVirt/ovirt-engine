@@ -114,7 +114,7 @@ public class TagsDirector implements BackendService, ITagsHandler {
      */
     private void addChildren(Tags tag) {
         log.info("Tag '{}' added to tree", tag.getTagName());
-        List<Tags> children = getTagDao().getAllForParent(tag.getTagId());
+        List<Tags> children = tagDao.getAllForParent(tag.getTagId());
         for (Tags child : children) {
             addChildren(child);
             log.info("Tag '{}' added as child to parent '{}'", child.getTagName(), tag.getTagName());
@@ -122,10 +122,6 @@ public class TagsDirector implements BackendService, ITagsHandler {
             addTagToHash(tag);
             addTagToHash(child);
         }
-    }
-
-    protected TagDao getTagDao() {
-        return tagDao;
     }
 
     private void removeTagAndChildren(Tags tag) {
