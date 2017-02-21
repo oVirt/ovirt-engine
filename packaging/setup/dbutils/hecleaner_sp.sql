@@ -46,7 +46,7 @@ BEGIN
         WHEN NO_DATA_FOUND THEN
             RAISE WARNING 'VM % is not on the hosted-engine storage domain', v_HostedEngineVmName;
         WHEN TOO_MANY_ROWS THEN
-            RAISE EXCEPTION 'The hosted-engine storage domain contains more than one vm.';
+            RAISE WARNING 'The hosted-engine storage domain contains disks for more than one vm; this procedure will filter out all the disks on the hosted-engine storage domain including other VMs ones.';
         IF v_vm_guid <> v_vm_guid_check THEN
             RAISE EXCEPTION 'The hosted-engine storage domain contains a vm that is not the hosted-engine one.';
         END IF;
