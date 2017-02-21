@@ -153,12 +153,12 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     }
 
     @Override
-    public void buildVmCD() {
-        boolean hasPayload = vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.CDROM;
+    public void buildVmCD(VmPayload vmPayload) {
+        boolean hasPayload = vmPayload != null && vmPayload.getDeviceType() == VmDeviceType.CDROM;
         // check if we have payload CD
         if (hasPayload) {
-            Map<String, Object> struct = vmInfoBuildUtils.buildCdDetails(vm.getVmPayload(), vm);
-            addDevice(struct, vm.getVmPayload(), "");
+            Map<String, Object> struct = vmInfoBuildUtils.buildCdDetails(vmPayload, vm);
+            addDevice(struct, vmPayload, "");
         }
         // check first if CD was given as a RunOnce parameter
         if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getCdPath())) {
@@ -204,12 +204,12 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     }
 
     @Override
-    public void buildVmFloppy() {
+    public void buildVmFloppy(VmPayload vmPayload) {
         // check if we have payload Floppy
-        boolean hasPayload = vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.FLOPPY;
+        boolean hasPayload = vmPayload != null && vmPayload.getDeviceType() == VmDeviceType.FLOPPY;
         if (hasPayload) {
-            Map<String, Object>struct = vmInfoBuildUtils.buildFloppyDetails(vm.getVmPayload());
-            addDevice(struct, vm.getVmPayload(), "");
+            Map<String, Object>struct = vmInfoBuildUtils.buildFloppyDetails(vmPayload);
+            addDevice(struct, vmPayload, "");
         }
         // check first if Floppy was given as a parameter
         else if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getFloppyPath())) {

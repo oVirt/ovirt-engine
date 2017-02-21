@@ -99,6 +99,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private Guid cachedActiveIsoDomainId;
     private boolean needsHostDevices = false;
     private InitializationType initializationType;
+    protected VmPayload vmPayload;
 
     public static final String ISO_PREFIX = "iso://";
     public static final String STATELESS_SNAPSHOT_DESCRIPTION = "stateless snapshot";
@@ -557,6 +558,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected CreateVDSCommandParameters buildCreateVmParameters() {
         CreateVDSCommandParameters parameters  = new CreateVDSCommandParameters(getVdsId(), getVm());
         parameters.setRunInUnknownStatus(getParameters().isRunInUnknownStatus());
+        parameters.setVmPayload(vmPayload);
         if (initializationType == InitializationType.Sysprep
                 && osRepository.isWindows(getVm().getVmOsId())
                 && (getVm().getFloppyPath() == null || "".equals(getVm().getFloppyPath()))) {
@@ -687,7 +689,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // if we asked for floppy from Iso Domain we cannot
         // have floppy payload since we are limited to only one floppy device
         if (!StringUtils.isEmpty(getParameters().getFloppyPath()) && isPayloadExists(VmDeviceType.FLOPPY)) {
-            getVm().setVmPayload(null);
+            vmPayload = null;
         }
 
         updateVmGuestAgentVersion();
@@ -742,14 +744,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected boolean isPayloadExists(VmDeviceType deviceType) {
-        return getVm().getVmPayload() != null && getVm().getVmPayload().getDeviceType().equals(deviceType);
+        return vmPayload != null && vmPayload.getDeviceType().equals(deviceType);
     }
 
     protected void loadPayload() {
         List<VmDevice> disks = vmDeviceDao.getVmDeviceByVmIdAndType(getVm().getId(), VmDeviceGeneralType.DISK);
         for (VmDevice disk : disks) {
             if (disk.isManaged() && VmPayload.isPayload(disk.getSpecParams())) {
-                getVm().setVmPayload(new VmPayload(disk));
+                vmPayload = new VmPayload(disk);
                 break;
             }
         }
@@ -801,10 +803,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // the payload since we can only have one media (Floppy/CDROM) per payload.
             if (getParameters().getInitializationType() == InitializationType.Sysprep &&
                     isPayloadExists(VmDeviceType.FLOPPY)) {
-                getVm().setVmPayload(null);
+                vmPayload = null;
             } else if (getParameters().getInitializationType() == InitializationType.CloudInit &&
                     isPayloadExists(VmDeviceType.CDROM)) {
-                getVm().setVmPayload(null);
+                vmPayload = null;
             }
         }
     }

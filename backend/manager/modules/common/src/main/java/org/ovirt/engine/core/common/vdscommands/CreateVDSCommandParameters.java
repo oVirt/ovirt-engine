@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -12,6 +13,7 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private SysPrepParams sysPrepParams;
     private boolean runInUnknownStatus;
     private InitializationType initializationType;
+    private VmPayload vmPayload;
 
     public CreateVDSCommandParameters() {
     }
@@ -48,6 +50,14 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     public void setInitializationType(InitializationType value) {
         initializationType = value;
+    }
+
+    public VmPayload getVmPayload() {
+        return vmPayload;
+    }
+
+    public void setVmPayload(VmPayload vmPayload) {
+        this.vmPayload = vmPayload;
     }
 
     @Override

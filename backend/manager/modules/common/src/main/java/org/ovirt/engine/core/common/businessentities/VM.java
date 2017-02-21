@@ -25,8 +25,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     private VmDynamic vmDynamic;
     private VmStatistics vmStatistics;
-    @EditableVmField
-    private VmPayload vmPayload;
 
     @Valid
     private List<Snapshot> snapshots;
@@ -1402,7 +1400,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         result = prime * result + ((clusterDescription == null) ? 0 : clusterDescription.hashCode());
         result = prime * result + ((clusterName == null) ? 0 : clusterName.hashCode());
         result = prime * result + ((vmDynamic == null) ? 0 : vmDynamic.hashCode());
-        result = prime * result + ((vmPayload == null) ? 0 : vmPayload.hashCode());
         result = prime * result + ((vmPoolId == null) ? 0 : vmPoolId.hashCode());
         result = prime * result + ((vmPoolName == null) ? 0 : vmPoolName.hashCode());
         result = prime * result + ((vmStatic == null) ? 0 : vmStatic.hashCode());
@@ -1551,14 +1548,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     public boolean isRunOnce() {
         return vmDynamic.isRunOnce();
-    }
-
-    public void setVmPayload(VmPayload vmPayload) {
-        this.vmPayload = vmPayload;
-    }
-
-    public VmPayload getVmPayload() {
-        return vmPayload;
     }
 
     public boolean isUseHostCpuFlags() {

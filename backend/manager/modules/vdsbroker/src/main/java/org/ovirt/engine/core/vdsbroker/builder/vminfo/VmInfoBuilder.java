@@ -2,6 +2,8 @@ package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.VmPayload;
+
 public interface VmInfoBuilder {
     void buildVmProperties();
 
@@ -22,9 +24,9 @@ public interface VmInfoBuilder {
      */
     void buildVmGraphicsDevices();
 
-    void buildVmCD();
+    void buildVmCD(VmPayload payload);
 
-    void buildVmFloppy();
+    void buildVmFloppy(VmPayload payload);
 
     void buildVmDrives();
 

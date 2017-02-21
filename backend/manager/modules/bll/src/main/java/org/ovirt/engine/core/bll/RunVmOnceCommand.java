@@ -100,7 +100,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         List<VmDevice> disks = vmDeviceDao.getVmDeviceByVmIdAndType(getParameters().getVmId(), VmDeviceGeneralType.DISK);
         for (VmDevice disk : disks) {
             if (VmPayload.isPayload(disk.getSpecParams())) {
-                getVm().setVmPayload(new VmPayload(disk));
+                vmPayload = new VmPayload(disk);
                 break;
             }
         }

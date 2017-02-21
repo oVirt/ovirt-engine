@@ -82,8 +82,8 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         builder.buildVmProperties();
         builder.buildVmVideoCards();
         builder.buildVmGraphicsDevices();
-        builder.buildVmCD();
-        builder.buildVmFloppy();
+        builder.buildVmCD(getParameters().getVmPayload());
+        builder.buildVmFloppy(getParameters().getVmPayload());
         builder.buildVmDrives();
         builder.buildVmNetworkInterfaces();
         builder.buildVmNetworkCluster();
