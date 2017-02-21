@@ -165,10 +165,10 @@ public class VolumeModel extends Model {
         getGluster_accecssProtocol().setIsChangeable(false);
 
         setNfs_accecssProtocol(new EntityModel<Boolean>());
-        getNfs_accecssProtocol().setEntity(true);
+        getNfs_accecssProtocol().setEntity(false);
 
         setCifs_accecssProtocol(new EntityModel<Boolean>());
-        getCifs_accecssProtocol().setEntity(true);
+        getCifs_accecssProtocol().setEntity(false);
 
         setAllowAccess(new EntityModel<String>());
         getAllowAccess().setEntity("*"); //$NON-NLS-1$
@@ -306,6 +306,12 @@ public class VolumeModel extends Model {
     private void updateArbiterAvailability() {
         getArbiterVolume().setIsAvailable(getTypeList().getSelectedItem().isReplicatedType()
                 && Version.v4_1.compareTo(getCluster().getSelectedItem().getCompatibilityVersion()) >= 0);
+    }
+
+    private void updateDefaults() {
+        getCifs_accecssProtocol().setEntity(!isHCMode());
+        getNfs_accecssProtocol().setEntity(!isHCMode());
+        getOptimizeForVirtStore().setEntity(isHCMode());
     }
 
     public void addBricks(){
@@ -491,6 +497,7 @@ public class VolumeModel extends Model {
         if (getCluster().getSelectedItem() != null) {
             final Cluster cluster = getCluster().getSelectedItem();
             updateArbiterAvailability();
+            updateDefaults();
             AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery<>(new AsyncCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean returnValue) {
