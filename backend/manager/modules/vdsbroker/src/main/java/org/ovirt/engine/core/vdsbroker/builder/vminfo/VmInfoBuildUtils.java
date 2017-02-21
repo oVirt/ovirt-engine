@@ -338,16 +338,19 @@ public class VmInfoBuildUtils {
         return null;
     }
 
-    void addFloppyDetails(VmDevice vmDevice, Map<String, Object> struct) {
+    Map<String, Object> buildFloppyDetails(VmDevice vmDevice) {
+        Map<String, Object> struct = new HashMap<>();
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
         struct.put(VdsProperties.Index, "0"); // IDE slot 2 is reserved by VDSM to CDROM
         struct.put(VdsProperties.INTERFACE, VdsProperties.Fdc);
         struct.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getReadOnly()));
         struct.put(VdsProperties.Shareable, Boolean.FALSE.toString());
+        return struct;
     }
 
-    void addCdDetails(VmDevice vmDevice, Map<String, Object> struct, VM vm) {
+    Map<String, Object> buildCdDetails(VmDevice vmDevice, VM vm) {
+        Map<String, Object> struct = new HashMap<>();
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
 
@@ -367,6 +370,7 @@ public class VmInfoBuildUtils {
 
         struct.put(VdsProperties.ReadOnly, Boolean.TRUE.toString());
         struct.put(VdsProperties.Shareable, Boolean.FALSE.toString());
+        return struct;
     }
 
     void setVdsPropertiesFromSpecParams(Map<String, Object> specParams, Map<String, Object> struct) {

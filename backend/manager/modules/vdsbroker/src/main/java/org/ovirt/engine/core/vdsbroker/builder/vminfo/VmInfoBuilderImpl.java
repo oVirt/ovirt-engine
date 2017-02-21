@@ -154,12 +154,10 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     @Override
     public void buildVmCD() {
-        Map<String, Object> struct;
         boolean hasPayload = vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.CDROM;
         // check if we have payload CD
         if (hasPayload) {
-            struct = new HashMap<>();
-            vmInfoBuildUtils.addCdDetails(vm.getVmPayload(), struct, vm);
+            Map<String, Object> struct = vmInfoBuildUtils.buildCdDetails(vm.getVmPayload(), vm);
             addDevice(struct, vm.getVmPayload(), "");
         }
         // check first if CD was given as a RunOnce parameter
@@ -177,8 +175,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                             null,
                             null,
                             null);
-            struct = new HashMap<>();
-            vmInfoBuildUtils.addCdDetails(vmDevice, struct, vm);
+            Map<String, Object> struct = vmInfoBuildUtils.buildCdDetails(vmDevice, vm);
             addDevice(struct, vmDevice, vm.getCdPath());
         } else {
             // get vm device for this CD from DB
@@ -197,9 +194,8 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                 if (VmPayload.isPayload(vmDevice.getSpecParams())) {
                     continue;
                 }
-                struct = new HashMap<>();
                 String cdPath = vm.getCdPath();
-                vmInfoBuildUtils.addCdDetails(vmDevice, struct, vm);
+                Map<String, Object> struct = vmInfoBuildUtils.buildCdDetails(vmDevice, vm);
                 vmInfoBuildUtils.addAddress(vmDevice, struct);
                 addDevice(struct, vmDevice, cdPath == null ? "" : cdPath);
             }
@@ -212,8 +208,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         // check if we have payload Floppy
         boolean hasPayload = vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.FLOPPY;
         if (hasPayload) {
-            Map<String, Object> struct = new HashMap<>();
-            vmInfoBuildUtils.addFloppyDetails(vm.getVmPayload(), struct);
+            Map<String, Object>struct = vmInfoBuildUtils.buildFloppyDetails(vm.getVmPayload());
             addDevice(struct, vm.getVmPayload(), "");
         }
         // check first if Floppy was given as a parameter
@@ -231,8 +226,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                             null,
                             null,
                             null);
-            Map<String, Object> struct = new HashMap<>();
-            vmInfoBuildUtils.addFloppyDetails(vmDevice, struct);
+            Map<String, Object> struct = vmInfoBuildUtils.buildFloppyDetails(vmDevice);
             addDevice(struct, vmDevice, vm.getFloppyPath());
         } else {
             // get vm device for this Floppy from DB
@@ -256,9 +250,8 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                 if (VmPayload.isPayload(vmDevice.getSpecParams())) {
                     continue;
                 }
-                Map<String, Object> struct = new HashMap<>();
                 String file = vm.getFloppyPath();
-                vmInfoBuildUtils.addFloppyDetails(vmDevice, struct);
+                Map<String, Object> struct = vmInfoBuildUtils.buildFloppyDetails(vmDevice);
                 addDevice(struct, vmDevice, file);
             }
         }
@@ -536,8 +529,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                         null,
                         null,
                         null);
-        Map<String, Object> struct = new HashMap<>();
-        vmInfoBuildUtils.addFloppyDetails(vmDevice, struct);
+        Map<String, Object>struct = vmInfoBuildUtils.buildFloppyDetails(vmDevice);
         addDevice(struct, vmDevice, vm.getFloppyPath());
     }
 
@@ -564,8 +556,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                         null,
                         null,
                         null);
-        Map<String, Object> struct = new HashMap<>();
-        vmInfoBuildUtils.addCdDetails(vmDevice, struct, vm);
+        Map<String, Object> struct = vmInfoBuildUtils.buildCdDetails(vmDevice, vm);
         addDevice(struct, vmDevice, "");
     }
 
