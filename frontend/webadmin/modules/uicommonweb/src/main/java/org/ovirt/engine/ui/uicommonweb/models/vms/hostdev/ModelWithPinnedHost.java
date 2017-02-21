@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.hostdev;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -41,7 +42,7 @@ public class ModelWithPinnedHost extends Model {
         AsyncDataProvider.getInstance().getHostListByClusterId(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
             @Override
             public void onSuccess(List<VDS> hosts) {
-                getPinnedHost().setItems(hosts);
+                getPinnedHost().setItems(filterHostDevicePassthroughCapableHosts(hosts));
                 stopProgress();
                 selectCurrentPinnedHost();
             }
@@ -53,5 +54,14 @@ public class ModelWithPinnedHost extends Model {
         if (host != null) {
             getPinnedHost().setSelectedItem(host);
         }
+    }
+
+    private Collection<VDS> filterHostDevicePassthroughCapableHosts(Collection<VDS> hosts) {
+        return Linq.where(hosts, new Linq.IPredicate<VDS>() {
+            @Override
+            public boolean match(VDS host) {
+                return host.isHostDevicePassthroughEnabled();
+            }
+        });
     }
 }
