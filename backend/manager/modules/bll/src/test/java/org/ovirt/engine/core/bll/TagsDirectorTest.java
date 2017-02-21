@@ -5,13 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.compat.Guid;
@@ -38,11 +34,11 @@ public class TagsDirectorTest {
     @Mock
     private TagDao tagDao;
 
+    @Mock
+    private BackendInternal backendInternal;
+
     @Before
     public void setup() {
-        when(tagDao.getAllForParent(any(Guid.class))).thenReturn(Collections.emptyList());
-        doReturn(tagDao).when(tagsDirector).getTagDao();
-        doNothing().when(tagsDirector).updateTagInBackend(any(Tags.class));
         tagsDirector.init();
     }
 
