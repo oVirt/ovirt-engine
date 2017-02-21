@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
@@ -16,9 +15,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -32,7 +29,6 @@ public class HostValidator {
     private VdsStaticDao hostStaticDao;
     private VDS host;
     private HostedEngineHelper hostedEngineHelper;
-    private ClusterDao clusterDao;
 
     private ValidationResult validateStatus(VDSStatus hostStatus) {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
@@ -46,7 +42,6 @@ public class HostValidator {
         this.hostStaticDao = dbFacade.getVdsStaticDao();
         this.host = host;
         this.hostedEngineHelper = hostedEngineHelper;
-        this.clusterDao = dbFacade.getClusterDao();
     }
 
     public HostValidator(VDS host) {
@@ -173,14 +168,7 @@ public class HostValidator {
         if (heConfig == null) {
             return ValidationResult.VALID;
         }
-        final Cluster cluster = clusterDao.get(host.getClusterId());
-        if (cluster.getCompatibilityVersion().less(Version.v4_0)
-                && heConfig.getDeployAction() != HostedEngineDeployConfiguration.Action.NONE) {
-            return new ValidationResult(
-                    EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DEPLOYMENT_UNSUPPORTED,
-                    "$deployAction " + heConfig.getDeployAction().name().toLowerCase(),
-                    "$clusterLevel " + cluster.getCompatibilityVersion());
-        }
+
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE)
                 .when(heConfig.getDeployAction() == HostedEngineDeployConfiguration.Action.DEPLOY
                         && !hostedEngineHelper.isVmManaged());
