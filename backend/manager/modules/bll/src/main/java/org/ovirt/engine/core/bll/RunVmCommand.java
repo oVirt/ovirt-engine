@@ -128,8 +128,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         super.init();
         setStoragePoolId(getVm().getStoragePoolId());
-        // Load payload from Database (only if none was sent via the parameters)
-        loadPayloadDevice();
+        loadPayload();
         needsHostDevices = hostDeviceManager.checkVmNeedsDirectPassthrough(getVm());
         loadVmInit();
         fetchVmDisksFromDb();
@@ -746,26 +745,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return getVm().getVmPayload() != null && getVm().getVmPayload().getDeviceType().equals(deviceType);
     }
 
-    protected void loadPayloadDevice() {
-        VmPayload payload = getVmPayloadByDeviceType(VmDeviceType.CDROM);
-        if (payload != null) {
-            getVm().setVmPayload(payload);
-        } else {
-            getVm().setVmPayload(getVmPayloadByDeviceType(VmDeviceType.FLOPPY));
-        }
-    }
-
-    protected VmPayload getVmPayloadByDeviceType(VmDeviceType deviceType) {
-        List<VmDevice> vmDevices = vmDeviceDao
-                .getVmDeviceByVmIdTypeAndDevice(getVm().getId(),
-                        VmDeviceGeneralType.DISK,
-                        deviceType.getName());
-        for (VmDevice vmDevice : vmDevices) {
-            if (vmDevice.isManaged() && VmPayload.isPayload(vmDevice.getSpecParams())) {
-                return new VmPayload(vmDevice);
+    protected void loadPayload() {
+        List<VmDevice> disks = vmDeviceDao.getVmDeviceByVmIdAndType(getVm().getId(), VmDeviceGeneralType.DISK);
+        for (VmDevice disk : disks) {
+            if (disk.isManaged() && VmPayload.isPayload(disk.getSpecParams())) {
+                getVm().setVmPayload(new VmPayload(disk));
+                break;
             }
         }
-        return null;
     }
 
     protected void fetchVmDisksFromDb() {

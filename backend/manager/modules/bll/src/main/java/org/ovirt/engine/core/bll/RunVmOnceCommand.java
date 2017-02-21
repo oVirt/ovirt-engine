@@ -43,7 +43,6 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         }
 
         super.init();
-        loadPayload();
         if (getParameters().getCustomCpuName() != null) {
             getVm().setCpuName(getParameters().getCustomCpuName());
         }
@@ -96,13 +95,12 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         return true;
     }
 
-    private void loadPayload() {
+    @Override
+    protected void loadPayload() {
         List<VmDevice> disks = vmDeviceDao.getVmDeviceByVmIdAndType(getParameters().getVmId(), VmDeviceGeneralType.DISK);
-
         for (VmDevice disk : disks) {
             if (VmPayload.isPayload(disk.getSpecParams())) {
-                VmPayload payload = new VmPayload(disk);
-                getVm().setVmPayload(payload);
+                getVm().setVmPayload(new VmPayload(disk));
                 break;
             }
         }
