@@ -10,16 +10,13 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -40,17 +37,6 @@ public class TagsDirectorTest {
 
     @Mock
     private TagDao tagDao;
-
-    @BeforeClass
-    public static void beforeClass() {
-        System.setProperty("jboss.server.log.dir", "/tmp");
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        File f = new File("/tmp/engine.log");
-        f.delete();
-    }
 
     @Before
     public void setup() {
