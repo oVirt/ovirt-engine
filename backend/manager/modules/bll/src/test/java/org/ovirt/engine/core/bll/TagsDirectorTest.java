@@ -336,6 +336,7 @@ public class TagsDirectorTest {
         assertEquals(tag2.getTagId(), changedTag.getParentId());
     }
 
+    @Test
     public void testDirectDescetor() {
         Tags tag1 = createTag("tag1", "desc1");
         Tags tag2 = createTag("tag2", "desc2");
