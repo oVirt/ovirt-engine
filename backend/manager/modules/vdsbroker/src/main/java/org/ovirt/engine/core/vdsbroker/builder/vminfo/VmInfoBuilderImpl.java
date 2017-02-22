@@ -569,38 +569,18 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     @Override
     public void buildVmMemoryBalloon() {
-        if (vm.isRunOnce() && vm.isBalloonEnabled()) {
-            Map<String, Object> specParams = new HashMap<>();
-            specParams.put(VdsProperties.Model, VdsProperties.Virtio);
-            VmDevice vmDevice =
-                    new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
-                            VmDeviceGeneralType.BALLOON,
-                            VmDeviceType.MEMBALLOON.getName(),
-                            "",
-                            specParams,
-                            true,
-                            true,
-                            true,
-                            "",
-                            null,
-                            null,
-                            null);
-            addMemBalloonDevice(vmDevice);
-        } else {
-            // get vm device for this Balloon from DB
-            List<VmDevice> vmDevices =
-                    vmDeviceDao
-                            .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                    VmDeviceGeneralType.BALLOON,
-                                    VmDeviceType.MEMBALLOON.getName());
-            for (VmDevice vmDevice : vmDevices) {
-                // skip unamanged devices (handled separtely)
-                if (!vmDevice.isManaged()) {
-                    continue;
-                }
-                addMemBalloonDevice(vmDevice);
-                break; // only one memory balloon should exist
+        // get vm device for this Balloon from DB
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(),
+                VmDeviceGeneralType.BALLOON,
+                VmDeviceType.MEMBALLOON.getName());
+        for (VmDevice vmDevice : vmDevices) {
+            // skip unamanged devices (handled separtely)
+            if (!vmDevice.isManaged()) {
+                continue;
             }
+            addMemBalloonDevice(vmDevice);
+            break; // only one memory balloon should exist
         }
     }
 

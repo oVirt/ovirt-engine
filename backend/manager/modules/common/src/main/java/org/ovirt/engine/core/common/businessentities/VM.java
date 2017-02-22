@@ -28,8 +28,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     @EditableVmField
     private VmPayload vmPayload;
 
-    private boolean balloonEnabled;
-
     @Valid
     private List<Snapshot> snapshots;
 
@@ -1385,7 +1383,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         long temp;
         temp = (long)_actualDiskWithSnapthotsSize;
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + (balloonEnabled ? 1231 : 1237);
         result = prime * result + ((cdPath == null) ? 0 : cdPath.hashCode());
         result = prime * result + ((configured == null) ? 0 : configured.hashCode());
         result = prime * result + ((diskMap == null) ? 0 : diskMap.hashCode());
@@ -1578,14 +1575,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     public void setCpuPinning(String cpuPinning) {
         vmStatic.setCpuPinning(cpuPinning);
-    }
-
-    public boolean isBalloonEnabled() {
-        return balloonEnabled;
-    }
-
-    public void setBalloonEnabled(boolean isBallonEnabled) {
-        balloonEnabled = isBallonEnabled;
     }
 
     public String getOvfVersion() {

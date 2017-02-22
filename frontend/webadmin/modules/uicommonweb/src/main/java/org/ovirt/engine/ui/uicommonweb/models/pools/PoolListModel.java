@@ -450,7 +450,6 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
 
         VM vm = buildVmOnSave(model);
         vm.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
-        vm.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
 
         vm.setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
         vm.setStateless(false);

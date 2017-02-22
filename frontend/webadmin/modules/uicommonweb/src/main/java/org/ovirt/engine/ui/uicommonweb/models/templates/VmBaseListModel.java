@@ -325,8 +325,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         // Save changes.
         buildVmOnSave(model, getcurrentVm());
 
-        getcurrentVm().setBalloonEnabled(balloonEnabled(model));
-
         getcurrentVm().setCpuPinning(model.getCpuPinning().getEntity());
 
         getcurrentVm().setUseHostCpuFlags(model.getHostCpu().getEntity());
