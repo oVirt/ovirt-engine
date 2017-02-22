@@ -901,7 +901,9 @@ public abstract class AbstractDiskModel extends DiskModel {
         } else {
             getIsReadOnly().setIsChangeable(isEditEnabled());
         }
-        getIsReadOnly().setEntity(getIsNew() ? Boolean.FALSE : getDisk().getReadOnly());
+        if (!getIsNew()) {
+            getIsReadOnly().setEntity(getDisk().getReadOnly());
+        }
     }
 
     protected void updateWipeAfterDeleteChangeability() {
