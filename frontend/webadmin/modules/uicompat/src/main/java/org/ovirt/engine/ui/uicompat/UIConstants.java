@@ -2055,5 +2055,7 @@ public interface UIConstants extends Constants {
 
     String noGeoRepSessionForGlusterVolume();
 
+    String hcAddBrickWarning();
+
 }
 
