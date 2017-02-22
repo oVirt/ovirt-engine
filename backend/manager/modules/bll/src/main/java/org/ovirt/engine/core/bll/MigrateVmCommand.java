@@ -434,7 +434,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     /**
      * Note: Even if there is a QoS associated with migrational network, it may not contain neither
-     * {@link HostNetworkQos#outAverageRealtime} nor {@link HostNetworkQos#outAverageUpperlimit} property.
+     * {@link HostNetworkQos#getOutAverageRealtime()} nor {@link HostNetworkQos#getOutAverageUpperlimit()} property.
      * @return `null` if it can't be obtained, value in Mbps otherwise
      */
     private Integer getQosBandwidth(Guid clusterId) {
