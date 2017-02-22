@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -85,8 +86,9 @@ public class CommandCallbacksPoller implements BackendService {
 
             Guid cmdId = entry.getKey();
             CallbackTiming callbackTiming = entry.getValue();
-
             CommandEntity commandEntity = commandsRepository.getCommandEntity(cmdId);
+            CorrelationIdTracker.setCorrelationId(commandEntity != null
+                    ? commandEntity.getCommandParameters().getCorrelationId() : null);
             if (commandEntity != null && updateCommandWaitingForEvent(commandEntity, callbackTiming)) {
                 continue;
             } else {
@@ -148,7 +150,7 @@ public class CommandCallbacksPoller implements BackendService {
                 }
             }
         }
-
+        CorrelationIdTracker.setCorrelationId(null);
         commandsRepository.markExpiredCommandsAsFailure();
     }
 
