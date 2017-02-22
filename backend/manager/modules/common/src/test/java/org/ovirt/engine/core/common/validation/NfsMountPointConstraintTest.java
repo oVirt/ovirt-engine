@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class NFSMountPointConstraintTest {
+public class NfsMountPointConstraintTest {
     @Test
     public void isValid() {
         assertTrue(new NfsMountPointConstraint().isValid("192.168.0.1:/tmp/kakukk", null));
