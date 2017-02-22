@@ -5,12 +5,12 @@
     xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.errata">
 
     <g:LayoutPanel>
-        <g:layer top="0px" height="28px">
+        <g:layer top="0px" height="32px">
             <g:FlowPanel>
                 <p:ErrataFilterPanel ui:field="errataFilterPanel" />
             </g:FlowPanel>
         </g:layer>
-        <g:layer top="28px" height="100%">
+        <g:layer top="32px" height="100%">
             <g:ScrollPanel ui:field="scrollPanel">
                 <e:EntityModelCellTable ui:field="errataTable" />
             </g:ScrollPanel>

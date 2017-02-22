@@ -6,18 +6,18 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.HasColumns;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractIconTypeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.AbstractErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ErrataFilterValue;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.errata.ErrataFilterPanel;
 
@@ -27,7 +27,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
@@ -54,7 +54,6 @@ public class ErrataTableView extends ResizeComposite {
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
-    private static final ApplicationResources resources = AssetProvider.getResources();
 
     @UiField(provided=true)
     EntityModelCellTable<AbstractErrataListModel> errataTable;
@@ -144,17 +143,20 @@ public class ErrataTableView extends ResizeComposite {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void initErrataGrid(HasColumns grid) {
         grid.enableColumnResizing();
-        AbstractImageResourceColumn<Erratum> errataTypeColumn = new AbstractImageResourceColumn<Erratum>() {
+        AbstractIconTypeColumn<Erratum> errataTypeColumn = new AbstractIconTypeColumn<Erratum>() {
             @Override
-            public ImageResource getValue(Erratum erratum) {
+            public IconType getValue(Erratum erratum) {
                 if (erratum.getType() == ErrataType.BUGFIX) {
-                    return resources.bug();
+                    getCell().setColor(SafeHtmlUtils.fromTrustedString(ErrataType.BUGFIX.getColor()));
+                    return IconType.BUG;
                 }
                 else if (erratum.getType() == ErrataType.ENHANCEMENT) {
-                    return resources.enhancement();
+                    getCell().setColor(SafeHtmlUtils.fromTrustedString(ErrataType.ENHANCEMENT.getColor()));
+                    return IconType.PLUS_SQUARE;
                 }
                 else if (erratum.getType() == ErrataType.SECURITY) {
-                    return resources.security();
+                    getCell().setColor(SafeHtmlUtils.fromTrustedString(ErrataType.SECURITY.getColor()));
+                    return IconType.WARNING;
                 }
                 return null;
             }

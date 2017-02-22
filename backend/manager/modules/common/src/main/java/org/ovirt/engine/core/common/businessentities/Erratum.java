@@ -158,14 +158,16 @@ public class Erratum implements IVdcQueryable, BusinessEntity<String> {
     }
 
     public enum ErrataType {
-        BUGFIX("bugfix"), //$NON-NLS-1$
-        SECURITY("security"), //$NON-NLS-1$
-        ENHANCEMENT("enhancement"); //$NON-NLS-1$
+        BUGFIX("bugfix", "ORANGERED"), // $NON-NLS-1$ $NON-NLS-2$
+        SECURITY("security", "DARKORANGE"), //$NON-NLS-1$ $NON-NLS-2$
+        ENHANCEMENT("enhancement", "BLUE"); //$NON-NLS-1$ $NON-NLS-2$
 
         private String description;
+        private String color;
 
-        private ErrataType(String description) {
+        private ErrataType(String description, String color) {
             this.description = description;
+            this.color = color;
         }
 
         public static ErrataType byDescription(String description) {
@@ -180,6 +182,10 @@ public class Erratum implements IVdcQueryable, BusinessEntity<String> {
 
         public String getDescription() {
             return description;
+        }
+
+        public String getColor() {
+            return color;
         }
     }
 

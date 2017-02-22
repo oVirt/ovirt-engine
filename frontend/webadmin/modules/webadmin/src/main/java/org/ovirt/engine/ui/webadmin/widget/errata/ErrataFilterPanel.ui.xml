@@ -6,31 +6,10 @@
     xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
-
-    <ui:style>
-    .security, .bug, .enhancement{
-        position: relative;
-        left: 37px;
-        top: -1px;
-    }
-    .securityCheckbox label, .bugCheckbox label, .enhancementCheckbox label {
-        padding-left: 25px;
-    }
-
-    .securityCheckbox input, .bugCheckbox input, .enhancementCheckbox input {
-        position: relative;
-        top: 3px;
-    }
-    </ui:style>
-
-    <g:FlowPanel>
-        <g:Image ui:field="securityCheckboxImage" resource="{resources.security}" addStyleNames="{style.security}"/>
-        <g:CheckBox ui:field="securityCheckbox" addStyleNames="{style.securityCheckbox}"/>
-        <g:Image ui:field="bugCheckboxImage" resource="{resources.bug}" addStyleNames="{style.bug}"/>
-        <g:CheckBox ui:field="bugCheckbox" addStyleNames="{style.bugCheckbox}"/>
-        <g:Image ui:field="enhancementCheckboxImage" resource="{resources.enhancement}" addStyleNames="{style.enhancement}"/>
-        <g:CheckBox ui:field="enhancementCheckbox" addStyleNames="{style.enhancementCheckbox}"/>
-    </g:FlowPanel>
+    <b:ButtonGroup dataToggle="BUTTONS">
+        <b:CheckBoxButton ui:field="securityCheckbox" icon="WARNING" size="LARGE" />
+        <b:CheckBoxButton ui:field="bugCheckbox" icon="BUG" size="LARGE" />
+        <b:CheckBoxButton ui:field="enhancementCheckbox" icon="PLUS_SQUARE" size="LARGE"/>
+    </b:ButtonGroup>
 
 </ui:UiBinder>

@@ -1,27 +1,28 @@
 package org.ovirt.engine.ui.webadmin.widget.errata;
 
+import org.gwtbootstrap3.client.ui.ButtonGroup;
+import org.gwtbootstrap3.client.ui.CheckBoxButton;
 import org.ovirt.engine.ui.uicommonweb.models.ErrataFilterValue;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
 
 /**
- * Composite panel that renders three checkboxes that allow the user to (client-side) filter
+ * Composite panel that renders three check box buttons that allow the user to (client-side) filter
  * a grid of errata by errata Type.
  */
 public class ErrataFilterPanel extends Composite {
 
-    interface ViewUiBinder extends UiBinder<FlowPanel, ErrataFilterPanel> {
+    interface ViewUiBinder extends UiBinder<ButtonGroup, ErrataFilterPanel> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -32,22 +33,13 @@ public class ErrataFilterPanel extends Composite {
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
-    CheckBox securityCheckbox;
+    CheckBoxButton securityCheckbox;
 
     @UiField
-    CheckBox bugCheckbox;
+    CheckBoxButton bugCheckbox;
 
     @UiField
-    CheckBox enhancementCheckbox;
-
-    @UiField
-    Image securityCheckboxImage;
-
-    @UiField
-    Image bugCheckboxImage;
-
-    @UiField
-    Image enhancementCheckboxImage;
+    CheckBoxButton enhancementCheckbox;
 
     public ErrataFilterPanel() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -61,9 +53,9 @@ public class ErrataFilterPanel extends Composite {
     }
 
     public void init(boolean security, boolean bugs, boolean enhancements) {
-        securityCheckbox.setValue(security);
-        bugCheckbox.setValue(bugs);
-        enhancementCheckbox.setValue(enhancements);
+        securityCheckbox.setActive(security);
+        bugCheckbox.setActive(bugs);
+        enhancementCheckbox.setActive(enhancements);
         showPanelItems(true);
     }
 
@@ -71,9 +63,6 @@ public class ErrataFilterPanel extends Composite {
         securityCheckbox.setVisible(show);
         bugCheckbox.setVisible(show);
         enhancementCheckbox.setVisible(show);
-        enhancementCheckboxImage.setVisible(show);
-        bugCheckboxImage.setVisible(show);
-        securityCheckboxImage.setVisible(show);
     }
 
     public void addValueChangeHandler(final ValueChangeHandler<ErrataFilterValue> handler) {
@@ -82,12 +71,18 @@ public class ErrataFilterPanel extends Composite {
 
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
+                // Do this deferred to give the javascript time to activate/deactivate the buttons.
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
-                // one of the checkboxes changed, but get all three checkbox values for the event
-                ErrataFilterValue value = new ErrataFilterValue(securityCheckbox.getValue(),
-                        bugCheckbox.getValue(), enhancementCheckbox.getValue());
+                    @Override
+                    public void execute() {
+                        // one of the checkboxes changed, but get all three checkbox values for the event
+                        ErrataFilterValue value = new ErrataFilterValue(securityCheckbox.isActive(),
+                                bugCheckbox.isActive(), enhancementCheckbox.isActive());
 
-                handler.onValueChange(new ValueChangeEvent<ErrataFilterValue>(value) {});
+                        handler.onValueChange(new ValueChangeEvent<ErrataFilterValue>(value) {});
+                    }
+                });
             }
 
         };
@@ -98,9 +93,9 @@ public class ErrataFilterPanel extends Composite {
     }
 
     private void localize() {
-        securityCheckbox.setText(constants.security());
-        bugCheckbox.setText(constants.bugs());
-        enhancementCheckbox.setText(constants.enhancements());
+        securityCheckbox.setHTML(constants.security());
+        bugCheckbox.setHTML(constants.bugs());
+        enhancementCheckbox.setHTML(constants.enhancements());
     }
 
 }

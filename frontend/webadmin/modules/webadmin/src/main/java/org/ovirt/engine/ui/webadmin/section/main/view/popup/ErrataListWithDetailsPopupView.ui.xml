@@ -18,17 +18,22 @@
         }
 
         .errataDetailPanel {
-            overflow: scroll;
+            overflow: auto;
         }
 
         .progressDotsImage {
             margin: 10px;
         }
+
+        .splitLayout {
+            height: 520px;
+            width: 100%;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="870px" height="650px">
         <d:content>
-            <g:SplitLayoutPanel ui:field="splitLayoutPanel">
+            <g:SplitLayoutPanel ui:field="splitLayoutPanel" addStyleNames="{style.splitLayout}">
                 <g:center>
                     <t:ErrataTableView ui:field="errataTableView"/>
                 </g:center>
