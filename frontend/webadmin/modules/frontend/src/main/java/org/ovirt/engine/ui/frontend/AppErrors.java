@@ -2475,6 +2475,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__HOST_DEVICE_UNAVAILABLE();
 
+    String VAR__DETAIL__WRONG_HOST_FOR_REQUESTED_HOST_DEVICES();
+
     String SCHEDULING_NO_HOSTS();
 
     String POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS();
