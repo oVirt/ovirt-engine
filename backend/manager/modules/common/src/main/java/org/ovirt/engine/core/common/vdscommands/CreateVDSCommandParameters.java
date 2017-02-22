@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -15,6 +17,7 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private InitializationType initializationType;
     private VmPayload vmPayload;
     private String hibernationVolHandle;
+    private Map<Guid, String> passthroughVnicToVfMap;
 
     public CreateVDSCommandParameters() {
     }
@@ -67,6 +70,14 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     public void setHibernationVolHandle(String value) {
         this.hibernationVolHandle = value;
+    }
+
+    public Map<Guid, String> getPassthroughVnicToVfMap() {
+        return passthroughVnicToVfMap;
+    }
+
+    public void setPassthroughVnicToVfMap(Map<Guid, String> passthroughVnicToVfMap) {
+        this.passthroughVnicToVfMap = passthroughVnicToVfMap;
     }
 
     @Override

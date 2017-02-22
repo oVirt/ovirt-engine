@@ -532,8 +532,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         initParametersForExternalNetworks();
 
-        initParametersForPassthroughVnics();
-
         VMStatus vmStatus = (VMStatus) getVdsBroker()
                 .runAsyncVdsCommand(VDSCommandType.Create, buildCreateVmParameters(), this).getReturnValue();
 
@@ -560,6 +558,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         parameters.setRunInUnknownStatus(getParameters().isRunInUnknownStatus());
         parameters.setVmPayload(vmPayload);
         parameters.setHibernationVolHandle(getMemoryFromActiveSnapshot());
+        parameters.setPassthroughVnicToVfMap(flushPassthroughVnicToVfMap());
         if (initializationType == InitializationType.Sysprep
                 && osRepository.isWindows(getVm().getVmOsId())
                 && (getVm().getFloppyPath() == null || "".equals(getVm().getFloppyPath()))) {
@@ -594,9 +593,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
-    protected void initParametersForPassthroughVnics() {
-        getVm().setPassthroughVnicToVfMap(getVnicToVfMap(getVdsId()));
+    protected Map<Guid, String> flushPassthroughVnicToVfMap() {
+        Map<Guid, String> passthroughVnicToVf = getVnicToVfMap(getVdsId());
         vfScheduler.cleanVmData(getVmId());
+        return passthroughVnicToVf;
     }
 
     @Override

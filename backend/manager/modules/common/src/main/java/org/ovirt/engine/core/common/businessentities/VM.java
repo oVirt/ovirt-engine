@@ -35,8 +35,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     private Map<VmDeviceId, Map<String, String>> runtimeDeviceCustomProperties;
 
-    private Map<Guid, String> passthroughVnicToVfMap;
-
     private ArchitectureType clusterArch;
 
     private boolean nextRunConfigurationExists;
@@ -80,14 +78,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.runtimeDeviceCustomProperties = runtimeDeviceCustomProperties;
     }
 
-    public Map<Guid, String> getPassthroughVnicToVfMap() {
-        return passthroughVnicToVfMap;
-    }
-
-    public void setPassthroughVnicToVfMap(Map<Guid, String> passthroughVnicToVfMap) {
-        this.passthroughVnicToVfMap = passthroughVnicToVfMap;
-    }
-
     public VM() {
         this(new VmStatic(), new VmDynamic(), new VmStatistics());
     }
@@ -103,7 +93,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.setDiskSize(0);
         snapshots = new ArrayList<>();
         runtimeDeviceCustomProperties = new HashMap<>();
-        passthroughVnicToVfMap = new HashMap<>();
         vmtCreationDate = new Date(0);
         storagePoolId = Guid.Empty;
     }

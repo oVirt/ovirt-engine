@@ -1239,7 +1239,7 @@ public class LibvirtVmXmlBuilder {
                 writer.writeEndElement();
                 writer.writeEndElement();
             }
-            String vfDeviceName = vm.getPassthroughVnicToVfMap().get(nic.getId());
+//            String vfDeviceName = vm.getPassthroughVnicToVfMap().get(nic.getId());
 //            writer.writeStartElement("$SOURCE:" + vfDeviceName+"$");
 //            writer.writeEndElement();
             break;

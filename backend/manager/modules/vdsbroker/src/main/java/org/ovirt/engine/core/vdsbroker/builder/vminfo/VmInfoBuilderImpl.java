@@ -397,7 +397,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     }
 
     @Override
-    public void buildVmNetworkInterfaces() {
+    public void buildVmNetworkInterfaces(Map<Guid, String> passthroughVnicToVfMap) {
         Map<VmDeviceId, VmDevice> devicesByDeviceId =
                 Entities.businessEntitiesById(
                         vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
@@ -426,7 +426,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                 }
 
                 if (vmInterface.isPassthrough()) {
-                    String vfDeviceName = vm.getPassthroughVnicToVfMap().get(vmInterface.getId());
+                    String vfDeviceName = passthroughVnicToVfMap.get(vmInterface.getId());
                     vmInfoBuildUtils.addNetworkVirtualFunctionProperties(struct,
                             vmInterface,
                             vmDevice,

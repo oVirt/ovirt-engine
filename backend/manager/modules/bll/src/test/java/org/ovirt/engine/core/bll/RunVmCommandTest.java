@@ -314,7 +314,7 @@ public class RunVmCommandTest extends BaseCommandTest {
 
         mockSuccessfulRunVmValidator();
         doNothing().when(command).initParametersForExternalNetworks();
-        doNothing().when(command).initParametersForPassthroughVnics();
+        doReturn(Collections.emptyMap()).when(command).flushPassthroughVnicToVfMap();
         mockSuccessfulSnapshotValidator();
         mockBackend();
     }

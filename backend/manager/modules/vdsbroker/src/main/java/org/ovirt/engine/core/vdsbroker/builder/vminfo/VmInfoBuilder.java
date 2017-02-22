@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.compat.Guid;
 
 public interface VmInfoBuilder {
     void buildVmProperties(String hibernationVolHandle);
@@ -30,7 +31,7 @@ public interface VmInfoBuilder {
 
     void buildVmDrives();
 
-    void buildVmNetworkInterfaces();
+    void buildVmNetworkInterfaces(Map<Guid, String> passthroughVnicToVfMap);
 
     void buildVmSoundDevices();
 
