@@ -47,7 +47,7 @@ CLEAR_JOB_STEPS=
 CLEAR_JOB_STEPS_AND_COMPENSATION=
 QUITE_MODE=
 TASKS_FIELDS="task_id,task_type,status,started_at,result,action_type as command_type,command_id,step_id,storage_pool_id as DC"
-COMMANDS_FIELDS="command_id,command_type,root_command_id,command_parameters,command_params_class,created_at,status,return_value,return_value_class,job_id,step_id,executed"
+COMMANDS_FIELDS="command_id,command_type,root_command_id,command_parameters,command_params_class,created_at,status,return_value,return_value_class,executed"
 
 usage() {
     cat << __EOF__
