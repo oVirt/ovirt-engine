@@ -400,6 +400,15 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @OvfExportOnlyField(valueToIgnore = "MIGRATABLE", exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     private MigrationSupport migrationSupport;
 
+    /**
+     * Host with ID's contained in this list will be preferred by the scheduler on VM run attempts.
+     * If none of them are available the VM may be run on a host not contained in this list.
+     *
+     * In the case of usage for direct host device passthrough, this list shall contain ID
+     * of exactly one host and that one will be used for all hostdev passthrough purposes
+     * - i.e. determining which host's devices are assigned to the VM and
+     * more strictly restraining the set of hosts available for scheduling.
+     */
     @CopyOnNewVersion
     @EditableVmField
     @EditableVmTemplateField
