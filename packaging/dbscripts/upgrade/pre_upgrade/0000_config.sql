@@ -38,6 +38,7 @@ select fn_db_rename_config_key('DefaultMtu', 'DefaultMTU', 'general');
 select fn_db_rename_config_key('ManagementNetwork', 'DefaultManagementNetwork', 'general');
 select fn_db_rename_config_key('FreeSpaceCriticalLowInGB','CriticalSpaceActionBlocker', 'general');
 select fn_db_rename_config_key('FreeSpaceLow', 'WarningLowSpaceIndicator', 'general');
+select fn_db_rename_config_key('ImageProxyURL', 'ImageProxyAddress', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
