@@ -287,11 +287,14 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
     }
 
     private void checkUpServerAndAddBricks() {
+
         if (getWindow() != null) {
             return;
         }
 
         final GlusterVolumeEntity volumeEntity = getEntity();
+
+        cancelConfirmation();
 
         if (volumeEntity == null) {
             return;
@@ -301,7 +304,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             @Override
             public void onSuccess(Boolean clusterHasUpHost) {
                 if (clusterHasUpHost) {
-                    addBricks(volumeEntity);
+                    preAddBricks(volumeEntity);
                 }
                 else {
                     ConfirmationModel model = new ConfirmationModel();
@@ -323,9 +326,52 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         }), volumeEntity.getClusterName());
     }
 
-    private void addBricks(GlusterVolumeEntity volumeEntity) {
-
+    private void preAddBricks(final GlusterVolumeEntity volumeEntity) {
+        if (volumeEntity == null) {
+            return;
+        }
         final VolumeBrickModel volumeBrickModel = new VolumeBrickModel();
+        setWindow(volumeBrickModel);
+
+        if (volumeEntity.getVolumeType().isReplicatedType()) {
+
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
+                @Override
+                public void onSuccess(Cluster cluster) {
+                    if (cluster.supportsGlusterService() && cluster.supportsVirtService()) {
+                        //in HC mode, show a warning that add bricks is not recommended
+                        ConfirmationModel model = new ConfirmationModel();
+                        setConfirmWindow(model);
+                        model.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());
+                        model.setMessage(ConstantsManager.getInstance()
+                                .getConstants().hcAddBrickWarning());
+                        model.setHelpTag(HelpTag.cannot_add_bricks);
+                        model.setHashName("cannot_add_bricks"); //$NON-NLS-1$
+
+                        UICommand yesCommand = new UICommand("AddBricks", VolumeBrickListModel.this); //$NON-NLS-1$
+                        yesCommand.setTitle(ConstantsManager.getInstance().getConstants().yes());
+                        model.getCommands().add(yesCommand);
+                        UICommand noCommand = new UICommand("CancelAll", VolumeBrickListModel.this); //$NON-NLS-1$
+                        noCommand.setTitle(ConstantsManager.getInstance().getConstants().no());
+                        noCommand.setIsCancel(true);
+                        noCommand.setIsDefault(true);
+                        model.getCommands().add(noCommand);
+
+                        return;
+                    } else {
+                        addBricks();
+                    }
+                }
+            }), volumeEntity.getClusterId());
+        } else {
+            addBricks();
+        }
+    }
+
+    private void addBricks() {
+
+        final VolumeBrickModel volumeBrickModel = (VolumeBrickModel)getWindow();
+        final GlusterVolumeEntity volumeEntity = getEntity();
 
         volumeBrickModel.getReplicaCount().setEntity(volumeEntity.getReplicaCount());
         volumeBrickModel.getReplicaCount().setIsChangeable(true);
@@ -339,8 +385,6 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         volumeBrickModel.setHelpTag(HelpTag.add_bricks);
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
         volumeBrickModel.getVolumeType().setEntity(volumeEntity.getVolumeType());
-
-        setWindow(volumeBrickModel);
 
         AsyncDataProvider.getInstance().getClusterById(volumeBrickModel.asyncQuery(new AsyncCallback<Cluster>() {
             @Override
@@ -1245,6 +1289,9 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         super.executeCommand(command);
         if (command.equals(getAddBricksCommand())) {
             checkUpServerAndAddBricks();
+        } else if (command.getName().equals("AddBricks")) { //$NON-NLS-1$
+            cancelConfirmation();
+            addBricks();
         } else if (command.getName().equals("OnAddBricks")) { //$NON-NLS-1$
             onAddBricks();
         } else if (command.getName().equals("OnAddBricksInternal")) { //$NON-NLS-1$
@@ -1284,6 +1331,9 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         } else if (command.equals(getBrickAdvancedDetailsCommand())) {
             showBrickAdvancedDetails();
         } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
+            setWindow(null);
+        } else if (command.getName().equals("CancelAll")) { //$NON-NLS-1$
+            cancelConfirmation();
             setWindow(null);
         }
 
