@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -37,9 +36,6 @@ public class HostValidator {
 
     @Inject
     private HostedEngineHelper hostedEngineHelper;
-
-    @Inject
-    private ClusterDao clusterDao;
 
     private VDS host;
 
