@@ -4,6 +4,14 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface CommonApplicationTemplates extends SafeHtmlTemplates {
+    /*
+     * NOTE TO DEVS
+     *
+     * This is NOT the place to put messages, you can put messages in either CommonApplicationConstants (if there are
+     * no variables in your message) or CommonApplicationMessages (if there are variables in your message). Templates
+     * are for creating formatting of your message which you then PASS to the template. No text in this file will get
+     * translated at all.
+     */
 
     // TODO this doesn't belong here
     public static final int TAB_BAR_HEIGHT = 24;
@@ -133,52 +141,6 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<p><hr size=\"2\" width=\"100%\"></p>")
     SafeHtml horizontalLine();
 
-    @Template("If ovirt-engine has the user's password connect automatically "
-            + "to the first running VM if there is one on User Portal login.")
-    SafeHtml connectAutomaticallyMessage();
-
-    @Template("Specify public key for SSH authentication. Used to access guest serial console.")
-    SafeHtml consolePublicKeyMessage();
-
     @Template("<p>{0}</p>")
     SafeHtml paragraph(String text);
-
-    @Template("Total number of vCPUs.<br/>Stands for number of<ul><li>sockets</li><li>cores per socket</li><li>threads per core</li></ul>")
-    SafeHtml numOfCpuCoresTooltip();
-
-    @Template("<i>Replace '&lthostname&gt' with the hostname of the Xen hypervisor in the libvirt URI. <br />" +
-            "Only SSH transport is allowed for Xen import and the connection has to be without password. <br /> <br />" +
-            "To disable SSH host key verification add 'no_verify' parameter to the URI, " +
-            "i.e.: xen+ssh://root@xen.example.com?<br>no_verify=1</i>")
-    SafeHtml xenUriInfo();
-
-    @Template("<i>Any valid libvirt URI format is allowed for KVM URI. <br />" +
-            "Examples: <br />" +
-            "qemu+tcp://&lthostname&gt/system <br />" +
-            "qemu+ssh://root@&lthostname&gt/path <br />" +
-            "Where '&lthostname&gt' is the host of the hypervisor. <br /> <br />" +
-            "Please see libvirt documentation for more information on libvirt URI formats and authentication.</i>")
-
-    SafeHtml kvmUriInfo();
-
-    @Template("This is not the entire kernel command line. Parameters listed below will be added to default kernel parameters.")
-    SafeHtml kernelCmdlineInfoIcon();
-
-    @Template("Enables or disables host's IOMMU, allowing PCI passthrough devices to be added to guests. Has no effect unless IOMMU is supported by the hardware and enabled in a firmware.")
-    SafeHtml kernelCmdlineIommuInfoIcon();
-
-    @Template("Enables or disables nested virtualization. Nested virtualization passes vmx/svm (hardware virtualization flag) to guest operating system. Requires vdsm 'nestedvt' hook.")
-    SafeHtml kernelCmdlineKvmNestedInfoIcon();
-
-    @Template("Enables or disables unsafe interrupt remapping. Should only be enabled if VMs with PCI passthrough devices cannot be started and 'dmesg' command indicates that it should be enabled (search for 'No interrupt remapping support.').")
-    SafeHtml kernelCmdlineUnsafeInterruptsInfoIcon();
-
-    @Template("Enables or disables reallocation of PCI bridge resources. Some firmware does not correctly handle SR-IOV devices, disallowing VF creation. Dynamic reallocation attempts to solve this problem. Does not help on unsupported hardware.")
-    SafeHtml kernelCmdlinePciReallocInfoIcon();
-
-    @Template("Upper bound of virtual machine memory up to which memory hot-plug can be performed.")
-    SafeHtml maxMemoryInfoIcon();
-
-    @Template("Depends on cluster version: <code>/dev/urandom</code> for 4.1 and higher, <code>/dev/random</code> for 4.0 and lower.")
-    SafeHtml vmUrandomInfoIcon();
 }

@@ -7,6 +7,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiConstructor;
 
 public class InfoIcon extends TooltippedIcon {
@@ -24,7 +25,12 @@ public class InfoIcon extends TooltippedIcon {
 
     private final InfoIconStyle style;
 
+
     @UiConstructor
+    public InfoIcon() {
+        this(SafeHtmlUtils.EMPTY_SAFE_HTML);
+    }
+
     public InfoIcon(SafeHtml text) {
         super(text, new Anchor());
         // We know getTooltipWidget() is an Anchor

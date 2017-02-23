@@ -591,6 +591,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("rngSourceRandom")
     public EntityModelRadioButtonEditor rngSourceUrandom;
 
+    @UiField
+    public InfoIcon rngSourceUrandomInfoIcon;
+
     @UiField(provided = true)
     @Path(value = "rngSourceHwrng.entity")
     @WithElementId("rngSourceHwrng")
@@ -1050,6 +1053,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         driver.initialize(this);
 
         initialize();
+        localizeSafeHtmlFields();
         populateTabMap();
     }
 
@@ -1533,6 +1537,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 setNumaInfoMsg(model.getNumaEnabled().getMessage());
             }
         });
+    }
+
+    private void localizeSafeHtmlFields() {
+        rngSourceUrandomInfoIcon.setText(SafeHtmlUtils.fromString(constants.vmUrandomInfoIcon()));
+        detachableMaxMemorySizeEditor.setExplanation(SafeHtmlUtils.fromString(constants.maxMemoryInfoIcon()));
     }
 
     private void setNumaInfoMsg(String message) {

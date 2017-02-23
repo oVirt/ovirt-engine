@@ -48,6 +48,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -321,13 +322,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         EnableableFormLabel xenUriLabel = new EnableableFormLabel();
         xenUriLabel.setText(constants.xenUri());
         xenUriWithInfo = new EntityModelWidgetWithInfo(xenUriLabel, xenUriEditor);
-        xenUriWithInfo.setExplanation(templates.xenUriInfo());
+        xenUriWithInfo.setExplanation(SafeHtmlUtils.fromString(constants.xenUriInfo()));
 
         kvmUriEditor = new StringEntityModelTextBoxOnlyEditor();
         EnableableFormLabel kvmUriLabel = new EnableableFormLabel();
         kvmUriLabel.setText(constants.kvmUri());
         kvmUriWithInfo = new EntityModelWidgetWithInfo(kvmUriLabel, kvmUriEditor);
-        kvmUriWithInfo.setExplanation(templates.kvmUriInfo());
+        kvmUriWithInfo.setExplanation(SafeHtmlUtils.fromString(constants.kvmUriInfo()));
         kvmRequiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         externalVms = new EntityModelCellTable<>(true, false, true);

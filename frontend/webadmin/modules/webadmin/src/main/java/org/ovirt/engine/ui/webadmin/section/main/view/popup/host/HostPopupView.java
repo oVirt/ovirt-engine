@@ -78,6 +78,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
@@ -391,21 +392,36 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Path("kernelCmdlineIommu.entity")
     EntityModelCheckBoxEditor kernelCmdlineIommu;
 
+    @UiField
+    InfoIcon kernelCmdlineIommuInfoIcon;
+
     @UiField(provided = true)
     @Path("kernelCmdlineKvmNested.entity")
     EntityModelCheckBoxEditor kernelCmdlineKvmNested;
 
+    @UiField
+    InfoIcon kernelCmdlineKvmNestedInfoIcon;
+
     @UiField(provided = true)
     @Path("kernelCmdlineUnsafeInterrupts.entity")
     EntityModelCheckBoxEditor kernelCmdlineUnsafeInterrupts;
+
+    @UiField
+    InfoIcon kernelCmdlineUnsafeInterruptsInfoIcon;
 
     @UiField(provided = true)
     @Path("kernelCmdlinePciRealloc.entity")
     EntityModelCheckBoxEditor kernelCmdlinePciRealloc;
 
     @UiField
+    InfoIcon kernelCmdlinePciReallocInfoIcon;
+
+    @UiField
     @Path("kernelCmdline.entity")
     StringEntityModelLabelEditor kernelCmdlineText;
+
+    @UiField
+    InfoIcon kernelCmdlineInfoIcon;
 
     @UiField
     @Ignore
@@ -605,6 +621,14 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         externalDiscoveredHostsEditor.setLabel(constants.discoveredHostsLabel());
         externalHostGroupsEditor.setLabel(constants.hostGroupsLabel());
         externalComputeResourceEditor.setLabel(constants.computeResourceLabel());
+
+        // Info icons
+        kernelCmdlineUnsafeInterruptsInfoIcon.setText(
+                SafeHtmlUtils.fromString(constants.kernelCmdlineUnsafeInterruptsInfoIcon()));
+        kernelCmdlineIommuInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineIommuInfoIcon()));
+        kernelCmdlineKvmNestedInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineKvmNestedInfoIcon()));
+        kernelCmdlinePciReallocInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlinePciReallocInfoIcon()));
+        kernelCmdlineInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineInfoIcon()));
     }
 
     private void applyModeCustomizations() {

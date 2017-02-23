@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
@@ -18,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -57,7 +57,6 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
     StringValueLabel monitorCount = new StringValueLabel();
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
-    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -116,7 +115,7 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
             }
         }));
         WidgetTooltip cpuInfoWithTooltip = new WidgetTooltip(cpuInfo);
-        cpuInfoWithTooltip.setHtml(templates.numOfCpuCoresTooltip());
+        cpuInfoWithTooltip.setHtml(SafeHtmlUtils.fromString(constants.numOfCpuCoresTooltip()));
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfoWithTooltip, 2, 1));
         formBuilder.addFormItem(new FormItem(constants.GuestCpuCount(), guestCpuCount, 3, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 4, 1));

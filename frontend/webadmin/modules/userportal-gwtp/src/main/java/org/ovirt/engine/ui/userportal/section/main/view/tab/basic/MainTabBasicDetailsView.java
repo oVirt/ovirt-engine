@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
-import org.ovirt.engine.ui.userportal.ApplicationTemplates;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
 import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.userportal.widget.basic.VmTypeImage;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -48,7 +49,7 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
         String basicInfoDetailsLink();
     }
 
-    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
     @Path("selectedItem.smallIconId")
@@ -134,7 +135,7 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     }
 
     private void initToolTips() {
-        numberOfCoresTooltip.setHtml(templates.numOfCpuCoresTooltip());
+        numberOfCoresTooltip.setHtml(SafeHtmlUtils.fromString(constants.numOfCpuCoresTooltip()));
     }
 
     @Override
