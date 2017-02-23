@@ -311,24 +311,12 @@ public class TagsDirectorTest {
         tagsDirector.addTag(tag4);
         // Emulates the REST API behavior of getting all the tags prior to updating
         ArrayList<Tags> tags = tagsDirector.getAllTags();
-        Tags tagToChange = null;
-        for (Tags tag : tags) {
-            if (tag.getTagName().equals("tag1")) {
-                tagToChange = tag;
-                break;
-            }
-        }
+        Tags tagToChange = tags.stream().filter(t -> t.getTagName().equals("tag1")).findFirst().orElse(null);
         tagToChange.setParentId(tag2.getTagId());
         tagsDirector.updateTag(tagToChange);
         // Emulates the REST API behavior of getting all the tags after updating
         tags = tagsDirector.getAllTags();
-        Tags changedTag = null;
-        for (Tags tag : tags) {
-            if (tag.getTagName().equals("tag1")) {
-                changedTag = tag;
-                break;
-            }
-        }
+        Tags changedTag = tags.stream().filter(t -> t.getTagName().equals("tag1")).findFirst().orElse(null);
         assertEquals(tag2.getTagId(), changedTag.getParentId());
     }
 
