@@ -53,6 +53,9 @@ public class VmPoolMapper {
         if (model.isSetStateful()) {
             entity.setStateful(model.isStateful());
         }
+        if (model.isSetAutoStorageSelect()) {
+            entity.setAutoStorageSelect(model.isAutoStorageSelect());
+        }
         return entity;
     }
 
@@ -107,6 +110,7 @@ public class VmPoolMapper {
         }
         model.setType(map(entity.getVmPoolType(), null));
         model.setStateful(entity.isStateful());
+        model.setAutoStorageSelect(entity.isAutoStorageSelect());
 
         return model;
     }
