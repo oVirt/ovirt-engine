@@ -5,7 +5,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 
 public interface VmInfoBuilder {
-    void buildVmProperties();
+    void buildVmProperties(String hibernationVolHandle);
 
     void buildVmNetworkCluster();
 

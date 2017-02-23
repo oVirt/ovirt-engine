@@ -79,7 +79,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     }
 
     private void buildVmData() {
-        builder.buildVmProperties();
+        builder.buildVmProperties(getParameters().getHibernationVolHandle());
         builder.buildVmVideoCards();
         builder.buildVmGraphicsDevices();
         builder.buildVmCD(getParameters().getVmPayload());

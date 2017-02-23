@@ -666,7 +666,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     }
 
     @Override
-    public void buildVmProperties() {
+    public void buildVmProperties(String hibernationVolHandle) {
         createInfo.put(VdsProperties.vm_guid, vm.getId().toString());
         createInfo.put(VdsProperties.vm_name, vm.getName());
         createInfo.put(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
@@ -728,9 +728,8 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             createInfo.put(VdsProperties.cpuShares,
                     String.valueOf(vm.getCpuShares()));
         }
-        if (!StringUtils.isEmpty(vm.getHibernationVolHandle())) {
-            createInfo.put(VdsProperties.hiberVolHandle,
-                    vm.getHibernationVolHandle());
+        if (!StringUtils.isEmpty(hibernationVolHandle)) {
+            createInfo.put(VdsProperties.hiberVolHandle, hibernationVolHandle);
         }
 
         if (osRepository.isLinux(vm.getVmOsId())) {

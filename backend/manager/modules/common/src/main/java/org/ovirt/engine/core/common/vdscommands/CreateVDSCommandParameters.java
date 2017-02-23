@@ -14,6 +14,7 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private boolean runInUnknownStatus;
     private InitializationType initializationType;
     private VmPayload vmPayload;
+    private String hibernationVolHandle;
 
     public CreateVDSCommandParameters() {
     }
@@ -58,6 +59,14 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     public void setVmPayload(VmPayload vmPayload) {
         this.vmPayload = vmPayload;
+    }
+
+    public String getHibernationVolHandle() {
+        return hibernationVolHandle;
+    }
+
+    public void setHibernationVolHandle(String value) {
+        this.hibernationVolHandle = value;
     }
 
     @Override

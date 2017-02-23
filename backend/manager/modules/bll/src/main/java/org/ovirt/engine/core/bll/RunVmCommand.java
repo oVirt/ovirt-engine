@@ -149,7 +149,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return Collections.emptyList();
     }
 
-    private String getMemoryFromActiveSnapshot() {
+    protected String getMemoryFromActiveSnapshot() {
         // If the memory from the snapshot could have been restored already, the disks might be
         // non coherent with the memory, thus we don't want to try to restore the memory again
         if (memoryFromSnapshotUsed) {
@@ -559,6 +559,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         CreateVDSCommandParameters parameters  = new CreateVDSCommandParameters(getVdsId(), getVm());
         parameters.setRunInUnknownStatus(getParameters().isRunInUnknownStatus());
         parameters.setVmPayload(vmPayload);
+        parameters.setHibernationVolHandle(getMemoryFromActiveSnapshot());
         if (initializationType == InitializationType.Sysprep
                 && osRepository.isWindows(getVm().getVmOsId())
                 && (getVm().getFloppyPath() == null || "".equals(getVm().getFloppyPath()))) {
@@ -708,8 +709,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVm().getEmulatedMachine() == null) {
             getVm().setEmulatedMachine(getEffectiveEmulatedMachine());
         }
-
-        getVm().setHibernationVolHandle(getMemoryFromActiveSnapshot());
     }
 
     protected String getEffectiveEmulatedMachine() {

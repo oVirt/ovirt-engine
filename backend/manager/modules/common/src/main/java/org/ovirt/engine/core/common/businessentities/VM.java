@@ -43,8 +43,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     private boolean previewSnapshot;
 
-    private String hibernationVolHandle;
-
     private LockInfo lockInfo;
 
     private int backgroundOperationProgress;
@@ -1137,14 +1135,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     public void setVmType(VmType value) {
         this.vmStatic.setVmType(value);
-    }
-
-    public String getHibernationVolHandle() {
-        return hibernationVolHandle;
-    }
-
-    public void setHibernationVolHandle(String value) {
-        this.hibernationVolHandle = value;
     }
 
     public String getCustomCpuName() {
