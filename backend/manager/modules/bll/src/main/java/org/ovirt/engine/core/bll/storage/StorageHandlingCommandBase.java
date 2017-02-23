@@ -549,6 +549,10 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                         log.debug("Exception", e);
                     }
                     ovfStoreDiskImages.remove(ovfDisk);
+                } else {
+                    log.error("Couldn't find additional ovf store to retrieve the ovf data from in storage domain '{}'",
+                            storageDomainId);
+                    break;
                 }
             }
             AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
