@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,16 +14,6 @@ public class AllocateVolumeVDSCommand<P extends AllocateVolumeVDSCommandParamete
 
     @Override
     protected void executeVdsBrokerCommand() {
-//        log.info("-- executeJobCommand: calling 'allocateVolume'");
-//        status = getBroker().allocateVolume(
-//                getParameters().getStoragePoolId().toString(),
-//                getParameters().getStorageDomainId().toString(),
-//                getParameters().getImageGroupId().toString(),
-//                getParameters().getVolumeId().toString(),
-//                Long.valueOf(getParameters().getSizeInBytes()).toString());
-//
-//        proceedProxyReturnValue();
-
         Map<String, Object> map = new HashMap<>();
         map.put("code", EngineError.Done.getValue());
         map.put("message", "done");
