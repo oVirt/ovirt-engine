@@ -500,16 +500,19 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     protected VdcReturnValueBase evaluateCorrelationId(CommandBase<?> commandBase) {
         VdcReturnValueBase returnValue = null;
-
+        VdcActionParametersBase cmdParams = commandBase.getParameters();
+        if (cmdParams.getCorrelationId() == null && cmdParams.getParentParameters() != null) {
+            cmdParams.setCorrelationId(cmdParams.getParentParameters().getCorrelationId());
+        }
         // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
-        returnValue = ExecutionHandler.evaluateCorrelationId(commandBase.getParameters());
+        returnValue = ExecutionHandler.evaluateCorrelationId(cmdParams);
         if (returnValue != null) {
             log.warn("Validation of action '{}' failed. Reasons: {}", commandBase.getActionType(),
                     StringUtils.join(returnValue.getValidationMessages(), ','));
 
         }
         // Set the correlation-id on the command
-        commandBase.setCorrelationId(commandBase.getParameters().getCorrelationId());
+        commandBase.setCorrelationId(cmdParams.getCorrelationId());
         return returnValue;
     }
 
