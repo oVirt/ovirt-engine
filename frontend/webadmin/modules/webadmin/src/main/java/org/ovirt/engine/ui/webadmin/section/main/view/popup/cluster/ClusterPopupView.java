@@ -283,6 +283,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     DialogTab migrationTab;
 
+    @UiField
+    InfoIcon clusterPopupResiliencePolicyInfoIcon;
+
     @UiField(provided = true)
     @Path(value = "migrateOnErrorOption_YES.entity")
     @WithElementId
@@ -302,6 +305,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path(value = "migrationBandwidthLimitType.selectedItem")
     @WithElementId
     ListModelListBoxEditor<MigrationBandwidthLimitType> migrationBandwidthLimitTypeEditor;
+
+    @UiField
+    InfoIcon migrationBandwidthLimitInfoIcon;
 
     @UiField
     @Path(value = "customMigrationNetworkBandwidth.entity")
@@ -511,8 +517,15 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         driver.initialize(this);
         applyModeCustomizations();
         setVisibilities();
+        localizeInfoIcons();
 
         additionalFeaturesEditor.clearAllSelections();
+    }
+
+    private void localizeInfoIcons() {
+        migrationBandwidthLimitInfoIcon.setText(SafeHtmlUtils.fromString(constants.migrationBandwidthLimit()));
+        clusterPopupResiliencePolicyInfoIcon.setText(
+                SafeHtmlUtils.fromString(constants.clusterPopupResiliencePolicyInfo()));
     }
 
     private void setVisibilities() {

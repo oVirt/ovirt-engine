@@ -16,7 +16,6 @@
 
     <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
-    <ui:with field='templates' type='org.ovirt.engine.ui.webadmin.ApplicationTemplates' />
 
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView.WidgetStyle">
         .generalTabTopDecorator {
@@ -319,7 +318,7 @@
                                 <b:Row>
                                     <b:Column size="LG_6" >
                                         <l:LabelWithTooltip text="{constants.clusterPopupMigrationBandwidthLimit}" forWidget="{migrationBandwidthLimitTypeEditor}" />
-                                        <d:InfoIcon text="{templates.migrationBandwidthLimit}" addStyleNames="{style.panelInfo}" tooltipPlacement="AUTO"/>
+                                        <d:InfoIcon ui:field="migrationBandwidthLimitInfoIcon" addStyleNames="{style.panelInfo}" tooltipPlacement="AUTO"/>
                                     </b:Column>
                                     <b:Column size="LG_6" >
                                         <b:Row addStyleNames="{style.narrowGutters}">
@@ -335,7 +334,7 @@
                                 <b:Row addStyleNames="{style.groupTitle}">
                                     <b:Column size="LG_12">
                                         <l:LabelWithTooltip text="{constants.clusterPopupResiliencePolicyLabel}" addStyleNames="{style.labelTitle}"/>
-                                        <d:InfoIcon text="{templates.clusterPopupResiliencePolicyInfo}" addStyleNames="{style.panelInfo}" />
+                                        <d:InfoIcon ui:field="clusterPopupResiliencePolicyInfoIcon" addStyleNames="{style.panelInfo}" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>

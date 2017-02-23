@@ -3240,5 +3240,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String storageDRGeoRepSessionLabel();
 
     String unsetInitiallySetNetworkRoleIsNotAllowed();
+
+    String migrationBandwidthLimit();
+
+    String clusterPopupResiliencePolicyInfo();
+
 }
 

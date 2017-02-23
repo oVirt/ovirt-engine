@@ -1646,4 +1646,29 @@ public interface CommonApplicationConstants extends Constants {
     String headlessModeVmPopup();
 
     String headlessModeExplanation();
+
+    String connectAutomaticallyMessage();
+
+    String consolePublicKeyMessage();
+
+    String kernelCmdlineInfoIcon();
+
+    String kernelCmdlineIommuInfoIcon();
+
+    String kernelCmdlineKvmNestedInfoIcon();
+
+    String kernelCmdlineUnsafeInterruptsInfoIcon();
+
+    String kernelCmdlinePciReallocInfoIcon();
+
+    String maxMemoryInfoIcon();
+
+    String vmUrandomInfoIcon();
+
+    String numOfCpuCoresTooltip();
+
+    String xenUriInfo();
+
+    String kvmUriInfo();
+
 }
