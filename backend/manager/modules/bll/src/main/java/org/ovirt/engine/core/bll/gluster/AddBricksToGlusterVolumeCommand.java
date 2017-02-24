@@ -66,6 +66,10 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         if (getGlusterVolume().getVolumeType().isReplicatedType()) {
             if (getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount() + 1) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE);
+            } else if (getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount()
+                    && getGlusterVolume().getIsArbiter()) {
+                return failValidation(
+                        EngineMessage.ACTION_TYPE_FAILED_GLUSTER_ARBITER_VOLUME_SHOULD_BE_REPLICA_3_VOLUME);
             } else if (getParameters().getReplicaCount() < getGlusterVolume().getReplicaCount()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT);
             }
@@ -326,6 +330,12 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             // No change in the replica/stripe count
             int brickCount = volumeBricks.get(volumeBricks.size() - 1).getBrickOrder();
 
+            //If the volume is an arbiter volume then make every third brick as arbiter brick.
+            if(volume.getIsArbiter()){
+                for(int i=2;i<newBricks.size();i+=3){
+                    newBricks.get(i).setIsArbiter(true);
+                }
+            }
             for (GlusterBrickEntity brick : newBricks) {
                 brick.setBrickOrder(++brickCount);
                 brick.setStatus(getBrickStatus());
