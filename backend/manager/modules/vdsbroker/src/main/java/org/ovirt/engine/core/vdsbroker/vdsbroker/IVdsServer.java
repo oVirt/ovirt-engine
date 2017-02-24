@@ -408,6 +408,8 @@ public interface IVdsServer {
 
     StatusOnlyReturn hotplugMemory(Map info);
 
+    StatusOnlyReturn hotUnplugMemory(Map<String, Object> params);
+
     StatusOnlyReturn updateVmPolicy(Map info);
 
     VMListReturn getExternalVmList(String uri, String username, String password, List<String> vmsNames);

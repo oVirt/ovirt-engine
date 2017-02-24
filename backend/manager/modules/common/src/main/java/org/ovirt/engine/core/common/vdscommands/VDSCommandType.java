@@ -212,6 +212,7 @@ public enum VDSCommandType {
 
     SetNumberOfCpus("org.ovirt.engine.core.vdsbroker"),
     SetAmountOfMemory("org.ovirt.engine.core.vdsbroker"),
+    HotUnplugMemory("org.ovirt.engine.core.vdsbroker"),
     UpdateVmPolicy("org.ovirt.engine.core.vdsbroker"),
     GetVmsFullInfoFromExternalProvider("org.ovirt.engine.core.vdsbroker.vdsbroker"),     // get a list of VMs from external provider with full data
     GetVmsNamesFromExternalProvider("org.ovirt.engine.core.vdsbroker.vdsbroker"),        // get a list of VMs from external provider with name only
