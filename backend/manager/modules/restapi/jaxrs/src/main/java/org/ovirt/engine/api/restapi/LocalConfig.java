@@ -33,6 +33,7 @@ public class LocalConfig {
     // The names of the properties:
     private static final String SUPPORTED_VERSIONS = "ENGINE_API_SUPPORTED_VERSIONS";
     private static final String DEFAULT_VERSION = "ENGINE_API_DEFAULT_VERSION";
+    private static final String FILTER_BY_DEFAULT = "ENGINE_API_FILTER_BY_DEFAULT";
 
     // Reference to the engine local configuration, as that is what is used to actually read the configuration:
     private EngineLocalConfig config;
@@ -73,5 +74,13 @@ public class LocalConfig {
      */
     public String getDefaultVersion() {
         return config.getProperty(DEFAULT_VERSION);
+    }
+
+    /**
+     * Returns a boolean that indicates if the <i>filter</i> mechanism should be enabled by default for users that
+     * aren't administrators.
+     */
+    public boolean getFilterByDefault() {
+        return config.getBoolean(FILTER_BY_DEFAULT);
     }
 }
