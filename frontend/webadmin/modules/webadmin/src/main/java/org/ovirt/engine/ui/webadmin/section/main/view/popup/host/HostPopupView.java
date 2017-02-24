@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelMultipleSelectListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
@@ -319,12 +320,12 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @UiField(provided = true)
     @Ignore
     @WithElementId
-    public RadioButton rbProvisionedHost;
+    public EntityModelRadioButtonEditor rbProvisionedHost;
 
     @UiField(provided = true)
     @Ignore
     @WithElementId
-    public RadioButton rbDiscoveredHost;
+    public EntityModelRadioButtonEditor rbDiscoveredHost;
 
     @UiField
     @Ignore
@@ -359,7 +360,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Path(value = "providerSearchFilterLabel.entity")
     EnableableFormLabel providerSearchFilterLabel;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "consoleAddressEnabled.entity")
     EntityModelCheckBoxEditor consoleAddressEnabled;
 
@@ -445,7 +446,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         providersEditor.hideLabel();
         passwordEditor.hideLabel();
         publicKeyEditor.hideLabel();
-        consoleAddressEnabled.hideLabel();
         consoleAddress.hideLabel();
     }
 
@@ -531,13 +531,14 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         rbPassword = new RadioButton("1"); //$NON-NLS-1$
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
-        rbDiscoveredHost = new RadioButton("2"); //$NON-NLS-1$
-        rbProvisionedHost = new RadioButton("2"); //$NON-NLS-1$
+        rbDiscoveredHost = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
+        rbProvisionedHost = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
 
         kernelCmdlineIommu = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlineKvmNested = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlineUnsafeInterrupts = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlinePciRealloc = new EntityModelCheckBoxEditor(Align.RIGHT);
+        consoleAddressEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
         hostedEngineDeployActionsEditor = new ListModelListBoxEditor<>(new EnumRenderer<HostedEngineDeployConfiguration.Action>());
     }
 
@@ -683,10 +684,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (object.getIsDiscoveredHosts().getEntity() != null) {
                     if (object.getIsDiscoveredHosts().getEntity()) {
-                        rbDiscoveredHost.setValue(true);
+                        rbDiscoveredHost.asRadioButton().setValue(true);
                         showDiscoveredHostsWidgets(true);
                     } else if (!object.getIsDiscoveredHosts().getEntity()) {
-                        rbProvisionedHost.setValue(true);
+                        rbProvisionedHost.asRadioButton().setValue(true);
                         showProvisionedHostsWidgets(true);
                     }
                 }
@@ -797,8 +798,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     }
 
     private void hideProviderWidgets(final HostModel object) {
-        rbProvisionedHost.setValue(false);
-        rbDiscoveredHost.setValue(false);
+        rbProvisionedHost.asRadioButton().setValue(false);
+        rbDiscoveredHost.asRadioButton().setValue(false);
         usualFormToDiscover(false);
         showExternalDiscoveredHost(false);
         setHostProviderVisibility(false);

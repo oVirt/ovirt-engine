@@ -127,7 +127,6 @@ import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel>
@@ -687,7 +686,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Ignore
     @WithElementId("specificHost")
-    public RadioButton specificHost;
+    public EntityModelRadioButtonEditor specificHost;
 
     @UiField(provided = true)
     @Path(value = "defaultHost.selectedItems")
@@ -1422,7 +1421,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         vncKeyboardLayoutEditor = new ListModelListBoxEditor<>(new VncKeyMapRenderer(), new ModeSwitchingVisibilityRenderer());
 
         // Host Tab
-        specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$
+        specificHost = new EntityModelRadioButtonEditor("runVmOnHostGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
         isAutoAssignEditor =
                 new EntityModelRadioButtonEditor("runVmOnHostGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
         defaultHostEditor = new ListModelMultipleSelectListBoxEditor<>(new NameRenderer<VDS>(),
@@ -1579,7 +1578,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 defaultHostEditor.setEnabled(!isAutoAssign);
 
                 // only this is not bind to the model, so needs to listen to the change explicitly
-                specificHost.setValue(!isAutoAssign);
+                specificHost.asRadioButton().setValue(!isAutoAssign);
             }
         });
 
@@ -1769,10 +1768,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         });
 
         defaultHostEditor.setEnabled(false);
-        specificHost.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+        specificHost.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
-                defaultHostEditor.setEnabled(specificHost.getValue());
+                defaultHostEditor.setEnabled(specificHost.asRadioButton().getValue());
                 ValueChangeEvent.fire(isAutoAssignEditor.asRadioButton(), false);
             }
         });
@@ -1806,7 +1805,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (!isAutoAssignEditor.asRadioButton().getValue()) {
-                        specificHost.setValue(true, true);
+                        specificHost.asRadioButton().setValue(true, true);
                 }
             }
         });
