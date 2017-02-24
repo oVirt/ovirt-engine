@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.CompletenessAssertor;
 import org.ovirt.engine.api.common.util.EnumValidator;
 import org.ovirt.engine.api.model.Fault;
+import org.ovirt.engine.api.restapi.LocalConfig;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
@@ -24,6 +25,7 @@ import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -373,6 +375,17 @@ public class BaseBackendResource {
      * @return true if data should be filtered, otherwise queries are executed as admin.
      */
     protected boolean isFiltered() {
-        return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FILTER, true, false);
+        Boolean result = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FILTER, true, null);
+        if (result == null) {
+            DbUser user = getCurrent().getUser();
+            if (!user.isAdmin()) {
+                LocalConfig config = LocalConfig.getInstance();
+                result = config.getFilterByDefault();
+            }
+            else {
+                result = Boolean.FALSE;
+            }
+        }
+        return result;
     }
 }
