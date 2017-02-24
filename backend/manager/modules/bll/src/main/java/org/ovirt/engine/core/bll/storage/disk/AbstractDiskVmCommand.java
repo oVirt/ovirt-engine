@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -248,17 +249,27 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 int sPaprVscsiIndex = controllerIndexMap.get(DiskInterface.SPAPR_VSCSI);
 
                 if (diskInterface == DiskInterface.VirtIO_SCSI) {
-                    Map<VmDevice, Integer> vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm());
-                    return getAddressMapForScsiDisk(address, vmDeviceUnitMap, vmDevice, virtioScsiIndex, false);
+                    Map<Integer, Map<VmDevice, Integer>>  vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm());
+                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap), vmDevice, virtioScsiIndex, false);
                 } else if (diskInterface == DiskInterface.SPAPR_VSCSI) {
-                    Map<VmDevice, Integer> vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
-                    return getAddressMapForScsiDisk(address, vmDeviceUnitMap, vmDevice, sPaprVscsiIndex, true);
+                    Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
+                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap), vmDevice, sPaprVscsiIndex, true);
                 }
             } finally {
                 lockManager.releaseLock(vmDiskHotPlugEngineLock);
             }
         }
         return null;
+    }
+
+    private Map<VmDevice, Integer> vmDeviceUnitMapForController(VmDevice vmDevice,
+                                                                Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap) {
+        int numOfDisks = getVm().getDiskMap().values().size();
+        int controllerId = vmInfoBuildUtils.getControllerForScsiDisk(vmDevice, getVm(), numOfDisks);
+        if (!vmDeviceUnitMap.containsKey(controllerId)) {
+            return new HashMap<>();
+        }
+        return vmDeviceUnitMap.get(controllerId);
     }
 
     private Map<String, String> getAddressMapForScsiDisk(String address,

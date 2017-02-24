@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.CharEncoding;
@@ -261,10 +262,10 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     public void buildVmDrives() {
         boolean bootDiskFound = false;
         List<Disk> disks = vmInfoBuildUtils.getSortedDisks(vm);
-        Map<VmDevice, Integer> vmDeviceVirtioScsiUnitMap =
+        Map<Integer, Map<VmDevice, Integer>> vmDeviceVirtioScsiUnitMap =
                 vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(vm);
 
-        Map<VmDevice, Integer> vmDeviceSpaprVscsiUnitMap =
+        Map<Integer, Map<VmDevice, Integer>> vmDeviceSpaprVscsiUnitMap =
                 vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(vm);
 
         Map<DiskInterface, Integer> controllerIndexMap =
@@ -301,26 +302,14 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                     pinnedDriveIndex = pinToIoThreads(vmDevice, pinnedDriveIndex);
                     break;
                 case VirtIO_SCSI:
-                    struct.put(VdsProperties.INTERFACE, VdsProperties.Scsi);
-                    // If SCSI pass-through is enabled (DirectLUN disk and SGIO is defined),
-                    // set device type as 'lun' (instead of 'disk') and set the specified SGIO.
-                    if (disk.getDiskStorageType() == DiskStorageType.LUN && disk.isScsiPassthrough()) {
-                        struct.put(VdsProperties.Device, VmDeviceType.LUN.getName());
-                        struct.put(VdsProperties.Sgio, disk.getSgio().toString().toLowerCase());
-                    }
-                    if (StringUtils.isEmpty(vmDevice.getAddress())) {
-                        // Explicitly define device's address if missing
-                        int unit = vmDeviceVirtioScsiUnitMap.get(vmDevice);
-                        vmDevice.setAddress(
-                                vmInfoBuildUtils.createAddressForScsiDisk(virtioScsiIndex, unit).toString());
-                    }
+                    setupVirtioScsiDisk(vmDeviceVirtioScsiUnitMap, virtioScsiIndex, disk, struct, vmDevice);
                     break;
                 case SPAPR_VSCSI:
                     struct.put(VdsProperties.INTERFACE, VdsProperties.Scsi);
 
                     if (StringUtils.isEmpty(vmDevice.getAddress())) {
                         // Explicitly define device's address if missing
-                        int unit = vmDeviceSpaprVscsiUnitMap.get(vmDevice);
+                        Integer unit = vmDeviceSpaprVscsiUnitMap.get(sPaprVscsiIndex).get(vmDevice);
                         vmDevice.setAddress(
                                 vmInfoBuildUtils.createAddressForScsiDisk(sPaprVscsiIndex, unit).toString());
                     }
@@ -380,6 +369,48 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         }
 
         ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllers(devices));
+    }
+
+    public void setupVirtioScsiDisk(Map<Integer, Map<VmDevice, Integer>> vmDeviceVirtioScsiUnitMap, int virtioScsiIndex, Disk disk, Map<String, Object> struct, VmDevice vmDevice) {
+        struct.put(VdsProperties.INTERFACE, VdsProperties.Scsi);
+        // If SCSI pass-through is enabled (DirectLUN disk and SGIO is defined),
+        // set device type as 'lun' (instead of 'disk') and set the specified SGIO.
+        if (disk.getDiskStorageType() == DiskStorageType.LUN && disk.isScsiPassthrough()) {
+            struct.put(VdsProperties.Device, VmDeviceType.LUN.getName());
+            struct.put(VdsProperties.Sgio, disk.getSgio().toString().toLowerCase());
+        }
+
+        VmDevice deviceFromMap = vmDevice;
+        int controllerId = virtioScsiIndex;
+        Integer unit = null;
+
+        for (Entry<Integer, Map<VmDevice, Integer>> controllerToDevices : vmDeviceVirtioScsiUnitMap.entrySet()) {
+            Optional<VmDevice> maybeDeviceFromMap = controllerToDevices.getValue().keySet().stream()
+                    .filter(d -> d.getId().equals(vmDevice.getId()))
+                    .findFirst();
+
+            if (maybeDeviceFromMap.isPresent()) {
+                controllerId = controllerToDevices.getKey();
+                deviceFromMap = maybeDeviceFromMap.get();
+                unit = controllerToDevices.getValue().get(deviceFromMap);
+                break;
+            }
+        }
+
+        if (StringUtils.isEmpty(deviceFromMap.getAddress())) {
+            // by default use default controller
+            if (unit == null) {
+                // should never get here, but for safety having this fallback and generating a new unit id
+                unit = vmInfoBuildUtils.getAvailableUnitForScsiDisk(
+                        vmDeviceVirtioScsiUnitMap.get(controllerId),
+                        false
+                );
+                log.debug("The unit was null for disk '{}' on controller '{}', generating a new one '{}'", disk.getId(), controllerId, unit);
+            }
+
+            vmDevice.setAddress(
+                    vmInfoBuildUtils.createAddressForScsiDisk(controllerId, unit).toString());
+        }
     }
 
     private int pinToIoThreads(VmDevice vmDevice, int pinnedDriveIndex) {

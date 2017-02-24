@@ -13,11 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -34,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -42,6 +45,7 @@ import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,6 +65,8 @@ public class VmInfoBuildUtilsTest {
     private static final Guid DISK_IMAGE_ID = Guid.newGuid();
     private static final Guid LUN_DISK_ID = Guid.newGuid();
 
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule();
     @Mock
     private NetworkDao networkDao;
     @Mock
@@ -210,7 +216,6 @@ public class VmInfoBuildUtilsTest {
         Map<Guid, Disk> map = new HashMap<>();
         map.put(lunDisk.getId(), lunDisk);
         map.put(diskImage.getId(), diskImage);
-
         return map;
     }
 
@@ -245,13 +250,15 @@ public class VmInfoBuildUtilsTest {
         VM vm = new VM();
         vm.setId(VM_ID);
         vm.setDiskMap(mockUnsortedDisksMap(lunDiskVmDevice, diskImageVmDevice));
+        vm.setClusterArch(ArchitectureType.x86_64);
+        vm.setClusterCompatibilityVersion(Version.v4_1);
 
-        Map<VmDevice, Integer> vmDeviceUnitMap =
+        Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap =
                 underTest.getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.VirtIO_SCSI, false);
 
         // Ensures that the boot disk unit is lower
-        assertEquals(vmDeviceUnitMap.get(lunDiskVmDevice), (Integer) 1);
-        assertEquals(vmDeviceUnitMap.get(diskImageVmDevice), (Integer) 0);
+        assertEquals(vmDeviceUnitMap.get(0).get(lunDiskVmDevice), (Integer) 1);
+        assertEquals(vmDeviceUnitMap.get(0).get(diskImageVmDevice), (Integer) 0);
     }
 
 }
