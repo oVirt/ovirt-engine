@@ -463,6 +463,7 @@ The user portal interface to %{ovirt_product_name_short}
 %package userportal-debuginfo
 Summary:	Debug information for User Portal of %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
+Requires:	%{name}-userportal = %{version}-%{release}
 
 %description userportal-debuginfo
 Debug information for the user portal interface to %{ovirt_product_name_short}
@@ -478,6 +479,7 @@ The web administration interface to %{ovirt_product_name_short}
 %package webadmin-portal-debuginfo
 Summary:	Debug information for Web Admin Portal of %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
+Requires:	%{name}-webadmin-portal = %{version}-%{release}
 
 %description webadmin-portal-debuginfo
 Debug information for the web administration interface to %{ovirt_product_name_short}
