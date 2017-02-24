@@ -53,19 +53,19 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
 
     private void addRadioButtonsListeners(final HostModel model) {
         registerHandler(
-                ((HostPopupView)getView()).rbDiscoveredHost.addClickHandler(new ClickHandler() {
+                ((HostPopupView)getView()).rbDiscoveredHost.asRadioButton().addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
-                        if (((HostPopupView)getView()).rbDiscoveredHost.getValue()) {
+                        if (((HostPopupView)getView()).rbDiscoveredHost.asRadioButton().getValue()) {
                             model.getIsDiscoveredHosts().setEntity(true);
                         }
                     }
                 }));
         registerHandler(
-                ((HostPopupView)getView()).rbProvisionedHost.addClickHandler(new ClickHandler() {
+                ((HostPopupView)getView()).rbProvisionedHost.asRadioButton().addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
-                        if (((HostPopupView)getView()).rbProvisionedHost.getValue()) {
+                        if (((HostPopupView)getView()).rbProvisionedHost.asRadioButton().getValue()) {
                             model.getIsDiscoveredHosts().setEntity(false);
                         }
                     }

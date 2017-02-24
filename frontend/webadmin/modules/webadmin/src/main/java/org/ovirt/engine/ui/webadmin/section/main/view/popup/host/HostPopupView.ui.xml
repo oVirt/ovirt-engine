@@ -168,6 +168,7 @@
        .infoIcon {
            float: left;
            padding-left: 2px;
+           line-height: 30px;
        }
 
         .warningLabel {
@@ -212,15 +213,13 @@
                                 </b:Row>
                                 <b:Row addStyleNames="{style.generalTabTopDecorator}">
                                     <b:Column size="SM_11" offset="SM_1" ui:field="discoveredHostSection" >
-                                        <g:RadioButton ui:field="rbDiscoveredHost" addStyleNames="{style.floatLeft}" />
-                                        <g:Label addStyleNames="{style.patternFlyRadio} {style.floatLeft}" text="{constants.discoveredHostsLabel}" />
+                                        <ge:EntityModelRadioButtonEditor ui:field="rbDiscoveredHost" label="{constants.discoveredHostsLabel}" addStyleNames="{style.floatLeft}" />
                                         <d:InfoIcon ui:field="discoveredHostInfoIcon" addStyleNames="{style.infoIcon}" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row addStyleNames="{style.generalTabTopDecorator}">
                                     <b:Column size="SM_11" offset="SM_1" ui:field="provisionedHostSection" >
-                                        <g:RadioButton ui:field="rbProvisionedHost" addStyleNames="{style.floatLeft}" />
-                                        <g:Label addStyleNames="{style.patternFlyRadio} {style.floatLeft}" text="{constants.provisionedHostsLabel}" />
+                                        <ge:EntityModelRadioButtonEditor ui:field="rbProvisionedHost" label="{constants.provisionedHostsLabel}" addStyleNames="{style.floatLeft}" />
                                         <d:InfoIcon ui:field="provisionedHostInfoIcon" addStyleNames="{style.infoIcon}" />
                                     </b:Column>
                                 </b:Row>
@@ -357,8 +356,7 @@
                             <b:Container addStyleNames="{style.container}">
                                 <b:Row addStyleNames="{style.topElement}">
                                     <b:Column size="SM_6">
-                                        <ge:EntityModelCheckBoxOnlyEditor ui:field="consoleAddressEnabled" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
-                                        <g:Label text="{constants.enableConsoleAddressOverride}" addStyleNames="{style.floatLeft} {style.patternFlyRadio}" />
+                                        <ge:EntityModelCheckBoxEditor ui:field="consoleAddressEnabled" addStyleNames="{style.floatLeft}" label="{constants.enableConsoleAddressOverride}" usePatternFly="true" removeFormGroup="true" />
                                         <d:InfoIcon ui:field="consoleAddressInfoIcon" addStyleNames="{style.infoIcon}" />
                                    </b:Column>
                                    <b:Column size="SM_6">
