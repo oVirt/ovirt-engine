@@ -172,6 +172,9 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         GlusterVolumeEntity createdVolume = (GlusterVolumeEntity) returnValue.getReturnValue();
         setVolumeType(createdVolume);
         setBrickOrder(createdVolume.getBricks());
+        if(createdVolume.getIsArbiter()){
+            setArbiterFlag(createdVolume);
+        }
         addVolumeToDb(createdVolume);
 
         // If we log successful volume creation at the end of this command,
@@ -186,6 +189,15 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         setVolumeOptions(createdVolume);
 
         getReturnValue().setActionReturnValue(createdVolume.getId());
+    }
+
+    /**
+     * Sets every third brick as arbiter brick if GlusterVolume is an arbiter volume
+     */
+    private void setArbiterFlag(GlusterVolumeEntity volume) {
+       for(int i=2;i<volume.getBricks().size();i+=3){
+           volume.getBricks().get(i).setIsArbiter(volume.getIsArbiter());
+       }
     }
 
     private void setVolumeType(GlusterVolumeEntity createdVolume) {
