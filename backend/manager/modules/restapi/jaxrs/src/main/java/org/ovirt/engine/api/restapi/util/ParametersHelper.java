@@ -142,8 +142,8 @@ public class ParametersHelper {
      * @param empty the value that will be returned if the parameter is present but has no value
      * @param missing the value that will be returned if the parameter isn't present or has an invalid boolean value
      */
-    public static boolean getBooleanParameter(HttpHeaders headers, UriInfo uri, String name, boolean empty,
-            boolean missing) {
+    public static Boolean getBooleanParameter(HttpHeaders headers, UriInfo uri, String name, Boolean empty,
+            Boolean missing) {
         String text = getParameter(headers, uri, name);
         if (text == null) {
             return missing;
@@ -152,10 +152,10 @@ public class ParametersHelper {
             return empty;
         }
         if (FALSE_PATTERN.matcher(text).matches()) {
-            return false;
+            return Boolean.FALSE;
         }
         if (TRUE_PATTERN.matcher(text).matches()) {
-            return true;
+            return Boolean.TRUE;
         }
         log.error("The value \"{}\" of parameter \"{}\" isn't a valid boolean, it will be ignored.", text, name);
         return missing;

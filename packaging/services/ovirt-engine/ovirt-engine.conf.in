@@ -380,6 +380,12 @@ ENGINE_API_SUPPORTED_VERSIONS="3, 4"
 ENGINE_API_DEFAULT_VERSION="4"
 
 #
+# This flags indicates if 'filtering' should be enabled by default for
+# users that aren't administartors.
+#
+ENGINE_API_FILTER_BY_DEFAULT="true"
+
+#
 # Specify custom krb5.conf file (if empty the default is /etc/krb5.conf)
 #
 AAA_KRB5_CONF_FILE=
