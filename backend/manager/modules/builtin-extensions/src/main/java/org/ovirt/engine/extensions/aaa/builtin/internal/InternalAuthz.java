@@ -1,7 +1,7 @@
 package org.ovirt.engine.extensions.aaa.builtin.internal;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
 
 import org.ovirt.engine.api.extensions.Base;
@@ -97,7 +97,7 @@ public class InternalAuthz implements Extension {
     private void doQueryExecute(ExtMap input, ExtMap output) {
         Opaque opaque = input.get(Authz.InvokeKeys.QUERY_OPAQUE);
         output.put(Authz.InvokeKeys.QUERY_RESULT,
-                opaque.firstCall && opaque.found ? Arrays.asList(adminUser)
+                opaque.firstCall && opaque.found ? Collections.singletonList(adminUser)
                         : null);
         opaque.firstCall = false;
     }
@@ -138,7 +138,7 @@ public class InternalAuthz implements Extension {
                         Base.INTERFACE_VERSION_CURRENT
                 ).mput(
                         Authz.ContextKeys.AVAILABLE_NAMESPACES,
-                        Arrays.asList(NAMESPACE)
+                        Collections.singletonList(NAMESPACE)
                         );
         adminUser = new ExtMap().mput(
                 Authz.PrincipalRecord.NAMESPACE,
