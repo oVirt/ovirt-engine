@@ -38,7 +38,7 @@ public class InternalAuthz implements Extension {
     @Override
     public void invoke(ExtMap input, ExtMap output) {
         try {
-            ExtUUID command = input.<ExtUUID> get(Base.InvokeKeys.COMMAND);
+            ExtUUID command = input.get(Base.InvokeKeys.COMMAND);
             if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.LOAD)) {
                 doLoad(input, output);
             } else if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.INITIALIZE)) {
@@ -72,7 +72,7 @@ public class InternalAuthz implements Extension {
 
     private void doQueryOpen(ExtMap input, ExtMap output) {
         if (input.get(Authz.InvokeKeys.QUERY_ENTITY).equals(Authz.QueryEntity.PRINCIPAL)) {
-            output.put(Authz.InvokeKeys.QUERY_OPAQUE, new Opaque(doQueryOpenImpl(input.<ExtMap> get(Authz.InvokeKeys.QUERY_FILTER))));
+            output.put(Authz.InvokeKeys.QUERY_OPAQUE, new Opaque(doQueryOpenImpl(input.get(Authz.InvokeKeys.QUERY_FILTER))));
         } else {
             output.put(Authz.InvokeKeys.QUERY_OPAQUE, new Opaque(false));
         }
@@ -81,9 +81,9 @@ public class InternalAuthz implements Extension {
     private boolean doQueryOpenImpl(ExtMap filter) {
         boolean found = false;
         if (filter.<Integer> get(Authz.QueryFilterRecord.OPERATOR) == Authz.QueryFilterOperator.EQ) {
-            ExtKey extKey = filter.<ExtKey> get(Authz.QueryFilterRecord.KEY);
+            ExtKey extKey = filter.get(Authz.QueryFilterRecord.KEY);
             if (extKey.equals(Authz.PrincipalRecord.NAME)) {
-                String name = filter.<String> get(Authz.PrincipalRecord.NAME);
+                String name = filter.get(Authz.PrincipalRecord.NAME);
                 found = adminUser.<String>get(Authz.PrincipalRecord.NAME).matches(name.replace("*", ".*"));
             } else if (extKey.equals(Authz.PrincipalRecord.ID)) {
                 found = filter.<String>get(Authz.PrincipalRecord.ID).equals(adminUser.<String>get(Authz.PrincipalRecord.ID));
@@ -99,7 +99,7 @@ public class InternalAuthz implements Extension {
     }
 
     private void doQueryExecute(ExtMap input, ExtMap output) {
-        Opaque opaque = input.<Opaque> get(Authz.InvokeKeys.QUERY_OPAQUE);
+        Opaque opaque = input.get(Authz.InvokeKeys.QUERY_OPAQUE);
         output.put(Authz.InvokeKeys.QUERY_RESULT,
                 opaque.firstCall && opaque.found ? Arrays.asList(adminUser)
                         : null);
@@ -107,16 +107,16 @@ public class InternalAuthz implements Extension {
     }
 
     private void doFetchPrincipalRecord(ExtMap input, ExtMap output) {
-        ExtMap authRecord = input.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD);
-        String principal = authRecord != null ? authRecord.<String>get(Authn.AuthRecord.PRINCIPAL) : input.<String> get(Authz.InvokeKeys.PRINCIPAL);
+        ExtMap authRecord = input.get(Authn.InvokeKeys.AUTH_RECORD);
+        String principal = authRecord != null ? authRecord.get(Authn.AuthRecord.PRINCIPAL) : input.get(Authz.InvokeKeys.PRINCIPAL);
         if (principal.equals(adminUser.<String> get(Authz.PrincipalRecord.NAME))) {
             output.put(Authz.InvokeKeys.PRINCIPAL_RECORD, adminUser);
         }
     }
 
     private void doLoad(ExtMap input, ExtMap output) {
-        context = input.<ExtMap> get(Base.InvokeKeys.CONTEXT);
-        configuration = context.<Properties> get(Base.ContextKeys.CONFIGURATION);
+        context = input.get(Base.InvokeKeys.CONTEXT);
+        configuration = context.get(Base.ContextKeys.CONFIGURATION);
         context.mput(
                 Base.ContextKeys.AUTHOR,
                 "The oVirt Project"
