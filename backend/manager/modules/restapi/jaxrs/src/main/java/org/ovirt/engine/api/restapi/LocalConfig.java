@@ -36,7 +36,6 @@ public class LocalConfig {
     // The names of the properties:
     private static final String SUPPORTED_VERSIONS = "ENGINE_API_SUPPORTED_VERSIONS";
     private static final String DEPRECATED_VERSIONS = "ENGINE_API_DEPRECATED_VERSIONS";
-    private static final String DEPRECATED_MESSAGES_FREQUENCY = "ENGINE_API_DEPRECATED_MESSAGES_FREQUENCY";
     private static final String DEFAULT_VERSION = "ENGINE_API_DEFAULT_VERSION";
 
     // Reference to the engine local configuration, as that is what is used to actually read the configuration:
