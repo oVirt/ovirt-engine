@@ -1179,6 +1179,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * in {@link VdcReturnValueBase#getValidationMessages()} retrieved by {@link #getReturnValue()}
      *
      * @return {@code true} if the command can be executed, else {@code false}
+     *
+     * @see ValidateSupportsTransaction
      */
     protected boolean validate() {
         return true;
