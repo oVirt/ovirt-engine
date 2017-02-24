@@ -18,11 +18,7 @@ public class InternalAuthz implements Extension {
     private static final String DEFAULT_PRINCIPAL_ID = "fdfc627c-d875-11e0-90f0-83df133b58cc";
     private static final String NAMESPACE = "*";
 
-    private ExtMap context;
-
     private ExtMap adminUser;
-
-    private Properties configuration;
 
     private static class Opaque {
 
@@ -115,8 +111,8 @@ public class InternalAuthz implements Extension {
     }
 
     private void doLoad(ExtMap input, ExtMap output) {
-        context = input.get(Base.InvokeKeys.CONTEXT);
-        configuration = context.get(Base.ContextKeys.CONFIGURATION);
+        ExtMap context = input.get(Base.InvokeKeys.CONTEXT);
+        Properties configuration = context.get(Base.ContextKeys.CONFIGURATION);
         context.mput(
                 Base.ContextKeys.AUTHOR,
                 "The oVirt Project"
