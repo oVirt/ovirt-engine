@@ -5,7 +5,7 @@
 <fmt:setLocale value="${locale}" />
 <fmt:setBundle basename="messages" var="methodnotallowed" />
 <!DOCTYPE html>
-<html class="obrand_background">
+<html class="login-pf">
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <obrand:favicon />

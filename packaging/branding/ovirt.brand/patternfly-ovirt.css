@@ -2,19 +2,18 @@
    This CSS file overrides classes in PatternFly. Only classes already
    defined in PatternFly should be placed in here.
 */
-
-.login-pf .container {
-  background-color: rgba(0, 0, 0, 0.25);
+.login-pf body {
+    background-image: url(images/ovirt_bg.png);
+    background-color: #282d33;
+    background-size: auto;
+    background-repeat: repeat-x;
+    background-position: 50% 0;
 }
 
 @media (min-width: 768px) {
-    .login-pf .login {
-        padding-left: 0;
-    }
-}
-
-.login-pf .login {
-    padding-right: 20px;
+    .login-pf body {
+        background-size: 100% auto;
+     }
 }
 
 .navbar-pf {

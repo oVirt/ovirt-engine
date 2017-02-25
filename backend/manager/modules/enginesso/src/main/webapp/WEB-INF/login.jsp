@@ -6,7 +6,7 @@
 <fmt:setLocale value="${locale}" />
 <fmt:setBundle basename="messages" var="loginpage" />
 <!DOCTYPE html>
-<html class="obrand_background">
+<html class="login-pf">
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <obrand:favicon />
@@ -19,7 +19,7 @@
     <a href="${ssoSession.engineUrl}" class="obrand_loginPageLogoImageLink">
          <span class="obrand_loginPageLogoImage"></span>
     </a>
-    <div class="login-pf">
+    <div class="ovirt-container">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
