@@ -4,6 +4,7 @@ import static org.ovirt.engine.core.common.businessentities.gluster.GlusterHookC
 import static org.ovirt.engine.core.common.businessentities.gluster.GlusterHookConflictFlags.STATUS_CONFLICT;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -306,8 +307,7 @@ public class GlusterHookSyncJob extends GlusterJob {
 
     @SuppressWarnings("serial")
     private void logMessage(Guid clusterId, final String hookName, AuditLogType logType) {
-        logUtil.logAuditMessage(clusterId, null, null, logType, new HashMap<String, String>(){
-            {put("hookName", hookName);}});
+        logUtil.logAuditMessage(clusterId, null, null, logType, Collections.singletonMap("hookName", hookName));
     }
 
     private int getConflictStatus(GlusterHookEntity hook, GlusterHookEntity fetchedHook) {
