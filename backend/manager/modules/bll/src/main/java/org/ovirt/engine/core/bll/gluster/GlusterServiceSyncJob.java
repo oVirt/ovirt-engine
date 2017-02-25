@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -230,17 +231,15 @@ public class GlusterServiceSyncJob extends GlusterJob {
                                     server.getHostName(),
                                     oldStatus.name(),
                                     newStatus.name());
+                            Map<String, String> customValues = new HashMap<>();
+                            customValues.put(GlusterConstants.SERVICE_NAME, fetchedService.getServiceName());
+                            customValues.put(GlusterConstants.OLD_STATUS, oldStatus.getStatusMsg());
+                            customValues.put(GlusterConstants.NEW_STATUS, newStatus.getStatusMsg());
                             logUtil.logAuditMessage(server.getClusterId(),
                                     null,
                                     server,
                                     AuditLogType.GLUSTER_SERVER_SERVICE_STATUS_CHANGED,
-                                    new HashMap<String, String>() {
-                                        {
-                                            put(GlusterConstants.SERVICE_NAME, fetchedService.getServiceName());
-                                            put(GlusterConstants.OLD_STATUS, oldStatus.getStatusMsg());
-                                            put(GlusterConstants.NEW_STATUS, newStatus.getStatusMsg());
-                                        }
-                                    });
+                                    customValues);
                             existingService.setStatus(fetchedService.getStatus());
                             servicesToUpdate.add(existingService);
                         }
@@ -291,11 +290,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
                 null,
                 server,
                 AuditLogType.GLUSTER_SERVICE_ADDED_TO_SERVER,
-                new HashMap<String, String>() {
-                    {
-                        put(GlusterConstants.SERVICE_NAME, fetchedService.getServiceName());
-                    }
-                });
+                Collections.singletonMap(GlusterConstants.SERVICE_NAME, fetchedService.getServiceName()));
     }
 
     @SuppressWarnings("serial")
@@ -309,17 +304,15 @@ public class GlusterServiceSyncJob extends GlusterJob {
                 clusterService.getClusterId(),
                 oldStatus,
                 newStatus);
+        Map<String, String> customValues = new HashMap<>();
+        customValues.put(GlusterConstants.SERVICE_TYPE, clusterService.getServiceType().name());
+        customValues.put(GlusterConstants.OLD_STATUS, oldStatus.getStatusMsg());
+        customValues.put(GlusterConstants.NEW_STATUS, newStatus.getStatusMsg());
         logUtil.logAuditMessage(clusterService.getClusterId(),
                 null,
                 null,
                 AuditLogType.GLUSTER_CLUSTER_SERVICE_STATUS_CHANGED,
-                new HashMap<String, String>() {
-                    {
-                        put(GlusterConstants.SERVICE_TYPE, clusterService.getServiceType().name());
-                        put(GlusterConstants.OLD_STATUS, oldStatus.getStatusMsg());
-                        put(GlusterConstants.NEW_STATUS, newStatus.getStatusMsg());
-                    }
-                });
+                customValues);
     }
 
     @SuppressWarnings("serial")
@@ -336,16 +329,14 @@ public class GlusterServiceSyncJob extends GlusterJob {
         log.info("Service type '{}' not mapped to cluster '{}'. Mapped it now.",
                 serviceType,
                 cluster.getName());
+        Map<String, String> customValues = new HashMap<>();
+        customValues.put(GlusterConstants.SERVICE_TYPE, serviceType.name());
+        customValues.put(GlusterConstants.NEW_STATUS, status.getStatusMsg());
         logUtil.logAuditMessage(clusterService.getClusterId(),
                 null,
                 null,
                 AuditLogType.GLUSTER_CLUSTER_SERVICE_STATUS_ADDED,
-                new HashMap<String, String>() {
-                    {
-                        put(GlusterConstants.SERVICE_TYPE, serviceType.name());
-                        put(GlusterConstants.NEW_STATUS, status.getStatusMsg());
-                    }
-                });
+                customValues);
 
         return clusterService;
     }
