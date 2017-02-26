@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.vdscommands.PostDeleteAction;
-import org.ovirt.engine.core.common.vdscommands.StorageDomainIdParametersBase;
+import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.InjectorRule;
@@ -93,7 +93,7 @@ public class PostDeleteActionHandlerTest {
     }
 
     private static class ParametersWithPostDeleteAction
-            extends StorageDomainIdParametersBase implements PostDeleteAction {
+            extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters implements PostDeleteAction {
 
         private boolean postZero;
 

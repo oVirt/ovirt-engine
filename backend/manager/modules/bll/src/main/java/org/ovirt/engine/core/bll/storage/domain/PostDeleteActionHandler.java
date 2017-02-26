@@ -6,7 +6,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.vdscommands.PostDeleteAction;
-import org.ovirt.engine.core.common.vdscommands.StorageDomainIdParametersBase;
+import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -28,7 +28,8 @@ public class PostDeleteActionHandler {
      * @param <T> the parameters type.
      * @return the fixed parameters.
      */
-    public <T extends StorageDomainIdParametersBase & PostDeleteAction> T fixParameters(T parameters) {
+    public <T extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters & PostDeleteAction> T fixParameters(
+            T parameters) {
         StorageDomain storageDomain = storageDomainStaticDao.get(parameters.getStorageDomainId());
         T parametersWithFixedPostZero = fixPostZeroField(parameters, storageDomain.getStorageType().isFileDomain());
         return fixDiscardField(parametersWithFixedPostZero, storageDomain);
@@ -43,8 +44,8 @@ public class PostDeleteActionHandler {
      * @param <T> the parameters type.
      * @return the fixed parameters.
      */
-    protected <T extends StorageDomainIdParametersBase & PostDeleteAction> T fixPostZeroField(T parameters,
-            boolean isFileDomain) {
+    protected <T extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters & PostDeleteAction> T fixPostZeroField(
+            T parameters, boolean isFileDomain) {
         if (isFileDomain) {
             parameters.setPostZero(false);
         }
@@ -60,8 +61,8 @@ public class PostDeleteActionHandler {
      * @param <T> the parameters type.
      * @return the fixed parameters.
      */
-    protected <T extends StorageDomainIdParametersBase & PostDeleteAction> T fixDiscardField(T parameters,
-            StorageDomain storageDomain) {
+    protected <T extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters & PostDeleteAction> T fixDiscardField(
+            T parameters, StorageDomain storageDomain) {
         if (storageDomain.isDiscardAfterDelete() && !Boolean.TRUE.equals(storageDomain.getSupportsDiscard())) {
             parameters.setDiscard(false);
             AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
