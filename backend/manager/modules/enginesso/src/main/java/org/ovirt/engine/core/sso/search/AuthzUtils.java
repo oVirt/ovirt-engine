@@ -122,7 +122,7 @@ public class AuthzUtils {
             final String namespace,
             final ExtMap input) {
         final Collection<ExtMap> records = new ArrayList<>();
-        queryImpl(extension, namespace, input, (queryResults) -> {
+        queryImpl(extension, namespace, input, queryResults -> {
             boolean result = true;
             for (ExtMap queryResult : queryResults) {
                 if (records.size() < QUERIES_RESULTS_LIMIT) {
@@ -190,7 +190,7 @@ public class AuthzUtils {
             final boolean groupsResolvingRecursive) {
         List<ExtMap> results = new ArrayList<>();
         SearchParsingUtils.getIdsBatches(extension.getContext(), ids).forEach(
-                (batch) ->
+                batch ->
                         results.addAll(
                                 queryPrincipalRecords(
                                         extension,
@@ -214,7 +214,7 @@ public class AuthzUtils {
             final boolean groupsResolvingRecursive) {
         Collection<ExtMap> results = new ArrayList<>();
         SearchParsingUtils.getIdsBatches(extension.getContext(), ids).forEach(
-                (batch) -> results.addAll(
+                batch -> results.addAll(
                         queryGroupRecords(
                                 extension,
                                 namespace,
