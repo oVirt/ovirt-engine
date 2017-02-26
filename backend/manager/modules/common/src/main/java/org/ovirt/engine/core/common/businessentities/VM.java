@@ -93,7 +93,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.setDiskSize(0);
         snapshots = new ArrayList<>();
         runtimeDeviceCustomProperties = new HashMap<>();
-        vmtCreationDate = new Date(0);
         storagePoolId = Guid.Empty;
     }
 
@@ -911,96 +910,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmtName = value;
     }
 
-    private int vmtMemSizeMb;
-
-    public int getVmtMemSizeMb() {
-        return this.vmtMemSizeMb;
-    }
-
-    public void setVmtMemSizeMb(int value) {
-        this.vmtMemSizeMb = value;
-    }
-
-    private int vmtOsId;
-
-    public int getVmtOsId() {
-        return this.vmtOsId;
-    }
-
-    public void setVmtOsId(int value) {
-        this.vmtOsId = value;
-    }
-
-    private Date vmtCreationDate;
-
-    public Date getVmtCreationDate() {
-        return this.vmtCreationDate;
-    }
-
-    public void setVmtCreationDate(Date value) {
-        this.vmtCreationDate = value;
-    }
-
-    private int vmtchildCount;
-
-    public int getVmtChildCount() {
-        return this.vmtchildCount;
-    }
-
-    public void setVmtChildCount(int value) {
-        this.vmtchildCount = value;
-    }
-
-    private int vmtNumOfCpus;
-
-    public int getVmtNumOfCpus() {
-        return this.vmtNumOfCpus;
-    }
-
-    public void setVmtNumOfCpus(int value) {
-        this.vmtNumOfCpus = value;
-    }
-
-    private int vmtNumOfSockets;
-
-    public int getVmtNumOfSockets() {
-        return this.vmtNumOfSockets;
-    }
-
-    public void setVmtNumOfSockets(int value) {
-        this.vmtNumOfSockets = value;
-    }
-
-    private int vmtCpuPerSocket;
-
-    public int getVmtCpuPerSocket() {
-        return this.vmtCpuPerSocket;
-    }
-
-    public void setVmtCpuPerSocket(int value) {
-        this.vmtCpuPerSocket = value;
-    }
-
-    private String vmtDescription;
-
-    public String getVmtDescription() {
-        return this.vmtDescription;
-    }
-
-    public void setVmtDescription(String value) {
-        this.vmtDescription = value;
-    }
-
-    private String vmtTimeZone;
-
-    public String getVmtTimeZone() {
-        return vmtTimeZone;
-    }
-
-    public void setVmtTimeZone(String value) {
-        vmtTimeZone = value;
-    }
-
     private Version clusterCompatibilityVersion;
 
     public Version getClusterCompatibilityVersion() {
@@ -1383,16 +1292,7 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         result = prime * result + ((vmPoolName == null) ? 0 : vmPoolName.hashCode());
         result = prime * result + ((vmStatic == null) ? 0 : vmStatic.hashCode());
         result = prime * result + ((vmStatistics == null) ? 0 : vmStatistics.hashCode());
-        result = prime * result + vmtCpuPerSocket;
-        result = prime * result + ((vmtCreationDate == null) ? 0 : vmtCreationDate.hashCode());
-        result = prime * result + ((vmtDescription == null) ? 0 : vmtDescription.hashCode());
-        result = prime * result + vmtMemSizeMb;
         result = prime * result + ((vmtName == null) ? 0 : vmtName.hashCode());
-        result = prime * result + vmtNumOfCpus;
-        result = prime * result + vmtNumOfSockets;
-        result = prime * result + vmtOsId;
-        result = prime * result + ((vmtTimeZone == null) ? 0 : vmtTimeZone.hashCode());
-        result = prime * result + vmtchildCount;
         return result;
     }
 

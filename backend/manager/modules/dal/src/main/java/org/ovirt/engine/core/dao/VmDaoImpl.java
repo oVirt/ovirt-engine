@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -317,14 +316,6 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         entity.setClusterName(rs.getString("cluster_name"));
         entity.setClusterDescription(rs.getString("cluster_description"));
         entity.setVmtName(rs.getString("vmt_name"));
-        entity.setVmtMemSizeMb(rs.getInt("vmt_mem_size_mb"));
-        entity.setVmtOsId(rs.getInt("vmt_os"));
-        entity.setVmtCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("vmt_creation_date")));
-        entity.setVmtChildCount(rs.getInt("vmt_child_count"));
-        entity.setVmtNumOfCpus(rs.getInt("vmt_num_of_cpus"));
-        entity.setVmtNumOfSockets(rs.getInt("vmt_num_of_sockets"));
-        entity.setVmtCpuPerSocket(rs.getInt("vmt_cpu_per_socket"));
-        entity.setVmtDescription(rs.getString("vmt_description"));
         entity.setVmPoolName(rs.getString("vm_pool_name"));
         entity.setVmPoolId(getGuid(rs, "vm_pool_id"));
         entity.setRunOnVdsName(rs.getString("run_on_vds_name"));
