@@ -1,20 +1,29 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.vdscommands.PostDeleteAction;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -23,8 +32,12 @@ public class PostDeleteActionHandlerTest {
     @ClassRule
     public static InjectorRule injectorRule = new InjectorRule();
 
+    @Spy
     @InjectMocks
     private PostDeleteActionHandler postDeleteActionHandler;
+
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
 
     @Mock
     private AuditLogableBase auditLogableBase;
@@ -62,13 +75,49 @@ public class PostDeleteActionHandlerTest {
 
     @Test
     public void discardIsTrueWhenDiscardAfterDeleteIsTrueAndDomainSupportsDiscard() {
-        assertDiscardValue(true, true, true);
+        assertDiscardValue(true, true, true, false);
     }
 
     @Test
     public void discardIsFalseWhenDiscardAfterDeleteIsTrueAndDomainDoesNotSupportDiscard() {
-        assertDiscardValue(true, false, false);
-        assertDiscardValue(true, null, false);
+        assertDiscardValue(true, false, false, false);
+        assertDiscardValue(true, null, false, false);
+    }
+
+    @Test
+    public void discardIsTrueWhenTheDiskIsAttachedToVmWithEnableDiscardAndDomainSupportsDiscard() {
+        assertDiscardValue(false, true, true, true);
+    }
+
+    @Test
+    public void discardIsFalseWhenTheDiskIsAttachedToVmWithEnableDiscardAndDomainDoesNotSupportDiscard() {
+        assertDiscardValue(false, false, false, true);
+    }
+
+    @Test
+    public void diskVmElementWithPassDiscardExists() {
+        testExistenceOfDiskVmElementWithPassDiscard(true,
+                Arrays.asList(createDiskVmElementWithPassDiscardValue(false),
+                        createDiskVmElementWithPassDiscardValue(true)));
+    }
+
+    @Test
+    public void diskVmElementWithPassDiscardDoesNotExist() {
+        testExistenceOfDiskVmElementWithPassDiscard(false,
+                Arrays.asList(createDiskVmElementWithPassDiscardValue(false),
+                        createDiskVmElementWithPassDiscardValue(false)));
+    }
+
+    private DiskVmElement createDiskVmElementWithPassDiscardValue(boolean passDiscard) {
+        DiskVmElement diskVmElement = new DiskVmElement();
+        diskVmElement.setPassDiscard(passDiscard);
+        return diskVmElement;
+    }
+
+    private void testExistenceOfDiskVmElementWithPassDiscard(boolean expectedResult,
+            List<DiskVmElement> diskVmElements) {
+        when(diskVmElementDao.getAllDiskVmElementsByDiskId(any())).thenReturn(diskVmElements);
+        assertEquals(expectedResult, postDeleteActionHandler.diskVmElementWithPassDiscardExists(Guid.Empty));
     }
 
     private void assertPostZeroValue(ParametersWithPostDeleteAction parameters, boolean postZeroExpectedValue) {
@@ -78,7 +127,7 @@ public class PostDeleteActionHandlerTest {
     }
 
     private void assertDiscardValue(boolean discardAfterDelete, Boolean supportsDiscard,
-            boolean expectedFixedDiscardParameter) {
+            boolean expectedFixedDiscardParameter, boolean diskAttachedToAtLeastOneVmWithEnableDiscard) {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setDiscardAfterDelete(discardAfterDelete);
         storageDomain.setSupportsDiscard(supportsDiscard);
@@ -87,6 +136,8 @@ public class PostDeleteActionHandlerTest {
                 new ParametersWithPostDeleteAction(false, storageDomain.isDiscardAfterDelete());
 
         injectorRule.bind(AuditLogableBase.class, auditLogableBase);
+        doReturn(diskAttachedToAtLeastOneVmWithEnableDiscard)
+                .when(postDeleteActionHandler).diskVmElementWithPassDiscardExists(any());
 
         assertEquals(expectedFixedDiscardParameter,
                 postDeleteActionHandler.fixDiscardField(params, storageDomain).isDiscard());
