@@ -29,21 +29,6 @@ public class AuthzUtils {
         return (proxy.getContext().<Long>get(Authn.ContextKeys.CAPABILITIES, 0L) & Authn.Capabilities.AUTHENTICATE_PASSWORD) != 0;
     }
 
-    public static ExtMap fetchPrincipalRecord(final ExtensionProxy extension, ExtMap authRecord) {
-        return fetchPrincipalRecordImpl(
-                extension,
-                new ExtMap().mput(
-                        Authn.InvokeKeys.AUTH_RECORD,
-                        authRecord
-                ).mput(
-                        Authz.InvokeKeys.PRINCIPAL,
-                        authRecord.get(Authn.AuthRecord.PRINCIPAL)
-                ),
-                true,
-                true
-        );
-    }
-
     public static ExtMap fetchPrincipalRecord(
             final ExtensionProxy extension,
             String principal,
