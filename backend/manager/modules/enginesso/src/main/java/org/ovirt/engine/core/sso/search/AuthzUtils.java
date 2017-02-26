@@ -22,7 +22,7 @@ public class AuthzUtils {
 
 
     public static String getName(ExtensionProxy proxy) {
-        return proxy.getContext().<String>get(Base.ContextKeys.INSTANCE_NAME);
+        return proxy.getContext().get(Base.ContextKeys.INSTANCE_NAME);
     }
 
     public static boolean supportsPasswordAuthentication(ExtensionProxy proxy) {
@@ -75,7 +75,7 @@ public class AuthzUtils {
                                 (resolveGroupsRecursive ? Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE : 0)
                 ));
         if (output.<Integer>get(Authz.InvokeKeys.STATUS) == Authz.Status.SUCCESS) {
-            ret = output.<ExtMap>get(Authz.InvokeKeys.PRINCIPAL_RECORD);
+            ret = output.get(Authz.InvokeKeys.PRINCIPAL_RECORD);
         }
         return ret;
     }
