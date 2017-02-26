@@ -5,10 +5,13 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.vdscommands.PostDeleteAction;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.di.Injector;
 
@@ -17,6 +20,9 @@ public class PostDeleteActionHandler {
 
     @Inject
     private StorageDomainDao storageDomainStaticDao;
+
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -63,12 +69,24 @@ public class PostDeleteActionHandler {
      */
     protected <T extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters & PostDeleteAction> T fixDiscardField(
             T parameters, StorageDomain storageDomain) {
-        if (storageDomain.isDiscardAfterDelete() && !Boolean.TRUE.equals(storageDomain.getSupportsDiscard())) {
-            parameters.setDiscard(false);
-            AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
-            auditLog.setStorageDomainId(storageDomain.getId());
-            auditLogDirector.log(auditLog, AuditLogType.ILLEGAL_STORAGE_DOMAIN_DISCARD_AFTER_DELETE);
+        if (storageDomain.isDiscardAfterDelete()) {
+            if (!Boolean.TRUE.equals(storageDomain.getSupportsDiscard())) {
+                parameters.setDiscard(false);
+                AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
+                auditLog.setStorageDomainId(storageDomain.getId());
+                auditLogDirector.log(auditLog, AuditLogType.ILLEGAL_STORAGE_DOMAIN_DISCARD_AFTER_DELETE);
+            }
+        } else if (diskVmElementWithPassDiscardExists(parameters.getImageGroupId()) &&
+                Boolean.TRUE.equals(storageDomain.getSupportsDiscard())) {
+            // At least one vm has this disk with pass discard enabled.
+            // Thus, although the relevant storage domain's discard after
+            // delete value is false, we send discard = true to vdsm.
+            parameters.setDiscard(true);
         }
         return parameters;
+    }
+
+    protected boolean diskVmElementWithPassDiscardExists(Guid diskId) {
+        return diskVmElementDao.getAllDiskVmElementsByDiskId(diskId).stream().anyMatch(DiskVmElement::isPassDiscard);
     }
 }
