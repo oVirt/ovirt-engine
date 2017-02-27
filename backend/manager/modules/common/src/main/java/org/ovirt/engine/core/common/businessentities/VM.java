@@ -959,16 +959,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.clusterName = value;
     }
 
-    private String clusterDescription;
-
-    public String getClusterDescription() {
-        return this.clusterDescription;
-    }
-
-    public void setClusterDescription(String value) {
-        this.clusterDescription = value;
-    }
-
     private String clusterCpuName;
 
     public String getClusterCpuName() {
@@ -1270,7 +1260,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         temp = (long)_actualDiskWithSnapthotsSize;
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((cdPath == null) ? 0 : cdPath.hashCode());
-        result = prime * result + ((configured == null) ? 0 : configured.hashCode());
         result = prime * result + ((diskMap == null) ? 0 : diskMap.hashCode());
         temp = (long)diskSize;
         result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -1285,7 +1274,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         result =
                 prime * result + ((clusterCompatibilityVersion == null) ? 0 : clusterCompatibilityVersion.hashCode());
         result = prime * result + ((clusterCpuName == null) ? 0 : clusterCpuName.hashCode());
-        result = prime * result + ((clusterDescription == null) ? 0 : clusterDescription.hashCode());
         result = prime * result + ((clusterName == null) ? 0 : clusterName.hashCode());
         result = prime * result + ((vmDynamic == null) ? 0 : vmDynamic.hashCode());
         result = prime * result + ((vmPoolId == null) ? 0 : vmPoolId.hashCode());
@@ -1373,24 +1361,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     @Override
     public Object getQueryableId() {
         return getId();
-    }
-
-    private Boolean configured;
-
-    /**
-     * @return true if vm has at least one Disk and one Interface
-     */
-    public boolean isConfigured() {
-        if (configured == null) {
-            configured =
-                    getInterfaces() != null && getDiskMap() != null && getInterfaces().size() > 0 && getDiskMap()
-                            .size() > 0;
-        }
-        return configured;
-    }
-
-    public void setConfigured(boolean value) {
-        configured = value;
     }
 
     public ArrayList<DiskImage> getDiskList() {

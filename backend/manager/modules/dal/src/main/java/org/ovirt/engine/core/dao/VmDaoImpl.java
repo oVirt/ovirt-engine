@@ -314,7 +314,6 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         entity.setQuotaName(rs.getString("quota_name"));
         entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
         entity.setClusterName(rs.getString("cluster_name"));
-        entity.setClusterDescription(rs.getString("cluster_description"));
         entity.setVmtName(rs.getString("vmt_name"));
         entity.setVmPoolName(rs.getString("vm_pool_name"));
         entity.setVmPoolId(getGuid(rs, "vm_pool_id"));
