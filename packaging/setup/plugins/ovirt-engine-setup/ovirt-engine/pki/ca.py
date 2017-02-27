@@ -88,6 +88,24 @@ class Plugin(plugin.PluginBase):
             fileList=files,
         )
 
+    def _x509_load_cert(self, f):
+        try:
+            res = X509.load_cert(f)
+        except X509.X509Error:
+            # In the past we wrote the ca cert with 'text'.
+            # This confuses newer m2crypto.
+            # Try to read it with openssl instead.
+            rc, stdout, stderr = self.execute(
+                args=(
+                    self.command.get('openssl'),
+                    'x509',
+                    '-in', f,
+                ),
+                raiseOnError=False,
+            )
+            res = X509.load_cert_string(str('\n'.join(stdout)))
+        return res
+
     def _extractPKCS12CertificateString(self, pkcs12):
         res = False
         rc, stdout, stderr = self.execute(
@@ -272,7 +290,7 @@ class Plugin(plugin.PluginBase):
                     res = True
                 else:
                     if x509.verify(
-                        X509.load_cert(
+                        self._x509_load_cert(
                             oenginecons.FileLocations.
                             OVIRT_ENGINE_PKI_ENGINE_CA_CERT
                         ).get_pubkey()
@@ -283,7 +301,7 @@ class Plugin(plugin.PluginBase):
 
                         # sanity check, make sure user did not manually
                         # change cert
-                        x509x = X509.load_cert(
+                        x509x = self._x509_load_cert(
                             os.path.join(
                                 (
                                     oenginecons.FileLocations.
@@ -452,7 +470,7 @@ class Plugin(plugin.PluginBase):
     def _customization_upgrade(self):
         if True in [
             self._expired(
-                X509.load_cert(
+                self._x509_load_cert(
                     oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
                 )
             )
@@ -504,7 +522,7 @@ class Plugin(plugin.PluginBase):
         # country in post install file. Load it from CA certificate.
         #
         if self.environment[oenginecons.PKIEnv.ORG] is None:
-            ca = X509.load_cert(
+            ca = self._x509_load_cert(
                 oenginecons.FileLocations.
                 OVIRT_ENGINE_PKI_ENGINE_CA_CERT
             )
@@ -577,7 +595,7 @@ class Plugin(plugin.PluginBase):
 
         if self.environment[oenginecons.PKIEnv.RENEW]:
             if self._expired(
-                X509.load_cert(
+                self._x509_load_cert(
                     oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
                 )
             ):
@@ -753,9 +771,8 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _closeup(self):
-        x509 = X509.load_cert(
-            file=oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-            format=X509.FORMAT_PEM,
+        x509 = self._x509_load_cert(
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
         )
         self.dialog.note(
             text=_('Internal CA {fingerprint}').format(
