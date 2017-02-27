@@ -91,12 +91,12 @@ public class CommandCallbacksPoller implements BackendService {
                     ? commandEntity.getCommandParameters().getCorrelationId() : null);
             if (commandEntity != null && updateCommandWaitingForEvent(commandEntity, callbackTiming)) {
                 continue;
-            } else {
-                // Decrement counter; execute if it reaches 0
-                callbackTiming.setRemainingDelay(callbackTiming.getRemainingDelay() - pollingRate);
-                if (callbackTiming.getRemainingDelay() > 0) {
-                    continue;
-                }
+            }
+
+            // Decrement counter; execute if it reaches 0
+            callbackTiming.setRemainingDelay(callbackTiming.getRemainingDelay() - pollingRate);
+            if (callbackTiming.getRemainingDelay() > 0) {
+                continue;
             }
 
             CommandCallback callback = callbackTiming.getCallback();
