@@ -5,9 +5,10 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
@@ -18,11 +19,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +29,19 @@ import org.slf4j.LoggerFactory;
 public class OvfDataUpdater implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(OvfDataUpdater.class);
 
+    @Inject
+    private StoragePoolDao storagePoolDao;
+
+    @Inject
+    private BackendInternal backend;
+
+    @Inject
+    private SchedulerUtilQuartzImpl scheduler;
+
     private volatile String updateTimerJobId;
-    protected StoragePoolDao getStoragePoolDao() {
-        return DbFacade.getInstance().getStoragePoolDao();
-    }
 
     @PostConstruct
     public void initOvfDataUpdater() {
-        SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
         updateTimerJobId = scheduler.scheduleAFixedDelayJob(this, "ovfUpdateTimer", new Class[] {},
                 new Object[] {}, Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
                 Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes), TimeUnit.MINUTES);
@@ -46,18 +49,18 @@ public class OvfDataUpdater implements BackendService {
     }
 
     protected void performOvfUpdateForDomain(Guid storagePoolId, Guid domainId) {
-        Backend.getInstance().runInternalAction(VdcActionType.ProcessOvfUpdateForStorageDomain,
+        backend.runInternalAction(VdcActionType.ProcessOvfUpdateForStorageDomain,
                 new ProcessOvfUpdateForStorageDomainCommandParameters(storagePoolId, domainId));
     }
 
     protected VdcReturnValueBase performOvfUpdateForStoragePool(Guid storagePoolId) {
         ProcessOvfUpdateForStoragePoolParameters parameters = new ProcessOvfUpdateForStoragePoolParameters(storagePoolId);
-        return Backend.getInstance().runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters);
+        return backend.runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters);
     }
 
     @OnTimerMethodAnnotation("ovfUpdateTimer")
     public void ovfUpdateTimer() {
-        List<StoragePool> storagePools = getStoragePoolDao().getAllByStatus(StoragePoolStatus.Up);
+        List<StoragePool> storagePools = storagePoolDao.getAllByStatus(StoragePoolStatus.Up);
         updateOvfData(storagePools);
     }
 
@@ -86,7 +89,6 @@ public class OvfDataUpdater implements BackendService {
 
     public void triggerNow() {
         if (updateTimerJobId != null) {
-            SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
             scheduler.triggerJob(updateTimerJobId);
         }
     }

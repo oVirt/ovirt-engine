@@ -14,6 +14,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OvfDataUpdaterTest {
+    @InjectMocks
     @Spy
     private OvfDataUpdater ovfDataUpdater;
     private Map<Guid, Map<Guid, Boolean>> map;
@@ -35,7 +37,6 @@ public class OvfDataUpdaterTest {
     @Before
     public void setUp() {
         map = new HashMap<>();
-        doReturn(storagePoolDao).when(ovfDataUpdater).getStoragePoolDao();
         mockAnswers();
 
         StoragePool pool1 = new StoragePool();
