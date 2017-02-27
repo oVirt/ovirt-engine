@@ -1,18 +1,11 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import static java.util.stream.Collectors.toSet;
-
-import java.util.List;
-import java.util.Set;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
 /**
@@ -25,7 +18,7 @@ public abstract class StoragePoolQueryBase<P extends VdcQueryParametersBase>  ex
     protected StoragePoolDao storagePoolDao;
 
     @Inject
-    ClusterDao clusterDao;
+    private DcSingleMacPoolFinder dcSingleMacPoolFinder;
 
     public StoragePoolQueryBase(P parameters) {
         super(parameters);
@@ -54,7 +47,6 @@ public abstract class StoragePoolQueryBase<P extends VdcQueryParametersBase>  ex
             for (StoragePool storagePool : (Iterable<StoragePool>) dataCenterQueryResult) {
                 dataCenterQueryResult(storagePool);
             }
-
             return;
         }
 
@@ -62,11 +54,8 @@ public abstract class StoragePoolQueryBase<P extends VdcQueryParametersBase>  ex
     }
 
     private void dataCenterQueryResult(StoragePool storagePool) {
-        final List<Cluster> clusters = clusterDao.getAllForStoragePool(storagePool.getId());
-        final Set<Guid> macPoolIds = clusters.stream().map(Cluster::getMacPoolId).collect(toSet());
-
-        //each cluster, due to db constraint, must have not null reference to pool, thus collection cannot be empty.
-        storagePool.setMacPoolId(macPoolIds.size() != 1 ? null : macPoolIds.iterator().next());
+        final Guid macPoolId = dcSingleMacPoolFinder.find(storagePool.getId());
+        storagePool.setMacPoolId(macPoolId);
     }
 
     /**

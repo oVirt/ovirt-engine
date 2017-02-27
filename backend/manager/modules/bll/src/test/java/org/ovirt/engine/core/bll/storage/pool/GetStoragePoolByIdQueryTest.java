@@ -5,17 +5,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
 /**
@@ -24,46 +19,35 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
  */
 public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetStoragePoolByIdQuery<IdQueryParameters>> {
 
+    private static final Guid STORAGE_POOL_ID = Guid.newGuid();
+    private static final Guid MAC_POOL_ID = Guid.newGuid();
+
     @Mock
     private StoragePoolDao storagePoolDaoMock;
 
     @Mock
-    private ClusterDao clusterDaoMock;
+    private DcSingleMacPoolFinder dcSingleMacPoolFinderMock;
 
     @Test
-    public void testExecuteQueryWhenAllClustersHaveSameMacPoolAssigned() {
-        test(true);
-    }
+    public void testExecuteQuery() {
+        StoragePool expectedResult = createStoragePool();
 
-    @Test
-    public void testExecuteQueryWhenAllClustersHaveNotSameMacPoolAssigned() {
-        test(false);
-    }
-
-    private void test(boolean allClustersUsesSamePool) {
-        Guid storagePoolID = Guid.newGuid();
-        StoragePool expectedResult = new StoragePool();
-        expectedResult.setId(storagePoolID);
-
-        IdQueryParameters paramsMock = getQueryParameters();
-        when(paramsMock.getId()).thenReturn(storagePoolID);
-
-        when(storagePoolDaoMock.get(storagePoolID, getUser().getId(), paramsMock.isFiltered()))
+        when(getQueryParameters().getId()).thenReturn(STORAGE_POOL_ID);
+        when(storagePoolDaoMock.get(STORAGE_POOL_ID, getUser().getId(), getQueryParameters().isFiltered()))
                 .thenReturn(expectedResult);
-
-        final Guid cluster1Guid = Guid.newGuid();
-        final Cluster cluster1 = new Cluster();
-        cluster1.setMacPoolId(cluster1Guid);
-
-        final Cluster cluster2 = new Cluster();
-        cluster2.setMacPoolId(allClustersUsesSamePool ? cluster1Guid : Guid.newGuid());
-
-        when(clusterDaoMock.getAllForStoragePool(storagePoolID)).thenReturn(Arrays.asList(cluster1, cluster2));
+        when(dcSingleMacPoolFinderMock.find(STORAGE_POOL_ID)).thenReturn(MAC_POOL_ID);
 
         getQuery().executeQueryCommand();
-
         StoragePool result = getQuery().getQueryReturnValue().getReturnValue();
+
         assertEquals("Wrong storage pool returned", expectedResult, result);
-        assertThat(result.getMacPoolId(), allClustersUsesSamePool ? is(cluster1Guid) : CoreMatchers.nullValue());
+        assertThat(result.getMacPoolId(), is(MAC_POOL_ID));
     }
+
+    private StoragePool createStoragePool() {
+        StoragePool expectedResult = new StoragePool();
+        expectedResult.setId(STORAGE_POOL_ID);
+        return expectedResult;
+    }
+
 }

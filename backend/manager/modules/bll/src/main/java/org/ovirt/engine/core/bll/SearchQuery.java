@@ -3,12 +3,14 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
+import org.ovirt.engine.core.bll.storage.pool.DcSingleMacPoolFinder;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
@@ -144,6 +147,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     @Inject
     private ImageTransferDao imageTransferDao;
+
+    @Inject
+    private DcSingleMacPoolFinder dcSingleMacPoolFinder;
 
     public SearchQuery(P parameters) {
         super(parameters);
@@ -349,16 +355,28 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<StoragePool> searchStoragePool() {
-        Optional<Version> retVal = Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels).stream()
-                .max((v1, v2) -> v1.compareTo(v2));
         List<StoragePool> dataCenters = genericSearch(storagePoolDao, true);
-        if (retVal.isPresent()) {
-            dataCenters.stream()
-                    .forEach(dataCenter -> dataCenter.setStoragePoolCompatibilityLevelUpgradeNeeded(
-                            retVal.get().compareTo(dataCenter.getCompatibilityVersion()) > 0)
-                    );
-        }
+        dataCenters.forEach(this::setDcSingleMacPoolId);
+        setDcCompatibilityLevelUpgradeNeeded(dataCenters);
         return dataCenters;
+    }
+
+    private void setDcSingleMacPoolId(StoragePool dataCenter) {
+        dataCenter.setMacPoolId(dcSingleMacPoolFinder.find(dataCenter.getId()));
+    }
+
+    private void setDcCompatibilityLevelUpgradeNeeded(List<StoragePool> dataCenters) {
+        Config.<Set<Version>> getValue(ConfigValues.SupportedClusterLevels)
+                .stream()
+                .max(Comparator.naturalOrder())
+                .ifPresent(maxSupportedClusterLevel ->
+                        setDcCompatibilityLevelUpgradeNeeded(dataCenters, maxSupportedClusterLevel));
+    }
+
+    private void setDcCompatibilityLevelUpgradeNeeded(List<StoragePool> dataCenters, Version maxSupportedClusterLevel) {
+        dataCenters.forEach(
+                dataCenter -> dataCenter.setStoragePoolCompatibilityLevelUpgradeNeeded(
+                        maxSupportedClusterLevel.compareTo(dataCenter.getCompatibilityVersion()) > 0));
     }
 
     private List<StorageDomain> searchStorageDomain() {
