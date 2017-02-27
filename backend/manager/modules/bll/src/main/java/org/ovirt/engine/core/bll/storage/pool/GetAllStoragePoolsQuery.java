@@ -2,11 +2,10 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
-public class GetAllStoragePoolsQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetAllStoragePoolsQuery<P extends VdcQueryParametersBase> extends StoragePoolQueryBase<P> {
     @Inject
     private StoragePoolDao storagePoolDao;
 
@@ -15,7 +14,7 @@ public class GetAllStoragePoolsQuery<P extends VdcQueryParametersBase> extends Q
     }
 
     @Override
-    protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(storagePoolDao.getAll(getUserID(), getParameters().isFiltered()));
+    protected Object queryDataCenter() {
+        return storagePoolDao.getAll(getUserID(), getParameters().isFiltered());
     }
 }
