@@ -844,24 +844,12 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         return this.vmStatistics.getMemoryUsageHistory();
     }
 
-    public void addMemoryUsageHistory(Integer memoryUsageHistory, int limit) {
-        this.vmStatistics.addMemoryUsageHistory(memoryUsageHistory, limit);
-    }
-
     public List<Integer> getCpuUsageHistory() {
         return this.vmStatistics.getCpuUsageHistory();
     }
 
-    public void addCpuUsageHistory(Integer cpuUsageHistory, int limit) {
-        this.vmStatistics.addCpuUsageHistory(cpuUsageHistory, limit);
-    }
-
     public List<Integer> getNetworkUsageHistory() {
         return this.vmStatistics.getNetworkUsageHistory();
-    }
-
-    public void addNetworkUsageHistory(Integer networkUsageHistory, int limit) {
-        this.vmStatistics.addNetworkUsageHistory(networkUsageHistory, limit);
     }
 
     public Integer getMigrationProgressPercent() {
