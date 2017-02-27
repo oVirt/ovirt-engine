@@ -106,6 +106,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private InClusterUpgradeValidator clusterUpgradeValidator;
     @Inject
     private RngDeviceUtils rngDeviceUtils;
+    @Inject
+    private OvfDataUpdater ovfDataUpdater;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -194,7 +196,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             registerRollbackHandler(new TransactionCompletionListener() {
                 @Override
                 public void onSuccess() {
-                    OvfDataUpdater.getInstance().triggerNow();
+                    ovfDataUpdater.triggerNow();
                 }
 
                 @Override

@@ -4,7 +4,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -23,23 +27,16 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OvfDataUpdater {
+@Singleton
+public class OvfDataUpdater implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(OvfDataUpdater.class);
-    private static final OvfDataUpdater INSTANCE = new OvfDataUpdater();
 
     private volatile String updateTimerJobId;
-
-    private OvfDataUpdater() {
-    }
-
-    public static OvfDataUpdater getInstance() {
-        return INSTANCE;
-    }
-
     protected StoragePoolDao getStoragePoolDao() {
         return DbFacade.getInstance().getStoragePoolDao();
     }
 
+    @PostConstruct
     public void initOvfDataUpdater() {
         SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
         updateTimerJobId = scheduler.scheduleAFixedDelayJob(this, "ovfUpdateTimer", new Class[] {},
