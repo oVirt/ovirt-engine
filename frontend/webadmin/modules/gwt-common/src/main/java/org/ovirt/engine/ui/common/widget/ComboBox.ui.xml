@@ -4,47 +4,22 @@
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
-    <ui:style type="org.ovirt.engine.ui.common.widget.ComboBox.WidgetStyle">
-        .listBoxLabel {
-            margin-left: 30px;
-        }
-
+    <ui:style>
         .textBoxPosition {
             position: absolute;
             top: 0px;
-            width: 100%;
-            padding-right: 26px;
+            width: 91%;
+            z-index: 2;
         }
 
-        .textBoxEditor {
-            margin-top: 2px;
-            margin-top: 1px;
-            right: 18px;
-            right: 20px;
-        }
-
-        .textBoxWidget {
-            width: 216px;
-            margin-top: 1px;
-        }
-
-        .textBoxInput {
-            border-width: 0px !important;
-            font-size: 13px;
-        }
-
-        .selectBoxInput {
-            height: 23px !important;
-        }
-
-        .textBoxLabel {
-            display: none;
+        .position {
+            position: relative;
         }
     </ui:style>
 
-    <g:AbsolutePanel>
+    <g:FlowPanel addStyleNames="{style.position}">
         <e:ListModelListBoxEditor ui:field="listBoxEditor" />
-        <ge:EntityModelTextBoxEditor ui:field="textBoxEditor" addStyleNames="{style.textBoxEditor} {style.textBoxPosition}" />
-    </g:AbsolutePanel>
+        <ge:EntityModelTextBoxEditor ui:field="textBoxEditor" addStyleNames="{style.textBoxPosition}" />
+    </g:FlowPanel>
 
 </ui:UiBinder>

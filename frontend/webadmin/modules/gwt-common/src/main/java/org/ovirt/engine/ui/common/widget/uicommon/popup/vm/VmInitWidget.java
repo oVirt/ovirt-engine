@@ -80,8 +80,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     interface Style extends CssResource {
         String displayNone();
-
-        String primaryOptionComboBox();
     }
 
     private final BasicStyle customizableStyle;
@@ -614,7 +612,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             cloudInitPasswordSetEditor.removeStyleName(customizableStyle.primaryOption());
             sysprepPasswordSetEditor.removeStyleName(customizableStyle.primaryOption());
             regenerateKeysEnabledEditor.removeStyleName(customizableStyle.primaryOption());
-            networkComboBox.removeStyleName(style.primaryOptionComboBox());
             networkSelectLabel.addStyleName(Styles.FORM_GROUP);
         } else {
             sysprepScriptEditor.setContentWidgetContainerStyleName(customizableStyle.customScript());
