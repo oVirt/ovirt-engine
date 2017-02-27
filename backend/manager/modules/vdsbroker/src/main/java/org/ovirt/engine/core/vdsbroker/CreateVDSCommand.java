@@ -24,9 +24,9 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
     @Override
     protected void executeVmCommand() {
         VM vm = getParameters().getVm();
+        getVDSReturnValue().setReturnValue(vm.getStatus());
         if (!resourceManager.addAsyncRunningVm(vm.getId())) {
             log.info("Vm Running failed - vm '{}'({}) already running", vm.getName(), vm.getId());
-            getVDSReturnValue().setReturnValue(vm.getStatus());
             return;
         }
 
@@ -34,17 +34,18 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
         VDSReturnValue vdsReturnValue = null;
         try {
             vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.CreateBroker, getParameters());
-            if (vdsReturnValue.getSucceeded()) {
-                if (!getParameters().isRunInUnknownStatus()) {
-                    vmDao.saveIsInitialized(vm.getId(), true);
-                    vm.setStopReason(null);
-                    vm.setInitialized(true);
-                    vm.setRunOnVds(getParameters().getVdsId());
-                    vmManager.update(vm.getDynamicData());
-                }
-            } else {
+            if (!vdsReturnValue.getSucceeded()) {
                 handleCommandResult(vdsReturnValue);
                 resourceManager.removeAsyncRunningVm(getParameters().getVmId());
+                return;
+            }
+
+            if (!getParameters().isRunInUnknownStatus()) {
+                vmDao.saveIsInitialized(vm.getId(), true);
+                vm.setStopReason(null);
+                vm.setInitialized(true);
+                vm.setRunOnVds(getParameters().getVdsId());
+                vmManager.update(vm.getDynamicData());
             }
         } catch (Exception e) {
             log.error("Failed to create VM: {}", e.getMessage());
