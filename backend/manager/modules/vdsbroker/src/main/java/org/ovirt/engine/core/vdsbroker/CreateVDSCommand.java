@@ -41,7 +41,9 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
             }
 
             if (!getParameters().isRunInUnknownStatus()) {
-                vmDao.saveIsInitialized(vm.getId(), true);
+                if (!vm.isInitialized()) {
+                    vmDao.saveIsInitialized(vm.getId(), true);
+                }
                 vm.setStopReason(null);
                 vm.setInitialized(true);
                 vm.setRunOnVds(getParameters().getVdsId());
