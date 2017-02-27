@@ -18,65 +18,41 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatus>, HasStoragePool<Guid>, HasErrata, Nameable, Commented, Reasoned {
+public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatus>, HasStoragePool<Guid>, HasErrata, Nameable, Commented {
     private static final long serialVersionUID = -4078140531074414263L;
+
     @Valid
     private VmStatic vmStatic;
-
     private VmDynamic vmDynamic;
     private VmStatistics vmStatistics;
-
     @Valid
     private List<Snapshot> snapshots;
-
     private String clusterSpiceProxy;
-
     private String vmPoolSpiceProxy;
-
     private Map<VmDeviceId, Map<String, String>> runtimeDeviceCustomProperties;
-
     private ArchitectureType clusterArch;
-
     private boolean nextRunConfigurationExists;
-
     private boolean previewSnapshot;
-
     private LockInfo lockInfo;
-
     private int backgroundOperationProgress;
     private String backgroundOperationDescription;
-
-    public String getUserDefinedProperties() {
-        return vmStatic.getUserDefinedProperties();
-    }
-
-    public void setUserDefinedProperties(String userDefinedProperties) {
-        vmStatic.setUserDefinedProperties(userDefinedProperties);
-    }
-
-    public String getPredefinedProperties() {
-        return vmStatic.getPredefinedProperties();
-    }
-
-    public String getCustomProperties() {
-        return vmStatic.getCustomProperties();
-    }
-
-    public void setCustomProperties(String customProperties) {
-        vmStatic.setCustomProperties(customProperties);
-    }
-
-    public void setPredefinedProperties(String predefinedProperties) {
-        vmStatic.setPredefinedProperties(predefinedProperties);
-    }
-
-    public Map<VmDeviceId, Map<String, String>> getRuntimeDeviceCustomProperties() {
-        return runtimeDeviceCustomProperties;
-    }
-
-    public void setRuntimeDeviceCustomProperties(Map<VmDeviceId, Map<String, String>> runtimeDeviceCustomProperties) {
-        this.runtimeDeviceCustomProperties = runtimeDeviceCustomProperties;
-    }
+    private Guid vmPoolId;
+    private String vmPoolName;
+    private String vmtName;
+    private Version clusterCompatibilityVersion;
+    private String clusterName;
+    private String clusterCpuName;
+    private Map<Guid, Disk> diskMap;
+    // even this field has no setter, it can not have the final modifier because the GWT serialization mechanism
+    // ignores the final fields
+    private String cdPath;
+    private String floppyPath;
+    private double _actualDiskWithSnapthotsSize;
+    private double diskSize;
+    private Version privateGuestAgentVersion;
+    private Version spiceDriverVersion;
+    private boolean transparentHugePages;
+    private boolean trustedService;
 
     public VM() {
         this(new VmStatic(), new VmDynamic(), new VmStatistics());
@@ -246,12 +222,10 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmStatic.setCustomEmulatedMachine(value);
     }
 
-    @Override
     public String getStopReason() {
         return this.vmDynamic.getStopReason();
     }
 
-    @Override
     public void setStopReason(String value) {
         this.vmDynamic.setStopReason(value);
     }
@@ -491,9 +465,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public void setKernelParams(String value) {
         vmStatic.setKernelParams(value);
     }
-
-    private Guid vmPoolId;
-    private String vmPoolName;
 
     @Override
     public VMStatus getStatus() {
@@ -888,8 +859,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmStatic.setVmtGuid(value);
     }
 
-    private String vmtName;
-
     public String getVmtName() {
         return this.vmtName;
     }
@@ -897,8 +866,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public void setVmtName(String value) {
         this.vmtName = value;
     }
-
-    private Version clusterCompatibilityVersion;
 
     public Version getClusterCompatibilityVersion() {
         return this.clusterCompatibilityVersion;
@@ -937,8 +904,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         return getCustomCompatibilityVersion() != null ? getCustomCompatibilityVersion() : getClusterCompatibilityVersion();
     }
 
-    private String clusterName;
-
     public String getClusterName() {
         return this.clusterName;
     }
@@ -946,8 +911,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public void setClusterName(String value) {
         this.clusterName = value;
     }
-
-    private String clusterCpuName;
 
     public String getClusterCpuName() {
         return this.clusterCpuName;
@@ -1083,18 +1046,9 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         vmStatic.setImages(value);
     }
 
-    private Map<Guid, Disk> diskMap;
-
-    // even this field has no setter, it can not have the final modifier because the GWT serialization mechanism
-    // ignores the final fields
-    private String cdPath;
-    private String floppyPath;
-
     public boolean isFirstRun() {
         return vmStatic.isFirstRun();
     }
-
-    private double _actualDiskWithSnapthotsSize;
 
     public double getActualDiskWithSnapshotsSize() {
         if (_actualDiskWithSnapthotsSize == 0 && getDiskMap() != null) {
@@ -1115,8 +1069,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public void setActualDiskWithSnapshotsSize(double value) {
         // Purposely empty
     }
-
-    private double diskSize;
 
     public double getDiskSize() {
         if (diskSize == 0) {
@@ -1288,8 +1240,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         vmPoolId = value;
     }
 
-    private Version privateGuestAgentVersion;
-
     /**
      * assumption: Qumranet Agent version stored in app_list by "Qumranet Agent" name. Qumranet Agent version,
      * received from vds in format : a.b.d there is no major revision received from vds - always 0
@@ -1312,8 +1262,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         return getGuestAgentVersion() != null;
     }
 
-    private Version spiceDriverVersion;
-
     public Version getSpiceDriverVersion() {
         return spiceDriverVersion;
     }
@@ -1326,8 +1274,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         return getSpiceDriverVersion() != null;
     }
 
-    private boolean transparentHugePages;
-
     public boolean isTransparentHugePages() {
         return this.transparentHugePages;
     }
@@ -1335,8 +1281,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public void setTransparentHugePages(boolean value) {
         this.transparentHugePages = value;
     }
-
-    private boolean trustedService;
 
     public void setTrustedService(boolean trustedService) {
         this.trustedService = trustedService;
@@ -1428,10 +1372,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public String toString() {
         return "VM [" + getName() + "]";
     }
-
-    ///////////////////////////////////////////////
-    /// Utility methods that check the VM state ///
-    ///////////////////////////////////////////////
 
     public boolean isDown() {
         return getStatus() == VMStatus.Down;
@@ -1768,4 +1708,37 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public void setLeaseStorageDomainId(Guid leaseStorageDomainId) {
         vmStatic.setLeaseStorageDomainId(leaseStorageDomainId);
     }
+
+    public String getUserDefinedProperties() {
+        return vmStatic.getUserDefinedProperties();
+    }
+
+    public void setUserDefinedProperties(String userDefinedProperties) {
+        vmStatic.setUserDefinedProperties(userDefinedProperties);
+    }
+
+    public String getPredefinedProperties() {
+        return vmStatic.getPredefinedProperties();
+    }
+
+    public String getCustomProperties() {
+        return vmStatic.getCustomProperties();
+    }
+
+    public void setCustomProperties(String customProperties) {
+        vmStatic.setCustomProperties(customProperties);
+    }
+
+    public void setPredefinedProperties(String predefinedProperties) {
+        vmStatic.setPredefinedProperties(predefinedProperties);
+    }
+
+    public Map<VmDeviceId, Map<String, String>> getRuntimeDeviceCustomProperties() {
+        return runtimeDeviceCustomProperties;
+    }
+
+    public void setRuntimeDeviceCustomProperties(Map<VmDeviceId, Map<String, String>> runtimeDeviceCustomProperties) {
+        this.runtimeDeviceCustomProperties = runtimeDeviceCustomProperties;
+    }
+
 }
