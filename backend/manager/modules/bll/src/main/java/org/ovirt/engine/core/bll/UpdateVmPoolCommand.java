@@ -88,6 +88,10 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
             return failValidation(EngineMessage.VM_POOL_CANNOT_CHANGE_POOL_STATEFUL_OPTION);
         }
 
+        if (!oldPool.getName().equals(getParameters().getVmPool().getName())) {
+            return failValidation(EngineMessage.VM_POOL_CANNOT_CHANGE_POOL_NAME);
+        }
+
         return true;
     }
 
