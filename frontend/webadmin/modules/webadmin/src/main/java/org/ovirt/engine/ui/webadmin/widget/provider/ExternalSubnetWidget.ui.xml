@@ -20,7 +20,7 @@
         <b:Row>
             <ge:StringEntityModelTextBoxEditor ui:field="gatewayEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
         </b:Row>
-        <p:DnsServersWidget ui:field="dnsServersEditor" usePatternFly="true" dnsServerWidth="350" />
+        <p:DnsServersWidget ui:field="dnsServersEditor" usePatternFly="true" dnsServerWidth="300" />
     </g:FlowPanel>
 
 </ui:UiBinder>
