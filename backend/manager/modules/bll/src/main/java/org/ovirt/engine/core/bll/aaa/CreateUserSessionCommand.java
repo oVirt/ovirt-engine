@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateUserSessionParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -82,6 +83,8 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
             boolean isAdmin = !roleDao.getAnyAdminRoleForUserAndGroups(user.getId(),
                     StringUtils.join(user.getGroupIds(), ",")).isEmpty();
             user.setAdmin(isAdmin);
+            setCurrentUser(user);
+            setUserName(String.format("%s@%s", getCurrentUser().getLoginName(), getCurrentUser().getDomain()));
 
             if (getParameters().isAdminRequired() && !isAdmin) {
                 setSucceeded(false);
@@ -134,4 +137,8 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         return Collections.emptyList();
     }
 
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.USER_VDC_LOGIN : AuditLogType.USER_VDC_LOGIN_FAILED;
+    }
 }
