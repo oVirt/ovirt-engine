@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +54,7 @@ public class DataCenterCompatibilityChecker implements BackendService {
     @OnTimerMethodAnnotation("onTimer")
     public void onTimer() {
         Optional<Version> retVal = Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels).stream()
-                .max((v1, v2) -> v1.compareTo(v2));
+                .max(Comparator.naturalOrder());
         if (retVal.isPresent()) {
             Version version = retVal.get();
             storagePoolDao.getAll().stream()

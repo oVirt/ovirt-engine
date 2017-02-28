@@ -346,7 +346,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<Cluster> searchClusters() {
         Optional<Version> retVal = Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels).stream()
-                .max((v1, v2) -> v1.compareTo(v2));
+                .max(Comparator.naturalOrder());
         List<Cluster> clusters = genericSearch(clusterDao, true);
         if (retVal.isPresent()) {
             clusters.stream()
