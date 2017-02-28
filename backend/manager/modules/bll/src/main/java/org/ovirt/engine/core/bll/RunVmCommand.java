@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -727,7 +728,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         List<String> oldSupported = Config.getValue(ConfigValues.ClusterEmulatedMachines,
                 getVm().getCustomCompatibilityVersion().getValue());
         Optional<String> best = oldSupported.stream().max(
-                (s1, s2) -> StringUtils.indexOfDifference(recentClusterDefault, s1) - StringUtils.indexOfDifference(recentClusterDefault, s2));
+                Comparator.comparingInt(s -> StringUtils.indexOfDifference(recentClusterDefault, s)));
         log.info("Emulated machine '{}' selected since Custom Compatibility Version is set for '{}'", best.orElse(recentClusterDefault), getVm());
         return best.orElse(recentClusterDefault);
     }

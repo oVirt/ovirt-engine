@@ -2,9 +2,11 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -109,7 +111,7 @@ public class RankSelectorPolicyUnit extends PolicyUnitImpl {
                 // Assign rank, same weight has to have the same rank number
                 // Rank = the number of hosts with the same or worse weight
                 weights.entrySet().stream()
-                        .sorted((o1, o2) -> Integer.compare(o1.getValue(), o2.getValue()))
+                        .sorted(Comparator.comparingInt(Entry::getValue))
                         .forEach(entry -> {
                             realRank[0]--;
 

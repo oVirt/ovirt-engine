@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
@@ -53,7 +55,7 @@ public class BasicWeightSelectorPolicyUnit extends PolicyUnitImpl {
         @Override
         public Optional<Guid> best() {
             Optional<Guid> bestHostEntry = weightTable.entrySet().stream()
-                    .min((a, b) -> Integer.compare(a.getValue(), b.getValue()))
+                    .min(Comparator.comparingInt(Entry::getValue))
                     .map(Map.Entry::getKey);
 
             return bestHostEntry;
