@@ -6,7 +6,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
-import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.DisksResource;
@@ -59,9 +58,10 @@ public class BackendDisksResource
                 && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
             return asGuid(disk.getStorageDomains().getStorageDomains().get(0).getId());
         } else if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetName()) {
-            Guid storageDomainId = getStorageDomainIdByName(disk.getStorageDomains().getStorageDomains().get(0).getName());
+            String storageName = disk.getStorageDomains().getStorageDomains().get(0).getName();
+            Guid storageDomainId = getStorageDomainIdByName(storageName);
             if (storageDomainId == null) {
-                notFound(StorageDomain.class);
+                notFound(storageName);
             } else {
                 return storageDomainId;
             }

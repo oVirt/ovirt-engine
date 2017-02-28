@@ -13,6 +13,7 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Link;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.rsdl.ServiceTree;
@@ -361,6 +362,20 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
 
     protected Q entityNotFound() {
         return notFound(entityType);
+    }
+
+    /**
+     * This method will raise an WebFaultException with message describing the entity was not found.
+     *
+     * @param name The name of the entity
+     */
+    protected void notFound(String name) {
+        throw new WebFaultException(
+            null,
+            localize(Messages.BACKEND_FAILED),
+            localize(Messages.ENTITY_NOT_FOUND_TEMPLATE, name),
+            Response.Status.NOT_FOUND
+        );
     }
 
     protected <T> T notFound(Class<T> clz) {
