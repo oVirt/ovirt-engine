@@ -45,6 +45,12 @@ public interface UIMessages extends Messages {
 
     String integerValidationNumberLessInvalidReason(String prefixMsg, int max);
 
+    String longValidationNumberBetweenInvalidReason(String prefixMsg, long min, long max);
+
+    String longValidationNumberGreaterInvalidReason(String prefixMsg, long min);
+
+    String longValidationNumberLessInvalidReason(String prefixMsg, long max);
+
     String lenValidationFieldMusnotExceed(int maxLength);
 
     String vmStorageDomainIsNotAccessible();

@@ -15,6 +15,7 @@
 
 		<!-- Referenced directly by UICommon -->
 		<include name="compat/IntegerCompat.java" />
+		<include name="compat/LongCompat.java" />
 		<include name="compat/RefObject.java" />
 		<include name="compat/KeyValuePairCompat.java" />
 		<include name="compat/TimeSpan.java" />

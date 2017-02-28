@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LongValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -124,10 +125,12 @@ public class EditQuotaClusterModel extends EntityModel<QuotaCluster> {
     public boolean validate() {
         IntegerValidation intValidation = new IntegerValidation();
         intValidation.setMinimum(1);
+        LongValidation longValidation = new LongValidation();
+        longValidation.setMinimum(1);
         getSpecificMemValue().setIsValid(true);
         getSpecificCpuValue().setIsValid(true);
         if (getSpecificMem().getEntity()) {
-            getSpecificMemValue().validateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
+            getSpecificMemValue().validateEntity(new IValidation[] { longValidation, new NotEmptyValidation() });
         }
         if (getSpecificCpu().getEntity()) {
             getSpecificCpuValue().validateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
