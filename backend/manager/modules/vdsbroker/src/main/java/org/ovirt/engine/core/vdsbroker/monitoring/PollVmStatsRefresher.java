@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -35,7 +37,11 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
             long fetchTime = System.nanoTime();
             if (fetcher.fetch()) {
                 getVmsMonitoring().perform(fetcher.getChangedVms(), fetchTime, vdsManager, true);
-                processDevices(fetcher.getVdsmVms().stream(), fetchTime);
+                //we only want to monitor vm devices for vms that already exist in the db
+                Stream<VdsmVm> vdsmVmsToMonitor = fetcher.getChangedVms().stream().
+                        filter(monitoredVm -> monitoredVm.getFirst() != null).
+                        map(Pair::getSecond);
+                processDevices(vdsmVmsToMonitor, fetchTime);
             } else {
                 log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", vdsManager.getVdsName());
             }
