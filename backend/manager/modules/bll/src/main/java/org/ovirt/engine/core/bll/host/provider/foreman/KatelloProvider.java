@@ -134,7 +134,6 @@ public abstract class KatelloProvider  implements ContentHostProvider {
             ErrataCount errataCount = new ErrataCount();
             errataCount.setTotalCount((int) totalCount);
             errataBySeverity.entrySet()
-                    .stream()
                     .forEach(entry -> errataCount.getCountBySeverity().put(entry.getKey(),
                             entry.getValue().intValue()));
 

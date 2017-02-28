@@ -1047,7 +1047,7 @@ public abstract class OvfReader implements IOvfBuilder {
         // of the OS properties which comes after the disks creation so the disk VM elements are set to the wrong VM ID
         // this part sets them to the correct VM ID
         for (DiskImage disk : _images) {
-            disk.getDiskVmElements().stream().forEach(dve -> dve.setId(new VmDeviceId(disk.getId(), vmBase.getId())));
+            disk.getDiskVmElements().forEach(dve -> dve.setId(new VmDeviceId(disk.getId(), vmBase.getId())));
             disk.setDiskVmElements(disk.getDiskVmElements());
         }
     }

@@ -137,7 +137,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         mockDomain();
         EnumSet<StorageDomainStatus> invalidStatuses = EnumSet.allOf(StorageDomainStatus.class);
         invalidStatuses.remove(StorageDomainStatus.Active);
-        invalidStatuses.stream().forEach(s -> {
+        invalidStatuses.forEach(s -> {
             domain.setStatus(s);
             ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
         });

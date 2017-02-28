@@ -35,8 +35,7 @@ public class SetVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
         }
 
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
-        vmNumaNodes.stream()
-                .forEach(node -> node.setId(Guid.newGuid()));
+        vmNumaNodes.forEach(node -> node.setId(Guid.newGuid()));
 
         vmNumaNodeDao.massSaveNumaNode(vmNumaNodes, getVm().getId());
 

@@ -185,7 +185,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         Guid entityId = FixturesTool.FLOATING_DISK_ID;
         prepareProgressTest(entityId);
         List<Guid> stepIds = Arrays.asList(FixturesTool.STEP_ID, FixturesTool.STEP_ID_2);
-        stepIds.stream().forEach(x -> {
+        stepIds.forEach(x -> {
             Step s = dao.get(x);
             s.setProgress(null);
             s.setStatus(JobExecutionStatus.FINISHED);

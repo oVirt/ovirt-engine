@@ -473,7 +473,7 @@ public class NetworkDeviceHelperImplTest {
     @Test
     public void setVmIdOnVfs() {
         List<HostDevice> vfs = mockVfsOnNetDevice(1);
-        vfs.stream().forEach(vf -> vf.setVmId(null));
+        vfs.forEach(vf -> vf.setVmId(null));
         mockHostDevices(vfs);
 
         HostDevice vf = vfs.get(0);

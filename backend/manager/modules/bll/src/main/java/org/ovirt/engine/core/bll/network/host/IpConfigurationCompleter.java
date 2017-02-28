@@ -13,7 +13,6 @@ public class IpConfigurationCompleter {
 
     public void fillInUnsetIpConfigs(Collection<NetworkAttachment> networkAttachments) {
         networkAttachments
-                .stream()
                 .forEach(attachment -> {
                     if (attachment.getIpConfiguration() == null) {
                         attachment.setIpConfiguration(NetworkCommonUtils.createDefaultIpConfiguration());

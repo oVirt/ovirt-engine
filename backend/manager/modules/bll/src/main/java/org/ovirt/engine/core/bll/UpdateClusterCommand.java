@@ -243,7 +243,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         if (!Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
-            vmStaticDao.getAllByCluster(getCluster().getId()).stream().forEach(this::updateClusterVersionInManager);
+            vmStaticDao.getAllByCluster(getCluster().getId()).forEach(this::updateClusterVersionInManager);
         }
 
         setSucceeded(true);
@@ -380,7 +380,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     private void updateGlusterHosts() {
-        allForCluster.stream().forEach(glusterCommandHelper::initGlusterHost);
+        allForCluster.forEach(glusterCommandHelper::initGlusterHost);
     }
 
     private NetworkCluster createManagementNetworkCluster(Network managementNetwork) {

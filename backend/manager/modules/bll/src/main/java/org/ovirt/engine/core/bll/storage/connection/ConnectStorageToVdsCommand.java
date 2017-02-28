@@ -130,7 +130,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
                 return new ValidationResult(EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_GLUSTER_VOLUME);
             }
             Set<String> addressSet = new LinkedHashSet<>();
-            glusterVolume.getBricks().stream().forEach(
+            glusterVolume.getBricks().forEach(
                     brick -> addressSet.add(brick.getNetworkId() != null && !brick.getNetworkAddress().isEmpty()
                             ? brick.getNetworkAddress() : brick.getServerName()));
             String firstHost = (String) addressSet.toArray()[0];

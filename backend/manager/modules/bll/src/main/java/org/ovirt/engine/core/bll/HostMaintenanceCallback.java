@@ -119,7 +119,7 @@ public class HostMaintenanceCallback implements CommandCallback {
             // Mark the bricks as DOWN on this node
             if (succeeded) {
                 List<GlusterBrickEntity> bricks = glusterBrickDao.getGlusterVolumeBricksByServerId(vdsId);
-                bricks.stream().forEach(brick -> brick.setStatus(GlusterStatus.DOWN));
+                bricks.forEach(brick -> brick.setStatus(GlusterStatus.DOWN));
                 glusterBrickDao.updateBrickStatuses(bricks);
             }
         }

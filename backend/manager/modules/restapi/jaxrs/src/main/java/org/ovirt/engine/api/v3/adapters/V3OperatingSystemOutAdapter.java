@@ -34,7 +34,7 @@ public class V3OperatingSystemOutAdapter implements V3Adapter<OperatingSystem, V
         if (fromBoot != null) {
             if (fromBoot.isSetDevices()) {
                 List<V3Boot> toBoot = to.getBoot();
-                fromBoot.getDevices().getDevices().stream().forEach(device -> {
+                fromBoot.getDevices().getDevices().forEach(device -> {
                     V3Boot boot = new V3Boot();
                     boot.setDev(device.value());
                     toBoot.add(boot);

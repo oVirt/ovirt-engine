@@ -35,7 +35,7 @@ public class GetDefaultAllowedOriginsQuery<P extends GetDefaultAllowedOriginsQue
 
     private List<String> getHostOrigins(String host, Set<String> suffixes) {
         List<String> origins = new LinkedList<>();
-        suffixes.stream().forEach(suffix -> origins.add(String.format("https://%s%s", host, suffix)));
+        suffixes.forEach(suffix -> origins.add(String.format("https://%s%s", host, suffix)));
         return origins;
     }
 
@@ -44,10 +44,10 @@ public class GetDefaultAllowedOriginsQuery<P extends GetDefaultAllowedOriginsQue
         Set<String> allowedOrigins = new HashSet<>();
 
         if (getParameters().getSuffixes().isEmpty()) {
-            allVds.stream().forEach(
+            allVds.forEach(
                     vds -> allowedOrigins.add(String.format("https://%s", vds.getHostName())));
         } else {
-            allVds.stream().forEach(
+            allVds.forEach(
                     vds -> allowedOrigins.addAll(getHostOrigins(vds.getHostName(), getParameters().getSuffixes())));
         }
 

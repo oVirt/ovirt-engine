@@ -349,8 +349,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 .max(Comparator.naturalOrder());
         List<Cluster> clusters = genericSearch(clusterDao, true);
         if (retVal.isPresent()) {
-            clusters.stream()
-                    .forEach(cluster -> cluster.setClusterCompatibilityLevelUpgradeNeeded(
+            clusters.forEach(cluster -> cluster.setClusterCompatibilityLevelUpgradeNeeded(
                             retVal.get().compareTo(cluster.getCompatibilityVersion()) > 0)
                     );
         }

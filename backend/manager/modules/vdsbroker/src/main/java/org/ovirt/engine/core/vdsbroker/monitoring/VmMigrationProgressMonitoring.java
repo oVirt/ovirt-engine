@@ -45,7 +45,7 @@ public class VmMigrationProgressMonitoring extends EventSubscriber implements Ba
     public void onNext(Map<String, Object> map) {
         try {
             map.remove(VdsProperties.notify_time);
-            map.entrySet().stream().forEach(vmInfo -> {
+            map.entrySet().forEach(vmInfo -> {
                 Guid vmId = new Guid(vmInfo.getKey());
                 Map<?, ?> properties = (Map<?, ?>) vmInfo.getValue();
                 int progress = Integer.valueOf(properties.get(VdsProperties.vm_migration_progress).toString());

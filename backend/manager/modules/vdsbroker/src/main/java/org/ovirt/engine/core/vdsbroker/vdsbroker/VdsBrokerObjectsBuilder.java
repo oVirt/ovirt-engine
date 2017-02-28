@@ -1413,7 +1413,6 @@ public class VdsBrokerObjectsBuilder {
             // collect(Collectors.toMap(...)) will not work here as it uses merge() internally and
             // will fail on null values
             diskStatsStruct.entrySet()
-                    .stream()
                     .forEach(e -> diskStats.put(e.getKey(),
                             assignLongValue((Map<String, Object>) e.getValue(), VdsProperties.DISK_STATS_FREE)));
             vds.setLocalDisksUsage(diskStats);

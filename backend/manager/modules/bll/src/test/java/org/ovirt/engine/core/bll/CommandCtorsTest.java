@@ -108,7 +108,7 @@ public class CommandCtorsTest {
                         String startStr = String.format(":%n\t");
                         String separatorStr = String.format("%n\t");
                         String endStr = String.format("%n%n");
-                        ((Set<Map.Entry<Class<?>, List<Constructor<?>>>>) item).stream().forEach(
+                        ((Set<Map.Entry<Class<?>, List<Constructor<?>>>>) item).forEach(
                                 commandsWithInaccessibleConstructors -> description.appendValueList(
                                         commandsWithInaccessibleConstructors.getKey().getSimpleName() + startStr,
                                         separatorStr,
