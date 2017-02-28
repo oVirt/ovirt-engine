@@ -7,7 +7,7 @@
     <inherits name="org.ovirt.engine.ui.common.GwtCommon" />
 
     <!-- Inherit the default GWT theme -->
-    <inherits name="com.google.gwt.user.theme.standard.Standard" />
+    <inherits name="com.google.gwt.user.theme.standard.StandardResources" />
 
     <!-- Configure GWT logging level -->
     <set-property name="gwt.logging.logLevel" value="${gwt.runtimeLogLevel}" />
