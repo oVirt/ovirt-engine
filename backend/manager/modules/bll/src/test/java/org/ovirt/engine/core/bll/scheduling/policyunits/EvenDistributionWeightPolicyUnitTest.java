@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -71,7 +72,7 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
         List<Pair<Guid, Integer>> scores = unit.score(new Cluster(), hosts,
                 vm,
                 null);
-        scores.sort((score1, score2) -> score1.getSecond().compareTo(score2.getSecond()));
+        scores.sort(Comparator.comparing(Pair::getSecond));
         return scores.get(0).getFirst();
     }
 }

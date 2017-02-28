@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -160,7 +161,7 @@ public class VmsMonitoring implements BackendService {
                 }
             }
         });
-        vmAnalyzers.sort((a1, a2) -> a1.getVmId().compareTo(a2.getVmId()));
+        vmAnalyzers.sort(Comparator.comparing(VmAnalyzer::getVmId));
         return vmAnalyzers;
     }
 
