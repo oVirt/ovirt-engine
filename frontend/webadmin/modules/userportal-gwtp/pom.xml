@@ -100,6 +100,12 @@
       <version>${engine.version}</version>
     </dependency>
     <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>gwt-aop</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>${engine.core.groupId}</groupId>
       <artifactId>utils</artifactId>
       <version>${engine.version}</version>
@@ -156,8 +162,7 @@
     </dependency>
   </dependencies>
   <build>
-    <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes
-        </outputDirectory>
+    <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
     <resources>
       <resource>
         <targetPath>${project.build.directory}/generated-sources/gwt</targetPath>

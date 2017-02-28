@@ -5,8 +5,8 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.PopupViewImpl;
 
 /**
@@ -29,7 +29,7 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
     }
 
     @Override
-    protected final void initWidget(Widget widget) {
+    protected final void initWidget(IsWidget widget) {
         throw new IllegalArgumentException("Use initWidget(PopupPanel) instead of initWidget(Widget)"); //$NON-NLS-1$
     }
 

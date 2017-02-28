@@ -17,10 +17,9 @@
     <!-- Disable GWTP version checking -->
     <set-configuration-property name="verifyNewerVersion" value="false"/>
 
-    <!-- Inherit oVirt UiCommon Web modules and GWT deRPC module -->
+    <!-- Inherit oVirt specific GWT modules -->
     <inherits name="org.ovirt.engine.ui.GwtExtension" />
     <inherits name="org.ovirt.engine.ui.UICommonWeb" />
-    <inherits name="com.google.gwt.rpc.RPC" />
 
     <!-- Inherit GWT logging module -->
     <inherits name="com.google.gwt.logging.Logging" />
@@ -48,10 +47,10 @@
     </generate-with>
 
     <!--
-        TODO-GWT Using GWT 2.8.0 requires a workaround for GIN 2.1.2:
-        https://github.com/gwtproject/gwt/issues/9311
+        TODO-GWT using GWT 2.8.0 requires a workaround for GIN 2.1.2
+        See https://github.com/gwtproject/gwt/issues/9311 for details.
     -->
-    <extend-configuration-property name="gin.classloading.exceptedPackages" value="com.google.gwt.core.client,com.google.gwt.core.client.impl" />
+    <extend-configuration-property name="gin.classloading.exceptedPackages" value="com.google.gwt.core.client,com.google.gwt.core.client.impl,org.ovirt.engine.ui.gwtaop" />
 
     <!--
         This linker uses an iframe to hold the code and a script tag to download

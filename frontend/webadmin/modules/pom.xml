@@ -52,15 +52,7 @@
     <!-- * scope Java temp directory and Java Preference subsystem files into project's build directory -->
     <!-- * use custom Java logging configuration -->
     <!-- Do not override this property, use gwt.jvmArgs instead! -->
-    <gwt-plugin.extraJvmArgs>
-      -Dgwt.jjs.permutationWorkerFactory=com.google.gwt.dev.ThreadedPermutationWorkerFactory \
-      -Dgwt.jjs.maxThreads=4 \
-      -Djava.io.tmpdir="${project.build.directory}/tmp" \
-      -Djava.util.prefs.systemRoot="${project.build.directory}/tmp" \
-      -Djava.util.prefs.userRoot="${project.build.directory}/tmp" \
-      -Djava.util.logging.config.class=org.ovirt.engine.ui.gwtextension.JavaLoggingConfig \
-      ${gwt.jvmArgs}
-    </gwt-plugin.extraJvmArgs>
+    <gwt-plugin.extraJvmArgs>-Dgwt.jjs.permutationWorkerFactory=com.google.gwt.dev.ThreadedPermutationWorkerFactory -Dgwt.jjs.maxThreads=4 -Djava.io.tmpdir="${project.build.directory}/tmp" -Djava.util.prefs.systemRoot="${project.build.directory}/tmp" -Djava.util.prefs.userRoot="${project.build.directory}/tmp" -Djava.util.logging.config.class=org.ovirt.engine.ui.gwtaop.JavaLoggingConfig ${gwt.jvmArgs}</gwt-plugin.extraJvmArgs>
     <!-- Control target browsers for GWT compilation, maps to 'user.agent' deferred binding property in *.gwt.xml -->
     <!-- By default, compile for Firefox browser only, use 'all-user-agents' profile to compile for all browsers -->
     <gwt.userAgent>gecko1_8</gwt.userAgent>
@@ -161,12 +153,6 @@
               <artifactId>gwt-servlet</artifactId>
               <version>${gwt.version}</version>
             </dependency>
-            <!-- Add gwt-aop aspects to GWT compiler classpath -->
-            <dependency>
-              <groupId>${engine.groupId}</groupId>
-              <artifactId>gwt-aop</artifactId>
-              <version>${engine.version}</version>
-            </dependency>
           </dependencies>
           <configuration>
             <logLevel>${gwt.logLevel}</logLevel>
@@ -177,15 +163,15 @@
             <gen>${gwtGenDirectory}</gen>
             <extraJvmArgs>${aspectj.agent} ${gwt-plugin.extraJvmArgs} ${gwt.dontPrune}</extraJvmArgs>
             <copyWebapp>true</copyWebapp>
-            <strict>true</strict>
+            <failOnError>true</failOnError>
             <compileSourcesArtifacts>
+              <!--
+                TODO Following modules don't have .java sources in their JAR,
+                but provide xxx-sources.jar instead (this should be fixed).
+              -->
               <compileSourcesArtifact>${engine.groupId}:gwt-extension</compileSourcesArtifact>
               <compileSourcesArtifact>${engine.groupId}:uicommonweb</compileSourcesArtifact>
             </compileSourcesArtifacts>
-            <!-- TODO Why is asm excluded? -->
-            <runClasspathExcludes>
-              <runClasspathExclude>asm-3.3.jar</runClasspathExclude>
-            </runClasspathExcludes>
           </configuration>
         </plugin>
 

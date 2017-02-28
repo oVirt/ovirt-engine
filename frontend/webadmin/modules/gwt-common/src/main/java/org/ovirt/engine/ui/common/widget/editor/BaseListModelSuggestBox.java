@@ -19,13 +19,13 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasConstrainedValue;
+import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Base SuggestBox widget that adapts to UiCommon list model items.
@@ -37,7 +37,7 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements
 
     private T value;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     protected SuggestBox suggestBox;
 
     private ListModelSuggestionDisplay suggestionDisplay;
@@ -142,7 +142,7 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements
         asTextBox().setEnabled(enabled);
     }
 
-    public Widget getSuggestionMenu() {
+    public MenuBar getSuggestionMenu() {
         return suggestionDisplay.getSuggestionMenu();
     }
 
@@ -211,8 +211,6 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements
 
     class ListModelSuggestionDisplay extends DefaultSuggestionDisplay {
 
-        private Widget suggestionMenu;
-
         public ListModelSuggestionDisplay(int maxSuggestionPanelHeightInPx) {
             getPopupPanel().getElement().getStyle().setZIndex(1);
 
@@ -245,14 +243,8 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements
             getPopupPanel().setAutoHideEnabled(enabled);
         }
 
-        public Widget getSuggestionMenu() {
-            return suggestionMenu;
-        }
-
-        @Override
-        protected Widget decorateSuggestionList(Widget suggestionList) {
-            this.suggestionMenu = suggestionList;
-            return super.decorateSuggestionList(suggestionList);
+        public MenuBar getSuggestionMenu() {
+            return super.getSuggestionMenu();
         }
 
         @Override

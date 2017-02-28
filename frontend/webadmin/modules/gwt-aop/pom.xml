@@ -32,7 +32,5 @@
     </dependency>
   </dependencies>
   <build>
-    <!-- Overrides default value ${project.artifactId}-${project.version} -->
-    <finalName>ovirt-engine-gwt-aop-${project.version}</finalName>
   </build>
 </project>
