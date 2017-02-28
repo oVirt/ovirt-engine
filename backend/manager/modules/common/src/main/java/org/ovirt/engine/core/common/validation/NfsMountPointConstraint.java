@@ -17,7 +17,7 @@ public class NfsMountPointConstraint implements ConstraintValidator<ValidNFSMoun
     private static final String FQDN =
             "(?=^.{1,254}$)(^(((?!-)[a-zA-Z0-9-]{1,63}(?<!-))|((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\\.)+[a-zA-Z0-9]{2,63}))";
 
-    private static final String PATH = "\\:/(.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)";
+    private static final String PATH = "\\:/(.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)/?";
 
     private static final String LINUX_MOUNT_POINT = String.format("(?:%s|%s|%s)%s",
             ValidationUtils.IPV4_PATTERN_NON_EMPTY,

@@ -9,6 +9,7 @@ public class NfsMountPointConstraintTest {
     @Test
     public void isValid() {
         assertTrue(new NfsMountPointConstraint().isValid("192.168.0.1:/tmp/kakukk", null));
+        assertTrue(new NfsMountPointConstraint().isValid("192.168.0.1:/tmp/kakukk/", null));
         assertTrue(new NfsMountPointConstraint().isValid("[1:2:3:4:5:6:7:8]:/tmp/kakukk", null));
         assertTrue(new NfsMountPointConstraint().isValid("[1::2]:/tmp/kakukk", null));
         assertTrue(new NfsMountPointConstraint().isValid("foo.example.com:/tmp/kakukk", null));
