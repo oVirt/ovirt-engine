@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LongValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -70,12 +70,12 @@ public class EditQuotaStorageModel extends EntityModel<QuotaStorage> {
     }
 
     public boolean validate() {
-        IntegerValidation intValidation = new IntegerValidation();
-        intValidation.setMinimum(1);
-        intValidation.setMaximum(65535);
+        LongValidation longValidation = new LongValidation();
+        longValidation.setMinimum(1);
+        longValidation.setMaximum(65535);
         getSpecificStorageValue().setIsValid(true);
         if (getSpecificStorage().getEntity()) {
-            getSpecificStorageValue().validateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
+            getSpecificStorageValue().validateEntity(new IValidation[] { longValidation, new NotEmptyValidation() });
         }
         return getSpecificStorageValue().getIsValid();
     }
