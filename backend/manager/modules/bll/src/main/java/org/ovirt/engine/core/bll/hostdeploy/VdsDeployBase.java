@@ -580,10 +580,11 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
         }
         catch (TimeLimitExceededException e){
             log.error(
-                "Timeout during host {} install",
+                "Timeout during host {} install: {}",
                 _vds.getHostName(),
-                e
+                e.getMessage()
             );
+            log.debug("Exception", e);
             userVisibleLog(
                 Level.SEVERE,
                 "Processing stopped due to timeout"
