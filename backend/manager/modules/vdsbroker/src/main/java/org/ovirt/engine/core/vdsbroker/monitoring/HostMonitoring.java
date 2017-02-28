@@ -43,7 +43,6 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,12 +93,9 @@ public class HostMonitoring {
                 }
                 // save all data to db
                 saveDataToDb();
-            } catch (IRSErrorException ex) {
-                logFailureMessage("ResourceManager::refreshVdsRunTimeInfo:", ex);
-                log.debug("Exception", ex);
             } catch (RuntimeException ex) {
                 logFailureMessage("ResourceManager::refreshVdsRunTimeInfo:", ex);
-                log.error("Exception", ex);
+                log.debug("Exception", ex);
             }
         }
     }
@@ -358,12 +354,9 @@ public class HostMonitoring {
                             (vds.getNonOperationalReason() != null) ? vds.getNonOperationalReason().name() : "unknown");
                 }
             }
-        } catch (IRSErrorException ex) {
-            logFailureMessage("Could not finish afterRefreshTreatment", ex);
-            log.debug("Exception", ex);
         } catch (RuntimeException ex) {
             logFailureMessage("Could not finish afterRefreshTreatment", ex);
-            log.error("Exception", ex);
+            log.debug("Exception", ex);
         }
     }
 
@@ -503,7 +496,7 @@ public class HostMonitoring {
         } catch (Exception e) {
             log.error("Failure on checkInterfaces on update runtime info for host '{}': {}",
                     vds.getName(), e.getMessage());
-            log.error("Exception", e);
+            log.debug("Exception", e);
         } finally {
             if (!problematicNicsWithNetworks.isEmpty()) {
                 // we give 1 minutes to a nic to get up in case the nic get the ip from DHCP server
@@ -539,7 +532,7 @@ public class HostMonitoring {
                 } catch (Exception e) {
                     log.error("checkInterface: Failure on moving host: '{}' to non-operational: {}",
                             vds.getName(), e.getMessage());
-                    log.error("Exception", e);
+                    log.debug("Exception", e);
                 }
             } else {
                 // no nics are down, remove from list if exists
