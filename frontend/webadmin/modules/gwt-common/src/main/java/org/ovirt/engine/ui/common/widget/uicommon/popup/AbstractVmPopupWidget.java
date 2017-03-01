@@ -309,7 +309,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField
     @Ignore
-    public Label ssoMethodLabel;
+    public EnableableFormLabel ssoMethodLabel;
 
     @UiField(provided = true)
     @Path(value = "ssoMethodNone.entity")
@@ -488,6 +488,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "consoleDisconnectAction.selectedItem")
     @WithElementId("consoleDisconnectAction")
     public ListModelListBoxEditor<ConsoleDisconnectAction> consoleDisconnectActionEditor;
+
+    @UiField
+    @Ignore
+    public EnableableFormLabel monitorsLabel;
 
     @UiField(provided = true)
     @Path(value = "numOfMonitors.selectedItem")
@@ -1693,6 +1697,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getCustomCompatibilityVersion().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateUrandomLabel(object);
+            }
+        });
+
+        object.getIsHeadlessModeEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                boolean isHeadlessEnabled = object.getIsHeadlessModeEnabled().getEntity();
+                ssoMethodLabel.setEnabled(!isHeadlessEnabled);
+                monitorsLabel.setEnabled(!isHeadlessEnabled);
+                spiceProxyEnabledCheckboxWithInfoIcon.setEnabled(!isHeadlessEnabled);
             }
         });
     }

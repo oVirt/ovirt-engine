@@ -310,7 +310,7 @@
                 </b:Row>
                 <b:Row ui:field="monitors">
                   <b:Column size="LG_6">
-                    <g:Label text="{constants.monitors}" />
+                    <l:EnableableFormLabel ui:field="monitorsLabel" text="{constants.monitors}" />
                   </b:Column>
                   <b:Column size="LG_2">
                     <e:ListModelListBoxEditor ui:field="numOfMonitorsEditor" usePatternFly="true" />
@@ -326,7 +326,7 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="LG_12">
-                    <g:Label ui:field="ssoMethodLabel" text="{constants.ssoMethod}" />
+                    <l:EnableableFormLabel ui:field="ssoMethodLabel" text="{constants.ssoMethod}" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
