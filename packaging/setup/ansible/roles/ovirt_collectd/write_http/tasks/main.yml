@@ -1,6 +1,0 @@
----
-- name: Place write_http-config
-  template:
-    src: write-http.conf.j2
-    dest: /etc/collectd.d/30-write_http.conf
-  notify: restart collectd
