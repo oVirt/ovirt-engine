@@ -1,8 +1,0 @@
----
-- name: persist iptables
-  command: >
-    service iptables save
-
-- name: reload firewalld
-  command: >
-    firewall-cmd --reload

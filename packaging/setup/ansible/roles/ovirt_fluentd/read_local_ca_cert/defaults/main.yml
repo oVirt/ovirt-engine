@@ -1,4 +1,0 @@
----
-# Where to find the Fluentd server certificate authority certificate
-# on the control machine.
-local_fluentd_ca_cert_path: 'fluentd_ca_cert.pem'
