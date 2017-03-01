@@ -1939,6 +1939,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 updateDisplayAndGraphics();
                 getBehavior().updateMemoryBalloon();
 
+                headlessModeChanged();
                 getBehavior().activateInstanceTypeManager();
             }
             else if (sender == getFirstBootDevice()) {
