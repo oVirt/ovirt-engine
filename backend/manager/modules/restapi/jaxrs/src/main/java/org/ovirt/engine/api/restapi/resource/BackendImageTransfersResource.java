@@ -14,7 +14,6 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -36,7 +35,6 @@ public class BackendImageTransfersResource
             params.setTransferType(TransferType.Download);
         }
         params.setImageId(GuidUtils.asGuid(imageTransfer.getImage().getId()));
-        params.setKeepaliveInterval(ConfigurationValues.UploadImageUiInactivityTimeoutInSeconds.getValue());
         return performCreate(VdcActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(VdcQueryType.GetImageTransferById,
                 IdQueryParameters.class));
     }
