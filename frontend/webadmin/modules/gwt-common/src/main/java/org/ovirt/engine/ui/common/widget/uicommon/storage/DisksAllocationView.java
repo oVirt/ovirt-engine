@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -222,6 +223,10 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     public void setListWidth(String listWidth) {
         diskListPanel.setWidth(listWidth);
+    }
+
+    public void setListOverflow(Overflow overflow) {
+        diskListPanel.getElement().getStyle().setOverflow(overflow);
     }
 
     public void setShowVolumeType(boolean showVolumeType) {
