@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -512,6 +513,7 @@ public class LibvirtVmXmlBuilder {
         List<VmDevice> interfaceDevices = new ArrayList<>();
         List<VmDevice> diskDevices = new ArrayList<>();
         List<VmDevice> cdromDevices = new ArrayList<>();
+        VmDevice floppyDevice = null;
 
         boolean spiceExists = false;
         for (VmDevice device : devices) {
@@ -575,6 +577,11 @@ public class LibvirtVmXmlBuilder {
                 case DISK:
                     diskDevices.add(device);
                     break;
+                case FLOPPY:
+                    if (floppyDevice == null || !VmPayload.isPayload(floppyDevice.getSpecParams())) {
+                        floppyDevice = device;
+                    }
+                    break;
                 default:
                 }
                 break;
@@ -608,7 +615,7 @@ public class LibvirtVmXmlBuilder {
         writeInterfaces(writer, interfaceDevices, vm);
         writeDisks(writer, diskDevices, vm);
         writeCdRom(writer, cdromDevices, vm);
-        // TODO floppy
+        writeFloppy(writer, floppyDevice, vm);
 
         writer.writeEndElement();
     }
@@ -1158,6 +1165,70 @@ public class LibvirtVmXmlBuilder {
         }
     }
 
+    private void writeFloppy(XmlTextWriter writer, VmDevice device, VM vm) {
+        // <disk device="floppy" snapshot="no" type="file">
+        //   <source file="/var/run/vdsm/payload/8b5fa6b8-9c57-4d7c-80cb-64537eea560f.6e38a5ccb3c6b2b674086e9d07126a03.img" startupPolicy="optional" />
+        //   <target bus="fdc" dev="fda" />
+        //   <readonly />
+        // </disk>
+        if (device != null && VmPayload.isPayload(device.getSpecParams())) {
+            writer.writeStartElement("disk");
+            writer.writeAttributeString("type", "file");
+            writer.writeAttributeString("device", "floppy");
+            writer.writeAttributeString("snapshot", "no");
+
+            writer.writeStartElement("source");
+            writer.writeAttributeString("file", "PAYLOAD:");
+            writer.writeAttributeString("startupPolicy", "optional");
+            writer.writeEndElement();
+
+            String cdInterface = osRepository.getCdInterface(
+                    vm.getOs(),
+                    vm.getCompatibilityVersion(),
+                    ChipsetType.fromMachineType(vm.getEmulatedMachine()));
+
+            writer.writeStartElement("target");
+            writer.writeAttributeString("dev", "hdc"); // TODO
+            writer.writeAttributeString("bus", cdInterface); // index ??
+            writer.writeEndElement();
+
+            int index = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
+            if ("scsi".equals(cdInterface)) {
+                writeAddress(writer, vmInfoBuildUtils.createAddressForScsiDisk(0, index));
+            }
+
+            writer.writeElement("readonly");
+
+            writer.writeEndElement();
+            return;
+        }
+
+        if (device != null || (vm.isRunOnce() && !StringUtils.isEmpty(vm.getFloppyPath()))) {
+            writer.writeStartElement("disk");
+            writer.writeAttributeString("type", "file");
+            writer.writeAttributeString("device", "floppy");
+            writer.writeAttributeString("snapshot", "no");
+
+            writer.writeStartElement("source");
+            writer.writeAttributeString("file", vm.getFloppyPath());
+            writer.writeAttributeString("startupPolicy", "optional");
+            writer.writeEndElement();
+
+            writer.writeStartElement("target");
+            writer.writeAttributeString("dev", "hdc"); // TODO
+//            writer.writeAttributeString("bus", cdInterface); // index ??
+            writer.writeEndElement();
+
+            writer.writeElement("readonly");
+
+            if (device != null) {
+                writeDeviceAliasAndAddress(writer, device);
+            }
+
+            writer.writeEndElement();
+        }
+    }
+
     private void writeCdRom(XmlTextWriter writer, List<VmDevice> devices, VM vm) {
         if (devices.isEmpty()) {
             return;
@@ -1384,17 +1455,20 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeDeviceAliasAndAddress(XmlTextWriter writer, VmDevice device) {
-        Map<String, String> addressMap = StringMapUtils.string2Map(device.getAddress());
-        if (!addressMap.isEmpty()) {
-            writer.writeStartElement("address");
-            addressMap.entrySet().forEach(x -> writer.writeAttributeString(x.getKey(), x.getValue()));
-            writer.writeEndElement();
-        }
+        writeAddress(writer, StringMapUtils.string2Map(device.getAddress()));
 
         String alias = device.getAlias();
         if (StringUtils.isNotEmpty(alias)) {
             writer.writeStartElement("alias");
             writer.writeAttributeString("name", alias);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeAddress(XmlTextWriter writer, Map<String, String> addressMap) {
+        if (!addressMap.isEmpty()) {
+            writer.writeStartElement("address");
+            addressMap.entrySet().forEach(x -> writer.writeAttributeString(x.getKey(), x.getValue()));
             writer.writeEndElement();
         }
     }
