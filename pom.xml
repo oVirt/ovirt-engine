@@ -41,7 +41,7 @@
 
     <!-- Versions of the API model and tools: -->
     <metamodel.version>1.2.1</metamodel.version>
-    <model.version>4.2.5</model.version>
+    <model.version>4.2.6</model.version>
 
     <!-- Name of the product and engine as used in the API documentation: -->
     <product.name>oVirt</product.name>
