@@ -1,6 +1,0 @@
----
-- name: Place builtins-conf-for-ovirt-config
-  template:
-    src: builtins-conf-for-ovirt.conf.j2
-    dest: /etc/collectd.d/20-builtins-conf-for-ovirt.conf
-  notify: restart collectd

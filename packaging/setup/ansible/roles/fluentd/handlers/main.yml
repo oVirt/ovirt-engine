@@ -1,5 +1,0 @@
----
-- name: restart fluentd
-  service:
-    name: '{{ fluentd_service_name }}'
-    state: restarted

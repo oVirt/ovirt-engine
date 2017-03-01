@@ -1,4 +1,0 @@
----
-manage_services: true
-
-fluentd_use_ssl: True
