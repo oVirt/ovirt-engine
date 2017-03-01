@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -212,7 +213,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         // Remove snpashot first, in case other update is in progress, it will block this one with exclusive lock
         // and any newer update should be preffered to this one.
         Snapshot runSnap = snapshotDao.get(getVmId(), SnapshotType.NEXT_RUN);
-        if (runSnap != null) {
+        if (runSnap != null && getVm().getStatus() != VMStatus.Suspended) {
             log.debug("Attempt to apply NEXT_RUN snapshot for VM '{}'", getVmId());
 
             EngineLock updateVmLock = createUpdateVmLock();
