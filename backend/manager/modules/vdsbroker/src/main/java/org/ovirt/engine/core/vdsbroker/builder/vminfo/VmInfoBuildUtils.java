@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
@@ -536,7 +536,7 @@ public class VmInfoBuildUtils {
         // order first by drive numbers and then order by boot for the bootable
         // drive to be first (important for IDE to be index 0) !
         List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
-        Collections.sort(disks, new DiskByDiskAliasComparator());
+        Collections.sort(disks, new LexoNumericNameableComparator<>());
         Collections.sort(disks, Collections.reverseOrder(new DiskByBootAndSnapshotComparator(vm.getId())));
         return disks;
     }
