@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -1264,7 +1264,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         // drive to be first (important for IDE to be index 0) !
         List<Disk> diskImages = new ArrayList<>(vm.getDiskMap()
                 .values());
-        Collections.sort(diskImages, new DiskByDiskAliasComparator());
+        Collections.sort(diskImages, new LexoNumericNameableComparator());
         Collections.sort(diskImages,
                 Collections.reverseOrder(new DiskImageByBootAndSnapshotComparator(vm.getId())));
         return diskImages;
