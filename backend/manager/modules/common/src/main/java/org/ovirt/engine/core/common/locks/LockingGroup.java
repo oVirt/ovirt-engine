@@ -8,6 +8,7 @@ public enum LockingGroup {
     VDS_FENCE,
     VM,
     TEMPLATE,
+    TEMPLATE_NAME,
     DISK,
     VM_DISK_BOOT,
     VM_NAME,

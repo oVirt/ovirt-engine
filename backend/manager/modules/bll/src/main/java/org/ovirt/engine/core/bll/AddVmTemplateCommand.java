@@ -4,6 +4,7 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTI
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -148,6 +149,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Override
     protected void init() {
         T parameters = getParameters();
+        if (Guid.isNullOrEmpty(getParameters().getVmTemplateId())) {
+            setVmTemplateId(Guid.newGuid());
+        } else {
+            setVmTemplateId(getParameters().getVmTemplateId());
+        }
         super.setVmTemplateName(parameters.getName());
         VmStatic parameterMasterVm = parameters.getMasterVm();
         if (parameterMasterVm != null) {
@@ -218,7 +224,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution);
+        return lockProperties.withScope(Scope.Command);
     }
 
     protected void updateDiskInfoDestinationMap() {
@@ -307,7 +313,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             vmHandler.lockVm(vmDynamic, getCompensationContext());
         }
         setActionReturnValue(Guid.Empty);
-        setVmTemplateId(Guid.newGuid());
         getParameters().setVmTemplateId(getVmTemplateId());
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
 
@@ -967,7 +972,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private void restoreCommandState() {
-        setVmTemplateId(getParameters().getVmTemplateId());
         setVmId(getVmIdFromImageParameters());
         isVmInDb = !getVmId().equals(Guid.Empty) && getVm() != null;
     }
@@ -1178,15 +1182,36 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        Map<String, Pair<String, String>> locks = new HashMap<>();
+        if (getVmTemplateName() != null && !isTemplateVersion()) {
+            locks.put(getVmTemplateName(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE_NAME,
+                            EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NAME_IS_USED));
+        }
+        locks.put(getVmTemplateId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE,
+                        EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_CREATED));
+        Arrays.stream(targetDiskIds)
+                .forEach(id -> locks.put(id.toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
+                                EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_CREATED)));
+        return locks;
+    }
+
+    @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
 
         if (isTemplateVersion()) {
             locks.put(getParameters().getBaseTemplateId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE,
+                            EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_VERSION_IS_BEING_CREATED));
         }
         locks.put(getParameters().getVm().getId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_CREATED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM,
+                        EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_CREATED_FROM_VM));
+
         return locks;
     }
 
