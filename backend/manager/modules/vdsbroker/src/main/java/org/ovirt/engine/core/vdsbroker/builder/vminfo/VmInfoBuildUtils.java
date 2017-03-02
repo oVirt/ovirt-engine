@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -22,8 +23,12 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -65,6 +70,7 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
+import org.ovirt.engine.core.utils.collections.ComparatorUtils;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NetworkQosMapper;
@@ -663,4 +669,66 @@ public class VmInfoBuildUtils {
         }
     }
 
+    public VmDevice createVideoDeviceByDisplayType(DisplayType displayType, Guid vmId) {
+        VmDevice vmDevice = new VmDevice();
+        vmDevice.setId(new VmDeviceId(Guid.newGuid(), vmId));
+        vmDevice.setType(VmDeviceGeneralType.VIDEO);
+        vmDevice.setDevice(displayType.name());
+        vmDevice.setPlugged(true);
+        vmDevice.setAddress("");
+        return vmDevice;
+    }
+
+    public void addVmGraphicsOptions(Map<GraphicsType, GraphicsInfo> infos, Map<String, Object> params, VM vm) {
+        if (infos != null && infos.containsKey(GraphicsType.SPICE)) {
+            params.put(VdsProperties.spiceFileTransferEnable,
+                    Boolean.toString(vm.isSpiceFileTransferEnabled()));
+            params.put(VdsProperties.spiceCopyPasteEnable,
+                    Boolean.toString(vm.isSpiceCopyPasteEnabled()));
+
+            if (Config.getValue(ConfigValues.SSLEnabled)) {
+                params.put(VdsProperties.SpiceSecureChannels, Config.getValue(
+                        ConfigValues.SpiceSecureChannels, vm.getCompatibilityVersion().toString()));
+            }
+        }
+
+        if (infos != null && infos.containsKey(GraphicsType.VNC)) {
+            String keyboardLayout = vm.getDynamicData().getVncKeyboardLayout();
+            if (keyboardLayout == null) {
+                keyboardLayout = vm.getDefaultVncKeyboardLayout();
+                if (keyboardLayout == null) {
+                    keyboardLayout = Config.getValue(ConfigValues.VncKeyboardLayout);
+                }
+            }
+
+            params.put(VdsProperties.KeyboardMap, keyboardLayout);
+        }
+    }
+
+    public List<VmDevice> createGraphicsDevices(
+            Map<GraphicsType, GraphicsInfo> graphicsInfos,
+            Map<String, Object> extraSpecParams,
+            Guid vmId) {
+        final Comparator<GraphicsType> spiceLastComparator =
+                ComparatorUtils.sortLast(GraphicsType.SPICE);
+        final List<Entry<GraphicsType, GraphicsInfo>> sortedGraphicsInfos = graphicsInfos.entrySet().stream()
+                .sorted(Comparator.comparing(Entry::getKey, spiceLastComparator))
+                .collect(Collectors.toList());
+
+        List<VmDevice> result = new ArrayList<>();
+        for (Entry<GraphicsType, GraphicsInfo> graphicsInfo : sortedGraphicsInfos) {
+            VmDevice device = new VmDevice();
+            device.setId(new VmDeviceId(Guid.newGuid(), vmId));
+            device.setType(VmDeviceGeneralType.GRAPHICS);
+            device.setDevice(graphicsInfo.getKey().name().toLowerCase());
+            device.setPlugged(true);
+            device.setAddress("");
+            if (extraSpecParams != null) {
+                device.setSpecParams(extraSpecParams);
+            }
+            result.add(device);
+        }
+
+        return result;
+    }
 }

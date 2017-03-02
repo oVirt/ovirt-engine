@@ -18,9 +18,12 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -496,6 +499,9 @@ public class LibvirtVmXmlBuilder {
 
     private void writeDevices() {
         List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vm.getId());
+        // replacement of some devices in run-once mode should eventually be done by the run-command
+        devices = overrideDevicesForRunOnce(devices);
+
         writer.writeStartElement("devices");
 
         writeInput(writer, vm);
@@ -618,6 +624,46 @@ public class LibvirtVmXmlBuilder {
         writeFloppy(writer, floppyDevice, vm);
 
         writer.writeEndElement();
+    }
+
+    private List<VmDevice> overrideDevicesForRunOnce(List<VmDevice> devices) {
+        if (!vm.isRunOnce()) {
+            return devices;
+        }
+
+        // video device handling
+        DisplayType displayType = vm.getDefaultDisplayType();
+        if (displayType != null) {
+            // remove existing video device
+            devices = devices.stream()
+                    .filter(dev -> dev.getType() != VmDeviceGeneralType.VIDEO)
+                    .collect(Collectors.toList());
+
+            // add new video device
+            if (displayType != DisplayType.none) {
+                devices.add(vmInfoBuildUtils.createVideoDeviceByDisplayType(displayType, vm.getId()));
+            }
+        }
+
+        // graphics device handling
+        if (displayType == DisplayType.none || (vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty())) {
+            // remove existing graphics devices
+            devices = devices.stream()
+                    .filter(dev -> dev.getType() != VmDeviceGeneralType.GRAPHICS)
+                    .collect(Collectors.toList());
+
+            if (displayType != DisplayType.none) {
+                // add new graphics devices
+                Map<GraphicsType, GraphicsInfo> infos = vm.getGraphicsInfos();
+                Map<String, Object> specParamsFromVm = null;
+                specParamsFromVm = new HashMap<>();
+                vmInfoBuildUtils.addVmGraphicsOptions(infos, specParamsFromVm, vm);
+
+                devices.addAll(vmInfoBuildUtils.createGraphicsDevices(infos, specParamsFromVm, vm.getId()));
+            }
+        }
+
+        return devices;
     }
 
     @SafeVarargs

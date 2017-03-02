@@ -143,7 +143,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         Map<String, Object> specParamsFromVm = null;
         if (infos != null) {
             specParamsFromVm = new HashMap<>();
-            addVmGraphicsOptions(infos, specParamsFromVm);
+            vmInfoBuildUtils.addVmGraphicsOptions(infos, specParamsFromVm, vm);
         }
 
         if (graphicsOverridden) {
@@ -1141,32 +1141,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             if (!cpuPinDict.isEmpty()) {
                 createInfo.put(VdsProperties.cpuPinning, cpuPinDict);
             }
-        }
-    }
-
-    private void addVmGraphicsOptions(Map<GraphicsType, GraphicsInfo> infos, Map<String, Object> params) {
-        if (infos != null && infos.containsKey(GraphicsType.SPICE)) {
-            params.put(VdsProperties.spiceFileTransferEnable,
-                    Boolean.toString(vm.isSpiceFileTransferEnabled()));
-            params.put(VdsProperties.spiceCopyPasteEnable,
-                    Boolean.toString(vm.isSpiceCopyPasteEnabled()));
-
-            if (Config.getValue(ConfigValues.SSLEnabled)) {
-                params.put(VdsProperties.SpiceSecureChannels, Config.getValue(
-                        ConfigValues.SpiceSecureChannels, vm.getCompatibilityVersion().toString()));
-            }
-        }
-
-        if (infos != null && infos.containsKey(GraphicsType.VNC)) {
-            String keyboardLayout = vm.getDynamicData().getVncKeyboardLayout();
-            if (keyboardLayout == null) {
-                keyboardLayout = vm.getDefaultVncKeyboardLayout();
-                if (keyboardLayout == null) {
-                    keyboardLayout = Config.getValue(ConfigValues.VncKeyboardLayout);
-                }
-            }
-
-            params.put(VdsProperties.KeyboardMap, keyboardLayout);
         }
     }
 
