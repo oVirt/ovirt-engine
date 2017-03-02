@@ -1522,11 +1522,12 @@ public class VdsBrokerObjectsBuilder {
                                                      // is decimal and we
                                                      // need int.
                 stringValue = stringValue.split("[.]", -1)[0];
-            }
-            try {
-                return Long.parseLong(stringValue);
-            } catch (NumberFormatException e) {
-                log.error("Failed to parse '{}' value '{}' to long: {}", name, stringValue, e.getMessage());
+
+                try {
+                    return Long.parseLong(stringValue);
+                } catch (NumberFormatException e) {
+                    log.error("Failed to parse '{}' value '{}' to long: {}", name, stringValue, e.getMessage());
+                }
             }
         }
         return null;
