@@ -162,9 +162,13 @@ public class BackendVmResource
             incoming.setPlacementPolicy(null);
         }
 
+        VdcQueryType queryType = isNextRunRequested()
+                ? VdcQueryType.GetVmNextRunConfiguration
+                : VdcQueryType.GetVmByVmId;
+
         Vm vm = performUpdate(
             incoming,
-            new QueryIdResolver<>(VdcQueryType.GetVmByVmId, IdQueryParameters.class),
+            new QueryIdResolver<>(queryType, IdQueryParameters.class),
             VdcActionType.UpdateVm,
             new UpdateParametersProvider()
         );
