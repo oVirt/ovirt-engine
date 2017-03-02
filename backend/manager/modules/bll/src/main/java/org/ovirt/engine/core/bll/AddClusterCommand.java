@@ -154,7 +154,8 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
                 && validate(validator.migrationSupported(getArchitecture()))
                 && validate(validator.rngSourcesAllowed())
                 && validateClusterPolicy(null)
-                && validateManagementNetwork();
+                && validateManagementNetwork()
+                && validate(validator.memoryOptimizationConfiguration());
     }
 
     private boolean validateManagementNetwork() {

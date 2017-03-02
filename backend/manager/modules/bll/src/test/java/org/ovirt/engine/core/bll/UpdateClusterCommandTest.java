@@ -535,6 +535,61 @@ public class UpdateClusterCommandTest {
         validateFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_RANDOM_RNG_SOURCE_CANT_BE_ADDED_TO_CLUSTER_ADDITIONAL_RNG_SOURCES);
     }
 
+    @Test
+    public void memoryOptimizationWithoutKsmOrBallooning(){
+        final Cluster cluster = createDefaultCluster();
+        cluster.setMaxVdsMemoryOverCommit(150);
+        cluster.setEnableKsm(false);
+        cluster.setEnableBallooning(false);
+        createCommand(cluster);
+        cpuExists();
+        validateFailedWithReason(EngineMessage.CLUSTER_TO_ALLOW_MEMORY_OPTIMIZATION_YOU_MUST_ALLOW_KSM_OR_BALLOONING);
+    }
+
+    @Test
+    public void memoryOptimizationLowerThenZeroWithoutKsmOrBallooning(){
+        final Cluster cluster = createDefaultCluster();
+        cluster.setMaxVdsMemoryOverCommit(-52);
+        cluster.setEnableKsm(false);
+        cluster.setEnableBallooning(false);
+        createCommand(cluster);
+        cpuExists();
+        validateFailedWithReason(EngineMessage.CLUSTER_TO_ALLOW_MEMORY_OPTIMIZATION_YOU_MUST_ALLOW_KSM_OR_BALLOONING);
+    }
+
+    @Test
+    public void memoryOptimizationWithoutBallooning(){
+        final Cluster cluster = createDefaultCluster();
+        cluster.setMaxVdsMemoryOverCommit(0);
+        cluster.setEnableKsm(true);
+        cluster.setEnableBallooning(false);
+        createCommand(cluster);
+        cpuExists();
+        initAndAssertValidation(true);
+    }
+
+    @Test
+    public void memoryOptimizationWithoutKsm(){
+        final Cluster cluster = createDefaultCluster();
+        cluster.setMaxVdsMemoryOverCommit(200);
+        cluster.setEnableKsm(false);
+        cluster.setEnableBallooning(true);
+        createCommand(cluster);
+        cpuExists();
+        initAndAssertValidation(true);
+    }
+
+    @Test
+    public void memoryOptimizationWithKsmAndBallooning(){
+        final Cluster cluster = createDefaultCluster();
+        cluster.setMaxVdsMemoryOverCommit(200);
+        cluster.setEnableKsm(true);
+        cluster.setEnableBallooning(true);
+        createCommand(cluster);
+        cpuExists();
+        initAndAssertValidation(true);
+    }
+
     private void createSimpleCommand() {
         createCommand(createNewCluster());
     }
@@ -649,6 +704,7 @@ public class UpdateClusterCommandTest {
         group.setStoragePoolId(DC_ID1);
         group.setArchitecture(ArchitectureType.x86_64);
         group.setClusterPolicyId(Guid.newGuid());
+        group.setMaxVdsMemoryOverCommit(100);
         return group;
     }
 
@@ -668,6 +724,7 @@ public class UpdateClusterCommandTest {
         group.setStoragePoolId(DC_ID1);
         group.setArchitecture(ArchitectureType.undefined);
         group.setClusterPolicyId(Guid.newGuid());
+        group.setMaxVdsMemoryOverCommit(100);
         return group;
     }
 
@@ -683,6 +740,7 @@ public class UpdateClusterCommandTest {
         group.setStoragePoolId(DC_ID1);
         group.setVirtService(supportsVirtService);
         group.setGlusterService(supportsGlusterService);
+        group.setMaxVdsMemoryOverCommit(100);
         return group;
     }
 
