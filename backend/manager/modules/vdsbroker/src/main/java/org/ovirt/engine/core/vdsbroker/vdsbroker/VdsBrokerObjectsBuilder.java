@@ -1501,12 +1501,12 @@ public class VdsBrokerObjectsBuilder {
                                                        // is decimal and we
                                                        // need int.
                 stringValue = stringValue.split("[.]", -1)[0];
-            }
-            try {
-                int intValue = Integer.parseInt(stringValue);
-                return intValue;
-            } catch (NumberFormatException nfe) {
-                log.error("Failed to parse '{}' value '{}' to integer: {}", name, stringValue, nfe.getMessage());
+
+                try {
+                    return Integer.parseInt(stringValue);
+                } catch (NumberFormatException nfe) {
+                    log.error("Failed to parse '{}' value '{}' to integer: {}", name, stringValue, nfe.getMessage());
+                }
             }
         }
         return null;
