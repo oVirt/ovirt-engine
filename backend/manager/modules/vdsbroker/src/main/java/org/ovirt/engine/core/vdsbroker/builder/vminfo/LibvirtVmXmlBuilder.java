@@ -1192,14 +1192,15 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("bus", cdInterface); // index ??
             writer.writeEndElement();
 
-            int index = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
             if ("scsi".equals(cdInterface)) {
+                int index = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
                 writeAddress(writer, vmInfoBuildUtils.createAddressForScsiDisk(0, index));
             }
 
             writer.writeElement("readonly");
 
             writer.writeEndElement();
+            // we can have only one floppy device
             return;
         }
 
@@ -1214,9 +1215,14 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("startupPolicy", "optional");
             writer.writeEndElement();
 
+            String cdInterface = osRepository.getCdInterface(
+                    vm.getOs(),
+                    vm.getCompatibilityVersion(),
+                    ChipsetType.fromMachineType(vm.getEmulatedMachine()));
+
             writer.writeStartElement("target");
             writer.writeAttributeString("dev", "hdc"); // TODO
-//            writer.writeAttributeString("bus", cdInterface); // index ??
+            writer.writeAttributeString("bus", cdInterface); // index ??
             writer.writeEndElement();
 
             writer.writeElement("readonly");
@@ -1230,9 +1236,6 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeCdRom(XmlTextWriter writer, List<VmDevice> devices, VM vm) {
-        if (devices.isEmpty()) {
-            return;
-        }
         // <disk type='file' device='cdrom'>
         //   <driver name='qemu' type='raw'/>
         //   <source startupPolicy='optional'/>
@@ -1242,32 +1245,72 @@ public class LibvirtVmXmlBuilder {
         //   <alias name='ide0-1-0'/>
         //   <address type='drive' controller='0' bus='1' target='0' unit='0'/>
         // </disk>
-        VmDevice device = devices.get(0); // assume only 1 CD
-        writer.writeStartElement("disk");
-        writer.writeAttributeString("type", "file");
-        writer.writeAttributeString("device", "cdrom");
-        writer.writeAttributeString("snapshot", "no");
+        devices.stream().filter(d -> VmPayload.isPayload(d.getSpecParams())).forEach(device -> {
+            writer.writeStartElement("disk");
+            writer.writeAttributeString("type", "file");
+            writer.writeAttributeString("device", "cdrom");
+            writer.writeAttributeString("snapshot", "no");
 
-        writer.writeStartElement("source");
-        writer.writeAttributeString("file", ""); // TODO: path
-        writer.writeAttributeString("startupPolicy", "optional");
-        writer.writeEndElement();
+            writer.writeStartElement("source");
+            writer.writeAttributeString("file", "PAYLOAD:");
+            writer.writeAttributeString("startupPolicy", "optional");
+            writer.writeEndElement();
 
-        String cdInterface = osRepository.getCdInterface(
-                vm.getOs(),
-                vm.getCompatibilityVersion(),
-                ChipsetType.fromMachineType(vm.getEmulatedMachine()));
+            String cdInterface = osRepository.getCdInterface(
+                    vm.getOs(),
+                    vm.getCompatibilityVersion(),
+                    ChipsetType.fromMachineType(vm.getEmulatedMachine()));
 
-        writer.writeStartElement("target");
-        writer.writeAttributeString("dev", "hdc"); // TODO
-        writer.writeAttributeString("bus", cdInterface);
-        writer.writeEndElement();
+            writer.writeStartElement("target");
+            writer.writeAttributeString("dev", "hdc"); // TODO
+            writer.writeAttributeString("bus", cdInterface);
+            writer.writeEndElement();
 
-        writer.writeElement("readonly");
+            writer.writeElement("readonly");
 
-        writeDeviceAliasAndAddress(writer, device);
+            if ("scsi".equals(cdInterface)) {
+                int index = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
+                writeAddress(writer, vmInfoBuildUtils.createAddressForScsiDisk(0, index));
+            }
 
-        writer.writeEndElement();
+            writer.writeEndElement();
+        });
+
+        VmDevice nonPayload = devices.stream()
+                .filter(d -> !VmPayload.isPayload(d.getSpecParams()))
+                .findAny().orElse(null);
+        if (nonPayload != null || (vm.isRunOnce() && !StringUtils.isEmpty(vm.getCdPath()))) {
+            // add a device that points to vm.getCdPath()
+            writer.writeStartElement("disk");
+            writer.writeAttributeString("type", "file");
+            writer.writeAttributeString("device", "cdrom");
+            writer.writeAttributeString("snapshot", "no");
+
+            writer.writeStartElement("source");
+            writer.writeAttributeString("file", vm.getCdPath());
+            writer.writeAttributeString("startupPolicy", "optional");
+            writer.writeEndElement();
+
+            String cdInterface = osRepository.getCdInterface(
+                    vm.getOs(),
+                    vm.getCompatibilityVersion(),
+                    ChipsetType.fromMachineType(vm.getEmulatedMachine()));
+
+            writer.writeStartElement("target");
+            writer.writeAttributeString("dev", "hdc"); // TODO
+            writer.writeAttributeString("bus", cdInterface);
+            writer.writeEndElement();
+
+            writer.writeElement("readonly");
+
+            if (nonPayload != null) {
+                writeDeviceAliasAndAddress(writer, nonPayload);
+                writeBootOrder(writer, nonPayload.getBootOrder());
+            }
+
+            writer.writeEndElement();
+        }
+
     }
 
     private void writeInterface(XmlTextWriter writer, VmDevice device, VM vm, VmNetworkInterface nic) {
