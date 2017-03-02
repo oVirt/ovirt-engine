@@ -820,3 +820,32 @@ class RemoveEnv(object):
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class OvnEnv(object):
+
+    @osetupattrs(
+        answerfile=True,
+        description=_('Set up ovirt-provider-ovn'),
+        summary=True,
+        postinstallfile=True,
+        reconfigurable=True,
+    )
+    def OVIRT_PROVIDER_OVN(self):
+        return 'OVESETUP_OVN/ovirtProviderOvn'
+
+    @osetupattrs(
+        answerfile=True,
+        description=_('oVirt OVN provider user name'),
+    )
+    def OVIRT_PROVIDER_OVN_USER(self):
+        return 'OVESETUP_OVN/ovirtProviderOvnUser'
+
+    @osetupattrs(
+        answerfile=True,
+        description=_('oVirt OVN provider password'),
+    )
+    def OVIRT_PROVIDER_OVN_PASSWORD(self):
+        return 'OVESETUP_OVN/ovirtProviderOvnPassword'
