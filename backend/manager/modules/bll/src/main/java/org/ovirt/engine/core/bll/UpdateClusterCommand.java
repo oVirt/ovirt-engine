@@ -664,10 +664,14 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             }
         }
 
-        result = result && validate(new ClusterValidator(
+        ClusterValidator clusterValidator = new ClusterValidator(
                 getDbFacade(),
                 getCluster(),
-                cpuFlagsManagerHandler).rngSourcesAllowed());
+                cpuFlagsManagerHandler);
+
+        result = result
+                && validate(clusterValidator.rngSourcesAllowed())
+                && validate(clusterValidator.memoryOptimizationConfiguration());
 
         return result;
     }

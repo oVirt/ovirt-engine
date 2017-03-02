@@ -106,6 +106,14 @@ public class ClusterValidator {
                 .unless(ALLOWED_ADDITIONAL_RNG_SOURCES.containsAll(cluster.getAdditionalRngSources()));
     }
 
+    public ValidationResult memoryOptimizationConfiguration() {
+        //if maxVdsMemoryOverCommit is set to a value <=0, it is later translated to maxVdsMemoryOverCommit = 200
+        //so we need to check that as well
+        return ValidationResult.failWith(EngineMessage.CLUSTER_TO_ALLOW_MEMORY_OPTIMIZATION_YOU_MUST_ALLOW_KSM_OR_BALLOONING)
+                .when((cluster.getMaxVdsMemoryOverCommit() > 100 || cluster.getMaxVdsMemoryOverCommit() <=0)
+                        && !(cluster.isEnableKsm() || cluster.isEnableBallooning()));
+    }
+
     protected boolean migrationSupportedForArch(ArchitectureType arch) {
         return FeatureSupported.isMigrationSupported(arch, cluster.getCompatibilityVersion());
     }
