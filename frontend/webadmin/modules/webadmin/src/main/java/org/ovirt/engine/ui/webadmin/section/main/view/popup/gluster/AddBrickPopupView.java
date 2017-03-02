@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
@@ -24,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
@@ -31,7 +33,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -50,9 +51,6 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     interface ViewIdHandler extends ElementIdHandler<AddBrickPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    @UiField
-    WidgetStyle style;
 
     @UiField(provided = true)
     @Path(value = "volumeType.entity")
@@ -126,15 +124,15 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     @UiField
     @Ignore
-    Label infoLabel;
+    Alert info;
 
     @UiField
     @Ignore
-    Label forceWarningLabel;
+    Alert forceWarning;
 
     @UiField
     @Ignore
-    Label messageLabel;
+    Alert message;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -147,8 +145,6 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
-        addStyles();
         initTableColumns();
         initButtons();
         driver.initialize(this);
@@ -165,13 +161,6 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
             }
         });
 
-    }
-
-    protected void addStyles() {
-        volumeTypeEditor.addContentWidgetContainerStyleName(style.editorContentWidget());
-        replicaCountEditor.addContentWidgetContainerStyleName(style.editorContentWidget());
-        stripeCountEditor.addContentWidgetContainerStyleName(style.editorContentWidget());
-        forceEditor.addContentWidgetContainerStyleName(style.forceEditorWidget());
     }
 
     protected void initTableColumns(){
@@ -248,24 +237,6 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         }
     }
 
-    private void localize() {
-        volumeTypeEditor.setLabel(constants.volumeTypeVolume());
-        replicaCountEditor.setLabel(constants.replicaCountVolume());
-        stripeCountEditor.setLabel(constants.stripeCountVolume());
-        bricksHeader.setText(constants.bricksHeaderLabel());
-        serverEditor.setLabel(constants.serverBricks());
-        exportDirEditor.setLabel(constants.brickDirectoryBricks());
-        bricksFromServerList.setLabel(constants.brickDirectoryBricks());
-        showBricksListEditor.setLabel(constants.addBricksShowBricksFromHost());
-        addBrickButton.setLabel(constants.addBricksButtonLabel());
-        removeBricksButton.setLabel(constants.removeBricksButtonLabel());
-        removeAllBricksButton.setLabel(constants.removeAllBricksButtonLabel());
-        moveBricksUpButton.setLabel(constants.moveBricksUpButtonLabel());
-        moveBricksDownButton.setLabel(constants.moveBricksDownButtonLabel());
-        forceEditor.setLabel(constants.allowBricksInRootPartition());
-        forceWarningLabel.setText(constants.allowBricksInRootPartitionWarning());
-    }
-
     @Override
     public void edit(final VolumeBrickModel object) {
         bricksTable.asEditor().edit(object.getBricks());
@@ -280,21 +251,24 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
         GlusterVolumeType volumeType = object.getVolumeType().getEntity();
         if (volumeType == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
-            infoLabel.setText(constants.distributedReplicateVolumeBrickInfoLabel());
+            info.setVisible(true);
+            info.setText(constants.distributedReplicateVolumeBrickInfoLabel());
         }
         else if (volumeType == GlusterVolumeType.DISTRIBUTED_STRIPE) {
-            infoLabel.setText(constants.distributedStripeVolumeBrickInfoLabel());
+            info.setVisible(true);
+            info.setText(constants.distributedStripeVolumeBrickInfoLabel());
         }
         else {
-            infoLabel.setText(null);
+            info.setVisible(false);
+            info.setText(null);
         }
 
-        forceWarningLabel.setVisible(object.getForce().getEntity());
+        forceWarning.setVisible(object.getForce().getEntity());
 
         object.getForce().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                forceWarningLabel.setVisible(object.getForce().getEntity());
+                forceWarning.setVisible(object.getForce().getEntity());
             }
         });
     }
@@ -302,7 +276,11 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     @Override
     public void setMessage(String message) {
         super.setMessage(message);
-        messageLabel.setText(message);
+        this.message.setText(message);
+        this.message.setVisible(false);
+        if (!StringUtils.isEmpty(message)) {
+            this.message.setVisible(true);
+        }
     }
 
     @Override
@@ -315,11 +293,4 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     public void cleanup() {
         driver.cleanup();
     }
-
-    interface WidgetStyle extends CssResource {
-        String editorContentWidget();
-
-        String forceEditorWidget();
-    }
-
 }

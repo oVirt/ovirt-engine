@@ -1,63 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style>
-		.tablePanel {
-		height: 415px;
-		width: 981px;
-		padding: 1px;
-		border: 1px solid #CED8DF;
-		}
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
-		.labelStyle {
-                padding-top: 36px;
-                font-size: 14px;
-		font-weight: bold;
-		color: #333333;
-		}
+    <ui:style>
+        .labelStyle {
+            font-weight: bold;
+        }
 
-                .stopTime {
-                padding-top: 30px;
-                }
+        .container {
+            width: 100%;
+        }
+    </ui:style>
 
-		.messageLabel {
-		color: #FF0000;
-		left: 10px;
-		padding-top: 5px;
-		padding-left: 5px;
-		}
-	</ui:style>
-
-	<d:SimpleDialogPanel width="1000px" height="550px">
-		<d:content>
-			<g:VerticalPanel>
-				<g:HorizontalPanel>
-					<g:VerticalPanel>
-						<ge:StringEntityModelLabelEditor ui:field="volumeEditor" />
-						<ge:EntityModelLabelEditor ui:field="startTimeEditor" />
-					</g:VerticalPanel>
-					<g:VerticalPanel ui:field="stopTimePanel" addStyleNames="{style.stopTime}">
-					    <ge:EntityModelLabelEditor ui:field="stopTimeEditor" />
-					</g:VerticalPanel>
-					<g:VerticalPanel>
-					        <ge:StringEntityModelLabelEditor ui:field="clusterEditor" />
-						<ge:EntityModelLabelEditor ui:field="statusTimeEditor" />
-					</g:VerticalPanel>
-					<g:VerticalPanel>
-					    <g:Label ui:field="status" addStyleNames="{style.labelStyle}"/>
-					</g:VerticalPanel>
-				</g:HorizontalPanel>
-				<g:ScrollPanel addStyleNames="{style.tablePanel}"
-					ui:field="sPanel">
-					<e:EntityModelCellTable ui:field="rebalanceHostsTable" />
-				</g:ScrollPanel>
-				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
-			</g:VerticalPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <d:SimpleDialogPanel width="1000px" height="550px">
+        <d:content>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <b:Column size="SM_4">
+                        <b:Row>
+                            <ge:StringEntityModelLabelEditor ui:field="volumeEditor" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                        </b:Row>
+                    </b:Column>
+                    <b:Column size="SM_4">
+                        <b:Row>
+                            <ge:StringEntityModelLabelEditor ui:field="clusterEditor" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                        </b:Row>
+                    </b:Column>
+                    <b:Column size="SM_2">
+                        <g:Label ui:field="status" addStyleNames="{style.labelStyle}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_4">
+                        <b:Row>
+                            <ge:EntityModelLabelEditor ui:field="startTimeEditor" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                        </b:Row>
+                    </b:Column>
+                    <b:Column size="SM_4">
+                        <b:Row>
+                            <ge:EntityModelLabelEditor ui:field="statusTimeEditor" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                        </b:Row>
+                    </b:Column>
+                    <b:Column ui:field="stopTimeColumn" size="SM_4">
+                        <b:Row>
+                            <ge:EntityModelLabelEditor ui:field="stopTimeEditor" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                        </b:Row>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <e:EntityModelCellTable ui:field="rebalanceHostsTable" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:Label ui:field="messageLabel" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

@@ -1,107 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.BrickAdvancedDetailsPopupView.WidgetStyle">
-		.tablePanel {
-			height: 450px;
-			width: 615px;
-			border: 1px solid #CED8DF;
-		}
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
-		.memStatLabel{
-			width: 150px;
-		}
+    <ui:style>
+        .container {
+            width: 100%;
+        }
 
-		.memStatValue{
-			width: 150px;
-		}
+        .content textarea {
+            resize: none;
+        }
+    </ui:style>
 
-		.generalValue{
-			width: 300px;
-		}
-
-		.messageLabel {
-			color: #FF0000;
-			left: 10px;
-			padding-top: 50px;
-			padding-left: 5px;
-		}
-
-                .content textarea {
-			resize: none;
-		}
-	</ui:style>
-
-	<d:SimpleDialogPanel width="800px" height="530px">
-		<d:content>
-			<t:DialogTabPanel height="100%">
-				<t:tab>
-					<t:DialogTab ui:field="generalTab">
-						<t:content>
-							<g:FlowPanel>
-								<ge:StringEntityModelLabelEditor ui:field="brickEditor" />
-								<ge:EntityModelLabelEditor ui:field="statusEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="portEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="rdmaPortEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="pidEditor" />
-								<ge:DoubleEntityModelLabelEditor ui:field="totalSizeEditor" />
-								<ge:DoubleEntityModelLabelEditor ui:field="freeSizeEditor" />
-								<ge:StringEntityModelLabelEditor ui:field="deviceEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="blockSizeEditor" />
-								<ge:StringEntityModelLabelEditor ui:field="fileSystemEditor" />
-								<ge:StringEntityModelTextAreaLabelEditor addStyleNames="{style.content}" ui:field="mountOptionsEditor" />
-								<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
-							</g:FlowPanel>
-						</t:content>
-					</t:DialogTab>
-				</t:tab>
-				<t:tab>
-					<t:DialogTab ui:field="clientsTab">
-						<t:content>
-							<g:FlowPanel >
-								<g:ScrollPanel addStyleNames="{style.tablePanel}">
-									<e:EntityModelCellTable ui:field="clientsTable"/>
-								</g:ScrollPanel>
-							</g:FlowPanel>
-						</t:content>
-					</t:DialogTab>
-				</t:tab>
-				<t:tab>
-					<t:DialogTab ui:field="memoryStatsTab">
-						<t:content>
-							<g:FlowPanel>
-								<ge:IntegerEntityModelLabelEditor ui:field="totalAllocatedEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="freeBlocksEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="freeFastbinBlocksEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="mmappedBlocksEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="spaceAllocatedMmappedEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="maxTotalAllocatedEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="spaceFreedFastbinEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="totalAllocatedSpaceEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="totalFreeSpaceEditor" />
-								<ge:IntegerEntityModelLabelEditor ui:field="releasableFreeSpaceEditor" />
-							</g:FlowPanel>
-						</t:content>
-					</t:DialogTab>
-				</t:tab>
-				<t:tab>
-					<t:DialogTab ui:field="memoryPoolsTab">
-						<t:content>
-							<g:FlowPanel>
-								<g:ScrollPanel addStyleNames="{style.tablePanel}">
-									<e:EntityModelCellTable ui:field="memoryPoolsTable"/>
-								</g:ScrollPanel>
-							</g:FlowPanel>
-						</t:content>
-					</t:DialogTab>
-				</t:tab>
-			</t:DialogTabPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <d:SimpleDialogPanel width="800px" height="530px">
+        <d:content>
+            <t:DialogTabPanel width="100%" height="100%">
+                <t:tab>
+                    <t:DialogTab ui:field="generalTab" label="{constants.generalBrickAdvancedPopupLabel}">
+                        <t:content>
+                            <b:Container addStyleNames="{style.container}">
+                                <b:Row>
+                                    <ge:StringEntityModelLabelEditor ui:field="brickEditor" label="{constants.brickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:EntityModelLabelEditor ui:field="statusEditor" label="{constants.statusBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="portEditor" label="{constants.portBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="rdmaPortEditor" label="{constants.rdmaPortBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="pidEditor" label="{constants.pidBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:DoubleEntityModelLabelEditor ui:field="totalSizeEditor" label="{constants.totalSizeBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:DoubleEntityModelLabelEditor ui:field="freeSizeEditor" label="{constants.freeSizeBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelLabelEditor ui:field="deviceEditor" label="{constants.deviceBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="blockSizeEditor" label="{constants.blockSizeBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelLabelEditor ui:field="fileSystemEditor" label="{constants.fileSystemBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextAreaLabelEditor addStyleNames="{style.content}" ui:field="mountOptionsEditor" label="{constants.mountOptionsBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8"/>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Alert type="INFO" ui:field="message" visible="false" />
+                                </b:Row>
+                            </b:Container>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="clientsTab" label="{constants.clientsBrickAdvancedPopupLabel}">
+                        <t:content>
+                            <b:Container addStyleNames="{style.container}">
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <e:EntityModelCellTable ui:field="clientsTable" />
+                                    </b:Column>
+                                </b:Row>
+                            </b:Container>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="memoryStatsTab" label="{constants.memoryStatsBrickAdvancedPopupLabel}">
+                        <t:content>
+                            <b:Container addStyleNames="{style.container}">
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="totalAllocatedEditor" label="{constants.totalAllocatedBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="freeBlocksEditor" label="{constants.freeBlocksBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="freeFastbinBlocksEditor" label="{constants.freeFastbinBlocksBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="mmappedBlocksEditor" label="{constants.mmappedBlocksBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="spaceAllocatedMmappedEditor" label="{constants.allocatedInMmappedBlocksBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="maxTotalAllocatedEditor" label="{constants.maxTotalAllocatedSpaceBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="spaceFreedFastbinEditor" label="{constants.spaceInFreedFasbinBlocksBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="totalAllocatedSpaceEditor" label="{constants.totalAllocatedSpaceBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="totalFreeSpaceEditor" label="{constants.totalFreeSpaceBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelLabelEditor ui:field="releasableFreeSpaceEditor" label="{constants.releasableFreeSpaceBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                            </b:Container>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="memoryPoolsTab" label="{constants.memoryPoolsBrickAdvancedPopupLabel}">
+                        <t:content>
+                            <b:Container addStyleNames="{style.container}">
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <e:EntityModelCellTable ui:field="memoryPoolsTable"/>
+                                    </b:Column>
+                                </b:Row>
+                            </b:Container>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+            </t:DialogTabPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

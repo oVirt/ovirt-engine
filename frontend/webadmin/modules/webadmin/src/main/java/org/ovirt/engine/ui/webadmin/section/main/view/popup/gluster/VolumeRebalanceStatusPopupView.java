@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
 import java.util.Date;
 
+import org.gwtbootstrap3.client.ui.Column;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractHumanReadableTimeColumn;
@@ -32,7 +32,6 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<VolumeRebalanceStatusModel> implements VolumeRebalanceStatusPopupPresenterWidget.ViewDef {
@@ -90,10 +89,9 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     @UiField
     @Ignore
     @WithElementId
-    VerticalPanel stopTimePanel;
+    Column stopTimeColumn;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
-    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     protected FullDateTimeRenderer renderer = new FullDateTimeRenderer(true);
 
@@ -215,7 +213,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
                     status.setVisible(object.isStatusAvailable());
                 }
                 else if (args.propertyName.equals("STOP_TIME_UPDATED")) {//$NON-NLS-1$
-                    stopTimePanel.setVisible(object.isStopTimeVisible());
+                    stopTimeColumn.setVisible(object.isStopTimeVisible());
                 }
             }
         });

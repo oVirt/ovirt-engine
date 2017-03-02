@@ -1,128 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.AddBrickPopupView.WidgetStyle">
-		.generalTabTopDecorator {
-			background-color: #D3D3D3;
-			margin-bottom: 8px;
-			margin-top: 4px;
-			margin-right: 3px;
-			padding-top: 6px;
-			padding-bottom: 6px;
-			width: 100%;
-		}
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
-		.editorContentWidget{
-			width: 150px;
-		}
+    <ui:style>
+        .separator {
+            border-bottom: 1px solid #D1D1D1;
+        }
 
-		.headerLabel {
-			font-weight: bold;
-			padding-bottom: 5px;
-		}
+        .headerLabel {
+            font-weight: bold;
+        }
 
-        .showBricksListCheckBox {
-			padding-left: 92px;
-			width: 300px;
-		}
-		.messageLabel {
-			color: #FF0000;
-			left: 10px;
-			padding-left: 5px;
-		}
+        .tablePanel {
+            min-height: 100px;
+            border: 1px solid #D1D1D1
+        }
 
-		.tablePanel {
-			height: 270px;
-			width: 400px;
-			border: 1px solid #CED8DF;
-		}
+        .gridButtons {
+            padding-top: 5px;
+        }
 
-		.brickButton table{
-			width: 100%;
-		}
+        .container {
+            width: 100%;
+        }
 
-		.infoLabel {
-			font-size: 13px;
-			left: 10px;
-			padding-left: 5px;
-			color: #0000FF;
-		}
+        .addButton {
+            padding-top: 5px;
+            padding-bottom: 15px;
+            float: right;
+        }
 
-		.forcePanel {
-			height: 60px;
-		}
+        .brickButton {
+            float: left;
+            padding-top: 5px;
+        }
+    </ui:style>
 
-		.forceEditorWidget{
-			width: 450px;
-		}
+    <d:SimpleDialogPanel width="550px" height="620px">
+        <d:content>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <ge:EntityModelLabelEditor ui:field="volumeTypeEditor" label="{constants.volumeTypeVolume}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row addStyleNames="{style.separator}">
+                    <ge:IntegerEntityModelTextBoxEditor ui:field="replicaCountEditor" label="{constants.replicaCountVolume}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                    <ge:IntegerEntityModelTextBoxEditor ui:field="stripeCountEditor" label="{constants.stripeCountVolume}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:Label ui:field="bricksHeader" text="{constants.bricksHeaderLabel}" addStyleNames="{style.headerLabel}"/>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="serverEditor" label="{constants.serverBricks}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="showBricksListEditor" label="{constants.addBricksShowBricksFromHost}" usePatternFly="true" removeFormGroup="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="bricksFromServerList" label="{constants.brickDirectoryBricks}" removeFormGroup="true" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row>
+                    <ge:StringEntityModelTextBoxEditor ui:field="exportDirEditor" label="{constants.brickDirectoryBricks}" removeFormGroup="true" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_2" offset="SM_10">
+                        <w:UiCommandButton ui:field="addBrickButton" label="{constants.addBricksButtonLabel}" addStyleNames="{style.addButton}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:ScrollPanel addStyleNames="{style.tablePanel}">
+                            <e:EntityModelCellTable ui:field="bricksTable"/>
+                        </g:ScrollPanel>
+                    </b:Column>
+                    <b:Column size="SM_12">
+                        <w:UiCommandButton ui:field="removeBricksButton" label="{constants.removeBricksButtonLabel}" addStyleNames="{style.brickButton}"/>
+                        <w:UiCommandButton ui:field="removeAllBricksButton" label="{constants.removeAllBricksButtonLabel}" addStyleNames="{style.brickButton}"/>
+                        <w:UiCommandButton ui:field="moveBricksUpButton" label="{constants.moveBricksUpButtonLabel}" addStyleNames="{style.brickButton}"/>
+                        <w:UiCommandButton ui:field="moveBricksDownButton" label="{constants.moveBricksDownButtonLabel}" addStyleNames="{style.brickButton}"/>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <b:Alert type="INFO" ui:field="info" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="forceEditor" label="{constants.allowBricksInRootPartition}" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <b:Alert type="WARNING" ui:field="forceWarning" text="{constants.allowBricksInRootPartitionWarning}"/>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <b:Alert type="INFO" ui:field="message" visible="false" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
 
-		.forceWarningLabel {
-			font-size: 13px;
-			left: 10px;
-			padding-left: 15px;
-			padding-bottom: 10px;
-			color: #FF0000;
-		}
-	</ui:style>
-	
-	<d:SimpleDialogPanel width="550px" height="620px">
-		<d:content>
-			<g:VerticalPanel>
-
-				<g:HorizontalPanel addStyleNames="{style.generalTabTopDecorator}">
-					<g:VerticalPanel>
-						<ge:EntityModelLabelEditor ui:field="volumeTypeEditor"/>
-					</g:VerticalPanel>
-					<g:VerticalPanel>
-						<ge:IntegerEntityModelTextBoxEditor ui:field="replicaCountEditor"/>
-						<ge:IntegerEntityModelTextBoxEditor ui:field="stripeCountEditor"/>
-					</g:VerticalPanel>
-				</g:HorizontalPanel>
-
-				<g:Label ui:field="bricksHeader" addStyleNames="{style.headerLabel}"/>
-
-				<g:HorizontalPanel verticalAlignment="ALIGN_BOTTOM">
-					<g:VerticalPanel>
-						<e:ListModelListBoxEditor ui:field="serverEditor"/>
-						<ge:EntityModelCheckBoxEditor ui:field="showBricksListEditor" addStyleNames="{style.showBricksListCheckBox}"/>
-						<e:ListModelListBoxEditor ui:field="bricksFromServerList" />
-						<ge:StringEntityModelTextBoxEditor ui:field="exportDirEditor" />
-					</g:VerticalPanel>
-					<g:HorizontalPanel spacing="5">
-						<w:UiCommandButton ui:field="addBrickButton" addStyleNames="{style.brickButton}"/>
-					</g:HorizontalPanel>
-				</g:HorizontalPanel>
-
-				<g:HorizontalPanel spacing="5" verticalAlignment="ALIGN_MIDDLE">
-						<g:VerticalPanel>
-							<g:ScrollPanel addStyleNames="{style.tablePanel}">
-								<e:EntityModelCellTable ui:field="bricksTable"/>
-							</g:ScrollPanel>
-							<g:HorizontalPanel spacing="5">
-								<w:UiCommandButton ui:field="removeBricksButton" addStyleNames="{style.brickButton}"/>
-								<w:UiCommandButton ui:field="removeAllBricksButton" addStyleNames="{style.brickButton}"/>
-							</g:HorizontalPanel>
-							<g:Label ui:field="infoLabel" addStyleNames="{style.infoLabel}" />
-						</g:VerticalPanel>
-						<g:VerticalPanel spacing="5">
-							<w:UiCommandButton ui:field="moveBricksUpButton" addStyleNames="{style.brickButton}"/>
-							<w:UiCommandButton ui:field="moveBricksDownButton" addStyleNames="{style.brickButton}"/>
-						</g:VerticalPanel>
-				</g:HorizontalPanel>
-
-				<g:VerticalPanel addStyleNames="{style.forcePanel}">
-					<ge:EntityModelCheckBoxEditor ui:field="forceEditor"/>
-					<g:Label ui:field="forceWarningLabel" addStyleNames="{style.forceWarningLabel}" />
-				</g:VerticalPanel>
-
-				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
-
-			</g:VerticalPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
-	
 </ui:UiBinder>

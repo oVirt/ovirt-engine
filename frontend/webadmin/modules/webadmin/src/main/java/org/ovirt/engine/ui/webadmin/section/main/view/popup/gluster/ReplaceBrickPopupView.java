@@ -12,13 +12,10 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.ReplaceBrickModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
@@ -35,9 +32,6 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
     interface ViewIdHandler extends ElementIdHandler<ReplaceBrickPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    @UiField
-    WidgetStyle style;
 
     @UiField(provided = true)
     @Path(value = "servers.selectedItem")
@@ -61,15 +55,12 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @Inject
     public ReplaceBrickPopupView(EventBus eventBus) {
         super(eventBus);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
         driver.initialize(this);
     }
 
@@ -83,14 +74,6 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
         });
 
     }
-
-    private void localize() {
-        serverEditor.setLabel(constants.serverBricks());
-        brickDirEditor.setLabel(constants.brickDirectoryBricks());
-        bricksFromServerList.setLabel(constants.brickDirectoryBricks());
-        showBricksListEditor.setLabel(constants.addBricksShowBricksFromHost());
-    }
-
 
     @Override
     public void edit(ReplaceBrickModel object) {
@@ -107,6 +90,4 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
         driver.cleanup();
     }
 
-    interface WidgetStyle extends CssResource {
-    }
 }

@@ -4,13 +4,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.compat.DayOfWeek;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
@@ -22,9 +23,11 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel.EndDateOptions;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -32,7 +35,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.Gluster
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -60,9 +62,6 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     DialogTabPanel tabContainer;
 
     @UiField
-    WidgetStyle style;
-
-    @UiField
     DialogTab generalTab;
 
     @UiField
@@ -75,13 +74,13 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     @WithElementId
     StringEntityModelLabelEditor volumeNameEditor;
 
-    @UiField
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelWidgetWithInfo snapshotNameEditorWithInfo;
+
     @Path(value = "snapshotName.entity")
     @WithElementId
     StringEntityModelTextBoxEditor snapshotNameEditor;
-
-    @UiField(provided = true)
-    InfoIcon snapshotNameInfoIcon;
 
     @UiField
     @Path(value = "description.entity")
@@ -91,7 +90,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     @UiField
     @Ignore
     @WithElementId
-    Label generalTabErrorMsgLabel;
+    Alert generalTabErrorMsg;
 
     @UiField
     DialogTab scheduleTab;
@@ -149,7 +148,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     @UiField
     @Ignore
     @WithElementId
-    Label scheduleTabErrorMessageLabel;
+    Alert scheduleTabErrorMessage;
 
     @UiField
     @Ignore
@@ -167,14 +166,18 @@ public class GlusterVolumeSnapshotCreatePopupView extends
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
-        setVisibilities();
         driver.initialize(this);
         daysOfWeekEditor.asCheckBoxGroup().clearAllSelections();
     }
 
     private void initEditors() {
-        snapshotNameInfoIcon = new InfoIcon(templates.italicText(constants.snapshotNameInfo()));
+        snapshotNameEditor = new StringEntityModelTextBoxEditor();
+        snapshotNameEditor.hideLabel();
+        EnableableFormLabel label = new EnableableFormLabel();
+        label.setText(constants.volumeSnapshotNamePrefixLabel());
+        snapshotNameEditorWithInfo = new EntityModelWidgetWithInfo(label, snapshotNameEditor);
+        snapshotNameEditorWithInfo.setExplanation(templates.italicText(constants.snapshotNameInfo()));
+
         startAtEditor = new EntityModelDateTimeBoxEditor();
         startAtEditor.getContentWidget().setDateTimeFormat(GwtBootstrapDateTimePicker.DEFAULT_DATE_TIME_FORMAT);
         startAtEditor.getContentWidget().showDateAndTime();
@@ -197,35 +200,6 @@ public class GlusterVolumeSnapshotCreatePopupView extends
                         return EnumTranslator.getInstance().translate(object);
                     }
         });
-    }
-
-    private void localize() {
-        generalTab.setLabel(constants.generalLabel());
-
-        clusterNameEditor.setLabel(constants.volumeClusterLabel());
-        volumeNameEditor.setLabel(constants.volumeNameLabel());
-        snapshotNameEditor.setLabel(constants.volumeSnapshotNamePrefixLabel());
-        snapshotDescriptionEditor.setLabel(constants.volumeSnapshotDescriptionLabel());
-
-        scheduleTab.setLabel(constants.scheduleLabel());
-
-        recurrenceEditor.setLabel(constants.recurrenceLabel());
-        intervalEditor.setLabel(constants.intervalLabel());
-        endByOptionsEditor.setLabel(constants.endByLabel());
-
-        timeZoneEditor.setLabel(constants.timeZoneLabel());
-        daysOfMonthEditor.setLabel(constants.daysOfMonthLabel());
-        daysOfWeekEditor.setLabel(constants.daysOfWeekLabel());
-        startAtEditor.setLabel(constants.startAtLabel());
-        endDate.setLabel(constants.endByDateLabel());
-        executionTimeEditor.setLabel(constants.executionTimeLabel());
-        criticalIntervalLabel.setText(constants.criticalSnapshotIntervalNote());
-        disableCliScheduleMessageLabel.setText(constants.glusterCliSchedulingEnabled());
-    }
-
-    private void setVisibilities() {
-        criticalIntervalLabel.setVisible(false);
-        disableCliScheduleMessageLabel.setVisible(false);
     }
 
     @Override
@@ -271,18 +245,18 @@ public class GlusterVolumeSnapshotCreatePopupView extends
         }
     }
 
-    public void setMessage(String msg, Label errorLabel) {
-        errorLabel.setText(msg);
-        errorLabel.setVisible(!msg.isEmpty());
+    public void setMessage(String msg, Alert alert) {
+        alert.setText(msg);
+        alert.setVisible(!StringUtils.isEmpty(msg));
     }
 
     @Override
     public void handleValidationErrors(GlusterVolumeSnapshotModel object) {
         String generalTabErrors = collectGeneralTabErrors(object);
-        setMessage(generalTabErrors, generalTabErrorMsgLabel);
+        setMessage(generalTabErrors, generalTabErrorMsg);
 
         String scheduleTabErrors = collectScheduleTabErrors(object);
-        setMessage(scheduleTabErrors, scheduleTabErrorMessageLabel);
+        setMessage(scheduleTabErrors, scheduleTabErrorMessage);
     }
 
     private String collectScheduleTabErrors(GlusterVolumeSnapshotModel object) {
@@ -343,9 +317,5 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     @Override
     public void cleanup() {
         driver.cleanup();
-    }
-
-    interface WidgetStyle extends CssResource {
-        String editorContentWidget();
     }
 }

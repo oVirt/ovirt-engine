@@ -12,8 +12,8 @@
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
     <ui:style>
-        .generalTabTopDecorator {
-            background-color: #D3D3D3;
+        .separator {
+            border-bottom: 1px solid #d1d1d1;
         }
 
         .sectionLabel {
@@ -36,43 +36,43 @@
     <d:SimpleDialogPanel width="500px" height="620px">
         <d:content>
             <b:Container fluid="true">
-                <b:Row addStyleNames="{style.generalTabTopDecorator} {style.topElement}">
-                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.dataCenterVolume}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                <b:Row addStyleNames="{style.topElement}">
+                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.dataCenterVolume}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
-                <b:Row addStyleNames="{style.generalTabTopDecorator}">
-                    <e:ListModelListBoxEditor ui:field="clusterEditor" label="{constants.volumeClusterVolume}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                <b:Row addStyleNames="{style.separator}">
+                    <e:ListModelListBoxEditor ui:field="clusterEditor" label="{constants.volumeClusterVolume}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row addStyleNames="{style.topElement}">
-                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.clusterPopupNameLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.clusterPopupNameLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
-                    <e:ListModelListBoxEditor ui:field="typeListEditor" label="{constants.typeVolume}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    <e:ListModelListBoxEditor ui:field="typeListEditor" label="{constants.typeVolume}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
-                    <ge:EntityModelCheckBoxEditor ui:field="arbiterVolumeEditor" label="{constants.arbiterVolume}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    <ge:EntityModelCheckBoxEditor ui:field="arbiterVolumeEditor" label="{constants.arbiterVolume}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
-                    <ge:IntegerEntityModelLabelEditor ui:field="replicaCountEditor" label="{constants.replicaCountVolume}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    <ge:IntegerEntityModelLabelEditor ui:field="replicaCountEditor" label="{constants.replicaCountVolume}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
-                    <ge:IntegerEntityModelLabelEditor ui:field="stripeCountEditor" label="{constants.stripeCountVolume}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    <ge:IntegerEntityModelLabelEditor ui:field="stripeCountEditor" label="{constants.stripeCountVolume}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
-                    <b:Column size="SM_6">
+                    <b:Column size="SM_4">
                         <g:Label text="{constants.transportTypeVolume}" />
                     </b:Column>
-                    <b:Column size="SM_3">
+                    <b:Column size="SM_4">
                         <ge:EntityModelCheckBoxEditor ui:field="tcpTransportTypeEditor" label="{constants.tcpVolume}" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="SM_3">
+                    <b:Column size="SM_4">
                         <ge:EntityModelCheckBoxEditor ui:field="rdmaTransportTypeEditor" label="{constants.rdmaVolume}" usePatternFly="true" />
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="SM_6">
+                    <b:Column size="SM_4">
                         <g:Label text="{constants.bricksVolume}" />
                     </b:Column>
-                    <b:Column size="SM_6">
+                    <b:Column size="SM_8">
                         <w:UiCommandButton ui:field="addBricksButton" label="{constants.addBricksVolume}" />
                         <g:Label ui:field="bricksCountEditor" addStyleNames="{style.bricksCountLabel}"/>
                     </b:Column>
@@ -83,16 +83,16 @@
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <ge:EntityModelCheckBoxEditor ui:field="glusterAccessProtocolEditor" label="{constants.glusterVolume}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    <ge:EntityModelCheckBoxEditor ui:field="glusterAccessProtocolEditor" label="{constants.glusterVolume}" usePatternFly="true" removeFormGroup="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                    <ge:EntityModelCheckBoxEditor ui:field="nfsAccessProtocolEditor" label="{constants.nfsVolume}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    <ge:EntityModelCheckBoxEditor ui:field="nfsAccessProtocolEditor" label="{constants.nfsVolume}" usePatternFly="true" removeFormGroup="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
                     <ge:EntityModelCheckBoxEditor ui:field="cifsAccessProtocolEditor" label="{constants.cifsVolume}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                    <ge:StringEntityModelTextBoxEditor ui:field="allowAccessEditor" label="{constants.allowAccessFromVolume}" removeFormGroup="true" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="allowAccessEditor" label="{constants.allowAccessFromVolume}" removeFormGroup="true" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
                     <b:Column size="SM_12">

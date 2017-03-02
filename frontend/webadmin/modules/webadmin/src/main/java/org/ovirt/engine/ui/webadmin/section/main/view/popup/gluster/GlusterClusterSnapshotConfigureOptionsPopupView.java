@@ -24,11 +24,13 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.inject.Inject;
 
-public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractModelBoundPopupView<GlusterClusterSnapshotConfigModel> implements GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget.ViewDef {
+public class GlusterClusterSnapshotConfigureOptionsPopupView extends
+    AbstractModelBoundPopupView<GlusterClusterSnapshotConfigModel> implements
+        GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget.ViewDef {
+
     interface Driver extends UiCommonEditorDriver<GlusterClusterSnapshotConfigModel, GlusterClusterSnapshotConfigureOptionsPopupView> {
     }
 
@@ -39,11 +41,6 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractMod
     interface ViewIdHandler extends ElementIdHandler<GlusterClusterSnapshotConfigureOptionsPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    @UiField
-    @Ignore
-    @WithElementId
-    Label snapshotConfigHeader;
 
     @UiField(provided = true)
     @Path(value = "clusters.selectedItem")
@@ -65,7 +62,6 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractMod
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
         driver.initialize(this);
     }
 
@@ -97,11 +93,6 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractMod
                 object.getEntity().setParamValue(value);
             }
         });
-    }
-
-    private void localize() {
-        clusterEditor.setLabel(constants.volumeClusterLabel());
-        snapshotConfigHeader.setText(constants.snapshotConfigHeaderLabel());
     }
 
     @Override

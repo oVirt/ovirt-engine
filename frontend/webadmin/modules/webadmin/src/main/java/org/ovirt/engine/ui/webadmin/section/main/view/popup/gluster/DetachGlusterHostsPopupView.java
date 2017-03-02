@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -9,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.DetachGlusterHostsModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -18,7 +20,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<DetachGlusterHostsModel> implements DetachGlusterHostsPopupPresenterWidget.ViewDef {
@@ -37,7 +38,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
     @UiField(provided = true)
     @Ignore
     @WithElementId
-    EntityModelCellTable<ListModel> hostsTable;
+    EntityModelCellTable<ListModel<EntityModel<String>>> hostsTable;
 
     @UiField(provided = true)
     @Path(value = "force.entity")
@@ -46,7 +47,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
 
     @UiField
     @Ignore
-    Label messageLabel;
+    Alert message;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -59,7 +60,6 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
         forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
         initTableColumns();
         driver.initialize(this);
     }
@@ -74,10 +74,6 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
         }, constants.detachGlusterHostsHostAddress());
     }
 
-    private void localize() {
-        forceEditor.setLabel(constants.detachGlusterHostsForcefully());
-    }
-
     @Override
     public void edit(DetachGlusterHostsModel object) {
         hostsTable.asEditor().edit(object.getHosts());
@@ -87,7 +83,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
     @Override
     public void setMessage(String message) {
         super.setMessage(message);
-        messageLabel.setText(message);
+        this.message.setText(message);
     }
 
     @Override

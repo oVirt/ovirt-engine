@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -9,7 +10,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableList
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
@@ -18,7 +19,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class VolumeParameterPopupView extends AbstractModelBoundPopupView<VolumeParameterModel> implements VolumeParameterPopupPresenterWidget.ViewDef {
@@ -49,12 +49,11 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
 
     @UiField
     @Ignore
-    public Label messageLabel;
+    public Alert message;
 
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public VolumeParameterPopupView(EventBus eventBus) {
@@ -62,14 +61,7 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
         initComboBox();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
         driver.initialize(this);
-    }
-
-    private void localize() {
-        keyListBoxEditor.setLabel(constants.optionKeyVolumeParameter());
-        descriptionEditor.setLabel(constants.descriptionVolumeParameter());
-        valueEditor.setLabel(constants.optionValueVolumeParameter());
     }
 
     void initComboBox() {
@@ -107,7 +99,8 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
     @Override
     public void setMessage(String message) {
         super.setMessage(message);
-        messageLabel.setText(message);
+        this.message.setText(message);
+        this.message.setVisible(!StringUtils.isEmpty(message));
     }
 
 }

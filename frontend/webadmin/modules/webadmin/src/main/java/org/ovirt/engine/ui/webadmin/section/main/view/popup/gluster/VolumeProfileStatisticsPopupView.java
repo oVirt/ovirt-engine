@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProfileDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.FopStats;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileStats;
@@ -9,7 +10,6 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.RefreshActionIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeProfileStatisticsPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
@@ -48,12 +47,9 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
     }
 
     @UiField
-    DialogTab bricksTab;
-
-    @UiField
     @Ignore
     @WithElementId
-    Label bricksErrorLabel;
+    Alert bricksError;
 
     @UiField(provided = true)
     @Path(value = "bricks.selectedItem")
@@ -88,12 +84,9 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
     Anchor brickProfileAnchor;
 
     @UiField
-    DialogTab nfsTab;
-
-    @UiField
     @Ignore
     @WithElementId
-    Label nfsErrorLabel;
+    Alert nfsError;
 
     @UiField(provided = true)
     @Path(value = "nfsServers.selectedItem")
@@ -127,7 +120,6 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
     @WithElementId
     Anchor nfsProfileAnchor;
 
-    private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
@@ -137,20 +129,10 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
         super(eventBus);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        bricks.hideLabel();
+        nfsServers.hideLabel();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
-        nfsErrorLabel.setVisible(false);
-        bricksErrorLabel.setVisible(false);
         driver.initialize(this);
-    }
-
-    private void localize() {
-        bricks.setLabel(constants.selectBrickToViewFopStats());
-        nfsServers.setLabel(constants.selectServerToViewFopStats());
-        bricksTab.setLabel(constants.volumeProfileBricksTab());
-        nfsTab.setLabel(constants.volumeProfileNfsTab());
-        bricksErrorLabel.setText(constants.brickProfileErrorMessage());
-        nfsErrorLabel.setText(constants.nfsProfileErrorMessage());
     }
 
     private void initEditors() {
@@ -298,8 +280,8 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
                         boolean isBrickTabSelected = !url.contains(";nfsStatistics=true");//$NON-NLS-1$
                         initAnchor(url, isBrickTabSelected ? brickProfileAnchor : nfsProfileAnchor);
                     }
-                    bricksErrorLabel.setVisible(disableErrorLabels);
-                    nfsErrorLabel.setVisible(disableErrorLabels);
+                    bricksError.setVisible(disableErrorLabels);
+                    nfsError.setVisible(disableErrorLabels);
                 }
             }
         });

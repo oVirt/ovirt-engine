@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
@@ -17,17 +18,17 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEd
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.BrickAdvancedDetailsModel;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<BrickAdvancedDetailsModel> implements BrickAdvancedDetailsPopupPresenterWidget.ViewDef {
@@ -42,9 +43,6 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     interface ViewIdHandler extends ElementIdHandler<BrickAdvancedDetailsPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    @UiField
-    WidgetStyle style;
 
     @UiField
     @WithElementId
@@ -112,7 +110,7 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     @UiField(provided = true)
     @Ignore
     @WithElementId
-    EntityModelCellTable<ListModel> clientsTable;
+    EntityModelCellTable<ListModel<EntityModel<GlusterClientInfo>>> clientsTable;
 
     @UiField
     @WithElementId
@@ -175,11 +173,11 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     @UiField(provided = true)
     @Ignore
     @WithElementId
-    EntityModelCellTable<ListModel> memoryPoolsTable;
+    EntityModelCellTable<ListModel<EntityModel<Mempool>>> memoryPoolsTable;
 
     @UiField
     @Ignore
-    Label messageLabel;
+    Alert message;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -191,9 +189,7 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        addStyles();
         initTableColumns();
-        localize();
         driver.initialize(this);
     }
 
@@ -201,31 +197,6 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         statusEditor = new EntityModelLabelEditor<>(new EnumRenderer<GlusterStatus>());
         clientsTable = new EntityModelCellTable<>(false, true);
         memoryPoolsTable = new EntityModelCellTable<>(false, true);
-    }
-
-    private void addStyles() {
-        brickEditor.addContentWidgetContainerStyleName(style.generalValue());
-        statusEditor.addContentWidgetContainerStyleName(style.generalValue());
-        portEditor.addContentWidgetContainerStyleName(style.generalValue());
-        rdmaPortEditor.addContentWidgetContainerStyleName(style.generalValue());
-        pidEditor.addContentWidgetContainerStyleName(style.generalValue());
-        totalSizeEditor.addContentWidgetContainerStyleName(style.generalValue());
-        freeSizeEditor.addContentWidgetContainerStyleName(style.generalValue());
-        deviceEditor.addContentWidgetContainerStyleName(style.generalValue());
-        blockSizeEditor.addContentWidgetContainerStyleName(style.generalValue());
-        mountOptionsEditor.addContentWidgetContainerStyleName(style.generalValue());
-        fileSystemEditor.addContentWidgetContainerStyleName(style.generalValue());
-
-        totalAllocatedEditor.addContentWidgetContainerStyleName(style.memStatValue());
-        freeBlocksEditor.addContentWidgetContainerStyleName(style.memStatValue());
-        freeFastbinBlocksEditor.addContentWidgetContainerStyleName(style.memStatValue());
-        mmappedBlocksEditor.addContentWidgetContainerStyleName(style.memStatValue());
-        spaceAllocatedMmappedEditor.addContentWidgetContainerStyleName(style.memStatValue());
-        maxTotalAllocatedEditor.addContentWidgetContainerStyleName(style.memStatValue());
-        spaceFreedFastbinEditor.addContentWidgetContainerStyleName(style.memStatValue());
-        totalAllocatedSpaceEditor.addContentWidgetContainerStyleName(style.memStatValue());
-        totalFreeSpaceEditor.addContentWidgetContainerStyleName(style.memStatValue());
-        releasableFreeSpaceEditor.addContentWidgetContainerStyleName(style.memStatValue());
     }
 
     private void initTableColumns() {
@@ -314,37 +285,6 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         }, constants.maxStdAllocatedBrickAdvancedLabel());
     }
 
-    private void localize() {
-        generalTab.setLabel(constants.generalBrickAdvancedPopupLabel());
-        brickEditor.setLabel(constants.brickAdvancedLabel());
-        statusEditor.setLabel(constants.statusBrickAdvancedLabel());
-        portEditor.setLabel(constants.portBrickAdvancedLabel());
-        rdmaPortEditor.setLabel(constants.rdmaPortBrickAdvancedLabel());
-        pidEditor.setLabel(constants.pidBrickAdvancedLabel());
-        totalSizeEditor.setLabel(constants.totalSizeBrickAdvancedLabel());
-        freeSizeEditor.setLabel(constants.freeSizeBrickAdvancedLabel());
-        deviceEditor.setLabel(constants.deviceBrickAdvancedLabel());
-        blockSizeEditor.setLabel(constants.blockSizeBrickAdvancedLabel());
-        mountOptionsEditor.setLabel(constants.mountOptionsBrickAdvancedLabel());
-        fileSystemEditor.setLabel(constants.fileSystemBrickAdvancedLabel());
-
-        clientsTab.setLabel(constants.clientsBrickAdvancedPopupLabel());
-
-        memoryStatsTab.setLabel(constants.memoryStatsBrickAdvancedPopupLabel());
-        totalAllocatedEditor.setLabel(constants.totalAllocatedBrickAdvancedLabel());
-        freeBlocksEditor.setLabel(constants.freeBlocksBrickAdvancedLabel());
-        freeFastbinBlocksEditor.setLabel(constants.freeFastbinBlocksBrickAdvancedLabel());
-        mmappedBlocksEditor.setLabel(constants.mmappedBlocksBrickAdvancedLabel());
-        spaceAllocatedMmappedEditor.setLabel(constants.allocatedInMmappedBlocksBrickAdvancedLabel());
-        maxTotalAllocatedEditor.setLabel(constants.maxTotalAllocatedSpaceBrickAdvancedLabel());
-        spaceFreedFastbinEditor.setLabel(constants.spaceInFreedFasbinBlocksBrickAdvancedLabel());
-        totalAllocatedSpaceEditor.setLabel(constants.totalAllocatedSpaceBrickAdvancedLabel());
-        totalFreeSpaceEditor.setLabel(constants.totalFreeSpaceBrickAdvancedLabel());
-        releasableFreeSpaceEditor.setLabel(constants.releasableFreeSpaceBrickAdvancedLabel());
-
-        memoryPoolsTab.setLabel(constants.memoryPoolsBrickAdvancedPopupLabel());
-    }
-
     @Override
     public void edit(BrickAdvancedDetailsModel object) {
         driver.edit(object);
@@ -365,15 +305,7 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     @Override
     public void setMessage(String message) {
         super.setMessage(message);
-        messageLabel.setText(message);
+        this.message.setText(message);
+        this.message.setVisible(!StringUtils.isEmpty(message));
     }
-
-    interface WidgetStyle extends CssResource {
-        String memStatLabel();
-
-        String memStatValue();
-
-        String generalValue();
-    }
-
 }

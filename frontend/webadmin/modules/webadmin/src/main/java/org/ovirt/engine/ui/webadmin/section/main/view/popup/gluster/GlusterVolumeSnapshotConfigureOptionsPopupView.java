@@ -68,7 +68,6 @@ public class GlusterVolumeSnapshotConfigureOptionsPopupView extends AbstractMode
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
         driver.initialize(this);
     }
 
@@ -90,27 +89,22 @@ public class GlusterVolumeSnapshotConfigureOptionsPopupView extends AbstractMode
             }
         }, constants.clusterSnapshotConfigValue(), "200px"); //$NON-NLS-1$
 
-        Column<EntityModel, String> valueColumn = new Column<EntityModel, String>(new TextInputCell()) {
+        Column<EntityModel<VolumeSnapshotOptionModel>, String> valueColumn =
+                new Column<EntityModel<VolumeSnapshotOptionModel>, String>(new TextInputCell()) {
             @Override
-            public String getValue(EntityModel object) {
+            public String getValue(EntityModel<VolumeSnapshotOptionModel> object) {
                 return ((VolumeSnapshotOptionModel)object.getEntity()).getOptionValue();
             }
         };
         configsTable.addColumn(valueColumn, constants.volumeSnapshotConfigValue(), "100px"); //$NON-NLS-1$
 
-        valueColumn.setFieldUpdater(new FieldUpdater<EntityModel, String>() {
+        valueColumn.setFieldUpdater(new FieldUpdater<EntityModel<VolumeSnapshotOptionModel>, String>() {
 
             @Override
-            public void update(int index, EntityModel object, String value) {
-                ((VolumeSnapshotOptionModel)object.getEntity()).setOptionValue(value);
+            public void update(int index, EntityModel<VolumeSnapshotOptionModel> object, String value) {
+                object.getEntity().setOptionValue(value);
             }
         });
-    }
-
-    private void localize() {
-        clusterNameEditor.setLabel(constants.volumeClusterLabel());
-        volumeNameEditor.setLabel(constants.volumeNameLabel());
-        snapshotConfigHeader.setText(constants.snapshotConfigHeaderLabel());
     }
 
     @Override

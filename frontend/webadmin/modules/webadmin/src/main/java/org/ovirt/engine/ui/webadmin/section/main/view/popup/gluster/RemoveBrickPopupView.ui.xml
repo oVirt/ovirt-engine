@@ -1,53 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickPopupView.WidgetStyle">
-		.contentPanel {
-			padding-left: 5px;
-			padding-right: 5px;
-		}
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
-		.warningLabel {
-			color: #FF0000;
-			left: 10px;
-		}
+    <ui:style>
+        .container {
+            width: 100%;
+        }
 
-		.itemsPanel {
-			height:120px;
-			border: 1px;
-			padding-top: 10px;
-		}
+        .infoIcon {
+            float: left;
+            padding-left: 10px;
+            line-height: 30px;
+        }
 
-		.migrateOption {
-			width: 200px;
-			padding: 0px;
-		}
+        .floatLeft {
+            float: left;
+            line-height: 30px;
+        }
+    </ui:style>
 
-		.migrateInfoIcon {
-			display: inline-block;
-		}
-
-	</ui:style>
-
-	<d:SimpleDialogPanel width="450px" height="280px">
-		<d:content>
-			<g:FlowPanel addStyleNames="{style.contentPanel}">
-				<g:Label ui:field="messageLabel"/>
-				<g:ScrollPanel addStyleNames="{style.itemsPanel}" >
-					<g:VerticalPanel ui:field="itemsPanel" />
-				</g:ScrollPanel>
-				<g:FlowPanel ui:field="migratePanel">
-					<g:HorizontalPanel>
-						<ge:EntityModelCheckBoxEditor ui:field="migrateEditor" />
-						<d:InfoIcon ui:field="migrateInfoIcon" addStyleNames="{style.migrateInfoIcon}"/>
-					</g:HorizontalPanel>
-					<g:Label ui:field="warningLabel" addStyleNames="{style.warningLabel}" />
-				</g:FlowPanel>
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <d:SimpleDialogPanel width="450px" height="320px">
+        <d:content>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <b:Alert type="INFO" ui:field="message" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <b:Alert type="INFO" ui:field="itemsAlert" />
+                    </b:Column>
+                </b:Row>
+                <g:FlowPanel ui:field="migratePanel">
+                    <b:Row>
+                        <b:Column size="SM_12">
+                            <ge:EntityModelCheckBoxEditor ui:field="migrateEditor" label="{constants.removeBricksMigrateData}" removeFormGroup="true" addStyleNames="{style.floatLeft}" usePatternFly="true" />
+                            <d:InfoIcon ui:field="migrateInfoIcon" addStyleNames="{style.infoIcon}" />
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="SM_12">
+                            <b:Alert type="WARNING" ui:field="warning" text="{constants.removeBricksWarning}" />
+                        </b:Column>
+                    </b:Row>
+                </g:FlowPanel>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

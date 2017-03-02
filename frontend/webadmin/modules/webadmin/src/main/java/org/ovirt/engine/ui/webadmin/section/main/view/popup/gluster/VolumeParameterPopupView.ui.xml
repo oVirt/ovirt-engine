@@ -8,37 +8,28 @@
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
     xmlns:select="urn:import:org.gwtbootstrap3.extras.select.client.ui">
 
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
+
     <ui:style>
-        .description textarea{
+        .description textarea {
             height: 130px;
-        }
-
-        .topElement {
-            padding-top: 20px;
-        }
-
-        .messageLabel {
-            color: #FF0000;
-            left: 10px;
-            padding-top: 5px;
-            padding-left: 5px;
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="450px" height="345px">
+    <d:SimpleDialogPanel width="450px" height="365px">
         <d:content>
             <b:Container fluid="true">
-                <b:Row addStyleNames="{style.topElement}">
-                    <e:ListModelTypeAheadChangeableListBoxEditor ui:field="keyListBoxEditor" usePatternFly="true" labelColSize="LG_4" widgetColSize="LG_8"/>
+                <b:Row>
+                    <e:ListModelTypeAheadChangeableListBoxEditor ui:field="keyListBoxEditor" label="{constants.optionKeyVolumeParameter}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
-                    <ge:StringEntityModelTextAreaLabelEditor ui:field="descriptionEditor" usePatternFly="true" labelColSize="LG_4" widgetColSize="LG_8" addStyleNames="{style.description}"/>
+                    <ge:StringEntityModelTextAreaLabelEditor ui:field="descriptionEditor" addStyleNames="{style.description}" label="{constants.descriptionVolumeParameter}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
-                    <ge:StringEntityModelTextBoxEditor ui:field="valueEditor" usePatternFly="true" labelColSize="LG_4" widgetColSize="LG_8"/>
+                    <ge:StringEntityModelTextBoxEditor ui:field="valueEditor" label="{constants.optionValueVolumeParameter}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8"/>
                 </b:Row>
                 <b:Row>
-                    <g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
+                    <b:Alert type="INFO" ui:field="message" visible="false" />
                 </b:Row>
             </b:Container>
         </d:content>

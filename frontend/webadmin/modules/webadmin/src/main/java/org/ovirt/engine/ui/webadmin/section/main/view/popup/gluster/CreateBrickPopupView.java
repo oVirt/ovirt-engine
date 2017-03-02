@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.RaidType;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -26,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.CreateBrickModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.UIMessages;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -35,7 +37,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.CreateB
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -52,12 +53,6 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
 
     interface ViewIdHandler extends ElementIdHandler<CreateBrickPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
-    }
-
-    interface WidgetStyle extends CssResource {
-        String editorContentWidget();
-
-        String forceEditorWidget();
     }
 
     @UiField
@@ -121,7 +116,7 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
 
     @UiField
     @Ignore
-    Label messageLabel;
+    Alert message;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
@@ -177,14 +172,7 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     }
 
     private void localize() {
-        lvNameEditor.setLabel(constants.logicalVolume());
-        mountPointEditor.setLabel(constants.mountPoint());
-        sizeEditor.setLabel(constants.lvSize());
-        raidParamsLabel.setText(constants.raidParameters());
-        raidTypeEditor.setLabel(constants.raidType());
-        noOfPhysicalDisksEditor.setLabel(constants.noOfPhysicalDisksInRaidVolume());
         stripeSizeLabel.setText(constants.stripeSize());
-        deviceHeader.setText(constants.storageDevices());
     }
 
     private void initInfoIcon() {
@@ -231,6 +219,7 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     @Override
     public void setMessage(String message) {
         super.setMessage(message);
-        messageLabel.setText(message);
+        this.message.setText(message);
+        this.message.setVisible(!StringUtils.isEmpty(message));
     }
 }

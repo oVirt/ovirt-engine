@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -16,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -34,9 +34,6 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
     interface ViewIdHandler extends ElementIdHandler<GeoRepActionConfirmPopUpView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    @UiField
-    WidgetStyle style;
 
     @UiField
     @Ignore
@@ -70,7 +67,7 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
     @UiField
     @Ignore
     @WithElementId
-    Label errorMsg;
+    Alert errorMsg;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -83,8 +80,6 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
-        addStyles();
         driver.initialize(this);
         initVisibilities();
     }
@@ -92,16 +87,6 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
     private void initVisibilities() {
         errorMsg.setVisible(false);
         geoRepForceHelpIcon.setVisible(false);
-    }
-
-    private void addStyles() {
-        forceEditor.addContentWidgetContainerStyleName(style.checkBoxEditorWidget());
-    }
-
-    private void localize() {
-        masterVolumeEditor.setLabel(constants.geoRepMasterVolume());
-        slaveVolumeEditor.setLabel(constants.geoRepSlaveVolume());
-        slaveHostEditor.setLabel(constants.geoRepSlaveHostIp());
     }
 
     @Override
@@ -157,9 +142,5 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
             errorMsg.setText(errorMessage);
         }
         errorMsg.setVisible(isNonEmptyErrorMessage);
-    }
-
-    interface WidgetStyle extends CssResource {
-        String checkBoxEditorWidget();
     }
 }

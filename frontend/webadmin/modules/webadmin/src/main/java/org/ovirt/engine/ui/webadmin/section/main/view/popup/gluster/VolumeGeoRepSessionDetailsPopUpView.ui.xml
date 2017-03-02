@@ -1,47 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
-	<ui:style>
-		.tablePanel {
-		height: 280px;
-		width: 730px;
-		padding: 1px;
-		border: 1px solid #CED8DF;
-		}
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
+
+    <ui:style>
         .headerLabel {
-			font-weight: bold;
-			padding-bottom: 5px;
-		}
+            font-weight: bold;
+        }
 
-        .button table{
-			width: 100%;
-		}
-	</ui:style>
+        .topElement {
+            padding-top: 15px;
+        }
 
-	<d:SimpleDialogPanel width="750px" height="625px">
-		<d:content>
-			<g:VerticalPanel>
-				<g:ScrollPanel addStyleNames="{style.tablePanel}">
-					<e:EntityModelCellTable ui:field="geoRepSessionSummaryTable" />
-				</g:ScrollPanel>
-				<g:FlowPanel>
-					<g:Label ui:field="georepSessionDetailsHeader"
-						addStyleNames="{style.headerLabel}" />
-					<ge:EntityModelLabelEditor ui:field="checkPointStatus" />
-					<ge:EntityModelLabelEditor ui:field="crawlStatus" />
-					<ge:EntityModelLabelEditor ui:field="dataOpsPending" />
-					<ge:EntityModelLabelEditor ui:field="metaOpsPending" />
-					<ge:EntityModelLabelEditor ui:field="entryOpsPending" />
-					<ge:EntityModelLabelEditor ui:field="failures" />
-					<ge:EntityModelLabelEditor ui:field="checkPointTime" />
-					<ge:EntityModelLabelEditor ui:field="checkPointCompletedAt" />
-				</g:FlowPanel>
-			</g:VerticalPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+        .container {
+            width: 100%;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="750px" height="625px">
+        <d:content>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <e:EntityModelCellTable ui:field="geoRepSessionSummaryTable" />
+                    </b:Column>
+                </b:Row>
+                <b:Row addStyleNames="{style.topElement}">
+                    <b:Column size="SM_12">
+                        <g:Label ui:field="georepSessionDetailsHeader" text="{constants.geoRepSessionDetailHeader}" addStyleNames="{style.headerLabel}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <ge:EntityModelLabelEditor ui:field="checkPointStatus" label="{constants.geoRepCheckPointStatus}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:EntityModelLabelEditor ui:field="crawlStatus" label="{constants.georepCrawlStatus}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:EntityModelLabelEditor ui:field="dataOpsPending" label="{constants.geoRepDataOpsPending}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:EntityModelLabelEditor ui:field="metaOpsPending" label="{constants.geoRepMetaOpsPending}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:EntityModelLabelEditor ui:field="entryOpsPending" label="{constants.geoRepEntryOpsPending}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:EntityModelLabelEditor ui:field="failures" label="{constants.geoRepFailures}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:EntityModelLabelEditor ui:field="checkPointTime" label="{constants.geoRepCheckPointTime}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:EntityModelLabelEditor ui:field="checkPointCompletedAt" label="{constants.geoRepCheckPointCompletedAt}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
 </ui:UiBinder>

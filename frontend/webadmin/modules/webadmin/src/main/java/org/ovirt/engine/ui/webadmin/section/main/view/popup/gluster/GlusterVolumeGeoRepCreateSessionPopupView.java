@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -18,11 +19,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepCreateSessionPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.inject.Inject;
 
 public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoundPopupView<GlusterVolumeGeoRepCreateModel> implements GlusterVolumeGeoRepCreateSessionPopupPresenterWidget.ViewDef{
@@ -37,9 +35,6 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
     interface ViewIdHandler extends ElementIdHandler<GlusterVolumeGeoRepCreateSessionPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    @UiField
-    WidgetStyle style;
 
     @UiField(provided = true)
     @Path(value = "showEligibleVolumes.entity")
@@ -79,12 +74,12 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
     @UiField
     @Ignore
     @WithElementId
-    TextArea suggestedConfigViolations;
+    Alert suggestedConfigViolations;
 
     @UiField
     @Ignore
     @WithElementId
-    Label message;
+    Alert message;
 
     private final ApplicationConstants constants;
 
@@ -102,8 +97,6 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
-        addStyles();
         driver.initialize(this);
         setVisibilities();
     }
@@ -156,22 +149,6 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
         });
     }
 
-    private void addStyles() {
-        showEligibleVolumes.addContentWidgetContainerStyleName(style.checkBoxEditorWidget());
-        startSessionEditor.addContentWidgetContainerStyleName(style.checkBoxEditorWidget());
-        suggestedConfigViolations.setEnabled(false);
-    }
-
-    private void localize() {
-        slaveHostIpEditor.setLabel(constants.geoRepSlaveHostIp());
-        slaveClusterEditor.setLabel(constants.geoRepSessionSlaveCluster());
-        slaveVolumeEditor.setLabel(constants.geoRepSlaveVolume());
-        showEligibleVolumes.setLabel(constants.geoRepShowEligibleVolumes());
-        slaveUserName.setLabel(constants.geoRepSessionUserName());
-        slaveUserGroupNameEditor.setLabel(constants.slaveUserGroupName());
-        startSessionEditor.setLabel(constants.geoRepSessionCreateAndStart());
-    }
-
     @Override
     public void edit(final GlusterVolumeGeoRepCreateModel object) {
         driver.edit(object);
@@ -203,9 +180,5 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
     @Override
     public void cleanup() {
         driver.cleanup();
-    }
-
-    interface WidgetStyle extends CssResource {
-        String checkBoxEditorWidget();
     }
 }

@@ -17,15 +17,12 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeoRepSessionDetailsModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeGeoRepSessionDetailsPopUpPresenterWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class VolumeGeoRepSessionDetailsPopUpView extends AbstractModelBoundPopupView<VolumeGeoRepSessionDetailsModel> implements VolumeGeoRepSessionDetailsPopUpPresenterWidget.ViewDef{
@@ -45,11 +42,6 @@ public class VolumeGeoRepSessionDetailsPopUpView extends AbstractModelBoundPopup
     @Ignore
     @WithElementId
     EntityModelCellTable<ListModel<EntityModel<GlusterGeoRepSessionDetails>>> geoRepSessionSummaryTable;
-
-    @UiField
-    @Ignore
-    @WithElementId
-    Label georepSessionDetailsHeader;
 
     @UiField(provided = true)
     @Ignore
@@ -91,35 +83,18 @@ public class VolumeGeoRepSessionDetailsPopUpView extends AbstractModelBoundPopup
     @WithElementId
     EntityModelLabelEditor<GlusterGeoRepSessionDetails> checkPointCompletedAt;
 
-    ApplicationResources resources;
     ApplicationConstants constants;
-    ApplicationMessages messages;
 
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public VolumeGeoRepSessionDetailsPopUpView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages) {
+    public VolumeGeoRepSessionDetailsPopUpView(EventBus eventBus, ApplicationConstants constants) {
         super(eventBus);
-        this.resources = resources;
         this.constants = constants;
-        this.messages = messages;
         intiEditors(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localise();
         driver.initialize(this);
-    }
-
-    private void localise() {
-        checkPointStatus.setLabel(constants.geoRepCheckPointStatus());
-        crawlStatus.setLabel(constants.georepCrawlStatus());
-        dataOpsPending.setLabel(constants.geoRepDataOpsPending());
-        metaOpsPending.setLabel(constants.geoRepMetaOpsPending());
-        entryOpsPending.setLabel(constants.geoRepEntryOpsPending());
-        failures.setLabel(constants.geoRepFailures());
-        georepSessionDetailsHeader.setText(constants.geoRepSessionDetailHeader());
-        checkPointTime.setLabel(constants.geoRepCheckPointTime());
-        checkPointCompletedAt.setLabel(constants.geoRepCheckPointCompletedAt());
     }
 
     private void intiEditors(final ApplicationConstants constants) {

@@ -1,33 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style>
-		.messageLabel {
-			color: #FF0000;
-			left: 10px;
-			padding-left: 5px;
-		}
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
-		.tablePanel {
-			height: 300px;
-			border: 1px solid #CED8DF;
-		}
-	</ui:style>
-	
-	<d:SimpleDialogPanel width="400px" height="450px">
-		<d:content>
-			<g:VerticalPanel spacing="5" horizontalAlignment="ALIGN_CENTER">
-				<g:ScrollPanel addStyleNames="{style.tablePanel}">
-					<e:EntityModelCellTable ui:field="hostsTable"/>
-				</g:ScrollPanel>
-				<ge:EntityModelCheckBoxEditor ui:field="forceEditor" />
-				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
-			</g:VerticalPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
-	
+    <ui:style>
+        .container {
+            width: 100%;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="400px" height="450px">
+        <d:content>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <e:EntityModelCellTable ui:field="hostsTable"/>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="forceEditor" label="{constants.detachGlusterHostsForcefully}" usePatternFly="true" removeFormGroup="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <b:Alert type="INFO" ui:field="message" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
+
 </ui:UiBinder>
