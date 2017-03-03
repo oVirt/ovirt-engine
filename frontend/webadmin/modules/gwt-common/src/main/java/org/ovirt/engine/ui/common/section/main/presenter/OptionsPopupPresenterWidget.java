@@ -16,7 +16,6 @@ public class OptionsPopupPresenterWidget
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<EditOptionsModel> {
         <T extends HasChangeHandlers & HasValue<String> & HasText> T getPublicKeyEditor();
-
     }
 
     @Inject
@@ -27,13 +26,16 @@ public class OptionsPopupPresenterWidget
     @Override
     public void init(EditOptionsModel model) {
         super.init(model);
-        registerHandler(getView().getPublicKeyEditor().addChangeHandler(new ChangeHandler() {
+
+        // TODO-GWT work around GWT issue 9476 using explicit type cast
+        registerHandler(((HasChangeHandlers) getView().getPublicKeyEditor()).addChangeHandler(new ChangeHandler() {
             /**
              * It replaces arbitrary number of '\n' by '\n\n' to visually separate lines.
              */
             @Override
             public void onChange(ChangeEvent event) {
-                final String originalValue = getView().getPublicKeyEditor().getValue();
+                // TODO-GWT work around GWT issue 9476 using explicit type cast
+                final String originalValue = ((HasValue<String>) getView().getPublicKeyEditor()).getValue();
                 String valueWithoutEmptyLines = originalValue;
                 if (valueWithoutEmptyLines == null) {
                     return;
@@ -55,4 +57,5 @@ public class OptionsPopupPresenterWidget
     protected void handleEnterKey() {
         // preventing confirmation by <Enter>
     }
+
 }
