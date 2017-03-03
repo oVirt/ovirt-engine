@@ -934,6 +934,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 updateSmartCardDevices();
                 addVmWatchdog();
                 addGraphicsDevice();
+                getVmDeviceUtils().updateVirtioScsiController(getVm().getStaticData(), getParameters().isVirtioScsiEnabled());
                 setActionReturnValue(getVm().getId());
                 setSucceeded(true);
                 return null;

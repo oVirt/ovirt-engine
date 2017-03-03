@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -49,6 +50,8 @@ import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
+import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
+import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NetworkQosMapper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -356,24 +359,34 @@ public class VmInfoBuildUtils {
     }
 
     /**
-     * @return a map containing an appropriate unit (disk's index in VirtIO-SCSI controller) for each vm device.
+     * @return A map of VirtIO-SCSI index to a map of disk's index in that VirtIO-SCSI controller:
+     * for example:
+     * (0 -> (disk1 -> 0, disk2 -> 1)),
+     * (1 -> (disk3 -> 0, disk4 -> 1))
+     * means that there are two controllers, 0 and 1. On the 0 there are 2 disks, first mapped to 0 and second to 1
+     * inside that particular controller. Similar for second controller.
      */
-    public Map<VmDevice, Integer> getVmDeviceUnitMapForVirtioScsiDisks(VM vm) {
+    public Map<Integer, Map<VmDevice, Integer>> getVmDeviceUnitMapForVirtioScsiDisks(VM vm) {
         return getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.VirtIO_SCSI, false);
     }
 
     /**
-     * @return a map containing an appropriate unit (disk's index in sPAPR VSCSI controller) for each vm device.
+     * @return A map of sPAPR VSCSI index to a map of disk's index in that sPAPR VSCSI controller:
+     * for example:
+     * (0 -> (disk1 -> 0, disk2 -> 1)),
+     * (1 -> (disk3 -> 0, disk4 -> 1))
+     * means that there are two controllers, 0 and 1. On the 0 there are 2 disks, first mapped to 0 and second to 1
+     * inside that particular controller. Similar for second controller.
      */
-    public Map<VmDevice, Integer> getVmDeviceUnitMapForSpaprScsiDisks(VM vm) {
+    public Map<Integer, Map<VmDevice, Integer>> getVmDeviceUnitMapForSpaprScsiDisks(VM vm) {
         return getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.SPAPR_VSCSI, true);
     }
 
-    private Map<VmDevice, Integer> getVmDeviceUnitMapForScsiDisks(VM vm,
+    private Map<Integer, Map<VmDevice, Integer>> getVmDeviceUnitMapForScsiDisks(VM vm,
             DiskInterface scsiInterface,
             boolean reserveFirstTwoLuns) {
         List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
-        Map<VmDevice, Integer> vmDeviceUnitMap = new HashMap<>();
+        Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap = new HashMap<>();
         Map<VmDevice, Disk> vmDeviceDiskMap = new HashMap<>();
 
         for (Disk disk : disks) {
@@ -382,11 +395,28 @@ public class VmInfoBuildUtils {
                 VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
                 Map<String, String> address = StringMapUtils.string2Map(vmDevice.getAddress());
                 String unitStr = address.get(VdsProperties.Unit);
+                String controllerStr = address.get(VdsProperties.Controller);
 
                 // If unit property is available adding to 'vmDeviceUnitMap';
                 // Otherwise, adding to 'vmDeviceDiskMap' for setting the unit property later.
-                if (StringUtils.isNotEmpty(unitStr)) {
-                    vmDeviceUnitMap.put(vmDevice, Integer.valueOf(unitStr));
+                if (StringUtils.isNotEmpty(unitStr) && StringUtils.isNotEmpty(controllerStr)) {
+                    Integer controllerInt = Integer.valueOf(controllerStr);
+
+                    boolean controllerOutOfRange = controllerInt >= vm.getNumOfIoThreads() + getDefaultVirtioScsiIndex(vm);
+                    boolean ioThreadsEnabled = vm.getNumOfIoThreads() > 0 &&
+                            FeatureSupported.virtioScsiIoThread(vm.getCompatibilityVersion());
+
+                    if ((ioThreadsEnabled && !controllerOutOfRange) ||
+                            (controllerInt == getDefaultVirtioScsiIndex(vm))) {
+                        if (!vmDeviceUnitMap.containsKey(controllerInt)) {
+                            vmDeviceUnitMap.put(controllerInt, new HashMap<>());
+                        }
+                        vmDeviceUnitMap.get(controllerInt).put(vmDevice, Integer.valueOf(unitStr));
+                    } else {
+                        // controller id not correct, generate the address again later
+                        vmDevice.setAddress(null);
+                        vmDeviceDiskMap.put(vmDevice, disk);
+                    }
                 } else {
                     vmDeviceDiskMap.put(vmDevice, disk);
                 }
@@ -394,16 +424,79 @@ public class VmInfoBuildUtils {
         }
 
         // Find available unit (disk's index in VirtIO-SCSI controller) for disks with empty address
+        int increment = 0;
         for (Entry<VmDevice, Disk> entry : vmDeviceDiskMap.entrySet()) {
-            int unit = getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstTwoLuns);
-            vmDeviceUnitMap.put(entry.getKey(), unit);
+            int controller = getControllerForScsiDisk(entry.getKey(), vm, increment);
+            increment++;
+            if (!vmDeviceUnitMap.containsKey(controller)) {
+                vmDeviceUnitMap.put(controller, new HashMap<>());
+            }
+
+            int unit = getAvailableUnitForScsiDisk(vmDeviceUnitMap.get(controller), reserveFirstTwoLuns);
+            vmDeviceUnitMap.get(controller).put(entry.getKey(), unit);
         }
 
         return vmDeviceUnitMap;
     }
 
+    private int getDefaultVirtioScsiIndex(VM vm) {
+        Map<DiskInterface, Integer> controllerIndexMap =
+                ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
+
+        return controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
+    }
+
+    /**
+     * Generates the next controller id using round robin.
+     * If the disk already has an controller id, returns it.
+     *
+     * @param disk the disk for which the controller id has to be generated
+     * @param vm a VM to which this disk is attached
+     * @param increment a number from 0..N to let the round robin cycle
+     * @return a controller id
+     */
+    public int getControllerForScsiDisk(VmDevice disk, VM vm, int increment) {
+        Map<String, String> address = StringMapUtils.string2Map(disk.getAddress());
+        String controllerStr = address.get(VdsProperties.Controller);
+
+        int defaultIndex = getDefaultVirtioScsiIndex(vm);
+        boolean ioThreadsEnabled = FeatureSupported.virtioScsiIoThread(vm.getCompatibilityVersion());
+
+        if (!ioThreadsEnabled) {
+            // no io threads, only 1 controller allowed and it is the default one
+            return defaultIndex;
+        }
+
+        if (StringUtils.isNotEmpty(controllerStr)) {
+            int controllerInt = Integer.parseInt(controllerStr);
+            boolean controllerOutOfRange = controllerInt > vm.getNumOfIoThreads() + getDefaultVirtioScsiIndex(vm);
+
+            if (!controllerOutOfRange) {
+                // io threads enabled and the controller in range, use it
+                return controllerInt;
+            }
+        }
+
+        // Here it can end up either if the controller has not been set or it has been set but it is out of range.
+        // Out of range it can be when:
+        // The VM was started with, say, 2 io threads and this disk had the controller id set to 1
+        // Than the VM has been turned off, set the io threads to 1 and ran the VM again. In that case this disk will
+        // be out of range.
+        // In both cases the controller index needs to be generated again.
+        if (vm.getNumOfIoThreads() > 0) {
+            // the num of IO threads equals to num of controllers
+            // the result of this will be a round robin over the controller indexes from the default index
+            return increment % vm.getNumOfIoThreads() + defaultIndex;
+        }
+
+        return defaultIndex;
+    }
+
     public int getAvailableUnitForScsiDisk(Map<VmDevice, Integer> vmDeviceUnitMap, boolean reserveFirstTwoLuns) {
         int unit = reserveFirstTwoLuns ? 2 : 0;
+        if (vmDeviceUnitMap == null) {
+            return unit;
+        }
         while (vmDeviceUnitMap.containsValue(unit)) {
             unit++;
         }
