@@ -218,20 +218,13 @@ public class IconEditorWidget extends AbstractValidatedWidget
         });
         inputFileWidget.getElement().setTabIndex(-1);
         hiddenPanel.add(inputFileWidget);
-        clickElement(inputFileWidget.getElement());
+        inputFileWidget.click();
     }
 
     @UiHandler("defaultButton")
     void onDefaultIconButton(ClickEvent event) {
         setIconAndFireChangeEvent(defaultIcon, ValidationResult.ok());
     }
-
-    /**
-     * TODO-GWT There is FileUpload#click() method since GWT 2.7.0.
-     */
-    native void clickElement(Element element) /*-{
-        element.click();
-    }-*/;
 
     protected void setIcon(final String icon) {
         this.icon = icon;

@@ -58,9 +58,9 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
         display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
         display.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
 
-        // Using KeyboardSelectionPolicy.BOUND_TO_SELECTION is preferable, but broken (see
-        // gwt issue 6310).  Instead, use ENABLED and handle the keyboard input ourselves.
-        // TODO-GWT is this issue now fixed?
+        // TODO-GWT work around GWT issue with KeyboardSelectionPolicy.BOUND_TO_SELECTION
+        // Using KeyboardSelectionPolicy.ENABLED instead and handling the input ourselves.
+        // See https://github.com/gwtproject/gwt/issues/6309 for details.
         display.addDomHandler(new KeyDownHandler() {
             @Override
             @SuppressWarnings("unchecked")

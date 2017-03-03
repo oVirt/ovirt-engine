@@ -63,12 +63,15 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
 
     @Override
     // TODO-GWT: override setInSlot to get hold of TabContentProxy in case of Presenter
+    // When moving to new GWTP slot API, make sure to override setInSlot(IsSlot<T>, T) instead.
+    // Also, check all overrides of legacy setInSlot(Object, PresenterWidget<?>) as well as other
+    // deprecated methods and replace them with non-deprecated method overrides.
     public void setInSlot(Object slot, PresenterWidget<?> content) {
         super.setInSlot(slot, content);
 
         // Update the view with regard to current tab's history token
         // in order to retain "active" tab after refreshing all tabs
-        if (slot == getTabContentSlot()) {
+        if (slot == tabContentSlot) {
             try {
                 Presenter<?, ?> presenter = (Presenter<?, ?>) content;
                 TabContentProxy<?> proxy = (TabContentProxy<?>) presenter.getProxy();
@@ -77,10 +80,6 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
                 logger.log(Level.SEVERE, "Error while updating tab view", e); //$NON-NLS-1$
             }
         }
-    }
-
-    Object getTabContentSlot() {
-        return tabContentSlot;
     }
 
     @Override
@@ -107,4 +106,5 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
             }
         }));
     }
+
 }

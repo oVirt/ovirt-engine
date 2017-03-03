@@ -73,10 +73,9 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
      *
      * Override this and use the id in your render.
      *
-     * TODO-GWT: this is copied from GWT's CheckboxCell, with ID injected. Keep in sync on GWT upgrade.
-     *
      * @see org.ovirt.engine.ui.common.widget.table.cell.Cell#render(com.google.gwt.cell.client.Cell.Context, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtmlBuilder, java.lang.String)
      */
+    // TODO-GWT: copied from GWT CheckboxCell, with ID injected. Keep in sync on GWT upgrade.
     public void render(Context context, Boolean value, SafeHtmlBuilder sb, String id) {
         // Get the view data.
         Object key = context.getKey();
@@ -91,6 +90,7 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
         } else {
             sb.append(templates.inputUnchecked(id, getAdditionalStyles()));
         }
+
         if (getLabel() != null && !StringUtils.isEmpty(getLabel().asString())) {
             sb.append(getLabel());
         }

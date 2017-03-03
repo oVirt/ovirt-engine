@@ -103,9 +103,7 @@ public class CompositeCell<C> extends com.google.gwt.cell.client.CompositeCell<C
         }
     }
 
-    /**
-     * TODO-GWT: copied from CompositeCell, with id injected. Keep in sync on GWT upgrades.
-     */
+    // TODO-GWT: copied from GWT CompositeCell, with ID injected. Keep in sync on GWT upgrade.
     protected <X> void render(Context context, C value, SafeHtmlBuilder sb, HasCell<C, X> hasCell, String id) {
         com.google.gwt.cell.client.Cell<X> _cell = hasCell.getCell();
         if (_cell instanceof Cell) {
@@ -113,8 +111,7 @@ public class CompositeCell<C> extends com.google.gwt.cell.client.CompositeCell<C
             sb.appendHtmlConstant("<span id=\"" + id + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
             cell.render(context, hasCell.getValue(value), sb, id);
             sb.appendHtmlConstant("</span>"); //$NON-NLS-1$
-        }
-        else {
+        } else {
             throw new IllegalStateException("CompositeCell cannot render Cells that do not implement " //$NON-NLS-1$
                     + Cell.class.getName());
         }

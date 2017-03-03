@@ -3,7 +3,7 @@
     "http://google-web-toolkit.googlecode.com/svn/tags/2.5.1/distro-source/core/src/gwt-module.dtd">
 <module>
 
-    <!-- Inherit the core Web Toolkit stuff -->
+    <!-- Inherit the core GWT stuff -->
     <inherits name="com.google.gwt.user.User" />
     <inherits name="com.google.gwt.inject.Inject" />
 
@@ -47,8 +47,18 @@
     </generate-with>
 
     <!--
-        TODO-GWT using GWT 2.8.0 requires a workaround for GIN 2.1.2
+        This property lists Java packages whose classes are NOT to be loaded
+        through GIN's (custom) classloader, i.e. they will have to be present
+        in compiled bytecode.
+
+        TODO-GWT using GWT 2.8.0 with GIN 2.1.2 requires a workaround involving
+        following core GWT packages:
+            com.google.gwt.core.client
+            com.google.gwt.core.client.impl
         See https://github.com/gwtproject/gwt/issues/9311 for details.
+
+        Any other packages are to avoid errors during GWT compilation, which
+        means they are unrelated to the above mentioned GWT + GIN workaround.
     -->
     <extend-configuration-property name="gin.classloading.exceptedPackages" value="com.google.gwt.core.client,com.google.gwt.core.client.impl,org.ovirt.engine.ui.gwtaop" />
 

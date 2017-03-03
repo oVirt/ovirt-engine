@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.compat;
 
 import java.util.Date;
+
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 
@@ -29,9 +31,10 @@ public class DateTime extends Date {
         return DayOfWeek.forValue(this.getDay());
     }
 
-    //TODO: TODO-GWT public String toString(DateFormat dateFormat) {
     public String toString(Object dateFormat) {
-        //TODO: TODO-GWT return  dateFormat.format(this);
+        if (dateFormat instanceof DateTimeFormat) {
+            return ((DateTimeFormat) dateFormat).format(this);
+        }
         return null;
     }
 
@@ -41,7 +44,7 @@ public class DateTime extends Date {
      */
     public static Date getMinValue() {
         // Return the static milliseconds representation of the min. date to avoid using GregorianCalendar which does
-        // not pass GWT compilitation
+        // not pass GWT compilation
         return new Date(-7200000);
     }
 

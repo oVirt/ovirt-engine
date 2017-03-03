@@ -181,12 +181,10 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
 
     @Override
     public String toString() {
-        String prefix = "";
-        if (TotalMilliseconds < 0) {
-            prefix = "-";
-        }
         // Ok to use String.format directly since GWT does not use TimeSpan from ui override package
-        return String.format("%s%d.%02d:%02d:%02d.%03d", prefix, Days, Hours, Minutes, Seconds, Milliseconds);
+        return String.format("%s%d.%02d:%02d:%02d.%03d",
+                (TotalMilliseconds < 0) ? "-" : "",
+                Days, Hours, Minutes, Seconds, Milliseconds);
     }
 
     public static TimeSpan tryParse(String string) {

@@ -27,15 +27,17 @@ public class OptionsPopupPresenterWidget
     public void init(EditOptionsModel model) {
         super.init(model);
 
-        // TODO-GWT work around GWT issue 9476 using explicit type cast
-        registerHandler(((HasChangeHandlers) getView().getPublicKeyEditor()).addChangeHandler(new ChangeHandler() {
+        // TODO-GWT work around GWT bug when handling "intersection" types
+        // See https://github.com/gwtproject/gwt/issues/9476 for details.
+        registerHandler(((/*required-cast*/HasChangeHandlers) getView().getPublicKeyEditor()).addChangeHandler(new ChangeHandler() {
             /**
              * It replaces arbitrary number of '\n' by '\n\n' to visually separate lines.
              */
             @Override
             public void onChange(ChangeEvent event) {
-                // TODO-GWT work around GWT issue 9476 using explicit type cast
-                final String originalValue = ((HasValue<String>) getView().getPublicKeyEditor()).getValue();
+                // TODO-GWT work around GWT bug when handling "intersection" types
+                // See https://github.com/gwtproject/gwt/issues/9476 for details.
+                final String originalValue = ((/*required-cast*/HasValue<String>) getView().getPublicKeyEditor()).getValue();
                 String valueWithoutEmptyLines = originalValue;
                 if (valueWithoutEmptyLines == null) {
                     return;

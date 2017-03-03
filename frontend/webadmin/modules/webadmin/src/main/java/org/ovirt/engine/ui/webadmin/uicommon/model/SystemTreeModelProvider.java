@@ -92,7 +92,8 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
         return selectionModel;
     }
 
-    // TODO-GWT: https://code.google.com/p/google-web-toolkit/issues/detail?id=6310
+    // TODO-GWT work around GWT issue with KeyboardSelectionPolicy.BOUND_TO_SELECTION
+    // See https://github.com/gwtproject/gwt/issues/6309 for details.
     public void setSelectedItem(Guid id) {
         display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED); // open small GWT workaround
         selectionModel.setSelected(getModel().getItemById(id), true);

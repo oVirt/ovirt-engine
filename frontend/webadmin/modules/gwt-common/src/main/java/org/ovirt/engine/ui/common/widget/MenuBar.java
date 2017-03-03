@@ -8,11 +8,11 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
- * MenuBar that adjusts sub menu popup location to fit screen
+ * MenuBar that adjusts sub menu popup location to fit the screen.
+ * <p>
+ * See <a href="https://code.google.com/p/google-web-toolkit/issues/detail?id=3924">
+ * this GWT issue</a> (not planned to be fixed in GWT) for details.
  */
-// TODO-GWT: extending GWT MenuBar to fix following issues:
-//      https://code.google.com/p/google-web-toolkit/issues/detail?id=407
-//      https://code.google.com/p/google-web-toolkit/issues/detail?id=3924
 public class MenuBar extends com.google.gwt.user.client.ui.MenuBar {
 
     public MenuBar() {

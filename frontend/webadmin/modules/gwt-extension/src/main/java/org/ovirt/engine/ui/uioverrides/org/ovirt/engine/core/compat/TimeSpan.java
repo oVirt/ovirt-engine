@@ -117,15 +117,6 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
         throw new IllegalArgumentException("Invalid TimeSpan");
     }
 
-    public String toString() {
-        String prefix = "";
-        if (TotalMilliseconds < 0) {
-            prefix = "-";
-        }
-        // TODO-GWT return String.format("%s%d.%02d:%02d:%02d.%03d", prefix, Days, Hours, Minutes, Seconds, Milliseconds);
-        return null;
-    }
-
     public static TimeSpan tryParse(String string) {
         try {
             return TimeSpan.parse(string);
