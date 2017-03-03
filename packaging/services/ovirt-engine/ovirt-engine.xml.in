@@ -342,6 +342,16 @@
               thread-factory="default"
               hung-task-threshold="60000"
               keepalive-time="5000"/>
+          <managed-executor-service
+              name="commandCoordinator"
+              long-running-tasks="true"
+              jndi-name="java:jboss/ee/concurrency/executor/commandCoordinator"
+              context-service="default"
+              thread-factory="default"
+              core-threads="1"
+              max-threads="{{ config.getinteger('COMMAND_COORDINATOR_THREAD_POOL_SIZE') }}"
+              keepalive-time="5000"
+              reject-policy="RETRY_ABORT" />
         </managed-executor-services>
         <managed-scheduled-executor-services>
           <managed-scheduled-executor-service

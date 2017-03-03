@@ -1,13 +1,12 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -17,10 +16,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.BackendUtils;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineFault;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
@@ -29,8 +27,10 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class CommandExecutor {
 
-    private static final ExecutorService executor =
-            Executors.newFixedThreadPool(Config.<Integer>getValue(ConfigValues.CommandCoordinatorThreadPoolSize));
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.CoCo)
+    private ManagedExecutorService executor;
+
     private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
     private final CommandsRepository commandsRepository;
 

@@ -64,6 +64,7 @@ import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.EngineThreadPools;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.DateTime;
@@ -238,6 +239,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
      */
     private void initialize() {
         log.info("Start initializing {}", getClass().getSimpleName());
+
+        // Load the thread pools
+        serviceLoader.load(EngineThreadPools.class);
 
         // save host that HE VM was running on prior to engine startup
         serviceLoader.load(PreviousHostedEngineHost.class);
