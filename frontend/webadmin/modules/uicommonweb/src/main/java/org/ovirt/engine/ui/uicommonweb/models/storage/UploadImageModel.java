@@ -873,6 +873,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         var bytesToSend;
         var xhr;
         var chunkErrorCount;
+        var fileName;
 
         var UploadStates = {
             NEW: "NEW",
@@ -907,6 +908,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             }
 
             file = fileUploadElement.files[0];
+            fileName = file.name;
             log.INFO('doUpload: Selected file: ' + file.name + ' (size: ' + file.size + ' bytes)');
 
             chunkErrorCount = 0;
@@ -958,6 +960,12 @@ public class UploadImageModel extends Model implements ICommandTarget {
                             + ', text: ' + xhr.responseText
                             + ', response: ' + xhr.response);
                     bytesSent += getBytesFromResponse(bytesToSend);
+                    if (file.size == 0) {
+                        log.ERROR('Error reading selected file (' + fileName + '). ' + 'Perhaps it has been deleted?');
+                        chunkErrorCount = maxRetries
+                        xhrError();
+                        return;
+                    }
                     if (getUploadStateString() == UploadStates.CLIENT_ERROR) {
                         finalizeUpload();
                     } else if (bytesSent < file.size) {
@@ -1059,10 +1067,17 @@ public class UploadImageModel extends Model implements ICommandTarget {
         function setAuditLogMessageByXhrError() {
             // According to xhr specifications, all network errors set the status to 0.
             if (xhr.status == 0) {
-                self.@org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel::setAuditLogType(Lorg/ovirt/engine/core/common/AuditLogType;)(
-                    @org.ovirt.engine.core.common.AuditLogType::UPLOAD_IMAGE_NETWORK_ERROR
-                );
+                setAuditLogMessage(@org.ovirt.engine.core.common.AuditLogType::UPLOAD_IMAGE_NETWORK_ERROR);
             }
+            else {
+                setAuditLogMessage(@org.ovirt.engine.core.common.AuditLogType::UPLOAD_IMAGE_CLIENT_ERROR);
+            }
+        }
+
+        function setAuditLogMessage(auditLogType) {
+            self.@org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel::setAuditLogType(Lorg/ovirt/engine/core/common/AuditLogType;)(
+                auditLogType
+            );
         }
     }-*/;
 
