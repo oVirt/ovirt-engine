@@ -673,7 +673,7 @@ public class VmInfoBuildUtils {
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId(Guid.newGuid(), vmId));
         vmDevice.setType(VmDeviceGeneralType.VIDEO);
-        vmDevice.setDevice(displayType.name());
+        vmDevice.setDevice(displayType.getDefaultVmDeviceType().getName());
         vmDevice.setPlugged(true);
         vmDevice.setAddress("");
         return vmDevice;
@@ -730,5 +730,32 @@ public class VmInfoBuildUtils {
         }
 
         return result;
+    }
+
+    /**
+     * See {@link VmInfoBuildUtilsTest#testMakeDiskName()}
+     */
+    public String makeDiskName(String diskInterface, int index) {
+        String devIndex = "";
+        while (index > 0) {
+            devIndex = (char)('a' + (index % 26)) + devIndex;
+            index /= 26;
+        }
+        return diskInterfaceToDevName(diskInterface) + (devIndex.isEmpty() ? 'a' : devIndex);
+    }
+
+    private String diskInterfaceToDevName(String iface) {
+        switch(iface) {
+        case "virtio":
+            return "vd";
+        case "fdc":
+            return "fd";
+        case "scsi":
+        case "sata":
+            return "sd";
+        case "ide":
+        default:
+            return "hd";
+        }
     }
 }

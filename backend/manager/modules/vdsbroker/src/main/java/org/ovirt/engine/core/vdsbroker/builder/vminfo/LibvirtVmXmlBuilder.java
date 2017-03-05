@@ -98,6 +98,8 @@ public class LibvirtVmXmlBuilder {
     private XmlTextWriter writer;
     private Map<Guid, StorageQos> qosCache;
     private String cdInterface;
+    private int payloadIndex;
+    private int cdRomIndex;
 
     private Map<String, Object> createInfo;
     private VM vm;
@@ -105,6 +107,8 @@ public class LibvirtVmXmlBuilder {
     public LibvirtVmXmlBuilder(Map<String, Object> createInfo, VM vm) {
         this.createInfo = createInfo;
         this.vm = vm;
+        payloadIndex = -1;
+        cdRomIndex = -1;
     }
 
     @PostConstruct
@@ -624,9 +628,10 @@ public class LibvirtVmXmlBuilder {
         updateBootOrder(diskDevices, cdromDevices, interfaceDevices);
 
         writeInterfaces(interfaceDevices);
-        writeDisks(diskDevices);
         writeCdRom(cdromDevices);
         writeFloppy(floppyDevice);
+        // we must write the disk after writing cd-rom and floppy to know reserved indices
+        writeDisks(diskDevices);
 
         writer.writeEndElement();
     }
@@ -713,10 +718,49 @@ public class LibvirtVmXmlBuilder {
     private void writeDisks(List<VmDevice> devices) {
         Map<VmDeviceId, VmDevice> deviceIdToDevice = devices.stream()
                 .collect(Collectors.toMap(VmDevice::getId, dev -> dev));
+        int ideIndex = -1;
+        int scsiIndex = -1;
+        int virtioIndex = -1;
+        DiskInterface cdDiskInterface = DiskInterface.forValue(cdInterface);
+
         for (Disk disk : vmInfoBuildUtils.getSortedDisks(vm)) {
             VmDevice device = deviceIdToDevice.get(new VmDeviceId(disk.getId(), vm.getId()));
+            DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
+            DiskInterface diskInterface = dve.getDiskInterface();
+            int index = 0;
+            switch(diskInterface) {
+            case IDE:
+                ideIndex++;
+                if (cdDiskInterface == diskInterface) {
+                    while (ideIndex == payloadIndex || ideIndex == cdRomIndex) {
+                        ideIndex++;
+                    }
+                }
+                index = ideIndex;
+                break;
+            case VirtIO:
+                virtioIndex++;
+                if (cdDiskInterface == diskInterface) {
+                    while (virtioIndex == payloadIndex || virtioIndex == cdRomIndex) {
+                        virtioIndex++;
+                    }
+                }
+                index = virtioIndex;
+                break;
+            case SPAPR_VSCSI:
+            case VirtIO_SCSI:
+                scsiIndex++;
+                if (cdDiskInterface == diskInterface) {
+                    while (scsiIndex == payloadIndex || scsiIndex == cdRomIndex) {
+                        scsiIndex++;
+                    }
+                }
+                index = scsiIndex;
+                break;
+            }
+
             if (device.isManaged()) {
-                writeManagedDisk(device, disk);
+                writeManagedDisk(device, disk, dve, index);
             }
             // TODO: else
         }
@@ -1012,7 +1056,11 @@ public class LibvirtVmXmlBuilder {
      * TODO:
      * add qemu_drive_cache configurable like in VDSM?
      */
-    private void writeManagedDisk(VmDevice device, Disk disk) {
+    private void writeManagedDisk(
+            VmDevice device,
+            Disk disk,
+            DiskVmElement dve,
+            int index) {
         // <disk type='file' device='disk' snapshot='no'>
         //   <driver name='qemu' type='qcow2' cache='none'/>
         //   <source file='/path/to/image'/>
@@ -1021,10 +1069,8 @@ public class LibvirtVmXmlBuilder {
         // </disk>
         writer.writeStartElement("disk");
 
-        DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
-
         writeGeneralDiskAttributes(device, disk, dve);
-        writeDiskTarget(dve);
+        writeDiskTarget(dve, index);
         writeDiskSource(disk);
         writeDiskDriver(device, disk, dve);
         writeDeviceAliasAndAddress(device);
@@ -1149,21 +1195,21 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeDiskTarget(DiskVmElement dve) {
+    private void writeDiskTarget(DiskVmElement dve, int index) {
         writer.writeStartElement("target");
         switch (dve.getDiskInterface()) {
         case IDE:
-            writer.writeAttributeString("dev", "hda"); // TODO: device name
+            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName("ide", index));
             writer.writeAttributeString("bus", "ide");
             break;
         case VirtIO:
-            writer.writeAttributeString("dev", "sda"); // TODO: device name
+            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName("virtio", index));
             writer.writeAttributeString("bus", "virtio");
 
             // TODO: index
             break;
         case VirtIO_SCSI:
-            writer.writeAttributeString("dev", "sda"); // TODO: device name
+            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName("scsi", index));
             writer.writeAttributeString("bus", "scsi");
 
             // TODO address
@@ -1232,9 +1278,11 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("startupPolicy", "optional");
             writer.writeEndElement();
 
+            payloadIndex = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
+
             writer.writeStartElement("target");
-            writer.writeAttributeString("dev", "hdc"); // TODO
-            writer.writeAttributeString("bus", cdInterface); // index ??
+            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(cdInterface, payloadIndex));
+            writer.writeAttributeString("bus", cdInterface);
             writer.writeEndElement();
 
             if ("scsi".equals(cdInterface)) {
@@ -1261,8 +1309,8 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
 
             writer.writeStartElement("target");
-            writer.writeAttributeString("dev", "hdc"); // TODO
-            writer.writeAttributeString("bus", cdInterface); // index ??
+            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(VdsProperties.Fdc, 0)); // IDE slot 2 is reserved by VDSM to CDROM
+            writer.writeAttributeString("bus", VdsProperties.Fdc);
             writer.writeEndElement();
 
             writer.writeElement("readonly");
@@ -1296,8 +1344,10 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("startupPolicy", "optional");
             writer.writeEndElement();
 
+            cdRomIndex = VmDeviceCommonUtils.getCdDeviceIndex(cdInterface);
+
             writer.writeStartElement("target");
-            writer.writeAttributeString("dev", "hdc"); // TODO
+            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(cdInterface, cdRomIndex));
             writer.writeAttributeString("bus", cdInterface);
             writer.writeEndElement();
 
@@ -1326,8 +1376,10 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("startupPolicy", "optional");
             writer.writeEndElement();
 
+            cdRomIndex = VmDeviceCommonUtils.getCdDeviceIndex(cdInterface);
+
             writer.writeStartElement("target");
-            writer.writeAttributeString("dev", "hdc"); // TODO
+            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(cdInterface, cdRomIndex));
             writer.writeAttributeString("bus", cdInterface);
             writer.writeEndElement();
 

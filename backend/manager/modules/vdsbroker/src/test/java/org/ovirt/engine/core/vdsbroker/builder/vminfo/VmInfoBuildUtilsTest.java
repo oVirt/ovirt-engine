@@ -261,4 +261,15 @@ public class VmInfoBuildUtilsTest {
         assertEquals(vmDeviceUnitMap.get(0).get(diskImageVmDevice), (Integer) 0);
     }
 
+    @Test
+    public void testMakeDiskName() {
+        assertEquals("hda", underTest.makeDiskName("ide", 0));
+        assertEquals("hda", underTest.makeDiskName("blabla", 0));
+        assertEquals("hdb", underTest.makeDiskName("blabla", 1));
+        assertEquals("hdc", underTest.makeDiskName("ide", 2));
+        assertEquals("sdd", underTest.makeDiskName("sata", 3));
+        assertEquals("sde", underTest.makeDiskName("scsi", 4));
+        assertEquals("fdf", underTest.makeDiskName("fdc", 5));
+        assertEquals("vdh", underTest.makeDiskName("virtio", 7));
+    }
 }
