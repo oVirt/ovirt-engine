@@ -618,7 +618,8 @@ public abstract class AbstractDiskModel extends DiskModel {
         }
         // handle disk profile selected item
         Guid defaultProfileId =
-                (getDisk() != null && getDisk().getDiskStorageType() == DiskStorageType.IMAGE)? ((DiskImage) getDisk()).getDiskProfileId() : null;
+                (getDisk() != null && !getIsNew() && getDisk().getDiskStorageType() == DiskStorageType.IMAGE)
+                        ? ((DiskImage) getDisk()).getDiskProfileId() : null;
         if (defaultProfileId != null) {
             for (DiskProfile profile : diskProfiles) {
                 if (profile.getId().equals(defaultProfileId)) {
