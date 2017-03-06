@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.sso.search;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,7 +52,7 @@ public enum DirectorySearch {
     FetchPrincipalRecord(SsoConstants.FETCH_PRINCIPAL_RECORD_QUERY, false) {
         public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             Map<String, Object> params = readParams(request);
-            return Arrays.asList(AuthzUtils.fetchPrincipalRecord(
+            return Collections.singletonList(AuthzUtils.fetchPrincipalRecord(
                     ssoContext.getSsoExtensionsManager().getExtensionByName(
                             (String) params.get(SsoConstants.HTTP_PARAM_DOMAIN)),
                     (String) params.get(SsoConstants.HTTP_PARAM_PRINCIPAL),
@@ -166,11 +165,11 @@ public enum DirectorySearch {
         String searchNamespace = (String) params.get(SsoConstants.HTTP_PARAM_NAMESPACE);
         for (String namespace : StringUtils.isEmpty(searchNamespace)
                 ? getNamespaces(ssoContext, (String) params.get(SsoConstants.HTTP_PARAM_DOMAIN))
-                : Arrays.asList(searchNamespace)) {
+                : Collections.singletonList(searchNamespace)) {
             users.addAll(AuthzUtils.findPrincipalsByIds(
                     extension,
                     namespace,
-                    Arrays.asList((String) params.get(SsoConstants.HTTP_PARAM_ID)),
+                    Collections.singletonList((String) params.get(SsoConstants.HTTP_PARAM_ID)),
                     (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING),
                     (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE)));
         }
@@ -184,11 +183,11 @@ public enum DirectorySearch {
         String searchNamespace = (String) params.get(SsoConstants.HTTP_PARAM_NAMESPACE);
         for (String namespace : StringUtils.isEmpty(searchNamespace)
                 ? getNamespaces(ssoContext, (String) params.get(SsoConstants.HTTP_PARAM_DOMAIN))
-                : Arrays.asList(searchNamespace)) {
+                : Collections.singletonList(searchNamespace)) {
             groups.addAll(AuthzUtils.findGroupRecordsByIds(
                     extension,
                     namespace,
-                    Arrays.asList((String) params.get(SsoConstants.HTTP_PARAM_ID)),
+                    Collections.singletonList((String) params.get(SsoConstants.HTTP_PARAM_ID)),
                     (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING),
                     (boolean) params.get(SsoConstants.HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE)));
         }
@@ -244,7 +243,7 @@ public enum DirectorySearch {
         log.debug("Entered getNamespaces");
         List<String> namespaces;
         if (StringUtils.isNotEmpty(namespace)) {
-            namespaces = Arrays.asList(namespace);
+            namespaces = Collections.singletonList(namespace);
         } else {
             namespaces = getNamespaces(ssoContext, authz);
         }
