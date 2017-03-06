@@ -3,12 +3,11 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -16,12 +15,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -32,8 +33,15 @@ public class CommandBaseTest extends BaseCommandTest {
 
     protected String session = "someSession";
 
+    @Mock
+    private AuditLogDirector director;
+
     @InjectMocks
-    private CommandBase<VdcActionParametersBase> command = new CommandBaseDummy(new VdcActionParametersBase());
+    private CommandBase<VdcActionParametersBase> command = mock(
+            CommandBase.class,
+            withSettings().defaultAnswer(Answers.CALLS_REAL_METHODS)
+                    .extraInterfaces(RenamedEntityInfoProvider.class)
+                    .useConstructor(new VdcActionParametersBase(), CommandContext.createContext(session)));
 
     @Before
     public void setupEnvironment() {
@@ -49,25 +57,6 @@ public class CommandBaseTest extends BaseCommandTest {
     public void clearEnvironment() {
         CorrelationIdTracker.clean();
         sessionDataContainer.removeSessionOnLogout(session);
-    }
-
-    /** A dummy class for testing CommandBase's functionality */
-    private class CommandBaseDummy extends CommandBase<VdcActionParametersBase> {
-
-        /** A dummy constructor to pass parameters, since constructors aren't inherited in Java */
-        protected CommandBaseDummy(VdcActionParametersBase params) {
-            super(params, CommandContext.createContext(session));
-        }
-
-        @Override
-        protected void executeCommand() {
-            setSucceeded(true);
-        }
-
-        @Override
-        public List<PermissionSubject> getPermissionCheckSubjects() {
-            return Collections.emptyList();
-        }
     }
 
     /** Testing the constructor, which adds the user id to the thread local container */
@@ -93,23 +82,15 @@ public class CommandBaseTest extends BaseCommandTest {
 
     @Test
     public void logRenamedEntity() {
-        abstract class RenameCommand extends CommandBaseDummy implements RenamedEntityInfoProvider {
-
-            protected RenameCommand(VdcActionParametersBase params) {
-                super(params);
-            }
-
-        }
-        RenameCommand command = mock(RenameCommand.class);
-        doCallRealMethod().when(command).logRenamedEntity();
+        RenamedEntityInfoProvider infoProvider = (RenamedEntityInfoProvider) command;
         command.logRenamedEntity();
-        when(command.getEntityOldName()).thenReturn("foo");
-        when(command.getEntityNewName()).thenReturn("bar");
+        when(infoProvider.getEntityOldName()).thenReturn("foo");
+        when(infoProvider.getEntityNewName()).thenReturn("bar");
         when(command.getCurrentUser()).thenReturn(mock(DbUser.class));
         command.logRenamedEntity();
-        when(command.getEntityNewName()).thenReturn("bar");
+        when(infoProvider.getEntityNewName()).thenReturn("bar");
         command.logRenamedEntity();
-        when(command.getEntityOldName()).thenReturn("foo");
+        when(infoProvider.getEntityOldName()).thenReturn("foo");
         command.logRenamedEntity();
     }
 
