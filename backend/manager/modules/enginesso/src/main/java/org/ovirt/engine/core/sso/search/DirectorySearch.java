@@ -148,7 +148,7 @@ public enum DirectorySearch {
 
         List<ExtMap> results = new ArrayList<>();
         getNamespaces(ssoContext, (String) params.get("namespace"), authzName).
-                forEach((namespace) -> results.addAll(DirectoryUtils.findDirectoryGroupsByQuery(authz,
+                forEach(namespace -> results.addAll(DirectoryUtils.findDirectoryGroupsByQuery(authz,
                         namespace,
                         query)));
         log.debug("DirectoryUtils.findDirectoryGroupsByQuery returned {} groups in authz {} for query {}",
@@ -200,7 +200,7 @@ public enum DirectorySearch {
         List<ExtMap> results = new ArrayList<>();
         getNamespaces(ssoContext, (String) params.get(SsoConstants.HTTP_PARAM_NAMESPACE),
                 (String) params.get(SsoConstants.HTTP_PARAM_DOMAIN)).
-                forEach((namespace) -> results.addAll(AuthzUtils.findPrincipalsByIds(
+                forEach(namespace -> results.addAll(AuthzUtils.findPrincipalsByIds(
                         extension,
                         namespace,
                         (Collection<String>) params.get(SsoConstants.HTTP_PARAM_IDS),
@@ -221,7 +221,7 @@ public enum DirectorySearch {
 
         List<ExtMap> results = new ArrayList<>();
         getNamespaces(ssoContext, (String) params.get("namespace"), authzName).
-                forEach((namespace) -> results.addAll(
+                forEach(namespace -> results.addAll(
                         DirectoryUtils.findDirectoryUsersByQuery(authz,
                                 namespace,
                                 query)));
