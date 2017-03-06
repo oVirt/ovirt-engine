@@ -269,6 +269,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_VM_IS_NOT_DOWN();
 
+    String ACTION_TYPE_FAILED_AMEND_AND_EXTEND_IN_ONE_OPERATION();
+
     String ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP();
 
     String ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING();

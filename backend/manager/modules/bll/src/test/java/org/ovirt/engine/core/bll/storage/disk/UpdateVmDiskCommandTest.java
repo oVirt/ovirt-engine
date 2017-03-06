@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -32,12 +33,16 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -54,6 +59,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -126,6 +132,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Mock
     private QuotaManager quotaManager;
+
+    @Mock
+    private BackendInternal backend;
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
@@ -449,6 +458,95 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void testAmend() {
+        DiskImage oldDisk = createDiskImage();
+        oldDisk.setVolumeFormat(VolumeFormat.COW);
+        oldDisk.setQcowCompat(QcowCompat.QCOW2_V2);
+        oldDisk.setDiskAlias("Test");
+        oldDisk.setDiskDescription("Test_Desc");
+        when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
+        DiskImage newDisk = DiskImage.copyOf(oldDisk);
+        newDisk.setQcowCompat(QcowCompat.QCOW2_V3);
+        command.getParameters().setDiskInfo(newDisk);
+        initializeCommand();
+        mockVdsCommandSetVolumeDescription();
+        command.executeVmCommand();
+        verify(command, times(1)).amendDiskImage();
+    }
+
+    @Test
+    public void testAmendWithPropertyChange() {
+        DiskImage oldDisk = createDiskImage();
+        oldDisk.setVolumeFormat(VolumeFormat.COW);
+        oldDisk.setQcowCompat(QcowCompat.QCOW2_V2);
+        oldDisk.setDiskAlias("Test");
+        oldDisk.setDiskDescription("Test_Desc");
+        when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
+        DiskImage newDisk = DiskImage.copyOf(oldDisk);
+        newDisk.setQcowCompat(QcowCompat.QCOW2_V3);
+        newDisk.setDiskAlias("New Disk Alias");
+        command.getParameters().setDiskInfo(newDisk);
+        initializeCommand();
+        mockVdsCommandSetVolumeDescription();
+        command.executeVmCommand();
+        verify(command, times(1)).amendDiskImage();
+        verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
+    }
+
+    @Test
+    public void testAmendFailedWithPropertyChange() {
+        DiskImage oldDisk = createDiskImage();
+        oldDisk.setVolumeFormat(VolumeFormat.COW);
+        oldDisk.setQcowCompat(QcowCompat.QCOW2_V2);
+        oldDisk.setDiskAlias("Test");
+        oldDisk.setDiskDescription("Test_Desc");
+        when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
+        DiskImage newDisk = DiskImage.copyOf(oldDisk);
+        newDisk.setQcowCompat(QcowCompat.QCOW2_V3);
+        newDisk.setDiskAlias("New Disk Alias");
+        command.getParameters().setDiskInfo(newDisk);
+        initializeCommand();
+        VdcReturnValueBase ret = new VdcReturnValueBase();
+        ret.setSucceeded(false);
+        ArrayList<String> msgList = new ArrayList<>();
+        msgList.add(EngineMessage.ACTION_TYPE_FAILED_AMEND_NOT_SUPPORTED_BY_DC_VERSION.toString());
+        ret.setValidationMessages(msgList);
+        when(backend.runInternalAction(eq(VdcActionType.AmendImageGroupVolumes), any(StorageDomainParametersBase.class), any(CommandContext.class))).thenReturn(ret);
+        mockVdsCommandSetVolumeDescription();
+        command.executeVmCommand();
+        verify(command, times(1)).amendDiskImage();
+        verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
+    }
+
+    @Test
+    public void testAmendNotRunningWithExtend() {
+        Guid quotaId = Guid.newGuid();
+
+        DiskImage oldDiskImage = createDiskImage();
+        oldDiskImage.setQuotaId(quotaId);
+        oldDiskImage.setSize(SizeConverter.convert(3L, SizeConverter.SizeUnit.GiB,
+                SizeConverter.SizeUnit.BYTES).longValue());
+        oldDiskImage.setVolumeFormat(VolumeFormat.COW);
+        oldDiskImage.setQcowCompat(QcowCompat.QCOW2_V2);
+
+
+        DiskImage newDiskImage = createDiskImage();
+        newDiskImage.setQuotaId(quotaId);
+        newDiskImage.setSize(SizeConverter.convert(5L, SizeConverter.SizeUnit.GiB,
+                SizeConverter.SizeUnit.BYTES).longValue());
+        newDiskImage.setVolumeFormat(VolumeFormat.COW);
+        newDiskImage.setQcowCompat(QcowCompat.QCOW2_V3);
+
+        command.getParameters().setDiskVmElement(new DiskVmElement(newDiskImage.getId(), vmId));
+        command.getParameters().setDiskInfo(newDiskImage);
+
+        when(diskDao.get(diskImageGuid)).thenReturn(oldDiskImage);
+        initializeCommand();
+        assertTrue(command.amendDiskRequested());
+        verify(command, times(0)).amendDiskImage();
+    }
+
+    @Test
     public void testFaultyResize() {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
@@ -515,7 +613,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(sd);
         StorageDomainValidator sdValidator = new StorageDomainValidator(sd);
         doReturn(sdValidator).when(command).getStorageDomainValidator(any(DiskImage.class));
-
+        VdcReturnValueBase ret = new VdcReturnValueBase();
+        ret.setSucceeded(true);
+        when(backend.runInternalAction(eq(VdcActionType.AmendImageGroupVolumes), any(StorageDomainParametersBase.class), any(CommandContext.class))).thenReturn(ret);
         command.init();
     }
 
@@ -746,6 +846,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         disk.setSize(100000L);
         disk.setStorageIds(new ArrayList<>(Collections.singleton(sdId)));
         disk.setStoragePoolId(spId);
+        disk.setVolumeFormat(VolumeFormat.RAW);
         disk.setDescription(RandomUtils.instance().nextString(10));
         return disk;
     }

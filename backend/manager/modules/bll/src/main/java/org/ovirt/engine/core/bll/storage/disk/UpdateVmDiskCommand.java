@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -60,6 +61,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -162,6 +164,9 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         } else {
             try {
                 performDiskUpdate(false);
+                if (Objects.equals(getOldDisk().getDiskStorageType(), DiskStorageType.IMAGE) && amendDiskRequested()) {
+                    amendDiskImage();
+                }
             } finally {
                 freeLock();
             }
@@ -218,6 +223,10 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         }
         if (isDiskImageOrCinder && !validateCanResizeDisk()) {
             return false;
+        }
+
+        if (resizeDiskImageRequested() && amendDiskRequested()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_AMEND_AND_EXTEND_IN_ONE_OPERATION);
         }
 
         DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(getNewDisk(), getDiskVmElement());
@@ -546,9 +555,19 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                 VdcActionType.ExtendImageSize,
                 createExtendImageSizeParameters());
 
-        if (ret.getSucceeded()) {
-            getReturnValue().getVdsmTaskIdList().addAll(ret.getInternalVdsmTaskIdList());
-        } else {
+        if (!ret.getSucceeded()) {
+            propagateInternalCommandFailure(ret);
+            getReturnValue().setFault(ret.getFault());
+        }
+        getReturnValue().getVdsmTaskIdList().addAll(ret.getInternalVdsmTaskIdList());
+        setSucceeded(ret.getSucceeded());
+    }
+
+    protected void amendDiskImage() {
+        VdcReturnValueBase ret = runInternalActionWithTasksContext(VdcActionType.AmendImageGroupVolumes,
+                amendImageGroupVolumesCommandParameters());
+
+        if (!ret.getSucceeded()) {
             propagateInternalCommandFailure(ret);
             getReturnValue().setFault(ret.getFault());
         }
@@ -744,6 +763,16 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         return false;
     }
 
+    protected boolean amendDiskRequested() {
+        if (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+            DiskImage oldDisk = (DiskImage) getOldDisk();
+            return (oldDisk.getVolumeFormat() == VolumeFormat.COW)
+                    && !Objects.equals(oldDisk.getQcowCompat().getCompatValue(),
+                            ((DiskImage) getNewDisk()).getQcowCompat().getCompatValue());
+        }
+        return false;
+    }
+
     private boolean updateParametersRequiringVmDownRequested() {
         return updateDiskParametersRequiringVmDownRequested() || updateImageParametersRequiringVmDownRequested();
     }
@@ -876,6 +905,11 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         final DiskImage diskImage = (DiskImage) getOldDisk();
         diskImage.setImageStatus(ImageStatus.OK);
         ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
+    }
+
+    private AmendImageGroupVolumesCommandParameters amendImageGroupVolumesCommandParameters() {
+        DiskImage diskImage = (DiskImage) getNewDisk();
+        return new AmendImageGroupVolumesCommandParameters(diskImage.getId(), diskImage.getQcowCompat());
     }
 
     private ExtendImageSizeParameters createExtendImageSizeParameters() {
