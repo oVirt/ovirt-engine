@@ -197,8 +197,12 @@ def main():
         if not options.quiet:
             sys.stdout.write(
                 '%s\n' % (
-                    _('Upgrade available') if exit == 0
-                    else _('No upgrade')
+                    _('Upgrade available.') if exit == 0
+                    else _(
+                        'No upgrade is available for the setup package.\n'
+                        'Please note that system may not be up to date '
+                        'if engine-setup wasn\'t executed after yum update.'
+                    )
                 )
             )
         sys.exit(exit)
