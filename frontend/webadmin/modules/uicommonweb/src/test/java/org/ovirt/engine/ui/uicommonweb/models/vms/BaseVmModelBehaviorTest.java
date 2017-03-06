@@ -75,7 +75,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
     @Test
     public void testBuildModel() {
         VmModelBehaviorBase behavior = getBehavior();
-        final UnitVmModel model = createModel(behavior);
+        final UnitVmModel model = initModel(behavior);
         behavior.buildModel(getVm(), new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
             @Override
             public void finished(VmBase source, UnitVmModel destination) {
@@ -90,17 +90,21 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
 
     protected abstract void verifyBuiltModel(UnitVmModel model);
 
-    protected UnitVmModel createModel(VmModelBehaviorBase behavior) {
+    protected UnitVmModel initModel(VmModelBehaviorBase behavior) {
         final Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(CLUSTER_VERSION);
 
-        UnitVmModel model = spy(new UnitVmModel(behavior, null));
+        UnitVmModel model = spy(createModel(behavior));
         doReturn(cluster).when(model).getSelectedCluster();
         doReturn(new EntityModel<>(true)).when(model).getIsSingleQxlEnabled();
         model.initialize(null);
         model.getInstanceImages().setItems(new ArrayList<InstanceImageLineModel>());
 
         return model;
+    }
+
+    protected UnitVmModel createModel(VmModelBehaviorBase behavior) {
+        return new UnitVmModel(behavior, null);
     }
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder} */

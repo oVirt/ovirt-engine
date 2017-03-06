@@ -27,17 +27,7 @@ public class PoolModelBehaviorBaseTest extends BaseVmModelBehaviorTest {
 
     @Override
     protected UnitVmModel createModel(VmModelBehaviorBase behavior) {
-        final Cluster cluster = new Cluster();
-        cluster.setCompatibilityVersion(CLUSTER_VERSION);
-
-        UnitVmModel model = new PoolModel(behavior) {
-            @Override
-            public Cluster getSelectedCluster() {
-                return cluster;
-            }
-        };
-
-        return model;
+        return new PoolModel(behavior);
     }
 
     @Override
