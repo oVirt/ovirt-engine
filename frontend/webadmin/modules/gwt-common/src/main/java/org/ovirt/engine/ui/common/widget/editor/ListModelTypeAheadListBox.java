@@ -151,12 +151,11 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     }
 
     protected void selectInMenu(T toSelect) {
-        if (!(getSuggestionMenu() instanceof MenuBar)) {
-            // can not select if the it is not a menu bar
+        MenuBar menuBar = getSuggestionMenu();
+        if (menuBar == null) {
             return;
         }
 
-        MenuBar menuBar = (MenuBar) getSuggestionMenu();
         List<MenuItem> items = getItems(menuBar);
         if (items == null) {
             return;
@@ -183,12 +182,11 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     }
 
     protected void scrollSelectedItemIntoView() {
-        if (!(getSuggestionMenu() instanceof MenuBar)) {
-            // can not select if it is not a menu bar
+        MenuBar menuBar = getSuggestionMenu();
+        if (menuBar == null) {
             return;
         }
 
-        MenuBar menuBar = (MenuBar) getSuggestionMenu();
         MenuItem item = getSelectedItem(menuBar);
         if (item != null) {
             Element toSelect = item.getElement().getParentElement();

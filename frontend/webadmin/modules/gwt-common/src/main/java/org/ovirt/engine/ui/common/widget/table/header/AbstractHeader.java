@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
 import org.ovirt.engine.ui.common.widget.tooltip.ProvidesTooltip;
 
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
@@ -19,8 +18,6 @@ import com.google.gwt.user.cellview.client.Header;
  * @param <H> Cell data type.
  */
 public abstract class AbstractHeader<H> extends Header<H> implements ColumnWithElementId, ProvidesTooltip {
-
-    private ValueUpdater<H> updater = null;
 
     private NativeContextMenuHandler contextMenuHandler;
 
@@ -49,11 +46,6 @@ public abstract class AbstractHeader<H> extends Header<H> implements ColumnWithE
     public void configureElementId(String elementIdPrefix, String columnId) {
         getCell().setElementIdPrefix(elementIdPrefix);
         getCell().setColumnId(columnId);
-    }
-
-    @Override
-    public void setUpdater(ValueUpdater<H> updater) {
-        this.updater = updater;
     }
 
     public void setContextMenuHandler(NativeContextMenuHandler contextMenuHandler) {
