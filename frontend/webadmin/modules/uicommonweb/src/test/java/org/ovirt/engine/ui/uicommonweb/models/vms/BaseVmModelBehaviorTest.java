@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 
@@ -92,18 +94,9 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         final Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(CLUSTER_VERSION);
 
-        UnitVmModel model = new UnitVmModel(behavior, null) {
-            @Override
-            public EntityModel<Boolean> getIsSingleQxlEnabled() {
-                return new EntityModel<Boolean>(true);
-            }
-
-            @Override
-            public Cluster getSelectedCluster() {
-                return cluster;
-            }
-        };
-
+        UnitVmModel model = spy(new UnitVmModel(behavior, null));
+        doReturn(cluster).when(model).getSelectedCluster();
+        doReturn(new EntityModel<>(true)).when(model).getIsSingleQxlEnabled();
         model.initialize(null);
         model.getInstanceImages().setItems(new ArrayList<InstanceImageLineModel>());
 
