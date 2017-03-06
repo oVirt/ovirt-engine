@@ -482,9 +482,7 @@ public class BackendVmResource
 
     @Override
     public Response ticket(Action action) {
-        GraphicsType graphicsType = deriveGraphicsType();
-        String consoleId = BackendGraphicsConsoleHelper.asConsoleId(graphicsType);
-        return getGraphicsConsolesResource().getConsoleResource(consoleId).ticket(action);
+        return BackendGraphicsConsoleHelper.setTicket(this, action, guid, deriveGraphicsType());
     }
 
     private GraphicsType deriveGraphicsType() {
