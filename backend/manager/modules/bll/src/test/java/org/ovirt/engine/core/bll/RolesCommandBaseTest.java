@@ -3,11 +3,14 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Answers;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
@@ -19,13 +22,8 @@ public class RolesCommandBaseTest extends AbstractRolesCommandTestBase {
 
     @Override
     protected RolesCommandBase<RolesParameterBase> generateCommand() {
-        return new RolesCommandBase<RolesParameterBase>(getParams(), null) {
-
-            @Override
-            protected void executeCommand() {
-                // Do nothing!
-            }
-        };
+        return mock(RolesCommandBase.class,
+                withSettings().defaultAnswer(Answers.CALLS_REAL_METHODS).useConstructor(getParams(), null));
     }
 
     @Test
