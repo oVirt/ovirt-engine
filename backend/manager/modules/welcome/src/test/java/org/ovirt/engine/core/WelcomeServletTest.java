@@ -2,18 +2,16 @@ package org.ovirt.engine.core;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -27,6 +25,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -41,6 +40,7 @@ public class WelcomeServletTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
+    @Spy
     WelcomeServlet testServlet;
 
     @Mock
@@ -75,33 +75,7 @@ public class WelcomeServletTest {
 
     @Before
     public void setUp() throws Exception {
-        testServlet = new WelcomeServlet() {
-
-            private static final long serialVersionUID = 1446616158991683162L;
-            @Override
-            public String getCurrentSsoSessionUser(HttpServletRequest request, Map<String, Object> userInfoMap) {
-                return "admin@internal";
-            }
-
-            public boolean getChangePasswordEnabled(Map<String, Object> userInfoMap) {
-                return true;
-            }
-
-            @Override
-            public boolean isSessionValid(HttpServletRequest request, String token) {
-                return true;
-            }
-
-            @Override
-            public Map<String, Object> isSsoWebappDeployed() {
-                return Collections.emptyMap();
-            }
-
-            @Override
-            public String getCredentialsChangeUrl(HttpServletRequest request) throws MalformedURLException {
-                return "http://localhost:8080/ovirt-engine/sso/credentials-change.html";
-            }
-        };
+        doReturn("http://localhost:8080/ovirt-engine/sso/credentials-change.html").when(testServlet).getCredentialsChangeUrl(any());
         testServlet.setBackend(mockBackend);
         testServlet.init(mockBrandingManager, "/ovirt-engine");
         mockBackendQuery(VdcQueryType.GetConfigurationValue, "oVirtVersion");
