@@ -53,7 +53,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicParameters> extends VmCommand<T> {
 
-    private static List<VMStatus> ALLOWED_VM_STATES = Arrays.asList(VMStatus.Up, VMStatus.Down, VMStatus.ImageLocked);
+    private static List<VMStatus> ALLOWED_VM_STATES =
+            Arrays.asList(VMStatus.Up, VMStatus.Down, VMStatus.ImageLocked, VMStatus.PoweringDown, VMStatus.PoweringUp);
+
+    private static final List<VMStatus> VM_STATUSES_FOR_WHICH_HOT_PLUG_IS_REQUIRED =
+            Arrays.asList(VMStatus.Up, VMStatus.PoweringUp);
 
     private VmDevice vmDevice;
 
@@ -111,7 +115,6 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             return false;
         }
 
-        // HotPlug in the host needs to be called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
             setVdsId(getVm().getRunOnVds());
             if (!isNicSupportedForPlugUnPlug()) {
@@ -381,7 +384,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private boolean hotPlugVmNicRequired(VMStatus vmStatus) {
-        return vmStatus == VMStatus.Up;
+        return VM_STATUSES_FOR_WHICH_HOT_PLUG_IS_REQUIRED.contains(vmStatus);
     }
 
     protected ValidationResult macAvailable() {
