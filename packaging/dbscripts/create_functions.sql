@@ -585,7 +585,7 @@ BEGIN
             ''
         INTO result;
     ELSE
-        SELECT (COALESCE(name, '') || ' ' || COALESCE(surname, '') || ' (' || COALESCE(username, '') || '@' || COALESCE(domain, '') || ')'),
+        SELECT (COALESCE(name, '') || ' ' || COALESCE(surname, '') || ' (' || COALESCE(username, '') || ')'),
             namespace,
             domain
         INTO result

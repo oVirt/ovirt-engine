@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.users.UserTypeChangeHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.users.UsersTypeRadioGroup;
-import org.ovirt.engine.ui.frontend.utils.FormatUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
@@ -103,7 +102,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         userNameColumn = new AbstractTextColumn<DbUser>() {
             @Override
             public String getValue(DbUser object) {
-                return FormatUtils.getFullLoginName(object);
+                return object.getLoginName();
             }
         };
         userNameColumn.makeSortable(VdcUserConditionFieldAutoCompleter.USER_NAME);
