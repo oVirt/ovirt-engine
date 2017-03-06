@@ -504,3 +504,11 @@ ENGINE_SCHEDULER_POOL_REJECT_POLICY=false
 # To change the value permanentaly create a conf file 99-coco-thread-pool.conf in /etc/ovirt-engine/engine.conf.d/
 #
 COMMAND_COORDINATOR_THREAD_POOL_SIZE=10
+
+#
+# Specify the thread pool size for jboss managed executor service used by host update checker service. This thread pool
+# is used by the service which checks for the updates on hosts. Host update check does not happen that often so it is
+# not necessary to change this pool size. To change the value permanentaly create a conf file 99-host-thread-pool.conf
+# in /etc/ovirt-engine/engine.conf.d/
+#
+HOST_CHECK_FOR_UPDATES_THREAD_POOL_SIZE=5

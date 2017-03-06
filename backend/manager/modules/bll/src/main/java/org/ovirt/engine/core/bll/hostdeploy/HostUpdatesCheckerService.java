@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -13,6 +12,7 @@ import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -33,8 +33,9 @@ public class HostUpdatesCheckerService implements BackendService {
     @Inject
     private HostUpdatesChecker hostUpdatesChecker;
 
-    private static final ExecutorService executor =
-            Executors.newFixedThreadPool(Config.<Integer> getValue(ConfigValues.HostCheckForUpdatesThreadPoolSize));
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.HostUpdatesChecker)
+    private ManagedExecutorService executor;
 
     @PostConstruct
     public void scheduleJob() {

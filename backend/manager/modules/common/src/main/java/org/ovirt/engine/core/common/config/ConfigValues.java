@@ -1864,13 +1864,6 @@ public enum ConfigValues {
     HostPackagesUpdateTimeInHours,
 
     /**
-     * The amount of concurrent threads for checking hosts updates
-     */
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("5")
-    HostCheckForUpdatesThreadPoolSize,
-
-    /**
      * The interval in hours of checking the validity of the host's certification
      */
     @TypeConverterAttribute(Double.class)
