@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.vm;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicParameters> extends VmCommand<T> {
 
+    private static List<VMStatus> ALLOWED_VM_STATES = Arrays.asList(VMStatus.Up, VMStatus.Down, VMStatus.ImageLocked);
+
     private VmDevice vmDevice;
 
     private VnicProfile vnicProfile;
@@ -101,8 +104,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             return false;
         }
 
-        if (!activateDeactivateVmNicAllowed(getVm().getStatus())) {
-            addValidationMessage(EngineMessage.ACTIVATE_DEACTIVATE_NIC_VM_STATUS_ILLEGAL);
+        if (!ALLOWED_VM_STATES.contains(getVm().getStatus())) {
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
+            addValidationMessage(ReplacementUtils.createSetVariableString("vmStatus", getVm().getStatus()));
+
             return false;
         }
 
@@ -363,10 +368,6 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             return getSucceeded() ? AuditLogType.NETWORK_DEACTIVATE_VM_INTERFACE_SUCCESS
                     : AuditLogType.NETWORK_DEACTIVATE_VM_INTERFACE_FAILURE;
         }
-    }
-
-    private boolean activateDeactivateVmNicAllowed(VMStatus vmStatus) {
-        return vmStatus == VMStatus.Up || vmStatus == VMStatus.Down || vmStatus == VMStatus.ImageLocked;
     }
 
     private boolean networkAttachedToVds(String networkName, Guid vdsId) {
