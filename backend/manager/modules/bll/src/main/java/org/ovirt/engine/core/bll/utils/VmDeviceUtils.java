@@ -1054,6 +1054,13 @@ public class VmDeviceUtils {
     }
 
     /**
+     * Get list of all memory devices in the VM.
+     */
+    public List<VmDevice> getMemoryDevices(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.MEMORY);
+    }
+
+    /**
      * Get list of graphics devices of the given type present in the VM.
      */
     public List<VmDevice> getGraphicsDevices(Guid vmId, GraphicsType type) {

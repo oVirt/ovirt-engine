@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.SetAmountOfMemoryVDSCommand;
 
 @NonTransactiveCommandAttribute
@@ -42,8 +43,6 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
     @Inject
     private VmDeviceDao vmDeviceDao;
 
-    private int memoryToConsume;
-
     public HotSetAmountOfMemoryCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -51,7 +50,6 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
     @Override
     protected void init() {
         super.init();
-        memoryToConsume = getParameters().getVm().getMemSizeMb() - getVm().getMemSizeMb();
     }
 
     @Override
@@ -82,10 +80,12 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_MORE_MEMORY_SLOTS,
                         "$maxMemSlots " + Config.getValue(ConfigValues.MaxMemorySlots).toString());
             }
-            // plugged memory should be multiply of 256mb
-            if (memoryToConsume > 0 && memoryToConsume % Config.<Integer>getValue(ConfigValues.HotPlugMemoryMultiplicationSizeMb) != 0) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_MEMORY_MUST_BE_MULTIPLICATION,
-                        "$multiplicationSize " + Config.getValue(ConfigValues.HotPlugMemoryMultiplicationSizeMb).toString());
+            final int hotplugMemorySizeFactor = getVm().getClusterArch().getHotplugMemorySizeFactorMb();
+            if (getParameters().getMemoryDeviceSizeMb() % hotplugMemorySizeFactor != 0) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_NOT_PLUGGED_MEMORY_ON_ARCH_MUST_BE_DIVIDABLE_BY,
+                        ReplacementUtils.createSetVariableString("architecture", getVm().getClusterArch()),
+                        ReplacementUtils.createSetVariableString("memorySize", getParameters().getMemoryDeviceSizeMb()),
+                        ReplacementUtils.createSetVariableString("factor", hotplugMemorySizeFactor));
             }
         } else if (!FeatureSupported.hotUnplugMemory(getVm().getCompatibilityVersion(), getVm().getClusterArch())) {
             return failValidation(EngineMessage.HOT_UNPLUG_MEMORY_IS_NOT_SUPPORTED);
@@ -114,7 +114,7 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
 
     private VmDevice createMemoryDevice() {
         Map<String, Object> specParams = new HashMap<>();
-        specParams.put(DEVICE_SIZE_FIELD_KEY, memoryToConsume);
+        specParams.put(DEVICE_SIZE_FIELD_KEY, getParameters().getMemoryDeviceSizeMb());
         specParams.put(DEVICE_NODE_FIELD_KEY, getParameters().getNumaNode());
         return new VmDevice(new VmDeviceId(Guid.newGuid(), getVmId()),
                 VmDeviceGeneralType.MEMORY,
@@ -137,7 +137,7 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
         // Calculate the change in memory consumption,
         // result above Zero means we add memory to the VM (consume)
         // result bellow Zero means we subtracted memory from the VM (release)
-        QuotaConsumptionParameter.QuotaAction quotaAction = (memoryToConsume > 0) ?
+        QuotaConsumptionParameter.QuotaAction quotaAction = (getParameters().getMemoryDeviceSizeMb() > 0) ?
                 QuotaConsumptionParameter.QuotaAction.CONSUME :
                 QuotaConsumptionParameter.QuotaAction.RELEASE;
 
@@ -146,7 +146,7 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
                 quotaAction,
                 getVm().getClusterId(),
                 0,
-                Math.abs(memoryToConsume)));
+                Math.abs(getParameters().getMemoryDeviceSizeMb())));
         return list;
     }
 

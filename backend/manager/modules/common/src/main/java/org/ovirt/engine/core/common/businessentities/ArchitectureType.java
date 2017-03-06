@@ -20,6 +20,8 @@ public enum ArchitectureType implements Identifiable {
     /* Guest architecture */
     ppcle(6, ppc);
 
+    public static final int HOTPLUG_MEMORY_FACTOR_PPC_MB = 256;
+    public static final int HOTPLUG_MEMORY_FACTOR_X86_MB = 128;
     private int value;
     private int family;
     private static final HashMap<Integer, ArchitectureType> valueToArchitecture = new HashMap<>();
@@ -51,5 +53,19 @@ public enum ArchitectureType implements Identifiable {
 
     public static ArchitectureType forValue(int value) {
         return valueToArchitecture.get(value);
+    }
+
+    /**
+     * @return Factor hot plugged memory needs to be dividable by for given architecture.
+     */
+    public int getHotplugMemorySizeFactorMb() {
+        switch (this) {
+            case x86:
+                return HOTPLUG_MEMORY_FACTOR_X86_MB;
+            case ppc:
+                return HOTPLUG_MEMORY_FACTOR_PPC_MB;
+            default:
+                return getFamily().getHotplugMemorySizeFactorMb();
+        }
     }
 }

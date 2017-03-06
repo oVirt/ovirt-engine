@@ -70,6 +70,8 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -80,6 +82,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.DateTime;
@@ -429,18 +432,64 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return;
         }
 
-        if (VmCommonUtils.isMemoryToBeHotplugged(getVm(), newVm)) {
-            hotSetMemory(currentMemory, newAmountOfMemory);
+        if (!VmCommonUtils.isMemoryToBeHotplugged(getVm(), newVm)) {
+            return;
         }
+
+        final int memoryAddedMb = newAmountOfMemory - currentMemory;
+        final int factor = Config.<Integer>getValue(ConfigValues.HotPlugMemoryMultiplicationSizeMb);
+        final boolean memoryDividable = memoryAddedMb % factor == 0;
+        if (!memoryDividable) {
+            addCustomValue("memoryAdded", String.valueOf(memoryAddedMb));
+            addCustomValue("requiredFactor", String.valueOf(factor));
+            auditLogDirector.log(this, AuditLogType.FAILED_HOT_SET_MEMORY_NOT_DIVIDABLE);
+            return;
+        }
+
+        hotSetMemory(currentMemory, newAmountOfMemory);
     }
 
-    private void hotSetMemory(int currentMemory, int newAmountOfMemory) {
+    /**
+     * Hot plug a memory device.
+     *
+     * <p>If there isn't memory device of minimal size (i.e. size of memory block), then hot plugged memory is split
+     * to two devices of sizes: minimal + the rest.</p>
+     *
+     * <p>Such behavior is shortcut of "the first hot plugged device has to be of minimal size". The reason for this is
+     * that the hot plugged memory is intended to be onlined (make available to the guest OS) as 'online_movable' for it
+     * to be unpluggable later on. Memory blocks can be onlined as movable only in order from higher addresses to lower
+     * addresses. Trying to online them in a different order fails. Kernel produces events to online memory blocks
+     * in arbitrary order, so not all of the blocks may be successfully onlined. But when a memory device of minimal
+     * size is hot plugged, it contains just a single memory block, so there is no ambiguity with memory block ordering
+     * and the block is always successfully onlined.</p>
+     *
+     * <p>Following memory hot plugs are not affected by this constraint because the first hot plug extends movable zone
+     * of the memory from the first hot plugged device to the end of the memory address space and memory blocks in this
+     * movable zone can be onlined as online movable in arbitrary order. Movable zone is not shrunk when memory devices
+     * are offlined and hot unplugged.</p>
+     */
+    private void hotSetMemory(int currentMemoryMb, int newAmountOfMemoryMb) {
+        final int minimalHotPlugDeviceSizeMb = getVm().getClusterArch().getHotplugMemorySizeFactorMb();
+        final List<VmDevice> memoryDevices = getVmDeviceUtils().getMemoryDevices(getVmId());
+        final boolean minimalMemoryDevicePresent = memoryDevices.stream()
+                .anyMatch(device -> VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(device) == minimalHotPlugDeviceSizeMb);
+        final int secondPartSizeMb = (newAmountOfMemoryMb - currentMemoryMb) - minimalHotPlugDeviceSizeMb;
+        if (minimalMemoryDevicePresent || secondPartSizeMb == 0) {
+            hotPlugMemoryDevice(currentMemoryMb, newAmountOfMemoryMb);
+            return;
+        }
+        hotPlugMemoryDevice(currentMemoryMb, currentMemoryMb + minimalHotPlugDeviceSizeMb);
+        hotPlugMemoryDevice(currentMemoryMb + minimalHotPlugDeviceSizeMb, newAmountOfMemoryMb);
+    }
+
+    private void hotPlugMemoryDevice(int currentMemoryMb, int newAmountOfMemoryMb) {
         HotSetAmountOfMemoryParameters params =
                 new HotSetAmountOfMemoryParameters(
                         newVmStatic,
-                        currentMemory < newAmountOfMemory ? PlugAction.PLUG : PlugAction.UNPLUG,
+                        currentMemoryMb < newAmountOfMemoryMb ? PlugAction.PLUG : PlugAction.UNPLUG,
                         // We always use node 0, auto-numa should handle the allocation
-                        0);
+                        0,
+                        newAmountOfMemoryMb - currentMemoryMb);
 
         VdcReturnValueBase setAmountOfMemoryResult =
                 runInternalAction(
@@ -449,7 +498,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // Hosted engine VM does not care if hostplug failed. The requested memory size is serialized
         // into the OVF store and automatically used during the next HE VM start
         if (!getVm().isHostedEngine()) {
-            newVmStatic.setMemSizeMb(setAmountOfMemoryResult.getSucceeded() ? newAmountOfMemory : currentMemory);
+            newVmStatic.setMemSizeMb(setAmountOfMemoryResult.getSucceeded() ? newAmountOfMemoryMb : currentMemoryMb);
         }
         hotSetMemlog(params, setAmountOfMemoryResult);
     }
