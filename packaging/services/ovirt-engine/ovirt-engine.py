@@ -29,6 +29,7 @@ import config
 
 from ovirt_engine import configfile
 from ovirt_engine import java
+from ovirt_engine import mem
 from ovirt_engine import service
 
 
@@ -307,13 +308,42 @@ class Daemon(service.Daemon):
         # We start with an empty list of arguments:
         self._engineArgs = []
 
+        # HEAP size
+        heap_min_conf = self._config.get('ENGINE_HEAP_MIN')
+        heap_max_conf = self._config.get('ENGINE_HEAP_MAX')
+
+        if not self._config.getboolean('ENFORCE_ENGINE_HEAP_PARAMS'):
+            total = mem.get_total_mb()
+
+            # Do not allow more than available memory
+            if mem.javaX_mb(heap_min_conf) > total:
+                new_min = total * 9 // 10
+                self.logger.warn(
+                    "ENGINE_HEAP_MIN is [%s], total available memory is %s "
+                    "MB. Setting to %s MB.",
+                    heap_min_conf,
+                    total,
+                    new_min,
+                )
+                heap_min_conf = '%sM' % new_min
+            if mem.javaX_mb(heap_max_conf) > total:
+                new_max = total * 9 // 10
+                self.logger.warn(
+                    "ENGINE_HEAP_MAX is [%s], total available memory is %s "
+                    "MB. Setting to %s MB.",
+                    heap_max_conf,
+                    total,
+                    new_max,
+                )
+                heap_max_conf = '%sM' % new_max
+
         # Add arguments for the java virtual machine:
         self._engineArgs.extend([
             # Virtual machine options:
             '-server',
             '-XX:+TieredCompilation',
-            '-Xms%s' % self._config.get('ENGINE_HEAP_MIN'),
-            '-Xmx%s' % self._config.get('ENGINE_HEAP_MAX'),
+            '-Xms%s' % heap_min_conf,
+            '-Xmx%s' % heap_max_conf,
         ])
 
         # Add extra system properties provided in the configuration:

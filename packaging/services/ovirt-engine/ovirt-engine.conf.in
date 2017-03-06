@@ -63,6 +63,10 @@ ENGINE_GROUP=@ENGINE_GROUP@
 ENGINE_HEAP_MIN=2g
 ENGINE_HEAP_MAX=4g
 
+# If true, above params are enforced. Otherwise the python wrapper might
+# change them if they seem too low or too high for the machine.
+ENFORCE_ENGINE_HEAP_PARAMS=false
+
 #
 # Use this if you want to enable remote debugging of the engine java virtual
 # machine (useful mainly for developers):
