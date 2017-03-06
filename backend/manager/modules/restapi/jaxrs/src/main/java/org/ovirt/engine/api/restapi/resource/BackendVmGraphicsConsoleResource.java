@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.ovirt.engine.api.restapi.resource.BackendGraphicsConsoleHelper.asGraphicsType;
-import static org.ovirt.engine.core.utils.Ticketing.generateOTP;
 
 import java.nio.charset.StandardCharsets;
 
@@ -10,19 +9,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsType;
 import org.ovirt.engine.api.model.ProxyTicket;
-import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ApiMediaType;
 import org.ovirt.engine.api.resource.VmGraphicsConsoleResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
-import org.ovirt.engine.core.common.action.SetVmTicketParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
@@ -37,8 +32,6 @@ import org.slf4j.LoggerFactory;
 public class BackendVmGraphicsConsoleResource
     extends AbstractBackendActionableResource<GraphicsConsole, org.ovirt.engine.core.common.businessentities.GraphicsType>
     implements VmGraphicsConsoleResource {
-
-    private static final long DEFAULT_TICKET_EXPIRY = 120 * 60; // 2 hours
 
     private static final Logger log = LoggerFactory.getLogger(BackendVmGraphicsConsoleResource.class);
 
@@ -124,42 +117,7 @@ public class BackendVmGraphicsConsoleResource
 
     @Override
     public Response ticket(Action action) {
-        final Response response = doAction(VdcActionType.SetVmTicket,
-                new SetVmTicketParameters(guid,
-                        getTicketValue(action),
-                        getTicketExpiry(action),
-                        asGraphicsType(consoleId)),
-                action);
-
-        final Action actionResponse = (Action) response.getEntity();
-
-        if (CreationStatus.FAILED.value().equals(actionResponse.getStatus())) {
-            actionResponse.getTicket().setValue(null);
-            actionResponse.getTicket().setExpiry(null);
-        }
-
-        return response;
-    }
-
-    protected String getTicketValue(Action action) {
-        if (!ensureTicket(action).isSetValue()) {
-            action.getTicket().setValue(generateOTP());
-        }
-        return action.getTicket().getValue();
-    }
-
-    protected int getTicketExpiry(Action action) {
-        if (!ensureTicket(action).isSetExpiry()) {
-            action.getTicket().setExpiry(DEFAULT_TICKET_EXPIRY);
-        }
-        return action.getTicket().getExpiry().intValue();
-    }
-
-    protected Ticket ensureTicket(Action action) {
-        if (!action.isSetTicket()) {
-            action.setTicket(new Ticket());
-        }
-        return action.getTicket();
+        return BackendGraphicsConsoleHelper.setTicket(this, action, guid, asGraphicsType(consoleId));
     }
 
     @Override

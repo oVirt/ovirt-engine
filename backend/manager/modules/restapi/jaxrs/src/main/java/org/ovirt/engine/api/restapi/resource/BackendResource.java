@@ -166,7 +166,7 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    protected Response performAction(VdcActionType task, VdcActionParametersBase params, Action action) {
+    public Response performAction(VdcActionType task, VdcActionParametersBase params, Action action) {
         return performAction(task, params, action, false);
     }
 

@@ -16,6 +16,8 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.core.utils.Ticketing.generateOTP;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -25,19 +27,25 @@ import java.util.function.Supplier;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsConsoles;
 import org.ovirt.engine.api.model.GraphicsType;
+import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
+import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGraphicsConsoleHelper {
+
+    private static final long DEFAULT_TICKET_EXPIRY = 120 * 60; // 2 hours
 
     public static org.ovirt.engine.core.common.businessentities.GraphicsType asGraphicsType(String consoleId) {
         String consoleString = HexUtils.hex2string(consoleId);
@@ -90,5 +98,45 @@ public class BackendGraphicsConsoleHelper {
             .findFirst()
             .map(existing -> Response.created(URI.create(existing.getHref())).entity(existing).build())
             .orElseThrow(() -> new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build()));
+    }
+
+    public static Response setTicket(BackendResource resource, Action action, Guid vmId,
+                                     org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType) {
+        final Response response = resource.performAction(VdcActionType.SetVmTicket,
+                new SetVmTicketParameters(vmId,
+                        getTicketValue(action),
+                        getTicketExpiry(action),
+                        graphicsType),
+                action);
+
+        final Action actionResponse = (Action) response.getEntity();
+
+        if (CreationStatus.FAILED.value().equals(actionResponse.getStatus())) {
+            actionResponse.getTicket().setValue(null);
+            actionResponse.getTicket().setExpiry(null);
+        }
+
+        return response;
+    }
+
+    private static String getTicketValue(Action action) {
+        if (!ensureTicket(action).isSetValue()) {
+            action.getTicket().setValue(generateOTP());
+        }
+        return action.getTicket().getValue();
+    }
+
+    private static int getTicketExpiry(Action action) {
+        if (!ensureTicket(action).isSetExpiry()) {
+            action.getTicket().setExpiry(DEFAULT_TICKET_EXPIRY);
+        }
+        return action.getTicket().getExpiry().intValue();
+    }
+
+    private static Ticket ensureTicket(Action action) {
+        if (!action.isSetTicket()) {
+            action.setTicket(new Ticket());
+        }
+        return action.getTicket();
     }
 }
