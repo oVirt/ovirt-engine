@@ -251,6 +251,6 @@ public enum DirectorySearch {
         log.debug("getNamespaces found {} namespaces in authz {}",
                 namespaces == null ? 0 : namespaces.size(),
                 authz);
-        return namespaces == null ? Collections.<String> emptyList() : namespaces;
+        return namespaces == null ? Collections.emptyList() : namespaces;
     }
 }
