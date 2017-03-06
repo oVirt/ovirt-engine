@@ -77,7 +77,7 @@ public class OAuthTokenInfoServlet extends HttpServlet {
 
             log.debug("Sending json response");
             SsoUtils.sendJsonData(response, isValidateRequest ?
-                    Collections.<String, Object>emptyMap() :
+                    Collections.emptyMap() :
                     isSearchAuthzRequest || isPublicSearchAuthzRequest ?
                             buildSearchResponse(request, isPublicSearchAuthzRequest) :
                             buildResponse(request, clientIdAndSecret[0], scope));
