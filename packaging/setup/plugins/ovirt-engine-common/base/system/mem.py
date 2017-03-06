@@ -17,10 +17,11 @@
 
 
 import gettext
-import re
 
 from otopi import plugin
 from otopi import util
+
+from ovirt_engine import mem
 
 from ovirt_engine_setup import constants as osetupcons
 
@@ -31,18 +32,6 @@ def _(m):
 
 @util.export
 class Plugin(plugin.PluginBase):
-
-    _RE_MEMINFO_MEMTOTAL = re.compile(
-        flags=re.VERBOSE,
-        pattern=r"""
-            ^
-            MemTotal:
-            \s+
-            (?P<value>\d+)
-            \s+
-            (?P<unit>\w+)
-        """
-    )
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -56,19 +45,10 @@ class Plugin(plugin.PluginBase):
     )
     def _setup(self):
         self.logger.debug('Checking total memory')
-        with open('/proc/meminfo', 'r') as f:
-            content = f.read()
-
-        match = self._RE_MEMINFO_MEMTOTAL.match(content)
-        if match is None:
-            raise RuntimeError(_("Unable to parse /proc/meminfo"))
-
         if self.environment[osetupcons.ConfigEnv.TOTAL_MEMORY_MB] is None:
-            self.environment[osetupcons.ConfigEnv.TOTAL_MEMORY_MB] = int(
-                match.group('value')
-            )
-            if match.group('unit') == "kB":
-                self.environment[osetupcons.ConfigEnv.TOTAL_MEMORY_MB] //= 1024
+            self.environment[
+                osetupcons.ConfigEnv.TOTAL_MEMORY_MB
+            ] = mem.get_total_mb()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
