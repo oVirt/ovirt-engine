@@ -44,7 +44,7 @@ public enum DirectorySearch {
     GetSessionStatuses(SsoConstants.SESSION_STATUES_QUERY, true) {
         public Object execute(SsoContext ssoContext, HttpServletRequest request) throws Exception {
             return ((Set<String>) readParams(request).get(SsoConstants.HTTP_PARAM_TOKENS)).stream()
-                    .filter(token -> StringUtils.isNotEmpty(token))
+                    .filter(StringUtils::isNotEmpty)
                     .collect(Collectors.toMap(token -> token, token -> ssoContext.getSsoSession(token) != null));
         }
     },
