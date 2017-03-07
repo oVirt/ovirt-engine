@@ -312,11 +312,27 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                     .getMessages()
                     .areYouSureYouWantToDeleteSanpshot( DateTimeFormat.getFormat(DATE_FORMAT).format(snapshot.getCreationDate()),
                             snapshot.getDescription()));
+
+            String unpluggedDisksNames = getUnpluggedDisksNames();
+            if (unpluggedDisksNames != null) {
+                model.setNote(ConstantsManager.getInstance().getMessages().liveMergeUnpluggedDisksNote(unpluggedDisksNames));
+            }
+
             UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
             model.getCommands().add(tempVar);
             UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
             model.getCommands().add(tempVar2);
         }
+    }
+
+    private String getUnpluggedDisksNames() {
+        ArrayList<Disk> unpluggedDisks = new ArrayList<>();
+        for (Disk disk : getVmDisks()) {
+            if (!disk.getPlugged()) {
+                unpluggedDisks.add(disk);
+            }
+        }
+        return VmModelHelper.getDiskLabelList(unpluggedDisks);
     }
 
     private void onRemove() {

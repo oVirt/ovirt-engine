@@ -98,7 +98,7 @@ public class VmModelHelper {
         }
     }
 
-    private static String getDiskLabelList(ArrayList<Disk> disks) {
+    public static String getDiskLabelList(ArrayList<Disk> disks) {
         if (disks.isEmpty()) {
             return null;
         }

@@ -412,5 +412,7 @@ public interface UIMessages extends Messages {
     String nullOperationOutOfSyncNetwork(String networkName);
 
     String storageDomainOfDiskCannotBeAccessed(String diskName);
+
+    String liveMergeUnpluggedDisksNote(String diskList);
 }
 

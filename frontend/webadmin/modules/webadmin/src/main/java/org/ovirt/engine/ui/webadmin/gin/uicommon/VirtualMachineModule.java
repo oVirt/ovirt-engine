@@ -348,6 +348,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmMakeTemplatePopupPresenterWidget> cloneTemplatePopupProvider,
             final Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider,
             final Provider<VmSnapshotCustomPreviewPopupPresenterWidget> customPreviewPopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<VmListModel<Void>> mainModelProvider,
             final Provider<VmSnapshotListModel> modelProvider) {
         SearchableDetailTabModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> result =
@@ -367,8 +368,20 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return customPreviewPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getCloneTemplateCommand()) {
                             return cloneTemplatePopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removeConfirmPopupProvider.get();
                         } else {
                             return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(
+                            VmSnapshotListModel source, UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }
                     }
                 };
