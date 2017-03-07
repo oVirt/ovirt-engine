@@ -296,9 +296,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                     break;
                 case VirtIO:
                     struct.put(VdsProperties.INTERFACE, VdsProperties.Virtio);
-                    if (disk.getDiskStorageType() == DiskStorageType.LUN) {
-                        struct.put(VdsProperties.Device, VmDeviceType.LUN.getName());
-                    }
                     pinnedDriveIndex = pinToIoThreads(vmDevice, pinnedDriveIndex);
                     break;
                 case VirtIO_SCSI:

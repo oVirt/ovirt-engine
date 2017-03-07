@@ -1239,13 +1239,9 @@ public class LibvirtVmXmlBuilder {
         }
 
         switch (dve.getDiskInterface()) {
+        case VirtIO:
         case IDE:
             writer.writeAttributeString("device", device.getDevice());
-            break;
-        case VirtIO:
-            writer.writeAttributeString("device", disk.getDiskStorageType() == DiskStorageType.LUN ?
-                    VmDeviceType.LUN.getName()
-                    : device.getDevice());
             break;
         case VirtIO_SCSI:
             if (disk.getDiskStorageType() == DiskStorageType.LUN && disk.isScsiPassthrough()) {
