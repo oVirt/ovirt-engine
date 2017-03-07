@@ -179,9 +179,16 @@ class Daemon(service.Daemon):
                 pass
 
     def _detectJBossVersion(self):
+        args = ['ovirt-engine-version'] + self._engineArgs + ['-v']
+        self.logger.info(
+            "Detecting JBoss version. Running: {exe} {args}".format(
+                exe=self._executable,
+                args=args,
+            )
+        )
         proc = subprocess.Popen(
             executable=self._executable,
-            args=['ovirt-engine-version'] + self._engineArgs + ['-v'],
+            args=args,
             env=self._engineEnv,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -192,7 +199,7 @@ class Daemon(service.Daemon):
         stdout = stdout.decode('utf-8', 'replace').splitlines()
         stderr = stderr.decode('utf-8', 'replace').splitlines()
 
-        self.logger.debug(
+        self.logger.info(
             "Return code: %s, \nstdout: '%s, \nstderr: '%s'",
             proc.returncode,
             stdout,
