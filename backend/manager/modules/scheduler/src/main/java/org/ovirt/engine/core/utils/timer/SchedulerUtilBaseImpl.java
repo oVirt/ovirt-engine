@@ -369,7 +369,7 @@ public abstract class SchedulerUtilBaseImpl implements SchedulerUtil {
     public void shutDown() {
         try {
             if (sched != null) {
-                sched.shutdown(true);
+                sched.shutdown(false);
             }
         } catch (SchedulerException se) {
             log.error("failed to shut down the scheduler: {}", se.getMessage());
