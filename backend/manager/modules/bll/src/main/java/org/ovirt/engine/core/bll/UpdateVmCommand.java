@@ -405,9 +405,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return;
         }
 
-        boolean isMemoryHotUnplugSupported =
-                FeatureSupported.hotUnplugMemory(getVm().getCompatibilityVersion(), getVm().getClusterArch());
-        if (VmCommonUtils.isMemoryToBeHotplugged(getVm(), newVm, isMemoryHotUnplugSupported)) {
+        if (VmCommonUtils.isMemoryToBeHotplugged(getVm(), newVm)) {
             hotSetMemory(currentMemory, newAmountOfMemory);
         }
     }

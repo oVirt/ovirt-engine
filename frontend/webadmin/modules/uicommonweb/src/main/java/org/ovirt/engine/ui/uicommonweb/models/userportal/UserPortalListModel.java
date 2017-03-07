@@ -993,10 +993,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
                             confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
                             confirmModel.setChangedFields(changedFields);
                             confirmModel.setCpuPluggable(VmCommonUtils.isCpusToBeHotplugged(selectedItem, gettempVm()));
-                            boolean isMemoryHotUnplugSupported =
-                                    AsyncDataProvider.getInstance().isMemoryHotUnplugSupported(gettempVm());
                             confirmModel.setMemoryPluggable(VmCommonUtils.isMemoryToBeHotplugged(
-                                    selectedItem, gettempVm(), isMemoryHotUnplugSupported));
+                                    selectedItem, gettempVm()));
                             confirmModel.getCommands().add(new UICommand("updateExistingVm", UserPortalListModel.this) //$NON-NLS-1$
                             .setTitle(ConstantsManager.getInstance().getConstants().ok())
                             .setIsDefault(true));

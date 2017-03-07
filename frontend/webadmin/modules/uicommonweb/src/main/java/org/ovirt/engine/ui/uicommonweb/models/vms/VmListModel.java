@@ -1729,10 +1729,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                     List<String> changedFields = returnValue.getReturnValue();
                     final boolean cpuHotPluggable = VmCommonUtils.isCpusToBeHotplugged(selectedItem, getcurrentVm());
                     final boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
-                    final boolean isMemoryHotUnplugSupported =
-                            AsyncDataProvider.getInstance().isMemoryHotUnplugSupported(getcurrentVm());
                     final boolean memoryHotPluggable =
-                            VmCommonUtils.isMemoryToBeHotplugged(selectedItem, getcurrentVm(), isMemoryHotUnplugSupported);
+                            VmCommonUtils.isMemoryToBeHotplugged(selectedItem, getcurrentVm());
                     if (isHeadlessModeChanged) {
                         changedFields.add(constants.headlessMode());
                     }

@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -50,9 +49,7 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
         if (VmCommonUtils.isCpusToBeHotplugged(srcVm, dstVm)) {
             dstStatic.setNumOfSockets(srcStatic.getNumOfSockets());
         }
-        boolean isMemoryHotUnplugSupported =
-                FeatureSupported.hotUnplugMemory(srcVm.getCompatibilityVersion(), srcVm.getClusterArch());
-        if (VmCommonUtils.isMemoryToBeHotplugged(srcVm, dstVm, isMemoryHotUnplugSupported)) {
+        if (VmCommonUtils.isMemoryToBeHotplugged(srcVm, dstVm)) {
             dstStatic.setMemSizeMb(srcStatic.getMemSizeMb());
         }
 

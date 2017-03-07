@@ -1580,7 +1580,7 @@ public enum ConfigValues {
     HotPlugMemorySupported,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"x86\":\"false\",\"ppc\":\"false\"}")
+    @DefaultValueAttribute("{\"x86\":\"true\",\"ppc\":\"true\"}")
     HotUnplugMemorySupported,
 
     @TypeConverterAttribute(Map.class)
