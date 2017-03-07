@@ -337,7 +337,7 @@ Requires:	openssh
 Requires:	vdsm-jsonrpc-java >= 1.4.3
 Requires:	openssl
 Requires:	ovirt-engine-extension-aaa-jdbc
-Requires:	ovirt-host-deploy-java >= 1.6.0
+Requires:	ovirt-host-deploy-java >= 1.6.3
 Requires:	python-jinja2
 Requires:	spice-html5
 
