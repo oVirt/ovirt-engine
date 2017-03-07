@@ -147,6 +147,13 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         dropdownButton.getElement().setInnerHTML(selectedValue.getString()
                 + buttonSelectedValueSpan.selectedValue().asString());
         dropdownPanel.add(listPanel);
+        dropdownButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                listPanel.scrollToSelected();
+            }
+        });
     }
 
     public void setDropdownWidth(String width) {
@@ -375,6 +382,23 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
             setElement(uListElement);
         }
 
+        public void scrollToSelected() {
+            for (Widget child : getChildren()) {
+                if (child instanceof ListModelListBox.ListItem) {
+                    final ListItem item = (ListModelListBox<T>.ListItem) child;
+                    if (item.isSelected()) {
+                        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+                            @Override
+                            public void execute() {
+                                item.getElement().scrollIntoView();
+                            }
+                        });
+                    }
+                }
+            }
+        }
+
         void setAriaLabelledBy(String id) {
             uListElement.setAttribute(ARIA_LABELLEDBY, id); //$NON-NLS-1$
         }
@@ -465,6 +489,10 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
                         style.selected());
             }
             getElement().setInnerHTML(anchor.asString());
+        }
+
+        public boolean isSelected() {
+            return getElement().getClassName().contains(SELECTED);
         }
 
         public void removeSelected() {
