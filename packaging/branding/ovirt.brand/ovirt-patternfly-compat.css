@@ -1,8 +1,5 @@
 /* These are styles we need to override temporarily until the entire application is
-   converted to use PatternFly. For example, since the body is still set to default
-   to Arial, the navigation tabs use Arial instead of Open Sans. To correct, we will
-   temporarily override such things in this file.
-
+   converted to use PatternFly.
    TODO: remove this file when fully converted over to PatternFly.
 */
 
@@ -42,32 +39,10 @@ label {
     font-weight: 500 !important;
 }
 
-
-/* UserPortal navigation bar has wrong font, set to Open Sans */
-.navbar-pf .navbar-nav > li > a {
-    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
-}
-
-
-.navbar-pf .navbar-utility > li > a {
-    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
-}
-
-.dropdown-menu > li > a {
-    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
-}
-.login-pf {
-    color: #fff !important;
-    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
-}
 .login-pf select {
-    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
     color: black;
 }
 
-.login-pf label {
-    font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
-}
 #LoginFormView_loginButton {
     position: relative;
     top: 6px;
@@ -145,9 +120,6 @@ label {
 }
 .connect-automatically-checkbox_pfly_fix {
     margin-left: 3px;
-}
-span.label {
-    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 }
 .avw_contentWidgetContainer_pfly_fix span.gwt-RadioButton label {
     padding-left: 5px !important;

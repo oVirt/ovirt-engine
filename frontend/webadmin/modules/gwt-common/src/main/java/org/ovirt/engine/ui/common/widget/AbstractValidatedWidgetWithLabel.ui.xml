@@ -15,7 +15,6 @@
 
         .label_legacy {
             font-size: 13px;
-            font-family: Arial, sans-serif;
             line-height: 16px;
             padding: 0;
         }

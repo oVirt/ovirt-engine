@@ -20,7 +20,6 @@
 .cellTableSelectedRowCell, .cellTableSelectedRow, .cellTableHoveredRow .cellTableSelectedRowCell {
 	background-color: #3a5f7c;
 	font-size: 14px;
-	font-family: Arial,sans-serif;
 	font-weight: bold;
 	color: black;
 }

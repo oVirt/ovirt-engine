@@ -101,7 +101,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     @Template("<button type='button' tabindex='-1' style='float: right; height: 20px;'>"
             +
-            "<span style='position: relative; left: 0px; top: -5px; width: 100%; font-family: arial; font-size: 10px;'>{0}</span></button>")
+            "<span style='position: relative; left: 0px; top: -5px; width: 100%; font-size: 10px;'>{0}</span></button>")
     SafeHtml actionButtonText(String text);
 
     @Template("<button type='button' tabindex='-1' style='background: url({0}) no-repeat; white-space: nowrap; height: 20px; width: 20px; line-height: 20px; float: right;'></button>")

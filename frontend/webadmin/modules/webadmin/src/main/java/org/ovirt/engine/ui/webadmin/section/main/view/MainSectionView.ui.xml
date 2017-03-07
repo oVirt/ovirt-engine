@@ -97,7 +97,6 @@
 		@external gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader;
 		@external gwt-StackLayoutPanel .gwt-StackLayoutPanelContent;
 		.gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
-			font-family: Arial, sans-serif;
 			font-size: 14px;
 			color: #333333;
 			padding-top: 0px;
@@ -108,12 +107,12 @@
 			border-right: 0px;
 			background: #FFFFFF;
 		}
-		
+
 		.gwt-StackLayoutPanel .gwt-StackLayoutPanelContent {
 			border: 0px;
 			padding: 2px;
 		}
-		
+
 		.alertEventFooterPanel {
 		}
 	</ui:style>

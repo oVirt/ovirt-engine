@@ -15,8 +15,7 @@
 .cellTableSelectedRowCell, .cellTableSelectedRow
  {
 	background-color: #3a5f7c;
-	font-size: 14px; 
-	font-family: Arial,sans-serif; 
+	font-size: 14px;
 	font-weight: bold;
 	color: black;
 }

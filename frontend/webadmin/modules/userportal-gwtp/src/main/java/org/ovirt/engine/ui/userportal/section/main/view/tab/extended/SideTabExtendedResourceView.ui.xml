@@ -67,7 +67,6 @@
 		.detailsBoxRowLabel, .detailsBoxRowValue {
 			float: left;
 			padding-top: 7px;
-			font-family: Arial,sans-serif;
 			font-size: 13px;
 		}
 
@@ -85,7 +84,6 @@
 
 		.resourcesGeneralLabel {
 			color: white;
-			font-family: Arial,sans-serif;
 			font-size: 18px;
 			font-weight: bold;
 		}

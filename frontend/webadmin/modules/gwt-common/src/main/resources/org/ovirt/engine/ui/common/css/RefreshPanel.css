@@ -1,5 +1,4 @@
 .refreshMenuTitle,.refreshRateOption {
-	font-family: Arial, sans-serif;
 	font-size: 11px;
 	color: black;
 	width: 90px;
@@ -23,7 +22,6 @@
 }
 
 .refreshRateOption .textItem {
-	font-family: Arial, sans-serif;
 	font-size: 11px;
 	color: gray;
 	width: 40px;

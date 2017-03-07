@@ -1,9 +1,4 @@
-﻿.login-pf {
-    color: #fff;
-    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
-}
-
-.container {
+﻿.container {
     padding-top: 10px !important;
 }
 
@@ -88,7 +83,6 @@
 }
 
 .ovirt-container select {
-    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
     color: black;
 }
 

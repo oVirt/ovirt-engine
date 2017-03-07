@@ -7,7 +7,7 @@
 }
 
 .cellTableLastColumn {
-	
+
 }
 
 .cellTableFooter {
@@ -23,7 +23,6 @@
 	padding-right: 5px;
 	text-align: left;
 	color: grey;
-	font-family: Arial,sans-serif;
 	font-size: 11px;
 	background-color: #F9F9F9;
 	height: 24px !important;
@@ -38,7 +37,7 @@
 	border-right: 0px;
 	border-left: 0px;
 	white-space: normal;
-	cursor: pointer;	
+	cursor: pointer;
 }
 
 .cellTableEvenRow {

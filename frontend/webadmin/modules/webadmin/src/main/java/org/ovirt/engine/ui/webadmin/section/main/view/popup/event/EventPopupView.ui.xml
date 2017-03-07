@@ -9,7 +9,6 @@
             height: 125px;
             padding-top: 6px;
             line-height: 18px;
-            font-family: Verdana, sans-serif;
             font-size: 13px;
         }
 

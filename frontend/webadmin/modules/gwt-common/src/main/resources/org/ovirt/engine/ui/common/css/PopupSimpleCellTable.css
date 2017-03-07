@@ -1,14 +1,14 @@
 @def selectionBorderWidth 2px;
 .cellTableWidget {
-  
+
 }
 
 .cellTableFirstColumn {
-  
+
 }
 
 .cellTableLastColumn {
-  
+
 }
 
 .cellTableFooter {
@@ -30,7 +30,6 @@
 	padding-right: 5px;
 	text-align: left;
 	color: #111111;
-	font-family: Arial,sans-serif;
 	font-size: 11px;
 	background-color: #fbfbfb;
 	height: 28px;
@@ -43,19 +42,19 @@
 }
 
 .cellTableFirstColumnFooter {
-  
+
 }
 
 .cellTableFirstColumnHeader {
-  
+
 }
 
 .cellTableLastColumnFooter {
-  
+
 }
 
 .cellTableLastColumnHeader {
-  
+
 }
 
 .cellTableSortableHeader {

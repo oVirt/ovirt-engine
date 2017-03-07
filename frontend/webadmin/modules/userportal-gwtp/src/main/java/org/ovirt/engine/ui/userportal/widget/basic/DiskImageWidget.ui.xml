@@ -5,20 +5,19 @@
 	<ui:style>
 		.diskLabel, .diskName, .diskSize {
 		 	color: #3A5F7C;
-    		font-family: Arial,sans-serif;
     		font-size: 15px;
     		font-weight: bold;
 		}
-	
+
 		.diskName {
 			float:left;
-			
+
 		}
 		.diskSize {
 			float:right;
 			padding-right: 100px;
 		}
-		
+
 		.diskRow {
 			float: left;
 			width: 100%;

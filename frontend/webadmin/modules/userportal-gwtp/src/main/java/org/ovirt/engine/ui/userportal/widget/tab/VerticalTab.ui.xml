@@ -5,7 +5,6 @@
     <ui:style type="org.ovirt.engine.ui.common.widget.tab.AbstractCompositeTab.Style">
         .tab {
             height: 25px;
-            font-family: Arial, sans-serif;
             line-height: 25px;
         }
 

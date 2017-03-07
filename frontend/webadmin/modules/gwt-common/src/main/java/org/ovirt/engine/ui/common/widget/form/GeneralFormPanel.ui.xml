@@ -10,12 +10,10 @@
 
         .formPanelLabel {
             color: black;
-            font-family: Arial, sans-serif;
         }
 
         .formPanelValue {
             color: #777777;
-            font-family: Arial, sans-serif;
             word-wrap: break-word;
         }
     </ui:style>

@@ -7,7 +7,6 @@
     xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
     xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
 
-
     <ui:with field='resources'
         type='org.ovirt.engine.ui.userportal.ApplicationResources' />
 
@@ -50,7 +49,6 @@
         }
 
         .basicInfoVmNameLabel {
-            font-family: Arial,sans-serif;
             color: #3A5F7C;
             font-size: 18px;
             font-weight: bold;
@@ -60,7 +58,6 @@
         }
 
         .basicInfoVmDescriptionLabel {
-            font-family: Arial,sans-serif;
             color: #728FAD;
             font-size: 15px;
             position: relative;
@@ -74,7 +71,6 @@
 
         .rowLabel {
             float: left;
-            font-family: Arial,sans-serif;
             color: #3A5F7C;
             font-size: 19px;
             font-weight: bold;
@@ -86,7 +82,6 @@
 
         .rowValue {
             float: right;
-            font-family: Arial,sans-serif;
             color: #3A5F7C;
             font-size: 15px;
             text-align: right;
@@ -121,7 +116,6 @@
         .protocolWarning, .protocol {
             float: right;
             color: #3A5F7C;
-            font-family: Arial,sans-serif;
             font-size: 19px;
             font-weight: bold;
             padding-left: 10px;
@@ -130,7 +124,6 @@
         }
 
         .basicInfoDetailsLinkDisabled, .basicInfoDetailsLink {
-            font-family: Arial,sans-serif;
             color: #3A5F7C;
             font-size: 15px;
             text-align: right;
@@ -157,7 +150,6 @@
 
         .consoleLabel, .clientResourcesLink {
             float: left;
-            font-family: Arial, sans-serif;
             color: #3A5F7C;
             text-align: left;
             padding-left: 5px;

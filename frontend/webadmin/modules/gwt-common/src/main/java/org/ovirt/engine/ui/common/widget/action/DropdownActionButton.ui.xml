@@ -10,7 +10,6 @@
         .actionButton {
             float: left;
             font-size: 11px;
-            font-family: Arial, sans-serif;
             color: #333333;
             background: transparent;
             padding: 0px;

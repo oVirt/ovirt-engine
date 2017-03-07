@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class NetworkOutOfSyncPanel extends FlowPanel {
 
-    private static final String FONT = "Arial Unicode MS,Arial,sans-serif";//$NON-NLS-1$
     private static final String MAIN_COLUMN_SIZE = "LG_13";//$NON-NLS-1$
     private static final String PROPERTY_COLUMN_SIZE = "LG_6";//$NON-NLS-1$
     private static final String COLUMN_SIZE = "LG_3";//$NON-NLS-1$
@@ -105,7 +104,6 @@ public class NetworkOutOfSyncPanel extends FlowPanel {
         }
         final String textColor = boldText ? WHITE_TEXT_COLOR : TEXT_COLOR;
         output.getElement().getStyle().setColor(textColor);
-        output.getElement().getStyle().setProperty("fontFamily", FONT);//$NON-NLS-1$
         return output;
     }
 

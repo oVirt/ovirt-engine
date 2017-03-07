@@ -112,10 +112,6 @@
         .searchBoxPanelContainer {
             width: 100%;
         }
-
-        .openSans {
-            font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
-        }
     </ui:style>
 
     <g:HTMLPanel addStyleNames="{style.wrapper}">
@@ -124,10 +120,10 @@
             <g:VerticalPanel ui:field="searchBoxPanel" addStyleNames="{style.searchBoxPanel}">
                 <g:HorizontalPanel ui:field="searchBoxPanelContainer" addStyleNames="{style.searchBoxPanelContainer}">
                     <g:HorizontalPanel addStyleNames="{style.searchBoxMiddleSearchPrefix}">
-                        <g:Label ui:field="searchStringPrefixLabel" addStyleNames="{style.searchStringPrefixLabel} {style.openSans} spv_searchStringPrefixLabel_pfly_fix" />
+                        <g:Label ui:field="searchStringPrefixLabel" addStyleNames="{style.searchStringPrefixLabel} spv_searchStringPrefixLabel_pfly_fix" />
                     </g:HorizontalPanel>
                     <g:HorizontalPanel addStyleNames="{style.searchBoxMiddleSearchString}">
-                        <g:SuggestBox ui:field="searchStringInput" addStyleNames="{style.searchSuggestBox} {style.openSans}" />
+                        <g:SuggestBox ui:field="searchStringInput" addStyleNames="{style.searchSuggestBox}" />
                     </g:HorizontalPanel>
                 </g:HorizontalPanel>
             </g:VerticalPanel>

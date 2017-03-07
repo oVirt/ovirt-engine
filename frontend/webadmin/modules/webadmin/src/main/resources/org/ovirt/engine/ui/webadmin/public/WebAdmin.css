@@ -2,15 +2,10 @@
 a.gwt-InlineHyperlink,a.gwt-Anchor {
     outline: none;
     text-decoration: none;
-    font-family: Arial,sans-serif;
 }
 
 .gwt-PushButton {
     outline: none;
-}
-
-.gwt-Label {
-    font-family: Arial,sans-serif;
 }
 
 /* oVirt legacy styles */
@@ -28,7 +23,6 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 
 .rhev-MastHead-Name {
     color: #FFFFFF;
-    font-family: Tahoma, Verdana, sans-serif;
     font-size: 14px;
     font-weight: bold;
     overflow: hidden;
@@ -43,7 +37,6 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 
 .rhev-MastHead-SignedInUser {
     color: #FFFFFF;
-    font-family: Tahoma, Verdana, sans-serif;
     font-size: 10px;
     font-weight: normal;
     overflow: hidden;
@@ -68,7 +61,6 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 .engine-progress-text {
     bottom: 1.3em;
     text-align: center;
-    font-family: Verdana,Arial,sans-serif;
     font-size: 0.8em;
     position: relative;
 }
@@ -84,7 +76,6 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 
 .dialog-button-text-disabled,
 .dialog-button-text {
-    font-family: Arial, sans-serif;
     font-size:13px;
     padding-left: 5px;
     padding-right: 5px;

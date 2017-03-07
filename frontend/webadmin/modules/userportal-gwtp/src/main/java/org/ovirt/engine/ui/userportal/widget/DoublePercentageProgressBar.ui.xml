@@ -18,7 +18,6 @@
 
         .percentageLabel, .percentageLabelBlack {
             text-align: center;
-            font-family: Arial,sans-serif;
             font-size: 11px;
             margin: 1px;
         }

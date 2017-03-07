@@ -19,7 +19,6 @@ public class UserPortalMainTab extends AbstractTab implements TabDefinition {
 
         root = new HTMLPanel("li",  ""); //$NON-NLS-1$ //$NON-NLS-2$
         hyperlink = new Anchor();
-        hyperlink.getElement().getStyle().setProperty("fontFamily", "'Open Sans', Helvetica, Arial, sans-serif !important"); //$NON-NLS-1$ //$NON-NLS-2$
         root.add(hyperlink);
         root.setVisible(true);
         accessible = true;

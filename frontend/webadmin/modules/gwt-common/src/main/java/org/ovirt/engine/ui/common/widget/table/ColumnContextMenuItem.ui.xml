@@ -4,7 +4,6 @@
 
     <ui:style type="org.ovirt.engine.ui.common.widget.table.ColumnContextMenuItem.Style">
         .container {
-            font-family: Arial,sans-serif;
             font-size: small;
             padding: 0 10px;
             height: 28px;
