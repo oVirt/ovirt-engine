@@ -100,13 +100,15 @@ public class LibvirtVmXmlBuilder {
     private String cdInterface;
     private int payloadIndex;
     private int cdRomIndex;
+    private VmDevice runOncePayload;
 
     private Map<String, Object> createInfo;
     private VM vm;
 
-    public LibvirtVmXmlBuilder(Map<String, Object> createInfo, VM vm) {
+    public LibvirtVmXmlBuilder(Map<String, Object> createInfo, VM vm, VmDevice runOncePayload) {
         this.createInfo = createInfo;
         this.vm = vm;
+        this.runOncePayload = runOncePayload;
         payloadIndex = -1;
         cdRomIndex = -1;
     }
@@ -670,6 +672,19 @@ public class LibvirtVmXmlBuilder {
 
                 devices.addAll(vmInfoBuildUtils.createGraphicsDevices(infos, specParamsFromVm, vm.getId()));
             }
+        }
+
+        if (runOncePayload != null) {
+            devices = devices.stream()
+                    .filter(dev -> !VmPayload.isPayload(dev.getSpecParams()))
+                    .collect(Collectors.toList());
+            devices.add(runOncePayload);
+        }
+
+        // the user may specify floppy path while there is no device in the database
+        if (!StringUtils.isEmpty(vm.getFloppyPath()) &&
+                !devices.stream().anyMatch(dev -> !dev.getDevice().equals(VmDeviceType.FLOPPY.getName()))) {
+            devices.add(vmInfoBuildUtils.createFloppyDevice(vm));
         }
 
         return devices;
@@ -1258,65 +1273,36 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeFloppy(VmDevice device) {
+        if (device == null) {
+            return;
+        }
         // <disk device="floppy" snapshot="no" type="file">
         //   <source file="/var/run/vdsm/payload/8b5fa6b8-9c57-4d7c-80cb-64537eea560f.6e38a5ccb3c6b2b674086e9d07126a03.img" startupPolicy="optional" />
         //   <target bus="fdc" dev="fda" />
         //   <readonly />
         // </disk>
-        if (device != null && VmPayload.isPayload(device.getSpecParams())) {
-            writer.writeStartElement("disk");
-            writer.writeAttributeString("type", "file");
-            writer.writeAttributeString("device", "floppy");
-            writer.writeAttributeString("snapshot", "no");
+        writer.writeStartElement("disk");
+        writer.writeAttributeString("type", "file");
+        writer.writeAttributeString("device", "floppy");
+        writer.writeAttributeString("snapshot", "no");
 
-            writer.writeStartElement("source");
-            writer.writeAttributeString("file", "PAYLOAD:");
-            writer.writeAttributeString("startupPolicy", "optional");
-            writer.writeEndElement();
+        writer.writeStartElement("source");
+        writer.writeAttributeString("file", VmPayload.isPayload(device.getSpecParams()) ?
+                "PAYLOAD:"
+                : vm.getFloppyPath());
+        writer.writeAttributeString("startupPolicy", "optional");
+        writer.writeEndElement();
 
-            payloadIndex = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
+        writer.writeStartElement("target");
+        writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(VdsProperties.Fdc, 0)); // IDE slot 2 is reserved by VDSM to CDROM
+        writer.writeAttributeString("bus", VdsProperties.Fdc);
+        writer.writeEndElement();
 
-            writer.writeStartElement("target");
-            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(cdInterface, payloadIndex));
-            writer.writeAttributeString("bus", cdInterface);
-            writer.writeEndElement();
+        writer.writeElement("readonly");
 
-            if ("scsi".equals(cdInterface)) {
-                int index = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
-                writeAddress(vmInfoBuildUtils.createAddressForScsiDisk(0, index));
-            }
+        writeDeviceAliasAndAddress(device);
 
-            writer.writeElement("readonly");
-
-            writer.writeEndElement();
-            // we can have only one floppy device
-            return;
-        }
-
-        if (device != null || (vm.isRunOnce() && !StringUtils.isEmpty(vm.getFloppyPath()))) {
-            writer.writeStartElement("disk");
-            writer.writeAttributeString("type", "file");
-            writer.writeAttributeString("device", "floppy");
-            writer.writeAttributeString("snapshot", "no");
-
-            writer.writeStartElement("source");
-            writer.writeAttributeString("file", vm.getFloppyPath());
-            writer.writeAttributeString("startupPolicy", "optional");
-            writer.writeEndElement();
-
-            writer.writeStartElement("target");
-            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(VdsProperties.Fdc, 0)); // IDE slot 2 is reserved by VDSM to CDROM
-            writer.writeAttributeString("bus", VdsProperties.Fdc);
-            writer.writeEndElement();
-
-            writer.writeElement("readonly");
-
-            if (device != null) {
-                writeDeviceAliasAndAddress(device);
-            }
-
-            writer.writeEndElement();
-        }
+        writer.writeEndElement();
     }
 
     private void writeCdRom(List<VmDevice> devices) {
@@ -1340,10 +1326,10 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("startupPolicy", "optional");
             writer.writeEndElement();
 
-            cdRomIndex = VmDeviceCommonUtils.getCdDeviceIndex(cdInterface);
+            payloadIndex = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
 
             writer.writeStartElement("target");
-            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(cdInterface, cdRomIndex));
+            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(cdInterface, payloadIndex));
             writer.writeAttributeString("bus", cdInterface);
             writer.writeEndElement();
 

@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,8 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.codec.CharEncoding;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
@@ -74,8 +71,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     private static final String DEVICES = "devices";
     private static final String USB_BUS = "usb";
-    private static final String CLOUD_INIT_VOL_ID = "config-2";
-    private static final Base64 BASE_64 = new Base64(0, null);
 
     private final VmInfoBuildUtils vmInfoBuildUtils;
     private final VdsNumaNodeDao vdsNumaNodeDao;
@@ -214,19 +209,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         }
         // check first if Floppy was given as a parameter
         else if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getFloppyPath())) {
-            VmDevice vmDevice =
-                    new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
-                            VmDeviceGeneralType.DISK,
-                            VmDeviceType.FLOPPY.getName(),
-                            "",
-                            null,
-                            true,
-                            true,
-                            true,
-                            "",
-                            null,
-                            null,
-                            null);
+            VmDevice vmDevice = vmInfoBuildUtils.createFloppyDevice(vm);
             Map<String, Object> struct = vmInfoBuildUtils.buildFloppyDetails(vmDevice);
             addDevice(struct, vmDevice, vm.getFloppyPath());
         } else {
@@ -535,55 +518,14 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     @Override
     public void buildSysprepVmPayload(String sysPrepContent) {
-
-        // We do not validate the size of the content being passed to the VM payload by VmPayload.isPayloadSizeLegal().
-        // The sysprep file size isn't being verified for 3.0 clusters and below, so we maintain the same behavior here.
-        VmPayload vmPayload = new VmPayload();
-        vmPayload.setDeviceType(VmDeviceType.FLOPPY);
-        vmPayload.getFiles().put(
-                vmInfoBuildUtils.getOsRepository().getSysprepFileName(vm.getOs(), vm.getCompatibilityVersion()),
-                new String(BASE_64.encode(sysPrepContent.getBytes()), Charset.forName(CharEncoding.UTF_8)));
-
-        VmDevice vmDevice =
-                new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
-                        VmDeviceGeneralType.DISK,
-                        VmDeviceType.FLOPPY.getName(),
-                        "",
-                        vmPayload.getSpecParams(),
-                        true,
-                        true,
-                        true,
-                        "",
-                        null,
-                        null,
-                        null);
+        VmDevice vmDevice = vmInfoBuildUtils.createSysprepPayloadDevice(sysPrepContent, vm);
         Map<String, Object>struct = vmInfoBuildUtils.buildFloppyDetails(vmDevice);
         addDevice(struct, vmDevice, vm.getFloppyPath());
     }
 
     @Override
     public void buildCloudInitVmPayload(Map<String, byte[]> cloudInitContent) {
-        VmPayload vmPayload = new VmPayload();
-        vmPayload.setDeviceType(VmDeviceType.CDROM);
-        vmPayload.setVolumeId(CLOUD_INIT_VOL_ID);
-        for (Entry<String, byte[]> entry : cloudInitContent.entrySet()) {
-            vmPayload.getFiles().put(entry.getKey(),
-                    new String(BASE_64.encode(entry.getValue()), Charset.forName(CharEncoding.UTF_8)));
-        }
-
-        VmDevice vmDevice =
-                new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
-                        VmDeviceGeneralType.DISK,
-                        VmDeviceType.CDROM.getName(),
-                        "",
-                        vmPayload.getSpecParams(),
-                        true,
-                        true,
-                        true,
-                        "",
-                        null,
-                        null,
-                        null);
+        VmDevice vmDevice = vmInfoBuildUtils.createCloudInitPayloadDevice(cloudInitContent, vm);
         Map<String, Object> struct = vmInfoBuildUtils.buildCdDetails(vmDevice, vm);
         addDevice(struct, vmDevice, "");
     }

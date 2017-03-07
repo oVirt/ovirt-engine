@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -13,11 +14,13 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.LibvirtVmXmlBuilder;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuilder;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuilderFactory;
 import org.slf4j.Logger;
@@ -30,6 +33,8 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     protected VM vm;
     protected Map<String, Object> createInfo;
     protected VmInfoBuilder builder;
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
 
     public CreateBrokerVDSCommand(P parameters) {
         super(parameters, parameters.getVm().getId());
@@ -43,7 +48,11 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         buildVmData();
         log.info("VM {}", createInfo);
         if ((boolean) Config.getValue(ConfigValues.DomainXML)) {
-            String libvirtXml = Injector.injectMembers(new LibvirtVmXmlBuilder(createInfo, vm)).build();
+            LibvirtVmXmlBuilder builder = Injector.injectMembers(new LibvirtVmXmlBuilder(
+                    createInfo,
+                    vm,
+                    getRunOncePayload()));
+            String libvirtXml = builder.build();
             String prettyLibvirtXml = prettify(libvirtXml);
             if (prettyLibvirtXml != null) {
                 log.info("VM {}", prettyLibvirtXml);
@@ -129,6 +138,36 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
             break;
 
         case None:
+        }
+    }
+
+    private VmDevice getRunOncePayload() {
+        switch (getParameters().getInitializationType()) {
+        case Sysprep:
+            String sysPrepContent = SysprepHandler.getSysPrep(
+                    getParameters().getVm(),
+                    getParameters().getSysPrepParams());
+
+            return (!"".equals(sysPrepContent)) ?
+                    vmInfoBuildUtils.createSysprepPayloadDevice(sysPrepContent, getParameters().getVm())
+                    : null;
+
+        case CloudInit:
+            CloudInitHandler cloudInitHandler = new CloudInitHandler(getParameters().getVm().getVmInit());
+            Map<String, byte[]> cloudInitContent;
+            try {
+                cloudInitContent = cloudInitHandler.getFileData();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to build cloud-init data:", e);
+            }
+
+            return (cloudInitContent != null && !cloudInitContent.isEmpty()) ?
+                    vmInfoBuildUtils.createCloudInitPayloadDevice(cloudInitContent, getParameters().getVm())
+                    : null;
+
+        case None:
+        default:
+            return null;
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,6 +19,8 @@ import java.util.stream.IntStream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.codec.CharEncoding;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -30,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -54,6 +58,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -83,6 +88,8 @@ public class VmInfoBuildUtils {
     private static final Logger log = LoggerFactory.getLogger(VmInfoBuildUtils.class);
 
     private static final String FIRST_MASTER_MODEL = "ich9-ehci1";
+    private static final String CLOUD_INIT_VOL_ID = "config-2";
+    private static final Base64 BASE_64 = new Base64(0, null);
 
     private final NetworkClusterDao networkClusterDao;
     private final NetworkDao networkDao;
@@ -758,4 +765,66 @@ public class VmInfoBuildUtils {
             return "hd";
         }
     }
+
+    public VmDevice createSysprepPayloadDevice(String sysPrepContent, VM vm) {
+        // We do not validate the size of the content being passed to the VM payload by VmPayload.isPayloadSizeLegal().
+        // The sysprep file size isn't being verified for 3.0 clusters and below, so we maintain the same behavior here.
+        VmPayload vmPayload = new VmPayload();
+        vmPayload.setDeviceType(VmDeviceType.FLOPPY);
+        vmPayload.getFiles().put(
+                getOsRepository().getSysprepFileName(vm.getOs(), vm.getCompatibilityVersion()),
+                new String(BASE_64.encode(sysPrepContent.getBytes()), Charset.forName(CharEncoding.UTF_8)));
+
+        return new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
+                VmDeviceGeneralType.DISK,
+                VmDeviceType.FLOPPY.getName(),
+                "",
+                vmPayload.getSpecParams(),
+                true,
+                true,
+                true,
+                "",
+                null,
+                null,
+                null);
+    }
+
+    public VmDevice createCloudInitPayloadDevice(Map<String, byte[]> cloudInitContent, VM vm) {
+        VmPayload vmPayload = new VmPayload();
+        vmPayload.setDeviceType(VmDeviceType.CDROM);
+        vmPayload.setVolumeId(CLOUD_INIT_VOL_ID);
+        for (Entry<String, byte[]> entry : cloudInitContent.entrySet()) {
+            vmPayload.getFiles().put(entry.getKey(),
+                    new String(BASE_64.encode(entry.getValue()), Charset.forName(CharEncoding.UTF_8)));
+        }
+
+        return new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
+                VmDeviceGeneralType.DISK,
+                VmDeviceType.CDROM.getName(),
+                "",
+                vmPayload.getSpecParams(),
+                true,
+                true,
+                true,
+                "",
+                null,
+                null,
+                null);
+    }
+
+    public VmDevice createFloppyDevice(VM vm) {
+        return new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
+                VmDeviceGeneralType.DISK,
+                VmDeviceType.FLOPPY.getName(),
+                "",
+                null,
+                true,
+                true,
+                true,
+                "",
+                null,
+                null,
+                null);
+    }
+
 }
