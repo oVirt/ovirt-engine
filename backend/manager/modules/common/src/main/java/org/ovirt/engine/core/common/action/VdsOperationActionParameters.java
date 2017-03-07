@@ -15,7 +15,11 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     @Valid
     private VdsStatic vdsStatic;
     private String password;
-    private boolean overrideFirewall;
+    /**
+     * Since version 4.1.2 of the engine when a host is newly added or reinstalled we override the host firewall
+     * definitions by default.
+     */
+    private boolean overrideFirewall = true;
     private boolean activateHost;
     private boolean enableSerialConsole;
     private AuthenticationMethod authMethod;
