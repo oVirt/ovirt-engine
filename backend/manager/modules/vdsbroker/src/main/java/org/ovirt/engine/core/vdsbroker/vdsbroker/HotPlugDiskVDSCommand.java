@@ -116,7 +116,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
                     }
                 }
                 else {
-                    drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
+                    drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
                 }
 
                 drive.put(VdsProperties.Guid, lunDisk.getLun().getLUNId());
