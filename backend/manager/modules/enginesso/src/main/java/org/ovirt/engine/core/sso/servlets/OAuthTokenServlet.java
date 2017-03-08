@@ -189,7 +189,7 @@ public class OAuthTokenServlet extends HttpServlet {
             if (authResult != null && authResult.getStatus() != Authn.AuthResult.SUCCESS) {
                 log.debug("Authentication failed using http headers");
                 List<String> schemes = (List<String>) request.getAttribute(NegotiateAuthUtils.REQUEST_SCHEMES_KEY);
-                for (String scheme : new HashSet<>(schemes == null ? Collections.<String>emptyList() : schemes)) {
+                for (String scheme : new HashSet<>(schemes == null ? Collections.emptyList() : schemes)) {
                     response.setHeader("WWW-Authenticate", scheme);
                 }
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
