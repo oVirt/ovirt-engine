@@ -11,9 +11,10 @@ import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class DbUser implements IVdcQueryable {
+public class DbUser implements IVdcQueryable, Nameable {
     private static final long serialVersionUID = 7052102138405696755L;
 
     /**
@@ -263,6 +264,15 @@ public class DbUser implements IVdcQueryable {
                 && Objects.equals(loginName, other.loginName)
                 && Objects.equals(isAdmin, other.isAdmin);
 
+    }
+
+    @Override
+    public String getName() {
+        String loginName = getLoginName();
+        if (loginName == null || loginName.isEmpty()) {
+            return getFirstName();
+        }
+        return loginName;
     }
 
 }

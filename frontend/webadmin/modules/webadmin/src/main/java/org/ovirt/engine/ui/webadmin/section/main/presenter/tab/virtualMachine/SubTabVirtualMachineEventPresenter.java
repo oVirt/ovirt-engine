@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
@@ -37,7 +36,7 @@ public class SubTabVirtualMachineEventPresenter
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<AuditLog, VmListModel<Void>, VmEventListModel> modelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineEventSubTabLabel(), 10, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.virtualMachineEventSubTabLabel(), 10, modelProvider);
     }
 
     @Inject

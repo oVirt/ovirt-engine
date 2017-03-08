@@ -1,24 +1,47 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import org.gwtbootstrap3.client.ui.Anchor;
+import org.gwtbootstrap3.client.ui.AnchorButton;
+import org.gwtbootstrap3.client.ui.AnchorListItem;
+import org.gwtbootstrap3.client.ui.ListGroup;
+import org.gwtbootstrap3.client.ui.ListGroupItem;
+import org.gwtbootstrap3.client.ui.Navbar;
+import org.gwtbootstrap3.client.ui.constants.Attributes;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.gwtbootstrap3.client.ui.html.Span;
+import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractHeaderView;
+import org.ovirt.engine.ui.common.widget.PatternflyIconType;
+import org.ovirt.engine.ui.common.widget.PatternflyStyles;
+import org.ovirt.engine.ui.common.widget.action.ActionAnchorListItem;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.alert.EventsListPopover;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.AnchorElement;
+import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.HasData;
 import com.google.inject.Inject;
 
 public class HeaderView extends AbstractHeaderView implements HeaderPresenterWidget.ViewDef {
+
+    private static final String GROUP_NAME = "group_name"; // $NON-NLS-1$
+    private static final String SECONDARY_POST_FIX = "-secondary"; // $NON-NLS-1$
+    private static final String ID = "id"; // $NON-NLS-1$
+
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     interface ViewUiBinder extends UiBinder<Widget, HeaderView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -30,41 +53,326 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
 
     @UiField(provided = true)
     @WithElementId
-    Anchor configureLink;
+    AnchorListItem configureLink;
+
+    @UiField(provided = true)
+    @WithElementId
+    AnchorListItem bookmarkLink;
 
     @UiField
-    SimplePanel searchPanelContainer;
+    AnchorButton help;
 
     @UiField
-    SimplePanel mainTabContainer;
+    AnchorButton settings;
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    @UiField
+    AnchorListItem tasks;
+
+    @UiField (provided=true)
+    AnchorListItem tagsLink;
+
+    @UiField (provided=true)
+    EventsListPopover events;
+
+    @UiField (provided=true)
+    EventsListPopover alerts;
+
+    @UiField
+    ListGroup mainNavbarNavContainer;
+
+    @UiField
+    Navbar mainNavBar;
+
+    ActionAnchorListItem alertDismissAction;
 
     @Inject
     public HeaderView(ApplicationDynamicMessages dynamicMessages) {
-        this.configureLink = new Anchor(constants.configureLinkLabel());
-        this.logoutLink = new Anchor(constants.logoutLinkLabel());
-        this.optionsLink = new Anchor(constants.optionsLinkLabel());
-        this.aboutLink = new Anchor(constants.aboutLinkLabel());
-        this.guideLink = new Anchor(dynamicMessages.guideLinkLabel());
+        this.configureLink = new AnchorListItem(constants.configureLinkLabel());
+        this.logoutLink = new AnchorListItem(constants.logoutLinkLabel());
+        this.optionsLink = new AnchorListItem(constants.optionsLinkLabel());
+        this.aboutLink = new AnchorListItem(constants.aboutLinkLabel());
+        this.bookmarkLink = new AnchorListItem(constants.bookmarksMainSection());
+        this.tagsLink = new AnchorListItem(constants.tagsMainSection());
+        this.guideLink = new AnchorListItem(dynamicMessages.guideLinkLabel());
+        events = new EventsListPopover(IconType.BELL, constants.eventsEventFooter());
+        alerts = new EventsListPopover(PatternflyIconType.PF_FLAG, constants.alertsEventFooter());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         this.logoLink.setHref(FrontendUrlUtils.getWelcomePageLink(GWT.getModuleBaseURL()));
-    }
 
-    @Override
-    public void setInSlot(Object slot, IsWidget content) {
-        if (slot == HeaderPresenterWidget.TYPE_SetSearchPanel) {
-            setPanelContent(searchPanelContainer, content);
-        } else if (slot == HeaderPresenterWidget.TYPE_SetTabBar) {
-            setPanelContent(mainTabContainer, content);
-        } else {
-            super.setInSlot(slot, content);
-        }
+        mainNavBar.removeStyleName(PatternflyStyles.NAVBAR_DEFAULT);
+
+        AnchorElement.as(this.help.getElement()).addClassName(NAV_ITEM_ICONIC);
+        AnchorElement.as(this.settings.getElement()).addClassName(NAV_ITEM_ICONIC);
+        this.tasks.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
+        setUserIcon();
     }
 
     @Override
     public HasClickHandlers getConfigureLink() {
         return configureLink;
+    }
+
+    @Override
+    public HasClickHandlers getTagsLink() {
+        return tagsLink;
+    }
+
+    @Override
+    public void addTabGroup(String title, int index, HasCssName icon) {
+        ListGroupItem group = new ListGroupItem();
+        group.addStyleName(PatternflyStyles.SECONDARY_NAV_ITEM);
+        group.getElement().setAttribute(Attributes.DATA_TARGET, "#" // $NON-NLS-1$
+                + title.toLowerCase() + SECONDARY_POST_FIX);
+        group.getElement().setAttribute(GROUP_NAME, title);
+
+        // Title
+        group.add(createTextAnchor(title, icon));
+
+        // Secondary menu
+        group.add(createSecondaryMenu(title));
+
+        insertOrAppendNavWidget(index, group);
+    }
+
+    private void insertOrAppendNavWidget(int index, ListGroupItem group) {
+        // Insert into nav bar
+        if (index >= mainNavbarNavContainer.getWidgetCount()) {
+            mainNavbarNavContainer.add(group);
+        } else {
+            mainNavbarNavContainer.insert(group, index);
+        }
+    }
+
+    private FlowPanel createSecondaryMenu(String title) {
+        FlowPanel secondaryContainer = new FlowPanel();
+        secondaryContainer.getElement().setAttribute(ID, title.toLowerCase() + SECONDARY_POST_FIX);
+        secondaryContainer.addStyleName(PatternflyStyles.NAV_SECONDARY_NAV);
+        FlowPanel secondaryHeader = new FlowPanel();
+        secondaryHeader.addStyleName(PatternflyStyles.NAV_ITEM_HEADER);
+        Anchor headerAnchor = new Anchor();
+        headerAnchor.getElement().setAttribute(Attributes.DATA_TOGGLE, PatternflyStyles.NAV_COLLAPSE_SECONDARY_NAV);
+        headerAnchor.getElement().setClassName(PatternflyStyles.SECONDARY_COLLAPSE_TOGGLE);
+        Span subMenuHeaderLabel = new Span();
+        subMenuHeaderLabel.setText(title);
+        secondaryHeader.add(headerAnchor);
+        secondaryHeader.add(subMenuHeaderLabel);
+        secondaryContainer.add(secondaryHeader);
+        secondaryContainer.add(new ListGroup());
+        return secondaryContainer;
+    }
+
+    private Anchor createTextAnchor(String title) {
+        return createTextAnchor(title, null);
+    }
+
+    private Anchor createTextAnchor(String title, HasCssName icon) {
+        Anchor titleAnchor = new Anchor();
+        if (icon != null) {
+            Span iconSpan = new Span();
+            if (icon instanceof IconType) {
+                iconSpan.addStyleName(Styles.FONT_AWESOME_BASE);
+            } else if (icon instanceof PatternflyIconType) {
+                iconSpan.addStyleName(PatternflyIconType.PF_BASE.getCssName());
+            }
+            iconSpan.addStyleName(icon.getCssName());
+            titleAnchor.add(iconSpan);
+        }
+        Span titleSpan = new Span();
+        titleSpan.addStyleName(PatternflyStyles.LIST_GROUP_ITEM_VALUE);
+        titleSpan.setText(title);
+        titleAnchor.add(titleSpan);
+        return titleAnchor;
+    }
+
+    @Override
+    public void addTab(String title, int index, String href, String groupTitle, int groupIndex, HasCssName icon) {
+        if (groupTitle == null) {
+            ListGroupItem item = new ListGroupItem();
+            item.getElement().setAttribute(GROUP_NAME, title);
+            // Not part of a group, so it needs an href and title.
+            Anchor titleAnchor = createTextAnchor(title, icon);
+            titleAnchor.setHref(href);
+            item.add(titleAnchor);
+
+            insertOrAppendNavWidget(index, item);
+        } else {
+            ensureGroupIsInserted(groupTitle, groupIndex, icon);
+            for (int i = 0; i < mainNavbarNavContainer.getWidgetCount(); i++) {
+                if (mainNavbarNavContainer.getWidget(i) instanceof ListGroupItem) {
+                    ListGroupItem group = (ListGroupItem) mainNavbarNavContainer.getWidget(i);
+                    String groupName = group.getElement().getAttribute(GROUP_NAME);
+                    if (groupName != null && groupName.equals(groupTitle)) {
+                        FlowPanel groupContainer = (FlowPanel) group.getWidget(2);
+                        ListGroup listGroup = (ListGroup) groupContainer.getWidget(1);
+                        ListGroupItem item = new ListGroupItem();
+                        Anchor itemAnchor = createTextAnchor(title);
+                        itemAnchor.setHref(href);
+                        item.add(itemAnchor);
+                        listGroup.insert(item, Math.min(index, listGroup.getWidgetCount() - 1 >= 0
+                                ? listGroup.getWidgetCount() - 1 : 0));
+                    }
+                }
+            }
+        }
+    }
+
+    private void ensureGroupIsInserted(String groupTitle, int groupIndex, HasCssName icon) {
+        boolean groupFound = false;
+        for (int i = 0; i < mainNavbarNavContainer.getWidgetCount(); i++) {
+            ListGroupItem group = (ListGroupItem) mainNavbarNavContainer.getWidget(i);
+            String groupName = group.getElement().getAttribute(GROUP_NAME);
+            if (groupName != null && groupName.equals(groupTitle)) {
+                groupFound = true;
+                break;
+            }
+        }
+        if (!groupFound) {
+            addTabGroup(groupTitle, groupIndex, icon);
+        }
+    }
+
+    @Override
+    public void removeTab(String title, String href) {
+        for (int i = 0; i < mainNavbarNavContainer.getWidgetCount(); i++) {
+            if (mainNavbarNavContainer.getWidget(i) instanceof ListGroupItem) {
+                ListGroupItem group = (ListGroupItem) mainNavbarNavContainer.getWidget(i);
+                String groupName = group.getElement().getAttribute(GROUP_NAME);
+                if (title != null && title.equals(groupName)) {
+                    mainNavbarNavContainer.remove(group);
+                } else if (title != null && group.getWidgetCount() > 2) {
+                    FlowPanel groupContainer = (FlowPanel) group.getWidget(2);
+                    if (removeSubMenu(title, (ListGroup) groupContainer.getWidget(1))) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean removeSubMenu(String title, ListGroup container) {
+        for (int i = 0; i < container.getWidgetCount(); i++) {
+            if (container.getWidget(i) instanceof ListGroupItem) {
+                ListGroupItem group = (ListGroupItem) container.getWidget(i);
+                String groupName = group.getElement().getAttribute(GROUP_NAME);
+                if (title.equals(groupName)) {
+                    mainNavbarNavContainer.remove(group);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void updateTab(String title, String href, boolean accessible) {
+        for (int i = 0; i < mainNavbarNavContainer.getWidgetCount(); i++) {
+            if (mainNavbarNavContainer.getWidget(i) instanceof ListGroupItem) {
+                ListGroupItem group = (ListGroupItem) mainNavbarNavContainer.getWidget(i);
+                String groupName = group.getElement().getAttribute(GROUP_NAME);
+                if (title != null && title.equals(groupName)) {
+                    group.setVisible(accessible);
+                } else if (title != null && group.getWidgetCount() > 2) {
+                    FlowPanel groupContainer = (FlowPanel) group.getWidget(2);
+                    if (updateSubMenu(title, (ListGroup) groupContainer.getWidget(1), accessible)) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean updateSubMenu(String title, ListGroup container, boolean accessible) {
+        for (int i = 0; i < container.getWidgetCount(); i++) {
+            if (container.getWidget(i) instanceof ListGroupItem) {
+                ListGroupItem group = (ListGroupItem) container.getWidget(i);
+                String groupName = group.getElement().getAttribute(GROUP_NAME);
+                if (title != null && title.equals(groupName)) {
+                    group.setVisible(accessible);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void markActiveTab(String title, String href) {
+        for (int i = 0; i < mainNavbarNavContainer.getWidgetCount(); i++) {
+            if (mainNavbarNavContainer.getWidget(i) instanceof ListGroupItem) {
+                ListGroupItem group = (ListGroupItem) mainNavbarNavContainer.getWidget(i);
+                String groupName = group.getElement().getAttribute(GROUP_NAME);
+                if (title != null && group.getWidgetCount() > 2) {
+                    FlowPanel groupContainer = (FlowPanel) group.getWidget(2);
+                    if (markSecondaryMenuActive(title, href, (ListGroup) groupContainer.getWidget(1), groupName)) {
+                        group.addStyleName(Styles.ACTIVE);
+                    } else {
+                        group.removeStyleName(Styles.ACTIVE);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean markSecondaryMenuActive(String title, String href, ListGroup secondaryMenulistGroup,
+            String groupName) {
+        boolean result = false;
+        for (int i = 0; i < secondaryMenulistGroup.getWidgetCount(); i++) {
+            if (secondaryMenulistGroup.getWidget(i) instanceof ListGroupItem) {
+                ListGroupItem group = (ListGroupItem) secondaryMenulistGroup.getWidget(i);
+                if (group.getWidgetCount() > 1) {
+                    Anchor groupAnchor = (Anchor) group.getWidget(1);
+                    if (groupAnchor.getHref().endsWith(href)) {
+                        group.addStyleName(Styles.ACTIVE);
+                        result = true;
+                    } else {
+                        group.removeStyleName(Styles.ACTIVE);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public HasData<AuditLog> getEventDropdown() {
+        return (HasData<AuditLog>) events.getContentWidget();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public HasData<AuditLog> getAlertDropdown() {
+        return (HasData<AuditLog>) alerts.getContentWidget();
+    }
+
+    @Override
+    public HasClickHandlers getTasksWidget() {
+        return tasks;
+    }
+
+    @Override
+    public void setRunningTaskCount(int count) {
+        tasks.setBadgeText(String.valueOf(count));
+    }
+
+    @Override
+    public void setAlertCount(int count) {
+        alerts.setBadgeText(String.valueOf(count));
+    }
+
+    @Override
+    public HasClickHandlers getBookmarkLink() {
+        return bookmarkLink;
+    }
+
+    @Override
+    public EventsListPopover getAlertPopover() {
+        return alerts;
+    }
+
+    @Override
+    public EventsListPopover getEventPopover() {
+        return events;
     }
 }

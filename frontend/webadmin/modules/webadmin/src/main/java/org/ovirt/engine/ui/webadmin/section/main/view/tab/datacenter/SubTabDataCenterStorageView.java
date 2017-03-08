@@ -37,7 +37,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
     public SubTabDataCenterStorageView(SearchableDetailModelProvider<StorageDomain, DataCenterListModel, DataCenterStorageListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -119,43 +119,49 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.domainDescriptionStorage(), "160px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.attachDataStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAttachStorageCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.attachIsoStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAttachISOCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.attachExportStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAttachBackupCommand();
             }
-        });
+        }));
         // TODO: Separator
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.detachStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDetachCommand();
             }
-        });
+        }));
         // TODO: Separator
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.activateStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getActivateCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.maintenanceHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getMaintenanceCommand();
             }
-        });
+        }));
     }
 }

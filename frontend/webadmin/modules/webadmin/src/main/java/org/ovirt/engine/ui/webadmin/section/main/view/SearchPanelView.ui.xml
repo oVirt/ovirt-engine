@@ -34,10 +34,6 @@
             display: none;
         }
 
-        .wrapper {
-            padding: 11px;
-        }
-
         .searchLabel {
             float: left;
             margin-left: 20px;
@@ -114,7 +110,7 @@
         }
     </ui:style>
 
-    <g:HTMLPanel addStyleNames="{style.wrapper}">
+    <g:HTMLPanel>
         <g:HorizontalPanel ui:field="searchPanelContainer">
 
             <g:VerticalPanel ui:field="searchBoxPanel" addStyleNames="{style.searchBoxPanel}">

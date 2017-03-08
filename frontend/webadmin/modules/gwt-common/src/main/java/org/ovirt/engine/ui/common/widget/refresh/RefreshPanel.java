@@ -1,44 +1,118 @@
 package org.ovirt.engine.ui.common.widget.refresh;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.resources.client.ImageResource.ImageOptions;
+import java.util.Set;
 
-public class RefreshPanel extends BaseRefreshPanel {
+import org.gwtbootstrap3.client.ui.AnchorListItem;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.ButtonGroup;
+import org.gwtbootstrap3.client.ui.DropDownMenu;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.gwtbootstrap3.client.ui.constants.Toggle;
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.widget.renderer.MillisecondRenderer;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 
-    public interface Resources extends BaseRefreshPanel.BaseResources {
+/**
+ * A panel that shows a refresh button, with popup menu to select the refresh rate.<BR>
+ * Works with an {@link AbstractRefreshManager}.
+ */
+public class RefreshPanel extends ButtonGroup implements HasClickHandlers, HasElementId {
 
-        @Override
-        @Source("org/ovirt/engine/ui/common/images/check_icon.png")
-        ImageResource check_icon();
+    private final AbstractRefreshManager<?> refreshManager;
 
-        @Override
-        @Source("org/ovirt/engine/ui/common/images/refresh_button.png")
-        ImageResource refresh_button();
+    private WidgetTooltip tooltip;
 
-        @Override
-        @Source("org/ovirt/engine/ui/common/css/RefreshPanel.css")
-        RefreshPanelCss refreshPanelCss();
+    private Button refreshButton;
+    private Button dropdownButton;
+    private DropDownMenu dropdownMenu;
 
-        @Override
-        @Source("org/ovirt/engine/ui/common/images/separator.gif")
-        @ImageOptions(width = 1, height = 9)
-        ImageResource separator();
+    /**
+     * Create a Panel managed by the specified {@link RefreshManager}<BR>
+     * used only by the Refresh Manager
+     *
+     */
+    protected RefreshPanel(AbstractRefreshManager<?> refreshManager) {
+        this.refreshManager = refreshManager;
 
-        @Override
-        @Source("org/ovirt/engine/ui/common/images/triangle_down.gif")
-        @ImageOptions(width = 7, height = 5)
-        ImageResource triangle_down();
+        refreshButton = new Button("", IconType.REFRESH, new ClickHandler() {
 
+            @Override
+            public void onClick(ClickEvent event) {
+                fireEvent(event);
+            }
+
+        });
+
+        createRefreshMenuButton();
+        createDropdownMenu();
+
+        add(refreshButton);
+        add(dropdownButton);
+        add(dropdownMenu);
+
+        tooltip = new WidgetTooltip(this);
+        setTooltipText(refreshManager.getRefreshStatus());
+        setDropUp(true);
     }
 
-    public RefreshPanel(AbstractRefreshManager<RefreshPanel> refreshManager) {
-        super(refreshManager);
+    public void hideRefreshMenuButton() {
+        refreshButton.setVisible(false);
     }
 
     @Override
-    protected BaseResources createResources() {
-        return GWT.create(Resources.class);
+    public void setElementId(String elementId) {
+        // Set refresh button element ID
+        refreshButton.getElement().setId(
+                ElementIdUtils.createElementId(elementId, "refreshButton")); //$NON-NLS-1$
     }
 
+    @Override
+    public HandlerRegistration addClickHandler(ClickHandler handler) {
+        return refreshButton.addHandler(handler, ClickEvent.getType());
+    }
+
+    public void setTooltipText(String status) {
+        tooltip.setText(status);
+    }
+
+    private void createRefreshMenuButton() {
+        dropdownButton = new Button();
+        dropdownButton.setToggleCaret(true);
+        dropdownButton.setDataToggle(Toggle.DROPDOWN);
+    }
+
+    private void createDropdownMenu() {
+        dropdownMenu = new DropDownMenu();
+        Set<Integer> refreshRates = AbstractRefreshManager.getRefreshRates();
+        for (Integer refreshRate : refreshRates) {
+            AnchorListItem refreshRateItem = new AnchorListItem();
+            refreshRateItem.setText(MillisecondRenderer.getInstance().render(refreshRate));
+            refreshRateItem.addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    refreshManager.setCurrentRefreshRate(refreshRate);
+                    removeActiveStyles();
+                    refreshRateItem.addStyleName(Styles.ACTIVE);
+                }
+
+            });
+            if (refreshManager.getCurrentRefreshRate() == refreshRate) {
+                refreshRateItem.addStyleName(Styles.ACTIVE);
+            }
+            dropdownMenu.add(refreshRateItem);
+        }
+    }
+
+    protected void removeActiveStyles() {
+        for (int i = 0; i < dropdownMenu.getWidgetCount(); i++) {
+            dropdownMenu.getWidget(i).removeStyleName(Styles.ACTIVE);
+        }
+    }
 }

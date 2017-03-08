@@ -22,7 +22,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         super(modelProvider);
         generateIds();
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     private void initTable() {
@@ -81,26 +81,29 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         membersColumn.makeSortable();
         getTable().addColumn(membersColumn, constants.membersAffinityGroup(), "500px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<AffinityGroup>(constants.newAffinityGroupLabel()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<AffinityGroup>(constants.editAffinityGroupLabel()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<AffinityGroup>(constants.removeAffinityGroupLabel()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
     }
 
     protected List<String> getEntityNames(AffinityGroup object) {

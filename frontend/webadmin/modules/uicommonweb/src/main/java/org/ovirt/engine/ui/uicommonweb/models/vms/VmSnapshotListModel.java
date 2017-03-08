@@ -51,9 +51,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-@SuppressWarnings("unused")
 public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
-    // This constant is intendend to be exported to a generic UTILS class later on
+    // This constant is intended to be exported to a generic UTILS class later on
     private static final String DATE_FORMAT = "yyyy-MM-dd, HH:mm"; //$NON-NLS-1$
 
     private UICommand privateNewCommand;

@@ -5,14 +5,15 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.widget.errata.ErrataFilterPanel;
+import org.ovirt.engine.ui.webadmin.widget.tab.MenuLayoutMenuDetails;
+import org.ovirt.engine.ui.webadmin.widget.tab.WebadminMenuLayout;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -34,8 +35,6 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 public class MainTabEngineErrataPresenter extends AbstractMainTabWithDetailsPresenter<Erratum,
     EngineErrataListModel, MainTabEngineErrataPresenter.ViewDef, MainTabEngineErrataPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @GenEvent
     public class ErrataSelectionChange {
         List<Erratum> selectedItems;
@@ -54,14 +53,19 @@ public class MainTabEngineErrataPresenter extends AbstractMainTabWithDetailsPres
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(
-            MainModelProvider<Erratum, EngineErrataListModel> modelErrata) {
-        return new ModelBoundTabData(constants.errataMainTabLabel(), 1, modelErrata);
+            MainModelProvider<Erratum, EngineErrataListModel> modelErrata, WebadminMenuLayout menuLayout) {
+        MenuLayoutMenuDetails menuTabDetails =
+                menuLayout.getDetails(WebAdminApplicationPlaces.errataMainTabPlace);
+        return new ModelBoundTabData(menuTabDetails.getSecondaryTitle(), menuTabDetails.getSecondaryPriority(),
+                menuTabDetails.getPrimaryTitle(), menuTabDetails.getPrimaryPriority(), modelErrata,
+                menuTabDetails.getIcon());
     }
 
     @Inject
     public MainTabEngineErrataPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<Erratum, EngineErrataListModel> modelErrata) {
-        super(eventBus, view, proxy, placeManager, modelErrata);
+            PlaceManager placeManager, MainModelProvider<Erratum, EngineErrataListModel> modelErrata,
+            OvirtBreadCrumbs<Erratum, EngineErrataListModel> breadCrumbs) {
+        super(eventBus, view, proxy, placeManager, modelErrata, null, breadCrumbs);
     }
 
     @Override

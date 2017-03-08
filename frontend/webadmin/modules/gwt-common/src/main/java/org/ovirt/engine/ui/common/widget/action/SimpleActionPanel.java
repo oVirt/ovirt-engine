@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.common.widget.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -26,8 +26,8 @@ public class SimpleActionPanel<T> extends AbstractActionPanel<T> {
     ButtonBase refreshButton;
 
     public SimpleActionPanel(SearchableModelProvider<T, ?> dataProvider,
-            SingleSelectionModel<T> selectionModel, EventBus eventBus) {
-        super(dataProvider, eventBus);
+            SingleSelectionModel<T> selectionModel) {
+        super(dataProvider);
         this.selectionModel = selectionModel;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
@@ -46,7 +46,11 @@ public class SimpleActionPanel<T> extends AbstractActionPanel<T> {
 
     @Override
     protected ActionButton createNewActionButton(ActionButtonDefinition<T> buttonDef) {
-        return new SimpleActionButton();
+        SimpleActionButton result = new SimpleActionButton();
+        if (buttonDef.getIcon() instanceof IconType) {
+            result.setIcon((IconType) buttonDef.getIcon());
+        }
+        return result;
     }
 
 }

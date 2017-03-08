@@ -13,11 +13,13 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
+import org.ovirt.engine.ui.common.widget.action.DropdownActionButton;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -37,6 +39,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmCountColumn;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -94,7 +97,15 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         additionalStatusColumn.setContextMenuTitle(constants.additionalStatusHost());
         getTable().addColumn(additionalStatusColumn, constants.empty(), "60px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VDS> nameColumn = new AbstractTextColumn<VDS>() {
+        AbstractTextColumn<VDS> nameColumn = new AbstractLinkColumn<VDS>(new FieldUpdater<VDS, String>() {
+
+                @Override
+                public void update(int index, VDS host, String value) {
+                    transitionHandler.handlePlaceTransition();
+                }
+
+            }) {
+
             @Override
             public String getValue(VDS object) {
                 return object.getName();
@@ -240,32 +251,41 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             getTable().addColumn(spmColumn, constants.spmPriorityHost(), "100px"); //$NON-NLS-1$
         }
 
+        //
+        // Buttons/menu items
         // Create/Edit/Remove Host operations
+        //
+
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.newHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.editHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.removeHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
-        });
+        }));
+
         // Host Console (link to Cockpit)
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.hostConsole()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getHostConsoleCommand();
             }
-        });
+        }));
 
         // Management operations drop down
         List<ActionButtonDefinition<VDS>> managementSubActions = new LinkedList<>();
@@ -292,12 +312,14 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         });
         // Confirm Host Rebooted button
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.confirmRebootedHost()) {
+            addMenuItemToKebab(
+            getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.confirmRebootedHost(),
+                CommandLocation.OnlyFromContext) {
                 @Override
                 protected UICommand resolveCommand() {
                     return getMainModel().getManualFenceCommand();
                 }
-            });
+            }));
         }
         // Power management drop down
         List<ActionButtonDefinition<VDS>> pmSubActions = new LinkedList<>();
@@ -368,12 +390,19 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         });
 
         // Add management menu bar
+        addButtonToActionGroup(
         getTable().addActionButton(
             new WebAdminMenuBarButtonDefinition<>(
                 constants.management(),
                 managementSubActions
-            )
-        );
+            ),
+            new DropdownActionButton<VDS>(managementSubActions, new DropdownActionButton.SelectedItemsProvider<VDS>() {
+                @Override
+                public List<VDS> getSelectedItems() {
+                    return getMainModel().getSelectedItems();
+                }
+            })
+        ));
 
         // Installation operations drop down
         List<ActionButtonDefinition<VDS>> moreSubActions = new LinkedList<>();
@@ -405,52 +434,64 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getUpgradeCommand();
             }
         });
+        addButtonToActionGroup(
         getTable().addActionButton(
             new WebAdminMenuBarButtonDefinition<>(
                 constants.installation(),
                 moreSubActions
-            )
-        );
+            ),
+            new DropdownActionButton<VDS>(moreSubActions, new DropdownActionButton.SelectedItemsProvider<VDS>() {
+                @Override
+                public List<VDS> getSelectedItems() {
+                    return getMainModel().getSelectedItems();
+                }
+            })
+        ));
 
         // Assign tags
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.assignTagsHost()) {
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.assignTagsHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getAssignTagsCommand();
             }
-        });
+        }));
 
         // NUMA support
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.numaSupport()) {
+            addMenuItemToKebab(
+            getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.numaSupport()) {
                 @Override
                 protected UICommand resolveCommand() {
                     return getMainModel().getNumaSupportCommand();
                 }
-            });
+            }));
         }
 
         // Approve
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.approveHost()) {
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.approveHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getApproveCommand();
             }
-        });
+        }));
 
         // HA global maintenance
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.enableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.enableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEnableGlobalHaMaintenanceCommand();
             }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.disableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
+        }));
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.disableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getDisableGlobalHaMaintenanceCommand();
             }
-        });
+        }));
 
     }
 

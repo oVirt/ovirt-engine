@@ -62,7 +62,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         defaultRouteImage = safeHtmlFromTrustedString(resources.defaultRouteNetwork());
 
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     private SafeHtml safeHtmlFromTrustedString(ImageResource resource) {
@@ -145,12 +145,13 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.descriptionCluster(), "400px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<Cluster, NetworkCluster>>(constants.assignUnassignNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getManageCommand();
             }
-        });
+        }));
     }
 
     private SafeHtml thisOrEmptyImage(boolean useFollowingImage, SafeHtml givenImage) {

@@ -6,6 +6,7 @@ import org.ovirt.engine.core.searchbackend.PoolConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
@@ -15,6 +16,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresen
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
+
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
@@ -38,7 +41,15 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumn<VmPool> nameColumn = new AbstractTextColumn<VmPool>() {
+        AbstractTextColumn<VmPool> nameColumn = new AbstractLinkColumn<VmPool>(new FieldUpdater<VmPool, String>() {
+
+            @Override
+            public void update(int index, VmPool pool, String value) {
+                //The link was clicked, now fire an event to switch to details.
+                transitionHandler.handlePlaceTransition();
+            }
+
+        }) {
             @Override
             public String getValue(VmPool object) {
                 return object.getName();
@@ -88,24 +99,27 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
         descColumn.makeSortable(PoolConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descColumn, constants.descriptionPool(), "300px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.newPool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.editPool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.removePool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
-        });
+        }));
     }
 
 }

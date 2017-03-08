@@ -27,7 +27,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-@SuppressWarnings("unused")
 public class BookmarkListModel extends SearchableListModel {
 
     private static class BookmarksComparator implements Comparator<Bookmark>, Serializable {

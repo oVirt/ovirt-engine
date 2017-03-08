@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.action;
 
 import java.util.List;
 
+import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.event.logical.shared.HasInitializeHandlers;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -45,14 +46,10 @@ public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
     void setCascaded(boolean cascade);
 
     /**
-     * Returns the content to show when this button is enabled.
+     * Get the Css name of the icon.
+     * @return The HasCssName class of the icon.
      */
-    SafeHtml getEnabledHtml();
-
-    /**
-     * Returns the content to show when this button is disabled.
-     */
-    SafeHtml getDisabledHtml();
+    HasCssName getIcon();
 
     /**
      * Returns the text of this button, used in context menus.

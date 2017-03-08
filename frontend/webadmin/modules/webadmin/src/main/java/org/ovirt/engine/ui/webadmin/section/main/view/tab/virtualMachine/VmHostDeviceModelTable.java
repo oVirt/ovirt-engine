@@ -24,24 +24,27 @@ public class VmHostDeviceModelTable extends HostDeviceModelBaseTable<VmHostDevic
         super.initTable();
         getTable().setRowVisitor(this);
 
+        addButtonToActionGroup(
         getTable().addActionButton(new UiCommandButtonDefinition<HostDeviceView>(getEventBus(), constants.addVmHostDevice()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAddCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new UiCommandButtonDefinition<HostDeviceView>(getEventBus(), constants.removeVmHostDevice()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new UiCommandButtonDefinition<HostDeviceView>(getEventBus(), constants.repinVmHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRepinHostCommand();
             }
-        });
+        }));
     }
 
     @Override

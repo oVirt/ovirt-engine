@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.events;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -24,16 +25,17 @@ public class TaskListModel extends SearchableListModel {
     private final Map<String, Job> detailedTaskMap = new HashMap<>();
 
     public TaskListModel() {
+        getSearchCommand().execute();
     }
 
     @Override
     protected void syncSearch() {
         AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
-            ArrayList<Job> taskList = returnValue.getReturnValue();
+            List<Job> taskList = returnValue.getReturnValue();
             if (taskList.size() == 0) {
                 detailedTaskMap.clear();
             }
-            ArrayList<Job> taskListWithCorrelationFilter = new ArrayList<>();
+            List<Job> taskListWithCorrelationFilter = new ArrayList<>();
 
             Map<String, Map.Entry<Job, ArrayList<Job>>> correlationTaskMap = new HashMap<>();
             for (Job task : taskList) {

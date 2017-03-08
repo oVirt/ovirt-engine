@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaClusterListModel;
@@ -49,11 +48,9 @@ public class QuotaModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<QuotaPopupPresenterWidget> quotaPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<QuotaListModel> modelProvider,
-            final Provider<CommonModel> commonModelProvider) {
+            final Provider<QuotaListModel> modelProvider) {
         MainTabModelProvider<Quota, QuotaListModel> result =
-                new MainTabModelProvider<Quota, QuotaListModel>(eventBus, defaultConfirmPopupProvider,
-                        commonModelProvider) {
+                new MainTabModelProvider<Quota, QuotaListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(
                             QuotaListModel source,

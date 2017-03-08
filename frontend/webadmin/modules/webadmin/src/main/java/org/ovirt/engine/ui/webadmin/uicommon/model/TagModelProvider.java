@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
-import org.ovirt.engine.ui.common.widget.tree.TreeModelWithElementId;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -19,17 +18,13 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.widget.tags.TagItemCell;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.view.client.DefaultSelectionEventManager;
-import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.gwtplatform.dispatch.annotation.GenEvent;
 
-public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagListModel>
-        implements SearchableTreeModelProvider<TagModel, TagListModel>, TreeModelWithElementId {
+public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagListModel> {
 
     @GenEvent
     public class TagActivationChange {
@@ -38,14 +33,10 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
 
     }
 
-    private final DefaultSelectionEventManager<TagModel> selectionManager =
-            DefaultSelectionEventManager.createDefaultManager();
     private final SingleSelectionModel<TagModel> selectionModel;
 
     private final Provider<TagPopupPresenterWidget> popupProvider;
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
-
-    private final TagItemCell cell;
 
     @Inject
     public TagModelProvider(EventBus eventBus,
@@ -53,7 +44,6 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
             Provider<TagPopupPresenterWidget> tagPopupPresenterWidgetProvider,
             Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider);
-        this.cell = new TagItemCell();
         this.popupProvider = tagPopupPresenterWidgetProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
 
@@ -115,33 +105,6 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
         getModel().setSelectedItem(items.size() > 0 ? items.get(0) : null);
     }
 
-    @Override
-    public <T> NodeInfo<?> getNodeInfo(T parent) {
-        if (parent != null) {
-            // Not a root node
-            TagModel parentModel = (TagModel) parent;
-            List<TagModel> children = parentModel.getChildren();
-            return new DefaultNodeInfo<>(new ListDataProvider<>(children), cell, selectionModel, selectionManager, null);
-        } else {
-            // This is the root node
-            return new DefaultNodeInfo<>(getDataProvider(), cell, selectionModel, selectionManager, null);
-        }
-    }
-
-    @Override
-    public boolean isLeaf(Object value) {
-        if (value != null) {
-            TagModel itemModel = (TagModel) value;
-            List<TagModel> children = itemModel.getChildren();
-
-            if (children != null) {
-                return children.isEmpty();
-            }
-        }
-
-        return false;
-    }
-
     public SingleSelectionModel<TagModel> getSelectionModel() {
         return selectionModel;
     }
@@ -166,10 +129,4 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
             return super.getConfirmModelPopup(source, lastExecutedCommand);
         }
     }
-
-    @Override
-    public void setElementIdPrefix(String elementIdPrefix) {
-        cell.setElementIdPrefix(elementIdPrefix);
-    }
-
 }

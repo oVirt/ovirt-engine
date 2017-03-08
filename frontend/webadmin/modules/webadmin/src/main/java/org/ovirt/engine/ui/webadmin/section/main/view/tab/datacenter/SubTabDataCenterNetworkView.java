@@ -30,7 +30,7 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<Storage
     public SubTabDataCenterNetworkView(SearchableDetailModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -59,24 +59,27 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<Storage
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.descriptionNetwork(), "400px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.newNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.editNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.removeNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
     }
 
 }

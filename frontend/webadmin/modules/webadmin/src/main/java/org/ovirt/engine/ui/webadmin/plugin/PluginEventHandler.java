@@ -5,8 +5,6 @@ import java.util.logging.Logger;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
-import org.ovirt.engine.ui.webadmin.plugin.entity.SystemTreeItemObject;
-import org.ovirt.engine.ui.webadmin.plugin.entity.TagObject;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsArrayHelper;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
@@ -24,8 +22,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSel
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VolumeSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.system.MessageEventData;
 import org.ovirt.engine.ui.webadmin.system.MessageReceivedEvent;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeSelectionChangeEvent;
-import org.ovirt.engine.ui.webadmin.uicommon.model.TagActivationChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -95,15 +91,6 @@ public class PluginEventHandler {
                 event -> manager.invokePluginsNow("EventSelectionChange", //$NON-NLS-1$
                         EntityObject.arrayFrom(event.getSelectedItems())));
 
-        // System tree item selection change
-        eventBus.addHandler(SystemTreeSelectionChangeEvent.getType(), event -> {
-            if (event.getSelectedItem() != null) {
-                manager.invokePluginsNow("SystemTreeSelectionChange", //$NON-NLS-1$
-                        JsArrayHelper.createMixedArray(
-                                SystemTreeItemObject.from(event.getSelectedItem())));
-            }
-        });
-
         // Cross-window messaging
         eventBus.addHandler(MessageReceivedEvent.getType(), event -> {
             final MessageEventData eventData = event.getData();
@@ -121,10 +108,12 @@ public class PluginEventHandler {
                     });
         });
 
-        // Tag Activation Change Event.
-        eventBus.addHandler(TagActivationChangeEvent.getType(),
-                event -> manager.invokePluginsNow("TagActivationChange", //$NON-NLS-1$
-                        TagObject.activeTagArray(event.getActiveTags())));
+// TODO: This needs to be commented out until the Dashboard doesn't try to hide itself when tags are selected, all
+// kinds of bad things happen if we don't.
+//        // Tag Activation Change Event.
+//        eventBus.addHandler(TagActivationChangeEvent.getType(),
+//                event -> manager.invokePluginsNow("TagActivationChange", //$NON-NLS-1$
+//                        TagObject.activeTagArray(event.getActiveTags())));
 
     }
 

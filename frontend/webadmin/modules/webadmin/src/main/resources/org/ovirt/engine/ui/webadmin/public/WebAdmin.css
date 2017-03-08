@@ -101,8 +101,9 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
     color: #888888;
 }
 
+/* Changed glass pane z-index to match bootstrap zindex-modal-background */
 .gwt-PopupPanelGlass {
-    z-index: 1;
+    z-index: 1040;
 }
 
 /* right click menu spacing */

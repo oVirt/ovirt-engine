@@ -15,8 +15,9 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.DetailsTransitionHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabTableView;
+import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -28,7 +29,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventListModel<Void>>
+public class MainTabEventView extends AbstractMainTabWithDetailsTableView<AuditLog, EventListModel<Void>>
     implements MainTabEventPresenter.ViewDef {
 
     interface ViewUiBinder extends UiBinder<Widget, MainTabEventView> {
@@ -43,6 +44,8 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
 
     @UiField
     SimplePanel tablePanel;
+
+    protected DetailsTransitionHandler<AuditLog> detailsTransitionHandler;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -144,6 +147,11 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
                 return getMainModel().getDetailsCommand();
             }
         });
+    }
+
+    @Override
+    public void setDetailPlaceTransitionHandler(DetailsTransitionHandler<AuditLog> handler) {
+        this.detailsTransitionHandler = handler;
     }
 
 }

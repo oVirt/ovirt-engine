@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -20,12 +21,12 @@ import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMachinePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -40,6 +41,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -47,7 +49,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
-public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableView<VM, VmListModel<Void>> implements MainTabVirtualMachinePresenter.ViewDef {
+public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableView<VM, VmListModel<Void>>
+    implements MainTabVirtualMachinePresenter.ViewDef {
 
     private final EventBus eventBus;
 
@@ -55,7 +58,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
@@ -82,7 +84,15 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         typeColumn.makeSortable(VmConditionFieldAutoCompleter.TYPE);
         getTable().addColumn(typeColumn, constants.empty(), "60px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
+        AbstractTextColumn<VM> nameColumn = new AbstractLinkColumn<VM>(new FieldUpdater<VM, String>() {
+
+            @Override
+            public void update(int index, VM vm, String value) {
+                //The link was clicked, now fire an event to switch to details.
+                transitionHandler.handlePlaceTransition();
+            }
+
+        }) {
             @Override
             public String getValue(VM object) {
                 return object.getName();
@@ -96,12 +106,22 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> hostColumn = new AbstractTextColumn<VM>() {
+        AbstractTextColumn<VM> hostColumn = new AbstractLinkColumn<VM>(new FieldUpdater<VM, String>(){
+
+            @Override
+            public void update(int index, VM vm, String value) {
+                //The link was clicked, now find cluster and switch to it.
+                getModelProvider().getModel().setSearchString("vms: host = " + value + " and status=up"); // $NON-NLS-1$ $NON-NLS-2$
+                getModelProvider().getModel().search();
+            }
+
+        }) {
             @Override
             public String getValue(VM object) {
                 return object.getRunOnVdsName();
             }
         };
+
         hostColumn.makeSortable(VmConditionFieldAutoCompleter.HOST);
         getTable().addColumn(hostColumn, constants.hostVm(), "120px"); //$NON-NLS-1$
 
@@ -124,12 +144,21 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         fqdnColumn.makeSortable(VmConditionFieldAutoCompleter.FQDN);
         getTable().addColumn(fqdnColumn, constants.fqdn(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> clusterColumn = new AbstractTextColumn<VM>() {
+        AbstractTextColumn<VM> clusterColumn = new AbstractLinkColumn<VM>(new FieldUpdater<VM, String>(){
+
+            @Override
+            public void update(int index, VM vm, String value) {
+                //The link was clicked, now find cluster and switch to it.
+                getModelProvider().getModel().setSearchString("vms: cluster = " + value); // $NON-NLS-1$
+            }
+
+        }) {
             @Override
             public String getValue(VM object) {
                 return object.getClusterName();
             }
         };
+
         clusterColumn.makeSortable(VmConditionFieldAutoCompleter.CLUSTER);
         getTable().addColumn(clusterColumn, constants.clusterVm(), "120px"); //$NON-NLS-1$
 
@@ -261,47 +290,58 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         descriptionColumn.makeSortable(VmConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descriptionColumn, constants.description(), "150px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newVm()) {
+        //
+        // Buttons/menu items
+        //
+        addButtonToActionGroup(
+                getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newVm()) {
 
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewVmCommand();
             }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.restoreVm()) {
+        }));
+
+        addMenuItemToKebab(
+                getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.restoreVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getImportVmCommand();
             }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.editVm()) {
+        }));
+        addButtonToActionGroup(
+                getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.editVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.removeVm()) {
+        }));
+        addMenuItemToKebab(
+                getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.removeVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.cloneVm()) {
+        }));
+        addMenuItemToKebab(
+                getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.cloneVm()) {
 
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCloneVmCommand();
             }
-        });
-        // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.runOnceVm()) {
+        }));
+        addDividerToKebab();
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.runOnceVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRunOnceCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.runVm(),
-                resources.runVmImage(), resources.runVmDisabledImage()) {
+                IconType.PLAY) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRunCommand();
@@ -311,9 +351,10 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             public SafeHtml getTooltip() {
                 return SafeHtmlUtils.fromSafeConstant(constants.runVm());
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
-                resources.suspendVmImage(), resources.suspendVmDisabledImage()) {
+                IconType.MOON_O) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getPauseCommand();
@@ -323,9 +364,10 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             public SafeHtml getTooltip() {
                 return SafeHtmlUtils.fromSafeConstant(constants.suspendVm());
             }
-        });
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(),
-                resources.stopVmImage(), resources.stopVmDisabledImage()) {
+        }));
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(), IconType.STOP
+                ) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getShutdownCommand();
@@ -335,8 +377,9 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             public SafeHtml getTooltip() {
                 return SafeHtmlUtils.fromSafeConstant(constants.shutDownVm());
             }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.powerOffVm(), CommandLocation.OnlyFromContext) {
+        }));
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.powerOffVm(), IconType.POWER_OFF) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopCommand();
@@ -346,9 +389,10 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             public SafeHtml getTooltip() {
                 return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.rebootVm(),
-                resources.rebootImage(), resources.rebootDisabledImage()) {
+                IconType.REPEAT) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRebootCommand();
@@ -358,7 +402,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             public SafeHtml getTooltip() {
                 return SafeHtmlUtils.fromSafeConstant(constants.rebootVm());
             }
-        });
+        }));
 
         List<ActionButtonDefinition<VM>> consoleOptionsSubActions = new LinkedList<>();
         consoleOptionsSubActions.add(new UiCommandButtonDefinition<VM>(eventBus, constants.consoleOptions()) {
@@ -369,8 +413,9 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         });
 
         // TODO: separator
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.consoleVm(),
-                resources.consoleImage(), resources.consoleDisabledImage()) {
+                IconType.DESKTOP) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getConsoleConnectCommand();
@@ -380,75 +425,89 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             public SafeHtml getTooltip() {
                 return SafeHtmlUtils.fromSafeConstant(constants.consoleVm());
             }
-        }, new DropdownActionButton<>(consoleOptionsSubActions, () -> getMainModel().getSelectedItems()));
+        }, new DropdownActionButton<>(consoleOptionsSubActions, new DropdownActionButton.SelectedItemsProvider<VM>() {
+            @Override
+            public List<VM> getSelectedItems() {
+                return getMainModel().getSelectedItems();
+            }
+        }, true, IconType.DESKTOP)));
 
-        // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.consoleOptions(),
+        addDividerToKebab();
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.consoleOptions(),
                 CommandLocation.OnlyFromContext) { //$NON-NLS-1$
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditConsoleCommand();
             }
-        });
-        // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.migrateVm()) {
+        }));
+        addDividerToKebab();
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.migrateVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getMigrateCommand();
             }
-        });
-        // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.cancelMigrationVm()) {
+        }));
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.cancelMigrationVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCancelMigrateCommand();
             }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.cancelConvertVm()) {
+        }));
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.cancelConvertVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCancelConvertCommand();
             }
-        });
-        // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.makeTemplateVm()) {
+        }));
+        addDividerToKebab();
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.makeTemplateVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewTemplateCommand();
             }
-        });
-        // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.exportVm()) {
+        }));
+        addDividerToKebab();
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.exportVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getExportCommand();
             }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.createSnapshotVM()) {
+        }));
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.createSnapshotVM()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCreateSnapshotCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.changeCdVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getChangeCdCommand();
             }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.assignTagsVm()) {
+        }));
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<VM>(constants.assignTagsVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getAssignTagsCommand();
             }
-        });
+        }));
 
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.guideMeVm(),
-                resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminImageButtonDefinition<VM>(constants.guideMeVm(),
+                IconType.SUPPORT, true) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getGuideCommand();
             }
-        });
+        }));
     }
 }

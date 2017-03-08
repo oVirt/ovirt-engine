@@ -29,9 +29,5 @@ public abstract class AbstractSubTabPanelView extends AbstractTabPanelView imple
 
     @Override
     public void setUiHandlers(TabWidgetHandler uiHandlers) {
-        AbstractTabPanel panel = getTabPanel();
-        if (panel instanceof SimpleTabPanel) {
-            ((SimpleTabPanel) getTabPanel()).setUiHandlers(uiHandlers);
-        }
     }
 }

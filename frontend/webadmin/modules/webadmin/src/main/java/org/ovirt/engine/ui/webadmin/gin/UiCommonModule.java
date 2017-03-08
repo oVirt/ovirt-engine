@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.gin;
 
 import org.ovirt.engine.ui.common.gin.BaseUiCommonModule;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
@@ -47,7 +46,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import com.google.inject.Singleton;
@@ -87,9 +85,6 @@ public class UiCommonModule extends BaseUiCommonModule {
         install(new SessionModule());
 
         bindCommonModels();
-
-        // SystemTreeModel
-        bind(SystemTreeModelProvider.class).asEagerSingleton();
 
         // BookmarkListModel
         bind(BookmarkModelProvider.class).asEagerSingleton();
@@ -135,7 +130,6 @@ public class UiCommonModule extends BaseUiCommonModule {
     }
 
     void bindCommonModels() {
-        bind(CommonModel.class).in(Singleton.class);
         bind(PermissionListModel.class).in(Singleton.class);
         bind(RoleListModel.class).in(Singleton.class);
         bind(RolePermissionListModel.class).in(Singleton.class);

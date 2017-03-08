@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
@@ -70,10 +69,9 @@ public class ClusterModule extends AbstractGinModule {
             final Provider<MultipleHostsPopupPresenterWidget> addMultipleHostsPopupProvider,
             final Provider<SharedMacPoolPopupPresenterWidget> macPoolPopupProvider,
             final Provider<ClusterListModel<Void>> clusterProvider,
-            final Provider<CommonModel> commonModelProvider,
             final Provider<ClusterWarningsPopupPresenterWidget> clusterWarningsPopupProvider) {
         MainTabModelProvider<Cluster, ClusterListModel<Void>> result = new MainTabModelProvider<Cluster, ClusterListModel<Void>>
-                (eventBus, defaultConfirmPopupProvider, commonModelProvider) {
+                (eventBus, defaultConfirmPopupProvider) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterListModel<Void> source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -323,7 +321,6 @@ public class ClusterModule extends AbstractGinModule {
         // Cpu Profile permission list model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, CpuProfileListModel, PermissionListModel<CpuProfile>>>(){})
             .to(new TypeLiteral<PermissionModelProvider<CpuProfile, CpuProfileListModel>>(){}).in(Singleton.class);
-
     }
 
 }

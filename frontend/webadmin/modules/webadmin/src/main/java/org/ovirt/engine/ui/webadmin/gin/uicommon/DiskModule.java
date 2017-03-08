@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -52,12 +51,10 @@ public class DiskModule extends AbstractGinModule {
             final Provider<DisksAllocationPopupPresenterWidget> moveOrCopyPopupProvider,
             final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider,
             final Provider<ImportExportImagePopupPresenterWidget> importExportImagePopupPresenterWidgetProvider,
-            final Provider<DiskListModel> modelProvider,
-            final Provider<CommonModel> commonModelProvider) {
+            final Provider<DiskListModel> modelProvider) {
 
         MainTabModelProvider<Disk, DiskListModel> result =
-                new MainTabModelProvider<Disk, DiskListModel>(eventBus, defaultConfirmPopupProvider,
-                        commonModelProvider) {
+                new MainTabModelProvider<Disk, DiskListModel>(eventBus, defaultConfirmPopupProvider) {
 
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DiskListModel source,
@@ -125,7 +122,6 @@ public class DiskModule extends AbstractGinModule {
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DiskListModel, PermissionListModel<Disk>>>(){})
             .to(new TypeLiteral<PermissionModelProvider<Disk, DiskListModel>>(){}).in(Singleton.class);
-
     }
 
 }

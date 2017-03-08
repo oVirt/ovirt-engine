@@ -4,10 +4,10 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
     xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
-    xmlns:f="urn:import:org.ovirt.engine.ui.webadmin.widget.footer"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels"
-    xmlns:c="urn:import:org.ovirt.engine.ui.common.widget">
+    xmlns:c="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
@@ -214,12 +214,6 @@
             background-color: #F6F6F6;
         }
 
-        .statusPanel{
-            background-color: #F6F6F6;
-            height: 30px;
-            border-bottom: 1px solid #C5C5C5;
-        }
-
         .errorPanel{
             background-color: pink;
             height: 30px;
@@ -271,10 +265,10 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="900px" height="685px">
+    <d:SimpleDialogPanel width="900px" height="715px">
         <d:content>
             <g:HTMLPanel>
-                <f:StatusPanel ui:field="statusPanel" />
+                <b:Alert ui:field="statusPanel" />
                 <g:HorizontalPanel width="100%" height="77%" verticalAlignment="ALIGN_TOP" addStyleNames="ts10">
                     <g:Cell width="69%" height="100%">
                         <g:FlowPanel styleName="{style.fullWidth}">

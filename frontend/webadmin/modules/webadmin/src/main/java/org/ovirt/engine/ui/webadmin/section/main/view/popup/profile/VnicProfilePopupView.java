@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.profile;
 
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -87,6 +88,10 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     @Path("network.selectedItem")
     ListModelListBoxEditor<Network> networkEditor;
 
+    @UiField(provided = true)
+    @Path("dataCenters.selectedItem")
+    ListModelListBoxEditor<StoragePool> dataCenterEditor;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -99,6 +104,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
         migratableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         portMirroringEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
+        dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
         networkQoSEditor = new ListModelListBoxEditor<>(new NameRenderer<NetworkQoS>());
         networkFilterEditor = new ListModelListBoxEditor<>(new NetworkFilterRenderer(constants));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

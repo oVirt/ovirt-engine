@@ -2,18 +2,19 @@ package org.ovirt.engine.ui.webadmin.widget.action;
 
 import org.ovirt.engine.ui.common.widget.action.ImageUiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+
+import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.ImageResource;
 
 public abstract class WebAdminImageButtonDefinition<T> extends ImageUiCommandButtonDefinition<T> {
 
-    public WebAdminImageButtonDefinition(String title, ImageResource enabledImage, ImageResource disabledImage) {
-        super(getEventBus(), title, enabledImage, disabledImage);
+    public WebAdminImageButtonDefinition(String title, HasCssName icon) {
+        super(getEventBus(), title, icon);
     }
 
-    public WebAdminImageButtonDefinition(String title, ImageResource enabledImage, ImageResource disabledImage,
+    public WebAdminImageButtonDefinition(String title, HasCssName icon,
             boolean showTitle) {
-        super(getEventBus(), title, enabledImage, disabledImage, showTitle, false);
+        super(getEventBus(), title, icon, showTitle, false);
     }
 
     static EventBus getEventBus() {

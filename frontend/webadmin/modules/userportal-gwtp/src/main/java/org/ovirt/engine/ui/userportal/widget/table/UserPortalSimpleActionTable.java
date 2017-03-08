@@ -45,10 +45,4 @@ public class UserPortalSimpleActionTable<T> extends SimpleActionTable<T> {
     protected String getBarPanelStyleName() {
         return style.obrand_mainBarPanel();
     }
-
-    @Override
-    protected String getTableContainerStyleName() {
-        return style.mainContentPanel();
-    }
-
 }

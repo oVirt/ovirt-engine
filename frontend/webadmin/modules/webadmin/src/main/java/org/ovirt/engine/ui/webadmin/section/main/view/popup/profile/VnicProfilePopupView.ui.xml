@@ -10,66 +10,63 @@
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
     <ui:style>
-        .container {
-            width: 100%;
-        }
-
         .firstRow {
             padding-top: 15px;
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="575px" height="500px">
+    <d:SimpleDialogPanel width="575px" height="630px">
         <d:content>
-            <g:ScrollPanel>
-                <b:Container addStyleNames="{style.container}">
-                    <b:Row addStyleNames="{style.firstRow}">
-                        <e:ListModelListBoxEditor ui:field="networkEditor" label="{constants.networkVnicProfile}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                    </b:Row>
-                    <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.nameVnicProfile}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                    </b:Row>
-                    <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.descriptionVnicProfile}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                    </b:Row>
-                    <b:Row>
-                        <e:ListModelListBoxEditor ui:field="networkQoSEditor" label="{constants.profileQoSInstanceTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                    </b:Row>
-                    <b:Row>
-                        <e:ListModelListBoxEditor ui:field="networkFilterEditor" label="{constants.profileNetworkFilterLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                    </b:Row>
-                    <b:Row>
-                        <b:Column size="SM_12">
-                            <ge:EntityModelCheckBoxEditor ui:field="passthroughEditor" label="{constants.passthorughVnicProfile}" usePatternFly="true" />
-                        </b:Column>
-                    </b:Row>
-                    <b:Row>
-                        <b:Column size="SM_12">
-                            <ge:EntityModelCheckBoxEditor ui:field="migratableEditor" label="{constants.migratableVnicProfile}" usePatternFly="true" />
-                        </b:Column>
-                    </b:Row>
-                    <b:Row>
-                        <b:Column size="SM_12">
-                            <ge:EntityModelCheckBoxEditor ui:field="portMirroringEditor" label="{constants.portMirroringVnicProfile}" usePatternFly="true" />
-                        </b:Column>
-                    </b:Row>
-                    <b:Row>
-                        <b:Column size="SM_12">
-                            <g:Label text="{constants.customPropertiesVnicProfile}" />
-                        </b:Column>
-                    </b:Row>
-                    <b:Row>
-                        <b:Column size="SM_12">
-                            <k:KeyValueWidget ui:field="customPropertiesSheetEditor" usePatternFly="true" />
-                        </b:Column>
-                    </b:Row>
-                    <b:Row>
-                        <b:Column size="SM_12">
-                            <ge:EntityModelCheckBoxEditor ui:field="publicUseEditor" label="{constants.publicUseVnicProfile}" usePatternFly="true" />
-                        </b:Column>
-                    </b:Row>
-                </b:Container>
-            </g:ScrollPanel>
+            <b:Container fluid="true">
+                <b:Row addStyleNames="{style.firstRow}">
+                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.clusterPopupDataCenterLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="networkEditor" label="{constants.networkVnicProfile}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.nameVnicProfile}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.descriptionVnicProfile}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="networkQoSEditor" label="{constants.profileQoSInstanceTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="networkFilterEditor" label="{constants.profileNetworkFilterLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="passthroughEditor" label="{constants.passthorughVnicProfile}" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="migratableEditor" label="{constants.migratableVnicProfile}" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="portMirroringEditor" label="{constants.portMirroringVnicProfile}" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:Label text="{constants.customPropertiesVnicProfile}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <k:KeyValueWidget ui:field="customPropertiesSheetEditor" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="publicUseEditor" label="{constants.publicUseVnicProfile}" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
         </d:content>
     </d:SimpleDialogPanel>
 

@@ -66,18 +66,6 @@ public class WebAdminApplicationPlaces {
     public static final String dataCenterQuotaSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
             + "quota"; //$NON-NLS-1$
 
-    public static final String dataCenterNetworkQoSSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
-            + "network_qos"; //$NON-NLS-1$
-
-    public static final String dataCenterStorageQosSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
-            + "storage_qos"; //$NON-NLS-1$
-
-    public static final String dataCenterCpuQosSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
-            + "cpu_qos"; //$NON-NLS-1$
-
-    public static final String dataCenterHostNetworkQosSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
-            + "host_network_qos"; //$NON-NLS-1$
-
     public static final String dataCenterPermissionSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
 
@@ -221,17 +209,8 @@ public class WebAdminApplicationPlaces {
     public static final String hostGeneralSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "general"; //$NON-NLS-1$
 
-    public static final String hostGeneralSoftwareSubTabPlace = hostGeneralSubTabPlace
-            + "_software"; //$NON-NLS-1$
-
-    public static final String hostGeneralHardwareSubTabPlace = hostGeneralSubTabPlace
-            + "_hardware"; //$NON-NLS-1$
-
-    public static final String hostGeneralInfoSubTabPlace = hostGeneralSubTabPlace
-            + "_info"; //$NON-NLS-1$
-
-    public static final String hostGeneralErrataSubTabPlace = hostGeneralSubTabPlace
-            + "_errata"; //$NON-NLS-1$
+    public static final String hostGeneralErrataSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
+            + "errata"; //$NON-NLS-1$
 
     public static final String hostVmSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "virtual_machines"; //$NON-NLS-1$

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification.Style">
+        .container {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            /* To match boostrap */
+            z-index: 1060;
+            display: inline-grid;
+        }
+    </ui:style>
+
+    <g:FlowPanel ui:field="widgetWrapper" addStyleNames="toast-pf alert alert-dismissable">
+        <b:Button ui:field="closeButton" addStyleNames="close" />
+        <g:HTMLPanel tag="SPAN" ui:field="icon" addStyleNames="pficon pficon-ok" />
+        <g:HTMLPanel tag="SPAN" ui:field="label" />
+    </g:FlowPanel>
+
+</ui:UiBinder>

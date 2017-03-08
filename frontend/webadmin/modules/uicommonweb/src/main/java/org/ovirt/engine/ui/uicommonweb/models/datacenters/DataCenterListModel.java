@@ -39,7 +39,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
@@ -59,7 +58,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, StoragePool> implements ISupportSystemTreeContext {
 
@@ -150,11 +148,8 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
     final DataCenterQuotaListModel quotaListModel;
     final DataCenterIscsiBondListModel iscsiBondListModel;
 
-    private final Provider<CommonModel> commonModelProvider;
-
     @Inject
-    public DataCenterListModel(Provider<CommonModel> commonModelProvider,
-            final DataCenterIscsiBondListModel dataCenterIscsiBondListModel,
+    public DataCenterListModel(final DataCenterIscsiBondListModel dataCenterIscsiBondListModel,
             final DataCenterQuotaListModel dataCenterQuotaListModel,
             final DataCenterStorageListModel dataCenterStorageListModel,
             final DataCenterNetworkListModel dataCenterNetworkListModel,
@@ -165,7 +160,6 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             final DataCenterCpuQosListModel dataCenterCpuQosListModel,
             final PermissionListModel<StoragePool> permissionListModel,
             final DataCenterEventListModel dataCenterEventListModel) {
-        this.commonModelProvider = commonModelProvider;
         iscsiBondListModel = dataCenterIscsiBondListModel;
         quotaListModel = dataCenterQuotaListModel;
         setDetailList(dataCenterStorageListModel, dataCenterNetworkListModel, dataCenterClusterListModel,
@@ -676,12 +670,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                     },
                 this);
         } else {
-            // Update the Quota at the corresponding DC object at the system tree.
-            // The DC Quota value from the tree is used at MainTabDiskView.
-            SystemTreeItemModel itemModel = commonModelProvider.get().getSystemTree().getItemById(dataCenter.getId());
-            itemModel.setEntity(dataCenter);
-
-            // Otherwise use async action in order to close dialog immediately.
+            // Use async action in order to close dialog immediately.
             Frontend.getInstance().runMultipleAction(VdcActionType.UpdateStoragePool,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(
                     new StoragePoolManagementParameter(dataCenter))

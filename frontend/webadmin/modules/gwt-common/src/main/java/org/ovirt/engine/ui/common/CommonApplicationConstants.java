@@ -963,6 +963,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String loadingTaskTree();
 
+    String completedTask();
+
+    String startedTask();
+
     String shareable();
 
     String readOnly();

@@ -30,7 +30,7 @@ public class SubTabStorageRegisterDiskImageView extends AbstractSubTabTableView<
     public SubTabStorageRegisterDiskImageView(SearchableDetailModelProvider<Disk, StorageListModel, StorageRegisterDiskImageListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -60,12 +60,13 @@ public class SubTabStorageRegisterDiskImageView extends AbstractSubTabTableView<
         getTable().ensureColumnVisible(
                 DisksViewColumns.getDescriptionColumn(null), constants.descriptionDisk(), true, "200px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.registerDiskImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRegisterCommand();
             }
-        });
+        }));
 
         getTable().showRefreshButton();
     }

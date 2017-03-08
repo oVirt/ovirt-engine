@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template;
 
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
-import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPanelPresenter;
 
 import com.google.gwt.event.shared.EventBus;
@@ -37,8 +36,8 @@ public class TemplateSubTabPanelPresenter extends
 
     @Inject
     public TemplateSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            TemplateMainTabSelectedItems selectedItems, ScrollableTabBarPresenterWidget tabBar) {
-        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems, tabBar);
+            TemplateMainTabSelectedItems selectedItems) {
+        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <g:FlowPanel ui:field="container">
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:FlowPanel addStyleNames="progress-description">
+                    <g:HTMLPanel tag="SPAN" ui:field="statusIcon"></g:HTMLPanel>
+                    <g:HTMLPanel tag="SPAN" ui:field="label"></g:HTMLPanel>
+                </g:FlowPanel>
+                <b:Progress ui:field="jobProgress" addStyleNames="progress-label-top-right">
+                    <b:ProgressBar ui:field="jobProgressBar" />
+                </b:Progress>
+            </b:Column>
+        </b:Row>
+    </g:FlowPanel>
+</ui:UiBinder>

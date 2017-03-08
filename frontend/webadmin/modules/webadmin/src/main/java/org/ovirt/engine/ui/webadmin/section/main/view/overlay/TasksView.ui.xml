@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+    <b:Container fluid="true">
+        <b:PageHeader text="{constants.tasksEventFooter}" />
+        <b:FormGroup>
+            <b:Row>
+                <b:Column size="SM_1" offset="SM_11">
+                    <b:Button text="{constants.closeText}" ui:field="closeButton" addStyleNames="pull-right" />
+                </b:Column>
+                <b:Column size="SM_10" ui:field="emptyTasksColumn">
+                    <g:HTMLPanel>
+                        <H1>No tasks found</H1>
+                    </g:HTMLPanel>
+                </b:Column>
+            </b:Row>
+        </b:FormGroup>
+        <b:FormGroup ui:field="tasksGroup">
+        </b:FormGroup>
+    </b:Container>
+</ui:UiBinder>

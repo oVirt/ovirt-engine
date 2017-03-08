@@ -51,7 +51,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         viewRadioGroup.setSelectedValue(NetworkVmFilter.running);
         viewRadioGroup.addStyleName("stnvmv_radioGroup_pfly_fix"); //$NON-NLS-1$
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -229,12 +229,13 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         handleRadioButtonClick(null);
         initSorting();
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VmNetworkInterface, VM>>(constants.removeInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
 
     }
 

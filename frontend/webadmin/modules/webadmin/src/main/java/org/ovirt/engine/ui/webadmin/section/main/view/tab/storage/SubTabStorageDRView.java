@@ -63,7 +63,7 @@ public class SubTabStorageDRView extends AbstractSubTabTableView<StorageDomain, 
         errorMessagePanel.setType(Type.WARNING);
 
         initTable();
-        tablePanel.add(getTable());
+        tablePanel.add(getTableContainer());
     }
 
     @Override
@@ -99,19 +99,21 @@ public class SubTabStorageDRView extends AbstractSubTabTableView<StorageDomain, 
                 };
         getTable().addColumn(scheduleColumn, constants.scheduleLabel(), "300px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomainDR>(constants.newDRSetup()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomainDR>(constants.editDRSetup()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
-        });
+        }));
     }
 
     @Override

@@ -2,12 +2,10 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.presenter.AbstractTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
-import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.UpdateMainContentLayout.ContentDisplayType;
+
 import com.google.gwt.event.shared.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
@@ -30,9 +28,6 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
 
     protected final PlaceManager placeManager;
     protected final MainModelProvider<T, M> modelProvider;
-
-    @Inject
-    private Provider<CommonModel> commonModelProvider;
 
     public AbstractMainTabPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, MainModelProvider<T, M> modelProvider) {
@@ -67,16 +62,11 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
             getProxy().manualReveal(this);
         } else {
             getProxy().manualRevealFailed();
-            revealActiveMainModelPresenter();
         }
     }
 
     protected M getModel() {
         return modelProvider.getModel();
-    }
-
-    void revealActiveMainModelPresenter() {
-        MainModelSelectionChangeEvent.fire(this, commonModelProvider.get().getSelectedItem());
     }
 
     /**
@@ -88,7 +78,8 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
      * Controls the sub tab panel visibility.
      */
     protected void setSubTabPanelVisible(boolean subTabPanelVisible) {
-        UpdateMainContentLayoutEvent.fire(this, subTabPanelVisible);
+        UpdateMainContentLayoutEvent.fire(this, subTabPanelVisible ? ContentDisplayType.SUB : ContentDisplayType.MAIN,
+                null);
     }
 
 }

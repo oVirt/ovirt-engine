@@ -60,7 +60,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
         defaultRouteImage = safeHtmlFromTrustedString(resources.defaultRouteNetwork());
 
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     private SafeHtml safeHtmlFromTrustedString(ImageResource resource) {
@@ -108,26 +108,29 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
         descColumn.makeSortable();
         getTable().addColumn(descColumn, constants.descriptionNetwork(), "400px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.addNetworkNetwork()) {
+        addButtonToActionGroup(
+                getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.addNetworkNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewNetworkCommand();
             }
-        });
+        }));
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.assignDetatchNetworksNework()) {
+        addButtonToActionGroup(
+                getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.assignDetatchNetworksNework()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getManageCommand();
             }
-        });
+        }));
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.setAsDisplayNetwork()) {
+        addButtonToActionGroup(
+                getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.setAsDisplayNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getSetAsDisplayCommand();
             }
-        });
+        }));
     }
 
     private SafeHtml thisOrEmptyImage(boolean useFollowingImage, SafeHtml givenImage) {

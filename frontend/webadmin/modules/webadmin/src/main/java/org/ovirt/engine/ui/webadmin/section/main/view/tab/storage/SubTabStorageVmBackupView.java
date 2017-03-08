@@ -29,7 +29,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AbstractDataProvider;
@@ -38,6 +37,7 @@ import com.google.inject.Inject;
 
 public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDomain, VM, StorageListModel, VmBackupModel>
         implements SubTabStorageVmBackupPresenter.ViewDef {
+    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabStorageVmBackupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -48,9 +48,6 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
     }
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
-
-    @UiField
-    HorizontalPanel mainContainer;
 
     @UiField
     SimplePanel vmTableContainer;
@@ -70,11 +67,9 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         initApplicationsTable();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        vmTableContainer.add(getTable());
+        vmTableContainer.add(getTableContainer());
+        getTable().removeStyleName(OBRAND_MAIN_TAB);
         applicationsTableContainer.add(applicationsTable);
-
-        mainContainer.setCellWidth(vmTableContainer, "50%"); //$NON-NLS-1$
-        mainContainer.setCellWidth(applicationsTableContainer, "50%"); //$NON-NLS-1$
     }
 
     @Override
@@ -166,19 +161,21 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         exportDateColumn.makeSortable(Comparator.comparing(VM::getExportDate));
         getTable().addColumn(exportDateColumn, constants.exportDateVm(), "95px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.restoreVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRestoreCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.removeVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
 
         getTable().showRefreshButton();
     }
@@ -198,7 +195,6 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         };
 
         applicationsTable.addColumn(nameColumn, constants.installedAppsVm());
-        applicationsTable.setWidth("100%"); //$NON-NLS-1$
         applicationsTable.setRowData(new ArrayList<String>());
 
         getDetailModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {

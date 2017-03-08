@@ -42,6 +42,10 @@
     background-color: #eee;
 }
 
+.cellTableSelectedRow a {
+    color: white;
+}
+
 .cellTableSelectedRow {
     background-color: #C3D0E0;
     color: white;

@@ -40,7 +40,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
     public SubTabStorageTemplateBackupView(SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -147,19 +147,21 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
         exportDateColumn.makeSortable(Comparator.comparing(VmTemplate::getExportDate));
         getTable().addColumn(exportDateColumn, constants.exportDateTemplate(), "160px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.restoreVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRestoreCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.removeTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
 
         getTable().showRefreshButton();
     }

@@ -1,11 +1,16 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
+import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
+import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.widget.tab.SimpleTabPanel;
 import com.google.gwt.core.client.GWT;
+import com.google.inject.Inject;
 
 public class NetworkSubTabPanelView extends AbstractSubTabPanelView implements NetworkSubTabPanelPresenter.ViewDef {
 
@@ -13,9 +18,11 @@ public class NetworkSubTabPanelView extends AbstractSubTabPanelView implements N
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final SimpleTabPanel tabPanel = new SimpleTabPanel();
+    private final SimpleTabPanel tabPanel;
 
-    public NetworkSubTabPanelView() {
+    @Inject
+    public NetworkSubTabPanelView(OvirtBreadCrumbs<NetworkView, NetworkListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+        tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }
 

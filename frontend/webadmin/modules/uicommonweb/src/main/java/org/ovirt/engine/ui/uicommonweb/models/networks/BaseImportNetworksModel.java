@@ -33,14 +33,15 @@ import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 
@@ -49,21 +50,18 @@ public class BaseImportNetworksModel extends Model {
     private static final String CMD_IMPORT = "OnImport"; //$NON-NLS-1$
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
 
-
     private final SearchableListModel sourceListModel;
-
-    private final StoragePool treeSelectedDc;
 
     private final ListModel<Provider<?>> providers = new ListModel<>();
     private final ListModel<ExternalNetwork> providerNetworks = new ListModel<>();
     private final ListModel<ExternalNetwork> importedNetworks = new ListModel<>();
     private final ListModel<String> errors = new ListModel<>();
+    private final DataCenterListModel dataCenterListModel;
 
     private final UICommand addImportCommand = new UICommand(null, this);
     private final UICommand cancelImportCommand = new UICommand(null, this);
 
     private Map<Guid, Collection<Cluster>> dcClusters;
-    private final com.google.inject.Provider<CommonModel> commonModelProvider;
 
     public ListModel<ExternalNetwork> getProviderNetworks() {
         return providerNetworks;
@@ -89,10 +87,9 @@ public class BaseImportNetworksModel extends Model {
         return cancelImportCommand;
     }
 
-    public BaseImportNetworksModel(SearchableListModel sourceListModel,
-            final com.google.inject.Provider<CommonModel> commonModelProvider) {
-        this.commonModelProvider = commonModelProvider;
+    public BaseImportNetworksModel(SearchableListModel sourceListModel, DataCenterListModel dataCenterListModel) {
         this.sourceListModel = sourceListModel;
+        this.dataCenterListModel = dataCenterListModel;
 
         setTitle(ConstantsManager.getInstance().getConstants().importNetworksTitle());
         setHelpTag(HelpTag.import_networks);
@@ -106,12 +103,13 @@ public class BaseImportNetworksModel extends Model {
         UICommand cancelCommand = UICommand.createCancelUiCommand(CMD_CANCEL, this); //$NON-NLS-1$
         getCommands().add(cancelCommand);
 
-        SystemTreeItemModel treeSelectedDcItem =
-                SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter,
-                        commonModelProvider.get().getSystemTree().getSelectedItem());
-        treeSelectedDc = (treeSelectedDcItem == null) ? null : (StoragePool) treeSelectedDcItem.getEntity();
+        providers.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
-        providers.getSelectedItemChangedEvent().addListener((ev, sender, args) -> onProviderChosen());
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                onProviderChosen();
+            }
+        });
 
         initProviderList();
     }
@@ -176,9 +174,9 @@ public class BaseImportNetworksModel extends Model {
 
         List<StoragePool> availableDataCenters = getAvailableDataCenters(dataCenters, attachedDataCenters);
         externalNetwork.getDataCenters().setItems(availableDataCenters);
-        StoragePool dataCenterToSelect = treeSelectedDc != null && availableDataCenters.contains(treeSelectedDc) ?
-                treeSelectedDc : Linq.firstOrNull(availableDataCenters);
-        externalNetwork.getDataCenters().setSelectedItem(dataCenterToSelect);
+        externalNetwork.getDataCenters().setSelectedItem(dataCenterListModel.getSelectedItem() != null
+                && availableDataCenters.contains(dataCenterListModel.getSelectedItem()) ?
+                        dataCenterListModel.getSelectedItem() : Linq.firstOrNull(availableDataCenters));
         return externalNetwork;
     }
 

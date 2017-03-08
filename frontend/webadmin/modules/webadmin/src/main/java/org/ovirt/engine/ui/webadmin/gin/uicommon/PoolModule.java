@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -42,11 +41,9 @@ public class PoolModule extends AbstractGinModule {
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<PoolNewPopupPresenterWidget> poolPopupProvider,
             final Provider<PoolEditPopupPresenterWidget> poolEditPopupProvider,
-            final Provider<PoolListModel> modelProvider,
-            final Provider<CommonModel> commonModelProvider) {
+            final Provider<PoolListModel> modelProvider) {
         MainTabModelProvider<VmPool, PoolListModel> result =
-                new MainTabModelProvider<VmPool, PoolListModel>(eventBus, defaultConfirmPopupProvider,
-                        commonModelProvider) {
+                new MainTabModelProvider<VmPool, PoolListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PoolListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {
@@ -118,7 +115,6 @@ public class PoolModule extends AbstractGinModule {
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, PoolListModel, PermissionListModel<VmPool>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<VmPool, PoolListModel>>(){}).in(Singleton.class);
-
     }
 
 }

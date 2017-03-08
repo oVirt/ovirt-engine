@@ -29,7 +29,7 @@ public class SubTabStorageRegisterDiskView extends AbstractSubTabTableView<Stora
     public SubTabStorageRegisterDiskView(SearchableDetailModelProvider<Disk, StorageListModel, StorageRegisterDiskListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -55,12 +55,13 @@ public class SubTabStorageRegisterDiskView extends AbstractSubTabTableView<Stora
         getTable().ensureColumnVisible(
                 DisksViewColumns.getDescriptionColumn(null), constants.descriptionDisk(), true, "200px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.registerDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRegisterCommand();
             }
-        });
+        }));
 
         getTable().showRefreshButton();
     }

@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.gwt.core.client.GWT;
@@ -87,8 +86,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
 
     @Override
     protected SimpleActionPanel<Bookmark> createActionPanel(BookmarkModelProvider modelProvider) {
-        return new SimpleActionPanel<>(modelProvider, modelProvider.getSelectionModel(),
-                ClientGinjectorProvider.getEventBus());
+        return new SimpleActionPanel<>(modelProvider, modelProvider.getSelectionModel());
     }
 
     private void addActionButtons(final BookmarkModelProvider modelProvider) {

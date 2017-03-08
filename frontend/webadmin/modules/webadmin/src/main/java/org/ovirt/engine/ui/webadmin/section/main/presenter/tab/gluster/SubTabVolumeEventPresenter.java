@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
@@ -37,7 +36,7 @@ public class SubTabVolumeEventPresenter
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> modelProvider) {
-        return new ModelBoundTabData(constants.volumeEventSubTabLabel(), 4, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.volumeEventSubTabLabel(), 4, modelProvider);
     }
 
     @Inject

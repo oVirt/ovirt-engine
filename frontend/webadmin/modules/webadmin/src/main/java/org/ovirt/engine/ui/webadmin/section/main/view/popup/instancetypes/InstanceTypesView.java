@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
+import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.instancetypes.InstanceTypeGeneralModelForm;
@@ -35,7 +36,10 @@ public class InstanceTypesView extends Composite {
     @UiField
     SimplePanel instanceTypesTabContent;
 
+    FlowPanel container = new FlowPanel();
+    PatternflyActionPanel actionPanel;
     private SimpleActionTable<InstanceType> table;
+
     private InstanceTypeGeneralModelForm detailTable;
     private SplitLayoutPanel splitLayoutPanel;
 
@@ -76,10 +80,11 @@ public class InstanceTypesView extends Composite {
         if (visible) {
             splitLayoutPanel.addSouth(detailTable, 150);
         }
-        splitLayoutPanel.add(table);
+        splitLayoutPanel.add(container);
     }
 
     private void initMainTable() {
+        actionPanel = new PatternflyActionPanel();
         table = new SimpleActionTable<>(instanceTypeModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
@@ -91,29 +96,33 @@ public class InstanceTypesView extends Composite {
         };
         table.addColumn(nameColumn, constants.instanceTypeName(), "100px"); //$NON-NLS-1$
 
-
+        actionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<InstanceType>(constants.newInstanceType()) {
             @Override
             protected UICommand resolveCommand() {
                 return instanceTypeModelProvider.getModel().getNewInstanceTypeCommand();
             }
-        });
+        }));
 
+        actionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<InstanceType>(constants.editInstanceType()) {
             @Override
             protected UICommand resolveCommand() {
                 return instanceTypeModelProvider.getModel().getEditInstanceTypeCommand();
             }
-        });
+        }));
 
+        actionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<InstanceType>(constants.removeInstanceType()) {
             @Override
             protected UICommand resolveCommand() {
                 return instanceTypeModelProvider.getModel().getDeleteInstanceTypeCommand();
             }
-        });
+        }));
 
-        splitLayoutPanel.add(table);
+        container.add(actionPanel);
+        container.add(table);
+        splitLayoutPanel.add(container);
 
         table.getSelectionModel().addSelectionChangeHandler(event -> {
             instanceTypeModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());

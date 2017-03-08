@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
     <ui:with field='dynamicMessages' type='org.ovirt.engine.ui.userportal.ApplicationDynamicMessages' />
@@ -9,57 +12,44 @@
         @external obrand_headerLogoImage;
             .obrand_headerLogoImage {
         }
+
         .topLinks {
             font-size: 11px;
+            cursor: pointer;
         }
     </ui:style>
 
     <g:HTMLPanel>
-
-        <nav class="navbar navbar-default navbar-pf" role="navigation">
-            <div class="navbar-header">
-                <!-- toggles navbar at mobile resolutions -->
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" ui:field="logoLink" href="">
-                    <g:Image styleName="{style.obrand_headerLogoImage}" url="clear.cache.gif" />
-                </a>
-            </div>
-
-            <div class="collapse navbar-collapse navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-utility">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <span class="pficon pficon-user {style.topLinks}"></span>
-                            <g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.topLinks}" /> <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <g:Anchor ui:field="optionsLink" addStyleNames="{style.topLinks}"/>
-                            </li>
-                            <li>
-                                <g:Anchor ui:field="logoutLink" addStyleNames="{style.topLinks}"/>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <g:Anchor ui:field="guideLink" addStyleNames="{style.topLinks}" />
-                    </li>
-                    <li>
-                        <g:Anchor ui:field="aboutLink" addStyleNames="{style.topLinks}" />
-                    </li>
-                </ul>
-
-                <g:HTMLPanel ui:field="mainTabBarPanel">
-                    <ul class="nav navbar-nav navbar-primary" ui:field="mainTabContainer">
-                    </ul>
-                </g:HTMLPanel>
-            </div>
-        </nav>
+    <b:Navbar addStyleNames="navbar-pf-vertical">
+        <b:NavbarHeader>
+             <b:NavbarCollapseButton />
+             <b:NavbarBrand ui:field="logoLink">
+                <img class="{style.obrand_headerLogoImage}" src="clear.cache.gif" />
+             </b:NavbarBrand>
+        </b:NavbarHeader>
+        <b:NavbarCollapse>
+            <b:NavbarNav addStyleNames="navbar-right navbar-iconic">
+                <b:ListDropDown>
+                    <b:AnchorButton ui:field="userName" dataToggle="DROPDOWN" icon="USER" />
+                    <b:DropDownMenu>
+                        <b:AnchorListItem ui:field="optionsLink" addStyleNames="{style.topLinks}" />
+                        <b:AnchorListItem ui:field="logoutLink" addStyleNames="{style.topLinks}" />
+                    </b:DropDownMenu>
+                </b:ListDropDown>
+                <b:ListDropDown>
+                    <b:AnchorButton ui:field="help" dataToggle="DROPDOWN" icon="QUESTION_CIRCLE" />
+                    <b:DropDownMenu>
+                        <b:AnchorListItem ui:field="guideLink" addStyleNames="{style.topLinks}" />
+                        <b:AnchorListItem ui:field="aboutLink" addStyleNames="{style.topLinks}" />
+                    </b:DropDownMenu>
+                </b:ListDropDown>
+            </b:NavbarNav>
+        </b:NavbarCollapse>
+    </b:Navbar>
+    <g:HTMLPanel>
+        <g:FlowPanel addStyleNames="nav-pf-vertical nav-pf-vertical-with-sub-menus">
+            <b:ListGroup />
+        </g:FlowPanel>
     </g:HTMLPanel>
-
+    </g:HTMLPanel>
 </ui:UiBinder>

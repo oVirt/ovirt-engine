@@ -32,7 +32,7 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, Permissi
     public SubTabQuotaUserView(SearchableDetailModelProvider<Permission, QuotaListModel, QuotaUserListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -65,18 +65,20 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, Permissi
         permissionColumn.makeSortable();
         getTable().addColumn(permissionColumn, constants.inheritedFromUser(), "400px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Permission>(constants.addUser()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAddCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Permission>(constants.removeUser()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
     }
 
 }

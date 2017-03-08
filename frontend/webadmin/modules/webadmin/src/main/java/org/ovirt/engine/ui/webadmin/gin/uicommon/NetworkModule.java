@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -74,11 +73,9 @@ public class NetworkModule extends AbstractGinModule {
             final Provider<EditNetworkPopupPresenterWidget> editNetworkPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<HostNetworkQosPopupPresenterWidget> addQosPopupProvider,
-            final Provider<NetworkListModel> modelProvider,
-            final Provider<CommonModel> commonModelProvider) {
+            final Provider<NetworkListModel> modelProvider) {
         MainTabModelProvider<NetworkView, NetworkListModel> result =
-                new MainTabModelProvider<NetworkView, NetworkListModel>(eventBus, defaultConfirmPopupProvider,
-                        commonModelProvider) {
+                new MainTabModelProvider<NetworkView, NetworkListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {

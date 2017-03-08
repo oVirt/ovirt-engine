@@ -6,6 +6,7 @@ import org.ovirt.engine.core.searchbackend.ProviderConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
@@ -14,6 +15,8 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabProviderPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
@@ -36,7 +39,16 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumn<Provider> nameColumn = new AbstractTextColumn<Provider>() {
+        AbstractTextColumn<Provider> nameColumn = new AbstractLinkColumn<Provider>(
+                new FieldUpdater<Provider, String>() {
+
+            @Override
+            public void update(int index, Provider provider, String value) {
+                //The link was clicked, now fire an event to switch to details.
+                transitionHandler.handlePlaceTransition();
+            }
+
+        }) {
             @Override
             public String getValue(Provider object) {
                 return object.getName();
@@ -76,26 +88,29 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
 
         getTable().addColumn(urlColumn, constants.urlProvider(), "300px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Provider>(constants.addProvider()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getAddCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Provider>(constants.editProvider()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Provider>(constants.removeProvider()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
-        });
+        }));
     }
 
 }

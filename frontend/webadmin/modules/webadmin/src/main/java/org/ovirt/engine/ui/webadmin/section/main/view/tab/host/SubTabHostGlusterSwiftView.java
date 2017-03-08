@@ -32,7 +32,7 @@ public class SubTabHostGlusterSwiftView extends AbstractSubTabTableView<VDS, Glu
     public SubTabHostGlusterSwiftView(SearchableDetailModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -62,26 +62,29 @@ public class SubTabHostGlusterSwiftView extends AbstractSubTabTableView<VDS, Glu
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusGlusterSwift(), "250px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterServerService>(constants.startGlusterSwiftInHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getStartSwiftCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterServerService>(constants.stopGlusterSwiftInHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getStopSwiftCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterServerService>(constants.restartGlusterSwiftInHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRestartSwiftCommand();
             }
-        });
+        }));
     }
 
 }

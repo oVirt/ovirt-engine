@@ -5,12 +5,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -45,7 +45,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -168,8 +168,9 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "110px"); //$NON-NLS-1$
 
         // add action buttons
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
-                resources.suspendVmImage(), resources.suspendVmDisabledImage()) {
+                IconType.MOON_O) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getPauseCommand();
@@ -179,10 +180,11 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             public SafeHtml getTooltip() {
                 return SafeHtmlUtils.fromSafeConstant(constants.suspendVm());
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(),
-                resources.stopVmImage(), resources.stopVmDisabledImage()) {
+                IconType.STOP) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getShutdownCommand();
@@ -192,9 +194,11 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             public SafeHtml getTooltip() {
                 return SafeHtmlUtils.fromSafeConstant(constants.shutDownVm());
             }
-        });
+        }));
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.powerOffVm(), CommandLocation.OnlyFromContext) {
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.powerOffVm(),
+                IconType.POWER_OFF) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getStopCommand();
@@ -204,10 +208,11 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             public SafeHtml getTooltip() {
                 return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.consoleVm(),
-                resources.consoleImage(), resources.consoleDisabledImage()) {
+                IconType.DESKTOP) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getConsoleConnectCommand();
@@ -218,23 +223,25 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return SafeHtmlUtils.fromSafeConstant(constants.consoleVm());
             }
 
-        });
+        }));
 
         // TODO: separator
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.migrateVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getMigrateCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.cancelMigrationVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getCancelMigrateCommand();
             }
-        });
+        }));
     }
 
     abstract class ResourceConsumptionComparator implements Comparator<VM> {

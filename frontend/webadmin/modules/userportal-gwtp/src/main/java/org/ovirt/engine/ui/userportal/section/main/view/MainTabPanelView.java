@@ -2,15 +2,20 @@ package org.ovirt.engine.ui.userportal.section.main.view;
 
 import org.ovirt.engine.ui.common.view.AbstractTabPanelView;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
+import org.ovirt.engine.ui.common.widget.tab.MenuLayout;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.widget.tab.HeadlessTabPanel;
 
+import com.google.inject.Inject;
+
 public class MainTabPanelView extends AbstractTabPanelView implements MainTabPanelPresenter.ViewDef {
 
-    private final HeadlessTabPanel tabPanel = new HeadlessTabPanel();
+    private final HeadlessTabPanel tabPanel;
 
-    public MainTabPanelView() {
+    @Inject
+    public MainTabPanelView(MenuLayout menuLayout) {
+        tabPanel = new HeadlessTabPanel(menuLayout);
         initWidget(getTabPanel());
     }
 

@@ -6,25 +6,22 @@ import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.action.UiMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 
 public class WebAdminMenuBarButtonDefinition<T> extends UiMenuBarButtonDefinition<T> {
 
-    private static final Resources resources = GWT.create(Resources.class);
-
     public WebAdminMenuBarButtonDefinition(String title, List<ActionButtonDefinition<T>> subActions, boolean asTitle) {
-        super(getEventBus(), title, subActions, asTitle, resources);
+        super(getEventBus(), title, subActions, asTitle);
     }
 
     public WebAdminMenuBarButtonDefinition(String title,
             List<ActionButtonDefinition<T>> subActions,
             CommandLocation commandLocation) {
-        super(getEventBus(), title, subActions, false, commandLocation, false, resources);
+        super(getEventBus(), title, subActions, false, commandLocation, false);
     }
 
     public WebAdminMenuBarButtonDefinition(String title, List<ActionButtonDefinition<T>> subActions) {
-        super(getEventBus(), title, subActions, resources);
+        super(getEventBus(), title, subActions);
     }
 
     static EventBus getEventBus() {

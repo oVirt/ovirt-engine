@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table;
 
+import com.google.gwt.user.client.ui.IsWidget;
+
 /**
  * Classes that implement this interface provide access to {@link ActionTable} widget.
  *
@@ -13,4 +15,9 @@ public interface HasActionTable<T> {
      */
     ActionTable<T> getTable();
 
+    /**
+     * Returns the widget containing the {@code ActionTable}.
+     * @return The widget with the action table.
+     */
+    IsWidget getTableContainer();
 }

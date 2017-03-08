@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -83,7 +82,7 @@ public class AssignTagsPopupView extends AbstractModelBoundTreePopupView<TagList
 
     private void updateTree(TagListModel model) {
         // Get tag node list
-        ArrayList<SelectionTreeNodeModel> tagTreeNodes = model.getSelectionNodeList();
+        List<SelectionTreeNodeModel> tagTreeNodes = model.getSelectionNodeList();
 
         // Get tree view model
         ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> modelListTreeViewModel =

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.template;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.action.SubTabTreeActionPanel;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
@@ -13,7 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
 import org.ovirt.engine.ui.webadmin.widget.template.DisksTree;
@@ -31,21 +29,21 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
             EventBus eventBus) {
         super(modelProvider);
 
+        addButtonToActionGroup(
         actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, constants.copyDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getCopyCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, constants.assignQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getChangeQuotaCommand();
             }
-        });
-
-        setIsActionTree(true);
+        }));
     }
 
     @Override
@@ -66,10 +64,5 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
     @Override
     protected DisksTree getTree() {
         return new DisksTree();
-    }
-
-    @Override
-    protected SubTabTreeActionPanel createActionPanel(SearchableDetailModelProvider modelProvider) {
-        return new SubTabTreeActionPanel<>(modelProvider, ClientGinjectorProvider.getEventBus());
     }
 }

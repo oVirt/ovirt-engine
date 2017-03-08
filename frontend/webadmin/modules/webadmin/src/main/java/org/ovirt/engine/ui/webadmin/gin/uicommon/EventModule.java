@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresen
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
@@ -29,11 +28,9 @@ public class EventModule extends AbstractGinModule {
     public MainModelProvider<AuditLog, EventListModel<Void>> getEventListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> popupProvider,
-            @Named("main") final Provider<EventListModel<Void>> modelProvider,
-            final Provider<CommonModel> commonModelProvider) {
+            @Named("main") final Provider<EventListModel<Void>> modelProvider) {
         MainTabModelProvider<AuditLog, EventListModel<Void>> result =
-                new MainTabModelProvider<AuditLog, EventListModel<Void>>(eventBus, defaultConfirmPopupProvider,
-                        commonModelProvider) {
+                new MainTabModelProvider<AuditLog, EventListModel<Void>>(eventBus, defaultConfirmPopupProvider) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(EventListModel<Void> source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -50,10 +47,10 @@ public class EventModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    @Named("footer")
+    @Named("notification")
     public EventModelProvider getEventModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            @Named("footer") final Provider<EventListModel<Void>> modelProvider) {
+            @Named("notification") final Provider<EventListModel<Void>> modelProvider) {
         EventModelProvider result = new EventModelProvider(eventBus, defaultConfirmPopupProvider);
         result.setModelProvider(modelProvider);
         return result;
@@ -65,7 +62,7 @@ public class EventModule extends AbstractGinModule {
             .annotatedWith(Names.named("main")).to(new TypeLiteral<EventListModel<Void>>(){}) //$NON-NLS-1$
             .in(Singleton.class);
         bind(new TypeLiteral<EventListModel<Void>>(){})
-            .annotatedWith(Names.named("footer")).to(new TypeLiteral<EventListModel<Void>>(){}) //$NON-NLS-1$
+            .annotatedWith(Names.named("notification")).to(new TypeLiteral<EventListModel<Void>>(){}) //$NON-NLS-1$
             .in(Singleton.class);
     }
 

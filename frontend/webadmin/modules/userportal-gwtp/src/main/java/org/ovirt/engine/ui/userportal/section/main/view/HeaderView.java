@@ -1,19 +1,17 @@
 package org.ovirt.engine.ui.userportal.section.main.view;
 
+import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.AbstractHeaderView;
+import org.ovirt.engine.ui.common.widget.tab.TabDefinition;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.HeaderPresenterWidget;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.UListElement;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -27,38 +25,52 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    @UiField
-    HTMLPanel mainTabBarPanel;
-
-    @UiField
-    UListElement mainTabContainer;
-
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public HeaderView(ApplicationDynamicMessages dynamicMessages) {
-        this.logoutLink = new Anchor(constants.logoutLinkLabel());
-        this.optionsLink = new Anchor(constants.optionsLinkLabel());
-        this.guideLink = new Anchor(dynamicMessages.guideLinkLabel());
-        this.aboutLink = new Anchor(constants.aboutLinkLabel());
+        this.logoutLink = new AnchorListItem(constants.logoutLinkLabel());
+        this.optionsLink = new AnchorListItem(constants.optionsLinkLabel());
+        this.guideLink = new AnchorListItem(dynamicMessages.guideLinkLabel());
+        this.aboutLink = new AnchorListItem(constants.aboutLinkLabel());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         this.logoLink.setHref(FrontendUrlUtils.getWelcomePageLink(GWT.getModuleBaseURL()));
     }
 
     @Override
-    public void addTabWidget(IsWidget tabWidget, int index) {
-        mainTabContainer.appendChild(tabWidget.asWidget().getElement());
+    public void addTabWidget(TabDefinition tab, int index) {
     }
 
     @Override
-    public void removeTabWidget(IsWidget tabWidget) {
-        mainTabContainer.removeChild(tabWidget.asWidget().getElement());
+    public void removeTabWidget(TabDefinition tab) {
     }
 
     @Override
     public void setMainTabPanelVisible(boolean visible) {
-        mainTabBarPanel.setVisible(visible);
     }
 
+    @Override
+    public void addTab(String title, String hashTag, int index) {
+    }
+
+    @Override
+    public void removeTab(String title, String hashTag) {
+    }
+
+    @Override
+    public void updateTab(String title, String hashTag, boolean accessible) {
+    }
+
+    @Override
+    public void updateTab(TabDefinition tab) {
+    }
+
+    @Override
+    public void markActiveTab(String title, String hashTag) {
+    }
+
+    @Override
+    public void setActiveTab(TabDefinition tab) {
+    }
 }

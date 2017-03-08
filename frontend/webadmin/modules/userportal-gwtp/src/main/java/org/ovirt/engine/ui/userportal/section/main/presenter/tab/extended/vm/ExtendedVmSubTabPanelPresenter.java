@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm;
 
-import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSubTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
 import com.google.gwt.event.shared.EventBus;
@@ -35,9 +34,8 @@ public class ExtendedVmSubTabPanelPresenter extends
     public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<>();
 
     @Inject
-    public ExtendedVmSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ScrollableTabBarPresenterWidget tabBar) {
+    public ExtendedVmSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab,
-                SideTabExtendedVirtualMachinePresenter.TYPE_SetSubTabPanelContent, tabBar);
+                SideTabExtendedVirtualMachinePresenter.TYPE_SetSubTabPanelContent);
     }
 }

@@ -5,14 +5,16 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.tab.MenuLayoutMenuDetails;
+import org.ovirt.engine.ui.webadmin.widget.tab.WebadminMenuLayout;
+
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -26,10 +28,6 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter<NetworkView, NetworkListModel, MainTabNetworkPresenter.ViewDef, MainTabNetworkPresenter.ProxyDef> {
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
-    private SystemTreeModelProvider systemTreeModelProvider;
 
     @GenEvent
     public class NetworkSelectionChange {
@@ -49,8 +47,12 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(
-            MainModelProvider<NetworkView, NetworkListModel> modelProvider) {
-        return new ModelBoundTabData(constants.networkMainTabLabel(), 3, modelProvider);
+            MainModelProvider<NetworkView, NetworkListModel> modelProvider, WebadminMenuLayout menuLayout) {
+        MenuLayoutMenuDetails menuTabDetails =
+                menuLayout.getDetails(WebAdminApplicationPlaces.networkMainTabPlace);
+        return new ModelBoundTabData(menuTabDetails.getSecondaryTitle(), menuTabDetails.getSecondaryPriority(),
+                menuTabDetails.getPrimaryTitle(), menuTabDetails.getPrimaryPriority(), modelProvider,
+                menuTabDetails.getIcon());
     }
 
     @Inject
@@ -59,9 +61,9 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
             ProxyDef proxy,
             PlaceManager placeManager,
             MainModelProvider<NetworkView, NetworkListModel> modelProvider,
-            SystemTreeModelProvider systemTreeModelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
-        this.systemTreeModelProvider = systemTreeModelProvider;
+            SearchPanelPresenterWidget<NetworkListModel> searchPanelPresenterWidget,
+            OvirtBreadCrumbs<NetworkView, NetworkListModel> breadCrumbs) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 
     @Override
@@ -72,12 +74,6 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
     @Override
     protected PlaceRequest getMainTabRequest() {
         return PlaceRequestFactory.get(WebAdminApplicationPlaces.networkMainTabPlace);
-    }
-
-    @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setProviderClickHandler((index, network, value) -> systemTreeModelProvider.setSelectedItem(network.getProvidedBy().getProviderId()));
     }
 
 }

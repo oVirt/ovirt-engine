@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
@@ -28,9 +27,6 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
     interface ViewUiBinder extends UiBinder<Widget, AbstractSubTabTreeView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-
-    @UiField
-    WidgetStyle style;
 
     @UiField
     protected SimplePanel headerTableContainer;
@@ -47,8 +43,6 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
 
     protected E tree;
 
-    boolean isActionTree;
-
     public AbstractSubTabTreeView(SearchableDetailModelProvider modelProvider) {
         super(modelProvider);
 
@@ -63,21 +57,9 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
 
         actionPanel = createActionPanel(modelProvider);
         if (actionPanel != null) {
-            actionPanelContainer.add(actionPanel);
+            actionPanelContainer.add(pfActionPanel);
             actionPanel.addContextMenuHandler(tree);
         }
-
-        updateStyles();
-    }
-
-    private void updateStyles() {
-        treeContainer.addStyleName(isActionTree ? style.actionTreeContainer() : style.treeContainer());
-    }
-
-    public void setIsActionTree(boolean isActionTree) {
-        this.isActionTree = isActionTree;
-
-        updateStyles();
     }
 
     private final IEventListener<EventArgs> itemsChangedListener = new IEventListener<EventArgs>() {
@@ -119,7 +101,7 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
     protected abstract E getTree();
 
     protected SubTabTreeActionPanel createActionPanel(SearchableDetailModelProvider modelProvider) {
-        return null;
+        return new SubTabTreeActionPanel<>(modelProvider);
     }
 
     @Override
@@ -130,11 +112,5 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
     @Override
     protected void generateIds() {
         //Do nothing, we don't want the tree tables to have ids.
-    }
-
-    interface WidgetStyle extends CssResource {
-        String treeContainer();
-
-        String actionTreeContainer();
     }
 }

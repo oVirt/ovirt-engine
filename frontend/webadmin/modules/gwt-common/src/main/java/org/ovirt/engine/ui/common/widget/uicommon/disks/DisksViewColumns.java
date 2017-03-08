@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskProgressColumn;
@@ -35,6 +36,7 @@ import org.ovirt.engine.ui.common.widget.table.column.DiskUploadImageProgressCol
 import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
@@ -48,12 +50,27 @@ public class DisksViewColumns {
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public static AbstractTextColumn<Disk> getAliasColumn(String sortBy) {
-        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
-            @Override
-            public String getValue(Disk object) {
-                return object.getDiskAlias();
-            }
-        };
+        return getAliasColumn(null, sortBy);
+    }
+
+    public static AbstractTextColumn<Disk> getAliasColumn(FieldUpdater<Disk, String> updater, String sortBy) {
+        AbstractTextColumn<Disk> column;
+
+        if (updater != null) {
+            column = new AbstractLinkColumn<Disk>(updater) {
+                @Override
+                public String getValue(Disk object) {
+                    return object.getName();
+                }
+            };
+        } else {
+            column = new AbstractTextColumn<Disk>() {
+                @Override
+                public String getValue(Disk object) {
+                    return object.getName();
+                }
+            };
+        }
 
         return makeSortable(column, sortBy);
     }

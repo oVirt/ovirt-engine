@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
@@ -12,6 +13,8 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVnicProfilePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
@@ -35,7 +38,16 @@ public class MainTabVnicProfileView extends AbstractMainTabWithDetailsTableView<
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumn<VnicProfileView> nameColumn = new AbstractTextColumn<VnicProfileView>() {
+        AbstractTextColumn<VnicProfileView> nameColumn = new AbstractLinkColumn<VnicProfileView>(
+                new FieldUpdater<VnicProfileView, String>() {
+
+            @Override
+            public void update(int index, VnicProfileView vnicProfile, String value) {
+                //The link was clicked, now fire an event to switch to details.
+                transitionHandler.handlePlaceTransition();
+            }
+
+        }) {
             @Override
             public String getValue(VnicProfileView object) {
                 return object.getName();
@@ -109,24 +121,27 @@ public class MainTabVnicProfileView extends AbstractMainTabWithDetailsTableView<
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.descriptionVnicProfile(), "400px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.newVnicProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.editVnicProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.removeVnicProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
-        });
+        }));
 
     }
 }

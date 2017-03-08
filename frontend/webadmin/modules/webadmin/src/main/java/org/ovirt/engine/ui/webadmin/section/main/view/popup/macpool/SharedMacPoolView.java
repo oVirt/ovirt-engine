@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
@@ -30,6 +32,8 @@ public class SharedMacPoolView extends Composite {
     private final PermissionModelProvider<MacPool, SharedMacPoolListModel> permissionModelProvider;
     private final SharedMacPoolModelProvider sharedMacPoolModelProvider;
 
+    private final FlowPanel container = new FlowPanel();
+    private final PatternflyActionPanel actionPanel = new PatternflyActionPanel();
     private final SimpleActionTable<MacPool> macPoolTable;
     private final PermissionListModelTable<PermissionListModel<MacPool>> authorizationTable;
 
@@ -59,6 +63,8 @@ public class SharedMacPoolView extends Composite {
         this.tableResources = tableResources;
 
         macPoolTable = createMacPoolTable();
+        container.add(actionPanel);
+        container.add(macPoolTable);
         authorizationTable = new PermissionListModelTable<>(permissionModelProvider, eventBus, clientStorage);
         authorizationTable.initTable();
 
@@ -77,7 +83,7 @@ public class SharedMacPoolView extends Composite {
         if (visible) {
             rootPanel.addSouth(authorizationTable, 150);
         }
-        rootPanel.add(macPoolTable);
+        rootPanel.add(container);
     }
 
     private SplitLayoutPanel createRootPanel() {
@@ -117,29 +123,31 @@ public class SharedMacPoolView extends Composite {
             }
         }, constants.configureMacPoolDescriptionColumn(), "300px"); //$NON-NLS-1$
 
-
+        actionPanel.addButtonToActionGroup(
         macPoolTable.addActionButton(new WebAdminButtonDefinition<MacPool>(constants.configureMacPoolAddButton()) {
 
             @Override
             protected UICommand resolveCommand() {
                 return sharedMacPoolModelProvider.getModel().getNewCommand();
             }
-        });
+        }));
 
+        actionPanel.addButtonToActionGroup(
         macPoolTable.addActionButton(new WebAdminButtonDefinition<MacPool>(constants.configureMacPoolEditButton()) {
 
             @Override
             protected UICommand resolveCommand() {
                 return sharedMacPoolModelProvider.getModel().getEditCommand();
             }
-        });
+        }));
+        actionPanel.addButtonToActionGroup(
         macPoolTable.addActionButton(new WebAdminButtonDefinition<MacPool>(constants.configureMacPoolRemoveButton()) {
 
             @Override
             protected UICommand resolveCommand() {
                 return sharedMacPoolModelProvider.getModel().getRemoveCommand();
             }
-        });
+        }));
 
 
         macPoolTable.getSelectionModel().addSelectionChangeHandler(event -> {

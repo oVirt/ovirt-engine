@@ -1,10 +1,6 @@
 package org.ovirt.engine.ui.common.widget.tab;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
-import org.ovirt.engine.ui.common.utils.FloatingPointHelper;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -26,53 +22,18 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
     @UiField
     public Panel tabContentContainer;
 
-    // List of tabs managed by this tab panel, sorted by tab priority
-    private final List<TabDefinition> tabList = new ArrayList<>();
 
     private Tab activeTab;
     private String activeTabHistoryToken;
 
-    @Override
-    public Tab addTab(TabData tabData, String historyToken) {
-        TabDefinition newTab = createNewTab(tabData);
-
-        int beforeIndex;
-        for (beforeIndex = 0; beforeIndex < tabList.size(); ++beforeIndex) {
-            TabDefinition currentTab = tabList.get(beforeIndex);
-
-            if (FloatingPointHelper.epsCompare(newTab.getPriority(), currentTab.getPriority()) < 0) {
-                break;
-            }
-        }
-
-        newTab.setTargetHistoryToken(historyToken);
-        newTab.setText(tabData.getLabel());
-        addTabWidget(newTab.asWidget(), beforeIndex);
-        tabList.add(beforeIndex, newTab);
-
-        updateTab(newTab);
-
-        // Try to retain active tab by its history token
-        if (activeTabHistoryToken != null && activeTabHistoryToken.equals(historyToken)) {
-            setActiveTab(newTab);
-        }
-
-        return newTab;
-    }
-
+    // This is here so sub classes don't have to implement these methods if they don't want to
     @Override
     public void removeTab(Tab tab) {
-        removeTabWidget(tab.asWidget());
-        tabList.remove(tab);
     }
 
+    // This is here so sub classes don't have to implement these methods if they don't want to
     @Override
     public void removeTabs() {
-        for (Tab tab : tabList) {
-            removeTabWidget(tab.asWidget());
-        }
-
-        tabList.clear();
     }
 
     @Override
@@ -99,6 +60,10 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
         this.activeTabHistoryToken = historyToken;
     }
 
+    protected String getActiveTabHistoryToken() {
+        return this.activeTabHistoryToken;
+    }
+
     /**
      * Sets a content widget to be displayed for the active tab.
      */
@@ -120,12 +85,12 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
     /**
      * Adds a tab widget to this tab panel at the given position.
      */
-    public abstract void addTabWidget(IsWidget tabWidget, int index);
+    public abstract void addTabDefinition(Tab tab, int index);
 
     /**
      * Removes a tab widget from this tab panel.
      */
-    public abstract void removeTabWidget(IsWidget tabWidget);
+    public abstract void removeTabDefinition(Tab tab);
 
     /**
      * Returns a new tab widget based on the given data.

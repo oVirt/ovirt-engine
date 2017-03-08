@@ -6,8 +6,9 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel.Type;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.DetailsTransitionHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEngineErrataPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabTableView;
+import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.ErrataTableView;
 import org.ovirt.engine.ui.webadmin.widget.errata.ErrataFilterPanel;
 
@@ -27,7 +28,7 @@ import com.google.inject.Inject;
  * a message upon failing to retrieve the errata. (Errata query results rely on integration with a
  * Katello provider, and if the provider has an issue, we want to notify the user right in the tab body.
  */
-public class MainTabEngineErrataView extends AbstractMainTabTableView<Erratum,
+public class MainTabEngineErrataView extends AbstractMainTabWithDetailsTableView<Erratum,
     EngineErrataListModel> implements MainTabEngineErrataPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabEngineErrataView> {
@@ -51,6 +52,8 @@ public class MainTabEngineErrataView extends AbstractMainTabTableView<Erratum,
     Style style;
 
     protected ErrataFilterPanel errataFilterPanel;
+
+    protected DetailsTransitionHandler<Erratum> detailsTransitionHandler;
 
     private static MainTabEngineErrataViewUiBinder uiBinder = GWT.create(MainTabEngineErrataViewUiBinder.class);
 
@@ -98,5 +101,10 @@ public class MainTabEngineErrataView extends AbstractMainTabTableView<Erratum,
 
     public ErrataFilterPanel getErrataFilterPanel() {
         return errataFilterPanel;
+    }
+
+    @Override
+    public void setDetailPlaceTransitionHandler(DetailsTransitionHandler<Erratum> handler) {
+        this.detailsTransitionHandler = handler;
     }
 }

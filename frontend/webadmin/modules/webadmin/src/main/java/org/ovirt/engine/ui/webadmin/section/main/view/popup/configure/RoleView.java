@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -24,6 +25,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -43,7 +45,12 @@ public class RoleView extends Composite {
     @UiField
     RadioButton userRolesRadioButton;
 
+    private PatternflyActionPanel roleActionPanel;
+    private FlowPanel roleTablePanel = new FlowPanel();
     private SimpleActionTable<Role> table;
+
+    private PatternflyActionPanel permissionActionPanel;
+    private FlowPanel permissionTablePanel = new FlowPanel();
     private SimpleActionTable<Permission> permissionTable;
     private SplitLayoutPanel splitLayoutPanel;
 
@@ -83,9 +90,9 @@ public class RoleView extends Composite {
     public void setSubTabVisibility(boolean visible) {
         splitLayoutPanel.clear();
         if (visible) {
-            splitLayoutPanel.addSouth(permissionTable, 150);
+            splitLayoutPanel.addSouth(permissionTablePanel, 150);
         }
-        splitLayoutPanel.add(table);
+        splitLayoutPanel.add(roleTablePanel);
     }
 
     private void initRolesFilterRadioButtons() {
@@ -119,8 +126,11 @@ public class RoleView extends Composite {
     }
 
     private void initRoleTable() {
+        roleActionPanel = new PatternflyActionPanel();
         this.table = new SimpleActionTable<>(roleModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
+        roleTablePanel.add(roleActionPanel);
+        roleTablePanel.add(table);
 
         this.table.enableColumnResizing();
         AbstractTextColumn<Role> nameColumn = new AbstractTextColumn<Role>() {
@@ -146,35 +156,39 @@ public class RoleView extends Composite {
         descColumn.makeSortable();
         table.addColumn(descColumn, constants.descriptionRole(), "575px"); //$NON-NLS-1$
 
+        roleActionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<Role>(constants.newRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getNewCommand();
             }
-        });
+        }));
 
+        roleActionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<Role>(constants.editRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getEditCommand();
             }
-        });
+        }));
 
+        roleActionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<Role>(constants.copyRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getCloneCommand();
             }
-        });
+        }));
 
+        roleActionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<Role>(constants.removeRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getRemoveCommand();
             }
-        });
+        }));
 
-        splitLayoutPanel.add(table);
+        splitLayoutPanel.add(roleTablePanel);
 
         table.getSelectionModel().addSelectionChangeHandler(event -> {
             roleModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());
@@ -188,8 +202,11 @@ public class RoleView extends Composite {
     }
 
     private void initPermissionTable() {
+        permissionActionPanel = new PatternflyActionPanel();
         permissionTable = new SimpleActionTable<>(permissionModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
+        permissionTablePanel.add(permissionActionPanel);
+        permissionTablePanel.add(permissionTable);
 
         permissionTable.enableColumnResizing();
 
@@ -211,12 +228,13 @@ public class RoleView extends Composite {
         permissionColumn.makeSortable();
         permissionTable.addColumn(permissionColumn, constants.objectPermission());
 
+        permissionActionPanel.addButtonToActionGroup(
         permissionTable.addActionButton(new WebAdminButtonDefinition<Permission>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return permissionModelProvider.getModel().getRemoveCommand();
             }
-        });
+        }));
 
         permissionTable.getSelectionModel().addSelectionChangeHandler(event ->
                 permissionModelProvider.setSelectedItems(permissionTable.getSelectionModel().getSelectedList()));

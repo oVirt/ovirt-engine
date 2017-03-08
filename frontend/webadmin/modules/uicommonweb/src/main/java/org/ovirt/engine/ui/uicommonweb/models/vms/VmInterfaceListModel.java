@@ -35,7 +35,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
-        initSelectionGeustAgentData(getSelectedItem());
+        initSelectionGuestAgentData(getSelectedItem());
         updateActionAvailability();
     }
 
@@ -221,11 +221,11 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
 
     @Override
     protected void onSelectedItemChanging(VmNetworkInterface newValue, VmNetworkInterface oldValue) {
-        initSelectionGeustAgentData(newValue);
+        initSelectionGuestAgentData(newValue);
         super.onSelectedItemChanging(newValue, oldValue);
     }
 
-    private void initSelectionGeustAgentData(VmNetworkInterface selectedItem) {
+    private void initSelectionGuestAgentData(VmNetworkInterface selectedItem) {
         if (selectedItem == null || getGuestAgentData() == null){
             setSelectionGuestAgentData(null);
             return;

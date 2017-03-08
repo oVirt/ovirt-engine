@@ -8,6 +8,7 @@ import org.ovirt.engine.core.searchbackend.QuotaConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
@@ -19,6 +20,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetails
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractQuotaPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaDcStatusColumn;
+
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.inject.Inject;
@@ -51,7 +54,15 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
         dcStatusColumn.setContextMenuTitle(constants.dcStatusQuota());
         getTable().addColumn(dcStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Quota> nameColumn = new AbstractTextColumn<Quota>() {
+        AbstractTextColumn<Quota> nameColumn = new AbstractLinkColumn<Quota>(new FieldUpdater<Quota, String>() {
+
+            @Override
+            public void update(int index, Quota quota, String value) {
+                //The link was clicked, now fire an event to switch to details.
+                transitionHandler.handlePlaceTransition();
+            }
+
+        }) {
             @Override
             public String getValue(Quota object) {
                 return object.getQuotaName() == null ? "" : object.getQuotaName(); //$NON-NLS-1$
@@ -59,6 +70,15 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
         };
         nameColumn.makeSortable(QuotaConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameQuota(), "120px"); //$NON-NLS-1$
+
+        AbstractTextColumn<Quota> dataCenterColumn = new AbstractTextColumn<Quota>() {
+            @Override
+            public String getValue(Quota object) {
+                return object.getStoragePoolName() == null ? "" : object.getStoragePoolName();
+            }
+        };
+        dataCenterColumn.makeSortable(QuotaConditionFieldAutoCompleter.STORAGEPOOLNAME);
+        getTable().addColumn(dataCenterColumn, constants.dcQuota(), "120px"); //$NON-NLS-1$
 
         AbstractTextColumn<Quota> descriptionColumn = new AbstractTextColumn<Quota>() {
             @Override
@@ -263,30 +283,34 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
             }
         }, constants.freeStorage(), "80px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCreateCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.editQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.copyQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCloneCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.removeQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
-        });
+        }));
 
     }
 }

@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
+import org.ovirt.engine.ui.common.widget.action.DropdownActionButton;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -19,10 +20,8 @@ import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -33,6 +32,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresen
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
+
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -42,7 +43,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, DiskListModel> implements MainTabDiskPresenter.ViewDef {
 
@@ -71,10 +71,10 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
 
-    @Inject
-    Provider<CommonModel> commonModelProvider;
-
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+
+    @Inject
+    private DataCenterListModel dataCenterListModel;
 
     @Inject
     public MainTabDiskView(MainModelProvider<Disk, DiskListModel> modelProvider) {
@@ -101,9 +101,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             EntityModel diskViewType = (EntityModel) sender;
             disksViewRadioGroup.setDiskStorageType((DiskStorageType) diskViewType.getEntity());
-            if (commonModelProvider.get().getSelectedItem() instanceof DiskListModel) {
-                onDiskViewTypeChanged();
-            }
+            onDiskViewTypeChanged();
         }
     };
 
@@ -115,11 +113,8 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     @Override
     public void handleQuotaColumnVisibility() {
         isQuotaVisible = false;
-        SystemTreeItemModel treeItem =
-                commonModelProvider.get().getSystemTree().getSelectedItem();
-        if (treeItem != null
-                && SystemTreeItemType.DataCenter == treeItem.getType()) {
-            StoragePool storagePool = (StoragePool) treeItem.getEntity();
+        if (dataCenterListModel.getSelectedItem() != null) {
+            StoragePool storagePool = dataCenterListModel.getSelectedItem();
             if (QuotaEnforcementTypeEnum.DISABLED != storagePool.getQuotaEnforcementType()) {
                 isQuotaVisible = true;
             }
@@ -210,7 +205,15 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     void initTableColumns() {
         getTable().enableColumnResizing();
 
-        aliasColumn = DisksViewColumns.getAliasColumn(DiskConditionFieldAutoCompleter.ALIAS);
+        aliasColumn = DisksViewColumns.getAliasColumn(new FieldUpdater<Disk, String>() {
+
+            @Override
+            public void update(int index, Disk disk, String value) {
+                //The link was clicked, now fire an event to switch to details.
+                transitionHandler.handlePlaceTransition();
+            }
+
+        }, DiskConditionFieldAutoCompleter.ALIAS);
         idColumn = DisksViewColumns.getIdColumn(DiskConditionFieldAutoCompleter.ID);
         sizeColumn = DisksViewColumns.getSizeColumn(DiskConditionFieldAutoCompleter.PROVISIONED_SIZE);
         allocationColumn = DisksViewColumns.getAllocationColumn(constants.empty());
@@ -235,55 +238,63 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     }
 
     void initTableButtons() {
+
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.newDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.moveDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getMoveCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.copyDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCopyCommand();
             }
-        });
+        }));
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.getDiskAlignment(),
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.getDiskAlignment(),
                 CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getScanAlignmentCommand();
             }
-        });
+        }));
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.exportDisk()) {
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.exportDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getExportCommand();
             }
-        });
+        }));
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.assignQuota()) {
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.assignQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getChangeQuotaCommand();
             }
-        });
+        }));
 
         // Upload operations drop down
         List<ActionButtonDefinition<Disk>> uploadActions = new LinkedList<>();
@@ -311,8 +322,19 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 return getMainModel().getResumeUploadCommand();
             }
         });
-        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(
-                constants.uploadImage(), uploadActions));
+        addButtonToActionGroup(
+        getTable().addActionButton(
+            new WebAdminMenuBarButtonDefinition<>(
+                    constants.uploadImage(),
+                uploadActions
+            ),
+            new DropdownActionButton<Disk>(uploadActions, new DropdownActionButton.SelectedItemsProvider<Disk>() {
+                @Override
+                public List<Disk> getSelectedItems() {
+                    return getMainModel().getSelectedItems();
+                }
+            })
+        ));
     }
 
     void searchByDiskViewType(Object diskViewType) {
@@ -320,67 +342,42 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         final String diskTypeSearchPrefix = "disk_type = "; //$NON-NLS-1$
         final String searchConjunctionAnd = "and "; //$NON-NLS-1$
         final String searchRegexDisksSearchPrefix = "^\\s*(disk(s)?\\s*(:)+)+\\s*"; //$NON-NLS-1$
-        final String searchRegexDiskTypeClause = "\\s*((and|or)\\s+)?disk_type\\s*=\\s*\\S+"; //$NON-NLS-1$
-        final String searchRegexStartConjunction = "^\\s*(and|or)\\s*"; //$NON-NLS-1$
         final String searchRegexFlags = "ig"; //$NON-NLS-1$
 
         final String space = " "; //$NON-NLS-1$
         final String empty = ""; //$NON-NLS-1$
-        final String colon = ":"; //$NON-NLS-1$
 
         RegExp searchPatternDisksSearchPrefix = RegExp.compile(searchRegexDisksSearchPrefix, searchRegexFlags);
-        RegExp searchPatternDiskTypeClause = RegExp.compile(searchRegexDiskTypeClause, searchRegexFlags);
-        RegExp searchPatternStartConjunction = RegExp.compile(searchRegexStartConjunction, searchRegexFlags);
 
         String diskTypePostfix = diskViewType != null ?
                 ((DiskStorageType) diskViewType).name().toLowerCase() + space : null;
         String diskTypeClause = diskTypePostfix != null ?
                 diskTypeSearchPrefix + diskTypePostfix : empty;
 
-        String inputSearchString = commonModelProvider.get().getSearchString().trim();
-        String inputSearchStringPrefix = commonModelProvider.get().getSearchStringPrefix().trim();
-
-        if (!inputSearchString.isEmpty() && inputSearchStringPrefix.isEmpty()) {
-            int indexOfColon = inputSearchString.indexOf(colon);
-            inputSearchStringPrefix = inputSearchString.substring(0, indexOfColon + 1).trim();
-            inputSearchString = inputSearchString.substring(indexOfColon + 1).trim();
-        }
-        if (inputSearchStringPrefix.isEmpty()) {
-            inputSearchStringPrefix = disksSearchPrefix;
-            inputSearchString = empty;
-        }
-
-        String searchStringPrefixRaw = searchPatternDiskTypeClause
-                .replace(inputSearchStringPrefix, empty).trim();
+        String inputSearchString = this.getMainModel().getSearchString().trim();
+        String inputSearchStringPrefix = this.getMainModel().getDefaultSearchString();
+        String userSearchString = inputSearchString.substring(inputSearchStringPrefix.length());
 
         String searchStringPrefix;
         if (diskTypeClause.equals(empty)) {
-            searchStringPrefix = searchStringPrefixRaw + space;
-        }
-        else {
-            searchStringPrefix = searchStringPrefixRaw + space
-                    + (searchPatternDisksSearchPrefix.test(searchStringPrefixRaw) ? empty : searchConjunctionAnd)
+            searchStringPrefix = disksSearchPrefix.trim();
+            if (userSearchString.trim().toLowerCase().startsWith(searchConjunctionAnd)) {
+                userSearchString = userSearchString.trim().substring(searchConjunctionAnd.length());
+            }
+        } else {
+            searchStringPrefix = disksSearchPrefix + space
+                    + (searchPatternDisksSearchPrefix.test(inputSearchStringPrefix) ? empty : searchConjunctionAnd)
                     + diskTypeClause;
+            if (!userSearchString.isEmpty() && !userSearchString.trim().toLowerCase().startsWith(searchConjunctionAnd)) {
+                userSearchString = searchConjunctionAnd + userSearchString.trim();
+            }
         }
-
-        inputSearchString = searchPatternDiskTypeClause
-                .replace(inputSearchString, empty);
-        inputSearchString = searchPatternStartConjunction
-                .replace(inputSearchString, empty);
-
-        String searchString;
-        if (searchPatternDisksSearchPrefix.test(searchStringPrefix) || inputSearchString.isEmpty()) {
-            searchString = inputSearchString;
-        }
-        else {
-            searchString = searchConjunctionAnd + inputSearchString;
-        }
-        commonModelProvider.get().setSearchStringPrefix(searchStringPrefix);
-        commonModelProvider.get().setSearchString(searchString);
+        String searchString = searchStringPrefix + userSearchString;
 
         getTable().getSelectionModel().clear();
         getMainModel().setItems(null);
-        getMainModel().setSearchString(commonModelProvider.get().getEffectiveSearchString());
+        getMainModel().setDefaultSearchString(searchStringPrefix.trim());
+        getMainModel().setSearchString(searchString.trim());
         getMainModel().search();
     }
 }

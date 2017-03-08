@@ -18,9 +18,10 @@ logo used in the application header */
 .obrand_headerLogoImage {
     background-image: url(images/ovirt_top_logo.png);
     width: 264px;
-    height: 15px !important;
+    height: 22px !important;
     border: 0px;
     display: block;
+    margin-top: 8px !important
 }
 
 .obrand_ssoHeader {
@@ -29,3 +30,9 @@ logo used in the application header */
     top: 4px;
     background-color: #121212;
 }
+
+.obrand_main_tab {
+    height: calc(100vh - 98px);
+    min-height: calc(100vh - 98px);
+}
+

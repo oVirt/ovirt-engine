@@ -5,13 +5,16 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.tab.MenuLayoutMenuDetails;
+import org.ovirt.engine.ui.webadmin.widget.tab.WebadminMenuLayout;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.dispatch.annotation.GenEvent;
@@ -24,8 +27,6 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class MainTabTemplatePresenter extends AbstractMainTabWithDetailsPresenter<VmTemplate, TemplateListModel, MainTabTemplatePresenter.ViewDef, MainTabTemplatePresenter.ProxyDef> {
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class TemplateSelectionChange {
@@ -44,14 +45,20 @@ public class MainTabTemplatePresenter extends AbstractMainTabWithDetailsPresente
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(
-            MainModelProvider<VmTemplate, TemplateListModel> modelProvider) {
-        return new ModelBoundTabData(constants.templateMainTabLabel(), 8, modelProvider);
+            MainModelProvider<VmTemplate, TemplateListModel> modelProvider, WebadminMenuLayout menuLayout) {
+        MenuLayoutMenuDetails menuTabDetails =
+                menuLayout.getDetails(WebAdminApplicationPlaces.templateMainTabPlace);
+        return new ModelBoundTabData(menuTabDetails.getSecondaryTitle(), menuTabDetails.getSecondaryPriority(),
+                menuTabDetails.getPrimaryTitle(), menuTabDetails.getPrimaryPriority(), modelProvider,
+                menuTabDetails.getIcon());
     }
 
     @Inject
     public MainTabTemplatePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<VmTemplate, TemplateListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+            PlaceManager placeManager, MainModelProvider<VmTemplate, TemplateListModel> modelProvider,
+            SearchPanelPresenterWidget<TemplateListModel> searchPanelPresenterWidget,
+            OvirtBreadCrumbs<VmTemplate, TemplateListModel> breadCrumbs) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 
     @Override

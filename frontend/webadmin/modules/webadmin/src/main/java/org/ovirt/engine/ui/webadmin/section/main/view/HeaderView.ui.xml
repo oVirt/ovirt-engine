@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget.alert"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
@@ -8,73 +12,55 @@
         @external obrand_headerLogoImage;
             .obrand_headerLogoImage {
         }
+
         .topLinks {
             font-size: 11px;
             cursor: pointer;
         }
-        .gradientFix {
-            background-image: -webkit-gradient(linear, left 0%, left 100%, from(#474c50), to(#383f43));
-            background-image: -webkit-linear-gradient(top, #474c50 0%, #383f43 100%);
-            background-image: -moz-linear-gradient(top, #474c50 0%, #383f43 100%);
-            background-image: linear-gradient(to bottom, #474c50 0%, #383f43 100%);
-            background-repeat: repeat-x;
-        }
-        .tabContainer {
-            background-color: #5C5C5C !important;
-            position: relative;
-            bottom: -1px;
-        }
     </ui:style>
 
     <g:HTMLPanel>
-
-        <nav class="navbar navbar-default navbar-pf" role="navigation">
-            <div class="navbar-header">
-                <!-- toggles navbar at mobile resolutions -->
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" ui:field="logoLink" href="">
-                    <g:Image styleName="{style.obrand_headerLogoImage}" url="clear.cache.gif" />
-                </a>
-            </div>
-
-            <div class="collapse navbar-collapse navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-utility">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <span class="pficon pficon-user {style.topLinks}"></span>
-                            <g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.topLinks}" /> <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <g:Anchor ui:field="optionsLink" addStyleNames="{style.topLinks}"/>
-                            </li>
-                            <li>
-                                <g:Anchor ui:field="logoutLink" addStyleNames="{style.topLinks}"/>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <g:Anchor ui:field="configureLink" addStyleNames="{style.topLinks}" />
-                    </li>
-                    <li>
-                        <g:Anchor ui:field="guideLink" addStyleNames="{style.topLinks}" />
-                    </li>
-                    <li>
-                        <g:Anchor ui:field="aboutLink" addStyleNames="{style.topLinks}" />
-                    </li>
-                </ul>
-
-                <g:HTMLPanel>
-                    <g:SimplePanel ui:field="searchPanelContainer" addStyleNames="{style.gradientFix}" />
-                    <g:SimplePanel ui:field="mainTabContainer" addStyleNames="{style.tabContainer}" />
-                </g:HTMLPanel>
-            </div>
-        </nav>
+    <b:Navbar ui:field="mainNavBar" addStyleNames="navbar-pf-vertical">
+        <b:NavbarHeader>
+             <b:NavbarCollapseButton />
+             <b:NavbarBrand ui:field="logoLink">
+                <img class="{style.obrand_headerLogoImage}" src="clear.cache.gif" />
+             </b:NavbarBrand>
+        </b:NavbarHeader>
+        <b:NavbarCollapse>
+            <b:NavbarNav addStyleNames="navbar-right navbar-iconic">
+                <b:AnchorListItem ui:field="tasks" icon="TASKS" />
+                <w:EventsListPopover ui:field="alerts" />
+                <w:EventsListPopover ui:field="events" />
+                <b:ListDropDown>
+                    <b:AnchorButton ui:field="userName" dataToggle="DROPDOWN" icon="USER" />
+                    <b:DropDownMenu>
+                        <b:AnchorListItem ui:field="optionsLink" addStyleNames="{style.topLinks}" />
+                        <b:AnchorListItem ui:field="bookmarkLink" addStyleNames="{style.topLinks}" />
+                        <b:AnchorListItem ui:field="logoutLink" addStyleNames="{style.topLinks}" />
+                    </b:DropDownMenu>
+                </b:ListDropDown>
+                <b:ListDropDown>
+                    <b:AnchorButton ui:field="help" dataToggle="DROPDOWN" icon="QUESTION_CIRCLE" />
+                    <b:DropDownMenu>
+                        <b:AnchorListItem ui:field="guideLink" addStyleNames="{style.topLinks}" />
+                        <b:AnchorListItem ui:field="aboutLink" addStyleNames="{style.topLinks}" />
+                    </b:DropDownMenu>
+                </b:ListDropDown>
+                <b:ListDropDown>
+                    <b:AnchorButton ui:field="settings" dataToggle="DROPDOWN" icon="GEAR" />
+                    <b:DropDownMenu>
+                        <b:AnchorListItem ui:field="configureLink" addStyleNames="{style.topLinks}" />
+                        <b:AnchorListItem ui:field="tagsLink" addStyleNames="{style.topLinks}" />
+                    </b:DropDownMenu>
+                </b:ListDropDown>
+            </b:NavbarNav>
+        </b:NavbarCollapse>
+    </b:Navbar>
+    <g:HTMLPanel>
+        <g:FlowPanel addStyleNames="nav-pf-vertical nav-pf-vertical-with-sub-menus">
+            <b:ListGroup ui:field="mainNavbarNavContainer" />
+        </g:FlowPanel>
     </g:HTMLPanel>
-
+    </g:HTMLPanel>
 </ui:UiBinder>

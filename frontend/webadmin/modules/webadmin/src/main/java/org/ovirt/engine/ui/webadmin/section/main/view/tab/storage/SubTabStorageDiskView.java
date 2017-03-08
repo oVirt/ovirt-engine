@@ -9,6 +9,7 @@ import org.ovirt.engine.core.searchbackend.DiskConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
+import org.ovirt.engine.ui.common.widget.action.DropdownActionButton;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -49,7 +50,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
     @Inject
     public SubTabStorageDiskView(SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> modelProvider) {
         super(modelProvider);
-        initWidget(getTable());
+        initWidget(getTableContainer());
         initTableColumns();
         initTableActionButtons();
     }
@@ -133,12 +134,13 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
     }
 
     void initTableActionButtons() {
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
 
         // Upload operations drop down
         List<ActionButtonDefinition<Disk>> uploadActions = new LinkedList<>();
@@ -166,7 +168,15 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
                 return getDetailModel().getResumeUploadCommand();
             }
         });
-        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(
-                constants.uploadImage(), uploadActions));
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<Disk>(
+                constants.uploadImage(),
+                uploadActions
+            ), new DropdownActionButton<Disk>(uploadActions, new DropdownActionButton.SelectedItemsProvider<Disk>() {
+            @Override
+            public List<Disk> getSelectedItems() {
+                return getTable().getSelectionModel().getSelectedList();
+            }
+        })));
     }
 }

@@ -33,7 +33,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
     public SubTabUserPermissionView(SearchableDetailModelProvider<Permission, UserListModel, UserPermissionListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -73,12 +73,13 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
         inheritedColumn.makeSortable();
         getTable().addColumn(inheritedColumn, constants.inheritedPermission());
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Permission>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
     }
 
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
@@ -18,7 +19,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -43,8 +44,10 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     public RefreshPanel refreshPanel;
 
     @UiField
-    @WithElementId("itemsCount")
-    public Label itemsCountLabel;
+    HTMLPanel fromCount;
+
+    @UiField
+    HTMLPanel toCount;
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             EventBus eventBus, ClientStorage clientStorage) {
@@ -79,14 +82,13 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
             Resources resources, Resources headerResources,
             EventBus eventBus, ClientStorage clientStorage,
             AbstractRefreshManager<RefreshPanel> refreshManager) {
-        super(dataProvider, resources, headerResources, eventBus, clientStorage);
+        super(dataProvider, resources, headerResources, clientStorage);
         this.refreshPanel = refreshManager.getRefreshPanel();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         initStyles();
         refreshPanel.setVisible(false);
         prevPageButton.setVisible(false);
         nextPageButton.setVisible(false);
-        itemsCountLabel.setVisible(false);
 
         refreshManager.setManualRefreshCallback(() -> {
             //Do any special refresh options.
@@ -95,23 +97,23 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         });
     }
 
+    public IsWidget getOuterWidget() {
+        return getWidget();
+    }
+
     @Override
     protected void updateTableControls() {
         super.updateTableControls();
-        itemsCountLabel.setText(getDataProvider().getItemsCount());
+        fromCount.getElement().setInnerText(String.valueOf(getDataProvider().getFromCount()));
+        toCount.getElement().setInnerText(String.valueOf(getDataProvider().getToCount()));
     }
 
     void initStyles() {
-        tableContainer.setStyleName(getTableContainerStyleName());
         barPanel.setStyleName(getBarPanelStyleName());
     }
 
     protected String getBarPanelStyleName() {
         return style.bar();
-    }
-
-    protected String getTableContainerStyleName() {
-        return showDefaultHeader ? style.contentWithDefaultHeader() : style.content();
     }
 
     public void showRefreshButton() {
@@ -126,7 +128,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     public void showItemsCount() {
-        itemsCountLabel.setVisible(true);
     }
 
     public void setBarStyle(String barStyle) {
@@ -135,7 +136,11 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
 
     @Override
     protected ActionButton createNewActionButton(ActionButtonDefinition<T> buttonDef) {
-        return new SimpleActionButton();
+        SimpleActionButton result = new SimpleActionButton();
+        if (buttonDef.getIcon() instanceof IconType) {
+            result.setIcon((IconType) buttonDef.getIcon());
+        }
+        return result;
     }
 
     @Override
@@ -157,10 +162,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     interface Style extends CssResource {
-        String content();
-
-        String contentWithDefaultHeader();
-
         String subTitledButton();
 
         String bar();

@@ -6,13 +6,16 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.tab.MenuLayoutMenuDetails;
+import org.ovirt.engine.ui.webadmin.widget.tab.WebadminMenuLayout;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.dispatch.annotation.GenEvent;
@@ -25,8 +28,6 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class MainTabUserPresenter extends AbstractMainTabWithDetailsPresenter<DbUser, UserListModel, MainTabUserPresenter.ViewDef, MainTabUserPresenter.ProxyDef> {
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class UserSelectionChange {
@@ -46,14 +47,20 @@ public class MainTabUserPresenter extends AbstractMainTabWithDetailsPresenter<Db
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(
-            MainModelProvider<DbUser, UserListModel> modelProvider) {
-        return new ModelBoundTabData(constants.userMainTabLabel(), 13, modelProvider);
+            MainModelProvider<DbUser, UserListModel> modelProvider, WebadminMenuLayout menuLayout) {
+        MenuLayoutMenuDetails menuTabDetails =
+                menuLayout.getDetails(WebAdminApplicationPlaces.userMainTabPlace);
+        return new ModelBoundTabData(menuTabDetails.getSecondaryTitle(), menuTabDetails.getSecondaryPriority(),
+                menuTabDetails.getPrimaryTitle(), menuTabDetails.getPrimaryPriority(), modelProvider,
+                menuTabDetails.getIcon());
     }
 
     @Inject
     public MainTabUserPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<DbUser, UserListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+            PlaceManager placeManager, MainModelProvider<DbUser, UserListModel> modelProvider,
+            SearchPanelPresenterWidget<UserListModel> searchPanelPresenterWidget,
+            OvirtBreadCrumbs<DbUser, UserListModel> breadCrumbs) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.table;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.Button;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -27,8 +28,6 @@ import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -41,10 +40,9 @@ import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
@@ -91,14 +89,14 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     @UiField
     @WithElementId
-    public ButtonBase prevPageButton;
+    public Button prevPageButton;
 
     @UiField
     @WithElementId
-    public ButtonBase nextPageButton;
+    public Button nextPageButton;
 
     @UiField
-    public ScrollPanel tableContainer;
+    public FlowPanel tableContainer;
 
     @UiField
     public SimplePanel tableHeaderContainer;
@@ -116,9 +114,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     private boolean multiSelectionDisabled;
     private final int[] mousePosition = new int[2];
 
-    private HandlerRegistration scrollHandlerRegistration;
-    private HandlerRegistration selectionModelScrollHandlerRegistration;
-
     // Table container's horizontal scroll position, used to align table header with main table
     private int tableContainerHorizontalScrollPosition = 0;
 
@@ -129,8 +124,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     private RowVisitor<T> rowVisitor;
 
     public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, Resources headerResources, EventBus eventBus, ClientStorage clientStorage) {
-        super(dataProvider, eventBus);
+            Resources resources, Resources headerResources, ClientStorage clientStorage) {
+        super(dataProvider);
         this.selectionModel = new OrderedMultiSelectionModel<>(dataProvider);
         this.table = new ActionCellTable<T>(dataProvider, resources) {
 
@@ -300,7 +295,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             table.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
         }
         addModelSearchStringChangeListener(dataProvider.getModel());
-        addScrollSelectionModelChangeListener();
     }
 
     public void setRowVisitor(RowVisitor<T> rowVisitor) {
@@ -324,28 +318,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         }
     }
 
-    private void addScrollSelectionModelChangeListener() {
-        if (selectionModelScrollHandlerRegistration != null) {
-            selectionModelScrollHandlerRegistration.removeHandler();
-        }
-        selectionModelScrollHandlerRegistration = selectionModel.addSelectionChangeHandler(
-                event -> {
-                    if (selectionModel.getSelectedList().isEmpty()) {
-                        scrollOffset = 0;
-                    } else {
-                        updateScrollPosition();
-                    }
-                    enforceScrollPosition();
-                });
-    }
-
-    private void addScrollListener() {
-        if (scrollHandlerRegistration != null) {
-            scrollHandlerRegistration.removeHandler();
-        }
-        scrollHandlerRegistration = tableContainer.addScrollHandler(event -> updateScrollPosition());
-    }
-
     void addModelSearchStringChangeListener(final SearchableListModel<?, ?> model) {
         if (model.supportsServerSideSorting()) {
             model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
@@ -362,9 +334,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     protected void updateTableControls() {
         prevPageButton.setEnabled(getDataProvider().canGoBack());
         nextPageButton.setEnabled(getDataProvider().canGoForward());
-
-        prevPageButton.addStyleName("prevPageButton_pfly_fix"); //$NON-NLS-1$
-        nextPageButton.addStyleName("nextPageButton_pfly_fix"); //$NON-NLS-1$
     }
 
     public void showPagingButtons() {
@@ -421,7 +390,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     protected void initWidget(Widget widget) {
         super.initWidget(widget);
         initTable();
-        addScrollListener();
     }
 
     /**
@@ -480,7 +448,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         setWidth("100%", true); //$NON-NLS-1$
 
         // Attach table widget to the corresponding panel
-        tableContainer.setWidget(table);
+        tableContainer.add(table);
         tableHeaderContainer.setWidget(tableHeader);
         tableHeaderContainer.setVisible(isTableHeaderVisible());
 
@@ -761,12 +729,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     public String getColumnWidth(Column<T, ?> column) {
         return table.getColumnWidth(column);
-    }
-
-    private void updateScrollPosition() {
-        if (tableContainer.getMaximumVerticalScrollPosition() > 0) {
-            scrollOffset = tableContainer.getVerticalScrollPosition();
-        }
     }
 
     public void setVisibleRange(int start, int length) {

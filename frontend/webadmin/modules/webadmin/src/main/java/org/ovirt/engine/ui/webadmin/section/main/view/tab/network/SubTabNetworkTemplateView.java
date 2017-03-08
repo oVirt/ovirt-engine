@@ -34,7 +34,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
     public SubTabNetworkTemplateView(SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -81,12 +81,13 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
         vnicNameColumn.makeSortable();
         getTable().addColumn(vnicNameColumn, constants.vnicNetworkTemplate(), "150px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VmNetworkInterface, VmTemplate>>(constants.removeInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
     }
 
 }

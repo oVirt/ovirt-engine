@@ -35,7 +35,7 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
     public SubTabHostGlusterStorageDevicesView(SearchableDetailModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     void initTable() {
@@ -98,19 +98,21 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
         fsTypeColumn.makeSortable();
         getTable().addColumn(fsTypeColumn, constants.fileSystemType(), "170px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDevice>(constants.createBrick()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getCreateBrickCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDevice>(constants.syncStorageDevices()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getSyncStorageDevicesCommand();
             }
-        });
+        }));
 
     }
 

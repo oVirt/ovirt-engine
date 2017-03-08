@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.userportal.section.main.presenter;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
+import org.ovirt.engine.ui.common.widget.tab.AbstractTab;
+import org.ovirt.engine.ui.common.widget.tab.TabDefinition;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
@@ -10,7 +12,6 @@ import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
@@ -23,6 +24,13 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
         void setMainTabPanelVisible(boolean visible);
 
+        void addTab(String title, String href, int index);
+
+        void removeTab(String title, String href);
+
+        void updateTab(String title, String href, boolean accessible);
+
+        void markActiveTab(String text, String href);
     }
 
     private final UserPortalCurrentUserRole userRole;
@@ -38,13 +46,39 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     }
 
     @Override
-    public void addTabWidget(IsWidget tabWidget, int index) {
-        getView().addTabWidget(tabWidget, index);
+    public void addTabWidget(TabDefinition tab, int index) {
+        String href = "#"; //$NON-NLS-1$
+        if (tab instanceof AbstractTab) {
+            href = ((AbstractTab)tab).getTargetHistoryToken();
+        }
+        getView().addTab(tab.getText(), href, index);
     }
 
     @Override
-    public void removeTabWidget(IsWidget tabWidget) {
-        getView().removeTabWidget(tabWidget);
+    public void removeTabWidget(TabDefinition tab) {
+        String href = "#"; //$NON-NLS-1$
+        if (tab instanceof AbstractTab) {
+            href = ((AbstractTab)tab).getTargetHistoryToken();
+        }
+        getView().removeTab(tab.getText(), href);
+    }
+
+    @Override
+    public void updateTab(TabDefinition tab) {
+        String href = "#"; //$NON-NLS-1$
+        if (tab instanceof AbstractTab) {
+            href = ((AbstractTab)tab).getTargetHistoryToken();
+        }
+        getView().updateTab(tab.getText(), href, tab.isAccessible());
+    }
+
+    @Override
+    public void setActiveTab(TabDefinition tab) {
+        String href = "#"; //$NON-NLS-1$
+        if (tab instanceof AbstractTab) {
+            href = ((AbstractTab)tab).getTargetHistoryToken();
+        }
+        getView().markActiveTab(tab.getText(), href);
     }
 
     @Override

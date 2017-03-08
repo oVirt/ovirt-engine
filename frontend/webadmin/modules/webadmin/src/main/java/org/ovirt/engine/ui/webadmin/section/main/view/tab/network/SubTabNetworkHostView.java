@@ -63,7 +63,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         labelImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.tagImage()).getHTML());
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -259,12 +259,13 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         handleRadioButtonClick(null);
         initSorting();
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VdsNetworkInterface, VDS>>(constants.setupHostNetworksInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getSetupNetworksCommand();
             }
-        });
+        }));
     }
 
     private void initSorting() {

@@ -183,6 +183,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.VfsConfigPopupView;
+import org.ovirt.engine.ui.webadmin.widget.tab.WebadminMenuLayout;
 
 import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 
@@ -499,4 +500,6 @@ public interface ClientGinjectorExtension {
     // Widgets
     VfsConfigPopupView getVfsConfigPopupView();
 
+    // WebadminMenuLayout
+    WebadminMenuLayout getWebadminMenuLayout();
 }

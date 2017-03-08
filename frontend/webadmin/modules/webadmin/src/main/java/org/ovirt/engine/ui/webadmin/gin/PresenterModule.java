@@ -3,12 +3,30 @@ package org.ovirt.engine.ui.webadmin.gin;
 import org.ovirt.engine.ui.common.gin.BasePresenterModule;
 import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.popup.HostMaintenanceConfirmationPopupView;
+import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
+import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.BookmarkPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TagsPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TasksPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostErrataListWithDetailsPopupPresenterWidget;
@@ -160,19 +178,15 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterServicePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterVmPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterQosSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterClusterPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterCpuQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterEventPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterHostNetworkQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterIscsiBondPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkQoSPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterPermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStorageQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.DiskSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskPermissionPresenter;
@@ -189,15 +203,12 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVol
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeParameterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumePermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSubTabPanelPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostGeneralSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostGeneralSubTabPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostDevicePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostErrataPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralHardwarePresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralHostErrataPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralInfoPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralSoftwarePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGlusterStorageDevicesPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGlusterSwiftPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
@@ -287,6 +298,9 @@ import org.ovirt.engine.ui.webadmin.section.main.view.MainContentView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.overlay.BookmarkView;
+import org.ovirt.engine.ui.webadmin.section.main.view.overlay.TagsView;
+import org.ovirt.engine.ui.webadmin.section.main.view.overlay.TasksView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AssignTagsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.HostErrataListWithDetailsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.ImportVmsPopupView;
@@ -442,18 +456,14 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterN
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterServiceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterVmView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.DataCenterQosSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.DataCenterSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterClusterView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterCpuQosView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterEventView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterHostNetworkQosView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterIscsiBondView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterNetworkQoSView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterNetworkView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterPermissionView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterQosView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterQuotaView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterStorageQosView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.DiskSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskGeneralView;
@@ -471,15 +481,12 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGe
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeParameterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumePermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.VolumeSubTabPanelView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostGeneralSubTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostGeneralSubTabView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostBrickView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostDeviceView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostErrataView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostEventView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralHardwareView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralHostErrataView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralInfoView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralSoftwareView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGlusterStorageDevicesView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGlusterSwiftView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHookView;
@@ -564,6 +571,9 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabV
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineVmDevicesView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.VirtualMachineSubTabPanelView;
 
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+
 /**
  * GIN module containing WebAdmin GWTP presenter bindings.
  */
@@ -586,9 +596,6 @@ public class PresenterModule extends BasePresenterModule {
         bindSingletonPresenterWidget(HeaderPresenterWidget.class,
                 HeaderPresenterWidget.ViewDef.class,
                 HeaderView.class);
-        bindSingletonPresenterWidget(SearchPanelPresenterWidget.class,
-                SearchPanelPresenterWidget.ViewDef.class,
-                SearchPanelView.class);
         bindPresenterWidget(AboutPopupPresenterWidget.class,
                 AboutPopupPresenterWidget.ViewDef.class,
                 AboutPopupView.class);
@@ -692,10 +699,6 @@ public class PresenterModule extends BasePresenterModule {
                 DataCenterSubTabPanelPresenter.ViewDef.class,
                 DataCenterSubTabPanelView.class,
                 DataCenterSubTabPanelPresenter.ProxyDef.class);
-        bindPresenter(DataCenterQosSubTabPanelPresenter.class,
-                DataCenterQosSubTabPanelPresenter.ViewDef.class,
-                DataCenterQosSubTabPanelView.class,
-                DataCenterQosSubTabPanelPresenter.ProxyDef.class);
         bindPresenter(SubTabDataCenterStoragePresenter.class,
                 SubTabDataCenterStoragePresenter.ViewDef.class,
                 SubTabDataCenterStorageView.class,
@@ -708,22 +711,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabDataCenterNetworkPresenter.ViewDef.class,
                 SubTabDataCenterNetworkView.class,
                 SubTabDataCenterNetworkPresenter.ProxyDef.class);
-        bindPresenter(SubTabDataCenterNetworkQoSPresenter.class,
-                SubTabDataCenterNetworkQoSPresenter.ViewDef.class,
-                SubTabDataCenterNetworkQoSView.class,
-                SubTabDataCenterNetworkQoSPresenter.ProxyDef.class);
-        bindPresenter(SubTabDataCenterStorageQosPresenter.class,
-                SubTabDataCenterStorageQosPresenter.ViewDef.class,
-                SubTabDataCenterStorageQosView.class,
-                SubTabDataCenterStorageQosPresenter.ProxyDef.class);
-        bindPresenter(SubTabDataCenterCpuQosPresenter.class,
-                SubTabDataCenterCpuQosPresenter.ViewDef.class,
-                SubTabDataCenterCpuQosView.class,
-                SubTabDataCenterCpuQosPresenter.ProxyDef.class);
-        bindPresenter(SubTabDataCenterHostNetworkQosPresenter.class,
-                SubTabDataCenterHostNetworkQosPresenter.ViewDef.class,
-                SubTabDataCenterHostNetworkQosView.class,
-                SubTabDataCenterHostNetworkQosPresenter.ProxyDef.class);
+        bindPresenter(SubTabDataCenterQosPresenter.class,
+                SubTabDataCenterQosPresenter.ViewDef.class,
+                SubTabDataCenterQosView.class,
+                SubTabDataCenterQosPresenter.ProxyDef.class);
         bindPresenter(SubTabDataCenterClusterPresenter.class,
                 SubTabDataCenterClusterPresenter.ViewDef.class,
                 SubTabDataCenterClusterView.class,
@@ -743,6 +734,8 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(RecoveryStoragePopupPresenterWidget.class,
                 RecoveryStoragePopupPresenterWidget.ViewDef.class,
                 RecoveryStorageConfirmationPopupView.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget<DataCenterListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<DataCenterListModel>>(){}).to(new TypeLiteral<SearchPanelView<DataCenterListModel>>(){}).in(Singleton.class);
 
         // Storage
         bindPresenter(StorageSubTabPanelPresenter.class,
@@ -821,6 +814,8 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabStorageDiskProfilePresenter.ViewDef.class,
                 SubTabStorageDiskProfileView.class,
                 SubTabStorageDiskProfilePresenter.ProxyDef.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget<StorageListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<StorageListModel>>(){}).to(new TypeLiteral<SearchPanelView<StorageListModel>>(){}).in(Singleton.class);
 
         // Cluster
         bindPresenter(ClusterSubTabPanelPresenter.class,
@@ -873,31 +868,23 @@ public class PresenterModule extends BasePresenterModule {
                 GlusterVolumeSnapshotCreatePopupPresenterWidget.ViewDef.class,
                 GlusterVolumeSnapshotCreatePopupView.class);
 
+        // TODO: make helper function that allows for TypeLiterals.
+        bind(new TypeLiteral<SearchPanelPresenterWidget<ClusterListModel<Void>>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<ClusterListModel<Void>>>(){}).to(new TypeLiteral<SearchPanelView<ClusterListModel<Void>>>(){}).in(Singleton.class);
+
         // Host
         bindPresenter(HostSubTabPanelPresenter.class,
                 HostSubTabPanelPresenter.ViewDef.class,
                 HostSubTabPanelView.class,
                 HostSubTabPanelPresenter.ProxyDef.class);
-        bindPresenter(HostGeneralSubTabPanelPresenter.class,
-                HostGeneralSubTabPanelPresenter.ViewDef.class,
-                HostGeneralSubTabPanelView.class,
-                HostGeneralSubTabPanelPresenter.ProxyDef.class);
-        bindPresenter(SubTabHostGeneralSoftwarePresenter.class,
-                SubTabHostGeneralSoftwarePresenter.ViewDef.class,
-                SubTabHostGeneralSoftwareView.class,
-                SubTabHostGeneralSoftwarePresenter.ProxyDef.class);
-        bindPresenter(SubTabHostGeneralInfoPresenter.class,
-                SubTabHostGeneralInfoPresenter.ViewDef.class,
-                SubTabHostGeneralInfoView.class,
-                SubTabHostGeneralInfoPresenter.ProxyDef.class);
-        bindPresenter(SubTabHostGeneralHardwarePresenter.class,
-                SubTabHostGeneralHardwarePresenter.ViewDef.class,
-                SubTabHostGeneralHardwareView.class,
-                SubTabHostGeneralHardwarePresenter.ProxyDef.class);
-        bindPresenter(SubTabHostGeneralHostErrataPresenter.class,
-                SubTabHostGeneralHostErrataPresenter.ViewDef.class,
-                SubTabHostGeneralHostErrataView.class,
-                SubTabHostGeneralHostErrataPresenter.ProxyDef.class);
+        bindPresenter(HostGeneralSubTabPresenter.class,
+                HostGeneralSubTabPresenter.ViewDef.class,
+                HostGeneralSubTabView.class,
+                HostGeneralSubTabPresenter.ProxyDef.class);
+        bindPresenter(SubTabHostErrataPresenter.class,
+                SubTabHostErrataPresenter.ViewDef.class,
+                SubTabHostErrataView.class,
+                SubTabHostErrataPresenter.ProxyDef.class);
         bindPresenter(SubTabHostVmPresenter.class,
                 SubTabHostVmPresenter.ViewDef.class,
                 SubTabHostVmView.class,
@@ -934,6 +921,8 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabHostGlusterStorageDevicesPresenter.ViewDef.class,
                 SubTabHostGlusterStorageDevicesView.class,
                 SubTabHostGlusterStorageDevicesPresenter.ProxyDef.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget<HostListModel<Void>>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<HostListModel<Void>>>(){}).to(new TypeLiteral<SearchPanelView<HostListModel<Void>>>(){}).in(Singleton.class);
 
         // VirtualMachine
         bindPresenter(VirtualMachineSubTabPanelPresenter.class,
@@ -992,6 +981,8 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVirtualMachineErrataPresenter.ViewDef.class,
                 SubTabVirtualMachineErrataView.class,
                 SubTabVirtualMachineErrataPresenter.ProxyDef.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget<VmListModel<Void>>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<VmListModel<Void>>>(){}).to(new TypeLiteral<SearchPanelView<VmListModel<Void>>>(){}).in(Singleton.class);
 
 
         // Pool
@@ -1017,6 +1008,8 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(PoolEditPopupPresenterWidget.class,
                 PoolEditPopupPresenterWidget.ViewDef.class,
                 PoolEditPopupView.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget<PoolListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<PoolListModel>>(){}).to(new TypeLiteral<SearchPanelView<PoolListModel>>(){}).in(Singleton.class);
 
         // Template
         bindPresenter(TemplateSubTabPanelPresenter.class,
@@ -1051,6 +1044,8 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabTemplateEventPresenter.ViewDef.class,
                 SubTabTemplateEventView.class,
                 SubTabTemplateEventPresenter.ProxyDef.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget<TemplateListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<TemplateListModel>>(){}).to(new TypeLiteral<SearchPanelView<TemplateListModel>>(){}).in(Singleton.class);
 
         // User
         bindPresenter(UserSubTabPanelPresenter.class,
@@ -1081,6 +1076,8 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabUserQuotaPresenter.ViewDef.class,
                 SubTabUserQuotaView.class,
                 SubTabUserQuotaPresenter.ProxyDef.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget<UserListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<UserListModel>>(){}).to(new TypeLiteral<SearchPanelView<UserListModel>>(){}).in(Singleton.class);
 
         // Quota
         bindPresenter(QuotaSubTabPanelPresenter.class,
@@ -1115,6 +1112,8 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabQuotaEventPresenter.ViewDef.class,
                 SubTabQuotaEventView.class,
                 SubTabQuotaEventPresenter.ProxyDef.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget<QuotaListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<QuotaListModel>>(){}).to(new TypeLiteral<SearchPanelView<QuotaListModel>>(){}).in(Singleton.class);
 
         // Disk
         bindPresenter(DiskSubTabPanelPresenter.class,
@@ -1141,6 +1140,8 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabDiskPermissionPresenter.ViewDef.class,
                 SubTabDiskPermissionView.class,
                 SubTabDiskPermissionPresenter.ProxyDef.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget<DiskListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<DiskListModel>>(){}).to(new TypeLiteral<SearchPanelView<DiskListModel>>(){}).in(Singleton.class);
 
         // Network
         bindPresenter(NetworkSubTabPanelPresenter.class,
@@ -1179,6 +1180,8 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabNetworkPermissionPresenter.ViewDef.class,
                 SubTabNetworkPermissionView.class,
                 SubTabNetworkPermissionPresenter.ProxyDef.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget<NetworkListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<NetworkListModel>>(){}).to(new TypeLiteral<SearchPanelView<NetworkListModel>>(){}).in(Singleton.class);
 
         // Provider
         bindPresenter(ProviderSubTabPanelPresenter.class,
@@ -1197,6 +1200,8 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabProviderSecretPresenter.ViewDef.class,
                 SubTabProviderSecretView.class,
                 SubTabProviderSecretPresenter.ProxyDef.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget<ProviderListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<ProviderListModel>>(){}).to(new TypeLiteral<SearchPanelView<ProviderListModel>>(){}).in(Singleton.class);
 
         // Errata
         bindPresenter(ErrataSubTabPanelPresenter.class,
@@ -1225,6 +1230,14 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVnicProfileTemplatePresenter.ViewDef.class,
                 SubTabVnicProfileTemplateView.class,
                 SubTabVnicProfileTemplatePresenter.ProxyDef.class);
+
+        // User Sessions
+        bind(new TypeLiteral<SearchPanelPresenterWidget<SessionListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<SessionListModel>>(){}).to(new TypeLiteral<SearchPanelView<SessionListModel>>(){}).in(Singleton.class);
+
+        //Volume
+        bind(new TypeLiteral<SearchPanelPresenterWidget<VolumeListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<VolumeListModel>>(){}).to(new TypeLiteral<SearchPanelView<VolumeListModel>>(){}).in(Singleton.class);
 
         // Main section: popups
 
@@ -1691,6 +1704,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(EventPopupPresenterWidget.class,
                 EventPopupPresenterWidget.ViewDef.class,
                 EventPopupView.class);
+        // Search bars
+        bind(new TypeLiteral<SearchPanelPresenterWidget<EventListModel<Void>>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<EventListModel<Void>>>(){}).to(new TypeLiteral<SearchPanelView<EventListModel<Void>>>(){}).in(Singleton.class);
 
         // Provider
         bindPresenterWidget(ProviderPopupPresenterWidget.class,
@@ -1734,5 +1750,21 @@ public class PresenterModule extends BasePresenterModule {
                 VmErrataListWithDetailsPopupPresenterWidget.ViewDef.class,
                 VmErrataListWithDetailsPopupView.class);
 
+        // Overlays
+        // Tasks
+        bindPresenter(TasksPresenter.class,
+                TasksPresenter.ViewDef.class,
+                TasksView.class,
+                TasksPresenter.ProxyDef.class);
+        // Bookmarks
+        bindPresenter(BookmarkPresenter.class,
+                BookmarkPresenter.ViewDef.class,
+                BookmarkView.class,
+                BookmarkPresenter.ProxyDef.class);
+        // Tags
+        bindPresenter(TagsPresenter.class,
+                TagsPresenter.ViewDef.class,
+                TagsView.class,
+                TagsPresenter.ProxyDef.class);
     }
 }

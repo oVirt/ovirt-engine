@@ -21,7 +21,7 @@ public abstract class WebAdminDynamicTabPresenter<V extends View, P extends Dyna
 
         // Hide the sub tab panel in case of dynamic main tab
         if (isMainTab()) {
-            UpdateMainContentLayoutEvent.fire(this, false);
+            UpdateMainContentLayoutEvent.fire(this, UpdateMainContentLayout.ContentDisplayType.MAIN, null);
         }
     }
 

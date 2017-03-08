@@ -32,7 +32,7 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
     public SubTabNetworkExternalSubnetView(SearchableDetailModelProvider<ExternalSubnet, NetworkListModel, NetworkExternalSubnetListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -103,17 +103,19 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
         externalIdColumn.makeSortable();
         getTable().addColumn(externalIdColumn, constants.externalIdExternalSubnet(), "300px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<ExternalSubnet>(constants.newNetworkExternalSubnet()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<ExternalSubnet>(constants.removeNetworkExternalSubnet()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
     }
 }

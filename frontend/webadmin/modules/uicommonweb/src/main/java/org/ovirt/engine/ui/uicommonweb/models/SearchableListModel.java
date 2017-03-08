@@ -145,7 +145,28 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     private String searchString;
 
     public String getSearchString() {
-        return searchString;
+        if (tags.isEmpty()) {
+            return searchString;
+        } else {
+            return getTaggedSearchString();
+        }
+    }
+
+    private String getTaggedSearchString() {
+        StringBuilder tags = new StringBuilder();
+        for (String tag: this.tags) {
+            tags.append("tag=" + tag); // $NON-NLS-1$
+            if (!this.tags.get(this.tags.size() - 1).equals(tag)) {
+                tags.append(" OR "); // $NON-NLS-1$
+            }
+        }
+        if (getDefaultSearchString().equalsIgnoreCase(searchString)) {
+            //Nothing added, we can append the tags.
+            return searchString + tags.toString();
+        } else {
+            //Have a search string with something already, append with OR.
+            return searchString + " OR " + tags.toString(); // $NON-NLS-1$
+        }
     }
 
     public void setSearchString(String value) {
@@ -156,6 +177,17 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
             searchStringChanged();
             onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
         }
+    }
+
+    private List<String> tags = new ArrayList<>();
+
+    public void setTagStrings(List<String> tags) {
+        this.tags.clear();
+        this.tags.addAll(tags);
+    }
+
+    public List<String> getTagStrings() {
+        return this.tags;
     }
 
     private boolean caseSensitiveSearch = true;
@@ -498,6 +530,12 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     private void setSearchStringPage(int newSearchPageNumber) {
        this.pagingSearchString = " page " + newSearchPageNumber; //$NON-NLS-1$
        this.currentPageNumber = newSearchPageNumber;
+    }
+
+    protected void searchFirstPage() {
+        searchString = stripPageKeyword(searchString);
+        setSearchStringPage(1); // First page
+        getSearchCommand().execute();
     }
 
     protected void searchNextPage() {

@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.tab;
 
-import org.ovirt.engine.ui.common.widget.Align;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -21,10 +20,6 @@ public class HyperlinkTab extends AbstractTab {
     public HyperlinkTab(TabData tabData, AbstractTabPanel tabPanel) {
         super(tabData, tabPanel);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-    }
-
-    @Override
-    public void setAlign(Align align) {
     }
 
     @Override

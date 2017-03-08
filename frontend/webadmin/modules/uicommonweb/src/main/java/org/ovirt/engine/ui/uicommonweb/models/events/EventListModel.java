@@ -116,6 +116,7 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.AUDIT_OBJ_NAME, SearchObjects.AUDIT_PLU_OBJ_NAME });
 
+        getSearchCommand().execute();
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
     }

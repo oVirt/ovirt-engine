@@ -38,7 +38,7 @@ public class SubTabClusterGlusterHookView
             SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -99,23 +99,26 @@ public class SubTabClusterGlusterHookView
                 };
         getTable().addColumn(contentTypeColumn, constants.contentTypeHook(), "150px"); //$NON-NLS-1$
 
-        getTable().addActionButton(
+        addButtonToActionGroup(
+                getTable().addActionButton(
                 new WebAdminButtonDefinition<GlusterHookEntity>(constants
                         .enableHook()) {
                     @Override
                     protected UICommand resolveCommand() {
                         return getDetailModel().getEnableHookCommand();
                     }
-                });
+                }));
 
-        getTable().addActionButton(
+        addButtonToActionGroup(
+                getTable().addActionButton(
                 new WebAdminButtonDefinition<GlusterHookEntity>(constants
                         .disableHook()) {
                     @Override
                     protected UICommand resolveCommand() {
                         return getDetailModel().getDisableHookCommand();
                     }
-                });
+                }));
+        addButtonToActionGroup(
         getTable().addActionButton(
                 new WebAdminButtonDefinition<GlusterHookEntity>(constants
                         .viewHookContent()) {
@@ -123,7 +126,8 @@ public class SubTabClusterGlusterHookView
                     protected UICommand resolveCommand() {
                         return getDetailModel().getViewHookCommand();
                     }
-                });
+                }));
+        addButtonToActionGroup(
         getTable().addActionButton(
                 new WebAdminButtonDefinition<GlusterHookEntity>(constants
                         .resolveConflictsGlusterHook()) {
@@ -131,14 +135,15 @@ public class SubTabClusterGlusterHookView
                     protected UICommand resolveCommand() {
                         return getDetailModel().getResolveConflictsCommand();
                     }
-                });
-        getTable().addActionButton(
+                }));
+        addButtonToActionGroup(
+                getTable().addActionButton(
                 new WebAdminButtonDefinition<GlusterHookEntity>(constants
                         .syncWithServersGlusterHook()) {
                     @Override
                     protected UICommand resolveCommand() {
                         return getDetailModel().getSyncWithServersCommand();
                     }
-                });
+                }));
     }
 }

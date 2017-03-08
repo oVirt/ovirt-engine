@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderSecretListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
@@ -43,8 +42,7 @@ public class SubTabProviderSecretPresenter
     @Inject
     public SubTabProviderSecretPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, ProviderMainTabSelectedItems selectedItems,
-            SearchableDetailModelProvider<LibvirtSecret, ProviderListModel, ProviderSecretListModel> modelProvider,
-            SystemTreeModelProvider systemTreeModelProvider) {
+            SearchableDetailModelProvider<LibvirtSecret, ProviderListModel, ProviderSecretListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
                 ProviderSubTabPanelPresenter.TYPE_SetTabContent);
     }

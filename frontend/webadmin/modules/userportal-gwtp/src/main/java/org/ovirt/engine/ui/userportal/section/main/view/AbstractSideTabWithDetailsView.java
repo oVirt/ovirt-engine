@@ -60,14 +60,7 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
                 getTableResources(),
                 getTableHeaderResources(),
                 ClientGinjectorProvider.getEventBus(),
-                ClientGinjectorProvider.getClientStorage()) {
-            @Override
-            protected String getTableContainerStyleName() {
-                return AbstractSideTabWithDetailsView.this.getTableContainerStyleName() == null
-                        ? super.getTableContainerStyleName()
-                        : AbstractSideTabWithDetailsView.this.getTableContainerStyleName();
-            }
-        };
+                ClientGinjectorProvider.getClientStorage());
     }
 
     protected Resources getTableResources() {
@@ -121,6 +114,12 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
     @Override
     public SimpleActionTable<T> getTable() {
         return table;
+    }
+
+    @Override
+    public IsWidget getTableContainer() {
+        // TODO: see if we need to get an actual container here.
+        return null;
     }
 
     protected M getModel() {

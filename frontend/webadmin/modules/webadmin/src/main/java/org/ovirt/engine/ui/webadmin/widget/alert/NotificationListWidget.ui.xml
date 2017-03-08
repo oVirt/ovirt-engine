@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:style>
+    </ui:style>
+
+    <g:FlowPanel>
+        <g:FlowPanel addStyleNames="drawer-pf-title">
+            <b:Anchor ui:field="toggleAnchor" addStyleNames="drawer-pf-toggle-expand" />
+            <b:Heading size="H3" ui:field="title" />
+        </g:FlowPanel>
+        <b:PanelGroup ui:field="contentPanel" />
+    </g:FlowPanel>
+</ui:UiBinder>

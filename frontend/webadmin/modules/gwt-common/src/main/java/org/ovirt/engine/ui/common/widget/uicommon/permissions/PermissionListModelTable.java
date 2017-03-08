@@ -104,20 +104,22 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
     }
 
     private void addAddPermissionsButton() {
+        addButtonToActionGroup(
         getTable().addActionButton(new UiCommandButtonDefinition<Permission>(getEventBus(), constants.addPermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAddCommand();
             }
-        });
+        }));
     }
 
     private void addRemovePermissionsButton() {
+        addButtonToActionGroup(
             getTable().addActionButton(new UiCommandButtonDefinition<Permission>(getEventBus(), constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
-        });
+        }));
     }
 }

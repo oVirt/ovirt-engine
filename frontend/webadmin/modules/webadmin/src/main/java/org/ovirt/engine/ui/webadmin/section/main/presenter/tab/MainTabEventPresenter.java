@@ -5,14 +5,16 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.tab.MenuLayoutMenuDetails;
+import org.ovirt.engine.ui.webadmin.widget.tab.WebadminMenuLayout;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.dispatch.annotation.GenEvent;
@@ -26,8 +28,6 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<AuditLog, EventListModel<Void>,
     MainTabEventPresenter.ViewDef, MainTabEventPresenter.ProxyDef> {
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class EventSelectionChange {
@@ -46,14 +46,20 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(
-            MainModelProvider<AuditLog, EventListModel<Void>> modelProvider) {
-        return new ModelBoundTabData(constants.eventMainTabLabel(), 14, modelProvider, Align.RIGHT);
+            MainModelProvider<AuditLog, EventListModel<Void>> modelProvider, WebadminMenuLayout menuLayout) {
+        MenuLayoutMenuDetails menuTabDetails =
+                menuLayout.getDetails(WebAdminApplicationPlaces.eventMainTabPlace);
+        return new ModelBoundTabData(menuTabDetails.getPrimaryTitle(), 0,
+                null, menuTabDetails.getPrimaryPriority(), modelProvider,
+                menuTabDetails.getIcon());
     }
 
     @Inject
     public MainTabEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<AuditLog, EventListModel<Void>> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+            PlaceManager placeManager, MainModelProvider<AuditLog, EventListModel<Void>> modelProvider,
+            SearchPanelPresenterWidget<EventListModel<Void>> searchPanelPresenterWidget,
+            OvirtBreadCrumbs<AuditLog, EventListModel<Void>> breadCrumbs) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 
     @Override
@@ -74,7 +80,7 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
     }
 
     @Override
-    protected void handlePlaceTransition() {
+    public void handlePlaceTransition() {
         // No-op, Event main tab has no sub tabs
     }
 

@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
@@ -19,11 +19,11 @@ public class ProviderNetworkListModel extends SearchableListModel<Provider, Netw
 
     private UICommand discoverCommand;
 
-    private final com.google.inject.Provider<CommonModel> commonModelProvider;
+    private final DataCenterListModel dataCenterListModel;
 
     @Inject
-    public ProviderNetworkListModel(final com.google.inject.Provider<CommonModel> commonModelProvider) {
-        this.commonModelProvider = commonModelProvider;
+    public ProviderNetworkListModel(DataCenterListModel dataCenterListModel) {
+        this.dataCenterListModel = dataCenterListModel;
         setTitle(ConstantsManager.getInstance().getConstants().providerNetworksTitle());
         setHelpTag(HelpTag.networks);
         setHashName("networks"); //$NON-NLS-1$
@@ -67,7 +67,7 @@ public class ProviderNetworkListModel extends SearchableListModel<Provider, Netw
         if (getWindow() != null) {
             return;
         }
-        DiscoverNetworksModel discoverModel = new DiscoverNetworksModel(this, getEntity(), commonModelProvider);
+        DiscoverNetworksModel discoverModel = new DiscoverNetworksModel(this, getEntity(), dataCenterListModel);
         setWindow(discoverModel);
         discoverModel.discoverNetworks();
     }

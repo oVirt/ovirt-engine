@@ -123,6 +123,16 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         return getModel().getItemsCountString();
     }
 
+    @Override
+    public int getFromCount() {
+        return getModel().getSearchPageSize() * (getModel().getSearchPageNumber() - 1) + 1;
+    }
+
+    @Override
+    public int getToCount() {
+        return (getFromCount() - 1) + (getModel().getItems() == null ? 0 : getModel().getItems().size());
+    }
+
     /**
      * Retrieves current data from model and updates the data provider.
      */

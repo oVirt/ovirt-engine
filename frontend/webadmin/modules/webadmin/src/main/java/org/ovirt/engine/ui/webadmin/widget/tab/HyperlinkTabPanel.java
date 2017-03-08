@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.tab;
 
+import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.common.widget.tab.HyperlinkTab;
 import org.ovirt.engine.ui.common.widget.tab.TabDefinition;
 import com.google.gwt.core.client.GWT;
@@ -8,6 +9,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.TabData;
 
 public class HyperlinkTabPanel extends SimpleTabPanel {
+
+    public HyperlinkTabPanel(DetailTabLayout detailTabLayout) {
+        super(null, detailTabLayout);
+    }
+
     interface WidgetUiBinder extends UiBinder<Widget, HyperlinkTabPanel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }

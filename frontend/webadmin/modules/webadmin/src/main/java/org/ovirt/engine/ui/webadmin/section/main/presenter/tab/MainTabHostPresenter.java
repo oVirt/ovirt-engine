@@ -5,30 +5,33 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.AbstractErrataCountModel;
-import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
+import org.ovirt.engine.ui.webadmin.uicommon.model.TagActivationChangeEvent;
+import org.ovirt.engine.ui.webadmin.widget.tab.MenuLayoutMenuDetails;
+import org.ovirt.engine.ui.webadmin.widget.tab.WebadminMenuLayout;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VDS, HostListModel<Void>, MainTabHostPresenter.ViewDef, MainTabHostPresenter.ProxyDef> {
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
+public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VDS, HostListModel<Void>,
+    MainTabHostPresenter.ViewDef, MainTabHostPresenter.ProxyDef>
+        implements TagActivationChangeEvent.TagActivationChangeHandler{
 
     @GenEvent
     public class HostSelectionChange {
@@ -43,18 +46,25 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
     }
 
     public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<VDS> {
+        void setActiveTags(List<TagModel> tags);
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(
-            MainModelProvider<VDS, HostListModel<Void>> modelProvider) {
-        return new ModelBoundTabData(constants.hostMainTabLabel(), 2, modelProvider);
+            MainModelProvider<VDS, HostListModel<Void>> modelProvider, WebadminMenuLayout menuLayout) {
+        MenuLayoutMenuDetails menuTabDetails =
+                menuLayout.getDetails(WebAdminApplicationPlaces.hostMainTabPlace);
+        return new ModelBoundTabData(menuTabDetails.getSecondaryTitle(), menuTabDetails.getSecondaryPriority(),
+                menuTabDetails.getPrimaryTitle(), menuTabDetails.getPrimaryPriority(), modelProvider,
+                menuTabDetails.getIcon());
     }
 
     @Inject
     public MainTabHostPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<VDS, HostListModel<Void>> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+            PlaceManager placeManager, MainModelProvider<VDS, HostListModel<Void>> modelProvider,
+            SearchPanelPresenterWidget<HostListModel<Void>> searchPanelPresenterWidget,
+            OvirtBreadCrumbs<VDS, HostListModel<Void>> breadCrumbs) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 
     @Override
@@ -67,18 +77,10 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
         return PlaceRequestFactory.get(WebAdminApplicationPlaces.hostMainTabPlace);
     }
 
+    @ProxyEvent
     @Override
-    protected PlaceRequest getSubTabRequest() {
-        HasEntity<?> activeDetailModel = modelProvider.getModel().getActiveDetailModel();
-        if (activeDetailModel instanceof HostHardwareGeneralModel || activeDetailModel instanceof AbstractErrataCountModel) {
-            //Since the host hardware section has been merged into the general sub sub tab, it no longer has its
-            //own place. So we need to make sure it stays on the host-general sub tab, if not it will generate
-            //an invalid sub tab and go to the VM main tab.
-            String requestToken = getMainTabRequest().getNameToken() + WebAdminApplicationPlaces.SUB_TAB_PREFIX
-                    + "general"; //$NON-NLS-1$
-            return PlaceRequestFactory.get(requestToken);
-        } else {
-            return super.getSubTabRequest();
-        }
+    public void onTagActivationChange(TagActivationChangeEvent event) {
+        getView().setActiveTags(event.getActiveTags());
+        setTags(event.getActiveTags());
     }
 }

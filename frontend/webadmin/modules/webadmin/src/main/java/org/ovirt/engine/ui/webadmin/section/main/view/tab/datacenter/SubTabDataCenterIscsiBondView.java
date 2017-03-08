@@ -30,7 +30,7 @@ public class SubTabDataCenterIscsiBondView extends AbstractSubTabTableView<Stora
             DataCenterIscsiBondListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -55,25 +55,28 @@ public class SubTabDataCenterIscsiBondView extends AbstractSubTabTableView<Stora
             }
         }, constants.description(), "400px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<IscsiBond>(constants.addIscsiBond()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAddCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<IscsiBond>(constants.editIscsiBond()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<IscsiBond>(constants.removeIscsiBond()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
     }
 }

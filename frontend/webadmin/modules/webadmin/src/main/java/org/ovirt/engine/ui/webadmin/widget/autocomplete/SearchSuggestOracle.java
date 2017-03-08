@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SuggestItemPartModel;
@@ -17,7 +16,7 @@ public class SearchSuggestOracle extends MultiWordSuggestOracle {
 
     private String searchStringPrefix;
 
-    private CommonModel commonModel;
+    private SearchableListModel<?, ?> model;
 
     public SearchSuggestOracle() {
         searchSuggestModel = new SearchSuggestModel();
@@ -59,13 +58,11 @@ public class SearchSuggestOracle extends MultiWordSuggestOracle {
     private String[] getSearchObjectFilter() {
         List<String> filter = new ArrayList<>();
 
-        for (SearchableListModel list : commonModel.getItems()) {
-            if (list != null && !list.getIsAvailable()) {
-                String[] searchObjects = list.getSearchObjects();
+        if (model != null && !model.getIsAvailable()) {
+            String[] searchObjects = model.getSearchObjects();
 
-                if (searchObjects != null) {
-                    filter.addAll(Arrays.asList(searchObjects));
-                }
+            if (searchObjects != null) {
+                filter.addAll(Arrays.asList(searchObjects));
             }
         }
 
@@ -76,8 +73,8 @@ public class SearchSuggestOracle extends MultiWordSuggestOracle {
         this.searchStringPrefix = searchStringPrefix;
     }
 
-    public void setCommonModel(CommonModel commonModel) {
-        this.commonModel = commonModel;
+    public void setModel(SearchableListModel<?, ?> model) {
+        this.model = model;
     }
 
 }

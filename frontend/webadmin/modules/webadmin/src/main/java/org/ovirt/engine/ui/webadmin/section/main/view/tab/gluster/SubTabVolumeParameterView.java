@@ -28,7 +28,7 @@ public class SubTabVolumeParameterView extends AbstractSubTabTableView<GlusterVo
     public SubTabVolumeParameterView(SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -57,33 +57,37 @@ public class SubTabVolumeParameterView extends AbstractSubTabTableView<GlusterVo
         optionValueColumn.makeSortable();
         getTable().addColumn(optionValueColumn, constants.optionValueVolumeParameter(), "400px"); //$NON-NLS-1$;
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>(constants.addVolumeParameter()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAddParameterCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>(constants.editVolumeParameter()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditParameterCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>(constants.resetVolumeParameter()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getResetParameterCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>(constants.resetAllVolumeParameter()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getResetAllParameterCommand();
             }
-        });
+        }));
     }
 
 }

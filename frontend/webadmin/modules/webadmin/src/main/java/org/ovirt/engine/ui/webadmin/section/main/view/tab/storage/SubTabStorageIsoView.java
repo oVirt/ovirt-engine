@@ -32,7 +32,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
     public SubTabStorageIsoView(SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -71,12 +71,13 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
         sizeColumn.makeSortable();
         getTable().addColumn(sizeColumn, constants.actualSizeTemplate(), "100px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<RepoImage>(constants.importImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getImportImagesCommand();
             }
-        });
+        }));
 
         getTable().showRefreshButton();
     }

@@ -36,7 +36,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<Cluster, VDS,
     public SubTabClusterHostView(SearchableDetailModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -102,12 +102,13 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<Cluster, VDS,
             getTable().addColumn(consoleColumn, constants.overriddenConsoleAddress(), "220px"); //$NON-NLS-1$
         }
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.updateMomPolicyClusterHost()) {
+        addButtonToActionGroup(
+                getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.updateMomPolicyClusterHost()) {
 
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getUpdateMomPolicyCommand();
             }
-        });
+        }));
     }
 }

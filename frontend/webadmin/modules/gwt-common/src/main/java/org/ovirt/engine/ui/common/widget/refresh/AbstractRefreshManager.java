@@ -18,7 +18,7 @@ import com.google.gwt.event.shared.HasHandlers;
 /**
  * Provides refresh rate management for a {@link GridController}.
  */
-public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> implements HasHandlers {
+public abstract class AbstractRefreshManager<T extends RefreshPanel> implements HasHandlers {
 
     /**
      * Callback triggered when the user clicks the refresh button.

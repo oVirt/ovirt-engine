@@ -30,7 +30,7 @@ public class SubTabStorageSnapshotView extends AbstractSubTabTableView<StorageDo
             StorageSnapshotListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -63,11 +63,12 @@ public class SubTabStorageSnapshotView extends AbstractSubTabTableView<StorageDo
                 DisksViewColumns.getDiskSnapshotIDColumn(null), constants.diskSnapshotIDDisk(),
                 true, "260px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
     }
 }

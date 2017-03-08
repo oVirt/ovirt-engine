@@ -109,12 +109,13 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<User
         sessionLastActiveColumn.makeSortable(Comparator.comparing(UserSession::getSessionLastActiveTime));
         getTable().addColumn(sessionLastActiveColumn, constants.sessionLastActiveTime(), "200px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<UserSession>(constants.terminateSession()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getTerminateCommand();
             }
-        });
+        }));
     }
 
     interface ViewIdHandler extends ElementIdHandler<MainTabSessionView> {

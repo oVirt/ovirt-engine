@@ -3,7 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestOracle;
@@ -23,7 +24,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public class SearchPanelView extends AbstractView implements SearchPanelPresenterWidget.ViewDef {
+public class SearchPanelView<M extends SearchableListModel> extends AbstractView implements SearchPanelPresenterWidget.ViewDef {
 
     interface ViewUiBinder extends UiBinder<Widget, SearchPanelView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -75,7 +76,8 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     @UiField
     Style style;
 
-    private final int SEARCH_PANEL_WIDTH = 1000;
+    private static final int SEARCH_PANEL_WIDTH = 1000;
+
     private final SearchSuggestOracle oracle;
 
     @Inject
@@ -105,12 +107,17 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
     @Override
     public String getSearchString() {
-        return searchStringInput.getText();
+        return searchStringPrefixLabel.getText() + searchStringInput.getText();
     }
 
     @Override
     public void setSearchString(String searchString) {
-        searchStringInput.setText(searchString);
+        if (StringUtils.isNotEmpty(searchString) && searchString.trim().toUpperCase()
+                .startsWith(searchStringPrefixLabel.getText().toUpperCase())) {
+            searchStringInput.setText(searchString.trim().substring(searchStringPrefixLabel.getText().length()));
+        } else {
+            searchStringInput.setText(searchString);
+        }
     }
 
     @Override
@@ -121,11 +128,6 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
         // Set search input width
         int searchStringInputWidth = SEARCH_PANEL_WIDTH - searchStringPrefixLabel.getElement().getOffsetWidth();
         searchStringInput.getElement().getStyle().setWidth(searchStringInputWidth, Unit.PX);
-    }
-
-    @Override
-    public void setHasSearchStringPrefix(boolean hasSearchStringPrefix) {
-        searchStringPrefixLabel.setVisible(hasSearchStringPrefix);
     }
 
     @Override
@@ -166,8 +168,8 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     }
 
     @Override
-    public void setCommonModel(CommonModel commonModel) {
-        oracle.setCommonModel(commonModel);
+    public void setModel(SearchableListModel model) {
+        oracle.setModel(model);
     }
 
     @Override

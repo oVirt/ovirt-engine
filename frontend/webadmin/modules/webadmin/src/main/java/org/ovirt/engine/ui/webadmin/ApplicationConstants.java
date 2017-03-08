@@ -201,6 +201,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String computeResourceLabel();
 
+    String computeLabel();
+
     String externalProviderExplanation();
 
     String networkLabel();
@@ -3265,5 +3267,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clusterPopupResiliencePolicyInfo();
 
+    String administration();
+
+    String activeTags();
+
+    String deactivateTag();
+
+    String activateTag();
 }
 

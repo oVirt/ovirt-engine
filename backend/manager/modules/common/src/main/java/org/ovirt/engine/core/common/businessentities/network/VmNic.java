@@ -150,7 +150,8 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
         return super.equals(obj)
                 && Objects.equals(vmId, other.vmId)
                 && Objects.equals(vnicProfileId, other.vnicProfileId)
-                && Objects.equals(vmTemplateId, other.vmTemplateId);
+                && Objects.equals(vmTemplateId, other.vmTemplateId)
+                && linked == other.linked;
     }
 
     public boolean isPassthrough() {

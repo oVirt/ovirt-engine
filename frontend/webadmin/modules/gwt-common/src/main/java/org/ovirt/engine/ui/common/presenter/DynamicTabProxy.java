@@ -34,7 +34,7 @@ public abstract class DynamicTabProxy<T extends DynamicTabPresenter<?, ?>> exten
                 Type<ChangeTabHandler> changeTabEventType,
                 String label, float priority, String historyToken, Align align) {
             bind(placeManager, eventBus);
-            this.tabData = new DynamicTabData(label, priority, historyToken, align);
+            this.tabData = new DynamicTabData(label, (int)priority, historyToken, align);
             this.targetHistoryToken = historyToken;
             this.requestTabsEventType = requestTabsEventType;
             this.changeTabEventType = changeTabEventType;

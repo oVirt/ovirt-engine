@@ -1,11 +1,16 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.quota;
 
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
+import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.QuotaSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.widget.tab.SimpleTabPanel;
 import com.google.gwt.core.client.GWT;
+import com.google.inject.Inject;
 
 public class QuotaSubTabPanelView extends AbstractSubTabPanelView implements QuotaSubTabPanelPresenter.ViewDef {
 
@@ -13,9 +18,11 @@ public class QuotaSubTabPanelView extends AbstractSubTabPanelView implements Quo
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final SimpleTabPanel tabPanel = new SimpleTabPanel();
+    private final SimpleTabPanel tabPanel;
 
-    public QuotaSubTabPanelView() {
+    @Inject
+    public QuotaSubTabPanelView(OvirtBreadCrumbs<Quota, QuotaListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+        tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }
 

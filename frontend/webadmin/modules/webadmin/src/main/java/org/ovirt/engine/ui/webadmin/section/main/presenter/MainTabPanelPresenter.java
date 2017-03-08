@@ -45,5 +45,4 @@ public class MainTabPanelPresenter extends DynamicTabContainerPresenter<MainTabP
                 MainContentPresenter.TYPE_SetMainTabPanelContent);
         view.setTabWidgetHandler(header);
     }
-
 }

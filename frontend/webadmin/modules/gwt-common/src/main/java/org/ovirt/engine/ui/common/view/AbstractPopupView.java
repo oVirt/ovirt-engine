@@ -17,7 +17,12 @@ import com.gwtplatform.mvp.client.PopupViewImpl;
  */
 public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewImpl implements AbstractPopupPresenterWidget.ViewDef {
 
+    // Bootstrap defines the z-index of modal dialogs to be 1050 (why they do this I don't know)
+    // Since we are trying to comply with patternfly which is based on bootstrap it makes sense for us
+    // to match the z-indexes defined by bootstrap for our modals.
+    private static final int BOOTSTRAP_MODAL_ZINDEX = 1050;
     public static final String POPUP_CONTENT_STYLE_NAME = "popup-content"; //$NON-NLS-1$
+    private static final String GWT_POPUPPANEL = "gwt-PopupPanel"; // $NON-NLS-1$
 
     public AbstractPopupView(EventBus eventBus) {
         super(eventBus);
@@ -39,6 +44,9 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
 
         // Add popup widget style
         widget.addStyleName(POPUP_CONTENT_STYLE_NAME);
+
+        widget.removeStyleName(GWT_POPUPPANEL);
+        widget.getElement().getStyle().setZIndex(BOOTSTRAP_MODAL_ZINDEX);
     }
 
     @SuppressWarnings("unchecked")

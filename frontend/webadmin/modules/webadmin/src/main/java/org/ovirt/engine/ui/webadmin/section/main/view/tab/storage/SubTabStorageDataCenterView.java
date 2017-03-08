@@ -31,7 +31,7 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
     public SubTabStorageDataCenterView(SearchableDetailModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -65,30 +65,34 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
         domainStatusColumn.makeSortable();
         getTable().addColumn(domainStatusColumn, constants.domainStatusInDcStorageDc(), "300px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.attachStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAttachCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.detachStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDetachCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.activateStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getActivateCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.maintenanceStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getMaintenanceCommand();
             }
-        });
+        }));
     }
 
 }

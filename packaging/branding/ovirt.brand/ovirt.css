@@ -75,6 +75,10 @@ TODO: use SASS, break into alerts.scss
 .ovirt-alert-main {
   width: 768px;
   margin-bottom: 0;
+  position: absolute;
+  top: 25px;
+  left: calc(50% - 384px);
+  z-index: 1030;
 }
 
 .ovirt-alert-main-message {

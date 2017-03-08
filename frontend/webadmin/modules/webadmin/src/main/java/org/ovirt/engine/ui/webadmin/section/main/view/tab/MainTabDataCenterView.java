@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.searchbackend.StoragePoolFieldAutoCompleter;
@@ -8,6 +9,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
@@ -21,6 +23,8 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DcAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DcStatusColumn;
+
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
@@ -53,7 +57,13 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         additionalStatusColumn.setContextMenuTitle(constants.additionalStatusDataCenter());
         getTable().addColumn(additionalStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumn<StoragePool> nameColumn = new AbstractTextColumn<StoragePool>() {
+        AbstractTextColumn<StoragePool> nameColumn = new AbstractLinkColumn<StoragePool>(new FieldUpdater<StoragePool, String>() {
+
+                @Override
+                public void update(int index, StoragePool storagePool, String value) {
+                    transitionHandler.handlePlaceTransition();
+                }
+            }) {
             @Override
             public String getValue(StoragePool object) {
                 return object.getName();
@@ -104,46 +114,53 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         descColumn.makeSortable(StoragePoolFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descColumn, constants.descriptionDc(), "300px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.newDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
-        });
+        }));
+
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.editDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.removeDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
-        });
+        }));
 
-        getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.forceRemoveDC()) {
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<StoragePool>(constants.forceRemoveDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getForceRemoveCommand();
             }
-        });
+        }));
 
-        getTable().addActionButton(new WebAdminImageButtonDefinition<StoragePool>(constants.guideMeDc(),
-                resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminImageButtonDefinition<StoragePool>(constants.guideMeDc(),
+                IconType.SUPPORT, true) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getGuideCommand();
             }
-        });
+        }));
 
-        getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.reinitializeDC(), CommandLocation.OnlyFromContext) {
+        addMenuItemToKebab(
+        getTable().addMenuListItem(new WebAdminButtonDefinition<StoragePool>(constants.reinitializeDC(), CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRecoveryStorageCommand();
             }
-        });
+        }));
     }
 
 }

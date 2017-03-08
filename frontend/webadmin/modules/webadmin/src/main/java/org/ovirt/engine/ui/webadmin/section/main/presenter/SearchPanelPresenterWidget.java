@@ -1,26 +1,34 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 
-public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPresenterWidget.ViewDef> {
+public class SearchPanelPresenterWidget<M extends SearchableListModel> extends PresenterWidget<SearchPanelPresenterWidget.ViewDef> {
 
-    public interface ViewDef extends View {
+    public interface ViewDef<M extends SearchableListModel> extends View {
 
         String getSearchString();
 
         void setSearchString(String searchString);
 
         void setSearchStringPrefix(String searchStringPrefix);
-
-        void setHasSearchStringPrefix(boolean hasSearchStringPrefix);
 
         void setHasSelectedTags(boolean hasSelectedTags);
 
@@ -36,50 +44,32 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
 
         void enableSearchBar(boolean status);
 
-        void setCommonModel(CommonModel commonModel);
+        void setModel(SearchableListModel model);
 
     }
 
-    private CommonModel commonModel;
-    private final Provider<CommonModel> commonProvider;
+    private final M model;
+
+    private final BookmarkModelProvider bookmarkModelProvider;
 
     @Inject
-    public SearchPanelPresenterWidget(EventBus eventBus, ViewDef view, Provider<CommonModel> commonProvider) {
+    public SearchPanelPresenterWidget(EventBus eventBus, ViewDef<M> view, M model,
+            BookmarkModelProvider bookmarkModelProvider) {
         super(eventBus, view);
-        this.commonProvider = commonProvider;
-
-        updateCommonModel();
-        addCommonModelListeners();
+        this.model = model;
+        this.bookmarkModelProvider = bookmarkModelProvider;
+        addModelListeners();
+        updateViewSearchStringPrefix();
     }
 
-    void updateCommonModel() {
-        commonModel = commonProvider.get();
-        getView().setCommonModel(commonModel);
-    }
-
-    void addCommonModelListeners() {
-        commonModel.getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            // Update search string when 'SearchString' property changes
-            if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
-                updateViewSearchString();
-            }
-
-            // Update search string prefix when 'SearchStringPrefix' property changes
-            else if ("SearchStringPrefix".equals(args.propertyName)) { //$NON-NLS-1$
-                updateViewSearchStringPrefix();
-            }
-
-            // Update search string prefix visibility when 'HasSearchStringPrefix' property changes
-            else if ("HasSearchStringPrefix".equals(args.propertyName)) { //$NON-NLS-1$
-                updateViewHasSearchStringPrefix();
-            }
-
-            else if ("HasSelectedTags".equals(args.propertyName)) { //$NON-NLS-1$
-                updateViewHasSelectedTags();
-            }
-
-            else if ("SearchEnabled".equals(args.propertyName)) { //$NON-NLS-1$
-                updateViewSearchEnabled();
+    void addModelListeners() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                // Update search string when 'SearchString' property changes
+                if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
+                    updateViewSearchString();
+                }
             }
         });
     }
@@ -88,9 +78,21 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
     protected void onBind() {
         super.onBind();
 
-        registerHandler(getView().getBookmarkButton().addClickHandler(event -> commonModel.getBookmarkList().getNewCommand().execute()));
+        registerHandler(getView().getBookmarkButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                bookmarkModelProvider.getModel().getNewCommand().execute();
+            }
+        }));
 
-        registerHandler(getView().getClearButton().addClickHandler(event -> commonModel.getClearSearchStringCommand().execute()));
+        registerHandler(getView().getClearButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                model.setSearchString("");
+                updateViewSearchString();
+                updateModelSearchString();
+            }
+        }));
 
         registerHandler(getView().getSearchButton().addClickHandler(event -> updateModelSearchString()));
 
@@ -103,38 +105,27 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
         }));
     }
 
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-
-        updateViewSearchString();
-        updateViewSearchStringPrefix();
-        updateViewHasSearchStringPrefix();
-    }
-
     void updateModelSearchString() {
-        commonModel.setSearchString(getView().getSearchString());
-        commonModel.search();
+        model.setSearchString(getView().getSearchString());
+        model.search();
     }
 
     void updateViewSearchString() {
-        getView().setSearchString(commonModel.getSearchString());
+        getView().setSearchStringPrefix(model.getDefaultSearchString());
+        getView().setSearchString(model.getSearchString());
     }
 
-    void updateViewSearchStringPrefix() {
-        getView().setSearchStringPrefix(commonModel.getSearchStringPrefix());
+    private void updateViewSearchStringPrefix() {
+        getView().setSearchStringPrefix(model.getDefaultSearchString());
     }
 
-    void updateViewHasSearchStringPrefix() {
-        getView().setHasSearchStringPrefix(commonModel.getHasSearchStringPrefix());
-    }
-
-    void updateViewHasSelectedTags() {
-        getView().setHasSelectedTags(commonModel.getHasSelectedTags());
-    }
-
-    void updateViewSearchEnabled() {
-        getView().enableSearchBar(commonModel.getSearchEnabled());
+    public void setTags(List<TagModel> tags) {
+        List<String> tagString = new ArrayList<>();
+        for (TagModel tagModel: tags) {
+            tagString.add(tagModel.getName().getEntity());
+        }
+        model.setTagStrings(tagString);
+        model.executeCommand(model.getSearchCommand());
     }
 
 }

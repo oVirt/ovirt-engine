@@ -2608,6 +2608,11 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetVnicProfilesByNetworkId, new IdQueryParameters(networkId), aQuery);
     }
 
+    public void getAllVnicProfiles(AsyncQuery<List<VnicProfileView>> aQuery) {
+        aQuery.converterCallback = new ListConverter<>();
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVnicProfiles, new IdQueryParameters(), aQuery);
+    }
+
     public void getVnicProfilesByDcId(AsyncQuery<List<VnicProfileView>> aQuery, Guid dcId) {
         // do not replace a converter = just add if none provided
         if (aQuery.converterCallback == null) {

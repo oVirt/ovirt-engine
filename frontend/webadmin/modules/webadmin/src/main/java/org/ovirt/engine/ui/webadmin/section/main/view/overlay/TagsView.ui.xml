@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <b:Container fluid="true">
+        <b:PageHeader text="Tags" />
+        <b:Row>
+            <b:Column size="SM_1" offset="SM_11">
+                <b:ButtonGroup addStyleNames="pull-right">
+                    <b:Button text="Add" ui:field="addTagButton" />
+                    <b:Button text="close" ui:field="closeButton" />
+                </b:ButtonGroup>
+            </b:Column>
+            <b:Column size="SM_10" ui:field="emptyTagsColumn">
+                <g:HTMLPanel>
+                    <H1>No tags found</H1>
+                </g:HTMLPanel>
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <b:ListGroup ui:field="rootListGroup" />
+            </b:Column>
+        </b:Row>
+    </b:Container>
+</ui:UiBinder>

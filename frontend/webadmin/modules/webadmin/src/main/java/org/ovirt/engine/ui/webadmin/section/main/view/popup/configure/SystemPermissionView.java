@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
@@ -18,20 +19,21 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.inject.Inject;
 
 public class SystemPermissionView extends Composite {
 
-    interface ViewUiBinder extends UiBinder<SimplePanel, SystemPermissionView> {
+    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
+
+    interface ViewUiBinder extends UiBinder<FlowPanel, SystemPermissionView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
     @UiField
-    SimplePanel tabContent;
+    FlowPanel tabContent;
 
-    SplitLayoutPanel content;
+    private PatternflyActionPanel actionPanel;
 
     private SimpleActionTable<Permission> table;
 
@@ -53,11 +55,6 @@ public class SystemPermissionView extends Composite {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
 
-        content = new SplitLayoutPanel();
-        content.setWidth("100%"); //$NON-NLS-1$
-        content.setHeight("100%"); //$NON-NLS-1$
-        tabContent.add(content);
-
         initTable();
     }
 
@@ -65,10 +62,12 @@ public class SystemPermissionView extends Composite {
     }
 
     private void initTable() {
+        actionPanel = new PatternflyActionPanel();
+        tabContent.add(actionPanel);
         table = new SimpleActionTable<>(modelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
-
-        content.add(table);
+        table.removeStyleName(OBRAND_MAIN_TAB);
+        tabContent.add(table);
         table.enableColumnResizing();
 
         table.addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
@@ -105,19 +104,21 @@ public class SystemPermissionView extends Composite {
         };
         table.addColumn(roleColumn, constants.rolePermission());
 
+        actionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<Permission>(constants.addPermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getAddCommand();
             }
-        });
+        }));
 
+        actionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<Permission>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();
             }
-        });
+        }));
 
         table.getSelectionModel().addSelectionChangeHandler(event -> modelProvider.setSelectedItems(table.getSelectionModel().getSelectedList()));
     }

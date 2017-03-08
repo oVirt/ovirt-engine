@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
  * @param <D> type of the detail entity
  * @param <T> {@link org.ovirt.engine.ui.uicommonweb.models.SearchableListModel.T}
  */
-@SuppressWarnings("unused")
 public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<E, T> {
 
     private List<HasEntity<D>> detailModels;

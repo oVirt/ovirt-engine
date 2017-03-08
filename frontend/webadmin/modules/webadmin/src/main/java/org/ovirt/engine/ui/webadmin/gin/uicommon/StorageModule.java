@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -83,11 +82,9 @@ public class StorageModule extends AbstractGinModule {
             final Provider<StorageRemovePopupPresenterWidget> removePopupProvider,
             final Provider<StorageDestroyPopupPresenterWidget> destroyConfirmPopupProvider,
             final Provider<StorageForceCreatePopupPresenterWidget> forceCreateConfirmPopupProvider,
-            final Provider<StorageListModel> modelProvider,
-            final Provider<CommonModel> commonModelProvider) {
+            final Provider<StorageListModel> modelProvider) {
         MainTabModelProvider<StorageDomain, StorageListModel> result =
-                new MainTabModelProvider<StorageDomain, StorageListModel>(eventBus, defaultConfirmPopupProvider,
-                        commonModelProvider) {
+                new MainTabModelProvider<StorageDomain, StorageListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {

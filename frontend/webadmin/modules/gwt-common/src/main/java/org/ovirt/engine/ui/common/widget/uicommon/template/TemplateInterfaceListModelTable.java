@@ -90,29 +90,32 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
         };
         getTable().addColumn(typeColumn, constants.typeInterface(), "100px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
                 constants.newInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
                 constants.editInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
                 constants.removeInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
-        });
+        }));
     }
 
 }

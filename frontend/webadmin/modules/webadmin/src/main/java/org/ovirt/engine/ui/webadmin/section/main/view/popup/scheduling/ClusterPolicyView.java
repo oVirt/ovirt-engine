@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -22,11 +23,13 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
 public class ClusterPolicyView extends Composite {
+    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
 
     interface ViewUiBinder extends UiBinder<SimplePanel, ClusterPolicyView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -35,8 +38,12 @@ public class ClusterPolicyView extends Composite {
     @UiField
     SimplePanel clusterPolicyTabContent;
 
+    private PatternflyActionPanel policyActionPanel;
     private SimpleActionTable<ClusterPolicy> table;
+    private FlowPanel container = new FlowPanel();
+
     private SimpleActionTable<Cluster> clusterTable;
+
     private SplitLayoutPanel splitLayoutPanel;
 
     private final ClusterPolicyModelProvider clusterPolicyModelProvider;
@@ -77,12 +84,14 @@ public class ClusterPolicyView extends Composite {
         if (visible) {
             splitLayoutPanel.addSouth(clusterTable, 150);
         }
-        splitLayoutPanel.add(table);
+        splitLayoutPanel.add(container);
     }
 
     private void initClusterPolicyTable() {
+        policyActionPanel = new PatternflyActionPanel();
         table = new SimpleActionTable<>(clusterPolicyModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
+        table.removeStyleName(OBRAND_MAIN_TAB);
 
         table.addColumn(new AbstractImageResourceColumn<ClusterPolicy>() {
             @Override
@@ -111,42 +120,49 @@ public class ClusterPolicyView extends Composite {
         };
         table.addColumn(descColumn, constants.clusterPolicyDescriptionLabel(), "300px"); //$NON-NLS-1$
 
+        policyActionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<ClusterPolicy>(constants.newClusterPolicy()) {
             @Override
             protected UICommand resolveCommand() {
                 return clusterPolicyModelProvider.getModel().getNewCommand();
             }
-        });
+        }));
 
+        policyActionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<ClusterPolicy>(constants.editClusterPolicy()) {
             @Override
             protected UICommand resolveCommand() {
                 return clusterPolicyModelProvider.getModel().getEditCommand();
             }
-        });
+        }));
 
+        policyActionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<ClusterPolicy>(constants.copyClusterPolicy()) {
             @Override
             protected UICommand resolveCommand() {
                 return clusterPolicyModelProvider.getModel().getCloneCommand();
             }
-        });
+        }));
 
+        policyActionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<ClusterPolicy>(constants.removeClusterPolicy()) {
             @Override
             protected UICommand resolveCommand() {
                 return clusterPolicyModelProvider.getModel().getRemoveCommand();
             }
-        });
+        }));
 
+        policyActionPanel.addButtonToActionGroup(
         table.addActionButton(new WebAdminButtonDefinition<ClusterPolicy>(constants.managePolicyUnits()) {
             @Override
             protected UICommand resolveCommand() {
                 return clusterPolicyModelProvider.getModel().getManagePolicyUnitCommand();
             }
-        });
+        }));
 
-        splitLayoutPanel.add(table);
+        container.add(policyActionPanel);
+        container.add(table);
+        splitLayoutPanel.add(container);
 
         table.getSelectionModel().addSelectionChangeHandler(event -> {
             clusterPolicyModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());

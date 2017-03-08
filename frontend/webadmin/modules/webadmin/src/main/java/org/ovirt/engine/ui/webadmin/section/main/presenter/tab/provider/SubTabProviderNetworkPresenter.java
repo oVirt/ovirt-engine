@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -26,8 +25,6 @@ public class SubTabProviderNetworkPresenter
         SubTabProviderNetworkPresenter.ProxyDef> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
-
-    private SystemTreeModelProvider systemTreeModelProvider;
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.providerNetworkSubTabPlace)
@@ -47,17 +44,8 @@ public class SubTabProviderNetworkPresenter
     @Inject
     public SubTabProviderNetworkPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, ProviderMainTabSelectedItems selectedItems,
-            SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider,
-                SystemTreeModelProvider systemTreeModelProvider) {
+            SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
                 ProviderSubTabPanelPresenter.TYPE_SetTabContent);
-        this.systemTreeModelProvider = systemTreeModelProvider;
     }
-
-    @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setNetworkClickHandler((index, network, value) -> systemTreeModelProvider.setSelectedItem(network.getId()));
-    }
-
 }

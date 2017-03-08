@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.BaseImportNetworksModel;
 
 import com.google.inject.Inject;
@@ -16,8 +16,8 @@ public class DiscoverNetworksModel extends BaseImportNetworksModel {
 
     @Inject
     public DiscoverNetworksModel(ProviderNetworkListModel sourceListModel, Provider<?> provider,
-            com.google.inject.Provider<CommonModel> commonModelProvider) {
-        super(sourceListModel, commonModelProvider);
+            DataCenterListModel dataCenterListModel) {
+        super(sourceListModel, dataCenterListModel);
         this.provider = provider;
         setHelpTag(HelpTag.discover_networks);
         setHashName("discover_networks"); //$NON-NLS-1$

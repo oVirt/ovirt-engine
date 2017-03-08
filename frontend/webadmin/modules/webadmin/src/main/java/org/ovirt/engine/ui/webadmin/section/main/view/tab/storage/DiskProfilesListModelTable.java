@@ -21,11 +21,12 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<DiskProfile, DiskProfileListModel> {
+
+    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
 
     interface WidgetUiBinder extends UiBinder<Widget, DiskProfilesListModelTable> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -34,14 +35,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
     private final PermissionWithInheritedPermissionListModelTable<PermissionListModel<DiskProfile>> permissionListModelTable;
 
     @UiField
-    SplitLayoutPanel splitLayoutPanel;
-
-    @UiField
-    SimplePanel tableContainer;
-
-    SimplePanel permissionContainer;
-
-    private boolean permissionPanelVisible = false;
+    FlowPanel tableContainer;
 
     private final DiskProfilePermissionModelProvider diskProfilePermissionModelProvider;
 
@@ -53,8 +47,9 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
         this.diskProfilePermissionModelProvider = diskProfilePermissionModelProvider;
+        getTable().removeStyleName(OBRAND_MAIN_TAB);
         // Create disk profile table
-        tableContainer.add(getTable());
+        tableContainer.add(getContainer());
 
         // Create permission panel
         permissionListModelTable =
@@ -62,8 +57,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
                         eventBus,
                         clientStorage);
         permissionListModelTable.initTable();
-        permissionContainer = new SimplePanel();
-        permissionContainer.add(permissionListModelTable);
+        tableContainer.add(permissionListModelTable);
     }
 
     @Override
@@ -111,24 +105,27 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
         getTable().addColumn(qosColumn, constants.qosName(), "200px"); //$NON-NLS-1$
         qosColumn.makeSortable();
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<DiskProfile>(constants.newProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<DiskProfile>(constants.editProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<DiskProfile>(constants.removeProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
-        });
+        }));
 
         // Add selection listener
         getModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updatePermissionPanel());
@@ -139,15 +136,10 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
     private void updatePermissionPanel() {
         final DiskProfile diskProfile = getModel().getSelectedItem();
         Scheduler.get().scheduleDeferred(() -> {
-            if (permissionPanelVisible && diskProfile == null) {
-                splitLayoutPanel.clear();
-                splitLayoutPanel.add(tableContainer);
-                permissionPanelVisible = false;
-            } else if (!permissionPanelVisible && diskProfile != null) {
-                splitLayoutPanel.clear();
-                splitLayoutPanel.addEast(permissionContainer, 600);
-                splitLayoutPanel.add(tableContainer);
-                permissionPanelVisible = true;
+            if (permissionListModelTable.isVisible() && diskProfile == null) {
+                permissionListModelTable.setVisible(false);
+            } else if (!permissionListModelTable.isVisible() && diskProfile != null) {
+                permissionListModelTable.setVisible(true);
             }
         });
     }

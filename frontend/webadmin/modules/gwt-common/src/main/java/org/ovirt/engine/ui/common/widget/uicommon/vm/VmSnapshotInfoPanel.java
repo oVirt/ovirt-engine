@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.Label;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -26,12 +27,10 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.view.client.NoSelectionModel;
 
-public class VmSnapshotInfoPanel extends TabLayoutPanel {
+public class VmSnapshotInfoPanel extends FlowPanel {
 
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
@@ -42,14 +41,6 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
     private EntityModelCellTable<ListModel> appsTable;
 
     public VmSnapshotInfoPanel() {
-        super(CommonApplicationTemplates.TAB_BAR_HEIGHT, Unit.PX);
-
-        initPanel();
-        addStyle();
-    }
-
-    private void initPanel() {
-
         // Initialize Tables
         initGeneralForm();
         initDisksTable();
@@ -57,10 +48,14 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         initAppsTable();
 
         // Add Tabs
-        add(new ScrollPanel(generalForm), constants.generalLabel());
-        add(new ScrollPanel(disksTable), constants.disksLabel());
-        add(new ScrollPanel(nicsTable), constants.nicsLabel());
-        add(new ScrollPanel(appsTable), constants.applicationsLabel());
+        add(new Label(constants.generalLabel()));
+        add(generalForm);
+        add(new Label(constants.disksLabel()));
+        add(disksTable);
+        add(new Label(constants.nicsLabel()));
+        add(nicsTable);
+        add(new Label(constants.applicationsLabel()));
+        add(appsTable);
     }
 
     public void updatePanel(final SnapshotModel snapshotModel) {

@@ -30,7 +30,7 @@ public class SubTabGlusterVolumeSnapshotView extends AbstractSubTabTableView<Glu
     public SubTabGlusterVolumeSnapshotView(SearchableDetailModelProvider<GlusterVolumeSnapshotEntity, VolumeListModel, GlusterVolumeSnapshotListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -76,39 +76,44 @@ public class SubTabGlusterVolumeSnapshotView extends AbstractSubTabTableView<Glu
         creationTimeColumn.makeSortable();
         getTable().addColumn(creationTimeColumn, constants.volumeSnapshotCreationTime(), "400px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeSnapshotEntity>(constants.restoreVolumeSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRestoreSnapshotCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeSnapshotEntity>(constants.deleteVolumeSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDeleteSnapshotCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeSnapshotEntity>(constants.deleteAllVolumeSnapshots()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDeleteAllSnapshotsCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeSnapshotEntity>(constants.activateVolumeSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getActivateSnapshotCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeSnapshotEntity>(constants.deactivateVolumeSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDeactivateSnapshotCommand();
             }
-        });
+        }));
     }
 }

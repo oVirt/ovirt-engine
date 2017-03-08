@@ -8,6 +8,6 @@
         }
     </ui:style>
 
-    <g:SimplePanel ui:field="tabContent" addStyleNames="{style.panel}" />
+    <g:FlowPanel ui:field="tabContent" addStyleNames="{style.panel}" />
 
 </ui:UiBinder>

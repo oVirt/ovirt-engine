@@ -50,6 +50,7 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
         setDismissCommand(new UICommand("Dismiss Alert", this)); //$NON-NLS-1$
         setDisplayAllCommand(new UICommand("Display All", this)); //$NON-NLS-1$
         setClearAllCommand(new UICommand("Clear All", this)); //$NON-NLS-1$
+        getSearchCommand().execute();
     }
 
     @Override

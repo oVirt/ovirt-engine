@@ -35,7 +35,7 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
     public SubTabUserEventNotifierView(SearchableDetailModelProvider<EventSubscriber, UserListModel, UserEventNotifierListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -53,12 +53,13 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
         eventNameColumn.makeSortable(Comparator.comparing(EventSubscriber::getEventUpName, new LexoNumericComparator()));
         getTable().addColumn(eventNameColumn, constants.eventNameEventNotifier());
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<EventSubscriber>(constants.manageEventsEventNotifier()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getManageEventsCommand();
             }
-        });
+        }));
     }
 
 }

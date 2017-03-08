@@ -3,8 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.tags;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
@@ -30,107 +32,18 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class TagListModel extends SearchableListModel<Void, TagModel> {
 
     public static final EventDefinition resetRequestedEventDefinition;
-    private Event<EventArgs> privateResetRequestedEvent;
-
-    public Event<EventArgs> getResetRequestedEvent() {
-        return privateResetRequestedEvent;
-    }
-
-    private void setResetRequestedEvent(Event<EventArgs> value) {
-        privateResetRequestedEvent = value;
-    }
-
-    private UICommand privateNewCommand;
-
-    public UICommand getNewCommand() {
-        return privateNewCommand;
-    }
-
-    private void setNewCommand(UICommand value) {
-        privateNewCommand = value;
-    }
-
-    private UICommand privateEditCommand;
-
-    @Override
-    public UICommand getEditCommand() {
-        return privateEditCommand;
-    }
-
-    private void setEditCommand(UICommand value) {
-        privateEditCommand = value;
-    }
-
-    private UICommand privateRemoveCommand;
-
-    public UICommand getRemoveCommand() {
-        return privateRemoveCommand;
-    }
-
-    private void setRemoveCommand(UICommand value) {
-        privateRemoveCommand = value;
-    }
-
-    private UICommand privateResetCommand;
-
-    public UICommand getResetCommand() {
-        return privateResetCommand;
-    }
-
-    private void setResetCommand(UICommand value) {
-        privateResetCommand = value;
-    }
-
-    @Override
-    public TagModel getSelectedItem() {
-        return super.getSelectedItem();
-    }
-
-    public void setSelectedItem(TagModel value) {
-        super.setSelectedItem(value);
-    }
-
-    @Override
-    public void setItems(Collection<TagModel> value) {
-        if (items != value) {
-            itemsChanging(value, items);
-            items = value;
-            itemsChanged();
-            getItemsChangedEvent().raise(this, EventArgs.EMPTY);
-            onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
-        }
-    }
-
-    private ArrayList<SelectionTreeNodeModel> selectionNodeList;
-
-    public ArrayList<SelectionTreeNodeModel> getSelectionNodeList() {
-        return selectionNodeList;
-    }
-
-    public void setSelectionNodeList(ArrayList<SelectionTreeNodeModel> value) {
-        if (selectionNodeList != value) {
-            selectionNodeList = value;
-            onPropertyChanged(new PropertyChangedEventArgs("SelectionNodeList")); //$NON-NLS-1$
-        }
-    }
-
-    private Map<Guid, Boolean> attachedTagsToEntities;
-
-    public Map<Guid, Boolean> getAttachedTagsToEntities() {
-        return attachedTagsToEntities;
-    }
-
-    public void setAttachedTagsToEntities(Map<Guid, Boolean> value) {
-        if (attachedTagsToEntities != value) {
-            attachedTagsToEntities = value;
-            attachedTagsToEntitiesChanged();
-            onPropertyChanged(new PropertyChangedEventArgs("AttachedTagsToEntities")); //$NON-NLS-1$
-        }
-    }
 
     static {
         resetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
     }
+
+    private Map<Guid, Boolean> attachedTagsToEntities;
+    private Event<EventArgs> resetRequestedEvent;
+    private UICommand newCommand;
+    private UICommand editCommand;
+    private UICommand removeCommand;
+    private UICommand resetCommand;
+    private List<SelectionTreeNodeModel> selectionNodeList;
 
     public TagListModel() {
         setResetRequestedEvent(new Event<>(resetRequestedEventDefinition));
@@ -150,6 +63,117 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
         setSelectedItems(new ArrayList<TagModel>());
 
         setSelectionNodeList(new ArrayList<SelectionTreeNodeModel>());
+    }
+
+    public Event<EventArgs> getResetRequestedEvent() {
+        return resetRequestedEvent;
+    }
+
+    private void setResetRequestedEvent(Event<EventArgs> value) {
+        resetRequestedEvent = value;
+    }
+
+
+    public UICommand getNewCommand() {
+        return newCommand;
+    }
+
+    private void setNewCommand(UICommand value) {
+        newCommand = value;
+    }
+
+    @Override
+    public UICommand getEditCommand() {
+        return editCommand;
+    }
+
+    private void setEditCommand(UICommand value) {
+        editCommand = value;
+    }
+
+    public UICommand getRemoveCommand() {
+        return removeCommand;
+    }
+
+    private void setRemoveCommand(UICommand value) {
+        removeCommand = value;
+    }
+
+    public UICommand getResetCommand() {
+        return resetCommand;
+    }
+
+    private void setResetCommand(UICommand value) {
+        resetCommand = value;
+    }
+
+    @Override
+    public TagModel getSelectedItem() {
+        return super.getSelectedItem();
+    }
+
+    public void setSelectedItem(TagModel value) {
+        super.setSelectedItem(value);
+    }
+
+    @Override
+    public void setItems(Collection<TagModel> value) {
+        if (items != value) {
+            if (items != null && value != null) {
+                Set<TagModel> currentSelected = getActiveItems(items.iterator().next());
+                updateSelection(value.iterator().next(), currentSelected);
+            }
+            itemsChanging(value, items);
+            items = value;
+            itemsChanged();
+            getItemsChangedEvent().raise(this, EventArgs.EMPTY);
+            onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
+        }
+    }
+
+    private void updateSelection(TagModel model, Set<TagModel> currentSelected) {
+        for (TagModel oldModel: currentSelected) {
+            if (model.getName().getEntity().equals(oldModel.getName().getEntity())) {
+                model.setSelection(oldModel.getSelection());
+            }
+        }
+        for (TagModel child: model.getChildren()) {
+            updateSelection(child, currentSelected);
+        }
+    }
+
+    private Set<TagModel> getActiveItems(TagModel model) {
+        Set<TagModel> result = new HashSet<>();
+        if (model.getSelection()) {
+            result.add(model);
+        }
+        for (TagModel child : model.getChildren()) {
+            result.addAll(getActiveItems(child));
+        }
+        return result;
+    }
+
+    public List<SelectionTreeNodeModel> getSelectionNodeList() {
+        return selectionNodeList;
+    }
+
+    public void setSelectionNodeList(List<SelectionTreeNodeModel> value) {
+        if (selectionNodeList != value) {
+            selectionNodeList = value;
+            onPropertyChanged(new PropertyChangedEventArgs("SelectionNodeList")); //$NON-NLS-1$
+        }
+    }
+
+    public Map<Guid, Boolean> getAttachedTagsToEntities() {
+        return attachedTagsToEntities;
+    }
+
+    public void setAttachedTagsToEntities(Map<Guid, Boolean> value) {
+        if (attachedTagsToEntities != value) {
+            attachedTagsToEntities = value;
+            attachedTagsToEntitiesChanged();
+            onPropertyChanged(new PropertyChangedEventArgs("AttachedTagsToEntities")); //$NON-NLS-1$
+        }
     }
 
     @Override

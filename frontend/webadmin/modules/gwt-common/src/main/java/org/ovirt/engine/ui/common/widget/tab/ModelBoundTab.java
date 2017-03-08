@@ -12,7 +12,9 @@ public class ModelBoundTab extends SimpleTab implements HasHandlers {
 
     public ModelBoundTab(final ModelBoundTabData tabData, AbstractTabPanel tabPanel, EventBus eventBus) {
         super(tabData, tabPanel);
-        setAlign(tabData.getAlign());
+        setGroupTitle(tabData.getGroupTitle());
+        setGroupPriority(tabData.getGroupPriority());
+        setIcon(tabData.getIcon());
 
         this.eventBus = eventBus;
         // Update tab accessibility

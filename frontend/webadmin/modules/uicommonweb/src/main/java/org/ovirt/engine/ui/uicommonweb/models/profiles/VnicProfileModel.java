@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -10,12 +11,16 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VersionQueryParameters;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceCustomPropertiesParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.Model.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
@@ -47,6 +53,7 @@ public abstract class VnicProfileModel extends Model {
     private EntityModel<String> description;
     private final IModel sourceModel;
     private ListModel<Network> network;
+    private ListModel<StoragePool> dataCenters;
     private ListModel<NetworkQoS> networkQoS;
     private ListModel<NetworkFilter> networkFilter;
     private VnicProfile vnicProfile = null;
@@ -128,6 +135,14 @@ public abstract class VnicProfileModel extends Model {
         return vnicProfile;
     }
 
+    public ListModel<StoragePool> getDataCenters() {
+        return dataCenters;
+    }
+
+    public void setDataCenters(ListModel<StoragePool> dataCenters) {
+        this.dataCenters = dataCenters;
+    }
+
     public ListModel<NetworkQoS> getNetworkQoS() {
         return networkQoS;
     }
@@ -145,7 +160,6 @@ public abstract class VnicProfileModel extends Model {
     }
 
     public VnicProfileModel(IModel sourceModel,
-            Version dcCompatibilityVersion,
             boolean customPropertiesVisible,
             Guid dcId,
             Guid defaultQosId) {
@@ -156,6 +170,7 @@ public abstract class VnicProfileModel extends Model {
         setName(new EntityModel<String>());
         setNetwork(new ListModel<Network>());
         setNetworkQoS(new ListModel<NetworkQoS>());
+        setDataCenters(new ListModel<StoragePool>());
         setNetworkFilter(new ListModel<NetworkFilter>());
         setPortMirroring(new EntityModel<Boolean>());
         setPassthrough(new EntityModel<Boolean>());
@@ -189,11 +204,48 @@ public abstract class VnicProfileModel extends Model {
         getPassthrough().setEntity(false);
         getMigratable().setEntity(false);
 
-        initCustomPropertySheet(dcCompatibilityVersion);
-        initNetworkQoSList(dcId);
-        initNetworkFilterList(dcCompatibilityVersion);
+        populateDataCenters(dcId);
+        getDataCenters().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            if (getDataCenters().getSelectedItem() != null) {
+                Version dcCompatibilityVersion = getDataCenters().getSelectedItem().getCompatibilityVersion();
+                Guid currentDcId = getDataCenters().getSelectedItem().getId();
+                initCustomPropertySheet(dcCompatibilityVersion);
+                initNetworkQoSList(currentDcId);
+                initNetworkFilterList(dcCompatibilityVersion);
+                initNetworkList(currentDcId);
+            }
+        });
         initCommands();
     }
+
+    private void populateDataCenters(Guid dcId) {
+        if (dcId == null) {
+            SearchParameters tempVar = new SearchParameters("DataCenter:", SearchType.StoragePool); // $NON-NLS-1$
+            Frontend.getInstance().runQuery(VdcQueryType.Search, tempVar, new AsyncQuery<VdcQueryReturnValue>(
+                    returnValue -> getDataCenters().setItems(returnValue.getReturnValue())));
+        } else {
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<StoragePool>(
+                    returnValue -> getDataCenters().setItems(Arrays.asList(returnValue))), dcId);
+            getDataCenters().setIsChangeable(false);
+        }
+    }
+
+    private void initNetworkList(Guid dataCenterId) {
+        startProgress();
+
+        IdQueryParameters queryParams = new IdQueryParameters(dataCenterId);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, queryParams, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            Collection<Network> networks = returnValue.getReturnValue();
+
+            getNetwork().setItems(networks);
+
+            updateNetworks(networks);
+
+            stopProgress();
+        }));
+    }
+
+    protected abstract void updateNetworks(Collection<Network> networks);
 
     protected void initCommands() {
         UICommand okCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
@@ -315,7 +367,7 @@ public abstract class VnicProfileModel extends Model {
         }));
     }
 
-    public void initNetworkFilterList(Version dcCompatibilityVersion) {
+    private void initNetworkFilterList(Version dcCompatibilityVersion) {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllSupportedNetworkFiltersByVersion,
                 new VersionQueryParameters(dcCompatibilityVersion),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {

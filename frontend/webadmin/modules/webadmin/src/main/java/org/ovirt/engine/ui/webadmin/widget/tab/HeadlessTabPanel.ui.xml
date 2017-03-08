@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:style>
-		.content {
-			border-top: 1px solid #7B7B7B;
-		}
-	</ui:style>
+    <ui:style>
+    </ui:style>
 
-	<g:SimplePanel ui:field="tabContentContainer" addStyleNames="{style.content}" />
+    <g:SimplePanel ui:field="tabContentContainer" />
 
 </ui:UiBinder>

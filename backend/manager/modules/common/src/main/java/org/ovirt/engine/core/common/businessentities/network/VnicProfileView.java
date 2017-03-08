@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.network;
 
 import java.util.Objects;
 
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class VnicProfileView extends VnicProfile {
@@ -12,6 +13,7 @@ public class VnicProfileView extends VnicProfile {
     private String dataCenterName;
     private Version compatibilityVersion;
     private String networkFilterName;
+    private Guid dataCenterId;
 
     public static final VnicProfileView EMPTY = new VnicProfileView();
 
@@ -55,6 +57,14 @@ public class VnicProfileView extends VnicProfile {
         this.networkFilterName = networkFilterName;
     }
 
+    public Guid getDataCenterId() {
+        return this.dataCenterId;
+    }
+
+    public void setDataCenterId(Guid id) {
+        this.dataCenterId = id;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -63,7 +73,8 @@ public class VnicProfileView extends VnicProfile {
                 dataCenterName,
                 networkName,
                 networkQosName,
-                networkFilterName
+                networkFilterName,
+                dataCenterId
         );
     }
 
@@ -81,6 +92,7 @@ public class VnicProfileView extends VnicProfile {
                 && Objects.equals(dataCenterName, other.dataCenterName)
                 && Objects.equals(networkName, other.networkName)
                 && Objects.equals(networkQosName, other.networkQosName)
-                && Objects.equals(networkFilterName, other.networkFilterName);
+                && Objects.equals(networkFilterName, other.networkFilterName)
+                && Objects.equals(dataCenterId, other.dataCenterId);
     }
 }

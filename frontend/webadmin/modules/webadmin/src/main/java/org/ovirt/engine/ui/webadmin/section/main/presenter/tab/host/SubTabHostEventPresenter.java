@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
@@ -37,7 +36,7 @@ public class SubTabHostEventPresenter
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<AuditLog, HostListModel<Void>, HostEventListModel> modelProvider) {
-        return new ModelBoundTabData(constants.hostEventSubTabLabel(), 7, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.hostEventSubTabLabel(), 7, modelProvider);
     }
 
     @Inject

@@ -37,7 +37,7 @@ public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<S
     public SubTabStorageRegisterTemplateView(SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageRegisterTemplateListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -120,11 +120,12 @@ public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<S
         exportDateColumn.makeSortable();
         getTable().addColumn(exportDateColumn, constants.exportDateVm(), "200px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.restoreVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getImportCommand();
             }
-        });
+        }));
     }
 }

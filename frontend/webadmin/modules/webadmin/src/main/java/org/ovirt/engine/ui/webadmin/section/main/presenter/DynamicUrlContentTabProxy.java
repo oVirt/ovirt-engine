@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.presenter.DynamicTabProxy;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -21,7 +20,6 @@ public class DynamicUrlContentTabProxy extends DynamicTabProxy<DynamicUrlContent
 
     private final boolean isMainTab;
     private final String contentUrl;
-    private final Provider<CommonModel> commonModelProvider;
 
     public DynamicUrlContentTabProxy(PlaceManager placeManager,
             EventBus eventBus, Gatekeeper gatekeeper,
@@ -30,8 +28,7 @@ public class DynamicUrlContentTabProxy extends DynamicTabProxy<DynamicUrlContent
             Type<RevealContentHandler<?>> slot,
             Provider<DynamicUrlContentTabPresenter.ViewDef> viewProvider,
             String label, float priority, String historyToken,
-            boolean isMainTab, String contentUrl, Align align,
-            Provider<CommonModel> commonModelProvider) {
+            boolean isMainTab, String contentUrl, Align align) {
         super(placeManager, eventBus, gatekeeper,
                 requestTabsEventType, changeTabEventType,
                 label, priority, historyToken, align);
@@ -40,14 +37,13 @@ public class DynamicUrlContentTabProxy extends DynamicTabProxy<DynamicUrlContent
         this.viewProvider = viewProvider;
         this.isMainTab = isMainTab;
         this.contentUrl = contentUrl;
-        this.commonModelProvider = commonModelProvider;
     }
 
     @Override
     protected DynamicUrlContentTabPresenter createPresenter() {
         return new DynamicUrlContentTabPresenter(
                 eventBus, viewProvider.get(), this,
-                getPlaceManager(), slot, isMainTab, contentUrl, commonModelProvider);
+                getPlaceManager(), slot, isMainTab, contentUrl);
     }
 
 }

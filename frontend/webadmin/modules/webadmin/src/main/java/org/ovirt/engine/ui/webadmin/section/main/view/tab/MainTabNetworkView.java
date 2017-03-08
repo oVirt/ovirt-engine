@@ -58,7 +58,16 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumn<NetworkView> nameColumn = new AbstractTextColumn<NetworkView>() {
+        AbstractTextColumn<NetworkView> nameColumn = new AbstractLinkColumn<NetworkView>(
+                new FieldUpdater<NetworkView, String>() {
+
+            @Override
+            public void update(int index, NetworkView network, String value) {
+                //The link was clicked, now fire an event to switch to details.
+                transitionHandler.handlePlaceTransition();
+            }
+
+        }) {
             @Override
             public String getValue(NetworkView object) {
                 return object.getName();
@@ -165,30 +174,34 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         providerColumn.makeSortable(NetworkConditionFieldAutoCompleter.PROVIDER_NAME);
         getTable().ensureColumnVisible(providerColumn, constants.providerNetwork(), virtMode, "200px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.newNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.importNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getImportCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.editNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.removeNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
-        });
+        }));
     }
 
     @Override

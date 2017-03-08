@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.Alert;
+import org.gwtbootstrap3.client.ui.constants.AlertType;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -32,7 +34,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanelsStyle;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.SimpleNetworkItemsPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
-import org.ovirt.engine.ui.webadmin.widget.footer.StatusPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -77,7 +78,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
     @UiField
     @Ignore
-    StatusPanel statusPanel;
+    Alert statusPanel;
 
     @UiField
     NetworkPanelsStyle style;
@@ -257,16 +258,19 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
     private void setValidStatus(String message) {
         keepStatusText = false;
-        statusPanel.setTextAndStyle(message, style.statusPanel(), style.statusLabel());
+        statusPanel.setText(message);
+        statusPanel.setType(AlertType.INFO);
     }
 
     private void setWarningStatus(String message) {
         keepStatusText = true;
-        statusPanel.setTextAndStyle(message, style.warningPanel(), style.warningLabel());
+        statusPanel.setText(message);
+        statusPanel.setType(AlertType.WARNING);
     }
 
     private void setErrorStatus(String message) {
         keepStatusText = false;
-        statusPanel.setTextAndStyle(message, style.errorPanel(), style.errorLabel());
+        statusPanel.setText(message);
+        statusPanel.setType(AlertType.DANGER);
     }
 }

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
@@ -21,19 +20,16 @@ public class DynamicUrlContentTabProxyFactory implements HasHandlers {
     private final EventBus eventBus;
     private final LoggedInGatekeeper gatekeeper;
     private final Provider<DynamicUrlContentTabPresenter.ViewDef> viewProvider;
-    private final Provider<CommonModel> commonModelProvider;
 
     @Inject
     public DynamicUrlContentTabProxyFactory(PlaceManager placeManager,
             EventBus eventBus,
             LoggedInGatekeeper gatekeeper,
-            Provider<DynamicUrlContentTabPresenter.ViewDef> viewProvider,
-            Provider<CommonModel> commonModelProvider) {
+            Provider<DynamicUrlContentTabPresenter.ViewDef> viewProvider) {
         this.placeManager = placeManager;
         this.eventBus = eventBus;
         this.gatekeeper = gatekeeper;
         this.viewProvider = viewProvider;
-        this.commonModelProvider = commonModelProvider;
     }
 
     public DynamicUrlContentTabProxy create(
@@ -52,7 +48,7 @@ public class DynamicUrlContentTabProxyFactory implements HasHandlers {
                 requestTabsEventType, changeTabEventType,
                 slot, viewProvider,
                 label, priority, historyToken,
-                isMainTab, contentUrl, align, commonModelProvider);
+                isMainTab, contentUrl, align);
     }
 
     @Override

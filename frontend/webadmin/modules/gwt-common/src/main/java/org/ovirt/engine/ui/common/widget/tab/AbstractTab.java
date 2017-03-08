@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.tab;
 
-import com.google.gwt.dom.client.AnchorElement;
-import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.user.client.ui.Composite;
 import com.gwtplatform.mvp.client.TabData;
 
@@ -18,8 +17,11 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
 
     protected boolean accessible = DEFAULT_ACCESSIBLE;
 
-    @UiField
-    public AnchorElement hyperlink;
+    private String groupTitle;
+    private int groupPriority;
+    private HasCssName icon;
+
+    private String href;
 
     public AbstractTab(TabData tabData, AbstractTabPanel tabPanel) {
         this.priority = tabData.getPriority();
@@ -32,11 +34,6 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
     }
 
     @Override
-    public void setTargetHistoryToken(String historyToken) {
-        hyperlink.setHref("#" + historyToken); //$NON-NLS-1$
-    }
-
-    @Override
     public boolean isAccessible() {
         return accessible;
     }
@@ -45,5 +42,38 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
     public void setAccessible(boolean accessible) {
         this.accessible = accessible;
         tabPanel.updateTab(this);
+    }
+
+    public void setGroupTitle(String groupTitle) {
+        this.groupTitle = groupTitle;
+    }
+
+    public String getGroupTitle() {
+        return this.groupTitle;
+    }
+
+    public void setGroupPriority(int priority) {
+        groupPriority = priority;
+    }
+
+    public int getGroupPriority() {
+        return groupPriority;
+    }
+
+    public HasCssName getIcon() {
+        return icon;
+    }
+
+    public void setIcon(HasCssName icon) {
+        this.icon = icon;
+    }
+
+    @Override
+    public void setTargetHistoryToken(String historyToken) {
+        href = "#" + historyToken; //$NON-NLS-1$
+    }
+
+    public String getTargetHistoryToken() {
+        return href;
     }
 }

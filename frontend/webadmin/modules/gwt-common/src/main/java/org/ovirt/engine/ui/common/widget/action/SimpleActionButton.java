@@ -1,43 +1,68 @@
 package org.ovirt.engine.ui.common.widget.action;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.IsWidget;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.Placement;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
-public class SimpleActionButton extends AbstractActionButton {
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
-    interface WidgetUiBinder extends UiBinder<IsWidget, SimpleActionButton> {
-        WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
-    }
+/**
+ * Default action button widget implementation.
+ */
+public class SimpleActionButton extends WidgetTooltip implements ActionButton {
 
-    @UiField
-    Style style;
+    Button button;
 
     public SimpleActionButton() {
-        initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this).asWidget());
-
-        button.addClickHandler(event -> {
-            button.removeStyleName(style.buttonMouseOver());
-            button.addStyleName(style.buttonMouseOut());
-        });
-
-        button.addMouseOverHandler(event -> {
-            button.removeStyleName(style.buttonMouseOut());
-            button.addStyleName(style.buttonMouseOver());
-        });
-
-        button.addMouseOutHandler(event -> {
-            button.removeStyleName(style.buttonMouseOver());
-            button.addStyleName(style.buttonMouseOut());
-        });
+        button = new Button();
+        setWidget(button);
     }
 
-    interface Style extends CssResource {
-        String buttonMouseOver();
-
-        String buttonMouseOut();
+    @Override
+    public void setTooltip(SafeHtml toolTipText) {
+        setHtml(toolTipText);
     }
 
+    @Override
+    public void setTooltip(SafeHtml toolTipText, Placement placement) {
+        setTooltip(toolTipText);
+        setPlacement(placement);
+    }
+
+    @Override
+    public HandlerRegistration addClickHandler(ClickHandler handler) {
+        return button.addClickHandler(handler);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return button.isEnabled();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        button.setEnabled(enabled);
+    }
+
+    @Override
+    public void setText(String label) {
+        button.setText(label);
+    }
+
+    public void setIcon(IconType icon) {
+        button.setIcon(icon);
+    }
+
+    @Override
+    public void fireEvent(GwtEvent<?> event) {
+        button.fireEvent(event);
+    }
+
+    protected Button asButton() {
+        return button;
+    }
 }

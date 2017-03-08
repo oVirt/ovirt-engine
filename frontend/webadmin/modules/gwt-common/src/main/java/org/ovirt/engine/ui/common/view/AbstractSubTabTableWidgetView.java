@@ -2,10 +2,13 @@ package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+
+import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * Base class for sub tab views that use {@linkplain AbstractModelBoundTableWidget model-bound table widgets}.
@@ -19,7 +22,8 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
  * @param <D>
  *            Detail model type.
  */
-public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel, D extends SearchableListModel> extends AbstractView implements AbstractSubTabPresenter.ViewDef<I> {
+public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel, D extends SearchableListModel>
+    extends AbstractView implements AbstractSubTabPresenter.ViewDef<I> {
 
     private final AbstractModelBoundTableWidget<T, D> modelBoundTableWidget;
 
@@ -31,8 +35,25 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
         this.table = modelBoundTableWidget.getTable();
     }
 
+    @Override
+    public IsWidget getTableContainer() {
+        return modelBoundTableWidget;
+    }
+
     protected AbstractModelBoundTableWidget<T, D> getModelBoundTableWidget() {
         return modelBoundTableWidget;
+    }
+
+    public void addButtonToActionGroup(ActionButton button) {
+        modelBoundTableWidget.addButtonToActionGroup(button);
+    }
+
+    public void addMenuItemToKebab(ActionButton menuItem) {
+        modelBoundTableWidget.addMenuItemToKebab(menuItem);
+    }
+
+    public void addDividerToKebab() {
+        modelBoundTableWidget.addDividerToKebab();
     }
 
     @Override

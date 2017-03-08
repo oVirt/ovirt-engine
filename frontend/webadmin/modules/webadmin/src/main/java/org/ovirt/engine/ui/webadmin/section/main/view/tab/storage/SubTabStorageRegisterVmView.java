@@ -37,7 +37,7 @@ public class SubTabStorageRegisterVmView extends AbstractSubTabTableView<Storage
     public SubTabStorageRegisterVmView(SearchableDetailModelProvider<VM, StorageListModel, StorageRegisterVmListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -117,11 +117,12 @@ public class SubTabStorageRegisterVmView extends AbstractSubTabTableView<Storage
         };
         getTable().addColumn(exportDateColumn, constants.exportDateVm(), "200px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.restoreVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getImportCommand();
             }
-        });
+        }));
     }
 }

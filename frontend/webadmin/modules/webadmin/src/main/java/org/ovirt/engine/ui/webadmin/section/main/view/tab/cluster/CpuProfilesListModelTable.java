@@ -22,11 +22,13 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<CpuProfile, CpuProfileListModel> {
+
+    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
 
     interface WidgetUiBinder extends UiBinder<Widget, CpuProfilesListModelTable> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -39,10 +41,7 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
     private final PermissionWithInheritedPermissionListModelTable<PermissionListModel<CpuProfile>> permissionListModelTable;
 
     @UiField
-    SplitLayoutPanel splitLayoutPanel;
-
-    @UiField
-    SimplePanel tableContainer;
+    FlowPanel tableContainer;
 
     SimplePanel permissionContainer;
 
@@ -60,7 +59,9 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
         this.cpuProfilePermissionModelProvider = cpuProfilePermissionModelProvider;
         ViewIdHandler.idHandler.generateAndSetIds(this);
         // Create cpu profile table
-        tableContainer.add(getTable());
+        SimpleActionTable<CpuProfile> table = getTable();
+        table.removeStyleName(OBRAND_MAIN_TAB);
+        tableContainer.add(getContainer());
 
         // Create permission panel
         permissionListModelTable =
@@ -117,24 +118,27 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
         getTable().addColumn(qosColumn, constants.cpuQosName(), "200px"); //$NON-NLS-1$
         qosColumn.makeSortable();
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<CpuProfile>(constants.newProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<CpuProfile>(constants.editProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<CpuProfile>(constants.removeProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
-        });
+        }));
 
         // Add selection listener
         getModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updatePermissionPanel());
@@ -144,15 +148,17 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
 
     private void updatePermissionPanel() {
         final CpuProfile cpuProfile = getModel().getSelectedItem();
+        final SimpleActionTable<CpuProfile> table = getTable();
+        table.removeStyleName(OBRAND_MAIN_TAB);
         Scheduler.get().scheduleDeferred(() -> {
             if (permissionPanelVisible && cpuProfile == null) {
-                splitLayoutPanel.clear();
-                splitLayoutPanel.add(tableContainer);
+                tableContainer.clear();
+                tableContainer.add(getContainer());
                 permissionPanelVisible = false;
             } else if (!permissionPanelVisible && cpuProfile != null) {
-                splitLayoutPanel.clear();
-                splitLayoutPanel.addEast(permissionContainer, 600);
-                splitLayoutPanel.add(tableContainer);
+                tableContainer.clear();
+                tableContainer.add(getContainer());
+                tableContainer.add(permissionContainer);
                 permissionPanelVisible = true;
             }
         });

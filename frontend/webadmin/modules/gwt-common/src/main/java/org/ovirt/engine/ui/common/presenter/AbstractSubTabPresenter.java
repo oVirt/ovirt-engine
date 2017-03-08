@@ -121,12 +121,11 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
         // Notify model provider that the tab has been revealed
         modelProvider.onSubTabSelected();
-    }
 
-    @Override
-    protected void onHide() {
-        super.onHide();
-        modelProvider.onSubTabDeselected();
+        Object entity = modelProvider.getModel().getEntity();
+        if (entity != null) {
+            onDetailModelEntityChange(entity);
+        }
     }
 
     @Override
@@ -213,7 +212,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             // This usually happens with synthetic item types that wrap multiple
             // logical entities into single type. Since views can typically edit
             // a single item type, we can do nothing here.
-            logger.warning("Detail model entity type is different from main model item type"); //$NON-NLS-1$
+            logger.warning("Detail model entity type is different from main model item type"); // $NON-NLS-1$
         }
     }
 

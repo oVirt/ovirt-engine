@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.logical.shared.InitializeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -102,13 +103,8 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
     }
 
     @Override
-    public SafeHtml getEnabledHtml() {
-        return title;
-    }
-
-    @Override
-    public SafeHtml getDisabledHtml() {
-        return title;
+    public HasCssName getIcon() {
+        return null;
     }
 
     @Override

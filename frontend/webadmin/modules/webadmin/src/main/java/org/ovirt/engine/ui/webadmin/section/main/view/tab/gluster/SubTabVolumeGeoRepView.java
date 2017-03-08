@@ -31,7 +31,7 @@ implements SubTabVolumeGeoRepPresenter.ViewDef {
     public SubTabVolumeGeoRepView(SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -69,69 +69,76 @@ implements SubTabVolumeGeoRepPresenter.ViewDef {
             }
         }, constants.volumeSubTabGeoRepStatusColumn(), "150px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.newGeoRepSession()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewSessionCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.removeGeoRepSession()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveSessionCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.startGeoRepSession()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getStartSessionCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.stopGeoRepSession()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getStopSessionCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.pauseGeoRepSession()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getPauseSessionCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.resumeGeoRepSession()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getResumeSessionCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.geoRepSessionsOptions()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getSessionOptionsCommand();
             }
-        });
+        }));
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.geoRepSessionDetails()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getViewSessionDetailsCommand();
             }
-        });
+        }));
 
-        getTable().addActionButton(
-                new WebAdminButtonDefinition<GlusterGeoRepSession>(constants
-                        .geoRepSessionSync()) {
-                    @Override
-                    protected UICommand resolveCommand() {
-                        return getDetailModel().getRefreshSessionsCommand();
-                    }
-                });
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.geoRepSessionSync()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRefreshSessionsCommand();
+            }
+        }));
     }
 }

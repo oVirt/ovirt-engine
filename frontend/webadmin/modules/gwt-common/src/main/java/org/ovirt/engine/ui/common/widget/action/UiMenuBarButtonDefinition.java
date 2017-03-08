@@ -2,15 +2,13 @@ package org.ovirt.engine.ui.common.widget.action;
 
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.logical.shared.InitializeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.resources.client.ImageResource.ImageOptions;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonDefinition<T> {
@@ -22,22 +20,11 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
 
     private boolean asTitle;
 
-    /**
-     * A ClientBundle that provides images for this widget.
-     */
-    public interface Resources extends ClientBundle {
-
-        @Source("org/ovirt/engine/ui/webadmin/images/triangle_down.gif")
-        @ImageOptions(width = 7, height = 5)
-        ImageResource triangle_down();
-
-    }
-
     public UiMenuBarButtonDefinition(EventBus eventBus,
             String title, List<ActionButtonDefinition<T>> subActions,
             boolean subTitledAction, CommandLocation commandLocation,
-            boolean asTitle, Resources resources) {
-        super(eventBus, title, resources.triangle_down(), resources.triangle_down(),
+            boolean asTitle) {
+        super(eventBus, title, IconType.ARROW_DOWN,
                 true, true, commandLocation);
         this.subActions = subActions;
         this.subTitledAction = subTitledAction;
@@ -45,21 +32,20 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
     }
 
     public UiMenuBarButtonDefinition(EventBus eventBus,
-            String title, List<ActionButtonDefinition<T>> subActions,
-            Resources resources) {
-        this(eventBus, title, subActions, false, resources);
+            String title, List<ActionButtonDefinition<T>> subActions) {
+        this(eventBus, title, subActions, false);
     }
 
     public UiMenuBarButtonDefinition(EventBus eventBus,
             String title, List<ActionButtonDefinition<T>> subActions,
-            CommandLocation commandLocation, Resources resources) {
-        this(eventBus, title, subActions, false, commandLocation, false, resources);
+            CommandLocation commandLocation) {
+        this(eventBus, title, subActions, false, commandLocation, false);
     }
 
     public UiMenuBarButtonDefinition(EventBus eventBus,
             String title, List<ActionButtonDefinition<T>> subActions,
-            boolean asTitle, Resources resources) {
-        this(eventBus, title, subActions, false, CommandLocation.ContextAndToolBar, asTitle, resources);
+            boolean asTitle) {
+        this(eventBus, title, subActions, false, CommandLocation.ContextAndToolBar, asTitle);
     }
 
     @Override

@@ -6,6 +6,8 @@ import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 
+import com.google.gwt.user.client.ui.IsWidget;
+
 /**
  * Base class for form-based {@link AbstractSubTabPresenter} views.
  *
@@ -31,6 +33,12 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
 
     @Override
     public ActionTable<?> getTable() {
+        // Form-based sub tab views have no table widget associated
+        return null;
+    }
+
+    @Override
+    public IsWidget getTableContainer() {
         // Form-based sub tab views have no table widget associated
         return null;
     }

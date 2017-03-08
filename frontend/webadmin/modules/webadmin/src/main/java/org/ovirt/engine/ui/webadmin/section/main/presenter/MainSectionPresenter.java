@@ -1,11 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.widget.AlertManager;
-import org.ovirt.engine.ui.webadmin.plugin.PluginManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
-import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
@@ -19,7 +17,7 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     public interface ProxyDef extends Proxy<MainSectionPresenter> {
     }
 
-    public interface ViewDef extends View, HasUiHandlers<MainTabBarOffsetUiHandlers> {
+    public interface ViewDef extends View {
     }
 
     @ContentSlot
@@ -29,17 +27,14 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     public static final Type<RevealContentHandler<?>> TYPE_SetMainContent = new Type<>();
 
     private final HeaderPresenterWidget header;
-    private final PluginManager pluginManager;
     private final AlertManager alertManager;
 
     @Inject
     public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            HeaderPresenterWidget header, PluginManager pluginManager, AlertManager alertManager) {
-        super(eventBus, view, proxy, RevealType.RootLayout);
+            HeaderPresenterWidget header, AlertManager alertManager) {
+        super(eventBus, view, proxy, RevealType.Root);
         this.header = header;
-        this.pluginManager = pluginManager;
         this.alertManager = alertManager;
-        getView().setUiHandlers(header);
     }
 
     @Override

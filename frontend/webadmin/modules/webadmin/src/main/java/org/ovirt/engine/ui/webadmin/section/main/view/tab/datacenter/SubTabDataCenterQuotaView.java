@@ -31,7 +31,7 @@ public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<StoragePo
     public SubTabDataCenterQuotaView(SearchableDetailModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -64,30 +64,34 @@ public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<StoragePo
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.descriptionQuota(), "400px"); //$NON-NLS-1$
 
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getCreateCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.editQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.copyQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getCloneCommand();
             }
-        });
+        }));
+        addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.removeQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
             }
-        });
+        }));
     }
 
 }

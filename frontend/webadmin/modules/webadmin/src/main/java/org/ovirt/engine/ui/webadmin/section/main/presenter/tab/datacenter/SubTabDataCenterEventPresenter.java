@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
@@ -37,7 +36,7 @@ public class SubTabDataCenterEventPresenter
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel> modelProvider) {
-        return new ModelBoundTabData(constants.dataCenterEventSubTabLabel(), 6, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.dataCenterEventSubTabLabel(), 6, modelProvider);
     }
 
     @Inject

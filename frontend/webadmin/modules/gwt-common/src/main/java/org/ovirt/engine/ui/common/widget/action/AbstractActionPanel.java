@@ -2,14 +2,12 @@ package org.ovirt.engine.ui.common.widget.action;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
-import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
@@ -19,27 +17,17 @@ import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.event.logical.shared.InitializeEvent;
+import com.google.gwt.event.logical.shared.InitializeHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
-import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -54,43 +42,7 @@ import com.google.gwt.user.client.ui.Widget;
  *            Action panel item type.
  */
 public abstract class AbstractActionPanel<T> extends Composite implements ActionPanel<T>, HasElementId,
-        ProvidesElementId, RequiresResize {
-    /**
-     * The cascading menu/panel CSS resources.
-     */
-    public interface CascadeActionPanelCss extends CssResource {
-        String cascadeButton();
-        String actionPanel();
-    }
-
-    /**
-     * Resources for the ActionPanel.
-     */
-    public interface ActionPanelResources extends ClientBundle {
-        @Source("org/ovirt/engine/ui/common/css/CascadeActionPanel.css")
-        CascadeActionPanelCss actionPanelCss();
-        @Source("org/ovirt/engine/ui/common/images/cascade_button.png")
-        ImageResource cascadeButtonArrow();
-    }
-
-    private static final ActionPanelResources RESOURCES = GWT.create(ActionPanelResources.class);
-
-    private static final String GWT_PREFIX = "gwt-"; //$NON-NLS-1$
-    private static final String MIN_WIDTH = "minWidth"; //$NON-NLS-1$
-    private static final String MAX_WIDTH = "maxWidth"; //$NON-NLS-1$
-    /**
-     * The padding to the left of each action button bar, if you change this value also change the value of the
-     * left-padding in the actionPadding class in SimpleActionTable.ui.xml.
-     */
-    private static final int ACTION_PANEL_PADDING_LEFT = 5; //There seems to be no good way to determine left padding
-                                                            //No getElement().getStyle().getPaddingLeft() doesn't work.
-
-    private final CascadeActionPanelCss style;
-
-    @UiField
-    public FlowPanel actionPanel;
-
-    private final FlowPanel contentPanel;
+        ProvidesElementId {
 
     // List of action buttons that show in the tool-bar and context menu
     private final List<ActionButtonDefinition<T>> actionButtonList = new ArrayList<>();
@@ -100,61 +52,24 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     private final Map<Widget, Boolean> originallyVisible = new HashMap<>();
 
     private final SearchableModelProvider<T, ?> dataProvider;
-    private final EventBus eventBus;
 
     private final PopupPanel contextPopupPanel;
     private final MenuBar contextMenuBar;
 
     private final MenuPanelPopup actionPanelPopupPanel;
 
-    /**
-     * The popup panel containing the {@link MenuBar} with the cascaded action buttons.
-     */
-    private final PopupPanel cascadePopupPanel;
-    /**
-     * The button used to open up the menu containing the cascaded action buttons.
-     */
-    private final PushButton cascadeButton;
-    /**
-     * The menu containing the cascaded action buttons.
-     */
-    private final MenuBar cascadeMenu;
-
     private String elementId = DOM.createUniqueId();
-
-    /**
-     * Handler registration for the resize handler.
-     */
-    private HandlerRegistration resizeHandlerRegistration;
-
-    /**
-     * Minimum width needed to display all the {@code ActionButton}s.
-     */
-    private int widgetMinWidth;
-    /**
-     * The width of any {@code Widget}s that are siblings of this {@code AbstractActionPanel} in the DOM tree.
-     */
-    private int siblingWidth;
 
     /**
      * Constructor.
      * @param dataProvider The data provider.
      * @param eventBus The GWT event bus.
      */
-    public AbstractActionPanel(SearchableModelProvider<T, ?> dataProvider, EventBus eventBus) {
+    public AbstractActionPanel(SearchableModelProvider<T, ?> dataProvider) {
         this.dataProvider = dataProvider;
-        this.eventBus = eventBus;
         contextPopupPanel = new PopupPanel(true);
         contextMenuBar = new MenuBar(true);
         actionPanelPopupPanel = new MenuPanelPopup(true);
-        //Cascading items.
-        contentPanel = new FlowPanel();
-        style = RESOURCES.actionPanelCss();
-        style.ensureInjected();
-        cascadePopupPanel = new PopupPanel(true);
-        cascadeMenu = new MenuBar(true);
-        cascadeButton = new PushButton(new Image(RESOURCES.cascadeButtonArrow()), getCascadeButtonClickHandler());
-        configureCascadeMenu();
     }
 
     /**
@@ -169,94 +84,6 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     protected void initWidget(Widget widget) {
         super.initWidget(widget);
         contextPopupPanel.setWidget(contextMenuBar);
-        cascadePopupPanel.setWidget(cascadeMenu);
-        contentPanel.add(cascadeButton);
-        actionPanel.add(contentPanel);
-        actionPanel.addStyleName(style.actionPanel());
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        // Defer size calculations until sizes are available.
-        Scheduler.get().scheduleDeferred(() -> {
-            int minWidth = calculateWidgetMinWidthNeeded();
-            contentPanel.getElement().getStyle().setProperty(MIN_WIDTH, minWidth, Unit.PX);
-            if (widgetMinWidth > 0) {
-                siblingWidth = calculateSiblingWidth();
-            }
-            initializeCascadeMenuPanel();
-        });
-        resizeHandlerRegistration = Window.addResizeHandler(resizeEvent -> initializeCascadeMenuPanel());
-        eventBus.addHandler(HeaderOffsetChangeEvent.getType(),
-                event -> {
-                    initializeCascadeMenuPanel();
-                    //Unregister the resize handler, we don't need it because resizes trigger the
-                    //HeaderOffsetChangeEvents.
-                    unregisterResizeHandler();
-                });
-    }
-
-    @Override
-    public void onResize() {
-        initializeCascadeMenuPanel();
-    }
-
-    /**
-     * Initialize the cascade menu panel.
-     */
-    private void initializeCascadeMenuPanel() {
-        if (widgetMinWidth > 0) {
-            cascadePopupPanel.hide();
-            int currentWidth = actionPanel.getParent().getOffsetWidth() - siblingWidth - ACTION_PANEL_PADDING_LEFT;
-            actionPanel.getElement().getStyle().setProperty(MAX_WIDTH, currentWidth - 1, Unit.PX);
-            if (currentWidth <= widgetMinWidth) {
-                cascadeButton.setVisible(true);
-            } else {
-                cascadeButton.setVisible(false);
-            }
-            toggleVisibleWidgets(currentWidth - cascadeButton.getOffsetWidth());
-        }
-    }
-
-    /**
-     * Toggles the visible {@code ActionButton}s on the action panel based on the current width of the panel.
-     * This method enumerates the buttons and totals the width of each button until we reach the width passed in.
-     * Any buttons that would pass the width passed in are hidden, the other buttons are visible.
-     *
-     * @param currentWidth The width to check against.
-     */
-    private void toggleVisibleWidgets(int currentWidth) {
-        int widgetWidth = 0;
-        boolean foundEdge = false;
-        if (contentPanel.getWidgetCount() > 1) {
-            for (int i = 0; i < contentPanel.getWidgetCount() - 1; i++) {
-                Widget widget = contentPanel.getWidget(i);
-                if (originallyVisible.get(widget)) {
-                    widget.setVisible(true); //temporarily show the widget, so we get the actual width of the widget.
-                    if (foundEdge || (widgetWidth + widget.getOffsetWidth() > currentWidth)) {
-                        widget.setVisible(false);
-                        toolbarOnlyActionButtonList.get(i).setCascaded(true);
-                        foundEdge = true;
-                    } else {
-                        toolbarOnlyActionButtonList.get(i).setCascaded(false);
-                        widgetWidth += widget.getOffsetWidth();
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onUnload() {
-        super.onUnload();
-        unregisterResizeHandler();
-    }
-
-    private void unregisterResizeHandler() {
-        if (resizeHandlerRegistration != null) {
-            resizeHandlerRegistration.removeHandler();
-        }
     }
 
     @Override
@@ -269,24 +96,61 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         return elementId;
     }
 
+    @Override
+    public ActionButton addMenuListItem(final ActionButtonDefinition<T> buttonDef) {
+        ActionAnchorListItem result = new ActionAnchorListItem(buttonDef.getText());
+        // Set button element ID for better accessibility
+        String buttonId = buttonDef.getUniqueId();
+        if (buttonId != null) {
+            result.asWidget().getElement().setId(
+                    ElementIdUtils.createElementId(elementId, buttonId));
+        }
+
+        // Add the button to the context menu
+        if (buttonDef.getCommandLocation().equals(CommandLocation.ContextAndToolBar)
+                || buttonDef.getCommandLocation().equals(CommandLocation.OnlyFromContext)) {
+            actionButtonList.add(buttonDef);
+        }
+
+        // Add button widget click handler
+        result.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (buttonDef instanceof UiMenuBarButtonDefinition) {
+                    actionPanelPopupPanel.asPopupPanel().addAutoHidePartner(((UIObject) result).getElement());
+                } else {
+                    buttonDef.onClick(getSelectedItems());
+                }
+            }
+        });
+
+        registerSelectionChangeHandler(buttonDef);
+
+        // Update button whenever its definition gets re-initialized
+        buttonDef.addInitializeHandler(new InitializeHandler() {
+            @Override
+            public void onInitialize(InitializeEvent event) {
+                updateActionButton(result, buttonDef);
+            }
+        });
+
+        updateActionButton(result, buttonDef);
+        return result;
+    }
 
     /**
      * Adds a new button to the action panel.
      * @param buttonDef The button definition.
      */
-    @Override
-    public void addActionButton(final ActionButtonDefinition<T> buttonDef) {
-        addActionButton(buttonDef, createNewActionButton(buttonDef));
+    public ActionButton addActionButton(final ActionButtonDefinition<T> buttonDef) {
+        return addActionButton(buttonDef, createNewActionButton(buttonDef));
     }
 
     /**
      * Adds a new button to the action panel.
      */
-    public void addActionButton(final ActionButtonDefinition<T> buttonDef, final ActionButton newActionButton) {
-        // Configure the button according to its definition
-        newActionButton.setEnabledHtml(buttonDef.getEnabledHtml());
-        newActionButton.setDisabledHtml(buttonDef.getDisabledHtml());
-
+    public ActionButton addActionButton(final ActionButtonDefinition<T> buttonDef, final ActionButton newActionButton) {
+        newActionButton.setText(buttonDef.getText());
         // Set button element ID for better accessibility
         String buttonId = buttonDef.getUniqueId();
         if (buttonId != null) {
@@ -297,8 +161,6 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         // Add the button to the action panel
         if (buttonDef.getCommandLocation().equals(CommandLocation.ContextAndToolBar)
                 || buttonDef.getCommandLocation().equals(CommandLocation.OnlyFromToolBar)) {
-            copyStyleToCascadeButton(newActionButton);
-            contentPanel.insert(newActionButton.asWidget(), contentPanel.getWidgetCount() - 1);
             toolbarOnlyActionButtonList.add(buttonDef);
         }
 
@@ -308,26 +170,14 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
             actionButtonList.add(buttonDef);
         }
 
-        actionPanelPopupPanel.asPopupPanel()
-                .addCloseHandler(event -> newActionButton.asToggleButton().setDown(false));
-
         // Add button widget click handler
         newActionButton.addClickHandler(event -> {
-            if (buttonDef instanceof UiMenuBarButtonDefinition) {
-                actionPanelPopupPanel.asPopupPanel().addAutoHidePartner(newActionButton.asToggleButton()
-                        .getElement());
-                if (newActionButton.asToggleButton().isDown()) {
-                    updateContextMenu(actionPanelPopupPanel.getMenuBar(),
-                            ((UiMenuBarButtonDefinition<T>) buttonDef).getSubActions(),
-                            actionPanelPopupPanel.asPopupPanel());
-                    actionPanelPopupPanel.asPopupPanel()
-                            .showRelativeToAndFitToScreen(newActionButton.asWidget());
+                if (buttonDef instanceof UiMenuBarButtonDefinition) {
+                    actionPanelPopupPanel.asPopupPanel().addAutoHidePartner(((UIObject) newActionButton).getElement());
                 } else {
                     actionPanelPopupPanel.asPopupPanel().hide();
                 }
-            } else {
                 buttonDef.onClick(getSelectedItems());
-            }
         });
 
         registerSelectionChangeHandler(buttonDef);
@@ -336,101 +186,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         buttonDef.addInitializeHandler(event -> updateActionButton(newActionButton, buttonDef));
 
         updateActionButton(newActionButton, buttonDef);
-    }
-
-    /**
-     * Calculate the width of all the sibling widgets to this widget (this is for the case where there are extra
-     * buttons and other things on the same row).<br />
-     * <br />
-     * <b>NOTE</b> This calculation breaks down if the siblings have left or/and right margins. The reported width
-     * is inaccurate if margins exist.
-     * @return The total width of all the sibling widgets in pixels.
-     */
-    private int calculateSiblingWidth() {
-        int width = 0;
-        Widget parent = actionPanel.getParent();
-        if (parent instanceof HasWidgets) {
-            Iterator<Widget> widgetIterator = ((HasWidgets) parent).iterator();
-            while (widgetIterator.hasNext()) {
-                Widget widget = widgetIterator.next();
-                if (widget != actionPanel) {
-                    width += widget.getOffsetWidth();
-                }
-            }
-        }
-        return width;
-    }
-
-    /**
-     * Calculate the minimum width needed to display all the {@code ActionButtons} in the action panel. This width
-     * is needed to determine when to show the button for the cascading menu.
-     * @return The minimum width needed in pixels.
-     */
-    private int calculateWidgetMinWidthNeeded() {
-        int minWidth = 0;
-        if (contentPanel.getWidgetCount() > 1) {
-            for (int i = 0; i < contentPanel.getWidgetCount() - 1; i++) {
-                Widget widget = contentPanel.getWidget(i);
-                boolean widgetVisible = widget.isVisible();
-                widget.setVisible(true);
-                minWidth += widget.getElement().getOffsetWidth();
-                widget.setVisible(widgetVisible);
-            }
-        }
-        // Store this in a variable so we don't have to calculate it all the time.
-        // This assumes that when resizes/etc happen this gets called to recalculate everything.
-        widgetMinWidth = minWidth;
-        return minWidth;
-    }
-
-    /**
-     * This method copies the appropriate styles from the {@code ActionButton} to the new menu items for
-     * the cascading menu.
-     * @param newActionButton The {@code ActionButton} to copy the style from.
-     */
-    private void copyStyleToCascadeButton(ActionButton newActionButton) {
-        String styleString = ((Widget) newActionButton).getStyleName().trim();
-        if (styleString != null && !styleString.isEmpty()) {
-            String[] stylesArray = styleString.split("\\s+"); //$NON-NLS-1$
-            for (String singleStyle : stylesArray) {
-                if (!singleStyle.startsWith(GWT_PREFIX)) {
-                    cascadeButton.addStyleName(singleStyle);
-                }
-            }
-        }
-    }
-
-    /**
-     * Get the cascade drop down button click handler.
-     * @return The {@code ClickHandler}
-     */
-    private ClickHandler getCascadeButtonClickHandler() {
-        return event -> {
-            if (!cascadePopupPanel.isShowing()) {
-                List<ActionButtonDefinition<T>> cascadeActionButtonList = new ArrayList<>();
-                for (int i = 0; i < contentPanel.getWidgetCount() - 1; i++) {
-                    if (!contentPanel.getWidget(i).isVisible()) {
-                        cascadeActionButtonList.add(toolbarOnlyActionButtonList.get(i));
-                    }
-                }
-                updateContextMenu(cascadeMenu, cascadeActionButtonList, cascadePopupPanel);
-                cascadePopupPanel.showRelativeToAndFitToScreen(cascadeButton);
-            } else {
-                cascadePopupPanel.hide();
-            }
-        };
-    }
-
-    /**
-     * Configure the options of the cascade menu and button.
-     */
-    private void configureCascadeMenu() {
-        cascadeButton.addStyleName(style.cascadeButton());
-        cascadeButton.setVisible(false); //Initially hide the button.
-        cascadePopupPanel.setAutoHideEnabled(true);
-        cascadePopupPanel.setModal(false);
-        cascadePopupPanel.setGlassEnabled(false);
-        cascadePopupPanel.addAutoHidePartner(cascadeButton.getElement());
+        return newActionButton;
     }
 
     void registerSelectionChangeHandler(final ActionButtonDefinition<T> buttonDef) {
@@ -443,6 +199,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         addSelectionChangeListener(itemSelectionChangeHandler);
     }
 
+    @SuppressWarnings("unchecked")
     void addSelectionChangeListener(IEventListener<EventArgs> itemSelectionChangeHandler) {
         dataProvider.getModel().getSelectedItemChangedEvent().addListener(itemSelectionChangeHandler);
         dataProvider.getModel().getSelectedItemsChangedEvent().addListener(itemSelectionChangeHandler);

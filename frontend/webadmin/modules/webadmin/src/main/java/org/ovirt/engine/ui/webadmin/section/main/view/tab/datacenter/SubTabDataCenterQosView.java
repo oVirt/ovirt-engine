@@ -1,0 +1,209 @@
+package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
+
+import javax.inject.Inject;
+
+import org.gwtbootstrap3.client.ui.PageHeader;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
+import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
+import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkQoSListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQosPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.FlowPanel;
+
+public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool,
+        StorageQos, DataCenterListModel, DataCenterStorageQosListModel>
+        implements SubTabDataCenterQosPresenter.ViewDef {
+
+    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabDataCenterQosView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+
+    private final VmNetworkQosListModelTable vmNetworkTable;
+    private final HostNetworkQosListModelTable hostNetworkTable;
+    private final CpuQosListModelTable cpuTable;
+
+    private final SearchableDetailModelProvider<NetworkQoS, DataCenterListModel,
+        DataCenterNetworkQoSListModel> vmNetworkModelProvider;
+    private final SearchableDetailModelProvider<HostNetworkQos,
+        DataCenterListModel, DataCenterHostNetworkQosListModel> hostNetworkModelProvider;
+    private final SearchableDetailModelProvider<CpuQos,
+        DataCenterListModel, DataCenterCpuQosListModel> cpuModelProvider;
+
+    @Inject
+    public SubTabDataCenterQosView(SearchableDetailModelProvider<StorageQos,
+            DataCenterListModel, DataCenterStorageQosListModel> modelProvider, SearchableDetailModelProvider<NetworkQoS,
+            DataCenterListModel, DataCenterNetworkQoSListModel> vmNetworkModelProvider, SearchableDetailModelProvider<HostNetworkQos,
+            DataCenterListModel, DataCenterHostNetworkQosListModel> hostNetworkModelProvider, SearchableDetailModelProvider<CpuQos,
+            DataCenterListModel, DataCenterCpuQosListModel> cpuModelProvider, EventBus eventBus,
+            ClientStorage clientStorage) {
+        super(modelProvider);
+        this.vmNetworkModelProvider = vmNetworkModelProvider;
+        this.hostNetworkModelProvider = hostNetworkModelProvider;
+        this.cpuModelProvider = cpuModelProvider;
+        initTable();
+        initWidget(getTableContainer());
+        getTable().removeStyleName(OBRAND_MAIN_TAB);
+        vmNetworkTable = new VmNetworkQosListModelTable(vmNetworkModelProvider, eventBus, clientStorage);
+        hostNetworkTable = new HostNetworkQosListModelTable(hostNetworkModelProvider, eventBus, clientStorage);
+        cpuTable = new CpuQosListModelTable(cpuModelProvider, eventBus, clientStorage);
+        if (getTableContainer() instanceof FlowPanel) {
+            FlowPanel container = (FlowPanel) getTableContainer();
+            PageHeader storageHeader = new PageHeader();
+            storageHeader.setText(constants.dataCenterStorageQosSubTabLabel());
+            container.insert(storageHeader, 0);
+            PageHeader vmNetworkHeader = new PageHeader();
+            vmNetworkHeader.setText(constants.dataCenterNetworkQoSSubTabLabel());
+            container.add(vmNetworkHeader);
+            container.add(vmNetworkTable);
+            PageHeader hostNetworkHeader = new PageHeader();
+            hostNetworkHeader.setText(constants.dataCenterHostNetworkQosSubTabLabel());
+            container.add(hostNetworkHeader);
+            container.add(hostNetworkTable);
+            PageHeader cpuHeader = new PageHeader();
+            cpuHeader.setText(constants.dataCenterCpuQosSubTabLabel());
+            container.add(cpuHeader);
+            container.add(cpuTable);
+        }
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
+    }
+
+    void initTable() {
+        getTable().enableColumnResizing();
+
+        AbstractTextColumn<StorageQos> nameColumn = new AbstractTextColumn<StorageQos>() {
+            @Override
+            public String getValue(StorageQos object) {
+                return object.getName() == null ? "" : object.getName(); //$NON-NLS-1$
+            }
+        };
+        nameColumn.makeSortable();
+        getTable().addColumn(nameColumn, constants.qosName(), "200px"); //$NON-NLS-1$
+
+        AbstractTextColumn<StorageQos> descColumn = new AbstractTextColumn<StorageQos>() {
+            @Override
+            public String getValue(StorageQos object) {
+                return object.getDescription() == null ? "" : object.getDescription(); //$NON-NLS-1$
+            }
+        };
+        descColumn.makeSortable();
+        getTable().addColumn(descColumn, constants.qosDescription(), "150px"); //$NON-NLS-1$
+
+        AbstractTextColumn<StorageQos> throughputColumn = new AbstractTextColumn<StorageQos>() {
+            @Override
+            public String getValue(StorageQos object) {
+                return object.getMaxThroughput() == null ? constants.unlimitedQos()
+                        : object.getMaxThroughput().toString();
+            }
+        };
+        throughputColumn.makeSortable();
+        getTable().addColumn(throughputColumn, constants.storageQosThroughputTotal(), "105px"); //$NON-NLS-1$
+
+        AbstractTextColumn<StorageQos> readThroughputColumn = new AbstractTextColumn<StorageQos>() {
+            @Override
+            public String getValue(StorageQos object) {
+                return object.getMaxReadThroughput() == null ? constants.unlimitedQos()
+                        : object.getMaxReadThroughput().toString();
+            }
+        };
+        readThroughputColumn.makeSortable();
+        getTable().addColumn(readThroughputColumn, constants.storageQosThroughputRead(), "105px"); //$NON-NLS-1$
+
+        AbstractTextColumn<StorageQos> writeThroughputColumn = new AbstractTextColumn<StorageQos>() {
+            @Override
+            public String getValue(StorageQos object) {
+                return object.getMaxWriteThroughput() == null ? constants.unlimitedQos()
+                        : object.getMaxWriteThroughput().toString();
+            }
+        };
+        writeThroughputColumn.makeSortable();
+        getTable().addColumn(writeThroughputColumn, constants.storageQosThroughputWrite(), "105px"); //$NON-NLS-1$
+
+        AbstractTextColumn<StorageQos> iopsColumn = new AbstractTextColumn<StorageQos>() {
+            @Override
+            public String getValue(StorageQos object) {
+                return object.getMaxIops() == null ? constants.unlimitedQos()
+                        : object.getMaxIops().toString();
+            }
+        };
+        iopsColumn.makeSortable();
+        getTable().addColumn(iopsColumn, constants.storageQosIopsTotal(), "105px"); //$NON-NLS-1$
+
+        AbstractTextColumn<StorageQos> readIopsColumn = new AbstractTextColumn<StorageQos>() {
+            @Override
+            public String getValue(StorageQos object) {
+                return object.getMaxReadIops() == null ? constants.unlimitedQos()
+                        : object.getMaxReadIops().toString();
+            }
+        };
+        readIopsColumn.makeSortable();
+        getTable().addColumn(readIopsColumn, constants.storageQosIopsRead(), "105px"); //$NON-NLS-1$
+
+        AbstractTextColumn<StorageQos> writeIopsColumn = new AbstractTextColumn<StorageQos>() {
+            @Override
+            public String getValue(StorageQos object) {
+                return object.getMaxWriteIops() == null ? constants.unlimitedQos()
+                        : object.getMaxWriteIops().toString();
+            }
+        };
+        writeIopsColumn.makeSortable();
+        getTable().addColumn(writeIopsColumn, constants.storageQosIopsWrite(), "105px"); //$NON-NLS-1$
+
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.newQos()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getNewCommand();
+            }
+        }));
+
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.editQos()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getEditCommand();
+            }
+        }));
+
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.removeQos()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        }));
+    }
+
+    @Override
+    public void setMainTabSelectedItem(StoragePool selectedItem) {
+        super.setMainTabSelectedItem(selectedItem);
+        getModelProvider().onSubTabSelected();
+        vmNetworkModelProvider.onSubTabSelected();
+        hostNetworkModelProvider.onSubTabSelected();
+        cpuModelProvider.onSubTabSelected();
+    }
+}

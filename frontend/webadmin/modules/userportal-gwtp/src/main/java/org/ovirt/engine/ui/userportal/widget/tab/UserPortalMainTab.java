@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.userportal.widget.tab;
 
-import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTab;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.TabDefinition;
@@ -36,11 +35,6 @@ public class UserPortalMainTab extends AbstractTab implements TabDefinition {
     @Override
     public void deactivate() {
         root.removeStyleName("active"); //$NON-NLS-1$
-    }
-
-    @Override
-    public void setAlign(Align align) {
-        // no-op, these can only be LEFT
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.basic;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -9,7 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListItemPresenterWidget;
 import org.ovirt.engine.ui.userportal.widget.basic.IconImage;
@@ -117,12 +117,11 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
     private final ErrorPopupManager errorPopupManager;
 
-    private MainTabBasicListItemActionButton runButton;
-    private MainTabBasicListItemActionButton shutdownButton;
-    private MainTabBasicListItemActionButton suspendButton;
-    private MainTabBasicListItemActionButton rebootButton;
+    MainTabBasicListItemActionButton runButton;
+    MainTabBasicListItemActionButton shutdownButton;
+    MainTabBasicListItemActionButton suspendButton;
+    MainTabBasicListItemActionButton rebootButton;
 
-    private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
@@ -150,8 +149,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public HasClickHandlers addRunButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                null, resources.playIcon(), resources.playDisabledIcon(),
-                style.runButtonAdditionalStyle());
+                null, IconType.PLAY);
         this.runButton = button;
         addButtonToPanel(button);
         return button;
@@ -167,8 +165,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public HasClickHandlers addShutdownButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                SafeHtmlUtils.fromSafeConstant(constants.shutdownVm()), resources.stopIcon(), resources.stopDisabledIcon(),
-                style.shutdownButtonAdditionalStyle());
+                SafeHtmlUtils.fromSafeConstant(constants.shutdownVm()), IconType.STOP);
         this.shutdownButton = button;
         addButtonToPanel(button);
         return button;
@@ -182,8 +179,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public HasClickHandlers addSuspendButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                SafeHtmlUtils.fromSafeConstant(constants.suspendVm()), resources.suspendIcon(), resources.suspendDisabledIcon(),
-                style.suspendButtonAdditionalStyle());
+                SafeHtmlUtils.fromSafeConstant(constants.suspendVm()), IconType.PAUSE);
         this.suspendButton = button;
         addButtonToPanel(button);
         return button;
@@ -197,10 +193,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public HasClickHandlers addRebootButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                SafeHtmlUtils.fromSafeConstant(constants.rebootVm()),
-                resources.rebootIcon(),
-                resources.rebootDisabledIcon(),
-                style.rebootButtonAdditionalStyle());
+                SafeHtmlUtils.fromSafeConstant(constants.rebootVm()), IconType.RECYCLE);
         this.rebootButton = button;
         addButtonToPanel(button);
         return button;

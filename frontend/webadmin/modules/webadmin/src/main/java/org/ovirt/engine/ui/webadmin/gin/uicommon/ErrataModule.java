@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresen
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.errata.ErrataMainTabSelectedItems;
@@ -25,11 +24,10 @@ public class ErrataModule extends AbstractGinModule {
     @Singleton
     public MainModelProvider<Erratum, EngineErrataListModel> getErrataListProvider(final EventBus eventBus,
             final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<EngineErrataListModel> modelProvider,
-            final Provider<CommonModel> commonModelProvider) {
+            final Provider<EngineErrataListModel> modelProvider) {
 
         MainTabModelProvider<Erratum, EngineErrataListModel> result =
-                new MainTabModelProvider<>(eventBus, defaultConfirmPopupProvider, commonModelProvider);
+                new MainTabModelProvider<>(eventBus, defaultConfirmPopupProvider);
 
         result.setModelProvider(modelProvider);
 
@@ -56,6 +54,6 @@ public class ErrataModule extends AbstractGinModule {
     protected void configure() {
         bind(EngineErrataListModel.class).in(Singleton.class);
         bind(ErrataMainTabSelectedItems.class).asEagerSingleton();
-    }
+}
 
 }
