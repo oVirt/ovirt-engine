@@ -701,7 +701,7 @@ public class VmDeviceUtils {
     /**
      * Update USB slots and controllers in the new VM, if USB policy of the new VM differs from one of the old VM.
      */
-    private void updateUsbSlots(VmBase oldVm, VmBase newVm) {
+    public void updateUsbSlots(VmBase oldVm, VmBase newVm) {
         UsbPolicy oldUsbPolicy = UsbPolicy.DISABLED;
         UsbPolicy newUsbPolicy = newVm.getUsbPolicy();
         int oldNumberOfSlots = 0;
@@ -1190,18 +1190,19 @@ public class VmDeviceUtils {
      * Copy devices from the given VmDevice list to the destination VM/VmBase.
      */
     public void copyVmDevices(Guid srcId,
-                                     Guid dstId,
-                                     VmBase dstVmBase,
-                                     List<VmDevice> srcDevices,
-                                     Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping,
-                                     boolean isSoundEnabled,
-                                     boolean isConsoleEnabled,
-                                     Boolean isVirtioScsiEnabled,
-                                     boolean isBalloonEnabled,
-                                     Set<GraphicsType> graphicsToSkip,
-                                     boolean copySnapshotDevices,
-                                     boolean copyHostDevices,
-                                     Version versionToUpdateRngDeviceWith) {
+                              Guid dstId,
+                              VmBase srcVmBase,
+                              VmBase dstVmBase,
+                              List<VmDevice> srcDevices,
+                              Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping,
+                              boolean isSoundEnabled,
+                              boolean isConsoleEnabled,
+                              Boolean isVirtioScsiEnabled,
+                              boolean isBalloonEnabled,
+                              Set<GraphicsType> graphicsToSkip,
+                              boolean copySnapshotDevices,
+                              boolean copyHostDevices,
+                              Version versionToUpdateRngDeviceWith) {
         if (graphicsToSkip == null) {
             graphicsToSkip = Collections.emptySet();
         }
@@ -1347,11 +1348,7 @@ public class VmDeviceUtils {
             addCdDevice(dstId, dstCdPath);
         }
 
-        // if copying from Blank template, adding USB slots to the destination
-        // according to the destination USB policy
-        if (srcId.equals(Guid.Empty)) {
-            updateUsbSlots(null, dstVmBase);
-        }
+        updateUsbSlots(srcId.equals(Guid.Empty) ? null : srcVmBase, dstVmBase);
 
         if (isSoundEnabled && !hasSound) {
             if (dstIsVm) {
@@ -1397,7 +1394,7 @@ public class VmDeviceUtils {
         VmBase dstVmBase = getVmBase(dstId);
         List<VmDevice> srcDevices = vmDeviceDao.getVmDeviceByVmId(srcId);
 
-        copyVmDevices(srcId, dstId, dstVmBase, srcDevices, srcDeviceIdToDstDeviceIdMapping,
+        copyVmDevices(srcId, dstId, srcVmBase, dstVmBase, srcDevices, srcDeviceIdToDstDeviceIdMapping,
                 isSoundEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled, graphicsToSkip,
                 copySnapshotDevices, canCopyHostDevices(srcVmBase, dstVmBase),
                 versionToUpdateRndDeviceWith);
@@ -1424,7 +1421,7 @@ public class VmDeviceUtils {
      * @param vmId ID of a VM or Template
      * @return VmStatic if a VM of given ID was found, VmTemplate otherwise.
      */
-    private VmBase getVmBase(Guid vmId) {
+    public VmBase getVmBase(Guid vmId) {
         VM vm = vmDao.get(vmId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
 

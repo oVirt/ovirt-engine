@@ -419,6 +419,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         devices.addAll(getVmFromConfiguration().getManagedVmDeviceMap().values());
         getVmDeviceUtils().copyVmDevices(getSourceVmId(),
                 getVmId(),
+                getVmDeviceUtils().getVmBase(getSourceVmId()),
                 getVm().getStaticData(),
                 devices,
                 getSrcDeviceIdToTargetDeviceIdMapping(),

@@ -400,6 +400,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 getParameters().isSoundDeviceEnabled());
 
         getVmDeviceUtils().updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
+        if (oldTemplate.getUsbPolicy() != getVmTemplate().getUsbPolicy()) {
+            getVmDeviceUtils().updateUsbSlots(oldTemplate, getVmTemplate());
+        }
         getVmDeviceUtils().updateVirtioScsiController(getVmTemplate(), getParameters().isVirtioScsiEnabled());
         if (getParameters().isBalloonEnabled() != null) {
             getVmDeviceUtils().updateMemoryBalloon(getVmTemplateId(), getParameters().isBalloonEnabled());
