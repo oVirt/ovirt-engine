@@ -433,6 +433,8 @@ public class StorageDomainMapper {
             return org.ovirt.engine.core.common.businessentities.NfsVersion.V4;
         case V4_1:
             return org.ovirt.engine.core.common.businessentities.NfsVersion.V4_1;
+        case V4_2:
+            return org.ovirt.engine.core.common.businessentities.NfsVersion.V4_2;
         case AUTO:
             return org.ovirt.engine.core.common.businessentities.NfsVersion.AUTO;
         default:
@@ -449,6 +451,8 @@ public class StorageDomainMapper {
             return NfsVersion.V4;
         case V4_1:
             return NfsVersion.V4_1;
+        case V4_2:
+            return NfsVersion.V4_2;
         case AUTO:
             return NfsVersion.AUTO;
         default:
