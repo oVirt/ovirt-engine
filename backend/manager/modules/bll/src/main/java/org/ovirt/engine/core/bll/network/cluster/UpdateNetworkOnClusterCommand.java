@@ -25,6 +25,9 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     @Inject
     private UpdateNetworkClusterPermissionsChecker permissionsChecker;
 
+    @Inject
+    private NetworkClusterHelper networkClusterHelper;
+
     private NetworkCluster oldNetworkCluster;
 
     public UpdateNetworkOnClusterCommand(T parameters, CommandContext cmdContext) {
@@ -88,7 +91,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
                     getNetworkCluster().isDefaultRoute() ? getPersistedNetwork().getId() : managementNetwork.getId());
         }
 
-        NetworkClusterHelper.setStatus(getClusterId(), getPersistedNetwork());
+        networkClusterHelper.setStatus(getClusterId(), getPersistedNetwork());
         setSucceeded(true);
     }
 

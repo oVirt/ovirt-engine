@@ -149,6 +149,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     @Inject
     private HostLocking hostLocking;
 
+    @Inject
+    private NetworkClusterHelper networkClusterHelper;
+
     public HostSetupNetworksCommand(T parameters) {
         this(parameters, null);
     }
@@ -747,7 +750,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
             // Update cluster networks (i.e. check if need to activate each new network)
             for (Network net : getModifiedNetworks()) {
-                NetworkClusterHelper.setStatus(getClusterId(), net);
+                networkClusterHelper.setStatus(getClusterId(), net);
             }
 
             return null;

@@ -52,6 +52,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Inject
     private VdsHandler vdsHandler;
 
+    @Inject
+    private NetworkClusterHelper networkClusterHelper;
+
     protected VDS oldHost;
     private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList(
             "host_name",
@@ -198,7 +201,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             for (NetworkCluster item : networkClusters) {
                 for (Network net : networks) {
                     if (net.getId().equals(item.getNetworkId())) {
-                        NetworkClusterHelper.setStatus(oldHost.getClusterId(), net);
+                        networkClusterHelper.setStatus(oldHost.getClusterId(), net);
                     }
                 }
             }

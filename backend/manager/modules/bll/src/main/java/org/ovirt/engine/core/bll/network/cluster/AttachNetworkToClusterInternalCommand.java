@@ -28,6 +28,9 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;
 
+    @Inject
+    private NetworkClusterHelper networkClusterHelper;
+
     public AttachNetworkToClusterInternalCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -143,7 +146,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
             networkClusterDao.setNetworkExclusivelyAsDefaultRoute(clusterId, network.getId());
         }
 
-        NetworkClusterHelper.setStatus(clusterId, network);
+        networkClusterHelper.setStatus(clusterId, network);
     }
 
     @Override

@@ -34,6 +34,9 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     @Inject
     private HostedEngineHelper hostedEngineHelper;
 
+    @Inject
+    private NetworkClusterHelper networkClusterHelper;
+
     private boolean haMaintenanceFailed;
 
     public ActivateVdsCommand(T parameters, CommandContext commandContext) {
@@ -67,7 +70,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                     // set network to operational / non-operational
                     List<Network> networks = networkDao.getAllForCluster(vds.getClusterId());
                     for (Network net : networks) {
-                        NetworkClusterHelper.setStatus(vds.getClusterId(), net);
+                        networkClusterHelper.setStatus(vds.getClusterId(), net);
                     }
                     return null;
                 });
