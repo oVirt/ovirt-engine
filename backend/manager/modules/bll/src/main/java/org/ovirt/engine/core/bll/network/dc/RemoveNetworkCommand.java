@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -21,6 +23,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends NetworkCommon<T> {
+
+    @Inject
+    private NetworkClusterHelper networkClusterHelper;
 
     private Network network;
     private Provider<?> provider;
@@ -78,8 +83,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
 
     private void removeFromClusters() {
         for (NetworkCluster networkCluster : networkClusterDao.getAllForNetwork(getNetwork().getId())) {
-            NetworkClusterHelper helper = new NetworkClusterHelper(networkCluster);
-            helper.removeNetworkAndReassignRoles();
+            networkClusterHelper.removeNetworkAndReassignRoles(networkCluster);
         }
     }
 

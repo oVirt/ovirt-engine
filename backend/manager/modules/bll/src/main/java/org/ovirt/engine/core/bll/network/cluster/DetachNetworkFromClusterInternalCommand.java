@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.cluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ClusterCommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.ValidateSupportsTransaction;
@@ -22,14 +24,16 @@ import org.ovirt.engine.core.dao.VmDao;
 public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToClusterParameter>
         extends ClusterCommandBase<T> {
 
+    @Inject
+    private NetworkClusterHelper networkClusterHelper;
+
     public DetachNetworkFromClusterInternalCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 
     @Override
     protected void executeCommand() {
-        NetworkClusterHelper helper = new NetworkClusterHelper(getParameters().getNetworkCluster());
-        helper.removeNetworkAndReassignRoles();
+        networkClusterHelper.removeNetworkAndReassignRoles(getParameters().getNetworkCluster());
 
         setSucceeded(true);
     }

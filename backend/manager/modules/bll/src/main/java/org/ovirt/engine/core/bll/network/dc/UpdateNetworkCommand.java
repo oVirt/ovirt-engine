@@ -54,6 +54,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     @Inject
     private SyncNetworkParametersBuilder syncNetworkParametersBuilder;
 
+    @Inject
+    private NetworkClusterHelper networkClusterHelper;
+
     private Network oldNetwork;
 
     public UpdateNetworkCommand(T parameters, CommandContext commandContext) {
@@ -66,7 +69,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             networkDao.update(getNetwork());
 
             for (NetworkCluster clusterAttachment : networkClusterDao.getAllForNetwork(getNetwork().getId())) {
-                NetworkClusterHelper.setStatus(clusterAttachment.getClusterId(), getNetwork());
+                networkClusterHelper.setStatus(clusterAttachment.getClusterId(), getNetwork());
             }
 
             if (networkChangedToNonVmNetwork()) {
