@@ -1354,6 +1354,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot update Cluster. Clusters hosts must be down in order to perform this action.")
     String VDS_GROUP_HOSTS_MUST_BE_DOWN();
 
+    @DefaultStringValue("KSM or balooning must be enabled to allow memory optimization.")
+    String VDS_GROUP_TO_ALLOW_MEMORY_OPTIMIZATION_YOU_MUST_ALLOW_KSM_OR_BALLOONING();
+
     @DefaultStringValue("Cannot ${action} ${type}. The ${type} name is already in use, please choose a unique name and try again.")
     String ACTION_TYPE_FAILED_NAME_ALREADY_USED();
 

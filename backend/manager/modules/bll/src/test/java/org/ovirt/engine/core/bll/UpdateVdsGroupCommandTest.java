@@ -70,6 +70,7 @@ public class UpdateVdsGroupCommandTest {
     private static final Version VERSION_1_0 = new Version(1, 0);
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
+    private static final Version VERSION_3_4 = new Version(3, 4);
     private static final Guid DC_ID1 = Guid.newGuid();
     private static final Guid DC_ID2 = Guid.newGuid();
     private static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
@@ -89,13 +90,15 @@ public class UpdateVdsGroupCommandTest {
                 add(VERSION_1_0);
                 add(VERSION_1_1);
                 add(VERSION_1_2);
+                add(VERSION_3_4);
             }});
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_0.getValue(), migrationMap),
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_1.getValue(), migrationMap),
-            mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_2.getValue(), migrationMap)
+            mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_2.getValue(), migrationMap),
+            mockConfig(ConfigValues.IsMigrationSupported, VERSION_3_4.getValue(), migrationMap)
     );
 
     @Mock
@@ -534,6 +537,63 @@ public class UpdateVdsGroupCommandTest {
         verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
     }
 
+    @Test
+    public void memoryOptimizationWithoutKsmOrBallooning(){
+        final VDSGroup cluster = createDefaultVdsGroup();
+        cluster.setMaxVdsMemoryOverCommit(150);
+        cluster.setEnableKsm(false);
+        cluster.setEnableBallooning(false);
+        createCommand(cluster);
+        cpuExists();
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_TO_ALLOW_MEMORY_OPTIMIZATION_YOU_MUST_ALLOW_KSM_OR_BALLOONING);
+    }
+
+    @Test
+    public void memoryOptimizationLowerThenZeroWithoutKsmOrBallooning(){
+        final VDSGroup cluster = createDefaultVdsGroup();
+        cluster.setMaxVdsMemoryOverCommit(-52);
+        cluster.setEnableKsm(false);
+        cluster.setEnableBallooning(false);
+        createCommand(cluster);
+        cpuExists();
+        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_TO_ALLOW_MEMORY_OPTIMIZATION_YOU_MUST_ALLOW_KSM_OR_BALLOONING);
+    }
+
+    @Test
+    public void memoryOptimizationWithoutBallooning(){
+        final VDSGroup cluster = createDefaultVdsGroup();
+        cluster.setMaxVdsMemoryOverCommit(0);
+        cluster.setEnableKsm(true);
+        cluster.setEnableBallooning(false);
+        createCommand(cluster);
+        cpuExists();
+        assertTrue(cmd.canDoAction());
+    }
+
+    @Test
+    public void memoryOptimizationWithoutKsm(){
+        final VDSGroup cluster = createDefaultVdsGroup();
+        cluster.setCompatibilityVersion(Version.v3_4);
+        cluster.setMaxVdsMemoryOverCommit(200);
+        cluster.setEnableKsm(false);
+        cluster.setEnableBallooning(true);
+        createCommand(cluster);
+        cpuExists();
+        assertTrue(cmd.canDoAction());
+    }
+
+    @Test
+    public void memoryOptimizationWithKsmAndBallooning(){
+        final VDSGroup cluster = createDefaultVdsGroup();
+        cluster.setCompatibilityVersion(Version.v3_4);
+        cluster.setMaxVdsMemoryOverCommit(200);
+        cluster.setEnableKsm(true);
+        cluster.setEnableBallooning(true);
+        createCommand(cluster);
+        cpuExists();
+        assertTrue(cmd.canDoAction());
+    }
+
     private void createSimpleCommand() {
         createCommand(createNewVdsGroup());
     }
@@ -664,6 +724,7 @@ public class UpdateVdsGroupCommandTest {
         group.setStoragePoolId(DC_ID1);
         group.setArchitecture(ArchitectureType.x86_64);
         group.setClusterPolicyId(Guid.newGuid());
+        group.setMaxVdsMemoryOverCommit(100);
         return group;
     }
 
@@ -683,6 +744,7 @@ public class UpdateVdsGroupCommandTest {
         group.setStoragePoolId(DC_ID1);
         group.setArchitecture(ArchitectureType.undefined);
         group.setClusterPolicyId(Guid.newGuid());
+        group.setMaxVdsMemoryOverCommit(100);
         return group;
     }
 
@@ -699,6 +761,7 @@ public class UpdateVdsGroupCommandTest {
         group.setStoragePoolId(DC_ID1);
         group.setVirtService(supportsVirtService);
         group.setGlusterService(supportsGlusterService);
+        group.setMaxVdsMemoryOverCommit(100);
         return group;
     }
 

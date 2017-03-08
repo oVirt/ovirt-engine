@@ -538,6 +538,13 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_WRONG_PROTOCOL_FOR_CLUSTER_VERSION);
             }
         }
+
+        ClusterValidator clusterValidator = new ClusterValidator(
+                getDbFacade(),
+                getVdsGroup());
+
+        result = result && validate(clusterValidator.memoryOptimizationConfiguration());
+
         return result;
     }
 

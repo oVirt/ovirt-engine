@@ -162,7 +162,8 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
                 && validate(validator.migrationSupported(getArchitecture()))
                 && validateClusterPolicy(null)
                 && validate(validator.virtIoRngSupported())
-                && validateManagementNetwork();
+                && validateManagementNetwork()
+                && validate(validator.memoryOptimizationConfiguration());
     }
 
     private boolean validateManagementNetwork() {

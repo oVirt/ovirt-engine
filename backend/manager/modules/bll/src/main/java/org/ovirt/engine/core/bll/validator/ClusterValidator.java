@@ -128,6 +128,15 @@ public class ClusterValidator {
         return StringUtils.isNotEmpty(attestationServer);
     }
 
+    public ValidationResult memoryOptimizationConfiguration() {
+        //if maxVdsMemoryOverCommit is set to a value <=0, it is later translated to maxVdsMemoryOverCommit = 200
+        //so we need to check that as well
+        return ValidationResult.failWith(
+                EngineMessage.VDS_GROUP_TO_ALLOW_MEMORY_OPTIMIZATION_YOU_MUST_ALLOW_KSM_OR_BALLOONING)
+                .when((cluster.getMaxVdsMemoryOverCommit() > 100 || cluster.getMaxVdsMemoryOverCommit() <=0)
+                        && !(cluster.isEnableKsm() || cluster.isEnableBallooning()));
+    }
+
     private StoragePool getDataCenter() {
         if (dataCenter == null && cluster.getStoragePoolId() != null) {
             dataCenter = dataCenterDao.get(cluster.getStoragePoolId());
