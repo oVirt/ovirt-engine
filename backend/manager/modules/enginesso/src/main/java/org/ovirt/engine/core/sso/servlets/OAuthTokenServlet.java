@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -149,7 +150,8 @@ public class OAuthTokenServlet extends HttpServlet {
                 AuthenticationUtils.handleCredentials(ssoContext, request, credentials, false);
                 token = (String) request.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
             }
-            log.debug("Attempting to issueTokenForPasswd for user: {}", credentials.getUsername());
+            log.debug("Attempting to issueTokenForPasswd for user: {}",
+                    Optional.ofNullable(credentials).map(Credentials::getUsername).orElse("null"));
             SsoSession ssoSession = SsoUtils.getSsoSessionFromRequest(request, token);
             if (ssoSession == null) {
                 throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
