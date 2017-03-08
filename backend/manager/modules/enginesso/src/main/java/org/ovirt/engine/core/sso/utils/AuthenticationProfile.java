@@ -29,8 +29,7 @@ public class AuthenticationProfile {
      *
      * @param authn the authenticator that will be used to check the credentials of the user
      * @param authz the directory that will be used to lookup the details of the user once it is successfully
-     * @param mapping the mappinng extension to map the post authn auth record
-     *     authenticated
+     * @param mapper the mapping extension to map the post authn auth record authenticated
      */
     public AuthenticationProfile(ExtensionProxy authn, ExtensionProxy authz, ExtensionProxy mapper) {
         Properties config = authn.getContext().get(Base.ContextKeys.CONFIGURATION);
