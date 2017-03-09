@@ -292,6 +292,12 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             for (LunModel lunModel : items) {
                 table.getSelectionModel().setSelected(lunModel, lunModel.getIsSelected());
             }
+            table.getSelectionModel().addSelectionChangeHandler(new Handler() {
+                @Override
+                public void onSelectionChange(SelectionChangeEvent event) {
+                    model.updateLunWarningForDiscardAfterDelete();
+                }
+            });
         }
 
         ScrollPanel panel = new ScrollPanel();

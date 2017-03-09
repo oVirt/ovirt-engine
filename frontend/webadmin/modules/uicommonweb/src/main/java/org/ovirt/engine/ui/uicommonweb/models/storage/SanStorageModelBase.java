@@ -49,6 +49,8 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public abstract class SanStorageModelBase extends SearchableListModel implements IStorageModel {
 
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
     private boolean isGrouppedByTarget;
     private VDS previousGetLunsByVGIdHost;
 
@@ -271,6 +273,18 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         else if (ev.matchesDefinition(entityChangedEventDefinition)) {
             useUserAuth_EntityChanged(sender, args);
         }
+    }
+
+    public void updateLunWarningForDiscardAfterDelete() {
+        if (getContainer().getDiscardAfterDelete().getEntity()) {
+            for (LunModel lunModel : getSelectedLuns()) {
+                if (!lunModel.getEntity().supportsDiscard()) {
+                    setSelectedLunWarning(constants.discardIsNotSupportedByUnderlyingStorage());
+                    return;
+                }
+            }
+        }
+        setSelectedLunWarning(constants.emptyString());
     }
 
     private void postLogin( VdcReturnValueBase returnValue, SanStorageModelBase sanStorageModel) {
@@ -971,6 +985,13 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 }
             }
         }
+    }
+
+    /**
+     * @return the new selected and the preselected luns.
+     */
+    public ArrayList<LunModel> getSelectedLuns() {
+        return getLuns(true, true);
     }
 
     /**
