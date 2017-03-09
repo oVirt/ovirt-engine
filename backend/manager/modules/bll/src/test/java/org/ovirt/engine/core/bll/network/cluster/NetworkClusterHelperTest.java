@@ -10,22 +10,24 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.network.host.HostNicsUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -48,6 +50,8 @@ public class NetworkClusterHelperTest {
     private VdsDao vdsDao;
     @Mock
     private ManagementNetworkUtil managementNetworkUtil;
+    @Mock
+    private HostNicsUtil hostNicsUtil;
 
     @InjectMocks
     private NetworkClusterHelper underTest;
@@ -92,11 +96,24 @@ public class NetworkClusterHelperTest {
         assertTrue(managementNetworkCluster.isMigration());
     }
 
-    @Ignore
     @Test
-    public void testSetStatusForRequiredNetwork() {
-        when(vdsDao.getAllForCluster(CLUSTER_ID)).thenReturn(createHosts(true, false));
-        underTest.setStatus(CLUSTER_ID, createNetwork(NETWORK_ID, NETWORK_NAME));
+    public void testSetStatusForRequiredNetworkAbsentOnHost() {
+        networkCluster.setStatus(NetworkStatus.OPERATIONAL);
+
+        testSetStatusForRequiredNetwork("not" + NETWORK_NAME);
+
+        verify(networkClusterDao).updateStatus(same(networkCluster));
+        assertThat(networkCluster.getStatus(), is(NetworkStatus.NON_OPERATIONAL));
+    }
+
+    @Test
+    public void testSetStatusForRequiredNetworkPresentOnHost() {
+        networkCluster.setStatus(NetworkStatus.OPERATIONAL);
+
+        testSetStatusForRequiredNetwork(NETWORK_NAME);
+
+        verify(networkClusterDao, never()).updateStatus(same(networkCluster));
+        assertThat(networkCluster.getStatus(), is(NetworkStatus.OPERATIONAL));
     }
 
     @Test
@@ -120,11 +137,27 @@ public class NetworkClusterHelperTest {
         verify(networkClusterDao, never()).updateStatus(same(networkCluster));
     }
 
+    private void testSetStatusForRequiredNetwork(String networkNameOnNic) {
+        final List<VDS> hosts = createHosts(false, true);
+        final VDS activeHost = hosts.get(1);
+        when(vdsDao.getAllForCluster(CLUSTER_ID)).thenReturn(hosts);
+        when(hostNicsUtil.findHostNics(activeHost.getId()))
+                .thenReturn(Collections.singletonList(createNic(networkNameOnNic)));
+
+        underTest.setStatus(CLUSTER_ID, createNetwork(NETWORK_ID, NETWORK_NAME));
+    }
+
     private void testRemoveNetworkAndReassignRoles() {
         underTest.removeNetworkAndReassignRoles(networkCluster);
 
         verify(networkClusterDao).remove(CLUSTER_ID, NETWORK_ID);
         verify(networkAttachmentDao).removeByNetworkId(NETWORK_ID);
+    }
+
+    private VdsNetworkInterface createNic(String networkName) {
+        final VdsNetworkInterface result = new VdsNetworkInterface();
+        result.setNetworkName(networkName);
+        return result;
     }
 
     private NetworkCluster createNetworkCluster(Guid clusterId, Guid networkId) {
@@ -145,6 +178,7 @@ public class NetworkClusterHelperTest {
                 .map(isUp -> isUp ? VDSStatus.Up : VDSStatus.Down)
                 .map(hostStatus -> {
                     VDS host = new VDS();
+                    host.setId(Guid.newGuid());
                     host.setStatus(hostStatus);
                     return host;
                 })
