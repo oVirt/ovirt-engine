@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -45,6 +46,8 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class StorageModel extends Model implements ISupportSystemTreeContext {
     public static final Guid UnassignedDataCenterId = Guid.Empty;
+
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private StorageModelBehavior behavior;
 
@@ -273,6 +276,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         getActivateDomain().setIsAvailable(false);
         setWipeAfterDelete(new EntityModel<>(false));
         setDiscardAfterDelete(new EntityModel<>(false));
+        getDiscardAfterDelete().getEntityChangedEvent().addListener(this);
 
         localFSPath = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
     }
@@ -311,6 +315,10 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         }
         else if (ev.matchesDefinition(NfsStorageModel.pathChangedEventDefinition)) {
             nfsStorageModel_PathChanged(sender);
+        } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
+            if (sender == getDiscardAfterDelete()) {
+                ((SanStorageModelBase) getCurrentStorageItem()).updateLunWarningForDiscardAfterDelete();
+            }
         }
     }
 
@@ -383,8 +391,6 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
     }
 
     private void initDataCenter() {
-        final UIConstants constants = ConstantsManager.getInstance().getConstants();
-
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
             SystemTreeItemModel dataCenterItem;
             StoragePool dc;
@@ -672,6 +678,8 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                 new NotEmptyValidation(), new IntegerValidation(0, Integer.MAX_VALUE)
         });
 
+        validateDiscardAfterDelete();
+
         return getName().getIsValid()
                 && getHost().getIsValid()
                 && getIsValid()
@@ -679,7 +687,31 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                 && getDescription().getIsValid()
                 && getComment().getIsValid()
                 && getWarningLowSpaceIndicator().getIsValid()
-                && getCriticalSpaceActionBlocker().getIsValid();
+                && getCriticalSpaceActionBlocker().getIsValid()
+                && getDiscardAfterDelete().getIsValid();
+    }
+
+    private void validateDiscardAfterDelete() {
+        if (getDiscardAfterDelete().getIsAvailable() && getDiscardAfterDelete().getEntity()) {
+            SanStorageModelBase sanStorageModel = (SanStorageModelBase) getCurrentStorageItem();
+            Collection<LunModel> luns = sanStorageModel.getSelectedLuns();
+            if (luns != null && !storageDomainSupportsDiscard(luns)) {
+                getDiscardAfterDelete().getInvalidityReasons().add(
+                        constants.discardIsNotSupportedByUnderlyingStorage());
+                getDiscardAfterDelete().setIsValid(false);
+                return;
+            }
+        }
+        getDiscardAfterDelete().setIsValid(true);
+    }
+
+    private boolean storageDomainSupportsDiscard(Collection<LunModel> luns) {
+        for (LunModel lun : luns) {
+            if (!lun.getEntity().supportsDiscard()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void validateListItems(ListModel<?> listModel) {
