@@ -1389,6 +1389,8 @@ public enum AuditLogType {
     MIGRATION_REASON_LOAD_BALANCING(12001),
     MIGRATION_REASON_HOST_IN_MAINTENANCE(12002),
 
+    CLUSTER_CANNOT_UPDATE_VM_COMPATIBILITY_VERSION(12005, AuditLogSeverity.ERROR),
+
     // API deprecation warning, at most once each day:
     DEPRECATED_API(13000, AuditLogSeverity.WARNING, AuditLogTimeInterval.DAY.getValue());
 

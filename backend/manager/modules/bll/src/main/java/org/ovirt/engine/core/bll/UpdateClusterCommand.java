@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.enterprise.event.Event;
@@ -107,6 +109,10 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     private List<VmStatic> vmsLockedForUpdate = Collections.emptyList();
     private List<VmTemplate> templatesLockedForUpdate = Collections.emptyList();
+
+    private Map<String, String> failedUpgradeEntities = new HashMap<>();
+    public static final String MESSAGE_REG_EX = "^(?<message>\\$message) (?<error>.*)";
+    public static final Pattern msgRegEx = Pattern.compile(MESSAGE_REG_EX);
 
     @Override
     protected void init() {
@@ -231,11 +237,14 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         // Call UpdateVmCommand on all VMs in the cluster to update defaults (i.e. DisplayType)
-        if (!updateVms()) {
-            setSucceeded(false);
-            return;
-        }
-        if (!updateTemplates()) {
+        updateVms();
+        updateTemplates();
+
+        if (!failedUpgradeEntities.isEmpty()) {
+            logFailedUpgrades();
+            failValidation(Arrays.asList(EngineMessage.CLUSTER_CANNOT_UPDATE_CLUSTER_FAILED_TO_UPDATE_VMS),
+                    "$VmList " + StringUtils.join(failedUpgradeEntities.keySet(), ", "));
+            getReturnValue().setValid(false);
             setSucceeded(false);
             return;
         }
@@ -273,11 +282,24 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                     cloneContextAndDetachFromParent());
 
             if (!result.getSucceeded()) {
-                propagateFailure(result);
-                return false;
+                List<String> params = new ArrayList<>();
+                params.add("$action Update");
+                params.add("$type VM");
+                params.add(parseErrorMessage(result.getValidationMessages()));
+                List<String> messages = Backend.getInstance().getErrorsTranslator().translateErrorText(params);
+
+                failedUpgradeEntities.put(vm.getName(), getFailedMessage(messages));
             }
         }
         return true;
+    }
+
+    private void logFailedUpgrades() {
+        for (Map.Entry<String, String> entry : failedUpgradeEntities.entrySet()) {
+            addCustomValue("VmName", entry.getKey());
+            addCustomValue("Message", entry.getValue());
+            auditLogDirector.log(this, AuditLogType.CLUSTER_CANNOT_UPDATE_VM_COMPATIBILITY_VERSION);
+        }
     }
 
     /**
@@ -305,7 +327,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         for (VmTemplate template : templatesLockedForUpdate) {
             // the object was loaded in before command execution started and thus the value may be outdated
             template.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
-            final UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);
+            UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);
             // Locking by UpdateVmTemplate is disabled since templates are already locked in #getExclusiveLocks method.
             parameters.setLockProperties(LockProperties.create(LockProperties.Scope.None));
             parameters.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
@@ -319,12 +341,37 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                     VdcActionType.UpdateVmTemplate,
                     parameters,
                     cloneContextAndDetachFromParent());
+
             if (!result.getSucceeded()) {
-                propagateFailure(result);
-                return false;
+                List<String> params = new ArrayList<>();
+                params.add("$action Update");
+                params.add("$type Template");
+                params.add(parseErrorMessage(result.getValidationMessages()));
+                List<String> messages = Backend.getInstance().getErrorsTranslator().translateErrorText(params);
+
+                failedUpgradeEntities.put(template.getName(), getFailedMessage(messages));
             }
         }
         return true;
+    }
+
+    private String getFailedMessage(List<String> messages) {
+        String msg = "[No Message]";
+        if (messages.size() > 0 && !StringUtils.isEmpty(messages.get(0))) {
+            msg = messages.get(0);
+        }
+        return msg;
+    }
+
+    private String parseErrorMessage(List<String> messages) {
+        // method gets command Validation Messages and return the message
+        for(String message: messages) {
+            Matcher matcher = msgRegEx.matcher(message);
+            if (matcher.matches()) {
+                return matcher.group("error");
+            }
+        }
+        return "";
     }
 
     /**
