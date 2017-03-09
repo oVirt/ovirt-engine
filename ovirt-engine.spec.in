@@ -314,6 +314,7 @@ Provides:	ovirt-engine-extensions-api-javadoc = 0
 Summary:	%{ovirt_product_name_short} library
 Group:		%{ovirt_product_group}
 Requires:	m2crypto
+Requires:	python-dateutil
 Requires:	python-daemon
 Conflicts:	python-daemon = 2.1.0
 
