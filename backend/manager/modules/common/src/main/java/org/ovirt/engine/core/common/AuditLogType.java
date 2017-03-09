@@ -1384,7 +1384,8 @@ public enum AuditLogType {
     // Migration reasons
     MIGRATION_REASON_AFFINITY_ENFORCEMENT(12000),
     MIGRATION_REASON_LOAD_BALANCING(12001),
-    MIGRATION_REASON_HOST_IN_MAINTENANCE(12002);
+    MIGRATION_REASON_HOST_IN_MAINTENANCE(12002),
+    CLUSTER_CANNOT_UPDATE_VM_COMPATIBILITY_VERSION(12005, AuditLogSeverity.ERROR);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.
