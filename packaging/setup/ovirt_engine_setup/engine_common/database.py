@@ -987,12 +987,9 @@ class OvirtUtils(base.Base):
         return invalid_config_items
 
     def getUpdatedPGConf(self, content):
-        needUpdate = True
-        confs_ok = {}
         edit_params = {}
         for item in self._pg_conf_info():
             key = item['key']
-            confs_ok[key] = False
             if item['needed_on_create']:
                 edit_params[key] = item['expected']
         for l in content:
@@ -1007,13 +1004,9 @@ class OvirtUtils(base.Base):
                         current=m.group('value'),
                         expected=item['expected']
                     ):
-                        confs_ok[item['key']] = True
-                    else:
-                        break
-            if False not in confs_ok.values():
-                needUpdate = False
-                break
+                        del(edit_params[item['key']])
 
+        needUpdate = len(edit_params) > 0
         if needUpdate:
             content = osetuputil.editConfigContent(
                 content=content,
