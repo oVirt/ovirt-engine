@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.network.host.HostNicsUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -15,8 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -31,16 +29,19 @@ public class NetworkClusterHelper {
     private final NetworkAttachmentDao networkAttachmentDao;
     private final VdsDao vdsDao;
     private final ManagementNetworkUtil managementNetworkUtil;
+    private final HostNicsUtil hostNicsUtil;
 
     @Inject
     public NetworkClusterHelper(NetworkClusterDao networkClusterDao,
             NetworkAttachmentDao networkAttachmentDao,
             VdsDao vdsDao,
-            ManagementNetworkUtil managementNetworkUtil) {
+            ManagementNetworkUtil managementNetworkUtil,
+            HostNicsUtil hostNicsUtil) {
         this.networkClusterDao = Objects.requireNonNull(networkClusterDao);
         this.networkAttachmentDao = Objects.requireNonNull(networkAttachmentDao);
         this.vdsDao = Objects.requireNonNull(vdsDao);
         this.managementNetworkUtil = Objects.requireNonNull(managementNetworkUtil);
+        this.hostNicsUtil = Objects.requireNonNull(hostNicsUtil);
     }
 
     private NetworkCluster getManagementNetworkCluster(NetworkCluster networkCluster) {
@@ -114,14 +115,13 @@ public class NetworkClusterHelper {
     }
 
     /**
-     *
      * @param hosts list of hosts to check
      * @param networkName name of network
      * @return true if there's at least one host, which does not have given network attached to one of its nics.
      */
     private boolean atLeastOneHostDoesNotHaveNetworkAttached(List<VDS> hosts, String networkName) {
         for (VDS host : hosts) {
-            List<VdsNetworkInterface> hostInterfaces = getHostInterfaces(host.getId());
+            List<VdsNetworkInterface> hostInterfaces = hostNicsUtil.findHostNics(host.getId());
             boolean hostHasInterfaceWithGivenNetwork =
                     hostInterfaces.stream().anyMatch(e -> StringUtils.equals(e.getNetworkName(), networkName));
             if (!hostHasInterfaceWithGivenNetwork) {
@@ -129,15 +129,6 @@ public class NetworkClusterHelper {
             }
         }
         return false;
-    }
-
-    /**
-     * @param hostId id of host.
-     * @return all <em>VdsNetworkInterface</em> records for given hostId.
-     */
-    private List<VdsNetworkInterface> getHostInterfaces(Guid hostId) {
-        IdQueryParameters params = new IdQueryParameters(hostId);
-        return Backend.getInstance().runInternalQuery(VdcQueryType.GetVdsInterfacesByVdsId, params).getReturnValue();
     }
 
     /**
