@@ -175,8 +175,16 @@ public class VdsStatistics implements BusinessEntity<Guid> {
      *
      * resident set size of qemu processes may grow - up to  memCommitted.
      * Thus, we deduct the growth potential of qemu processes, which is (memCommitted - resident)
+     *
+     * Do not use. This value was computed using very naive algorithm without the
+     * engine knowledge and does not reflect over-commit or Qemu overhead properly.
+     *
+     * Please see the org.ovirt.engine.core.bll.utils.VmOverheadCalculatorImpl for much more
+     * accurate algorithm and VDS#maxSchedulingMemory for a precomputed value.
+     *
      * @return - free mem available for new vm in MiB
      */
+    @Deprecated
     public Long getMemAvailable() {
         return memAvailable;
     }
@@ -240,6 +248,9 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.id = id;
     }
 
+    /**
+     * @return Returns the unused swap space size in MiB
+     */
     public Long getSwapFree() {
         return swapFree;
     }
@@ -248,6 +259,9 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         swapFree = value;
     }
 
+    /**
+     * @return Returns the total swap space size in MiB
+     */
     public Long getSwapTotal() {
         return swapTotal;
     }

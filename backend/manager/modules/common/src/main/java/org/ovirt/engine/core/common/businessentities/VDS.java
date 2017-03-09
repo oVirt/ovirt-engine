@@ -43,6 +43,13 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     private Double imagesLastDelay;
     private ServerCpu cpuName;
     private Integer vdsSpmId;
+
+    /**
+     * Maximal memory available for scheduling a new VM in MiB. This is a dynamic field
+     * that is recomputed every time one of the inputs changes.
+     *
+     * See VDS#calculateFreeSchedulingMemoryCache for the current algorithm.
+     */
     private float maxSchedulingMemory;
     private boolean hostedEngineHost;
     private boolean fencingEnabled;
