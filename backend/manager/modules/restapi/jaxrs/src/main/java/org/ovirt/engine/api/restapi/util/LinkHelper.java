@@ -801,7 +801,7 @@ public class LinkHelper {
                 }
             }
         }
-        log.error("Can't find relative path for class \"" + service.getName() + "\", will return null");
+        log.warn("Can't find relative path for class \"" + service.getName() + "\", will return null");
         return null;
     }
 
