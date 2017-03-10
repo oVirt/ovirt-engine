@@ -370,7 +370,8 @@ public class VmDeviceUtils {
         for (int i = 0; i < numOfScsiControllers; i++) {
             Map<String, Object> specParams = new HashMap<>();
             if (hasIoThreads) {
-                specParams.put(VdsProperties.ioThreadId, i);
+                // i + 1 because libvirt is indexing the io threads from 1 to N, not 0 to N - 1
+                specParams.put(VdsProperties.ioThreadId, i + 1);
             }
             VmDevice device = addManagedDevice(
                     new VmDeviceId(Guid.newGuid(), vm.getId()),
