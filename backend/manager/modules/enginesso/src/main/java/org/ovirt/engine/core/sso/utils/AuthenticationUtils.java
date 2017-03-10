@@ -226,8 +226,7 @@ public class AuthenticationUtils {
 
     public static List<Map<String, Object>> getProfileList(SsoExtensionsManager extensionsManager) {
         return extensionsManager.getExtensionsByService(Authn.class.getName()).stream()
-                .map((authn) -> AuthenticationUtils.getProfileEntry(extensionsManager, authn))
-                .collect(Collectors.toList());
+                .map((authn) -> getProfileEntry(extensionsManager, authn)).collect(Collectors.toList());
     }
 
     public static String getDefaultProfile(SsoExtensionsManager extensionsManager) {
