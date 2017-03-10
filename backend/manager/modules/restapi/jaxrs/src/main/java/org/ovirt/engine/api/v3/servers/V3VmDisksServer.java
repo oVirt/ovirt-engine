@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016 Red Hat, Inc.
+Copyright (c) 2016-2017 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@ limitations under the License.
 
 package org.ovirt.engine.api.v3.servers;
 
-import java.util.Collections;
+import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -25,7 +26,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskAttachment;
+import org.ovirt.engine.api.model.DiskAttachments;
+import org.ovirt.engine.api.resource.DiskAttachmentsResource;
+import org.ovirt.engine.api.resource.DiskResource;
+import org.ovirt.engine.api.resource.DisksResource;
+import org.ovirt.engine.api.resource.SystemResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
+import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.resource.VmsResource;
+import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.helpers.V3VmHelper;
 import org.ovirt.engine.api.v3.types.V3Disk;
@@ -48,16 +59,34 @@ public class V3VmDisksServer extends V3Server<VmDisksResource> {
         if (entity instanceof V3Disk) {
             disk = (V3Disk) entity;
             V3VmHelper.fixDiskLinks(vmId, disk);
-            V3VmHelper.addDiskAttachmentDetails(vmId, Collections.singletonList(disk));
+            V3VmHelper.addDiskAttachmentDetails(vmId, disk);
         }
         return response;
     }
 
     @GET
     public V3Disks list() {
-        V3Disks disks = adaptList(getDelegate()::list);
-        disks.getDisks().forEach(disk -> V3VmHelper.fixDiskLinks(vmId, disk));
-        V3VmHelper.addDiskAttachmentDetails(vmId, disks.getDisks());
+        SystemResource systemResource = BackendApiResource.getInstance();
+
+        // In version 4 of the API the collection of disks of a virtual machine has been replaced by the collection of
+        // disk attachments, so we need to fetch the disk attachments:
+        VmsResource vmsResource = systemResource.getVmsResource();
+        VmResource vmResource = vmsResource.getVmResource(vmId);
+        DiskAttachmentsResource attachmentsResource = vmResource.getDiskAttachmentsResource();
+        DiskAttachments attachments = attachmentsResource.list();
+
+        // For each disk, we need now to fetch it from the top level disks collection, and add the information from
+        // the corresponding attachment:
+        DisksResource disksResource = systemResource.getDisksResource();
+        V3Disks disks = new V3Disks();
+        for (DiskAttachment attachment : attachments.getDiskAttachments()) {
+            DiskResource diskResource = disksResource.getDiskResource(attachment.getDisk().getId());
+            Disk v4Disk = diskResource.get();
+            V3Disk v3Disk = adaptOut(v4Disk);
+            V3VmHelper.addDiskAttachmentDetails(attachment, v3Disk);
+            V3VmHelper.fixDiskLinks(vmId, v3Disk);
+            disks.getDisks().add(v3Disk);
+        }
         return disks;
     }
 

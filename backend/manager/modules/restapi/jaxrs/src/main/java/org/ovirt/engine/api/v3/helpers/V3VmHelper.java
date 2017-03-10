@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016 Red Hat, Inc.
+Copyright (c) 2016-2017 Red Hat, Inc.
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -153,41 +153,43 @@ public class V3VmHelper {
      * they are specific of the relationship between a particular VM and the disk. But in version 3 of the API we need
      * to continue supporting them. To do so we need to find the disk attachment and copy these attributes to the disk.
      */
-    public static void addDiskAttachmentDetails(String vmId, List<V3Disk> disks) {
+    public static void addDiskAttachmentDetails(String vmId, V3Disk disk) {
         if (vmId != null) {
             SystemResource systemResource = BackendApiResource.getInstance();
             VmsResource vmsResource = systemResource.getVmsResource();
             VmResource vmResource = vmsResource.getVmResource(vmId);
             DiskAttachmentsResource attachmentsResource = vmResource.getDiskAttachmentsResource();
-            for (V3Disk disk : disks) {
-                String diskId = disk.getId();
-                if (diskId != null) {
-                    DiskAttachmentResource attachmentResource = attachmentsResource.getAttachmentResource(diskId);
-                    try {
-                        DiskAttachment attachment = attachmentResource.get();
-                        if (attachment.isSetBootable()) {
-                            disk.setBootable(attachment.isBootable());
-                        }
-                        if (attachment.isSetInterface()) {
-                            disk.setInterface(attachment.getInterface().toString().toLowerCase());
-                        }
-                        if (attachment.isSetLogicalName()) {
-                            disk.setLogicalName(attachment.getLogicalName());
-                        }
-                        if (attachment.isSetActive()) {
-                            disk.setActive(attachment.isActive());
-                        }
-                        if (attachment.isSetUsesScsiReservation()) {
-                            disk.setUsesScsiReservation(attachment.isUsesScsiReservation());
-                        }
-                    }
-                    catch (WebApplicationException exception) {
-                        // If an application exception is generated while retrieving the details of the disk attachment
-                        // it is safe to ignore it, as it may be that the user just doesn't have permission to see
-                        // attachment, but she may still have permissions to see the other details of the disk.
-                    }
+            String diskId = disk.getId();
+            if (diskId != null) {
+                DiskAttachmentResource attachmentResource = attachmentsResource.getAttachmentResource(diskId);
+                try {
+                    DiskAttachment attachment = attachmentResource.get();
+                    addDiskAttachmentDetails(attachment, disk);
+                }
+                catch (WebApplicationException exception) {
+                    // If an application exception is generated while retrieving the details of the disk attachment
+                    // it is safe to ignore it, as it may be that the user just doesn't have permission to see
+                    // attachment, but she may still have permissions to see the other details of the disk.
                 }
             }
+        }
+    }
+
+    public static void addDiskAttachmentDetails(DiskAttachment attachment, V3Disk disk) {
+        if (attachment.isSetBootable()) {
+            disk.setBootable(attachment.isBootable());
+        }
+        if (attachment.isSetInterface()) {
+            disk.setInterface(attachment.getInterface().toString().toLowerCase());
+        }
+        if (attachment.isSetLogicalName()) {
+            disk.setLogicalName(attachment.getLogicalName());
+        }
+        if (attachment.isSetActive()) {
+            disk.setActive(attachment.isActive());
+        }
+        if (attachment.isSetUsesScsiReservation()) {
+            disk.setUsesScsiReservation(attachment.isUsesScsiReservation());
         }
     }
 }
