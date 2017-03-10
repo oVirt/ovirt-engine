@@ -209,7 +209,7 @@ public class AuthenticationUtils {
         Map<String, List<String>> namespacesMap = new HashMap<>();
         extensionsManager.getExtensionsByService(Authz.class.getName())
                 .forEach(authz -> {
-                    String authzName = authz.getContext().<String> get(Base.ContextKeys.INSTANCE_NAME);
+                    String authzName = authz.getContext().get(Base.ContextKeys.INSTANCE_NAME);
                     authz.getContext().<Collection<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES,
                             Collections.<String>emptyList())
                             .forEach(namespace -> {
