@@ -91,6 +91,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.CommonCompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.RngUtils;
@@ -159,6 +160,8 @@ public class BackendVmsResource extends
                     staticVm.setClusterId(cluster.getId());
                 }
 
+                updateMaxMemoryIfUnspecified(vm, staticVm);
+
                 if (Guid.Empty.equals(template.getId()) && !vm.isSetOs()) {
                     staticVm.setOsId(OsRepository.AUTO_SELECT_OS);
                 }
@@ -204,6 +207,12 @@ public class BackendVmsResource extends
         return response;
     }
 
+    private void updateMaxMemoryIfUnspecified(Vm vm, VmStatic vmStatic) {
+        if (!(vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetMax()) && vm.isSetMemory()) {
+            vmStatic.setMaxMemorySizeMb(VmCommonUtils.getMaxMemorySizeDefault(vmStatic.getMemSizeMb()));
+        }
+    }
+
     private void validateIconParameters(Vm vm) {
         if (!IconHelper.validateIconParameters(vm)) {
             throw new BaseBackendResource.WebFaultException(null,
@@ -233,6 +242,7 @@ public class BackendVmsResource extends
         String snapshotId = getSnapshotId(vm.getSnapshots());
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getVmConfiguration(snapshotId);
         getMapper(Vm.class, VmStatic.class).map(vm, vmConfiguration.getStaticData());
+        updateMaxMemoryIfUnspecified(vm, vmConfiguration.getStaticData());
         // If vm passed in the call has disks attached on them,
         // merge their data with the data of the disks on the configuration
         // The parameters to AddVmFromSnapshot hold an array list of Disks
