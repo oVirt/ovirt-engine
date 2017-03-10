@@ -192,6 +192,11 @@ public class InitGlusterCommandHelper {
             glusterServer.setGlusterServerUuid(addedServerUuid);
             glusterServer.setPeerStatus(PeerStatus.CONNECTED);
             glusterServerDao.save(glusterServer);
+        } else if (!glusterServer.getGlusterServerUuid().equals(addedServerUuid)) {
+            // it's possible that the server is re-installed and gluster uuid has changed,
+            // update this in the database.
+            glusterServer.setGlusterServerUuid(addedServerUuid);
+            glusterServerDao.update(glusterServer);
         }
     }
 
