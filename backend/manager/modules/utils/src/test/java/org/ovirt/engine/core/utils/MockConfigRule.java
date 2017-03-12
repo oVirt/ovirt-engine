@@ -1,18 +1,17 @@
 package org.ovirt.engine.core.utils;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.mockito.Answers;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
@@ -27,6 +26,20 @@ import org.ovirt.engine.core.compat.Version;
  * Mocking is done by calling {@link #mockConfigValue(ConfigValues, Object)} or {@link #mockConfigValue(ConfigValues, String, Object)} with the value you need.
  */
 public class MockConfigRule extends TestWatcher {
+
+    private static final Answer<?> DEFAULT_CONF_ANSWER = invocationOnMock -> {
+        Method invokedMethod = invocationOnMock.getMethod();
+        if (invokedMethod.getName().equals("getValue") && invokedMethod.getParameterCount() == 2) {
+            VdcOption option = new VdcOption();
+            option.setOptionName(((ConfigValues) invocationOnMock.getArguments()[0]).name());
+            option.setVersion((String) invocationOnMock.getArguments()[1]);
+            return ((ConfigUtilsBase) invocationOnMock.getMock()).getValue(option);
+        }
+        return invocationOnMock.callRealMethod();
+
+    };
+
+    private static final ConfigUtilsBase MOCK_CONFIG_UTILS = mock(ConfigUtilsBase.class, DEFAULT_CONF_ANSWER);
 
     /** A descriptor for a single config mocking */
     public static class MockConfigDescriptor<T> {
@@ -100,15 +113,7 @@ public class MockConfigRule extends TestWatcher {
     @Override
     public void starting(Description description) {
         origConfUtils = Config.getConfigUtils();
-        ConfigUtilsBase configUtils = mock(ConfigUtilsBase.class, Answers.CALLS_REAL_METHODS);
-        doAnswer(invocationOnMock -> {
-            VdcOption option = new VdcOption();
-            option.setOptionName(((ConfigValues) invocationOnMock.getArguments()[0]).name());
-            option.setVersion((String) invocationOnMock.getArguments()[1]);
-            return configUtils.getValue(option);
-
-        }).when(configUtils).getValue(any(ConfigValues.class), anyString());
-        Config.setConfigUtils(configUtils);
+        Config.setConfigUtils(MOCK_CONFIG_UTILS);
 
         for (MockConfigDescriptor<?> config : configs) {
             mockConfigValue(config.getValue(), config.getVersion(), config.getReturnValue());
@@ -117,6 +122,7 @@ public class MockConfigRule extends TestWatcher {
 
     @Override
     public void finished(Description description) {
+        Mockito.reset(MOCK_CONFIG_UTILS);
         Config.setConfigUtils(origConfUtils);
     }
 }
