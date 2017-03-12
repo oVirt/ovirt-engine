@@ -1422,7 +1422,7 @@ public class VmDeviceUtils {
      * @param vmId ID of a VM or Template
      * @return VmStatic if a VM of given ID was found, VmTemplate otherwise.
      */
-    public VmBase getVmBase(Guid vmId) {
+    private VmBase getVmBase(Guid vmId) {
         VM vm = vmDao.get(vmId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
 
