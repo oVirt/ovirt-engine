@@ -22,7 +22,6 @@ import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
@@ -33,8 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -63,9 +60,6 @@ public class HostValidatorTest {
 
     @Mock
     private HostedEngineHelper hostedEngineHelper;
-
-    @Mock
-    private ClusterDao clusterDao;
 
     @Spy
     @InjectMocks
@@ -302,7 +296,6 @@ public class HostValidatorTest {
     @Test
     public void supportsHostedEngineDeploy() {
         when(hostedEngineHelper.isVmManaged()).thenReturn(true);
-        mockCluster(Version.v4_0);
         assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
                 isValid());
     }
@@ -310,7 +303,6 @@ public class HostValidatorTest {
     @Test
     public void supportsHostedEngineDeployInVersion36() {
         when(hostedEngineHelper.isVmManaged()).thenReturn(true);
-        mockCluster(Version.v3_6);
         assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
                 isValid());
     }
@@ -318,24 +310,14 @@ public class HostValidatorTest {
     @Test
     public void unsupportedHostedEngineDeployWhenNoHostedEngine() {
         when(hostedEngineHelper.isVmManaged()).thenReturn(false);
-        mockCluster(Version.v4_0);
-        when(host.getClusterId()).thenReturn(Guid.Empty);
         assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE));
     }
 
     @Test
     public void allow36HostWithoutDeployingHostedEngine() {
-        mockCluster(Version.v3_6);
-        when(host.getClusterId()).thenReturn(Guid.Empty);
         HostedEngineDeployConfiguration heConfig =
                 new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.NONE);
         assertThat(validator.supportsDeployingHostedEngine(heConfig), isValid());
-    }
-
-    public void mockCluster(Version version) {
-        Cluster cluster = new Cluster();
-        cluster.setCompatibilityVersion(version);
-        when(clusterDao.get(any())).thenReturn(cluster);
     }
 }
