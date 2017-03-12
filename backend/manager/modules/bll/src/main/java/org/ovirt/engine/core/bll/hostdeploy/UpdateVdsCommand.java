@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
@@ -196,14 +195,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
         // set clusters network to be operational (if needed)
         if (oldHost.getStatus() == VDSStatus.Up) {
-            List<NetworkCluster> networkClusters = networkClusterDao.getAllForCluster(oldHost.getClusterId());
             List<Network> networks = networkDao.getAllForCluster(oldHost.getClusterId());
-            for (NetworkCluster item : networkClusters) {
-                for (Network net : networks) {
-                    if (net.getId().equals(item.getNetworkId())) {
-                        networkClusterHelper.setStatus(oldHost.getClusterId(), net);
-                    }
-                }
+            for (Network net : networks) {
+                networkClusterHelper.setStatus(oldHost.getClusterId(), net);
             }
         }
         alertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
