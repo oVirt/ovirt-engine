@@ -20,11 +20,10 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -40,12 +39,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
 
-@RunWith(Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class StartVdsCommandTest extends DbDependentTestBase {
 
     private static final String HOST_NAME = "HostName";
@@ -62,8 +60,6 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     private VdsDynamicDao vdsDynamicDao;
     @Mock
     private VmDao vmDao;
-    @Mock
-    private ClusterDao clusterDao;
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
 
@@ -83,16 +79,9 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     }
 
     private void mockDbFacades() {
-        mockClusterDao();
         mockVmDao();
         mockVdsDao();
         mockVdsDynamicDao();
-    }
-
-    private void mockClusterDao() {
-        Cluster cluster = new Cluster();
-        cluster.setId(FENCECD_HOST_CLUSTER_ID);
-        when(clusterDao.get(FENCECD_HOST_CLUSTER_ID)).thenReturn(cluster);
     }
 
     private void mockVmDao() {
