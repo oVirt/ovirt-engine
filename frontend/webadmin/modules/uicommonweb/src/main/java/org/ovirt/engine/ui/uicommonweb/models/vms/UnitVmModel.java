@@ -2074,6 +2074,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             // for the "other" also use cloud init
             getCloudInitEnabled().setEntity(!getIsWindowsOS());
             autoSetHostname();
+
+            if (getSysprepEnabled().getEntity()) {
+                getVmInitModel().updateSysprepDomain(getVmInitModel().getSysprepDomain().getSelectedItem());
+            }
         }
     }
 
