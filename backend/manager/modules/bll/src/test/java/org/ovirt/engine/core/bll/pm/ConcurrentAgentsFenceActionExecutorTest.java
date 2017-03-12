@@ -64,7 +64,6 @@ public class ConcurrentAgentsFenceActionExecutorTest {
 
         doReturn(singleExecutor1).when(executor).createFenceActionExecutor(eq(agent1));
         doReturn(singleExecutor2).when(executor).createFenceActionExecutor(eq(agent2));
-        doReturn("host1").when(fencedHost).getHostName();
     }
 
     /**
