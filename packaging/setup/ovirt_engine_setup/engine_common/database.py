@@ -53,6 +53,18 @@ PG_CONF_MSG = _(
     "Its location is usually /var/lib/pgsql/data , or "
     "somewhere under /etc/postgresql* ."
 )
+RE_KEY_VALUE = re.compile(
+    flags=re.VERBOSE,
+    pattern=r"""
+            ^
+            \s*
+            (?P<key>\w+)
+            \s*
+            =
+            \s*
+            (?P<value>\S+)
+        """,
+)
 
 
 def _ind_env(inst, keykey):
@@ -923,19 +935,6 @@ class OvirtUtils(base.Base):
             },
         )
 
-    _RE_KEY_VALUE = re.compile(
-        flags=re.VERBOSE,
-        pattern=r"""
-            ^
-            \s*
-            (?P<key>\w+)
-            \s*
-            =
-            \s*
-            (?P<value>\w+)
-        """,
-    )
-
     def validateDbConf(self, name, environment=None):
         '''
 
@@ -993,7 +992,7 @@ class OvirtUtils(base.Base):
             if item['needed_on_create']:
                 edit_params[key] = item['expected']
         for l in content:
-            m = self._RE_KEY_VALUE.match(l)
+            m = RE_KEY_VALUE.match(l)
             if m is not None:
                 for item in [
                     i for i in self._pg_conf_info()
