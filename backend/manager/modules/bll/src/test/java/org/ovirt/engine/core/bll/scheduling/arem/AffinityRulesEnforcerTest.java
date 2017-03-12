@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
@@ -41,8 +40,6 @@ public class AffinityRulesEnforcerTest {
     private AffinityGroupDao affinityGroupDao;
     @Mock
     private SchedulingManager schedulingManager;
-    @Mock
-    private VdsDao vdsDao;
     @Mock
     private VmDao vmDao;
 
@@ -522,8 +519,5 @@ public class AffinityRulesEnforcerTest {
             }
             return selectedVms;
         }).when(vmDao).getVmsByIds(anyList());
-        for (VM vm : vmList) {
-            when(vmDao.get(eq(vm.getId()))).thenReturn(vm);
-        }
     }
 }
