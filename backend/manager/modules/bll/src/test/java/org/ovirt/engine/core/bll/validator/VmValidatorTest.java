@@ -18,7 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -38,7 +38,7 @@ import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class VmValidatorTest extends DbDependentTestBase {
 
     private VmValidator validator;
@@ -258,8 +258,6 @@ public class VmValidatorTest extends DbDependentTestBase {
 
     private VmNetworkInterface mockVnic(boolean passthrough, boolean migratable, boolean plugged) {
         VmNetworkInterface vnic = mock(VmNetworkInterface.class);
-        Guid vnicId = Guid.newGuid();
-        when(vnic.getId()).thenReturn(vnicId);
         when(vnic.isPassthrough()).thenReturn(passthrough);
 
         when(vnic.isPlugged()).thenReturn(plugged);
