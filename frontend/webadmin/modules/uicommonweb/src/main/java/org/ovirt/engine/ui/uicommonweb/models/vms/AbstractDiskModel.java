@@ -750,7 +750,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         updateWipeAfterDeleteChangeability();
     }
 
-    private void updatePassDiscardAvailability() {
+    protected void updatePassDiscardAvailability() {
         if (!AsyncDataProvider.getInstance().isPassDiscardFeatureSupported(
                 getDataCenter().getSelectedItem().getCompatibilityVersion())) {
             getPassDiscard().setIsAvailable(false);

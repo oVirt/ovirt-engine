@@ -88,6 +88,18 @@ public class AttachDiskModel extends NewDiskModel {
         }
     }
 
+    @Override
+    protected void updatePassDiscardAvailability() {
+        // Pass discard is not relevant for the attach
+        // disk window, only for the new and edit windows.
+    }
+
+    @Override
+    protected void updatePassDiscardChangeability() {
+        // Pass discard is not relevant for the attach
+        // disk window, only for the new and edit windows.
+    }
+
     private void addBootChangeListener() {
         // Whenever the changeability of isBootable changes propagate it to all child DiskModels to reflect it in the view
         getIsBootable().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
