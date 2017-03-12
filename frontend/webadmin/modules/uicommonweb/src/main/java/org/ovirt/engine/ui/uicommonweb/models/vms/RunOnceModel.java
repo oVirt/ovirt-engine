@@ -1168,6 +1168,10 @@ public abstract class RunOnceModel extends Model {
         getIsCloudInitPossible().setEntity(!getIsWindowsOS());
         getIsCloudInitEnabled().setEntity(getInitializationType() == InitializationType.CloudInit);
         getIsCloudInitEnabled().setIsAvailable(!getIsWindowsOS());
+
+        if (getIsSysprepPossible().getEntity() && getIsSysprepEnabled().getEntity()) {
+            getVmInitModel().updateSysprepDomain(getVmInitModel().getSysprepDomain().getSelectedItem());
+        }
     }
 
     public boolean validate() {
