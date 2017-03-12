@@ -96,8 +96,6 @@ public class ReportedConfigurationsFillerTest {
         vlanNetworkQos.setId(vlanNetwork.getQosId());
 
         when(vdsDao.get(hostId)).thenReturn(vds);
-        when(hostNetworkQosDao.get(eq(baseNicNetwork.getQosId()))).thenReturn(baseNicNetworkQos);
-        when(hostNetworkQosDao.get(eq(vlanNetwork.getQosId()))).thenReturn(vlanNetworkQos);
 
         cluster = new Cluster();
         when(clusterDao.get(any())).thenReturn(cluster);
