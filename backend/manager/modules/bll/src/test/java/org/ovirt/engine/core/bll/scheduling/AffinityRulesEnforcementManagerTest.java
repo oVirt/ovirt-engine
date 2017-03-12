@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcer;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -34,7 +34,7 @@ import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
-@RunWith(Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class AffinityRulesEnforcementManagerTest {
 
     @Rule
@@ -131,7 +131,6 @@ public class AffinityRulesEnforcementManagerTest {
 
     @Test
     public void shouldHaveNotingToMigrate() {
-        when(rulesEnforcer.chooseNextVmToMigrate(any(Cluster.class))).thenReturn(null);
         verify(arem, never()).migrateVM(any(VM.class));
     }
 
