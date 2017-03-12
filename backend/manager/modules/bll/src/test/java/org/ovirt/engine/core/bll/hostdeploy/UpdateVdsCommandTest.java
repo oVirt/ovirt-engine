@@ -1,102 +1,108 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
-
-import org.junit.ClassRule;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.VdsHandler;
+import org.mockito.MockitoAnnotations;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
+import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
 public class UpdateVdsCommandTest {
-
-    @ClassRule
-    public static MockConfigRule configRule =
-            new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.MaxVdsNameLength, 4));
+    private static final Guid HOST_ID = Guid.newGuid();
+    private static final Guid CLUSTER_ID = Guid.newGuid();
+    private static final Version CLUSTER_VERSION = new Version("1.2.3");
+    private static final String PASSWORD = "password";
+    private static final HostedEngineDeployConfiguration HOSTED_ENGINE_DEPLOY_CONFIGURATION =
+            new HostedEngineDeployConfiguration();
 
     @Mock
     private VdsDao vdsDaoMock;
 
-    @Spy
-    private VdsHandler vdsHandler = new VdsHandler();
+    @Mock
+    private UpdateHostValidator updateHostValidator;
 
-    @Spy
     @InjectMocks
-    private UpdateVdsCommand<UpdateVdsActionParameters> commandMock
-            = new UpdateVdsCommand<UpdateVdsActionParameters>(createParameters(), null) {
-        @Override
-        UpdateHostValidator getUpdateHostValidator() {
-            return new UpdateHostValidator(oldHost,
-                    getParameters().getvds(),
-                    getParameters().isInstallHost());
-        }
-    };
+    private UpdateVdsCommand<UpdateVdsActionParameters> underTestCommand;
 
-    private static VDS makeTestVds(Guid vdsId) {
-        VDS newVdsData = new VDS();
-        newVdsData.setHostName("BUZZ");
-        newVdsData.setVdsName("BAR");
-        newVdsData.setClusterCompatibilityVersion(new Version("1.2.3"));
-        newVdsData.setClusterId(Guid.newGuid());
-        newVdsData.setId(vdsId);
-        return newVdsData;
+    private VDS newHost;
+    private VDS oldHost;
+    private UpdateVdsActionParameters parameters;
+
+    @Before
+    public void setUp() {
+        newHost = createTestHost(HOST_ID);
+        parameters = createParameters(newHost);
+        underTestCommand = new UpdateVdsCommand<>(parameters, null);
+        MockitoAnnotations.initMocks(this);
+        underTestCommand = spy(underTestCommand);
+
+        oldHost = createOldHost(newHost);
+        doReturn(updateHostValidator)
+                .when(underTestCommand)
+                .getUpdateHostValidator(oldHost, parameters.getvds(), parameters.isInstallHost());
     }
 
-    private static UpdateVdsActionParameters createParameters() {
+    @Test
+    public void testValidate() {
+        when(vdsDaoMock.get(HOST_ID)).thenReturn(oldHost);
+
+        when(updateHostValidator.hostExists()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.hostStatusValid()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.nameNotEmpty()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.nameLengthIsLegal()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.updateHostAddressAllowed()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.nameNotUsed()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.hostNameNotUsed()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.statusSupportedForHostInstallation()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.passwordProvidedForHostInstallation(AuthenticationMethod.PublicKey, PASSWORD))
+                .thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.updatePortAllowed()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.clusterNotChanged()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.hostProviderExists()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.hostProviderTypeMatches()).thenReturn(ValidationResult.VALID);
+        when(updateHostValidator.supportsDeployingHostedEngine(same(HOSTED_ENGINE_DEPLOY_CONFIGURATION)))
+                .thenReturn(ValidationResult.VALID);
+
+        assertTrue(underTestCommand.validate());
+    }
+
+    private VDS createOldHost(VDS host) {
+        VDS oldHost = host.clone();
+        oldHost.setVdsName("FOO");
+        return oldHost;
+    }
+
+    private VDS createTestHost(Guid hostId) {
+        VDS host = new VDS();
+        host.setHostName("BUZZ");
+        host.setVdsName("BAR");
+        host.setClusterCompatibilityVersion(CLUSTER_VERSION);
+        host.setClusterId(CLUSTER_ID);
+        host.setId(hostId);
+        return host;
+    }
+
+    private UpdateVdsActionParameters createParameters(VDS host) {
         UpdateVdsActionParameters parameters = new UpdateVdsActionParameters();
-        Guid vdsId = Guid.newGuid();
-        VDS newVdsData = makeTestVds(vdsId);
-        VDS oldVdsData = newVdsData.clone();
-        oldVdsData.setVdsName("FOO");
-        oldVdsData.setClusterCompatibilityVersion(new Version("1.2.3"));
-        parameters.setvds(newVdsData);
+        parameters.setvds(host);
+        parameters.setVdsId(host.getId());
+        parameters.setAuthMethod(AuthenticationMethod.PublicKey);
+        parameters.setPassword(PASSWORD);
+        parameters.setHostedEngineDeployConfiguration(HOSTED_ENGINE_DEPLOY_CONFIGURATION);
         return parameters;
     }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void validateSameName() {
-        Version version = new Version("1.2.3");
-        Cluster cluster = new Cluster();
-        cluster.setCompatibilityVersion(version);
-        doReturn(cluster).when(commandMock).getCluster();
-        VdsStatic vdsStatic = commandMock.getParameters().getVdsStaticData();
-        List<FenceAgent> fenceAgents = commandMock.getParameters().getFenceAgents();
-        doReturn(true).when(commandMock).isPowerManagementLegal(
-                vdsStatic.isPmEnabled(), fenceAgents, new Version("1.2.3").toString());
-
-        Guid vdsId = commandMock.getParameters().getVdsId();
-        VDS vds = commandMock.getParameters().getvds();
-        when(vdsDaoMock.get(vdsId)).thenReturn(vds);
-
-        //now return the old vds data
-        when(vdsDaoMock.getByName("BAR")).thenReturn(vds);
-
-        when(commandMock.getDbFacade()).thenReturn(mock(DbFacade.class));
-        vdsHandler.init();
-
-        assertFalse(commandMock.validate());
-    }
-
 }

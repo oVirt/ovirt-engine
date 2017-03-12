@@ -54,7 +54,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Inject
     private NetworkClusterHelper networkClusterHelper;
 
-    protected VDS oldHost;
+    private VDS oldHost;
     private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList(
             "host_name",
             "ip",
@@ -85,7 +85,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Override
     protected boolean validate() {
         oldHost = vdsDao.get(getVdsId());
-        UpdateHostValidator validator = getUpdateHostValidator();
+        UpdateHostValidator validator =
+                getUpdateHostValidator(oldHost, getParameters().getvds(), getParameters().isInstallHost());
 
         return validate(validator.hostExists())
                 && validate(validator.hostStatusValid())
@@ -109,11 +110,11 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         getParameters().getHostedEngineDeployConfiguration()));
     }
 
-    UpdateHostValidator getUpdateHostValidator() {
+    UpdateHostValidator getUpdateHostValidator(VDS oldHost, VDS updatedHost, boolean installHost) {
         return UpdateHostValidator.createInstance(
                 oldHost,
-                getParameters().getvds(),
-                getParameters().isInstallHost());
+                updatedHost,
+                installHost);
     }
 
     private boolean validateNetworkProviderConfiguration() {
