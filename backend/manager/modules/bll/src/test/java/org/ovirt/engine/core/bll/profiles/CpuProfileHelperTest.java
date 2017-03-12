@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.profiles;
 
-import java.util.Arrays;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -15,8 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.profiles.ProfileType;
@@ -31,7 +27,6 @@ public class CpuProfileHelperTest {
     private static final String CLUSTER_NAME = "ClusterName";
 
     private static final Guid USER_1_ID = Guid.newGuid();
-    private static final Guid USER_2_ID = Guid.newGuid();
 
     @Mock
     private CpuProfileDao cpuProfileDao;
@@ -57,15 +52,6 @@ public class CpuProfileHelperTest {
 
         when(cpuProfileDao.get(cpuProfile1.getId())).thenReturn(cpuProfile1);
         when(cpuProfileDao.get(cpuProfile2.getId())).thenReturn(cpuProfile2);
-        when(cpuProfileDao.getAllForCluster(CLUSTER_ID)).thenReturn(Arrays.asList(cpuProfile1, cpuProfile2));
-
-        when(permissionDao.getEntityPermissions(
-                USER_1_ID, ActionGroup.ASSIGN_CPU_PROFILE, cpuProfile1.getId(), VdcObjectType.CpuProfile))
-                .thenReturn(Guid.newGuid());
-
-        when(permissionDao.getEntityPermissions(
-                USER_2_ID, ActionGroup.ASSIGN_CPU_PROFILE, cpuProfile2.getId(), VdcObjectType.CpuProfile))
-                .thenReturn(Guid.newGuid());
     }
 
     @Test
