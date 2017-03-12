@@ -76,7 +76,7 @@ public class SsoExtensionsManager extends ExtensionsManager {
             if (
                     localConfig.getBoolean(
                             ENGINE_EXTENSION_ENABLED + normalizeName(
-                                    extension.getContext().<String>get(
+                                    extension.getContext().get(
                                             Base.ContextKeys.INSTANCE_NAME
                                     )
                             ),
@@ -88,7 +88,7 @@ public class SsoExtensionsManager extends ExtensionsManager {
                     )
                     ) {
                 try {
-                    initialize(extension.getContext().<String>get(Base.ContextKeys.INSTANCE_NAME));
+                    initialize(extension.getContext().get(Base.ContextKeys.INSTANCE_NAME));
                 } catch (Exception ex) {
                     log.error("Could not initialize extension '{}'. Exception message is: {}",
                             extension.getContext().<String>get(Base.ContextKeys.INSTANCE_NAME),
