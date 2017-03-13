@@ -11,24 +11,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VfsConfigValidatorTest {
@@ -49,9 +44,6 @@ public class VfsConfigValidatorTest {
     private VdsNetworkInterface nic;
 
     @Mock
-    private VDS host;
-
-    @Mock
     private Network network;
 
     @Mock
@@ -64,12 +56,6 @@ public class VfsConfigValidatorTest {
     private InterfaceDao interfaceDao;
 
     @Mock
-    private HostNicVfsConfigDao vfsConfigDao;
-
-    @Mock
-    private VdsDao vdsDao;
-
-    @Mock
     private NetworkDeviceHelper networkDeviceHelper;
 
     @Mock
@@ -77,16 +63,11 @@ public class VfsConfigValidatorTest {
 
     private VfsConfigValidator validator;
 
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule();
-
     @Before
     public void setup() {
         createValidator();
 
         when(dbFacade.getInterfaceDao()).thenReturn(interfaceDao);
-        when(dbFacade.getHostNicVfsConfigDao()).thenReturn(vfsConfigDao);
-        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
         when(dbFacade.getNetworkDao()).thenReturn(networkDao);
     }
 
@@ -112,7 +93,6 @@ public class VfsConfigValidatorTest {
 
     private void simulateNicExists() {
         when(interfaceDao.get(NIC_ID)).thenReturn(nic);
-        when(nic.getId()).thenReturn(NIC_ID);
         when(nic.getName()).thenReturn(NIC_NAME);
     }
 
@@ -216,7 +196,6 @@ public class VfsConfigValidatorTest {
 
     private void simulateNetworkExists() {
         when(networkDao.get(NETWORK_ID)).thenReturn(network);
-        when(network.getId()).thenReturn(NETWORK_ID);
         when(network.getName()).thenReturn(NETWORK_NAME);
     }
 
