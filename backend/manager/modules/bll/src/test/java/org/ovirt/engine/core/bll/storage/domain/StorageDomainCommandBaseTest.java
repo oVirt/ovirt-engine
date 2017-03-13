@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.VmDao;
 
 public class StorageDomainCommandBaseTest extends BaseCommandTest {
     private static final Guid[] GUIDS = new Guid[] {
@@ -49,9 +48,6 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
 
     @Mock
     private StorageDomainDao storageDomainDao;
-
-    @Mock
-    private VmDao vmDao;
 
     @InjectMocks
     public StorageDomainCommandBase<StorageDomainParametersBase> cmd =
