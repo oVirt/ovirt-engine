@@ -7,16 +7,18 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -51,9 +53,10 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     @Mock
     private VmDao vmDao;
 
-    @Spy
     @InjectMocks
-    public StorageDomainCommandBase<StorageDomainParametersBase> cmd = new TestStorageCommandBase(new StorageDomainParametersBase());
+    public StorageDomainCommandBase<StorageDomainParametersBase> cmd =
+            mock(StorageDomainCommandBase.class,
+                    withSettings().defaultAnswer(Answers.CALLS_REAL_METHODS).useConstructor(new StorageDomainParametersBase(), null));
 
     @Test
     public void statusMatches() {
@@ -312,17 +315,5 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         domain.setStatus(status);
         domain.setStorageType(StorageType.CINDER);
         when(cmd.getStorageDomain()).thenReturn(domain);
-    }
-
-    private static class TestStorageCommandBase extends StorageDomainCommandBase<StorageDomainParametersBase> {
-
-        public TestStorageCommandBase(StorageDomainParametersBase parameters) {
-            super(parameters, null);
-        }
-
-        @Override
-        protected void executeCommand() {
-
-        }
     }
 }
