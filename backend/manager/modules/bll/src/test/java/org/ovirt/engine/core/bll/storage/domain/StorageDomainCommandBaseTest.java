@@ -117,7 +117,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     public void checkCinderStorageDomainContainDisks() {
         setCinderStorageDomainStatus(StorageDomainStatus.Inactive);
         storagePoolExists();
-        cinderStorageDomainContainsDisks(false);
+        cinderStorageDomainContainsDisks();
         masterDomainIsUp();
         canDetachDomain();
         assertFalse(cmd.canDetachDomain(false, false));
@@ -186,13 +186,13 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     @Test
     public void shouldElectActiveSharedDataDomain() {
         final StorageDomain domain =
-                prepareSharedStorageDomainForElection(StorageDomainStatus.Active, "shared domain name");
+                prepareSharedStorageDomainForElection(StorageDomainStatus.Active);
         assertEquals(domain, cmd.electNewMaster());
     }
 
     @Test
     public void shouldElectActiveLocalDataDomain() {
-        StorageDomain domain = prepareLocalStorageDomainForElection(StorageDomainStatus.Active, "local domain name");
+        StorageDomain domain = prepareLocalStorageDomainForElection(StorageDomainStatus.Active);
         assertEquals(domain, cmd.electNewMaster());
     }
 
@@ -248,16 +248,16 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         assertEquals(sharedDomain, cmd.electNewMaster());
     }
 
-    private StorageDomain prepareLocalStorageDomainForElection(StorageDomainStatus status, String name) {
-        final StorageDomain localDomain = createDataStorageDomain(status, name, LOCAL_SD_ID);
+    private StorageDomain prepareLocalStorageDomainForElection(StorageDomainStatus status) {
+        final StorageDomain localDomain = createDataStorageDomain(status, "local domain name", LOCAL_SD_ID);
         localDomain.setStorageType(StorageType.LOCALFS);
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(localDomain));
         cmd.setStoragePool(new StoragePool());
         return localDomain;
     }
 
-    private StorageDomain prepareSharedStorageDomainForElection(StorageDomainStatus status, String name) {
-        final StorageDomain sharedDomain = createDataStorageDomain(status, name, SHARED_SD_ID);
+    private StorageDomain prepareSharedStorageDomainForElection(StorageDomainStatus status) {
+        final StorageDomain sharedDomain = createDataStorageDomain(status, "shared domain name", SHARED_SD_ID);
         when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(sharedDomain));
         cmd.setStoragePool(new StoragePool());
         return sharedDomain;
@@ -291,8 +291,8 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         doReturn(true).when(cmd).checkMasterDomainIsUp();
     }
 
-    private void cinderStorageDomainContainsDisks(boolean isCinderContainsDisks) {
-        doReturn(isCinderContainsDisks).when(cmd).isCinderStorageHasNoDisks();
+    private void cinderStorageDomainContainsDisks() {
+        doReturn(false).when(cmd).isCinderStorageHasNoDisks();
     }
 
     private void canDetachDomain() {
