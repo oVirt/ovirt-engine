@@ -749,9 +749,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             vdsDynamicDao.updateNetConfigDirty(updatedHost.getId(), updatedHost.getNetConfigDirty());
 
             // Update cluster networks (i.e. check if need to activate each new network)
-            for (Network net : getModifiedNetworks()) {
-                networkClusterHelper.setStatus(getClusterId(), net);
-            }
+            networkClusterHelper.setStatus(getClusterId(), getModifiedNetworks());
 
             return null;
         });

@@ -152,9 +152,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 clusters.add(vds.getClusterId());
                 // set network to operational / non-operational
                 List<Network> networks = networkDao.getAllForCluster(vds.getClusterId());
-                for (Network net : networks) {
-                    networkClusterHelper.setStatus(vds.getClusterId(), net);
-                }
+                networkClusterHelper.setStatus(vds.getClusterId(), networks);
             }
         }
 
