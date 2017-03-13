@@ -356,6 +356,9 @@ public enum EngineError {
     InvalidParameterException(1000),
     InvalidDefaultExceptionException(1001),
 
+    // Vdsm failing errors
+    ResourceExhausted(1100),
+
     // Hook Errors
     GeneralHookError(1500),
 

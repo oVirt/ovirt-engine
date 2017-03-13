@@ -898,5 +898,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
     String DefaultIconPairNotFound();
 
     String HOST_DEVICES_TAKEN_BY_OTHER_VM();
+
+    String ResourceExhausted();
 }
 
