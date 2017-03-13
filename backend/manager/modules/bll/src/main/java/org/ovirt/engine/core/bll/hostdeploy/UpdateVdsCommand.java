@@ -196,9 +196,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         // set clusters network to be operational (if needed)
         if (oldHost.getStatus() == VDSStatus.Up) {
             List<Network> networks = networkDao.getAllForCluster(oldHost.getClusterId());
-            for (Network net : networks) {
-                networkClusterHelper.setStatus(oldHost.getClusterId(), net);
-            }
+            networkClusterHelper.setStatus(oldHost.getClusterId(), networks);
         }
         alertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
         testVdsPowerManagementStatus(getParameters().getVdsStaticData());
