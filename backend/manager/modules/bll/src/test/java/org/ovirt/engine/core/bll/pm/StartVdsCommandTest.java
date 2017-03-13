@@ -21,7 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.DbDependentTestBase;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -44,7 +44,7 @@ import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StartVdsCommandTest extends DbDependentTestBase {
+public class StartVdsCommandTest extends BaseCommandTest {
 
     private static final String HOST_NAME = "HostName";
     private static final Guid FENCECD_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
