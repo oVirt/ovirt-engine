@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.network.dc;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
@@ -12,13 +10,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.dc.UpdateNetworkCommand.UpdateNetworkValidator;
-import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
@@ -26,52 +21,45 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 public class UpdateNetworkValidatorTest {
 
     @Mock
-    private Network network;
-    @Mock
-    private VM vm;
-    @Mock
-    private DbFacade dbFacade;
-    @Mock
     private VmDao vmDao;
     @Mock
-    private Cluster cluster;
-    @Mock
-    private VmNetworkInterface vNic;
-    @Mock
     private InterfaceDao interfaceDao;
+
+    private Network network;
 
     private UpdateNetworkValidator validator;
 
     @Before
     public void setup() {
+        network = new Network();
         validator = new UpdateNetworkValidator(network, vmDao, interfaceDao);
     }
 
-    private Network mockExternalNetwork() {
-        Network externalNetwork = mock(Network.class);
-        ProviderNetwork providerNetwork = mock(ProviderNetwork.class);
-        when(network.getProvidedBy()).thenReturn(providerNetwork);
-        when(externalNetwork.getProvidedBy()).thenReturn(providerNetwork);
+    private Network createExternalNetwork() {
+        Network externalNetwork = new Network();
+        ProviderNetwork providerNetwork = createProviderNetwork(Guid.newGuid());
+        network.setProvidedBy(providerNetwork);
+        externalNetwork.setProvidedBy(providerNetwork);
 
         return externalNetwork;
     }
 
     @Test
-    public void externalNetworkNameChanged() throws Exception {
-        Network externalNetwork = mockExternalNetwork();
+    public void externalNetworkNameChanged() {
+        Network externalNetwork = createExternalNetwork();
 
-        when(externalNetwork.getName()).thenReturn("aaa");
-        when(network.getName()).thenReturn("bbb");
+        externalNetwork.setName("aaa");
+        network.setName("bbb");
 
         assertThat(validator.externalNetworkDetailsUnchanged(externalNetwork), isValid());
     }
 
     @Test
-    public void externalNetworkDescriptionChanged() throws Exception {
-        Network externalNetwork = mockExternalNetwork();
+    public void externalNetworkDescriptionChanged() {
+        Network externalNetwork = createExternalNetwork();
 
-        when(externalNetwork.getDescription()).thenReturn("aaa");
-        when(network.getDescription()).thenReturn("bbb");
+        externalNetwork.setDescription("aaa");
+        network.setDescription("bbb");
 
         assertThat(validator.externalNetworkDetailsUnchanged(externalNetwork), isValid());
     }
@@ -82,60 +70,64 @@ public class UpdateNetworkValidatorTest {
     }
 
     @Test
-    public void externalNetworkMtuChanged() throws Exception {
-        Network externalNetwork = mockExternalNetwork();
+    public void externalNetworkMtuChanged() {
+        Network externalNetwork = createExternalNetwork();
 
-        when(externalNetwork.getMtu()).thenReturn(0);
-        when(network.getMtu()).thenReturn(1);
-
-        assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
-    }
-
-    @Test
-    public void externalNetworkStpChanged() throws Exception {
-        Network externalNetwork = mockExternalNetwork();
-
-        boolean stp = true;
-        when(externalNetwork.getStp()).thenReturn(stp);
-        when(network.getStp()).thenReturn(!stp);
+        externalNetwork.setMtu(0);
+        network.setMtu(1);
 
         assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
     }
 
     @Test
-    public void externalNetworkVlanIdChanged() throws Exception {
-        Network externalNetwork = mockExternalNetwork();
+    public void externalNetworkStpChanged() {
+        Network externalNetwork = createExternalNetwork();
 
-        when(externalNetwork.getVlanId()).thenReturn(0);
-        when(network.getVlanId()).thenReturn(1);
-
-        assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
-    }
-
-    @Test
-    public void externalNetworkVmNetworkChanged() throws Exception {
-        Network externalNetwork = mockExternalNetwork();
-
-        boolean vmNetwork = true;
-        when(externalNetwork.isVmNetwork()).thenReturn(vmNetwork);
-        when(network.isVmNetwork()).thenReturn(!vmNetwork);
+        externalNetwork.setStp(true);
+        network.setStp(false);
 
         assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
     }
 
     @Test
-    public void externalNetworkProvidedByChanged() throws Exception {
-        Network externalNetwork = mockExternalNetwork();
-        when(externalNetwork.getProvidedBy()).thenReturn(mock(ProviderNetwork.class));
+    public void externalNetworkVlanIdChanged() {
+        Network externalNetwork = createExternalNetwork();
+
+        externalNetwork.setVlanId(0);
+        network.setVlanId(1);
 
         assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
     }
 
     @Test
-    public void internalNetworkProvidedByChanged() throws Exception {
-        Network externalNetwork = mockExternalNetwork();
-        when(network.getProvidedBy()).thenReturn(null);
+    public void externalNetworkVmNetworkChanged() {
+        Network externalNetwork = createExternalNetwork();
+
+        externalNetwork.setVmNetwork(true);
+        network.setVmNetwork(false);
 
         assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
+    }
+
+    @Test
+    public void externalNetworkProvidedByChanged() {
+        Network externalNetwork = createExternalNetwork();
+        externalNetwork.setProvidedBy(createProviderNetwork(Guid.newGuid()));
+
+        assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
+    }
+
+    @Test
+    public void internalNetworkProvidedByChanged() {
+        Network externalNetwork = createExternalNetwork();
+        network.setProvidedBy(null);
+
+        assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
+    }
+
+    private ProviderNetwork createProviderNetwork(Guid providerId) {
+        final ProviderNetwork result = new ProviderNetwork();
+        result.setProviderId(providerId);
+        return result;
     }
 }
