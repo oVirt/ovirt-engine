@@ -26,7 +26,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -50,7 +50,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class GlusterServiceSyncJobTest {
     private static final Guid CLUSTER_ID = Guid.newGuid();
     private static final Guid SERVER1_ID = Guid.newGuid();

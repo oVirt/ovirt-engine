@@ -20,7 +20,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -38,7 +38,7 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class GlusterHookSyncJobTest {
     private static final Guid[] SERVER_GUIDS = {new Guid("11111111-1111-1111-1111-111111111111"),
         new Guid("22222222-2222-2222-2222-222222222222"),

@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -44,7 +44,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
-@RunWith(Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class GlusterGeoRepSyncJobTest {
     private static final Guid CLUSTER_GUID = new Guid("CC111111-1111-1111-1111-111111111111");
 
