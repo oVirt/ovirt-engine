@@ -163,7 +163,7 @@ public class NetworkClusterHelperTest {
         final List<VDS> hosts = createHosts(false, true);
         final VDS activeHost = hosts.get(1);
         when(vdsDao.getAllForCluster(CLUSTER_ID)).thenReturn(hosts);
-        when(hostNicsUtil.findHostNics(activeHost.getId())).thenReturn(singletonList(createNic(networkNameOnNic)));
+        when(hostNicsUtil.findHostNics(activeHost.getStaticData())).thenReturn(singletonList(createNic(networkNameOnNic)));
 
         underTest.setStatus(CLUSTER_ID, networks);
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -38,11 +39,23 @@ public class HostNicsUtil {
         this.networkImplementationDetailsUtils = Objects.requireNonNull(networkImplementationDetailsUtils);
     }
 
-    public List<VdsNetworkInterface> findHostNics(Guid hostId) {
-        return findHostNics(hostId, null, false);
+    public List<VdsNetworkInterface> findHostNics(VdsStatic vdsStatic) {
+        return findHostNics(vdsStatic.getId(), (x) -> vdsStatic.getClusterId(), null, false);
     }
 
     public List<VdsNetworkInterface> findHostNics(Guid hostId, Guid userID, boolean isFiltered) {
+        return findHostNics(hostId, this::findHostClusterId, userID, isFiltered);
+    }
+
+    private Guid findHostClusterId(Guid hostId) {
+        final VdsStatic host = vdsStaticDao.get(hostId);
+        return host.getClusterId();
+    }
+
+    private List<VdsNetworkInterface> findHostNics(Guid hostId,
+            Function<Guid, Guid> hostClusterIdFinder,
+            Guid userID,
+            boolean isFiltered) {
         final List<VdsNetworkInterface> vdsInterfaces =
                 interfaceDao.getAllInterfacesForVds(hostId, userID, isFiltered);
 
@@ -67,9 +80,9 @@ public class HostNicsUtil {
         List<VdsNetworkInterface> interfaces = new ArrayList<>(vdsInterfaces.size());
 
         if (!vdsInterfaces.isEmpty()) {
-            VdsStatic vdsStatic = vdsStaticDao.get(hostId);
+            final Guid clusterId = hostClusterIdFinder.apply(hostId);
             Map<String, Network> networks =
-                    Entities.entitiesByName(networkDao.getAllForCluster(vdsStatic.getClusterId()));
+                    Entities.entitiesByName(networkDao.getAllForCluster(clusterId));
 
             for (final VdsNetworkInterface nic : vdsInterfaces) {
                 if (!nic.isBond() || nicDoesHaveSlaves(vdsInterfaces, nic)) {
