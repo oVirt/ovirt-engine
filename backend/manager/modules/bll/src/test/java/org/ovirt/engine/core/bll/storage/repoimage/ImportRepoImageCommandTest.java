@@ -8,19 +8,29 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 /** A test case for {@link ImportRepoImageCommand} */
-@RunWith(Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest {
+    private String repoImageId = Guid.newGuid().toString();
+
+    @Mock
+    private StoragePoolDao storagePoolDao;
+
+    @Mock
+    private OpenStackImageProviderProxy providerProxy;
 
     @Spy
     @InjectMocks
@@ -31,6 +41,9 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     @Before
     public void setUp() {
         super.setUp();
+
+        when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
+        when(providerProxy.getImageAsDiskImage(repoImageId)).thenReturn(diskImage);
 
         cmd.getParameters().setSourceRepoImageId(repoImageId);
         cmd.getParameters().setSourceStorageDomainId(repoStorageDomainId);

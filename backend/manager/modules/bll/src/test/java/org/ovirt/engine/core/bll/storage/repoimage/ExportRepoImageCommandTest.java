@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
@@ -20,15 +20,19 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 
 /** A test case for {@link ExportRepoImageCommand} */
-@RunWith(Silent.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest {
 
     @Mock
-    protected VmDao vmDao;
+    private VmDao vmDao;
+
+    @Mock
+    private DiskDao diskDao;
 
     @InjectMocks
     protected ExportRepoImageCommand<ExportRepoImageParameters> cmd =
@@ -45,6 +49,8 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         vm.setStatus(VMStatus.Down);
 
         when(vmDao.getVmsListForDisk(diskImageId, Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
+
+        when(diskDao.get(diskImageGroupId)).thenReturn(diskImage);
     }
 
     @Test
