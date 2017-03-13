@@ -1,31 +1,26 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(MockitoJUnitRunner.class)
 public class UpgradeHostValidatorTest {
 
-    @Mock
     private VDS host;
 
     private UpgradeHostValidator validator;
 
     @Before
     public void setup() {
+        host = new VDS();
         validator = new UpgradeHostValidator(host);
     }
 
@@ -42,8 +37,8 @@ public class UpgradeHostValidatorTest {
     }
 
     @Test
-    public void statusSupportedForHostUpgrade() {
-        when(host.getStatus()).thenReturn(VDSStatus.Maintenance);
+    public void maintenanceStatusIsSupportedForHostUpgrade() {
+        host.setStatus(VDSStatus.Maintenance);
 
         assertThat(validator.statusSupportedForHostUpgrade(), isValid());
     }
@@ -59,14 +54,14 @@ public class UpgradeHostValidatorTest {
 
     @Test
     public void statusSupportedForHostUpgradeInternal() {
-        when(host.getStatus()).thenReturn(VDSStatus.Maintenance);
+        host.setStatus(VDSStatus.Maintenance);
 
         assertThat(validator.statusSupportedForHostUpgradeInternal(), isValid());
     }
 
     @Test
     public void statusNotSupportedForHostUpgradeInternal() {
-        when(host.getStatus()).thenReturn(VDSStatus.Unassigned);
+        host.setStatus(VDSStatus.Unassigned);
 
         assertThat(validator.statusSupportedForHostUpgradeInternal(),
                 failsWith(EngineMessage.CANNOT_UPGRADE_HOST_STATUS_ILLEGAL));
@@ -74,7 +69,7 @@ public class UpgradeHostValidatorTest {
 
     @Test
     public void updatesAvailable() {
-        when(host.isUpdateAvailable()).thenReturn(true);
+        host.getDynamicData().setUpdateAvailable(true);
 
         assertThat(validator.updatesAvailable(), isValid());
     }
@@ -87,7 +82,7 @@ public class UpgradeHostValidatorTest {
     }
 
     private void mockOvirtNode() {
-        when(host.isOvirtVintageNode()).thenReturn(true);
+        host.setVdsType(VDSType.oVirtVintageNode);
     }
 
     @Test
@@ -97,7 +92,6 @@ public class UpgradeHostValidatorTest {
 
     @Test
     public void imageProvidedForOvirtNode() {
-        when(host.getVdsType()).thenReturn(VDSType.oVirtVintageNode);
         String imageName = RandomUtils.instance().nextString(20);
 
         assertThat(validator.imageProvidedForOvirtNode(imageName), isValid());
@@ -113,7 +107,7 @@ public class UpgradeHostValidatorTest {
 
     @Test
     public void hostWasInstalled() {
-        when(host.getHostOs()).thenReturn(RandomUtils.instance().nextString(20));
+        host.setHostOs(RandomUtils.instance().nextString(20));
 
         assertThat(validator.hostWasInstalled(), isValid());
     }
