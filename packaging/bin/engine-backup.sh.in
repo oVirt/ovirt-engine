@@ -1450,6 +1450,7 @@ removeHostedEngineStorageVM() {
 removeHostedEngineHosts() {
 	output "  - Removing all the hosted-engine hosts."
 	callHECleaner "M"
+	output "  - Please redeploy already existing HE hosts IMMEDIATELY after restore, to avoid possible SPM deadlocks."
 }
 
 resetDwhCurrentlyRunning() {
