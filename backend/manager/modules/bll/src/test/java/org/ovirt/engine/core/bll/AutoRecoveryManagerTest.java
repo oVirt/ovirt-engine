@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,10 +73,6 @@ public class AutoRecoveryManagerTest {
         domain.setStoragePoolId(Guid.newGuid());
         storageDomains.add(domain);
         when(storageDomainDaoMock.listFailedAutorecoverables()).thenReturn(storageDomains);
-
-        when(interfaceDaoMock.getAllInterfacesForVds(any(Guid.class))).thenReturn(Collections.emptyList());
-
-        when(networkDaoMock.getAllForCluster(any(Guid.class))).thenReturn(Collections.emptyList());
     }
 
     @Test
