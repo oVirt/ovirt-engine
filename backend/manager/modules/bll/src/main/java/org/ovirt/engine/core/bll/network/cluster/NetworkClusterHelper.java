@@ -112,7 +112,7 @@ public class NetworkClusterHelper {
      */
     private boolean atLeastOneHostDoesNotHaveNetworkAttached(List<VDS> hosts, String networkName) {
         for (VDS host : hosts) {
-            List<VdsNetworkInterface> hostInterfaces = hostNicsUtil.findHostNics(host.getId());
+            List<VdsNetworkInterface> hostInterfaces = hostNicsUtil.findHostNics(host.getStaticData());
             boolean hostHasInterfaceWithGivenNetwork =
                     hostInterfaces.stream().anyMatch(e -> StringUtils.equals(e.getNetworkName(), networkName));
             if (!hostHasInterfaceWithGivenNetwork) {
