@@ -39,21 +39,13 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
     protected OpenStackImageProviderProxy providerProxy;
 
     protected Guid repoStorageDomainId = Guid.newGuid();
-
     protected Guid storagePoolId = Guid.newGuid();
-
     protected Guid storageDomainId = Guid.newGuid();
-
     protected StorageDomain diskStorageDomain;
-
     protected StoragePool storagePool;
-
     protected String repoImageId = Guid.newGuid().toString();
-
     protected Guid diskImageId = Guid.newGuid();
-
     protected Guid diskImageGroupId = Guid.newGuid();
-
     protected DiskImage diskImage;
 
     @Before
@@ -84,5 +76,4 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
         when(diskImageDao.get(diskImageId)).thenReturn(diskImage);
         when(providerProxy.getImageAsDiskImage(repoImageId)).thenReturn(diskImage);
     }
-
 }
