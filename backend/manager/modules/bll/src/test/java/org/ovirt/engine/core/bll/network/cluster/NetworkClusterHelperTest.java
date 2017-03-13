@@ -1,18 +1,21 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.same;
+import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,9 +41,11 @@ public class NetworkClusterHelperTest {
 
     private static final Guid CLUSTER_ID = Guid.newGuid();
     private static final Guid MANAGEMENT_NETWORK_ID = Guid.newGuid();
-    private static final Guid NETWORK_ID = Guid.newGuid();
+    private static final Guid NETWORK_ID1 = Guid.newGuid();
+    private static final Guid NETWORK_ID2 = Guid.newGuid();
     private static final String MANAGEMENT_NETWORK_NAME = "management network name";
-    private static final String NETWORK_NAME = "network name";
+    private static final String NETWORK_NAME1 = "network name 1";
+    private static final String NETWORK_NAME2 = "network name 2";
 
     @Mock
     private NetworkClusterDao networkClusterDao;
@@ -62,7 +67,7 @@ public class NetworkClusterHelperTest {
 
     @Before
     public void setUp() {
-        networkCluster = createNetworkCluster(CLUSTER_ID, NETWORK_ID);
+        networkCluster = createNetworkCluster(CLUSTER_ID, NETWORK_ID1);
         when(networkClusterDao.get(networkCluster.getId())).thenReturn(networkCluster);
 
         managementNetworkCluster = createNetworkCluster(CLUSTER_ID, MANAGEMENT_NETWORK_ID);
@@ -100,7 +105,20 @@ public class NetworkClusterHelperTest {
     public void testSetStatusForRequiredNetworkAbsentOnHost() {
         networkCluster.setStatus(NetworkStatus.OPERATIONAL);
 
-        testSetStatusForRequiredNetwork("not" + NETWORK_NAME);
+        testSetStatusForRequiredNetwork(createNetwork(NETWORK_ID1, NETWORK_NAME1), NETWORK_NAME2);
+
+        verify(networkClusterDao).updateStatus(same(networkCluster));
+        assertThat(networkCluster.getStatus(), is(NetworkStatus.NON_OPERATIONAL));
+    }
+
+    @Test
+    public void testSetStatusForRequiredNetworksAbsentOnHost() {
+        networkCluster.setStatus(NetworkStatus.OPERATIONAL);
+
+        final List<Network> networks = asList(
+                createNetwork(NETWORK_ID1, NETWORK_NAME1),
+                createNetwork(NETWORK_ID2, NETWORK_NAME2));
+        testSetStatusForRequiredNetwork(networks, NETWORK_NAME2);
 
         verify(networkClusterDao).updateStatus(same(networkCluster));
         assertThat(networkCluster.getStatus(), is(NetworkStatus.NON_OPERATIONAL));
@@ -110,7 +128,7 @@ public class NetworkClusterHelperTest {
     public void testSetStatusForRequiredNetworkPresentOnHost() {
         networkCluster.setStatus(NetworkStatus.OPERATIONAL);
 
-        testSetStatusForRequiredNetwork(NETWORK_NAME);
+        testSetStatusForRequiredNetwork(createNetwork(NETWORK_ID1, NETWORK_NAME1), NETWORK_NAME1);
 
         verify(networkClusterDao, never()).updateStatus(same(networkCluster));
         assertThat(networkCluster.getStatus(), is(NetworkStatus.OPERATIONAL));
@@ -121,7 +139,7 @@ public class NetworkClusterHelperTest {
         networkCluster.setRequired(false);
         networkCluster.setStatus(NetworkStatus.NON_OPERATIONAL);
 
-        underTest.setStatus(CLUSTER_ID, createNetwork(NETWORK_ID, NETWORK_NAME));
+        underTest.setStatus(CLUSTER_ID, createNetwork(NETWORK_ID1, NETWORK_NAME1));
 
         verify(networkClusterDao).updateStatus(same(networkCluster));
         assertThat(networkCluster.getStatus(), is(NetworkStatus.OPERATIONAL));
@@ -132,26 +150,31 @@ public class NetworkClusterHelperTest {
         networkCluster.setRequired(false);
         networkCluster.setStatus(NetworkStatus.OPERATIONAL);
 
-        underTest.setStatus(CLUSTER_ID, createNetwork(NETWORK_ID, NETWORK_NAME));
+        underTest.setStatus(CLUSTER_ID, createNetwork(NETWORK_ID1, NETWORK_NAME1));
 
         verify(networkClusterDao, never()).updateStatus(same(networkCluster));
     }
 
-    private void testSetStatusForRequiredNetwork(String networkNameOnNic) {
+    private void testSetStatusForRequiredNetwork(Network network, String networkNameOnNic) {
+        testSetStatusForRequiredNetwork(singletonList(network), networkNameOnNic);
+    }
+
+    private void testSetStatusForRequiredNetwork(Collection<Network> networks, String networkNameOnNic) {
         final List<VDS> hosts = createHosts(false, true);
         final VDS activeHost = hosts.get(1);
         when(vdsDao.getAllForCluster(CLUSTER_ID)).thenReturn(hosts);
-        when(hostNicsUtil.findHostNics(activeHost.getId()))
-                .thenReturn(Collections.singletonList(createNic(networkNameOnNic)));
+        when(hostNicsUtil.findHostNics(activeHost.getId())).thenReturn(singletonList(createNic(networkNameOnNic)));
 
-        underTest.setStatus(CLUSTER_ID, createNetwork(NETWORK_ID, NETWORK_NAME));
+        underTest.setStatus(CLUSTER_ID, networks);
+
+        verify(vdsDao, atMost(1)).getAllForNetwork(CLUSTER_ID);
     }
 
     private void testRemoveNetworkAndReassignRoles() {
         underTest.removeNetworkAndReassignRoles(networkCluster);
 
-        verify(networkClusterDao).remove(CLUSTER_ID, NETWORK_ID);
-        verify(networkAttachmentDao).removeByNetworkId(NETWORK_ID);
+        verify(networkClusterDao).remove(CLUSTER_ID, NETWORK_ID1);
+        verify(networkAttachmentDao).removeByNetworkId(NETWORK_ID1);
     }
 
     private VdsNetworkInterface createNic(String networkName) {
@@ -182,6 +205,6 @@ public class NetworkClusterHelperTest {
                     host.setStatus(hostStatus);
                     return host;
                 })
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 }

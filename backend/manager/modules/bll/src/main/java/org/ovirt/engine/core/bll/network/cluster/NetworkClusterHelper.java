@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -84,33 +86,22 @@ public class NetworkClusterHelper {
      * @param network network to update.
      */
     public void setStatus(Guid clusterId, final Network network) {
-        NetworkCluster networkCluster = networkClusterDao.get(new NetworkClusterId(clusterId, network.getId()));
-        boolean doUpdateNetworkClusterStatus = networkCluster != null;
-        if (doUpdateNetworkClusterStatus) {
-            if (networkCluster.isRequired()) {
-                updateStatusOfRequiredNetworkCluster(networkCluster, clusterId, network.getName());
-            } else {
-                updateNetworkClusterStatus(networkCluster, NetworkStatus.OPERATIONAL);
-            }
-        }
+        setStatus(clusterId, Collections.singletonList(network));
     }
 
-    /**
-     * updates status of required network in cluster. See this {@link #setStatus(Guid, Network) javadoc} for details.
-     */
-    private void updateStatusOfRequiredNetworkCluster(NetworkCluster networkCluster, Guid clusterId, String networkName) {
-
-        List<VDS> hostsInCluster = vdsDao.getAllForCluster(clusterId);
-        List<VDS> hostsWithUpStatusInCluster = getHostsWithUpStatus(hostsInCluster);
-        boolean atLeastOneHostIsUp = !hostsWithUpStatusInCluster.isEmpty();
-
-        if (atLeastOneHostIsUp) {
-            NetworkStatus networkStatusToSet =
-                    atLeastOneHostDoesNotHaveNetworkAttached(hostsWithUpStatusInCluster, networkName)
-                            ? NetworkStatus.NON_OPERATIONAL
-                            : NetworkStatus.OPERATIONAL;
-
-            updateNetworkClusterStatus(networkCluster, networkStatusToSet);
+    public void setStatus(Guid clusterId, final Collection<Network> networks) {
+        RequiredNetworkClusterStatusUpdater requiredNetworkClusterStatusUpdater =
+                new RequiredNetworkClusterStatusUpdater(clusterId);
+        for (Network network : networks) {
+            NetworkCluster networkCluster = networkClusterDao.get(new NetworkClusterId(clusterId, network.getId()));
+            boolean doUpdateNetworkClusterStatus = networkCluster != null;
+            if (doUpdateNetworkClusterStatus) {
+                if (networkCluster.isRequired()) {
+                    requiredNetworkClusterStatusUpdater.update(networkCluster, network.getName());
+                } else {
+                    updateNetworkClusterStatus(networkCluster, NetworkStatus.OPERATIONAL);
+                }
+            }
         }
     }
 
@@ -132,14 +123,6 @@ public class NetworkClusterHelper {
     }
 
     /**
-     * @param hosts hosts to filter
-     * @return all hosts which has status {@link VDSStatus#Up}.
-     */
-    private List<VDS> getHostsWithUpStatus(List<VDS> hosts) {
-        return hosts.stream().filter(e -> e.getStatus() == VDSStatus.Up).collect(Collectors.toList());
-    }
-
-    /**
      * Updates <em>networkCluster</em> with new <em>networkStatus</em> and persists passed <em>networkCluster</em> if
      * <em>newStatus</em> is different from current one saving DB roundtrip if no update is needed.
      *
@@ -150,6 +133,49 @@ public class NetworkClusterHelper {
         if (networkCluster.getStatus() != newStatus) {
             networkCluster.setStatus(newStatus);
             networkClusterDao.updateStatus(networkCluster);
+        }
+    }
+
+    private class RequiredNetworkClusterStatusUpdater {
+
+        private final Guid clusterId;
+        private List<VDS> activeHostsInCluster;
+
+        private RequiredNetworkClusterStatusUpdater(Guid clusterId) {
+            this.clusterId = clusterId;
+        }
+
+        /**
+         * Updates status of the required network in the cluster. See {@link #setStatus(Guid, Network)} for details.
+         */
+        public void update(NetworkCluster networkCluster, String networkName) {
+            List<VDS> hostsWithUpStatusInCluster = findActiveHostsInCluster(clusterId);
+            boolean atLeastOneHostIsUp = !hostsWithUpStatusInCluster.isEmpty();
+
+            if (atLeastOneHostIsUp) {
+                NetworkStatus networkStatusToSet =
+                        atLeastOneHostDoesNotHaveNetworkAttached(hostsWithUpStatusInCluster, networkName)
+                                ? NetworkStatus.NON_OPERATIONAL
+                                : NetworkStatus.OPERATIONAL;
+
+                updateNetworkClusterStatus(networkCluster, networkStatusToSet);
+            }
+        }
+
+        /**
+         * Finds active hosts in the give cluster.
+         *
+         * @param clusterId
+         *            cluster id
+         * @return all hosts which has status {@link VDSStatus#Up}.
+         */
+        private List<VDS> findActiveHostsInCluster(Guid clusterId) {
+            if (activeHostsInCluster == null) {
+                final List<VDS> hostsInCluster = vdsDao.getAllForCluster(clusterId);
+                activeHostsInCluster =
+                        hostsInCluster.stream().filter(e -> e.getStatus() == VDSStatus.Up).collect(Collectors.toList());
+            }
+            return activeHostsInCluster;
         }
     }
 }
