@@ -172,7 +172,6 @@ public class FenceAgentExecutorTest {
     private void mockProxyHost(boolean anotherProxyAvailable) {
         VDS proxyHost = new VDS();
         proxyHost.setId(PROXY_HOST_ID);
-        when(proxyLocator.findProxyHost()).thenReturn(proxyHost);
         when(proxyLocator.findProxyHost(true)).thenReturn(proxyHost);
 
         if (anotherProxyAvailable) {
