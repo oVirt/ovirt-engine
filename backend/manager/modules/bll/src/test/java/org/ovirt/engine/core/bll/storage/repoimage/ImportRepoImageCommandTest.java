@@ -32,10 +32,10 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     public void setUp() {
         super.setUp();
 
-        cmd.getParameters().setSourceRepoImageId(getRepoImageId());
-        cmd.getParameters().setSourceStorageDomainId(getRepoStorageDomainId());
-        cmd.getParameters().setStoragePoolId(getStoragePoolId());
-        cmd.getParameters().setStorageDomainId(getStorageDomainId());
+        cmd.getParameters().setSourceRepoImageId(repoImageId);
+        cmd.getParameters().setSourceStorageDomainId(repoStorageDomainId);
+        cmd.getParameters().setStoragePoolId(storagePoolId);
+        cmd.getParameters().setStorageDomainId(storageDomainId);
 
         doReturn(true).when(cmd).validateSpaceRequirements(any(DiskImage.class));
     }
@@ -47,14 +47,14 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
     @Test
     public void testValidateImageDoesNotExist() {
-        when(getProviderProxy().getImageAsDiskImage(getRepoImageId())).thenReturn(null);
+        when(providerProxy.getImageAsDiskImage(repoImageId)).thenReturn(null);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
     public void testValidatePoolInMaintenance() {
-        getStoragePool().setStatus(StoragePoolStatus.Maintenance);
+        storagePool.setStatus(StoragePoolStatus.Maintenance);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }

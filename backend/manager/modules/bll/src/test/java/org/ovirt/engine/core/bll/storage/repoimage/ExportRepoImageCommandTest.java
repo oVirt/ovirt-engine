@@ -32,8 +32,7 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
     @InjectMocks
     protected ExportRepoImageCommand<ExportRepoImageParameters> cmd =
-            new ExportRepoImageCommand<>(
-                    new ExportRepoImageParameters(getDiskImageGroupId(), getRepoStorageDomainId()), null);
+            new ExportRepoImageCommand<>(new ExportRepoImageParameters(diskImageGroupId, repoStorageDomainId), null);
 
     protected VM vm;
 
@@ -45,7 +44,7 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         vm = new VM();
         vm.setStatus(VMStatus.Down);
 
-        when(vmDao.getVmsListForDisk(getDiskImageId(), Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
+        when(vmDao.getVmsListForDisk(diskImageId, Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
     }
 
     @Test
@@ -55,28 +54,28 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
     @Test
     public void testValidateLunDisk() {
-        when(getDiskDao().get(getDiskImageGroupId())).thenReturn(new LunDisk());
+        when(diskDao.get(diskImageGroupId)).thenReturn(new LunDisk());
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
     public void testValidateImageDoesNotExist() {
-        when(getDiskDao().get(getDiskImageGroupId())).thenReturn(null);
+        when(diskDao.get(diskImageGroupId)).thenReturn(null);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
     public void testValidateDomainInMaintenance() {
-        getDiskStorageDomain().setStatus(StorageDomainStatus.Maintenance);
+        diskStorageDomain.setStatus(StorageDomainStatus.Maintenance);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     @Test
     public void testValidateImageHasParent() {
-        getDiskImage().setParentId(Guid.newGuid());
+        diskImage.setParentId(Guid.newGuid());
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
     }
@@ -90,7 +89,7 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
     @Test
     public void testValidateImageLocked() {
-        getDiskImage().setImageStatus(ImageStatus.LOCKED);
+        diskImage.setImageStatus(ImageStatus.LOCKED);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }

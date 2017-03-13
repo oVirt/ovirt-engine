@@ -30,87 +30,31 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
     private StoragePoolDao storagePoolDao;
 
     @Mock
-    private DiskDao diskDao;
+    protected DiskDao diskDao;
 
     @Mock
     private DiskImageDao diskImageDao;
 
     @Mock
-    private OpenStackImageProviderProxy providerProxy;
+    protected OpenStackImageProviderProxy providerProxy;
 
-    private Guid repoStorageDomainId = Guid.newGuid();
+    protected Guid repoStorageDomainId = Guid.newGuid();
 
-    private Guid storagePoolId = Guid.newGuid();
+    protected Guid storagePoolId = Guid.newGuid();
 
-    private Guid storageDomainId = Guid.newGuid();
+    protected Guid storageDomainId = Guid.newGuid();
 
-    private StorageDomain diskStorageDomain;
+    protected StorageDomain diskStorageDomain;
 
-    private StoragePool storagePool;
+    protected StoragePool storagePool;
 
-    private String repoImageId = Guid.newGuid().toString();
+    protected String repoImageId = Guid.newGuid().toString();
 
-    private Guid diskImageId = Guid.newGuid();
+    protected Guid diskImageId = Guid.newGuid();
 
-    private Guid diskImageGroupId = Guid.newGuid();
+    protected Guid diskImageGroupId = Guid.newGuid();
 
-    private DiskImage diskImage;
-
-    public Guid getRepoStorageDomainId() {
-        return repoStorageDomainId;
-    }
-
-    public Guid getStoragePoolId() {
-        return storagePoolId;
-    }
-
-    public Guid getStorageDomainId() {
-        return storageDomainId;
-    }
-
-    public StorageDomain getDiskStorageDomain() {
-        return diskStorageDomain;
-    }
-
-    public String getRepoImageId() {
-        return repoImageId;
-    }
-
-    public StorageDomainDao getStorageDomainDao() {
-        return storageDomainDao;
-    }
-
-    public StoragePoolDao getStoragePoolDao() {
-        return storagePoolDao;
-    }
-
-    public OpenStackImageProviderProxy getProviderProxy() {
-        return providerProxy;
-    }
-
-    public StoragePool getStoragePool() {
-        return storagePool;
-    }
-
-    public Guid getDiskImageId() {
-        return diskImageId;
-    }
-
-    public Guid getDiskImageGroupId() {
-        return diskImageGroupId;
-    }
-
-    public DiskDao getDiskDao() {
-        return diskDao;
-    }
-
-    public DiskImageDao getDiskImageDao() {
-        return diskImageDao;
-    }
-
-    public DiskImage getDiskImage() {
-        return diskImage;
-    }
+    protected DiskImage diskImage;
 
     @Before
     public void setUp() {
