@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
@@ -64,6 +65,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     private final VmSingleSelectionModel vmSelectionModel = new VmSingleSelectionModel();
 
@@ -222,14 +224,15 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         AbstractTextColumn<EntityModel> virtualSizeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return asDisk(entity).getSizeInGigabytes() + "GB"; //$NON-NLS-1$
+                return messages.gigabytes(String.valueOf(asDisk(entity).getSizeInGigabytes()));
             }
         };
 
         AbstractTextColumn<EntityModel> actualSizeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return ((Double) asDisk(entity).getActualDiskWithSnapshotsSize()).intValue() + "GB"; //$NON-NLS-1$
+                return messages.gigabytes(String.valueOf(
+                        ((Double) asDisk(entity).getActualDiskWithSnapshotsSize()).intValue()));
             }
         };
 
@@ -275,7 +278,8 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         AbstractTextColumn<EntityModel> virtualSizeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return ((Double) asVm(entity).getDiskSize()).intValue() + "GB"; //$NON-NLS-1$
+                return messages.gigabytes(String.valueOf(
+                        ((Double) asVm(entity).getDiskSize()).intValue()));
             }
 
         };
@@ -283,7 +287,8 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         AbstractTextColumn<EntityModel> actualSizeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return ((Double) asVm(entity).getActualDiskWithSnapshotsSize()).intValue() + "GB"; //$NON-NLS-1$
+                return messages.gigabytes(String.valueOf(
+                        ((Double) asVm(entity).getActualDiskWithSnapshotsSize()).intValue()));
             }
         };
 

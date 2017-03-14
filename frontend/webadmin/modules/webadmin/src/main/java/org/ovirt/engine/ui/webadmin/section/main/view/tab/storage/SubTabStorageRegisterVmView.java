@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
@@ -30,6 +31,7 @@ public class SubTabStorageRegisterVmView extends AbstractSubTabTableView<Storage
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public SubTabStorageRegisterVmView(SearchableDetailModelProvider<VM, StorageListModel, StorageRegisterVmListModel> modelProvider) {
@@ -67,7 +69,7 @@ public class SubTabStorageRegisterVmView extends AbstractSubTabTableView<Storage
         AbstractTextColumn<VM> memoryColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                return String.valueOf(object.getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
+                return messages.megabytes(String.valueOf(object.getVmMemSizeMb()));
             }
         };
         memoryColumn.makeSortable();

@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.ImportVmFromExternalProviderPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmGeneralSubTabView;
@@ -159,12 +160,17 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
 
     protected final ApplicationResources resources;
 
+    protected final ApplicationMessages messages;
+
     @Inject
-    public ImportVmFromExternalProviderPopupView(EventBus eventBus, ApplicationResources resources,
-            ApplicationConstants constants) {
+    public ImportVmFromExternalProviderPopupView(EventBus eventBus,
+            ApplicationResources resources,
+            ApplicationConstants constants,
+            ApplicationMessages messages) {
         super(eventBus);
         this.constants = constants;
         this.resources = resources;
+        this.messages = messages;
 
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -238,7 +244,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         AbstractTextColumn<ImportVmData> memoryColumn = new AbstractTextColumn<ImportVmData>() {
             @Override
             public String getValue(ImportVmData object) {
-                return String.valueOf(object.getVm().getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
+                return messages.megabytes(String.valueOf(object.getVm().getVmMemSizeMb()));
             }
         };
         table.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$

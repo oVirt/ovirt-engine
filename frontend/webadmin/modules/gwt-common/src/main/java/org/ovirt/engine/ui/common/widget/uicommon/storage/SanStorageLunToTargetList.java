@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
@@ -36,6 +37,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, ListModel> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public SanStorageLunToTargetList(SanStorageModelBase model) {
         super(model);
@@ -224,7 +226,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
-                return String.valueOf(model.getSize()) + "GB"; //$NON-NLS-1$
+                return messages.gigabytes(String.valueOf(model.getSize()));
             }
         }, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
 

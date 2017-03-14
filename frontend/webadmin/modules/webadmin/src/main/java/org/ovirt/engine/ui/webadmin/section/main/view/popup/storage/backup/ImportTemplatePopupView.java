@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
@@ -29,6 +30,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
 
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
     @Inject
     public ImportTemplatePopupView(EventBus eventBus) {
         super(eventBus);
@@ -91,7 +93,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
         AbstractTextColumn<Object> memoryColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
-                return String.valueOf(((ImportTemplateData) object).getTemplate().getMemSizeMb()) + " MB"; //$NON-NLS-1$
+                return messages.megabytes(String.valueOf(((ImportTemplateData) object).getTemplate().getMemSizeMb()));
             }
         };
         table.addColumn(memoryColumn, constants.memoryTemplate(), "100px"); //$NON-NLS-1$

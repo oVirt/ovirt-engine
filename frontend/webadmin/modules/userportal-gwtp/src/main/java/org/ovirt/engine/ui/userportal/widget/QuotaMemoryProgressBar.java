@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.userportal.widget;
 
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -11,6 +13,8 @@ public class QuotaMemoryProgressBar extends QuotaProgressBar {
     private static final double MB_GB_THRESHOLD = 4; // over this threshold number would be presented in GB not MB
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
             new DiskSizeRenderer<>(SizeConverter.SizeUnit.GiB);
+
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public QuotaMemoryProgressBar(QuotaUsagePerUser quotaUsagePerUser) {
         super(quotaUsagePerUser);
@@ -48,7 +52,9 @@ public class QuotaMemoryProgressBar extends QuotaProgressBar {
         if (memory <= 0) {
             return "0"; //$NON-NLS-1$
         }
-        return memory > Math.abs(MB_GB_THRESHOLD * GIGA) ? diskSizeRenderer.render(memory / GIGA) : (int) memory + "MB"; //$NON-NLS-1$
+        return memory > Math.abs(MB_GB_THRESHOLD * GIGA) ?
+                diskSizeRenderer.render(memory / GIGA) :
+                messages.megabytes(String.valueOf((int) memory));
     }
 
 }

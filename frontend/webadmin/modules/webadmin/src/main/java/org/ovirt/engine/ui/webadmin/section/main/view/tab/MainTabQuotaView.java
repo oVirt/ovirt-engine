@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -33,6 +34,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public MainTabQuotaView(MainModelProvider<Quota, QuotaListModel> modelProvider) {
@@ -121,11 +123,11 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 if (allocated < 0) {
                     returnVal = constants.unlimited();
                 } else if (value <= 0){
-                    returnVal = "0 MB"; //$NON-NLS-1$
+                    returnVal = messages.megabytes("0"); //$NON-NLS-1$
                 } else if (value <= 5*1024) {
-                    returnVal = value + "MB"; //$NON-NLS-1$
+                    returnVal = messages.megabytes(String.valueOf(value));
                 } else {
-                    returnVal = decimalFormat.format((double)value/1024) + "GB"; //$NON-NLS-1$
+                    returnVal = messages.gigabytes(decimalFormat.format((double)value/1024));
                 }
                 return returnVal;
             }
@@ -253,7 +255,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 if (allocated < 0) {
                     returnVal = constants.unlimited();
                 } else if (value <= 0) {
-                    returnVal = "0 GB"; //$NON-NLS-1$
+                    returnVal = messages.gigabytes("0"); //$NON-NLS-1$
                 } else {
                     returnVal = diskSizeRenderer.render(value);
                 }

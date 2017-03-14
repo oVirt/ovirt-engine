@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageVmBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
@@ -64,6 +65,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
     ActionCellTable<String> applicationsTable;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public SubTabStorageVmBackupView(SearchableDetailModelProvider<VM, StorageListModel, VmBackupModel> modelProvider) {
@@ -117,7 +119,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         AbstractTextColumn<VM> memoryColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                return String.valueOf(object.getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
+                return messages.megabytes(String.valueOf(object.getVmMemSizeMb()));
             }
         };
         memoryColumn.makeSortable();
