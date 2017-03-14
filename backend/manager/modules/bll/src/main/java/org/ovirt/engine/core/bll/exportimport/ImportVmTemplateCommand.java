@@ -24,6 +24,7 @@ import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -48,6 +49,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
+import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -530,6 +533,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             getBackend().endAction(VdcActionType.CopyImageGroup,
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+            initQcowVersionForDisks(((MoveOrCopyImageGroupParameters) p).getDestImageGroupId());
         }
     }
 
@@ -624,6 +628,37 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     (double)disk.getSizeInGigabytes()));
         }
         return list;
+    }
+
+    protected void initQcowVersionForDisks(Guid imageGroupId) {
+        List<DiskImage> diskVolumes = diskImageDao.getAllSnapshotsForImageGroup(imageGroupId);
+        diskVolumes.stream().filter(volume -> volume.getVolumeFormat() == VolumeFormat.COW).forEach(volume -> {
+            try {
+                setQcowCompat(volume);
+            } catch (Exception e) {
+                log.error("Could not set qcow compat version for disk '{} with id '{}/{}'",
+                        volume.getDiskAlias(),
+                        volume.getId(),
+                        volume.getImageId());
+            }
+        });
+    }
+
+    protected void setQcowCompat(DiskImage diskImage) {
+        diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
+        if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
+            QemuImageInfo qemuImageInfo =
+                    ImagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
+                            diskImage.getStorageIds().get(0),
+                            diskImage.getId(),
+                            diskImage.getImageId(),
+                            null,
+                            true);
+            if (qemuImageInfo != null) {
+                diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
+            }
+        }
+        imageDao.update(diskImage.getImage());
     }
 
     /**

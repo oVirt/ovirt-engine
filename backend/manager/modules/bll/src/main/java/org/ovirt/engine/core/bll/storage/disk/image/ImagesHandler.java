@@ -830,7 +830,7 @@ public final class ImagesHandler {
                         newImageId), storagePoolId, null).getReturnValue();
     }
 
-    protected static QemuImageInfo getQemuImageInfoFromVdsm(Guid storagePoolId,
+    public static QemuImageInfo getQemuImageInfoFromVdsm(Guid storagePoolId,
             Guid newStorageDomainID,
             Guid newImageGroupId,
             Guid newImageId,

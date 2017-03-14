@@ -205,7 +205,6 @@ public abstract class OvfWriter implements IOvfBuilder {
             }
             _writer.writeAttributeString(OVF_URI, "format", format);
             _writer.writeAttributeString(OVF_URI, "volume-format", image.getVolumeFormat().toString());
-            _writer.writeAttributeString(OVF_URI, "qcow-compat", image.getQcowCompat().toString());
             _writer.writeAttributeString(OVF_URI, "volume-type", image.getVolumeType().toString());
             _writer.writeAttributeString(OVF_URI, "disk-interface", dve.getDiskInterface().toString());
             _writer.writeAttributeString(OVF_URI, "boot", String.valueOf(dve.isBoot()));
