@@ -5,6 +5,7 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +23,9 @@ public class SchedulerThreadPool implements ThreadPool {
     private String schedulerName;
     private int count = -1;
     private int threadPriority = Thread.NORM_PRIORITY;
+    private int queueSize = 50;
     private boolean inheritLoader;
+    private boolean reject;
 
     public SchedulerThreadPool() {
     }
@@ -49,8 +52,9 @@ public class SchedulerThreadPool implements ThreadPool {
                 count,
                 60L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue<Runnable>(50),
-                new SchedulerThreadFactory(this));
+                new ArrayBlockingQueue<Runnable>(queueSize),
+                new SchedulerThreadFactory(this),
+                isReject() ? new ThreadPoolExecutor.AbortPolicy() : new BlockedRejectedExecutionHandler(log));
     }
 
     public void setThreadCount(int count) {
@@ -69,6 +73,14 @@ public class SchedulerThreadPool implements ThreadPool {
         return threadPriority;
     }
 
+    public void setReject(boolean reject) {
+        this.reject  = reject;
+    }
+
+    public boolean isReject() {
+        return reject;
+    }
+
     public boolean isThreadsInheritContextClassLoaderOfInitializingThread() {
         return inheritLoader;
     }
@@ -76,6 +88,14 @@ public class SchedulerThreadPool implements ThreadPool {
     public void setThreadsInheritContextClassLoaderOfInitializingThread(
             boolean inheritLoader) {
         this.inheritLoader = inheritLoader;
+    }
+
+    public int getQueueSize() {
+        return queueSize;
+    }
+
+    public void setQueueSize(int queueSize) {
+        this.queueSize = queueSize;
     }
 
     @Override
@@ -136,4 +156,29 @@ public class SchedulerThreadPool implements ThreadPool {
 
     }
 
+    /**
+     * {@link BlockedRejectedExecutionHandler} waits on the queue to have space.
+     * We do not want to reject any tasks.
+     *
+     */
+    static class BlockedRejectedExecutionHandler implements RejectedExecutionHandler {
+
+        private Logger log;
+
+        public BlockedRejectedExecutionHandler(Logger log) {
+            this.log = log;
+        }
+
+        @Override
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+            if (!executor.isShutdown()) {
+                try {
+                    executor.getQueue().put(r);
+                } catch (InterruptedException e) {
+                    log.error("Thread was interrupted while waiting for space to schedule: {}", r);
+                }
+            }
+
+        }
+    }
 }
