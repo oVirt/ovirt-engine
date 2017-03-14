@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.TemplateBackupModel;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageTemplateBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
@@ -33,6 +34,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
     private static final UIConstants messageConstants = GWT.create(UIConstants.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public SubTabStorageTemplateBackupView(SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> modelProvider) {
@@ -89,7 +91,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
                 new AbstractTextColumn<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
-                        return String.valueOf(object.getMemSizeMb()) + " MB"; //$NON-NLS-1$
+                        return messages.megabytes(String.valueOf(object.getMemSizeMb()));
                     }
                 };
         memoryColumn.makeSortable();

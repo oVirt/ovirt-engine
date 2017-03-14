@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.renderer;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import com.google.gwt.text.shared.AbstractRenderer;
 
@@ -17,6 +18,7 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
     public final Format format;
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public DiskSizeRenderer(SizeConverter.SizeUnit unit) {
         this(unit, Format.GIGABYTE);
@@ -56,19 +58,22 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
     private String renderGigabyteSize(long size) {
         long sizeInGB = (unit == SizeUnit.GiB) ?
                 size : SizeConverter.convert(size, unit, SizeUnit.GiB).longValue();
-        return sizeInGB >= 1 ? sizeInGB + " GB" : "< 1 GB"; //$NON-NLS-1$ //$NON-NLS-2$
+        return messages.gigabytes(sizeInGB >= 1 ? String.valueOf(sizeInGB) : "< 1"); //$NON-NLS-1$
     }
 
     private String renderHumanReadableSize(long size) {
         long sizeInBytes = SizeConverter.convert(size, unit, SizeUnit.BYTES).longValue();
         if(sizeInBytes > SizeConverter.BYTES_IN_GB) {
-            return SizeConverter.convert(sizeInBytes, SizeConverter.SizeUnit.BYTES, SizeUnit.GiB).longValue() + " GB"; //$NON-NLS-1$
+            return messages.gigabytes(String.valueOf(
+                    SizeConverter.convert(sizeInBytes, SizeUnit.BYTES, SizeUnit.GiB).longValue()));
         } else if(sizeInBytes > SizeConverter.BYTES_IN_MB) {
-            return SizeConverter.convert(sizeInBytes, SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.MiB).longValue() + " MB"; //$NON-NLS-1$
+            return messages.megabytes(String.valueOf(
+                    SizeConverter.convert(sizeInBytes, SizeUnit.BYTES, SizeUnit.MiB).longValue()));
         } else if(sizeInBytes > SizeConverter.BYTES_IN_KB) {
-            return SizeConverter.convert(sizeInBytes, SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.KiB).longValue() + " KB"; //$NON-NLS-1$
+            return messages.kilobytes(String.valueOf(
+                    SizeConverter.convert(sizeInBytes, SizeUnit.BYTES, SizeUnit.KiB).longValue()));
         } else {
-            return sizeInBytes + " Bytes"; //$NON-NLS-1$
+            return messages.bytes(String.valueOf(sizeInBytes));
         }
     }
 }

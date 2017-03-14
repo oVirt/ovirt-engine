@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelEnumCol
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -29,6 +30,7 @@ public abstract class AbstractFindStoragePopupView extends AbstractModelBoundPop
     Label messageLabel;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     public AbstractFindStoragePopupView(EventBus eventBus, boolean multiSelection) {
         super(eventBus);
@@ -56,9 +58,9 @@ public abstract class AbstractFindStoragePopupView extends AbstractModelBoundPop
             @Override
             public String getText(StorageDomain storage) {
                 if (storage.getAvailableDiskSize() == null || storage.getAvailableDiskSize() < 1) {
-                    return "< 1 GB"; //$NON-NLS-1$
+                    return messages.gigabytes("< 1"); //$NON-NLS-1$
                 }
-                return storage.getAvailableDiskSize() + " GB"; //$NON-NLS-1$
+                return messages.gigabytes(String.valueOf(storage.getAvailableDiskSize()));
             }
         }, constants.freeSpaceStorage());
 

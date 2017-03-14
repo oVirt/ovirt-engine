@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
@@ -72,6 +73,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public RecoveryStorageConfirmationPopupView(EventBus eventBus) {
@@ -154,9 +156,9 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
             @Override
             public String getText(StorageDomain storage) {
                 if (storage.getAvailableDiskSize() == null || storage.getAvailableDiskSize() < 1) {
-                    return "< 1 GB"; //$NON-NLS-1$
+                    return messages.gigabytes("< 1"); //$NON-NLS-1$
                 }
-                return storage.getAvailableDiskSize() + " GB"; //$NON-NLS-1$
+                return messages.gigabytes(String.valueOf(storage.getAvailableDiskSize()));
             }
         };
 

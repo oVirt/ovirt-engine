@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterTemplatePopupPresenterWidget;
 
@@ -24,6 +25,7 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplat
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public RegisterTemplatePopupView(EventBus eventBus, Driver driver) {
@@ -56,7 +58,7 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplat
             @Override
             public String getValue(Object object) {
                 int size = getEntity(object).getMemSizeMb();
-                return size + " MB"; //$NON-NLS-1$
+                return messages.megabytes(String.valueOf(size));
             }
         };
         entityTable.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$

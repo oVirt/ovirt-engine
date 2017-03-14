@@ -159,5 +159,13 @@ public interface CommonApplicationMessages extends Messages {
     String principalNamespace(String namespace);
 
     String snapshotContainsMemoryIncompatibleCluster(String clusterVersion);
+
+    String bytes(String num);
+
+    String kilobytes(String num);
+
+    String megabytes(String num);
+
+    String gigabytes(String num);
 }
 

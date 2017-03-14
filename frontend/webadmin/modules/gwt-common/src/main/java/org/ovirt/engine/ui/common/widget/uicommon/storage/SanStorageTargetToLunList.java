@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
@@ -44,6 +45,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
     private static final CommonApplicationResources resources = AssetProvider.getResources();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private LunModel selectedLunModel;
 
@@ -219,7 +221,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         AbstractLunTextColumn devSizeColumn = new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
-                return String.valueOf(model.getSize()) + "GB"; //$NON-NLS-1$
+                return messages.gigabytes(String.valueOf(model.getSize()));
             }
         };
         devSizeColumn.makeSortable();

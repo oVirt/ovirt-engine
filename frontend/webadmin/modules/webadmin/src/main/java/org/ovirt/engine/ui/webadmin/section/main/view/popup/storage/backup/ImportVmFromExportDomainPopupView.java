@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
@@ -139,6 +140,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public ImportVmFromExportDomainPopupView(EventBus eventBus) {
@@ -350,7 +352,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         AbstractTextColumn<Object> memoryColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
-                return String.valueOf(((ImportVmData) object).getVm().getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
+                return messages.megabytes(String.valueOf(((ImportVmData) object).getVm().getVmMemSizeMb()));
             }
         };
         table.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$

@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -43,6 +44,7 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public RegisterVmPopupView(EventBus eventBus, Driver driver) {
@@ -118,7 +120,7 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
             @Override
             public String getValue(RegisterVmData registerVmData) {
                 int size = registerVmData.getVm().getVmMemSizeMb();
-                return size + " MB"; //$NON-NLS-1$
+                return messages.megabytes(String.valueOf(size));
             }
         };
         entityTable.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$

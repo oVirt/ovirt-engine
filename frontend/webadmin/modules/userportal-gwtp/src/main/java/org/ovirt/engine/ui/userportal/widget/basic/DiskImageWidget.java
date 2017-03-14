@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.userportal.widget.basic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.userportal.ApplicationMessages;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -22,9 +24,11 @@ public class DiskImageWidget extends Composite implements HasElementId {
     @UiField
     Label diskSize;
 
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
+
     public DiskImageWidget(DiskImage diskImage) {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        diskSize.setText(diskImage.getSizeInGigabytes() + "GB"); //$NON-NLS-1$
+        diskSize.setText(messages.gigabytes(String.valueOf(diskImage.getSizeInGigabytes())));
         diskName.setText(diskImage.getDiskAlias() + ':'); //$NON-NLS-1$
     }
 

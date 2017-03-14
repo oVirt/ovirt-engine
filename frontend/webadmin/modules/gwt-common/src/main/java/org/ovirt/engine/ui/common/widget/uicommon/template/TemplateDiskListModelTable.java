@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
@@ -22,6 +23,7 @@ import com.google.gwt.event.shared.EventBus;
 public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends AbstractModelBoundTableWidget<DiskImage, T> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public TemplateDiskListModelTable(
             SearchableTableModelProvider<DiskImage, T> modelProvider,
@@ -44,7 +46,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
         AbstractTextColumn<DiskImage> provisionedSizeColumn = new AbstractTextColumn<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return String.valueOf(object.getSizeInGigabytes()) + " GB"; //$NON-NLS-1$
+                return messages.gigabytes(String.valueOf(object.getSizeInGigabytes()));
             }
         };
         getTable().addColumn(provisionedSizeColumn, constants.provisionedSizeDisk(), "150px"); //$NON-NLS-1$
