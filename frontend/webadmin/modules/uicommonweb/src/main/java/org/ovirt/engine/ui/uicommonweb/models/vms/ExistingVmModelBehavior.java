@@ -503,4 +503,11 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getIsHighlyAvailable().setChangeProhibitionReason(getModel().constants.noHaWhenHostedEngineUsed());
         }
     }
+
+    @Override
+    public void updateMaxMemory() {
+        if (vm.getStatus() != VMStatus.Up) {
+            super.updateMaxMemory();
+        }
+    }
 }

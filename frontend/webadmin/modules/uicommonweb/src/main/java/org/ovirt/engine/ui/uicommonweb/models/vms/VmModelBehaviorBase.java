@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -1654,6 +1655,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public VmRngDevice.Source getUrandomOrRandomRngSource() {
         return VmRngDevice.Source.getUrandomOrRandomFor(getModel().getCompatibilityVersion());
+    }
+
+    public void updateMaxMemory() {
+        final Integer memoryMb = getModel().getMemSize().getEntity();
+        if (memoryMb != null) {
+            getModel().getMaxMemorySize().setEntity(
+                    VmCommonUtils.getMaxMemorySizeDefault(memoryMb));
+        }
     }
 
     protected abstract class UpdateTemplateWithVersionListener implements IEventListener<EventArgs> {
