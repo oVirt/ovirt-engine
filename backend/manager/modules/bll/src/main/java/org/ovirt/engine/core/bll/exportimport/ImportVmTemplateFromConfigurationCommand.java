@@ -182,6 +182,9 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         if (getParameters().isImagesExistOnTargetStorageDomain()) {
             if (!getImages().isEmpty()) {
                 findAndSaveDiskCopies();
+                getImages().stream().forEach(diskImage -> {
+                    initQcowVersionForDisks(diskImage.getId());
+                });
             }
             unregisteredOVFDataDao.removeEntity(ovfEntityData.getEntityId(), null);
             unregisteredDisksDao.removeUnregisteredDiskRelatedToVM(ovfEntityData.getEntityId(), null);

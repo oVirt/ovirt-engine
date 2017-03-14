@@ -47,7 +47,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -340,7 +339,6 @@ public class OvfManagerTest {
         disk.setSize(rnd.nextLong(1000));
         disk.setActualSize(rnd.nextLong(1000));
         disk.setVolumeFormat(rnd.nextEnum(VolumeFormat.class));
-        disk.setQcowCompat(rnd.nextEnum(QcowCompat.class));
         disk.setVolumeType(rnd.nextEnum(VolumeType.class));
         disk.setWipeAfterDelete(rnd.nextBoolean());
         disk.setDiskAlias(generateRandomName());
@@ -354,7 +352,6 @@ public class OvfManagerTest {
         Image image = new Image();
         image.setActive(true);
         image.setVolumeFormat(rnd.nextEnum(VolumeFormat.class));
-        image.setQcowCompat(rnd.nextEnum(QcowCompat.class));
         image.setId(disk.getImageId());
         image.setSnapshotId(disk.getSnapshotId());
         image.setStatus(ImageStatus.OK);

@@ -216,6 +216,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         super.executeVmCommand();
         if (getSucceeded()) {
             if (isImagesAlreadyOnTarget()) {
+                getImages().stream().forEach(diskImage -> {
+                    initQcowVersionForDisks(diskImage.getId());
+                });
                 unregisteredOVFDataDao.removeEntity(ovfEntityData.getEntityId(), null);
                 unregisteredDisksDao.removeUnregisteredDiskRelatedToVM(ovfEntityData.getEntityId(), null);
                 auditLogDirector.log(this, AuditLogType.VM_IMPORT_FROM_CONFIGURATION_EXECUTED_SUCCESSFULLY);

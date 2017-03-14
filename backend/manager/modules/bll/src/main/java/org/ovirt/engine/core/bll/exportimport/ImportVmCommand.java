@@ -72,6 +72,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
+import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -808,6 +810,23 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return params;
     }
 
+    protected void setQcowCompat(DiskImage diskImage) {
+        diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
+        if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
+            QemuImageInfo qemuImageInfo =
+                    ImagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
+                            diskImage.getStorageIds().get(0),
+                            diskImage.getId(),
+                            diskImage.getImageId(),
+                            null,
+                            true);
+            if (qemuImageInfo != null) {
+                diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
+            }
+        }
+        imageDao.update(diskImage.getImage());
+    }
+
     protected void addVmImagesAndSnapshots() {
         Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getImages());
 
@@ -851,7 +870,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             for (DiskImage disk : getImages()) {
                 disk.setActive(false);
                 setDiskStorageDomainInfo(disk);
-
                 saveImage(disk);
                 snapshotId = disk.getVmSnapshotId();
                 saveSnapshotIfNotExists(snapshotId, disk);
@@ -1078,7 +1096,22 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             getBackend().endAction(VdcActionType.CopyImageGroup,
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+            initQcowVersionForDisks(((MoveOrCopyImageGroupParameters) p).getDestImageGroupId());
         }
+    }
+
+    protected void initQcowVersionForDisks(Guid imageGroupId) {
+        List<DiskImage> diskVolumes = diskImageDao.getAllSnapshotsForImageGroup(imageGroupId);
+        diskVolumes.stream().filter(volume -> volume.getVolumeFormat() == VolumeFormat.COW).forEach(volume -> {
+            try {
+                setQcowCompat(volume);
+            } catch (Exception e) {
+                log.error("Could not set qcow compat version for disk '{} with id '{}/{}'",
+                        volume.getDiskAlias(),
+                        volume.getId(),
+                        volume.getImageId());
+            }
+        });
     }
 
     @Override
