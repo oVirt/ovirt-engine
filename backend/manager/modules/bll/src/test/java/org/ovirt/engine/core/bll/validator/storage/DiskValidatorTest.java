@@ -275,7 +275,7 @@ public class DiskValidatorTest {
 
     @Test
     public void sparsifyNotSupportedWhenDiskIsPreallocated() {
-        StorageDomain storageDomain = createStorageDomainForDisk(StorageType.NFS);
+        createStorageDomainForDisk(StorageType.NFS);
         disk.getImage().setVolumeType(VolumeType.Preallocated);
         assertThat(validator.isSparsifySupported(), failsWith(EngineMessage
                 .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_FOR_PREALLOCATED));
