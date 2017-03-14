@@ -2,8 +2,15 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
+import org.ovirt.engine.core.common.action.RemoveImageParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -58,6 +65,11 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
     @Override
     protected void endWithFailure() {
         if (getDestinationDiskImage() != null) {
+            //TODO: removeImage() is under that condition as it  will perform only if the disk exits in the db.
+            // The flow should be changed so that the disk is added in transaction and then the copy flow is initiated.
+            // The disk should be removed from the db only in case of successful removal (otherwise it should remain
+            // illegal to let the user attempt to delete it again).
+            removeImage();
             baseDiskDao.remove(getDestinationDiskImage().getId());
             if (diskImageDynamicDao.get(getDestinationDiskImage().getImageId()) != null) {
                 diskImageDynamicDao.remove(getDestinationDiskImage().getImageId());
@@ -65,5 +77,30 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
         }
 
         super.endWithFailure();
+    }
+
+    private void removeImage() {
+        RemoveImageParameters removeImageParams =
+                new RemoveImageParameters(getParameters().getDestinationImageId());
+        removeImageParams.setStorageDomainId(getDestinationStorageDomainId());
+        removeImageParams.setDbOperationScope(ImageDbOperationScope.NONE);
+        removeImageParams.setShouldLockImage(false);
+        removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, getDestinationDiskImage().getId()));
+        VdcReturnValueBase returnValue = runInternalActionWithTasksContext(
+                VdcActionType.RemoveImage,
+                removeImageParams);
+        if (!returnValue.getSucceeded()) {
+            addAuditLogOnRemoveFailure();
+        }
+    }
+
+    private void addAuditLogOnRemoveFailure() {
+        addCustomValue("DiskAlias", getParameters().getDiskAlias());
+        AuditLogType logType = AuditLogType.USER_COPY_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE;
+        auditLogDirector.log(this, logType);
+    }
+
+    @Override
+    protected void revertTasks() {
     }
 }
