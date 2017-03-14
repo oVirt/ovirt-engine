@@ -57,7 +57,6 @@ public class DiskValidatorTest {
 
     private DiskValidator validator;
     private DiskImage disk;
-    private LunDisk lunDisk;
     private DiskValidator lunValidator;
 
     private static DiskImage createDiskImage() {
@@ -95,7 +94,7 @@ public class DiskValidatorTest {
     }
 
     private void setupForLun() {
-        lunDisk = createLunDisk();
+        LunDisk lunDisk = createLunDisk();
         lunValidator = spy(new DiskValidator(lunDisk));
     }
 
