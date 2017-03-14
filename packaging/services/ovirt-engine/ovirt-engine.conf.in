@@ -454,3 +454,28 @@ DASHBOARD_UTILIZATION_CACHE_UPDATE_INTERVAL=300
 # queries select from standard engine tables.
 #
 DASHBOARD_INVENTORY_CACHE_UPDATE_INTERVAL=60
+
+#
+# Quartz thread pool pool class
+# We can use two pools:
+# - provided by quartz: org.quartz.simpl.SimpleThreadPool
+# - based on ThreadPoolExecutor: org.ovirt.engine.core.utils.timer.SchedulerThreadPool
+#
+ENGINE_SCHEDULER_POOL_CLASS=org.ovirt.engine.core.utils.timer.SchedulerThreadPool
+
+#
+# Number of threads used in quartz thread pool
+#
+ENGINE_SCHEDULER_POOL_THREAD_SIZE=100
+
+#
+# Size of the queue used by quartz thread pool
+#
+ENGINE_SCHEDULER_POOL_QUEUE_SIZE=350
+
+#
+# Define rejection policy for the pool when a task queue is full.
+# When 'false' is set it will block if the queue is full.
+# When 'true' is set it would reject the task.
+#
+ENGINE_SCHEDULER_POOL_REJECT_POLICY=false
