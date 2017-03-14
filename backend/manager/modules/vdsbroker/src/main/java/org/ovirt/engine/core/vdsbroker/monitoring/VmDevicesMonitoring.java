@@ -623,7 +623,8 @@ public class VmDevicesMonitoring implements BackendService {
     }
 
     private static boolean devicePluggable(VmDevice device) {
-        return VmDeviceCommonUtils.isDisk(device) || VmDeviceCommonUtils.isBridge(device);
+        return VmDeviceCommonUtils.isDisk(device) || VmDeviceCommonUtils.isBridge(device)
+                || VmDeviceCommonUtils.isHostDevInterface(device);
     }
 
     /**
