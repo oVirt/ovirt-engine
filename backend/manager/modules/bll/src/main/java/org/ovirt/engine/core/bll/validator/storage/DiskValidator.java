@@ -171,8 +171,14 @@ public class DiskValidator {
 
         StorageDomain diskStorageDomain =
                 Injector.get(StorageDomainDao.class).get(((DiskImage) disk).getStorageIds().get(0));
-        StorageType domainStorageType = diskStorageDomain.getStorageType();
 
+        if (diskStorageDomain.isLocal()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_ON_LOCAL_STORAGE,
+                    getDiskAliasVarReplacement(),
+                    getStorageDomainNameVarReplacement(diskStorageDomain));
+        }
+
+        StorageType domainStorageType = diskStorageDomain.getStorageType();
         if (!domainStorageType.isFileDomain() && !domainStorageType.isBlockDomain()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_STORAGE_TYPE,
                     getDiskAliasVarReplacement(),
