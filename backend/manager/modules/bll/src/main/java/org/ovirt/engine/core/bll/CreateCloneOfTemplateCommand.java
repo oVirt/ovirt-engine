@@ -57,6 +57,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     @Override
     protected boolean performImageVdsmOperation() {
         setDestinationImageId(Guid.newGuid());
+        persistCommandIfNeeded();
         newDiskImage = cloneDiskImage(getDestinationImageId());
         newDiskImage.setId(Guid.newGuid());
         Guid storagePoolID = newDiskImage.getStoragePoolId() != null ? newDiskImage
