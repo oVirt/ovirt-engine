@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
-import org.ovirt.engine.core.common.businessentities.ConfigurationType;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
@@ -18,7 +17,13 @@ public class GetVmFromConfigurationQuery<P extends GetVmFromConfigurationQueryPa
     }
     @Override
     protected void executeQueryCommand() {
-        if (ConfigurationType.OVF.equals(getParameters().getConfigurationType())) {
+        if (getParameters().getConfigurationType() == null) {
+            log.error("received invalid configuration type: null");
+            return;
+        }
+
+        switch(getParameters().getConfigurationType()) {
+        case OVF:
             try {
                 getQueryReturnValue().setReturnValue(ovfHelper.readVmFromOvf(getParameters().getVmConfiguration()).getVm());
                 getQueryReturnValue().setSucceeded(true);
@@ -26,6 +31,17 @@ public class GetVmFromConfigurationQuery<P extends GetVmFromConfigurationQueryPa
                 log.debug("failed to parse a given ovf configuration: \n" + getParameters().getVmConfiguration(), e);
                 getQueryReturnValue().setExceptionString("failed to parse a given ovf configuration " + e.getMessage());
             }
+            break;
+
+        case OVA:
+            try {
+                getQueryReturnValue().setReturnValue(ovfHelper.readVmFromOva(getParameters().getVmConfiguration()));
+                getQueryReturnValue().setSucceeded(true);
+            } catch (OvfReaderException e) {
+                log.debug("failed to parse a given ovf configuration: \n" + getParameters().getVmConfiguration(), e);
+                getQueryReturnValue().setExceptionString("failed to parse a given ovf configuration " + e.getMessage());
+            }
+            break;
         }
     }
 }

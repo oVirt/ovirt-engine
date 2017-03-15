@@ -112,6 +112,32 @@ public class OvfHelper {
     }
 
     /**
+     * parses a given ovf to a vm, intialized with images and interfaces.
+     * unlike {@link #readVmFromOvf(String)}, the given ovf is taken from ova
+     * and thus closer to the OVF specification.
+     * @return
+     *        Pair of VM that represents the given ovf data and a Map that
+     *        Maps disk UUID to a pair of (filename, actual size) as they are within the OVA
+     */
+    public VM readVmFromOva(String ovf) throws OvfReaderException {
+        ovf = ovf
+                .replaceAll("[\r\n]+", "") // remove new lines
+                .replaceAll("xmlns=[^-\\s]*", ""); // remove global namespace
+        VM vm = new VM();
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
+        ovfManager.importVmFromOva(ovf, vm, fullEntityOvfData);
+
+        // add images
+        vm.setImages((ArrayList) fullEntityOvfData.getDiskImages());
+        // add interfaces
+        vm.setInterfaces(fullEntityOvfData.getInterfaces());
+
+        // add disk map
+        fullEntityOvfData.getDiskImages().forEach(image -> vm.getDiskMap().put(image.getId(), image));
+        return vm;
+    }
+
+    /**
      * parses a given ovf to a VmTemplate, initialized with images and interfaces.
      * @return
      *        VmTemplate that represents the given ovf data

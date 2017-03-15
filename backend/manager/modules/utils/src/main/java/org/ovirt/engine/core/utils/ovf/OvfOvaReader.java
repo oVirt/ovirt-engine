@@ -2,7 +2,6 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.xml.XmlAttribute;
@@ -30,11 +30,15 @@ public class OvfOvaReader extends OvfReader {
     private Map<String, XmlAttributeCollection> fileIdToFileAttributes;
 
     public OvfOvaReader(XmlDocument document,
-            List<DiskImage> images,
-            List<VmNetworkInterface> interfaces,
+            FullEntityOvfData fullEntityOvfData,
             VM vm,
             OsRepository osRepository) {
-        super(document, images, Collections.EMPTY_LIST, interfaces, vm.getStaticData(), osRepository);
+        super(document,
+                fullEntityOvfData.getDiskImages(),
+                Collections.EMPTY_LIST,
+                fullEntityOvfData.getInterfaces(),
+                vm.getStaticData(),
+                osRepository);
         this.vm = vm;
         fileIdToFileAttributes = new HashMap<>();
     }
@@ -43,12 +47,13 @@ public class OvfOvaReader extends OvfReader {
     public void buildVirtualSystem() {
         XmlNode virtualSystem = selectSingleNode(_document, "//*/VirtualSystem");
         final String virtualSystemId = virtualSystem.attributes.get("ovf:id").getValue();
-        consumeReadProperty(virtualSystem, NAME,
+        consumeReadProperty(virtualSystem,
+                NAME,
                 val -> vm.setName(val),
                 () -> vm.setName(virtualSystemId));
         try {
             vm.setId(Guid.createGuidFromString(virtualSystemId));
-        } catch(Exception e) {
+        } catch (Exception e) {
             vm.setId(Guid.newGuid());
         }
         readGeneralData(virtualSystem);
@@ -65,8 +70,7 @@ public class OvfOvaReader extends OvfReader {
             vm.setNumOfSockets(Integer.parseInt(virtualQuantity.innerText));
             vm.setCpuPerSocket(1);
             vm.setThreadsPerCpu(1);
-        }
-        else {
+        } else {
             super.readCpuItem(node);
         }
     }
@@ -83,7 +87,7 @@ public class OvfOvaReader extends OvfReader {
     }
 
     protected int mapOsId(String ovfOsId) {
-        switch(ovfOsId) {
+        switch (ovfOsId) {
         case "67": // Windows XP
         case "71": // Windows XP 63-Bit
         case "72": // Windows XP Embedded

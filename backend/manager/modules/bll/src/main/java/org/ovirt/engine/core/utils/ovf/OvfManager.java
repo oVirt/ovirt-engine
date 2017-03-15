@@ -84,6 +84,24 @@ public class OvfManager {
         fullEntityOvfData.getInterfaces().forEach(iface -> iface.setVmId(id));
     }
 
+    public void importVmFromOva(String ovfstring,
+            VM vm,
+            FullEntityOvfData fullEntityOvfData)
+            throws OvfReaderException {
+
+        OvfReader ovf = null;
+        try {
+            ovf = new OvfOvaReader(new XmlDocument(ovfstring), fullEntityOvfData, vm, osRepository);
+            ovf.build();
+        } catch (Exception ex) {
+            String message = generateOvfReaderErrorMessage(ovf, ex);
+            logOvfLoadError(message, ovfstring);
+            throw new OvfReaderException(message);
+        }
+        Guid id = vm.getStaticData().getId();
+        fullEntityOvfData.getInterfaces().forEach(iface -> iface.setVmId(id));
+    }
+
     public void importTemplate(String ovfstring, FullEntityOvfData fullEntityOvfData)
             throws OvfReaderException {
 

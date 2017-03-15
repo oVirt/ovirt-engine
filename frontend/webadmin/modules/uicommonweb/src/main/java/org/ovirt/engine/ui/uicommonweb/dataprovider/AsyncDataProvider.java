@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
+import org.ovirt.engine.core.common.businessentities.ConfigurationType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
@@ -137,6 +138,7 @@ import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
+import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmFromOvaQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParameters;
@@ -169,6 +171,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParamete
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -1982,6 +1985,14 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(
                 QueryType.GetVmFromOva,
                 new GetVmFromOvaQueryParameters(vdsId, path),
+                aQuery);
+    }
+
+    public void getVmFromOva(AsyncQuery<QueryReturnValue> aQuery, String ovf) {
+        aQuery.setHandleFailure(true);
+        Frontend.getInstance().runQuery(
+                QueryType.GetVmFromConfiguration,
+                new GetVmFromConfigurationQueryParameters(ConfigurationType.OVA, ovf),
                 aQuery);
     }
 
