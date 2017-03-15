@@ -592,7 +592,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
      */
     @UiField(provided = true)
     @Path(value = "rngSourceUrandom.entity")
-    @WithElementId("rngSourceRandom")
+    @WithElementId("rngSourceUrandom")
     public EntityModelRadioButtonEditor rngSourceUrandom;
 
     @UiField
