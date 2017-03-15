@@ -698,8 +698,13 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     @Override
-    protected void endVmCommand() {
+    protected void endSuccessfully() {
         unlockSnapshot(getParameters().getSnapshotId());
+        super.endVmCommand();
+    }
+
+    @Override
+    protected void endWithFailure() {
         super.endVmCommand();
     }
 
