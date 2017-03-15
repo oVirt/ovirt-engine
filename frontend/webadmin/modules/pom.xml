@@ -63,12 +63,6 @@
     <engine.port.http>8080</engine.port.http>
     <!-- GWT CSS obfuscation style. production should be 'obf', use 'pretty' in development for easier css debugging -->
     <gwt.cssResourceStyle>obf</gwt.cssResourceStyle>
-    <!-- Options for Super Dev Mode reflected into frontend module's META-INF/gwt-super-dev.properties file -->
-    <gwt.superDev.enabled>false</gwt.superDev.enabled>
-    <gwt.superDev.host>localhost</gwt.superDev.host>
-    <gwt.superDev.port>9876</gwt.superDev.port>
-    <gwt.superDev.connectTimeout>5000</gwt.superDev.connectTimeout>
-    <gwt.superDev.readTimeout>5000</gwt.superDev.readTimeout>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -158,6 +152,7 @@
             <logLevel>${gwt.logLevel}</logLevel>
             <style>OBF</style>
             <port>${engine.port.http}</port>
+            <!-- Don't run embedded web server, use Engine instead -->
             <noServer>true</noServer>
             <bindAddress>0.0.0.0</bindAddress>
             <gen>${gwtGenDirectory}</gen>
@@ -172,6 +167,13 @@
               <compileSourcesArtifact>${engine.groupId}:gwt-extension</compileSourcesArtifact>
               <compileSourcesArtifact>${engine.groupId}:uicommonweb</compileSourcesArtifact>
             </compileSourcesArtifacts>
+            <!-- Use Classic Dev Mode (debug as remote Java application) by default -->
+            <superDevMode>false</superDevMode>
+            <!-- Classic Dev Mode code server listens on this port, Super Dev Mode uses port 9876 -->
+            <codeServerPort>9997</codeServerPort>
+            <!-- Java debug port (Classic Dev Mode only) -->
+            <debugPort>8000</debugPort>
+            <debugSuspend>true</debugSuspend>
           </configuration>
         </plugin>
 
@@ -217,6 +219,30 @@
               <configuration>
                 <style>DETAILED</style>
                 <draftCompile>true</draftCompile>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+    <profile>
+      <id>gwtsuperdev</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>gwt-maven-plugin</artifactId>
+              <dependencies>
+                <dependency>
+                  <groupId>com.google.gwt</groupId>
+                  <artifactId>gwt-codeserver</artifactId>
+                  <version>${gwt.version}</version>
+                </dependency>
+              </dependencies>
+              <configuration>
+                <superDevMode>true</superDevMode>
+                <debugSuspend>false</debugSuspend>
               </configuration>
             </plugin>
           </plugins>

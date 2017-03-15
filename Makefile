@@ -98,9 +98,7 @@ DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) $(DEV_EXTRA_BUILD_FLAGS)
 GWT_DEBUG_PROFILES:=gwtdraft,gwtdev
 GWT_DEBUG_TARGET:=gwt:debug
 ifneq ($(DEV_BUILD_GWT_SUPER_DEV_MODE),0)
-DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) -D gwt.superDev.enabled=true
 GWT_DEBUG_PROFILES:=$(GWT_DEBUG_PROFILES),gwtsuperdev
-GWT_DEBUG_TARGET:=process-classes gwt:run-codeserver
 endif
 
 BUILD_FLAGS:=

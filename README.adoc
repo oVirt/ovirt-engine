@@ -180,9 +180,10 @@ GWT code server as following:
 +
   $ make gwt-debug DEBUG_MODULE=<module> DEV_BUILD_GWT_SUPER_DEV_MODE=1
 +
-In browser, open http://127.0.0.1:9876 and bookmark "Dev Mode On".
-Visit GWT application URL (without `gwt.codesvr`), click "Dev Mode On",
-then click "Compile" to reflect any UI code changes in browser.
+In your browser, open http://127.0.0.1:9876/ and save the "Dev Mode On"
+bookmark. Next, visit the GWT application URL (as served from Engine)
+and click "Dev Mode On". This allows you to recompile and reload the
+GWT application, reflecting any changes you've made in the UI code.
 
 DEV_EXTRA_BUILD_FLAGS:: Any maven build flags required for building.
 +

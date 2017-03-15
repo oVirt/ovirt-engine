@@ -326,28 +326,5 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>gwtsuperdev</id>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>gwt-maven-plugin</artifactId>
-              <configuration>
-                <codeServerPort>${gwt.superDev.port}</codeServerPort>
-              </configuration>
-              <dependencies>
-                <dependency>
-                  <groupId>com.google.gwt</groupId>
-                  <artifactId>gwt-codeserver</artifactId>
-                  <version>${gwt.version}</version>
-                </dependency>
-              </dependencies>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
   </profiles>
 </project>
