@@ -16,5 +16,6 @@
     <module>modules</module>
     <module>tools</module>
     <module>extensions-tool</module>
+    <module>sso-client-registration-tool</module>
   </modules>
 </project>

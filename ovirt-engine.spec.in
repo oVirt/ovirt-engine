@@ -684,6 +684,7 @@ done << __EOF__
 %{engine_jboss_modules}/common/org/ovirt/engine/core/compat/main/compat.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/core/dal/main/dal.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/core/extensions-tool/main/extensions-tool.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/sso-client-registration-tool/main/sso-client-registration-tool.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/core/extensions-manager/main/extensions-manager.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/core/searchbackend/main/searchbackend.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/core/tools/main/tools.jar
@@ -743,6 +744,7 @@ restapi %{name}-restapi-jaxrs.pom
 restapi %{name}-restapi-parent.pom
 restapi %{name}-restapi-types.pom
 tools %{name}-extensions-tool.pom
+tools %{name}-sso-client-registration-tool.pom
 tools %{name}-tools.pom
 __EOF__
 
@@ -1095,6 +1097,7 @@ fi
 %dir %{engine_etc}/notifier
 %{_bindir}/engine-config
 %{_bindir}/ovirt-engine-extensions-tool
+%{_bindir}/ovirt-register-sso-client-tool
 %{_bindir}/engine-vacuum
 %{_mandir}/man8/engine-config.*
 %{engine_data}/bin/engine-config.sh
@@ -1102,9 +1105,11 @@ fi
 %{engine_data}/bin/engine-vacuum.sh
 %{engine_data}/bin/generate-pgpass.sh
 %{engine_data}/bin/ovirt-engine-extensions-tool.sh
+%{engine_data}/bin/ovirt-register-sso-client-tool.sh
 %{engine_data}/bin/ovirt-engine-crypto-tool.sh
 %{engine_data}/bin/ovirt-engine-role.sh
 %{engine_data}/conf/extensions-tool-logging.properties
+%{engine_data}/conf/ovirt-register-sso-client-tool-logging.properties
 %{engine_data}/conf/jaas.conf
 %{engine_data}/conf/notifier-logging.properties
 %{engine_data}/conf/tools-logging.properties

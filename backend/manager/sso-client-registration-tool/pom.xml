@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.core</groupId>
+    <artifactId>manager</artifactId>
+    <version>4.2.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>sso-client-registration-tool</artifactId>
+  <packaging>jar</packaging>
+  <name>oVirt Engine sso client registration tool</name>
+  <description>oVirt Engine sso client registration tool</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>logutils</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>uutils</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${basedir}/**/src/test/java</additionalClasspathElement>
+          </additionalClasspathElements>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

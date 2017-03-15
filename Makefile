@@ -386,6 +386,7 @@ install_artifacts:
 install_poms:
 	install -dm 755 "$(DESTDIR)$(MAVENPOM_DIR)"
 	install -m 644 backend/manager/extensions-tool/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-extensions-tool.pom"
+	install -m 644 backend/manager/sso-client-registration-tool/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-sso-client-registration-tool.pom"
 	install -m 644 backend/manager/logutils/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-logutils.pom"
 	install -m 644 backend/manager/modules/aaa/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-aaa.pom"
 	install -m 644 backend/manager/modules/bll/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-bll.pom"
@@ -462,6 +463,7 @@ install-layout: \
 	ln -sf "$(DATA_DIR)/bin/engine-backup.sh" "$(DESTDIR)$(BIN_DIR)/engine-backup"
 	ln -sf "$(DATA_DIR)/bin/engine-vacuum.sh" "$(DESTDIR)$(BIN_DIR)/engine-vacuum"
 	ln -sf "$(DATA_DIR)/bin/ovirt-engine-extensions-tool.sh" "$(DESTDIR)$(BIN_DIR)/ovirt-engine-extensions-tool"
+	ln -sf "$(DATA_DIR)/bin/ovirt-register-sso-client-tool.sh" "$(DESTDIR)$(BIN_DIR)/ovirt-register-sso-client-tool"
 
 	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/certs"
 	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/keys"
