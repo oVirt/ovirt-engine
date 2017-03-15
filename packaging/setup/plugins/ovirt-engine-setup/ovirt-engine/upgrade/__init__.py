@@ -24,7 +24,6 @@ from otopi import util
 from . import answerfile_fixup
 from . import asynctasks
 from . import dbvalidations
-from . import dwh
 
 
 @util.export
@@ -32,7 +31,6 @@ def createPlugins(context):
     dbvalidations.Plugin(context=context)
     asynctasks.Plugin(context=context)
     answerfile_fixup.Plugin(context=context)
-    dwh.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

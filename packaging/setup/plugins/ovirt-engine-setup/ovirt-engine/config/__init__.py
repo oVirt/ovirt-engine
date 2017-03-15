@@ -29,7 +29,6 @@ from . import appmode
 from . import ca
 from . import database
 from . import domain_type
-from . import dwh_database
 from . import firewall
 from . import iso_domain
 from . import java
@@ -52,7 +51,6 @@ def createPlugins(context):
     jboss.Plugin(context=context)
     java.Plugin(context=context)
     database.Plugin(context=context)
-    dwh_database.Plugin(context=context)
     protocols.Plugin(context=context)
     appmode.Plugin(context=context)
     domain_type.Plugin(context=context)

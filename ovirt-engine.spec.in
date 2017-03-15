@@ -408,7 +408,7 @@ Group:		%{ovirt_product_group}
 Requires:	%{name} >= 3.6.0
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
-Requires:	%{name}-dwh-setup >= 4.0
+Requires:	%{name}-dwh-setup >= 4.2
 Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-imageio-proxy-setup
 Requires:	openssh
