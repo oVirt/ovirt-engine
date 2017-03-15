@@ -191,7 +191,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Set<VmRngDevice.Source> requiredRngSources = model.getSelectedCluster().getRequiredRngSources();
 
         boolean requiredRngSourcesEmpty = requiredRngSources.isEmpty();
-        boolean randomSourceAvailable = requiredRngSources.contains(VmRngDevice.Source.RANDOM);
+        boolean urandomSourceAvailable = requiredRngSources.contains(VmRngDevice.Source.URANDOM)
+                || requiredRngSources.contains(VmRngDevice.Source.RANDOM);
         boolean hwrngSourceAvailable = requiredRngSources.contains(VmRngDevice.Source.HWRNG);
 
         model.getIsRngEnabled().setIsChangeable(!requiredRngSourcesEmpty);
@@ -204,8 +205,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             model.getRngBytes().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
         }
 
-        model.getRngSourceUrandom().setIsChangeable(randomSourceAvailable);
-        if (!randomSourceAvailable) {
+        model.getRngSourceUrandom().setIsChangeable(urandomSourceAvailable);
+        if (!urandomSourceAvailable) {
             model.getRngSourceUrandom().setChangeProhibitionReason(messages.rngSourceNotSupportedByCluster(
                     VmRngDevice.Source.getUrandomOrRandomFor(getModel().getSelectedCluster().getCompatibilityVersion())
                             .toString().toLowerCase()));
