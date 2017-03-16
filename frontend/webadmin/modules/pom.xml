@@ -159,14 +159,6 @@
             <extraJvmArgs>${aspectj.agent} ${gwt-plugin.extraJvmArgs} ${gwt.dontPrune}</extraJvmArgs>
             <copyWebapp>true</copyWebapp>
             <failOnError>true</failOnError>
-            <compileSourcesArtifacts>
-              <!--
-                TODO Following modules don't have .java sources in their JAR,
-                but provide xxx-sources.jar instead (this should be fixed).
-              -->
-              <compileSourcesArtifact>${engine.groupId}:gwt-extension</compileSourcesArtifact>
-              <compileSourcesArtifact>${engine.groupId}:uicommonweb</compileSourcesArtifact>
-            </compileSourcesArtifacts>
             <!-- Use Classic Dev Mode (debug as remote Java application) by default -->
             <superDevMode>false</superDevMode>
             <!-- Classic Dev Mode code server listens on this port, Super Dev Mode uses port 9876 -->

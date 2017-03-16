@@ -78,8 +78,22 @@
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
-      <artifactId>gwt-common</artifactId>
+      <artifactId>uicommonweb</artifactId>
       <version>${engine.version}</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>uicompat</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>uicompat</artifactId>
+      <version>${engine.version}</version>
+      <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -91,13 +105,40 @@
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
+      <artifactId>gwt-common</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>gwt-common</artifactId>
+      <version>${engine.version}</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
       <artifactId>frontend</artifactId>
       <version>${engine.version}</version>
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
+      <artifactId>frontend</artifactId>
+      <classifier>sources</classifier>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
       <artifactId>gwt-extension</artifactId>
       <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>gwt-extension</artifactId>
+      <classifier>sources</classifier>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
@@ -150,15 +191,15 @@
     </dependency>
     <dependency>
       <groupId>${engine.core.groupId}</groupId>
-      <artifactId>branding</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${engine.core.groupId}</groupId>
       <artifactId>utils</artifactId>
       <version>${engine.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.core.groupId}</groupId>
+      <artifactId>branding</artifactId>
+      <version>${engine.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -168,12 +209,6 @@
         <targetPath>${project.build.directory}/generated-sources/gwt</targetPath>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
-      </resource>
-      <resource>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>**/*.java</include>
-        </includes>
       </resource>
     </resources>
     <testResources>

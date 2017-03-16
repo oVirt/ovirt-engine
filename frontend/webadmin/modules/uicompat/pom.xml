@@ -43,7 +43,6 @@
       <resource>
         <directory>src/main/java</directory>
         <includes>
-          <include>**/*.java</include>
           <include>**/*.gwt.xml</include>
         </includes>
       </resource>
@@ -67,6 +66,18 @@
           <execution>
             <goals>
               <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
             </goals>
           </execution>
         </executions>

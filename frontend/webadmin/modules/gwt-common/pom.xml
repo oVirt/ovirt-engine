@@ -75,6 +75,12 @@
       <groupId>${engine.groupId}</groupId>
       <artifactId>uicompat</artifactId>
       <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>uicompat</artifactId>
+      <version>${engine.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -148,6 +154,18 @@
                 <source>${project.build.directory}/generated-sources/gwt</source>
               </sources>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
