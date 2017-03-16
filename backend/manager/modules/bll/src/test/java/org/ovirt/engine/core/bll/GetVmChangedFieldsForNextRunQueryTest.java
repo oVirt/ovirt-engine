@@ -2,8 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -19,7 +17,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -44,7 +41,6 @@ public class GetVmChangedFieldsForNextRunQueryTest
         mockCpuFlagsManagerHandler();
         vmHandler.init();
         mockVmPropertiesUtils();
-        doNothing().when(vmPropertiesUtils).separateCustomPropertiesToUserAndPredefined(any(Version.class), any(VmStatic.class));
     }
 
     private void mockCpuFlagsManagerHandler() {

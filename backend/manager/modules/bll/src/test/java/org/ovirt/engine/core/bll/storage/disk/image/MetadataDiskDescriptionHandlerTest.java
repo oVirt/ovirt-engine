@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -18,11 +16,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
@@ -49,7 +45,6 @@ public class MetadataDiskDescriptionHandlerTest {
         disk = new DiskImage();
         metadataDiskDescriptionHandler = spy(MetadataDiskDescriptionHandler.getInstance());
         doReturn(auditLogDirector).when(metadataDiskDescriptionHandler).getAuditLogDirector();
-        doNothing().when(auditLogDirector).log(any(AuditLogableBase.class), any(AuditLogType.class));
     }
 
     @Test

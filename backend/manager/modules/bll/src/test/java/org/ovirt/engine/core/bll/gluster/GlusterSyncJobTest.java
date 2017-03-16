@@ -247,10 +247,6 @@ public class GlusterSyncJobTest {
         doReturn(existingServer1).when(glusterUtil).getUpServer(any());
         doReturn(existingServer1).when(glusterUtil).getRandomUpServer(any());
 
-        doNothing().when(logUtil).logServerMessage(any(), any());
-        doNothing().when(logUtil).logVolumeMessage(any(), any());
-        doNothing().when(logUtil).logAuditMessage(any(), any(), any(), any(), any());
-        doNothing().when(logUtil).logAuditMessage(any(), any(), any(), any(), any(), any());
         doReturn(getFetchedServersList()).when(glusterManager).fetchServers(any());
         doReturn(getFetchedVolumesList()).when(glusterManager).fetchVolumes(any());
         doReturn(getVolumeAdvancedDetails(existingDistVol)).when(glusterManager)
