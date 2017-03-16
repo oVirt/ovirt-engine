@@ -2,7 +2,6 @@
 -- PostgreSQL database dump
 --
 
-
 --
 -- Data for Name: cluster_policy_units; Type: TABLE DATA; Schema: public; Owner: engine
 --
@@ -55,6 +54,18 @@ INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequ
 INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('8d5d7bec-68de-4a67-b53e-0ac54686d579', 'e659c871-0bf1-4ccc-b748-f28f5d08dffd', 0, 1);
 INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('8d5d7bec-68de-4a67-b53e-0ac54686d579', '7f262d70-6cac-11e3-981f-0800200c9a66', 0, 1);
 INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('8d5d7bec-68de-4a67-b53e-0ac54686d579', '98e92667-6161-41fb-b3fa-34f820ccbc4b', 0, 1);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('20d25257-b4bd-4589-92a6-c4c5c5d3fd1a', '58ca6050-03e1-034b-0143-000000000238', 0, 0);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('5a2b0939-7d46-4b73-a469-e9c2c7fc6a53', '58ca6050-03e1-034b-0143-000000000238', 0, 0);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('b4ed2332-a7ac-4d5f-9596-99a439cb2812', '58ca6050-03e1-034b-0143-000000000238', 0, 0);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('8d5d7bec-68de-4a67-b53e-0ac54686d579', '58ca6050-03e1-034b-0143-000000000238', 0, 0);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('20d25257-b4bd-4589-92a6-c4c5c5d3fd1a', 'e659c871-0bf1-4ccc-b748-f28f5d08ddda', 0, 0);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('5a2b0939-7d46-4b73-a469-e9c2c7fc6a53', 'e659c871-0bf1-4ccc-b748-f28f5d08ddda', 0, 0);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('b4ed2332-a7ac-4d5f-9596-99a439cb2812', 'e659c871-0bf1-4ccc-b748-f28f5d08ddda', 0, 0);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('8d5d7bec-68de-4a67-b53e-0ac54686d579', 'e659c871-0bf1-4ccc-b748-f28f5d08ddda', 0, 0);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('20d25257-b4bd-4589-92a6-c4c5c5d3fd1a', '728a21f1-f97e-4d32-bc3e-b3cc49756abb', 0, 0);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('5a2b0939-7d46-4b73-a469-e9c2c7fc6a53', '728a21f1-f97e-4d32-bc3e-b3cc49756abb', 0, 0);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('b4ed2332-a7ac-4d5f-9596-99a439cb2812', '728a21f1-f97e-4d32-bc3e-b3cc49756abb', 0, 0);
+INSERT INTO cluster_policy_units (cluster_policy_id, policy_unit_id, filter_sequence, factor) VALUES ('8d5d7bec-68de-4a67-b53e-0ac54686d579', '728a21f1-f97e-4d32-bc3e-b3cc49756abb', 0, 0);
 
 
 --

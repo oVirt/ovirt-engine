@@ -1,1 +1,0 @@
-SELECT fn_db_change_column_type('gluster_georep_config', 'config_value', 'varchar', 'text');

@@ -45,7 +45,6 @@ select fn_db_rename_config_key('ImageProxyURL', 'ImageProxyAddress', 'general');
 ------------------------------------------------------------------------------------
 select fn_db_add_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_add_config_value('CpuPinMigrationEnabled','true','general');
-select fn_db_add_config_value('AdminDomain','internal','general');
 select fn_db_add_config_value('AffinityRulesEnforcementManagerEnabled', 'true', 'general');
 select fn_db_add_config_value('AffinityRulesEnforcementManagerRegularInterval', '1', 'general');
 
@@ -92,11 +91,10 @@ select fn_db_add_config_value('DefaultMaxThreadWaitQueueSize','100','general');
 select fn_db_add_config_value('DefaultWindowsTimeZone','GMT Standard Time','general');
 select fn_db_add_config_value('DefaultGeneralTimeZone','Etc/GMT','general');
 --Handling Default Workgroup
-select fn_db_add_config_value('DefaultWorkgroup','WORKGROUP','general');
 select fn_db_add_config_value('DisableFenceAtStartupInSec','300','general');
 select fn_db_add_config_value('PopulateDirectLUNDiskDescriptionWithLUNId','4','general');
 -- Host time drift
-select fn_db_add_config_value('EnableHostTimeDrift','false','general');
+select fn_db_add_config_value('EnableHostTimeDrift','true','general');
 -- list of os/remote-viewer minimal version supported by ovirt. Format: "linux:3.0;windows:2.5"
 select fn_db_add_config_value('RemoteViewerSupportedVersions','rhev-win64:2.0-128;rhev-win32:2.0-128;rhel7:2.0-6;rhel6:2.0-14','general');
 -- url which should be shown when the version check does not pass
@@ -165,7 +163,6 @@ select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks',
 select fn_db_add_config_value_for_versions_up_to('GlusterSupportArbiterVolume', 'false', '4.0');
 
 -- OpenStack related
-select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');
 
 select fn_db_add_config_value('GuestToolsSetupIsoPrefix','ovirt-guest-tools-','general');
 select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general');
@@ -343,7 +340,6 @@ select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');
 select fn_db_add_config_value('JobPageSize','100','general');
 select fn_db_add_config_value('LeaseRetries','3','general');
 select fn_db_add_config_value('LeaseTimeSec','60','general');
-select fn_db_add_config_value('LicenseCertificateFingerPrint','5f 38 41 89 b1 33 49 0c 24 13 6b b3 e5 ba 9e c7 fd 83 80 3b','general');
 --Handling Enable lock policy for Storage Pool Manager on activation
 select fn_db_add_config_value('LockPolicy','ON','general');
 select fn_db_add_config_value('LockRenewalIntervalSec','5','general');
@@ -493,7 +489,6 @@ select fn_db_add_config_value('VdsMaxConnectionsPerHost','2','general');
 select fn_db_add_config_value('IrsMaxConnectionsPerHost','2','general');
 select fn_db_add_config_value('MaxTotalConnections','20','general');
 select fn_db_add_config_value('CustomVdsFenceOptionMapping','','general');
-select fn_db_add_config_value('VdsFenceOptions','','general');
 select fn_db_add_config_value('VdsFenceOptionTypes','encrypt_options=bool,secure=bool,port=int,slot=int','general');
 select fn_db_add_config_value('CustomVdsFenceType','','general');
 select fn_db_add_config_value('vdsHeartbeatInSeconds','30','general');

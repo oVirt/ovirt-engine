@@ -1,1 +1,0 @@
--- empty script - the content had to be removed because it broke backward compatibility

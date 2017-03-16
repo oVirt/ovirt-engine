@@ -2,12 +2,11 @@
 -- PostgreSQL database dump
 --
 
-
 --
 -- Data for Name: network_cluster; Type: TABLE DATA; Schema: public; Owner: engine
 --
 
-INSERT INTO network_cluster (network_id, cluster_id, status, is_display, required, migration) VALUES ('00000000-0000-0000-0000-000000000009', '00000002-0002-0002-0002-00000000017a', 1, true, true, true);
+INSERT INTO network_cluster (network_id, cluster_id, status, is_display, required, migration, management, is_gluster) VALUES ('00000000-0000-0000-0000-000000000009', '58cfb470-03b9-01d0-03b9-0000000001e7', 1, true, true, true, true, false);
 
 
 --

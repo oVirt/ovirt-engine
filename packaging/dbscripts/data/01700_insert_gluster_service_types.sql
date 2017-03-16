@@ -2,7 +2,6 @@
 -- PostgreSQL database dump
 --
 
-
 --
 -- Data for Name: gluster_service_types; Type: TABLE DATA; Schema: public; Owner: engine
 --

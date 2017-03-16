@@ -1,1 +1,0 @@
-SELECT fn_db_add_column('user_profiles', 'user_portal_vm_auto_login', 'boolean DEFAULT true');

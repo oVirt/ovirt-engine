@@ -34,6 +34,7 @@ public class GlusterServiceDaoTest extends BaseDaoTestCase {
         assertEquals(GLUSTER_SERVICE, services.get(0).getServiceName());
 
         services = dao.getByServiceType(ServiceType.GLUSTER_SWIFT);
+        services.sort((p1, p2) -> p1.getServiceName().compareTo(p2.getServiceName()));
         assertNotNull(services);
         assertEquals(2, services.size());
         assertEquals(GLUSTER_SWIFT_SERVICE1, services.get(0).getServiceName());
