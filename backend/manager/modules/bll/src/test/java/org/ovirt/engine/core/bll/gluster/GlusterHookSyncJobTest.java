@@ -1,10 +1,8 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -63,7 +61,7 @@ public class GlusterHookSyncJobTest {
     @Spy
     private GlusterHookSyncJob hookSyncJob;
 
-    @Spy
+    @Mock
     private GlusterAuditLogUtil logUtil;
 
     @ClassRule
@@ -80,7 +78,6 @@ public class GlusterHookSyncJobTest {
     private void initMocks() {
         doReturn(getServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[0]);
         doReturn(Collections.emptyList()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[1]);
-        doNothing().when(logUtil).logAuditMessage(any(), any(), any(), any(), anyMap());
         mockDaos();
     }
 
