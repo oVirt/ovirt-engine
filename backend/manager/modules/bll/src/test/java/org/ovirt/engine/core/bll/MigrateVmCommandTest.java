@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -29,7 +28,6 @@ public class MigrateVmCommandTest {
     VmValidator vmValidator;
 
     @Spy
-    @InjectMocks
     MigrateVmCommand command = new MigrateVmCommand<>(new MigrateVmParameters(false, vmId), null);
 
 
