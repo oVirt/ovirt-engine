@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
@@ -130,12 +129,9 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     }
 
     private void initSpyCommand() {
-        doReturn(ValidationResult.VALID).when(storageValidator).allDomainsExistAndActive();
         doReturn(true).when(spyCommand).performImagesChecks();
         doReturn(storageValidator).when(spyCommand).createStorageDomainValidator();
         doReturn(vmValidator).when(spyCommand).createVmValidator(any(VM.class));
-        doReturn(ValidationResult.VALID).when(vmValidator).vmDown();
-        doReturn(ValidationResult.VALID).when(vmValidator).vmNotHavingDeviceSnapshotsAttachedToOtherVms(false);
     }
 
     private void mockDaos() {

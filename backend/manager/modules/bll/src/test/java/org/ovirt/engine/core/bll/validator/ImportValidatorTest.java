@@ -121,9 +121,6 @@ public class ImportValidatorTest {
         }
 
         doReturn(multipleSdValidator).when(validator).createMultipleStorageDomainsValidator(anyList());
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsExistAndActive();
         return validator;
     }
 

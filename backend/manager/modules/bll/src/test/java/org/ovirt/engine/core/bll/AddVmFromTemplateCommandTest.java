@@ -59,8 +59,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void validateSpaceAndThreshold() {
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
         mockGetAllSnapshots();
         assertTrue(cmd.validateSpaceRequirements());
         verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForClonedDisks(anyList());
@@ -69,7 +67,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void validateSpaceNotEnough() throws Exception {
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
         mockGetAllSnapshots();
@@ -96,7 +93,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         mockStorageDomainDaoGetAllForStoragePool();
         mockGetAllSnapshots();
 
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
 
@@ -121,8 +117,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(
                 new ArrayList<>(Collections.singletonList("VirtIO")));
         mockGetAllSnapshots();
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
 
         cmd.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
@@ -144,9 +138,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         doReturn(storagePool).when(cmd).getStoragePool();
 
         when(osRepository.isCpuSupported(vm.getVmOsId(), cluster.getCompatibilityVersion(), CPU_ID)).thenReturn(false);
-
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
     }

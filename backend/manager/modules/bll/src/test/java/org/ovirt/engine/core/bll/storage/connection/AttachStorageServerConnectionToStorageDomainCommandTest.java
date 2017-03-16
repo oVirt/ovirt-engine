@@ -77,19 +77,13 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
 
     @Test
     public void validateSuccess() {
-        when(validator.isConnectionExists()).thenReturn(ValidationResult.VALID);
         when(validator.isConnectionForISCSIDomainAttached(domain)).thenReturn(Boolean.FALSE);
-        when(validator.isISCSIConnectionAndDomain(domain)).thenReturn(ValidationResult.VALID);
-        when(validator.isDomainOfConnectionExistsAndInactive(domain)).thenReturn(ValidationResult.VALID);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
     public void validateFailure() {
-        when(validator.isConnectionExists()).thenReturn(ValidationResult.VALID);
         when(validator.isConnectionForISCSIDomainAttached(domain)).thenReturn(Boolean.TRUE);
-        when(validator.isISCSIConnectionAndDomain(domain)).thenReturn(ValidationResult.VALID);
-        when(validator.isDomainOfConnectionExistsAndInactive(domain)).thenReturn(ValidationResult.VALID);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_ALREADY_EXISTS);
     }
 
@@ -97,8 +91,6 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
     public void validateFailureNotExists() {
         ValidationResult result = new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         when(validator.isConnectionExists()).thenReturn(result);
-        when(validator.isISCSIConnectionAndDomain(domain)).thenReturn(ValidationResult.VALID);
-        when(validator.isDomainOfConnectionExistsAndInactive(domain)).thenReturn(ValidationResult.VALID);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
 

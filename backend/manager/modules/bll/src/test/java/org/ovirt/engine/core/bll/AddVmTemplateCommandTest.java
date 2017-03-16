@@ -202,7 +202,6 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
     @Test
     public void passDiscardSupportedForDestSds() {
-        mockPassDiscardSupportedForDestSds(ValidationResult.VALID);
         assertThat(cmd.isPassDiscardSupportedForImagesDestSds(), ValidationResultMatchers.isValid());
     }
 
@@ -318,11 +317,6 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateVmNotDuringSnapshot();
         vm.setStatus(VMStatus.Down);
         doReturn(multipleSdValidator).when(cmd).getStorageDomainsValidator(any(Guid.class), anySet());
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsExistAndActive();
-        doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesNotIllegal();
-        doReturn(ValidationResult.VALID).when(cmd).isPassDiscardSupportedForImagesDestSds();
 
         setupStoragePool();
     }

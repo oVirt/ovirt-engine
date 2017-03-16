@@ -128,7 +128,6 @@ public class HostSetupNetworksValidatorTest {
 
         when(mockNetworkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator())
                 .thenReturn(mockNetworkExclusivenessValidator);
-        when(mockNetworkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(any())).thenReturn(ValidationResult.VALID);
     }
 
     public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk() throws Exception {
@@ -548,9 +547,6 @@ public class HostSetupNetworksValidatorTest {
     @Test
     public void testValidNetworkAttachmentIpConfiguration() {
         HostSetupNetworksValidator validator = initValidator();
-        Collection<String> replacements = new ArrayList<>();
-        EngineMessage engineMessage = null;
-        initMockNetworkAttachmentIpConfigurationValidator(engineMessage, replacements);
         ValidationResult actual = validator.validNewOrModifiedNetworkAttachments();
         assertEquals(ValidationResult.VALID, actual);
 
@@ -596,8 +592,7 @@ public class HostSetupNetworksValidatorTest {
 
     private void initMockNetworkAttachmentIpConfigurationValidator(EngineMessage engineMessage,
             Collection<String> replacements) {
-        ValidationResult validationResult =
-                replacements.isEmpty() ? ValidationResult.VALID : new ValidationResult(engineMessage, replacements);
+        ValidationResult validationResult = new ValidationResult(engineMessage, replacements);
         when(mockNetworkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(any()))
                 .thenReturn(validationResult);
     }
@@ -1032,7 +1027,6 @@ public class HostSetupNetworksValidatorTest {
         HostInterfaceValidator hostInterfaceValidatorMock = mock(HostInterfaceValidator.class);
         when(hostInterfaceValidatorMock.interfaceExists(anyString())).thenReturn(interfaceExistValidationResult);
         when(hostInterfaceValidatorMock.interfaceIsValidSlave()).thenReturn(interfaceIsValidSlaveValidationResult);
-        when(hostInterfaceValidatorMock.interfaceIsBondOrNull()).thenReturn(ValidationResult.VALID);        //TODO MM: test for this.
 
         doReturn(hostInterfaceValidatorMock).when(validator).createHostInterfaceValidator(any());
 
@@ -1306,10 +1300,6 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validatorSpy = spy(validator);
         HostNetworkQosValidator hostNetworkQosValidatorMock = mock(HostNetworkQosValidator.class);
-
-
-        when(hostNetworkQosValidatorMock.requiredQosValuesPresentForOverriding(eq(network.getName()))).
-            thenReturn(ValidationResult.VALID);
 
         when(hostNetworkQosValidatorMock.valuesConsistent(eq(network.getName()))).
             thenReturn(new ValidationResult(hostNetworkQosValidatorFailure));

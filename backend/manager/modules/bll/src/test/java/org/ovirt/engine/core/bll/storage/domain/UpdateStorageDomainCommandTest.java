@@ -195,9 +195,5 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
 
     private void mockStorageDomainValidator() {
         doReturn(storageDomainValidator).when(cmd).getStorageDomainValidator();
-        when(storageDomainValidator.isDiscardAfterDeleteLegalForExistingStorageDomain())
-                .thenReturn(ValidationResult.VALID);
-        when(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(any(Version.class)))
-                .thenReturn(ValidationResult.VALID);
     }
 }

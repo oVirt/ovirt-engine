@@ -32,7 +32,6 @@ public class UpdateStorageServerConnectionExtensionCommandTest {
         UpdateStorageServerConnectionExtensionCommand cmd = spy(realCmd);
         when(cmd.getConnectionExtensionValidator()).thenReturn(storageServerConnectionExtensionValidator);
 
-        when(storageServerConnectionExtensionValidator.isConnectionExtensionExists(conn.getId())).thenReturn(ValidationResult.VALID);
         when(storageServerConnectionExtensionValidator.isConnectionDoesNotExistForHostAndTarget(conn)).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_EXTENSION_ALREADY_EXISTS));
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd,

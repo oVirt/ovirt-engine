@@ -40,7 +40,6 @@ public class StorageDomainSpaceRequirementsFilterTest {
         storageDomain.setId(Guid.newGuid());
         memoryDisks = new LinkedList<>();
         initFilter();
-        initStorageDomainValidator();
     }
 
     @Test
@@ -65,11 +64,5 @@ public class StorageDomainSpaceRequirementsFilterTest {
     private void initFilter() {
         filter = spy(new StorageDomainSpaceRequirementsFilter(mock(MemoryStorageHandler.class), memoryDisks));
         doReturn(storageDomainValidator).when(filter).getStorageDomainValidator(storageDomain);
-    }
-
-    private void initStorageDomainValidator() {
-        when(storageDomainValidator.isDomainWithinThresholds()).thenReturn(ValidationResult.VALID);
-        when(storageDomainValidator.hasSpaceForClonedDisks(memoryDisks))
-                .thenReturn(ValidationResult.VALID);
     }
 }

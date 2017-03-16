@@ -95,8 +95,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testPositiveValidateWithNoDisks() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainId();
         assertTrue(cmd.validate());
@@ -105,7 +103,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testVMIsNotValid() {
-        setUpGeneralValidations();
         doReturn(Boolean.FALSE).when(cmd).validateVM(vmValidator);
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         assertFalse(cmd.validate());
@@ -113,7 +110,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testStoragePoolIsNotUp() {
-        setUpGeneralValidations();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND)).when(storagePoolValidator)
                 .isUp();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
@@ -125,7 +121,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testVmDuringSnaoshot() {
-        setUpGeneralValidations();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT)).when(snapshotsValidator)
                 .vmNotDuringSnapshot(any(Guid.class));
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
@@ -137,7 +132,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testVmInPreview() {
-        setUpGeneralValidations();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW)).when(snapshotsValidator)
                 .vmNotInPreview(any(Guid.class));
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
@@ -149,7 +143,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testVmDuringMigration() {
-        setUpGeneralValidations();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS)).when(vmValidator)
                 .vmNotDuringMigration();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
@@ -161,14 +154,11 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testSaveMemoryPciPassthroughFailure() {
-        setUpGeneralValidations();
         cmd.getParameters().setSaveMemory(true);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES))
                 .when(vmValidator)
                 .vmNotHavingPciPassthroughDevices();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        doReturn(ValidationResult.VALID).when(diskImagesValidator)
-                .diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain();
         assertFalse(cmd.validate());
         assertThat(cmd.getReturnValue().getValidationMessages(),
                 hasItem(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES.name()));
@@ -176,8 +166,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testNoMemoryPciPassthroughSuccess() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         cmd.getParameters().setSaveMemory(false);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES))
                 .when(vmValidator)
@@ -189,7 +177,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testVmRunningStateless() {
-        setUpGeneralValidations();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS)).when(vmValidator)
                 .vmNotRunningStateless();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
@@ -201,8 +188,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testLiveSnapshotWhenNoPluggedDiskSnapshot() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         doReturn(true).when(cmd).isLiveSnapshotApplicable();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         assertTrue(cmd.validate());
@@ -213,7 +198,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testVmIllegal() {
-        setUpGeneralValidations();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL)).when(vmValidator)
                 .vmNotIlegal();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
@@ -225,7 +209,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testVmLocked() {
-        setUpGeneralValidations();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED)).when(vmValidator)
                 .vmNotLocked();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
@@ -237,8 +220,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testPositiveValidateWithDisks() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainId();
         assertTrue(cmd.validate());
@@ -247,8 +228,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testImagesExceededNumberOfVolumesInChain() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAXIMUM_LIMIT_OF_VOLUMES_IN_CHAIN)).when(diskImagesValidator)
@@ -261,8 +240,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testImagesLocked() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED)).when(diskImagesValidator)
@@ -275,8 +252,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testImagesIllegal() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).when(diskImagesValidator)
@@ -289,9 +264,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testImagesDoesNotExist() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
-
         DiskImage diskImage1 = getNewDiskImage();
         DiskImage diskImage2 = getNewDiskImage();
 
@@ -307,8 +279,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testAllDomainsExistAndActive() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         doReturn(Collections.emptyList()).when(cmd).getDisksList();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
@@ -320,8 +290,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testAllDomainsHaveSpaceForNewDisksFailure() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         List<DiskImage> disksList = Collections.emptyList();
         doReturn(disksList).when(cmd).getDisksList();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
@@ -332,19 +300,14 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testAllDomainsHaveSpaceForNewDisksSuccess() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         List<DiskImage> disksList = Collections.emptyList();
         doReturn(disksList).when(cmd).getDisksList();
-        doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
         verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
     }
 
     @Test
     public void testAllDomainsWithinThreshold() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         doReturn(Collections.emptyList()).when(cmd).getDisksList();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
@@ -356,8 +319,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testAllDomainsHaveSpaceForAllDisksFailure() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         doReturn(Collections.emptyList()).when(cmd).getDisksList();
         cmd.getParameters().setSaveMemory(true);
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.emptyList()));
@@ -369,36 +330,11 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testAllDomainsHaveSpaceForAllDisksSuccess() {
-        setUpGeneralValidations();
-        setUpDiskValidations();
         doReturn(Collections.emptyList()).when(cmd).getDisksList();
         cmd.getParameters().setSaveMemory(true);
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.emptyList()));
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
         verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForAllDisks(eq(Collections.emptyList()), anyList());
-    }
-
-    private void setUpDiskValidations() {
-        doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesNotLocked();
-        doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesNotIllegal();
-        doReturn(ValidationResult.VALID).when(diskImagesValidator)
-                .diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain();
-        doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsExistAndActive();
-        doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsWithinThresholds();
-        doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsHaveSpaceForAllDisks(anyList(), anyList());
-        doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(anyList());
-    }
-
-    private void setUpGeneralValidations() {
-        doReturn(Boolean.TRUE).when(cmd).validateVM(vmValidator);
-        doReturn(ValidationResult.VALID).when(storagePoolValidator).isUp();
-        doReturn(ValidationResult.VALID).when(vmValidator).vmNotDuringMigration();
-        doReturn(ValidationResult.VALID).when(vmValidator).vmNotRunningStateless();
-        doReturn(ValidationResult.VALID).when(vmValidator).vmNotIlegal();
-        doReturn(ValidationResult.VALID).when(vmValidator).vmNotLocked();
-        doReturn(ValidationResult.VALID).when(vmValidator).vmNotHavingPciPassthroughDevices();
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
     }
 
     private static List<DiskImage> getEmptyDiskList() {

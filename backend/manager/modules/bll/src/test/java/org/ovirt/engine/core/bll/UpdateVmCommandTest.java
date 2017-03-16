@@ -515,7 +515,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     public void testShouldCheckVmOnClusterUpgrade() {
         prepareVmToPassValidate();
         mockVmValidator();
-        doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isVmReadyForUpgrade(any(VM.class));
         group.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         command.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
@@ -526,7 +525,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     public void testCheckVmOnlyOnClusterUpgrade() {
         prepareVmToPassValidate();
         mockVmValidator();
-        doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isVmReadyForUpgrade(any(VM.class));
         command.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
         verify(inClusterUpgradeValidator, times(0)).isVmReadyForUpgrade(any(VM.class));

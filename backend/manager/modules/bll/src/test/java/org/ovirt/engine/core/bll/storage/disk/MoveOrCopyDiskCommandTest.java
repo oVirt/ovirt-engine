@@ -151,7 +151,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateVmIsNotDown() throws Exception {
         initializeCommand(new DiskImage());
-        initSnapshotValidator();
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         initSrcStorageDomain();
@@ -212,19 +211,17 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateEnoughSpace() throws Exception {
         initializeCommand(new DiskImage());
-        initSnapshotValidator();
         initVmForSpace();
         initVmDiskImage(false);
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
-        doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
+        doReturn(mockStorageDomainValidator()).when(command).createStorageDomainValidator();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
     public void successVmInPreviewForAttachedSnapshot() {
         initializeCommand(new DiskImage());
-        initSnapshotValidator();
         initVmForSpace();
         initVmDiskImage(false);
         initSrcStorageDomain();
@@ -236,7 +233,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateVmInPreview() {
         initializeCommand(new DiskImage());
-        initSnapshotValidator();
         initVmForSpace();
         initVmDiskImage(false);
         initSrcStorageDomain();
@@ -349,17 +345,8 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         return storageDomainValidator;
     }
 
-    private static StorageDomainValidator mockStorageDomainValidatorWithSpace() {
-        StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
-        when(storageDomainValidator.hasSpaceForDiskWithSnapshots(any(DiskImage.class))).thenReturn(ValidationResult.VALID);
-        return storageDomainValidator;
-    }
-
     private static StorageDomainValidator mockStorageDomainValidator() {
-        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
-        when(storageDomainValidator.isDomainExistAndActive()).thenReturn(ValidationResult.VALID);
-        when(storageDomainValidator.isDomainWithinThresholds()).thenReturn(ValidationResult.VALID);
-        return storageDomainValidator;
+        return mock(StorageDomainValidator.class);
     }
 
     private void initSrcStorageDomain() {
@@ -382,14 +369,9 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         vm.setStatus(VMStatus.Down);
         when(vmDao.get(any())).thenReturn(vm);
 
-        doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
+        doReturn(mockStorageDomainValidator()).when(command).createStorageDomainValidator();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(disk.getId()).when(command).getImageGroupId();
-    }
-
-    private void initSnapshotValidator() {
-        when(snapshotsValidator.vmNotInPreview(any())).thenReturn(ValidationResult.VALID);
-        when(snapshotsValidator.vmNotDuringSnapshot(any())).thenReturn(ValidationResult.VALID);
     }
 
     private void initTemplateDiskImage() {

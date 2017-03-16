@@ -11,7 +11,6 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import java.util.List;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -32,12 +31,6 @@ public class ExternalVnicProfileMappingValidatorTest {
 
     @Mock
     private VnicProfileValidator mockVnicProfileValidator;
-
-    @Before
-    public void setUp() {
-        when(mockVnicProfileValidator.validateTargetVnicProfileId(VNIC_PROFILE_ID, CLUSTER_ID))
-                .thenReturn(ValidationResult.VALID);
-    }
 
     @Test
     public void testValidateExternalVnicProfileMappingEmptyInputIsValid() {

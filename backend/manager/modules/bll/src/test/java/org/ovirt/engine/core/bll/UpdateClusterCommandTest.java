@@ -274,7 +274,7 @@ public class UpdateClusterCommandTest {
 
     @Test
     public void clusterAlreadyInLocalFs() {
-        prepareManagementNetworkMocks();
+        newDefaultManagementNetworkFound();
 
         createCommandWithDefaultCluster();
         oldGroupIsDetachedDefault();
@@ -309,7 +309,7 @@ public class UpdateClusterCommandTest {
     @Test
     public void detachedClusterMovesToDcWithExistingManagementNetwork() {
 
-        prepareManagementNetworkMocks();
+        newDefaultManagementNetworkFound();
 
         mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultClusterID, Guid.Empty);
         createCommandWithDefaultCluster();
@@ -344,7 +344,7 @@ public class UpdateClusterCommandTest {
 
     @Test
     public void defaultClusterInLocalFs() {
-        prepareManagementNetworkMocks();
+        newDefaultManagementNetworkFound();
 
         mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID);
         createCommandWithDefaultCluster();
@@ -353,11 +353,6 @@ public class UpdateClusterCommandTest {
         setupCpu();
         architectureIsUpdatable();
         validateFailedWithReason(EngineMessage.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
-    }
-
-    private void prepareManagementNetworkMocks() {
-        newDefaultManagementNetworkFound();
-        when(networkClusterValidator.managementNetworkChange()).thenReturn(ValidationResult.VALID);
     }
 
     private void newDefaultManagementNetworkFound() {
@@ -631,8 +626,6 @@ public class UpdateClusterCommandTest {
         final ClusterPolicy clusterPolicy = new ClusterPolicy();
         clusterPolicy.setId(ClusterPolicy.UPGRADE_POLICY_GUID);
         doReturn(clusterPolicy).when(schedulingManager).getClusterPolicy(eq(ClusterPolicy.UPGRADE_POLICY_GUID));
-        doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isUpgradeDone(anyList());
-        doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isUpgradePossible(anyList(), anyList());
 
         if (StringUtils.isEmpty(group.getCpuName())) {
             doReturn(ArchitectureType.undefined).when(cmd).getArchitecture();

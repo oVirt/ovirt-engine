@@ -81,8 +81,6 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void validateSpaceAndThreshold() {
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForNewDisks(anyList());
         assertTrue(cmd.validateSpaceRequirements());
         verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForNewDisks(anyList());
         verify(storageDomainValidator, never()).hasSpaceForClonedDisks(anyList());
@@ -90,7 +88,6 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void validateSpaceNotEnough() throws Exception {
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForNewDisks(anyList());
         assertFalse(cmd.validateSpaceRequirements());

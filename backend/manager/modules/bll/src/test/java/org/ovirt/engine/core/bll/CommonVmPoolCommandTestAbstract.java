@@ -313,7 +313,5 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
 
     protected void setupForStorageTests() {
         doReturn(multipleSdValidator).when(command).getStorageDomainsValidator(any(Guid.class), anySet());
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
     }
 }

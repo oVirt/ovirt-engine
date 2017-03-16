@@ -151,9 +151,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
         mockVm();
-        when(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
         when(diskVmElementValidator.isDiskInterfaceSupported(any())).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
-        when(diskVmElementValidator.isVirtIoScsiValid(any())).thenReturn(ValidationResult.VALID);
         when(command.getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class))).thenReturn(diskVmElementValidator);
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
@@ -222,7 +220,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         mockEntities(storageId);
         mockVm();
-        doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
+        doReturn(mockStorageDomainValidator()).when(command).createStorageDomainValidator();
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -369,13 +367,11 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(false).when(command).isSoundDeviceEnabled(any(Guid.class));
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).validateQuota();
-        mockSnapshotsValidator();
 
         doAnswer(invocation -> invocation.getArguments()[0] != null ?
                     invocation.getArguments()[0] : Guid.newGuid())
                 .when(quotaManager).getDefaultQuotaIfNull(any(Guid.class), any(Guid.class));
 
-        doReturn(ValidationResult.VALID).when(diskVmElementValidator).isPassDiscardSupported(any(Guid.class));
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 
         injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
@@ -423,11 +419,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         return vm;
     }
 
-    private void mockSnapshotsValidator() {
-        when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
-        when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(ValidationResult.VALID);
-    }
-
     private static StorageDomainValidator mockStorageDomainValidatorWithoutSpace() {
         StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
         when(storageDomainValidator.hasSpaceForNewDisk(any(DiskImage.class))).thenReturn(
@@ -435,17 +426,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         return storageDomainValidator;
     }
 
-    private static StorageDomainValidator mockStorageDomainValidatorWithSpace() {
-        StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
-        when(storageDomainValidator.hasSpaceForNewDisk(any(DiskImage.class))).thenReturn(ValidationResult.VALID);
-        return storageDomainValidator;
-    }
-
     private static StorageDomainValidator mockStorageDomainValidator() {
-        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
-        when(storageDomainValidator.isDomainExistAndActive()).thenReturn(ValidationResult.VALID);
-        when(storageDomainValidator.isDomainWithinThresholds()).thenReturn(ValidationResult.VALID);
-        return storageDomainValidator;
+        return mock(StorageDomainValidator.class);
     }
 
     private DiskValidator spyDiskValidator(Disk disk) {
@@ -887,7 +869,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         doReturn(true).when(command).isDiskPassPciAndIdeLimit();
         doReturn(true).when(command).checkIfImageDiskCanBeAdded(any(), any());
-        doReturn(ValidationResult.VALID).when(diskVmElementValidator).isReadOnlyPropertyCompatibleWithInterface();
         doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class));
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);

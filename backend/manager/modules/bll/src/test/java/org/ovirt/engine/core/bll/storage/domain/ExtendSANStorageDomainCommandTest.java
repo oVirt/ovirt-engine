@@ -78,8 +78,5 @@ public class ExtendSANStorageDomainCommandTest {
         connectResult.setActionReturnValue(new ArrayList<>());
         connectResult.setSucceeded(true);
         doReturn(connectResult).when(command).connectAllHostsToLun();
-
-        doReturn(ValidationResult.VALID).when(discardHelper).isExistingDiscardFunctionalityPreserved(
-                anyList(), any(StorageDomain.class));
     }
 }

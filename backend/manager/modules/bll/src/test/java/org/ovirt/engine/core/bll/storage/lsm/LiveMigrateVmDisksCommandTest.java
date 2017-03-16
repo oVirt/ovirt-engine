@@ -354,10 +354,5 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         doReturn(vmValidator).when(command).createVmValidator();
         doReturn(diskValidator).when(command).createDiskValidator(any());
         doReturn(diskVmElementValidator).when(command).createDiskVmElementValidator(any(), any());
-        doReturn(ValidationResult.VALID).when(vmValidator).vmNotRunningStateless();
-        doReturn(ValidationResult.VALID).when(diskValidator).isDiskPluggedToVmsThatAreNotDown(anyBoolean(), any());
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any());
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any());
-        when(diskVmElementValidator.isPassDiscardSupported(dstStorageId)).thenReturn(ValidationResult.VALID);
     }
 }

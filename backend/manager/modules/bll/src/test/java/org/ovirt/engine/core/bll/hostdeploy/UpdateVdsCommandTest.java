@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -11,7 +10,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
@@ -59,24 +57,6 @@ public class UpdateVdsCommandTest {
     @Test
     public void testValidate() {
         when(vdsDaoMock.get(HOST_ID)).thenReturn(oldHost);
-
-        when(updateHostValidator.hostExists()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.hostStatusValid()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.nameNotEmpty()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.nameLengthIsLegal()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.updateHostAddressAllowed()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.nameNotUsed()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.hostNameNotUsed()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.statusSupportedForHostInstallation()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.passwordProvidedForHostInstallation(AuthenticationMethod.PublicKey, PASSWORD))
-                .thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.updatePortAllowed()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.clusterNotChanged()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.hostProviderExists()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.hostProviderTypeMatches()).thenReturn(ValidationResult.VALID);
-        when(updateHostValidator.supportsDeployingHostedEngine(same(HOSTED_ENGINE_DEPLOY_CONFIGURATION)))
-                .thenReturn(ValidationResult.VALID);
-
         assertTrue(underTestCommand.validate());
     }
 

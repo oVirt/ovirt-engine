@@ -315,7 +315,6 @@ public class RunVmCommandTest extends BaseCommandTest {
         mockSuccessfulRunVmValidator();
         doNothing().when(command).initParametersForExternalNetworks();
         doReturn(Collections.emptyMap()).when(command).flushPassthroughVnicToVfMap();
-        mockSuccessfulSnapshotValidator();
         mockBackend();
     }
 
@@ -450,11 +449,6 @@ public class RunVmCommandTest extends BaseCommandTest {
         assertEquals(RunVmFlow.RUN, command.getFlow());
     }
 
-    private void mockSuccessfulSnapshotValidator() {
-        when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
-        when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(ValidationResult.VALID);
-    }
-
     @Test
     public void testEffectiveEmulatedMachineWithCustomSet() {
         final VM vm = new VM();
@@ -494,7 +488,6 @@ public class RunVmCommandTest extends BaseCommandTest {
         when(runVmValidator.canRunVm(
                 anyList(), any(StoragePool.class), anyList(), anyList(), any(Cluster.class), anyBoolean()))
                 .thenReturn(true);
-        when(runVmValidator.validateNetworkInterfaces()).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

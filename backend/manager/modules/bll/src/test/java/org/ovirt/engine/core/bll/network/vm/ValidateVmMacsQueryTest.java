@@ -74,7 +74,6 @@ public class ValidateVmMacsQueryTest {
         vms.add(vm1);
         vms.add(vm2);
 
-        when(vmMacsValidation.validate(vm1)).thenReturn(ValidationResult.VALID);
         when(vmMacsValidation.validate(vm2))
                 .thenReturn(new ValidationResult(EngineMessage.Unassigned, REPLACEMENT1, REPLACEMENT2));
 

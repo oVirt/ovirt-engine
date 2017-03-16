@@ -114,16 +114,9 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         mockVds();
         mockVmDevice(false);
 
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
-
         doReturn(storageDomainValidator).when(command).getStorageDomainValidator(any(StorageDomain.class));
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainExistAndActive();
-
         doReturn(diskValidator).when(command).getDiskValidator(disk);
         doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class));
-        doReturn(ValidationResult.VALID).when(diskValidator).isDiskExists();
-        doReturn(ValidationResult.VALID).when(diskValidator).isDiskAttachedToVm(vm);
 
         when(osRepository.getDiskHotpluggableInterfaces(anyInt(), any()))
                 .thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));

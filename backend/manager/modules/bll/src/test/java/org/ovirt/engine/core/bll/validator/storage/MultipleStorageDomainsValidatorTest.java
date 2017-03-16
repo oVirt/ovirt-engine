@@ -121,7 +121,6 @@ public class MultipleStorageDomainsValidatorTest {
         List<DiskImage> disksList = generateDisksList(NUM_DISKS, sdIds);
 
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForNewDisks(any());
         doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
 
         assertTrue(validator.allDomainsHaveSpaceForNewDisks(disksList).isValid());
@@ -148,7 +147,6 @@ public class MultipleStorageDomainsValidatorTest {
         List<DiskImage> disksList = generateDisksList(NUM_DISKS, sdIds);
 
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForClonedDisks(any());
         doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
 
         assertTrue(validator.allDomainsHaveSpaceForClonedDisks(disksList).isValid());
@@ -177,7 +175,6 @@ public class MultipleStorageDomainsValidatorTest {
         List<DiskImage> disksListForCloned = generateDisksList(NUM_DISKS, sdIdsForCloned);
 
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForAllDisks(any(), any());
         doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
 
         assertTrue(validator.allDomainsHaveSpaceForAllDisks(disksListForNew, disksListForCloned).isValid());

@@ -30,7 +30,6 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
@@ -180,7 +179,6 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
      */
     private void setupVolumeFormatAndTypeTest(
             VolumeFormat volumeFormat, VolumeType volumeType, StorageType storageType) {
-        when(vmNicMacsUtils.validateMacAddress(any())).thenReturn(ValidationResult.VALID);
 
         doReturn(false).when(command).isVmTemplateWithSameNameExist();
         doReturn(true).when(command).isClusterCompatible();

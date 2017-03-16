@@ -48,20 +48,6 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
 
         doReturn(diskValidator).when(getCommand()).getDiskValidator(any());
         doReturn(diskImagesValidator).when(getCommand()).getDiskImagesValidator(any());
-
-        // Set validators return
-        doReturn(ValidationResult.VALID)
-                .when(diskValidator)
-                .isDiskAttachedToAnyVm();
-        doReturn(ValidationResult.VALID)
-                .when(diskValidator)
-                .isDiskExists();
-        doReturn(ValidationResult.VALID)
-                .when(diskImagesValidator)
-                .diskImagesNotLocked();
-        doReturn(ValidationResult.VALID)
-                .when(diskImagesValidator)
-                .diskImagesNotIllegal();
     }
 
     @Test

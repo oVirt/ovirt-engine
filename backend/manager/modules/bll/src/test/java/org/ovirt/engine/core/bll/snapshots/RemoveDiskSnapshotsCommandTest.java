@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.snapshots;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -96,11 +95,6 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         sp.setStatus(StoragePoolStatus.Up);
 
         cmd.setSnapshotName("someSnapshot");
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).snapshotExists(any(), any());
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainExistAndActive();
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForClonedDisks(anyCollection());
         doReturn(true).when(cmd).validateAllDiskImages();
         doReturn(sp).when(spDao).get(STORAGE_POOLD_ID);
     }

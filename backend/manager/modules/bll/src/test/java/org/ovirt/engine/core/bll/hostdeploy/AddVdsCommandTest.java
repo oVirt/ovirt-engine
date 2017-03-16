@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -22,12 +21,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.validator.HostValidator;
-import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -100,20 +97,6 @@ public class AddVdsCommandTest {
     }
 
     private void mockHostValidator() {
-        when(validator.nameNotEmpty()).thenReturn(ValidationResult.VALID);
-        doReturn(ValidationResult.VALID).when(validator).nameLengthIsLegal();
-        doReturn(ValidationResult.VALID).when(validator).hostNameIsValid();
-        doReturn(ValidationResult.VALID).when(validator).nameNotUsed();
-        doReturn(ValidationResult.VALID).when(validator).hostNameNotUsed();
-        doReturn(ValidationResult.VALID).when(validator).portIsValid();
-        when(validator.sshUserNameNotEmpty()).thenReturn(ValidationResult.VALID);
-        doReturn(ValidationResult.VALID).when(validator).validateSingleHostAttachedToLocalStorage();
-        doReturn(ValidationResult.VALID).when(validator).securityKeysExists();
-        doReturn(ValidationResult.VALID).when(validator).provisioningComputeResourceValid(anyBoolean(), any());
-        doReturn(ValidationResult.VALID).when(validator).provisioningHostGroupValid(anyBoolean(), any());
-        doReturn(ValidationResult.VALID).when(validator).supportsDeployingHostedEngine(any());
-        when(validator.passwordNotEmpty(anyBoolean(), any(AuthenticationMethod.class), anyString()))
-                .thenReturn(ValidationResult.VALID);
         doReturn(validator).when(command).getHostValidator();
     }
 

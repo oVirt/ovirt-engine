@@ -142,27 +142,16 @@ public class AttachDiskToVmCommandTest {
 
     private void mockStorageDomainValidator() {
         doReturn(storageDomainValidator).when(command).getStorageDomainValidator(any());
-        when(storageDomainValidator.isDomainExistAndActive()).thenReturn(ValidationResult.VALID);
     }
 
     private void mockDiskValidator() {
         doReturn(diskValidator).when(command).getDiskValidator(any());
         doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(), any());
-        when(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
-        when(diskVmElementValidator.isVirtIoScsiValid(any())).thenReturn(ValidationResult.VALID);
-        when(diskVmElementValidator.isDiskInterfaceSupported(any())).thenReturn(ValidationResult.VALID);
-        when(diskVmElementValidator.isPassDiscardSupported(any())).thenReturn(ValidationResult.VALID);
-    }
-
-    private void mockSnapshotsValidator() {
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any());
-        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any());
     }
 
     private void mockValidators() {
         mockStorageDomainValidator();
         mockDiskValidator();
-        mockSnapshotsValidator();
     }
 
     private void mockStoragePoolIsoMap() {

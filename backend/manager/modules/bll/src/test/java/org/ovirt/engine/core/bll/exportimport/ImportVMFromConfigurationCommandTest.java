@@ -94,9 +94,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     public void setUp() throws IOException {
         doReturn(cluster).when(cmd).getCluster();
         doReturn(emptyList()).when(cmd).getImages();
-        when(externalVnicProfileMappingValidator.validateExternalVnicProfileMapping(
-                new ArrayList<>(), clusterId))
-                .thenReturn(ValidationResult.VALID);
 
         mockCluster();
         setXmlOvfData();
