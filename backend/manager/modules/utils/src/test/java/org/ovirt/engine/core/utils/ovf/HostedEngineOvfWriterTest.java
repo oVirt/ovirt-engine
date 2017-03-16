@@ -2,11 +2,9 @@ package org.ovirt.engine.core.utils.ovf;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -46,7 +44,6 @@ public class HostedEngineOvfWriterTest {
     @Before
     public void setup() {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        when(osRepository.getUniqueOsNames()).thenReturn(Collections.emptyMap());
         initVm();
         images = new ArrayList<>();
         emulatedMachine = "pc";

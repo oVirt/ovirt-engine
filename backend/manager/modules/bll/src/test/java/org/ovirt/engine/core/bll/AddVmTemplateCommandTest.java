@@ -342,7 +342,6 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
     private void mockPassDiscardSupportedForDestSds(ValidationResult validationResult) {
         cmd.diskInfoDestinationMap = Collections.emptyMap();
-        when(diskHandler.getDiskToDiskVmElementMap(any(Guid.class), anyMap())).thenReturn(Collections.emptyMap());
         MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
         doReturn(multipleDiskVmElementValidator).when(cmd).createMultipleDiskVmElementValidator(anyMap());
         when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(anyMap())).thenReturn(validationResult);

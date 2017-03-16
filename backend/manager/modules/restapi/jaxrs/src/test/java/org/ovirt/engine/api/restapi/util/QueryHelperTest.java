@@ -19,8 +19,6 @@ package org.ovirt.engine.api.restapi.util;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -76,7 +74,6 @@ public class QueryHelperTest extends Assert {
 
     private void doTestGetConstraint(Class<?> clz, String expectedPrefix) throws Exception {
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathSegments()).thenReturn(Collections.emptyList());
         MultivaluedMap<String, String> queries = mock(MultivaluedMap.class);
         when(queries.containsKey("search")).thenReturn(true);
         when(queries.getFirst("search")).thenReturn(QUERY);
@@ -157,7 +154,6 @@ public class QueryHelperTest extends Assert {
 
     private void doTestGetDefaultConstraint(Class<?> clz, String expectedConstraint) throws Exception {
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathSegments()).thenReturn(Collections.emptyList());
         MultivaluedMap<String, String> queries = mock(MultivaluedMap.class);
         when(queries.isEmpty()).thenReturn(true);
         when(uriInfo.getQueryParameters()).thenReturn(queries);

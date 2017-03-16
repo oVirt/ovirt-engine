@@ -136,7 +136,6 @@ public class UpdateHostValidatorTest {
     public void hostNNotUsed() {
         when(oldHost.getHostName()).thenReturn(generateRandomName());
         when(host.getHostName()).thenReturn(generateRandomName());
-        when(hostDao.getAllForHostname(anyString())).thenReturn(Collections.emptyList());
 
         assertThat(validator.hostNameNotUsed(), isValid());
     }

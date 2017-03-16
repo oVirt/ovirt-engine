@@ -2,13 +2,11 @@ package org.ovirt.engine.core.bll.scheduling.commands;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.HashMap;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -16,6 +14,9 @@ import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParam
 import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
+    @Mock
+    private SchedulingManager schedulingManager;
+
     @Test
     public void testCheckAddEditValidations() {
         Guid clusterPolicyId = new Guid("e754440b-76a6-4099-8235-4565ab4b5521");
@@ -29,7 +30,7 @@ public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
                     protected void executeCommand() {
                     }
                 };
-        command.schedulingManager = mockScheduler();
+        command.schedulingManager = schedulingManager;
         assertTrue(command.checkAddEditValidations());
     }
 
@@ -49,14 +50,7 @@ public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
                     protected void executeCommand() {
                     }
                 };
-        command.schedulingManager = mockScheduler();
+        command.schedulingManager = schedulingManager;
         assertFalse(command.checkAddEditValidations());
     }
-
-    private SchedulingManager mockScheduler() {
-        SchedulingManager mock = mock(SchedulingManager.class);
-        when(mock.getClusterPolicies()).thenReturn(Collections.emptyList());
-        return mock;
-    }
-
 }

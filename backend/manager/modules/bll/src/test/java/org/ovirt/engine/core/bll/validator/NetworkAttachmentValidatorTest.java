@@ -388,9 +388,6 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
         when(networkDaoMock.get(network.getId())).thenReturn(network);
 
-        // no vds for network id.
-        when(vdsDaoMock.getAllForNetwork(eq(network.getId()))).thenReturn(Collections.emptyList());
-
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNetworkId(network.getId());
         assertThat(createNetworkAttachmentValidator(attachment).networkNotAttachedToHost(),

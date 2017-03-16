@@ -2,14 +2,11 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.Mockito.doReturn;
 
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
@@ -46,7 +43,6 @@ public abstract class GeoRepSessionCommandTest<T extends GeoRepSessionCommandBas
         doReturn(getGeoRepSession(geoRepSessionId)).when(geoRepDao).getById(geoRepSessionId);
         doReturn(getGlusterVolume(startedVolumeId)).when(volumeDao).getById(startedVolumeId);
         doReturn(getGlusterVolume(stoppedVolumeId)).when(volumeDao).getById(stoppedVolumeId);
-        doReturn(new ArrayList<StorageDomainDR>()).when(storageDomainDRDao).getWithGeoRepSession(geoRepSessionId);
     }
 
     private VDS getVds(VDSStatus status) {

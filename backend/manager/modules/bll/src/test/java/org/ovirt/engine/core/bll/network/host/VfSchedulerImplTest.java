@@ -74,7 +74,6 @@ public class VfSchedulerImplTest {
 
     @Test
     public void hostNotHaveSriovNics() {
-        when(networkDeviceHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId)).thenReturn(new ArrayList<>());
         VmNetworkInterface vnic = mockVnic(true);
         assertHostNotValid(Collections.singletonList(vnic), Collections.singletonList(vnic.getName()));
     }

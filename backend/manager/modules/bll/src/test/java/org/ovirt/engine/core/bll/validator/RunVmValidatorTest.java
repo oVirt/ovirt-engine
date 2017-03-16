@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -168,7 +167,6 @@ public class RunVmValidatorTest {
     @Test
     public void testBootFromNetworkNoNetwork() {
         VmNicDao dao = mock(VmNicDao.class);
-        doReturn(new ArrayList<VmNic>()).when(dao).getAllForVm(any(Guid.class));
         doReturn(dao).when(runVmValidator).getVmNicDao();
         VM vm = new VM();
         vm.setBootSequence(BootSequence.N);
@@ -314,7 +312,6 @@ public class RunVmValidatorTest {
         doReturn(Collections.emptyList()).when(runVmValidator).getVmDisks();
 
         injectorRule.bind(DiskHandler.class, diskHandler);
-        when(diskHandler.getDiskToDiskVmElementMap(any(Guid.class), anyMap())).thenReturn(Collections.emptyMap());
 
         MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
         doReturn(multipleDiskVmElementValidator).when(runVmValidator).createMultipleDiskVmElementValidator(anyMap());

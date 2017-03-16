@@ -4,8 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -66,7 +64,6 @@ public class HostMonitoringTest {
 
     private void initConditions() {
         when(dbFacade.getInterfaceDao()).thenReturn(interfaceDao);
-        when(interfaceDao.getAllInterfacesForVds(any(Guid.class))).thenReturn(Collections.emptyList());
     }
 
     private void initVds() {

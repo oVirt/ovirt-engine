@@ -5,7 +5,6 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -69,7 +68,6 @@ public class GlusterHostValidatorTest {
     public void testCheckGlusterQuorumWithoutBricks() {
         Cluster cluster = getCluster(true, CLUSTER_ID);
         Iterable<Guid> hostIds = Arrays.asList(DUMMY_SERVER_ID, SERVER_ID_1);
-        doReturn(Collections.EMPTY_LIST).when(brickDao).getGlusterVolumeBricksByServerId(DUMMY_SERVER_ID);
         assertTrue(hostValidator.checkGlusterQuorum(cluster, hostIds).isEmpty());
     }
 

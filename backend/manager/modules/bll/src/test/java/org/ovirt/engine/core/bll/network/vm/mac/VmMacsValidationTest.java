@@ -6,7 +6,6 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -37,8 +36,6 @@ public class VmMacsValidationTest {
 
     @Test
     public void testValidateValid() {
-        when(mockProblematicVmMacsFinder.findProblematicMacs(mockVM)).thenReturn(Collections.emptyList());
-
         final ValidationResult actual = underTest.validate(mockVM);
 
         assertThat(actual, isValid());

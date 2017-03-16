@@ -112,7 +112,6 @@ public class DiskVmElementValidatorTest {
         ArrayList<String> supportedDiskInterfaces = new ArrayList<>();
         supportedDiskInterfaces.add(diskInterface.name());
         when(osRepository.getDiskInterfaces(OS_WITH_SUPPORTED_INTERFACES, null)).thenReturn(supportedDiskInterfaces);
-        when(osRepository.getDiskInterfaces(OS_WITH_NO_SUPPORTED_INTERFACES, null)).thenReturn(new ArrayList<>());
         // init the injector with the osRepository instance
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }

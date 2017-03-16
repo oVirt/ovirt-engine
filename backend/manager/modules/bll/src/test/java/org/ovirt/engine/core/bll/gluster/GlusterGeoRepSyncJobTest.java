@@ -9,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -86,7 +85,6 @@ public class GlusterGeoRepSyncJobTest {
         doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));
         doReturn(getServer()).when(glusterUtil).getRandomUpServer(any(Guid.class));
         doReturn(getSessions(2, true)).when(geoRepDao).getGeoRepSessionsInCluster(CLUSTER_GUID);
-        doReturn(Collections.emptyList()).when(storageDomainDRDao).getWithGeoRepSession(any(Guid.class));
     }
 
     @Test

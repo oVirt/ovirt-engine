@@ -127,7 +127,6 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
     private void testNonActiveVdsExecution(StorageDomainStatus status) {
         createStorageDomain(status);
         createUpStoragePool();
-        createNonUpVds();
         createCommand();
     }
 
@@ -161,11 +160,6 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
     private void createUpVds() {
         when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up)))
                 .thenReturn(Collections.singletonList(new VDS()));
-    }
-
-    private void createNonUpVds() {
-        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up)))
-                .thenReturn(Collections.emptyList());
     }
 
     private void createCommand() {

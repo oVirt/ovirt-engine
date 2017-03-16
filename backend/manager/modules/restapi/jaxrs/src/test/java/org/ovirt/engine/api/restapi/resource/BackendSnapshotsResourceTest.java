@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -242,7 +241,6 @@ public class BackendSnapshotsResourceTest
 
     private void mockOsRepository() {
         OsRepository mockOsRepository = mock(OsRepository.class);
-        when(mockOsRepository.getUniqueOsNames()).thenReturn(new HashMap<>());
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, mockOsRepository);
     }
 }

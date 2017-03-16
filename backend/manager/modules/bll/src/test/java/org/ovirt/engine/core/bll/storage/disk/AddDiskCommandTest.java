@@ -368,7 +368,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(false).when(command).isBalloonEnabled(any(Guid.class));
         doReturn(false).when(command).isSoundDeviceEnabled(any(Guid.class));
         doReturn(true).when(command).setAndValidateDiskProfiles();
-        doReturn(new ArrayList<>()).when(diskVmElementDao).getAllForVm(vmId);
         doReturn(true).when(command).validateQuota();
         mockSnapshotsValidator();
 

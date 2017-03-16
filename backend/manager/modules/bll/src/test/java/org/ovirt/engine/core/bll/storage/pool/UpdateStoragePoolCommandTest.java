@@ -94,7 +94,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     @Before
     public void setUp() {
         when(spDao.get(any())).thenReturn(createStoragePool());
-        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.emptyList());
         when(clusterDao.getAllForStoragePool(any())).thenReturn(createClusterList());
 
         // Spy the StoragePoolValidator:
@@ -136,13 +135,11 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void hasNoStorageDomains() {
-        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.emptyList());
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
     public void hasMultipleClustersForLocalDC() {
-        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.emptyList());
         List<Cluster> clusters = Arrays.asList(new Cluster(), new Cluster());
         when(clusterDao.getAllForStoragePool(any())).thenReturn(clusters);
         cmd.getStoragePool().setIsLocal(true);

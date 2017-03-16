@@ -74,9 +74,6 @@ public class MoveMacsTest {
 
     @Test
     public void testMigrateMacsToAnotherMacPoolWithSuccessfulDuplicityCheck() throws Exception {
-        //this simulates situation, where all macs were successfully added.
-        when(targetMacPool.addMacs(anyList())).thenReturn(Collections.emptyList());
-
         underTest.migrateMacsToAnotherMacPool(sourceMacPoolId, targetMacPoolId, macsToMigrate, true, commandContext);
 
         verify(macPoolPerCluster).getMacPoolById(sourceMacPoolId, commandContext);

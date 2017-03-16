@@ -692,15 +692,10 @@ public class HostSetupNetworksValidatorTest {
         return network;
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testValidateNotRemovingUsedNetworkByVmsWhenNotUsedByVms() throws Exception {
         HostSetupNetworksValidator validator = spy(new HostSetupNetworksValidatorBuilder()
             .build());
-
-
-        when(findActiveVmsUsingNetwork.findNamesOfActiveVmsUsingNetworks(any(), anyCollection()))
-                .thenReturn(Collections.emptyList());
 
         assertThat(validator.validateNotRemovingUsedNetworkByVms("removedNet"), isValid());
     }
@@ -1111,8 +1106,6 @@ public class HostSetupNetworksValidatorTest {
 
         //we do not test SimpleCustomPropertiesUtil here, we just state what happens if it does not find ValidationError
         SimpleCustomPropertiesUtil simpleCustomPropertiesUtilMock = mock(SimpleCustomPropertiesUtil.class);
-
-        when(simpleCustomPropertiesUtilMock.validateProperties(any(), any())).thenReturn(Collections.emptyList());
 
         assertThat(validator.validateCustomProperties(simpleCustomPropertiesUtilMock,
                 Collections.emptyMap(),

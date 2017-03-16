@@ -4,7 +4,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -69,7 +68,6 @@ public class BackendVmPoolsResourceTest extends
         org.ovirt.engine.core.common.businessentities.VM entity = mock(org.ovirt.engine.core.common.businessentities.VM.class);
         when(entity.getId()).thenReturn(GUIDS[0]);
         when(entity.getStaticData()).thenReturn(new VmStatic());
-        when(entity.getDedicatedVmForVdsList()).thenReturn(Collections.emptyList());
         return entity;
     }
 

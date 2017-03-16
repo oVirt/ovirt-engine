@@ -191,13 +191,11 @@ public class DiskValidatorTest {
     @Test
     public void testDiskAttachedToVMFail() {
         VM vm = createVM();
-        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
         assertThat(validator.isDiskAttachedToVm(vm), failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_ATTACHED_TO_VM));
     }
 
     @Test
     public void testDiskAttachedToAnyVM() {
-        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
         assertThat(validator.isDiskAttachedToAnyVm(), isValid());
     }
 
@@ -223,7 +221,6 @@ public class DiskValidatorTest {
         VM vm = createVM();
         vm.setName("MyVm");
         disk.setDiskAlias("MyDisk");
-        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
         String[] expectedReplacements = {
                 ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
                 ReplacementUtils.createSetVariableString(DiskValidator.VM_NAME_VARIABLE, vm.getName())};

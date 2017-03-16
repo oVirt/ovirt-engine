@@ -248,9 +248,6 @@ public class HostNetworkAttachmentsPersisterTest {
 
     @Test
     public void testPersistNetworkAttachmentsWhenPersistingUserNetworkAttachmentWithoutNetworkDoNotPersist() throws Exception {
-        when(networkAttachmentDao.getAllForHost(eq(hostId)))
-                .thenReturn(Collections.emptyList());
-
         createPersister(Collections.singletonList(createNetworkAttachment(null)),
             new VdsNetworkInterface[] {}).persistNetworkAttachments();
 
@@ -262,9 +259,6 @@ public class HostNetworkAttachmentsPersisterTest {
 
     @Test
     public void testPersistNetworkAttachmentsWhenPersistingUserNetworkAttachmentWithNetworkNotAttachedToNicDoNotPersist() throws Exception {
-        when(networkAttachmentDao.getAllForHost(eq(hostId)))
-                .thenReturn(Collections.emptyList());
-
         // user attachments references network, which is not assigned to NIC.
         createPersister(Collections.singletonList(createNetworkAttachment(clusterNetworkB)),
             new VdsNetworkInterface[] {}).persistNetworkAttachments();
@@ -277,8 +271,6 @@ public class HostNetworkAttachmentsPersisterTest {
 
     @Test
     public void testPersistNetworkAttachmentsWhenCalledWithNewUserAttachments() throws Exception {
-        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
-
         Guid userNetworkAttachmentNicId = interfaceWithAttachedClusterNetworkA.getId();
         NetworkAttachment userNetworkAttachment = createNetworkAttachment(clusterNetworkA);
         userNetworkAttachment.setNicId(userNetworkAttachmentNicId);
@@ -378,7 +370,6 @@ public class HostNetworkAttachmentsPersisterTest {
 
     @Test
     public void testPersistNetworkAttachmentsForInterfaceWithoutNetworkNothingIsPersisted() {
-        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
         HostNetworkAttachmentsPersister persister = createPersister(
             Collections.emptyList(),
             interfaceWithoutAttachedNetwork);
@@ -393,8 +384,6 @@ public class HostNetworkAttachmentsPersisterTest {
 
     @Test
     public void testPersistNetworkAttachmentsForNotReportedNetworkAttachmentIsNotPersisted() {
-        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
-
         VdsNetworkInterface interfaceWithUnreportedNetwork = createVdsNetworkInterface();
         interfaceWithUnreportedNetwork.setNetworkName("unreportedNetwork");
 
@@ -412,8 +401,6 @@ public class HostNetworkAttachmentsPersisterTest {
 
     @Test
     public void testPersistNetworkAttachmentsCreateNetworkAttachmentWhichWasntYetCreatedForEachNetworkOnReportedNic() {
-        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
-
         createPersister(Collections.emptyList(), interfaceWithAttachedClusterNetworkA).persistNetworkAttachments();
 
         verify(networkAttachmentDao).getAllForHost(any(Guid.class));
@@ -441,8 +428,6 @@ public class HostNetworkAttachmentsPersisterTest {
         HostNetworkAttachmentsPersister persister = createPersister(
             Collections.singletonList(networkAttachment),
             interfaceWithAttachedClusterNetworkA, nic);
-
-        when(networkAttachmentDao.getAllForHost(hostId)).thenReturn(Collections.emptyList());
 
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage(HostNetworkAttachmentsPersister.INCONSISTENCY_NETWORK_IS_REPORTED_ON_DIFFERENT_NIC_THAN_WAS_SPECIFIED);

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -77,7 +76,6 @@ public class GlusterHookSyncJobTest {
 
     private void initMocks() {
         doReturn(getServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[0]);
-        doReturn(Collections.emptyList()).when(glusterUtil).getAllUpServers(CLUSTER_GUIDS[1]);
         mockDaos();
     }
 

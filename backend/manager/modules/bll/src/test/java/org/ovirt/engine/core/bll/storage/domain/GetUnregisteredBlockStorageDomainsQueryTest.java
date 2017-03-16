@@ -65,7 +65,6 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         when(getQueryParameters().getVdsId()).thenReturn(Guid.newGuid());
 
         List<LUNs> luns = getLUNs(storageDomainId, vgId);
-        doReturn(Collections.emptyList()).when(lunDao).getAll();
 
         doReturn(createSuccessVdcReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
@@ -131,7 +130,6 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
 
         List<LUNs> luns = getLUNs(existingStorageDomainId, existingVgId);
 
-        doReturn(Collections.emptyList()).when(lunDao).getAll();
         doReturn(createSuccessVdcReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
 
@@ -159,7 +157,6 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
 
         List<LUNs> luns = getLUNs(storageDomainId, vgId);
 
-        doReturn(Collections.emptyList()).when(lunDao).getAll();
         doReturn(createGetDeviceListReturnValue(luns)).when(getQuery()).
                 executeGetDeviceList(any(GetDeviceListQueryParameters.class));
 
@@ -186,8 +183,6 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         when(getQueryParameters().getStorageType()).thenReturn(StorageType.FCP);
         when(getQueryParameters().getVdsId()).thenReturn(Guid.newGuid());
         List<LUNs> luns = getLUNs(existingStorageDomainId, existingVgId);
-
-        doReturn(Collections.emptyList()).when(lunDao).getAll();
 
         doReturn(createGetDeviceListReturnValue(luns)).when(getQuery()).
                 executeGetDeviceList(any(GetDeviceListQueryParameters.class));

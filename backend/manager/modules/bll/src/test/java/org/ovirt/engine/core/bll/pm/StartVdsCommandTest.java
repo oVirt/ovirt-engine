@@ -79,13 +79,8 @@ public class StartVdsCommandTest extends BaseCommandTest {
     }
 
     private void mockDbFacades() {
-        mockVmDao();
         mockVdsDao();
         mockVdsDynamicDao();
-    }
-
-    private void mockVmDao() {
-        when(vmDao.getAllRunningForVds(eq(FENCECD_HOST_ID))).thenReturn(new LinkedList<>());
     }
 
     private void mockVdsDao() {

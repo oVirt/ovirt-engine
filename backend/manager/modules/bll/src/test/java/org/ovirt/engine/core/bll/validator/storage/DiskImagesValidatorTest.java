@@ -225,7 +225,6 @@ public class DiskImagesValidatorTest {
     @Test
     public void diskImagesHasDerivedDisksNoStorageDomainSpecifiedSuccess() {
         disk1.setVmEntityType(VmEntityType.TEMPLATE);
-        when(diskImageDao.getAllSnapshotsForParent(disk1.getImageId())).thenReturn(Collections.emptyList());
         assertThat(validator.diskImagesHaveNoDerivedDisks(null),
                 isValid());
     }

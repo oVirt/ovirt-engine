@@ -196,7 +196,6 @@ public class ClusterValidatorTest {
         when(dataCenter.isLocal()).thenReturn(true);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.emptyList());
         when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 

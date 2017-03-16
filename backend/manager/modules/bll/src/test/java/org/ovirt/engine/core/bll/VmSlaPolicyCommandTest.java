@@ -80,7 +80,6 @@ public class VmSlaPolicyCommandTest {
         vm.setStatus(VMStatus.Up);
 
         when(vmDao.get(VM_ID)).thenReturn(vm);
-        when(vmNetworkInterfaceDao.getAllForVm(any(Guid.class))).thenReturn(Collections.emptyList());
 
         diskImage = new DiskImage();
         diskImage.setStorageIds(new ArrayList<>());

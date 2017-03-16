@@ -102,7 +102,6 @@ public class GlusterTasksSyncJobTest {
 
     @Test
     public void cleanOrphanTasksWhenNoVolume() {
-        doReturn(new HashMap<>()).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         doReturn(Collections.singletonList(TASK_GUIDS[2])).when(provider).getMonitoredTaskIDsInDB();
         doReturn(getSteps(TASK_GUIDS[2])).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);
 
@@ -121,7 +120,6 @@ public class GlusterTasksSyncJobTest {
     @Test
     public void testCreateTasksStartedFromCLI() {
         doReturn(getTasks(JobExecutionStatus.STARTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
-        prepareMocksForTasksFromCLI();
 
         tasksSyncJob.updateGlusterAsyncTasks();
         verify(taskUtils, times(0)).endStepJob(any(Step.class));
@@ -130,7 +128,6 @@ public class GlusterTasksSyncJobTest {
     @Test
     public void testCreateTasksStartedFromCLIWithErrors() {
         doReturn(getTasks(JobExecutionStatus.STARTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
-        prepareMocksForTasksFromCLI();
 
         tasksSyncJob.updateGlusterAsyncTasks();
         verify(taskUtils, times(0)).endStepJob(any(Step.class));
@@ -158,11 +155,6 @@ public class GlusterTasksSyncJobTest {
         doReturn(getSteps(TASK_GUIDS[1])).when(stepDao).getStepsByExternalId(TASK_GUIDS[1]);
         doReturn(getSteps(TASK_GUIDS[2])).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);
    }
-
-    private void prepareMocksForTasksFromCLI() {
-        doReturn(new ArrayList<Step>()).when(stepDao).getStepsByExternalId(TASK_GUIDS[0]);
-        doReturn(new ArrayList<Step>()).when(stepDao).getStepsByExternalId(TASK_GUIDS[1]);
-    }
 
     private List<Step> getSteps(Guid taskGuid) {
         List<Step> steps = new ArrayList<>();

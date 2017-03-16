@@ -12,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,10 +170,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         when(vmTemplateDao.get(vmTemplateId)).thenReturn(vmTemplate);
     }
 
-    private void mockVmNetworkInterfaceDao() {
-        when(vmNetworkInterfaceDao.getAllForTemplate(vmTemplateId)).thenReturn(Collections.emptyList());
-    }
-
     private void mockClusterDao() {
         when(clusterDao.get(clusterId)).thenReturn(cluster);
     }
@@ -312,7 +307,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     private void mockDbDao() {
         mockClusterDao();
         mockVMTemplateDao();
-        mockVmNetworkInterfaceDao();
         mockStoragePoolDao();
     }
 

@@ -7,7 +7,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -37,8 +36,6 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        when(storageDomainDaoMock.getHostedEngineStorageDomainIds()).thenReturn(Collections.emptyList());
 
         doReturn(Boolean.TRUE).when(getQuery()).connectStorageDomain(eq(storageDomain));
         doReturn(Boolean.TRUE).when(getQuery()).disconnectStorageDomain(eq(storageDomain));

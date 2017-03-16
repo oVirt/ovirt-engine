@@ -105,7 +105,6 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     public void testVmsWithNoIsoAttached() {
         mockDomain();
         doReturn(domain).when(cmd).getStorageDomain();
-        when(vmStaticDao.getAllByStoragePoolId(any(Guid.class))).thenReturn(Collections.emptyList());
         assertTrue(cmd.isRunningVmsWithIsoAttached());
         assertTrue(cmd.getReturnValue().getValidationMessages().isEmpty());
     }

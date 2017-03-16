@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkParameters;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
@@ -119,7 +118,6 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         initNetworkIdToExistingAttachmentIdMap();
 
         when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(false);
-        when(setupModel.getNetworkToLastDetachParams()).thenReturn(new HashMap<String, NetworkParameters>());
 
         NetworkOperation.ATTACH_NETWORK.getTarget().executeNetworkCommand(
                 logicalNetworkModelOfNetworkA,
