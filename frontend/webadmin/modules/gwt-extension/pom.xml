@@ -37,8 +37,6 @@
     </dependency>
   </dependencies>
   <build>
-    <!-- Overrides default value ${project.artifactId}-${project.version} -->
-    <finalName>ovirt-engine-${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
