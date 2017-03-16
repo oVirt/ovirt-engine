@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling;
 
+import java.util.List;
+
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -11,4 +13,7 @@ public class NonWaitingDelayer implements RunVmDelayer {
     public void delay(Guid vdsId) {
     }
 
+    @Override
+    public void delay(List<Guid> vdsIds) {
+    }
 }

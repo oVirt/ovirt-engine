@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling;
 
+import java.util.List;
+
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -12,5 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public interface RunVmDelayer {
 
-    public void delay(Guid vdsId);
+    void delay(Guid vdsId);
+
+    void delay(List<Guid> vdsIds);
 }

@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingOvercommitMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -43,12 +45,14 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
 
     @Override
     public List<VDS> filter(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
-        List<VDS> list = new ArrayList<>();
         // If Vm in Paused mode - no additional memory allocation needed
         if (vm.getStatus() == VMStatus.Paused) {
             return hosts;
         }
         List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(vm.getId());
+        boolean vmNumaPinned = isVmNumaPinned(vmNumaNodes);
+
+        List<VDS> filteredList = new ArrayList<>();
         for (VDS vds : hosts) {
             if (!isVMSwapValueLegal(vds)) {
                 log.debug("Host '{}' swap value is illegal", vds.getName());
@@ -73,33 +77,75 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
                 continue;
             }
 
-            // Check logical memory using overcommit, pending and guaranteed memory rules
-            if (!memoryChecker.evaluate(vds, vm)) {
-                log.debug("Host '{}' is already too close to the memory overcommitment limit. It can only accept {} MB of additional memory load.",
-                        vds.getName(),
-                        vds.getMaxSchedulingMemory());
-
-                messages.addMessage(vds.getId(), String.format("$availableMem %1$f", vds.getMaxSchedulingMemory()));
-                messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
-                continue;
-            }
-
             // In case one of VM's virtual NUMA nodes (vNode) is pinned to physical NUMA nodes (pNode),
             // host will be excluded ('filter out') when:
             // * memory tune is strict (vNode memory cannot be spread across several pNodes' memory)
             // [and]
             // * host support NUMA configuration
             // * there isn't enough memory for pinned vNode in pNode
-            if (vm.getNumaTuneMode() == NumaTuneMode.STRICT && isVmNumaPinned(vmNumaNodes)
+            if (vm.getNumaTuneMode() == NumaTuneMode.STRICT && vmNumaPinned
                     && (!vds.isNumaSupport() || !canVmNumaPinnedToVds(vm, vmNumaNodes, vds))) {
                 log.debug("Host '{}' cannot accommodate memory of VM's pinned virtual NUMA nodes within host's physical NUMA nodes",
                         vds.getName());
                 messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_MEMORY_PINNED_NUMA.toString());
                 continue;
             }
-            list.add(vds);
+            filteredList.add(vds);
         }
-        return list;
+
+        List<VDS> resultList = new ArrayList<>();
+        List<VDS> overcommitFailed = new ArrayList<>();
+
+        boolean canDelay = false;
+        for (VDS vds : filteredList) {
+            // Only delay if there are pending VMs to run.
+            // Otherwise, pending memory will not change by waiting.
+            if (vds.getPendingVmemSize() > 0) {
+                canDelay = true;
+            }
+
+            // Check logical memory using overcommit, pending and guaranteed memory rules
+            if (SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm)) {
+                resultList.add(vds);
+            } else {
+                overcommitFailed.add(vds);
+            }
+        }
+
+        // Wait a while, to see if pending memory was freed on some host
+        if (canDelay && resultList.isEmpty()) {
+            log.debug("Not enough memory on hosts. Delaying...");
+
+            overcommitFailed.clear();
+
+            runVmDelayer.delay(filteredList.stream()
+                    .map(VDS::getId)
+                    .collect(Collectors.toList()));
+
+            for (VDS vds : filteredList) {
+                // Refresh pending memory
+                int pendingMemory = PendingOvercommitMemory.collectForHost(getPendingResourceManager(), vds.getId());
+                vds.setPendingVmemSize(pendingMemory);
+
+                // Check logical memory using overcommit, pending and guaranteed memory rules
+                if (SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm)) {
+                    resultList.add(vds);
+                } else {
+                    overcommitFailed.add(vds);
+                }
+            }
+        }
+
+        for (VDS vds : overcommitFailed) {
+            log.debug("Host '{}' is already too close to the memory overcommitment limit. It can only accept {} MB of additional memory load.",
+                    vds.getName(),
+                    vds.getMaxSchedulingMemory());
+
+            messages.addMessage(vds.getId(), String.format("$availableMem %1$f", vds.getMaxSchedulingMemory()));
+            messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
+        }
+
+        return resultList;
     }
 
     private boolean canVmNumaPinnedToVds(VM vm, List<VmNumaNode> nodes, VDS vds) {

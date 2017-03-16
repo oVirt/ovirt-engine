@@ -331,12 +331,47 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             long t = Math.max(
                     resourceManager.getVdsManager(vdsId).getLastUpdateElapsed(),
                     TimeUnit.SECONDS.toMillis(Config.<Integer> getValue(VdsRefreshRate)));
-            t = Math.max(Config.<Integer> getValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis), t);
+            t = Math.min(Config.<Integer> getValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis), t);
 
             // wait for the run-time refresh to decrease any current powering-up VMs
             getBlockingQueue(vdsId).poll(t, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             // ignore
+        }
+    }
+
+    @Override
+    public void delay(List<Guid> vdsIds) {
+        if (vdsIds.isEmpty()) {
+            return;
+        }
+
+        log.debug("Try to wait for the engine to update memory and cpu stats");
+
+        long maxUpdateElapsed = vdsIds.stream()
+                .mapToLong(vdsId -> resourceManager.getVdsManager(vdsId).getLastUpdateElapsed())
+                .max().getAsLong();
+
+          long maxWaitTime = Math.min(
+                Math.max(maxUpdateElapsed,
+                        TimeUnit.SECONDS.toMillis(Config.<Integer> getValue(VdsRefreshRate))),
+                Config.<Integer> getValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis));
+
+        long endTime = System.currentTimeMillis() + maxWaitTime;
+
+        // Wait on all queues sequentially
+        for (Guid vdsId : vdsIds) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime >= endTime) {
+                break;
+            }
+
+            try {
+                // wait for the run-time refresh to decrease any current powering-up VMs
+                getBlockingQueue(vdsId).poll(endTime - currentTime, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                // ignore
+            }
         }
     }
 
