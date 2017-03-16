@@ -3,13 +3,16 @@ package org.ovirt.engine.core.bll.storage;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -25,8 +28,10 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
     @InjectMocks
-    private StorageHandlingCommandBase<StoragePoolManagementParameter> cmd =
-            new TestStorageHandlingCommandBase(new StoragePoolManagementParameter(createStoragePool()));
+    private StorageHandlingCommandBase<StoragePoolManagementParameter> cmd = mock(
+            StorageHandlingCommandBase.class,
+            withSettings().defaultAnswer(Answers.CALLS_REAL_METHODS)
+                    .useConstructor(new StoragePoolManagementParameter(createStoragePool()), null));
 
     @Mock
     private StoragePoolDao storagePoolDao;
@@ -96,7 +101,9 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
     }
 
     private void createCommandWithNullPool() {
-        cmd = new TestStorageHandlingCommandBase(new StoragePoolManagementParameter());
+        cmd = mock(StorageHandlingCommandBase.class,
+                withSettings().defaultAnswer(Answers.CALLS_REAL_METHODS)
+                        .useConstructor(new StoragePoolManagementParameter(), null));
     }
 
     private static void setAcceptableNameLength(final int length) {
@@ -109,16 +116,5 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
     private void checkStoragePoolNameLengthFails() {
         assertTrue(cmd.checkStoragePoolNameLengthValid());
-    }
-
-    private static class TestStorageHandlingCommandBase extends StorageHandlingCommandBase<StoragePoolManagementParameter> {
-        TestStorageHandlingCommandBase(StoragePoolManagementParameter parameters) {
-            super(parameters, null);
-        }
-
-        @Override
-        protected void executeCommand() {
-            // Intentionally empty - no behavior is required
-        }
     }
 }
