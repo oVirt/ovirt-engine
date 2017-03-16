@@ -36,7 +36,7 @@ public abstract class PolicyUnitImpl {
     public static final int MaxSchedulerWeight = Config.<Integer> getValue(ConfigValues.MaxSchedulerWeight);
 
     private final PolicyUnit policyUnit;
-    protected VdsFreeMemoryChecker memoryChecker;
+    protected RunVmDelayer runVmDelayer;
     protected PendingResourceManager pendingResourceManager;
 
     @Inject
@@ -94,9 +94,8 @@ public abstract class PolicyUnitImpl {
         return policyUnit;
     }
 
-    public void setMemoryChecker(VdsFreeMemoryChecker memoryChecker) {
-        this.memoryChecker = memoryChecker;
-
+    public void setRunVmDelayer(RunVmDelayer runVmDelayer) {
+        this.runVmDelayer = runVmDelayer;
     }
 
     public PendingResourceManager getPendingResourceManager() {

@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.migration.ConvergenceConfigProvider;
 import org.ovirt.engine.core.bll.migration.ConvergenceSchedule;
-import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.MultipleVmsValidator;
@@ -199,7 +198,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVdsWhiteList(),
                         getDestinationHostList(),
                         messages,
-                        new VdsFreeMemoryChecker(this),
+                        this,
                         getCorrelationId());
         messages.forEach(this::addValidationMessage);
         return vdsToRunOn;

@@ -25,7 +25,6 @@ import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -850,7 +849,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         getVdsWhiteList(),
                         getPredefinedVdsIdListToRunOn(),
                         new ArrayList<>(),
-                        new VdsFreeMemoryChecker(this),
+                        this,
                         getCorrelationId());
         setVdsId(vdsToRunOn.orElse(null));
         if (vdsToRunOn.isPresent()) {

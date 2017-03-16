@@ -113,7 +113,7 @@ public class SchedulingManager implements BackendService {
 
     private final ConcurrentHashMap<Guid, Semaphore> clusterLockMap = new ConcurrentHashMap<>();
 
-    private final VdsFreeMemoryChecker noWaitingMemoryChecker = new VdsFreeMemoryChecker(new NonWaitingDelayer());
+    private final RunVmDelayer noWaitingVmDelayer = new NonWaitingDelayer();
 
     private final Map<Guid, Boolean> clusterId2isHaReservationSafe = new HashMap<>();
 
@@ -296,7 +296,7 @@ public class SchedulingManager implements BackendService {
             List<Guid> hostWhiteList,
             List<Guid> destHostIdList,
             List<String> messages,
-            VdsFreeMemoryChecker memoryChecker,
+            RunVmDelayer runVmDelayer,
             String correlationId) {
         prepareClusterLock(cluster.getId());
         try {
@@ -319,7 +319,7 @@ public class SchedulingManager implements BackendService {
                             parameters,
                             policy.getFilterPositionMap(),
                             messages,
-                            memoryChecker,
+                            runVmDelayer,
                             true,
                             correlationId);
 
@@ -530,7 +530,7 @@ public class SchedulingManager implements BackendService {
                         parameters,
                         policy.getFilterPositionMap(),
                         messages,
-                        noWaitingMemoryChecker,
+                        noWaitingVmDelayer,
                         false,
                         null);
 
@@ -592,7 +592,7 @@ public class SchedulingManager implements BackendService {
             Map<String, String> parameters,
             Map<Guid, Integer> filterPositionMap,
             List<String> messages,
-            VdsFreeMemoryChecker memoryChecker,
+            RunVmDelayer runVmDelayer,
             boolean shouldRunExternalFilters,
             String correlationId) {
         SchedulingResult result = new SchedulingResult();
@@ -623,7 +623,7 @@ public class SchedulingManager implements BackendService {
 
         hostList =
                 runInternalFilters(internalFilters, cluster, hostList, vm, parameters, filterPositionMap,
-                        memoryChecker, correlationId, result);
+                        runVmDelayer, correlationId, result);
 
         if (shouldRunExternalFilters
                 && Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)
@@ -645,14 +645,14 @@ public class SchedulingManager implements BackendService {
             VM vm,
             Map<String, String> parameters,
             Map<Guid, Integer> filterPositionMap,
-            VdsFreeMemoryChecker memoryChecker,
+            RunVmDelayer runVmDelayer,
             String correlationId,
             SchedulingResult result) {
         for (PolicyUnitImpl filterPolicyUnit : filters) {
             if (hostList.isEmpty()) {
                 break;
             }
-            filterPolicyUnit.setMemoryChecker(memoryChecker);
+            filterPolicyUnit.setRunVmDelayer(runVmDelayer);
             List<VDS> currentHostList = new ArrayList<>(hostList);
             hostList = filterPolicyUnit.filter(cluster, hostList, vm, parameters, result.getDetails());
             logFilterActions(currentHostList,
