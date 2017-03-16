@@ -28,7 +28,7 @@ public class MigrateVmCommandTest {
     VmValidator vmValidator;
 
     @Spy
-    MigrateVmCommand command = new MigrateVmCommand<>(new MigrateVmParameters(false, vmId), null);
+    private MigrateVmCommand<MigrateVmParameters> command = new MigrateVmCommand<>(new MigrateVmParameters(false, vmId), null);
 
 
     @Before
