@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.sso.utils;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -135,7 +134,7 @@ public class SsoSession implements Serializable {
     public void setScope(String scope) {
         if (scopeAsList == null  && !SsoUtils.strippedScopeAsList(SsoUtils.scopeAsList(scope)).isEmpty()) {
             this.scope = scope;
-            this.scopeAsList = StringUtils.isEmpty(scope) ? Collections.<String>emptyList() : SsoUtils.scopeAsList(scope);
+            this.scopeAsList = SsoUtils.scopeAsList(scope);
         }
     }
 
