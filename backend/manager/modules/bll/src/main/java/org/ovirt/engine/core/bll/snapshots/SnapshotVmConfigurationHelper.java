@@ -60,7 +60,7 @@ public class SnapshotVmConfigurationHelper {
         VM vm;
         if (configuration != null) {
             vm = getVmWithConfiguration(configuration, vmId);
-            Snapshot snapshot = getSnapshotDao().get(snapshotId);
+            Snapshot snapshot = snapshotDao.get(snapshotId);
             if (snapshot != null && snapshot.getType() != Snapshot.SnapshotType.PREVIEW) {
                 // No need to mark disks of 'PREVIEW' snapshot as illegal
                 // as it represents previous 'Active VM' state and no operations
@@ -77,8 +77,8 @@ public class SnapshotVmConfigurationHelper {
     }
 
     protected VM getVmWithConfiguration(String configuration, Guid vmId) {
-        VM result = getVmDao().get(vmId);
-        getSnapshotManager().updateVmFromConfiguration(result, configuration);
+        VM result = vmDao.get(vmId);
+        snapshotsManager.updateVmFromConfiguration(result, configuration);
         return result;
     }
 
@@ -91,10 +91,10 @@ public class SnapshotVmConfigurationHelper {
      * @return a VM
      */
     protected VM getVmWithoutConfiguration(Guid vmId, Guid snapshotId) {
-        VM vm = getVmDao().get(vmId);
-        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+        VM vm = vmDao.get(vmId);
+        List<VmNetworkInterface> interfaces = vmNetworkInterfaceDao.getAllForVm(vm.getId());
         vm.setInterfaces(interfaces);
-        List<DiskImage> disks = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
+        List<DiskImage> disks = diskImageDao.getAllSnapshotsForVmSnapshot(snapshotId);
         vm.setImages(new ArrayList<>(disks));
 
         // OvfReader sets disks as active during import which is required by VmHandler.updateDisksForVm to prepare the
@@ -118,7 +118,7 @@ public class SnapshotVmConfigurationHelper {
      */
     protected void markImagesIllegalIfNotInDb(VM vm, Guid snapshotId) {
         List<DiskImage> imagesInDb =
-                getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
+                diskImageDao.getAllSnapshotsForVmSnapshot(snapshotId);
         // Converts to a map of Id to DiskImage in order to check existence only by Image ID (in case not all
         // image data is written to OVF
         Map<Guid, DiskImage> imagesInDbMap = ImagesHandler.getDiskImagesByIdMap(imagesInDb);
@@ -137,25 +137,4 @@ public class SnapshotVmConfigurationHelper {
             }
         }
     }
-
-    public SnapshotsManager getSnapshotManager() {
-        return snapshotsManager;
-    }
-
-    protected VmDao getVmDao() {
-        return vmDao;
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return snapshotDao;
-    }
-
-    protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return vmNetworkInterfaceDao;
-    }
-
-    protected DiskImageDao getDiskImageDao() {
-        return diskImageDao;
-    }
-
 }
