@@ -705,16 +705,13 @@ public class VmDeviceUtils {
 
     /**
      * Update USB slots and controllers in the new VM, if USB policy of the new VM differs from one of the old VM.
+     * @param oldVm old configuration, may not be null, won't be modified
+     * @param newVm new configuration, may not be null, only devices if this entity will be modified
      */
     public void updateUsbSlots(VmBase oldVm, VmBase newVm) {
-        UsbPolicy oldUsbPolicy = UsbPolicy.DISABLED;
-        UsbPolicy newUsbPolicy = newVm.getUsbPolicy();
-        int oldNumberOfSlots = 0;
-
-        if (oldVm != null) {
-            oldUsbPolicy = oldVm.getUsbPolicy();
-            oldNumberOfSlots = getUsbSlots(oldVm.getId()).size();
-        }
+        final UsbPolicy oldUsbPolicy = oldVm.getUsbPolicy();
+        final UsbPolicy newUsbPolicy = newVm.getUsbPolicy();
+        final int oldNumberOfSlots = getUsbSlots(oldVm.getId()).size();
 
         final int newNumberOfUsbSlots = Config.<Integer> getValue(ConfigValues.NumberOfUSBSlots);
 
@@ -858,7 +855,7 @@ public class VmDeviceUtils {
     }
 
     /**
-     * Get list of all USB slots in the VM.
+     * Get list of all USB slots in the VM or template.
      */
     public List<VmDevice> getUsbSlots(Guid vmId) {
         return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
@@ -1389,7 +1386,7 @@ public class VmDeviceUtils {
             addCdDevice(dstId, dstCdPath);
         }
 
-        updateUsbSlots(srcId.equals(Guid.Empty) ? null : srcVmBase, dstVmBase);
+        updateUsbSlots(srcVmBase, dstVmBase);
 
         if (isSoundEnabled && !hasSound) {
             if (dstIsVm) {
