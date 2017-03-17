@@ -101,8 +101,8 @@ public class VmDeviceDaoImpl extends
     }
 
     @Override
-    public List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId, VmDeviceGeneralType type, String device) {
-        return getVmDeviceByVmIdTypeAndDevice(vmId, type, device, null, false);
+    public List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmBaseId, VmDeviceGeneralType type, String device) {
+        return getVmDeviceByVmIdTypeAndDevice(vmBaseId, type, device, null, false);
     }
 
     @Override
