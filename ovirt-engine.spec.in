@@ -231,7 +231,7 @@ Requires:	apache-commons-jxpath
 Requires:	hystrix-core
 Requires:	hystrix-metrics-event-stream
 Requires:	jakarta-commons-httpclient
-Requires:	java-openjdk >= 1:1.8.0
+Requires:	java-openjdk-headless >= 1:1.8.0
 Requires:	jpackage-utils
 Requires:	objectweb-asm
 Requires:	ovirt-iso-uploader >= 4.0.0
@@ -329,7 +329,7 @@ Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	aopalliance >= 1.0
 Requires:	ebay-cors-filter
 Requires:	httpd
-Requires:	java
+Requires:	java-headless
 Requires:	logrotate
 Requires:	mailcap
 Requires:	mod_ssl
@@ -431,7 +431,7 @@ Requires:	nfs-utils
 Requires:	%{policycoreutils_python_utils}
 Requires:	python-psycopg2
 Requires(pre):	shadow-utils
-Requires:	java-openjdk >= 1:1.8.0
+Requires:	java-openjdk-headless >= 1:1.8.0
 
 %if 0%{?fedora}
 Requires:	python2-dnf
@@ -500,7 +500,7 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	%{name}-tools-backup = %{version}-%{release}
 Requires:	ovirt-engine-metrics
-Requires:	java
+Requires:	java-headless
 Requires:	logrotate
 Requires:	python-dateutil
 Requires:	python-psycopg2
