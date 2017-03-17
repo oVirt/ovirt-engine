@@ -163,23 +163,27 @@ NOTE: Note that `BUILD_JAVA_OPTS_GWT` overrides `BUILD_JAVA_OPTS_MAVEN`
 when building GWT applications (`BUILD_JAVA_OPTS_MAVEN` settings still
 apply, unless overridden).
 
-DEV_BUILD_GWT_DRAFT:: Build draft GWT applications without
-optimizations, this is useful when profiling compiled application in web
-browser. Default value is `0`.
+DEV_BUILD_GWT_DRAFT:: Build "draft" version of GWT applications without
+optimizations. This is useful when profiling compiled applications in
+web browser. Default value is `0`.
 +
 Following changes are applied for draft builds:
-
 - Prevent code and CSS obfuscation.
 - Reduce the level of code optimizations.
++
+On local development environment, using GWT Super Dev Mode (see below)
+is preferred, as it automatically disables all optimizations and allows
+you to recompile the GWT application on the fly.
 
 DEV_BUILD_GWT_SUPER_DEV_MODE:: Allows debugging GWT applications via
-Super Dev Mode. Default value is `0`.
+Super Dev Mode, using web browser's JavaScript development tooling.
+Default value is `0`.
 +
-First, build Engine with `DEV_BUILD_GWT_SUPER_DEV_MODE=1`. Then, start
-GWT code server as following:
-+
+Do a local Engine development build as you normally would. Then, start
+the Super Dev Mode code server as following:
+
   $ make gwt-debug DEBUG_MODULE=<module> DEV_BUILD_GWT_SUPER_DEV_MODE=1
-+
+
 In your browser, open http://127.0.0.1:9876/ and save the "Dev Mode On"
 bookmark. Next, visit the GWT application URL (as served from Engine)
 and click "Dev Mode On". This allows you to recompile and reload the
