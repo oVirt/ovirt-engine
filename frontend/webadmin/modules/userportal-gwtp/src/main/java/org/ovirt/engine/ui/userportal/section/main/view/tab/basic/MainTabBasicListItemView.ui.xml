@@ -63,9 +63,7 @@
             font-size: 13px;
             padding-top: 2px;
             padding-bottom: 2px;
-
             opacity: 0.8;
-            filter: alpha(opacity=80); /* IE8 */
         }
 
         .basicItemStyle {
