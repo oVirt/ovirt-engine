@@ -372,7 +372,7 @@ public class SnapshotsManager {
                 MemoryUtils.getMemoryDiskId(memoryVolume),
                 MemoryUtils.getMetadataDiskId(memoryVolume));
 
-        getSnapshotDao().save(snapshot);
+        snapshotDao.save(snapshot);
         compensationContext.snapshotNewEntity(snapshot);
         return snapshot;
     }
@@ -386,11 +386,11 @@ public class SnapshotsManager {
      */
     protected String generateVmConfiguration(VM vm, List<DiskImage> disks, Map<Guid, VmDevice> vmDevices) {
         if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
-            vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
+            vm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(vm.getId()));
         }
 
         if (StringUtils.isEmpty(vm.getVmtName())) {
-            VmTemplate t = getVmTemplateDao().get(vm.getVmtGuid());
+            VmTemplate t = vmTemplateDao.get(vm.getVmtGuid());
             vm.setVmtName(t.getName());
         }
 
@@ -401,8 +401,8 @@ public class SnapshotsManager {
         }
 
         if (disks == null) {
-            disks = DisksFilter.filterImageDisks(getDiskDao().getAllForVm(vm.getId()), ONLY_SNAPABLE, ONLY_ACTIVE);
-            disks.addAll(ImagesHandler.getCinderLeafImages(getDiskDao().getAllForVm(vm.getId())));
+            disks = DisksFilter.filterImageDisks(diskDao.getAllForVm(vm.getId()), ONLY_SNAPABLE, ONLY_ACTIVE);
+            disks.addAll(ImagesHandler.getCinderLeafImages(diskDao.getAllForVm(vm.getId())));
         }
         populateDisksWithVmData(disks, vm.getId());
         for (DiskImage image : disks) {
@@ -413,7 +413,7 @@ public class SnapshotsManager {
 
     private void populateDisksWithVmData(List<? extends Disk> disks, Guid vmId) {
         for (Disk disk : disks) {
-            DiskVmElement dve = getDiskVmElementDao().get(new VmDeviceId(disk.getId(), vmId));
+            DiskVmElement dve = diskVmElementDao.get(new VmDeviceId(disk.getId(), vmId));
             disk.setDiskVmElements(Collections.singletonList(dve));
         }
     }
@@ -426,9 +426,9 @@ public class SnapshotsManager {
      * @return Set of memoryVolumes of the removed snapshots
      */
     public Set<String> removeSnapshots(Guid vmId) {
-        final List<Snapshot> vmSnapshots = getSnapshotDao().getAll(vmId);
+        final List<Snapshot> vmSnapshots = snapshotDao.getAll(vmId);
         for (Snapshot snapshot : vmSnapshots) {
-            getSnapshotDao().remove(snapshot.getId());
+            snapshotDao.remove(snapshot.getId());
         }
         return MemoryUtils.getMemoryVolumesFromSnapshots(vmSnapshots);
     }
@@ -443,7 +443,7 @@ public class SnapshotsManager {
      *            The ID of the snapshot for who to remove illegal images for.
      */
     public void removeAllIllegalDisks(Guid snapshotId, Guid vmId) {
-        for (DiskImage diskImage : getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId)) {
+        for (DiskImage diskImage : diskImageDao.getAllSnapshotsForVmSnapshot(snapshotId)) {
             if (diskImage.getImageStatus() == ImageStatus.ILLEGAL) {
                 ImagesHandler.removeDiskImage(diskImage, vmId);
             }
@@ -481,22 +481,22 @@ public class SnapshotsManager {
 
         if (!vmUpdatedFromConfiguration) {
             if (images == null) {
-                images = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshot.getId());
+                images = diskImageDao.getAllSnapshotsForVmSnapshot(snapshot.getId());
             }
             vm.setImages(new ArrayList<>(images));
         }
 
         vm.setAppList(snapshot.getAppList());
-        getVmDynamicDao().update(vm.getDynamicData());
+        vmDynamicDao.update(vm.getDynamicData());
         synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), activeSnapshotId, vm.getImages(), vm.getName());
 
         if (vmUpdatedFromConfiguration) {
-            getVmStaticDao().update(vm.getStaticData());
+            vmStaticDao.update(vm.getStaticData());
             synchronizeNics(vm, compensationContext, user, vmInterfaceManager);
 
-            for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmId(vm.getId())) {
+            for (VmDevice vmDevice : vmDeviceDao.getVmDeviceByVmId(vm.getId())) {
                 if (deviceCanBeRemoved(vmDevice)) {
-                    getVmDeviceDao().remove(vmDevice.getId());
+                    vmDeviceDao.remove(vmDevice.getId());
                 }
             }
 
@@ -513,7 +513,7 @@ public class SnapshotsManager {
             VM vmFromConf = snapshotVmConfigurations.get(vmSnapshotId);
             if (vmFromConf == null) {
                 vmFromConf = new VM();
-                Snapshot snapshot = getSnapshotDao().get(image.getVmSnapshotId());
+                Snapshot snapshot = snapshotDao.get(image.getVmSnapshotId());
                 if (!updateVmFromConfiguration(vmFromConf, snapshot.getVmConfiguration())) {
                     return false;
                 }
@@ -543,7 +543,7 @@ public class SnapshotsManager {
             return true;
         }
 
-        return vmDevice.getSnapshotId() == null && getDiskDao().get(vmDevice.getDeviceId()).isAllowSnapshot();
+        return vmDevice.getSnapshotId() == null && diskDao.get(vmDevice.getDeviceId()).isAllowSnapshot();
     }
 
     /**
@@ -565,7 +565,7 @@ public class SnapshotsManager {
             ArrayList<VmNetworkInterface> interfaces = new ArrayList<>();
             ovfManager.importVm(configuration, tempVM, images, interfaces);
             for (DiskImage diskImage : images) {
-                DiskImage dbImage = getDiskImageDao().getSnapshotById(diskImage.getImageId());
+                DiskImage dbImage = diskImageDao.getSnapshotById(diskImage.getImageId());
                 if (dbImage != null) {
                     diskImage.setStorageIds(dbImage.getStorageIds());
                 }
@@ -584,9 +584,9 @@ public class SnapshotsManager {
 
             // The VM configuration does not hold the vds group Id.
             // It is necessary to fetch the vm static from the Db, in order to get this information
-            VmStatic vmStaticFromDb = getVmStaticDao().get(vm.getId());
+            VmStatic vmStaticFromDb = vmStaticDao.get(vm.getId());
             if (vmStaticFromDb != null) {
-                Cluster cluster = getClusterDao().get(vmStaticFromDb.getClusterId());
+                Cluster cluster = clusterDao.get(vmStaticFromDb.getClusterId());
                 if (cluster != null) {
                     vm.setStoragePoolId(cluster.getStoragePoolId());
                     vm.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
@@ -619,7 +619,7 @@ public class SnapshotsManager {
      */
     private void validateQuota(VM vm) {
         if (vm.getQuotaId() != null) {
-            Quota quota = getQuotaDao().getById(vm.getQuotaId());
+            Quota quota = quotaDao.getById(vm.getQuotaId());
             if (quota == null) {
                 vm.setQuotaId(null);
             }
@@ -693,16 +693,16 @@ public class SnapshotsManager {
         int count = 1;
         for (DiskImage diskImage : disksFromSnapshot) {
             diskIdsFromSnapshot.add(diskImage.getId());
-            if (getBaseDiskDao().exists(diskImage.getId())) {
-                getBaseDiskDao().update(diskImage);
-                DiskVmElement dve = getDiskVmElementDao().get(diskImage.getDiskVmElementForVm(vmId).getId());
+            if (baseDiskDao.exists(diskImage.getId())) {
+                baseDiskDao.update(diskImage);
+                DiskVmElement dve = diskVmElementDao.get(diskImage.getDiskVmElementForVm(vmId).getId());
                 if (dve != null && !dve.equals(diskImage.getDiskVmElementForVm(vmId))) {
-                    getDiskVmElementDao().update(diskImage.getDiskVmElementForVm(vmId));
+                    diskVmElementDao.update(diskImage.getDiskVmElementForVm(vmId));
                 }
 
             } else {
                 // If can't find the image, insert it as illegal so that it can't be used and make the device unplugged.
-                if (getDiskImageDao().getSnapshotById(diskImage.getImageId()) == null) {
+                if (diskImageDao.getSnapshotById(diskImage.getImageId()) == null) {
                     diskImage.setImageStatus(ImageStatus.ILLEGAL);
                     diskImage.setVmSnapshotId(activeSnapshotId);
 
@@ -726,63 +726,15 @@ public class SnapshotsManager {
      * @param diskIdsFromSnapshot - An image group id list for images which are part of the VM.
      */
     private void removeDisksNotInSnapshot(Guid vmId, List<Guid> diskIdsFromSnapshot) {
-        for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
+        for (VmDevice vmDevice : vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId, VmDeviceGeneralType.DISK, VmDeviceType.DISK.getName())) {
             if (!diskIdsFromSnapshot.contains(vmDevice.getDeviceId()) && vmDevice.getSnapshotId() == null) {
-                Disk disk = getDiskDao().get(vmDevice.getDeviceId());
+                Disk disk = diskDao.get(vmDevice.getDeviceId());
                 if (disk != null && disk.isAllowSnapshot()) {
-                    getBaseDiskDao().remove(vmDevice.getDeviceId());
-                    getVmDeviceDao().remove(vmDevice.getId());
+                    baseDiskDao.remove(vmDevice.getDeviceId());
+                    vmDeviceDao.remove(vmDevice.getId());
                 }
             }
         }
-    }
-
-    protected VmDeviceDao getVmDeviceDao() {
-        return vmDeviceDao;
-    }
-
-    protected BaseDiskDao getBaseDiskDao() {
-        return baseDiskDao;
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return snapshotDao;
-    }
-
-    protected VmDynamicDao getVmDynamicDao() {
-        return vmDynamicDao;
-    }
-
-    protected VmStaticDao getVmStaticDao() {
-        return vmStaticDao;
-    }
-
-    protected DiskImageDao getDiskImageDao() {
-        return diskImageDao;
-    }
-
-    protected DiskDao getDiskDao() {
-        return diskDao;
-    }
-
-    protected DiskVmElementDao getDiskVmElementDao() {
-        return diskVmElementDao;
-    }
-
-    protected ClusterDao getClusterDao() {
-        return clusterDao;
-    }
-
-    protected VmTemplateDao getVmTemplateDao() {
-        return vmTemplateDao;
-    }
-
-    protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return vmNetworkInterfaceDao;
-    }
-
-    protected QuotaDao getQuotaDao() {
-        return quotaDao;
     }
 }
