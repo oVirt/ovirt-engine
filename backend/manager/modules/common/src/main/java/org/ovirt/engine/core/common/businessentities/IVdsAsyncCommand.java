@@ -12,4 +12,6 @@ public interface IVdsAsyncCommand {
     void reportCompleted();
 
     void onPowerringUp();
+
+    void actualDowntimeReported(int actualDowntime);
 }
