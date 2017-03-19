@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
@@ -50,8 +52,8 @@ public class OvfUtils {
         return vmEntityType;
     }
 
-    public static List<Guid> fetchVmDisks(XmlDocument xmlDocument) {
-        List<Guid> disksIds = new ArrayList<>();
+    public static Set<Guid> fetchVmDisks(XmlDocument xmlDocument) {
+        Set<Guid> disksIds = new HashSet<>();
         XmlNodeList nodeList = xmlDocument.selectNodes("//*/Section");
         XmlNode selectedSection = null;
         for (XmlNode section : nodeList) {

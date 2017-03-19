@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
@@ -24,7 +25,7 @@ public class OvfUtilsTest {
     public void testFetchVmDisks() throws IOException {
         try {
             XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
-            List<Guid> disks = OvfUtils.fetchVmDisks(xmlDocument);
+            Set<Guid> disks = OvfUtils.fetchVmDisks(xmlDocument);
             assertNotNull("The list of disks should not be null", disks);
             assertTrue("The list of disks should not be empty", !disks.isEmpty());
         } catch (Exception e) {
