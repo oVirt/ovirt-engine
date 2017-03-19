@@ -1279,6 +1279,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     @Override
+    public void actualDowntimeReported(int actualDowntime) {
+        // nothing to do
+    }
+
+    @Override
     public CommandCallback getCallback() {
         return getFlow().isStateless() ? new ConcurrentChildCommandsExecutionCallback() : null;
     }

@@ -494,6 +494,14 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
+    public void actualDowntimeReported(Guid vmId, int actualDowntime) {
+        IVdsAsyncCommand command = vdsBroker.getAsyncCommandForVm(vmId);
+        if (command != null) {
+            command.actualDowntimeReported(actualDowntime);
+        }
+    }
+
+    @Override
     public void removeAsyncRunningCommand(Guid vmId) {
         IVdsAsyncCommand command = vdsBroker.removeAsyncRunningCommand(vmId);
         if (command != null) {

@@ -94,6 +94,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     private EngineError migrationErrorCode;
 
     private Integer actualDowntime;
+    private Object actualDowntimeLock = new Object();
 
     private List<VmNetworkInterface> cachedVmPassthroughNics;
     private boolean passthroughNicsUnplugged;
@@ -477,7 +478,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     @Override
     public void runningSucceded() {
         try {
-            getDowntime();
+            queryDowntime();
             vmDynamicDao.clearMigratingToVds(getVmId());
             updateVmAfterMigrationToDifferentCluster();
             plugPassthroughNics();
@@ -497,12 +498,16 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
     }
 
-    protected void getDowntime() {
+    private void queryDowntime() {
+        if (actualDowntime != null) {
+            return;
+        }
+
         try {
             VDSReturnValue retVal = runVdsCommand(VDSCommandType.MigrateStatus,
                     new MigrateStatusVDSCommandParameters(getDestinationVdsId(), getVmId()));
             if (retVal != null) {
-                actualDowntime = (Integer) retVal.getReturnValue();
+                setActualDowntime((Integer) retVal.getReturnValue());
             }
         } catch (EngineException e) {
             migrationErrorCode = e.getErrorCode();
@@ -833,6 +838,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return (actualDowntime == null) ? "(N/A)" : actualDowntime + "ms";
     }
 
+    public void setActualDowntime(Integer actualDowntime) {
+        synchronized (actualDowntimeLock) {
+            if (this.actualDowntime == null && actualDowntime != null) {
+                this.actualDowntime = actualDowntime;
+            }
+        }
+    }
     @Override
     protected String getLockMessage() {
         StringBuilder builder = new StringBuilder(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_MIGRATED.name());
@@ -873,6 +885,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     @Override
     public void onPowerringUp() {
         // nothing to do
+    }
+
+    @Override
+    public void actualDowntimeReported(int actualDowntime) {
+        setActualDowntime(actualDowntime);
     }
 
     protected VmValidator getVmValidator() {
