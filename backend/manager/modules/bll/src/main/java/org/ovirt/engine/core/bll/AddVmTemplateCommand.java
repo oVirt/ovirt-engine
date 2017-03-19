@@ -970,7 +970,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private void restoreCommandState() {
         setVmId(getVmIdFromImageParameters());
-        isVmInDb = getVm() != null;
+        isVmInDb = !getVmId().equals(Guid.Empty) && getVm() != null;
     }
 
     @Override
