@@ -150,10 +150,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected void init() {
         T parameters = getParameters();
         if (Guid.isNullOrEmpty(getParameters().getVmTemplateId())) {
-            setVmTemplateId(Guid.newGuid());
-        } else {
-            setVmTemplateId(getParameters().getVmTemplateId());
+            getParameters().setVmTemplateId(Guid.newGuid());
         }
+        setVmTemplateId(getParameters().getVmTemplateId());
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         super.setVmTemplateName(parameters.getName());
         VmStatic parameterMasterVm = parameters.getMasterVm();
         if (parameterMasterVm != null) {
@@ -313,8 +313,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             vmHandler.lockVm(vmDynamic, getCompensationContext());
         }
         setActionReturnValue(Guid.Empty);
-        getParameters().setVmTemplateId(getVmTemplateId());
-        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
 
         // set template id as base for new templates
         if (!isTemplateVersion()) {
