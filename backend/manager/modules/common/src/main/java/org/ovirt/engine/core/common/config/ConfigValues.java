@@ -2019,5 +2019,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("20")
     ExternalNetworkProviderConnectionTimeout,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    LegacyGraphicsDisplay,
+
     Invalid
 }

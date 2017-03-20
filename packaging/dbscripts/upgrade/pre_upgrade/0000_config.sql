@@ -633,6 +633,8 @@ select fn_db_add_config_value('MigrationPolicies','[{"id":{"uuid":"80554327-0569
 
 select fn_db_add_config_value('SriovHotPlugSupported','false','3.6');
 
+select fn_db_add_config_value('LegacyGraphicsDisplay','true','3.6');
+
 -- Hosted Engine
 select fn_db_add_config_value('HostedEngineVmName','HostedEngine','general');
 select fn_db_add_config_value('AutoImportHostedEngine','true','general');

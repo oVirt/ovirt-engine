@@ -181,4 +181,8 @@ public class FeatureSupported {
     public static boolean isAgentChannelNamingSupported(Version version) {
         return supportedInConfig(ConfigValues.AgentChannelNamingSupported, version);
     }
+
+    public static boolean isLegacyDisplaySupported(Version version) {
+        return supportedInConfig(ConfigValues.LegacyGraphicsDisplay, version);
+    }
 }

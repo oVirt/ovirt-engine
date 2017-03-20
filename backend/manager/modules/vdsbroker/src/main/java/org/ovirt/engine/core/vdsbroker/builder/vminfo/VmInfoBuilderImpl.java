@@ -815,7 +815,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             devices.add(struct);
         }
 
-        if (!graphicsInfos.isEmpty()) {
+        if (!graphicsInfos.isEmpty() && FeatureSupported.isLegacyDisplaySupported(vm.getCompatibilityVersion())) {
             String legacyGraphicsType = (graphicsInfos.size() == 2)
                     ? VdsProperties.QXL
                     : graphicsTypeToLegacyDisplayType(graphicsInfos.keySet().iterator().next());
@@ -864,9 +864,11 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                 ComparatorUtils.sortLast(VmDeviceType.SPICE.getName()));
         buildVmDevicesFromDb(VmDeviceGeneralType.GRAPHICS, false, extraSpecParams, spiceLastDeviceComparator);
 
-        String legacyDisplay = deriveDisplayTypeLegacy();
-        if (legacyDisplay != null) {
-            createInfo.put(VdsProperties.display, legacyDisplay);
+        if (FeatureSupported.isLegacyDisplaySupported(vm.getCompatibilityVersion())) {
+            String legacyDisplay = deriveDisplayTypeLegacy();
+            if (legacyDisplay != null) {
+                createInfo.put(VdsProperties.display, legacyDisplay);
+            }
         }
     }
 
