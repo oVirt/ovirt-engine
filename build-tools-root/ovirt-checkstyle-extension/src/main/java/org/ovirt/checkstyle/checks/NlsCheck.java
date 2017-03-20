@@ -11,7 +11,6 @@ import com.puppycrawl.tools.checkstyle.api.DetailAST;
 public class NlsCheck extends AbstractCheck {
     private static final Pattern patternString = Pattern.compile("[\"][^\"]*[^\\\\][\"]");
 
-    private Matcher matcher;
     private boolean run = false;
 
     @Override
@@ -48,8 +47,7 @@ public class NlsCheck extends AbstractCheck {
             }
 
             List<QuotedString> stringList = new LinkedList<>();
-            matcher = patternString.matcher(lineText);
-            int j = 0;
+            Matcher matcher = patternString.matcher(lineText);
             while (matcher.find()) {
 
                 if (getFileContents().hasIntersectionWithComment(i,
@@ -81,7 +79,7 @@ public class NlsCheck extends AbstractCheck {
 
             }
 
-            j = 0;
+            int j = 0;
             for (QuotedString str : stringList) {
                 ++j;
                 Pattern patternNls = Pattern.compile("\\$NON-NLS-" + j + "\\$"); //$NON-NLS-1$//$NON-NLS-2$
