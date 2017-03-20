@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.view.popup;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+
 import com.google.gwt.event.shared.EventBus;
 
 /**
@@ -62,4 +63,7 @@ public abstract class AbstractModelBoundWidgetPopupView<T extends Model> extends
        return popupWidget;
     }
 
+    protected void setNoScroll(boolean value) {
+        dialogPanel.setNoScroll(value);
+    }
 }

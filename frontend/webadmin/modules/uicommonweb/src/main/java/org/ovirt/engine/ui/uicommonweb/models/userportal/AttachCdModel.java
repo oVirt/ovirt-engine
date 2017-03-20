@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
-@SuppressWarnings("unused")
 public class AttachCdModel extends Model {
 
     private ListModel<String> privateIsoImage;

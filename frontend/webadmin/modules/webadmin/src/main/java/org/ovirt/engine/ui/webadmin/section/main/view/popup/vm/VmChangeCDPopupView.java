@@ -18,6 +18,7 @@ public class VmChangeCDPopupView extends AbstractModelBoundWidgetPopupView<Attac
     @Inject
     public VmChangeCDPopupView(EventBus eventBus) {
         super(eventBus, new VmChangeCDPopupWidget(), "400px", "170px"); //$NON-NLS-1$ //$NON-NLS-2$
+        setNoScroll(true);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

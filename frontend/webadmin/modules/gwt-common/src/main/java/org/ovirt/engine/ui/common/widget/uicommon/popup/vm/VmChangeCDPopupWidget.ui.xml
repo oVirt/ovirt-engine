@@ -5,22 +5,11 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
-    <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmChangeCDPopupWidget.Style">
-        .content {
-        }
-
-        .isoImageEditor {
-            width: 100%;
-        }
-
-        .isoImageEditorBox {
-            width: 100%;
-            padding: 0px;
-        }
+    <ui:style>
     </ui:style>
 
-    <g:VerticalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.content}">
-       <e:ListModelListBoxEditor ui:field="isoImageEditor" addStyleNames="{style.isoImageEditor}" />
-    </g:VerticalPanel>
+    <g:SimplePanel>
+       <e:ListModelListBoxEditor ui:field="isoImageEditor" usePatternFly="true" />
+    </g:SimplePanel>
 
 </ui:UiBinder>
