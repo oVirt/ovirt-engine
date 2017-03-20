@@ -20,7 +20,7 @@ public class DataFromHostSetupNetworksModel {
     private Set<CreateOrUpdateBond> bonds = new HashSet<>();
     private Set<Guid> removedBonds = new HashSet<>();
 
-    private Set<String> networksToSync = new HashSet<>();;
+    private Set<String> networksToSync = new HashSet<>();
 
     private Set<String> removedUnmanagedNetworks = new HashSet<>();
 

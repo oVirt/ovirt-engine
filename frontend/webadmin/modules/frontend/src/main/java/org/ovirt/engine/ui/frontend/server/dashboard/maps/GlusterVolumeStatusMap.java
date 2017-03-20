@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.frontend.server.dashboard.maps;
 
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 
 /**
  * Map Gluster Volume statuses to one of the following statuses:
