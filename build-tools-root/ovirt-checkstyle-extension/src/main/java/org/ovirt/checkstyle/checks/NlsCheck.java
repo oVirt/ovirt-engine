@@ -23,7 +23,7 @@ public class NlsCheck extends AbstractCheck {
         if (!run){
             return;
         }
-        if (!getFileContents().getFilename().matches(".*\\.java")) {
+        if (!getFileContents().getFileName().matches(".*\\.java")) {
             return;
         }
 
