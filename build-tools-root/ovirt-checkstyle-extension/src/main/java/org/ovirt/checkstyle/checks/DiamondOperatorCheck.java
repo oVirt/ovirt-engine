@@ -79,20 +79,5 @@ public class DiamondOperatorCheck extends AbstractCheck {
 
         failCheck(expressionNode.getFirstChild());
     }
-
-    /**
-     * Checks if type arguments of left and right side of assignment are equals
-     * @param variableDefNode
-     *          current variable definition
-     * @param typeArgs
-     *          right type arguments of assignment
-     * @return true or false
-     */
-    private boolean isSameTypeArgsInVariableDef(DetailAST variableDefNode, DetailAST typeArgs) {
-        DetailAST typeNode = variableDefNode.findFirstToken(TokenTypes.TYPE);
-        DetailAST variableDefTypeArgs = typeNode.findFirstToken(TokenTypes.TYPE_ARGUMENTS);
-
-        return variableDefTypeArgs != null && variableDefTypeArgs.equalsTree(typeArgs);
-    }
 }
 
