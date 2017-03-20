@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.tasks.CommandHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
@@ -64,10 +66,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         DiskImage diskImage = (DiskImage) diskDao.get(imageId);
         DiskValidator diskValidator = getDiskValidator(diskImage);
         DiskImagesValidator diskImagesValidator = getDiskImagesValidator(diskImage);
+        StorageDomainValidator storageDomainValidator = getStorageDomainValidator(
+                storageDomainDao.getForStoragePool(getStorageDomainId(), diskImage.getStoragePoolId()));
         return validate(diskValidator.isDiskExists())
                 && validate(diskValidator.isDiskAttachedToAnyVm())
                 && validate(diskImagesValidator.diskImagesNotIllegal())
-                && validate(diskImagesValidator.diskImagesNotLocked());
+                && validate(diskImagesValidator.diskImagesNotLocked())
+                && validate(storageDomainValidator.isDomainExistAndActive());
     }
 
     protected DiskImagesValidator getDiskImagesValidator(DiskImage diskImage) {
@@ -76,6 +81,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     protected DiskValidator getDiskValidator(DiskImage diskImage) {
         return new DiskValidator(diskImage);
+    }
+
+    protected StorageDomainValidator getStorageDomainValidator(StorageDomain storageDomain) {
+        return new StorageDomainValidator(storageDomain);
     }
 
     private PrepareImageVDSCommandParameters getPrepareParameters(Guid vdsId) {
