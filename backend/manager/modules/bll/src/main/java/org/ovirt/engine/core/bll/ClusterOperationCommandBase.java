@@ -98,8 +98,7 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
     protected void checkMaxMemoryOverCommitValue() {
         if (getCluster().getMaxVdsMemoryOverCommit() <= 0) {
-            getCluster().setMaxVdsMemoryOverCommit(
-                    Config.<Integer>getValue(ConfigValues.MaxVdsMemOverCommit));
+            getCluster().setMaxVdsMemoryOverCommit(100);
         }
     }
 
