@@ -168,7 +168,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean checkOperationIsCorrect() {
         if (getParameters().getOperation() == ImageOperation.Move
                 && getImage().getVmEntityType() != null && getImage().getVmEntityType().isTemplateType()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK,
+                    String.format("$%1$s %2$s", "diskAliases", getImage().getDiskAlias()));
         }
         return true;
     }
