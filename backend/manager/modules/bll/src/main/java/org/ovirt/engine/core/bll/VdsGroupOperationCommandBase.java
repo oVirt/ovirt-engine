@@ -112,8 +112,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
 
     protected void checkMaxMemoryOverCommitValue() {
         if (getVdsGroup().getMaxVdsMemoryOverCommit() <= 0) {
-            getVdsGroup().setMaxVdsMemoryOverCommit(
-                    Config.<Integer>getValue(ConfigValues.MaxVdsMemOverCommit));
+            getVdsGroup().setMaxVdsMemoryOverCommit(100);
         }
     }
 
