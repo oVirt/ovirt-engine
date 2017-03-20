@@ -9,7 +9,7 @@ import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 
 public class NlsCheck extends AbstractCheck {
-    private final Pattern patternString = Pattern.compile("[\"][^\"]*[^\\\\][\"]");
+    private static final Pattern patternString = Pattern.compile("[\"][^\"]*[^\\\\][\"]");
 
     private Matcher matcher;
     private boolean run = false;
