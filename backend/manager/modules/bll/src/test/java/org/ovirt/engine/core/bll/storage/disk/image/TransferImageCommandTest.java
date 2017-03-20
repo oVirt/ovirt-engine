@@ -46,7 +46,8 @@ public class TransferImageCommandTest extends BaseCommandTest{
     @Mock
     ImageTransferUpdater imageTransferUpdater;
 
-    @Spy @InjectMocks
+    @Spy
+    @InjectMocks
     protected TransferImageCommand<? extends TransferImageParameters> transferImageCommand = spyCommand();
 
     @Before

@@ -36,13 +36,16 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public final class ManageNetworkClustersCommand extends CommandBase<ManageNetworkClustersParameters> {
 
-    @Inject @Named
+    @Inject
+    @Named
     private Predicate<NetworkCluster> managementNetworkAppointmentPredicate;
 
-    @Inject @Named
+    @Inject
+    @Named
     private Function<NetworkCluster, AttachNetworkToClusterParameter> networkClusterToAttachNetworkToClusterParameterTransformer;
 
-    @Inject @Named
+    @Inject
+    @Named
     private Function<NetworkCluster, NetworkClusterParameters> networkClusterParameterTransformer;
 
     @Inject

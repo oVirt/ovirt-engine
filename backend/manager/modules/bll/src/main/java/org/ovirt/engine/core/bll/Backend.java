@@ -123,7 +123,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private ServiceLoader serviceLoader;
     @Inject
     private DbFacade dbFacade;
-    @Inject @Any
+    @Inject
+    @Any
     private Instance<SchedulerUtil> taskSchedulers;
     @Inject
     private SessionDataContainer sessionDataContainer;

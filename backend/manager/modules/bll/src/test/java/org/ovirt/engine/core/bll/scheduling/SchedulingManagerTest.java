@@ -44,7 +44,8 @@ public class SchedulingManagerTest extends TransactionalTestBase {
             mockConfig(ConfigValues.HighVmCountForEvenGuestDistribute, 5)
     );
 
-    @Inject @Spy
+    @Inject
+    @Spy
     private Instance<SchedulingManager> schedulingManager;
 
     @Deployment(name = "SchedulingManagerTest")
@@ -70,11 +71,14 @@ public class SchedulingManagerTest extends TransactionalTestBase {
 
     @Singleton
     private static class Mocks {
-        @Produces @Singleton
+        @Produces
+        @Singleton
         private ResourceManager resourceManager = mock(ResourceManager.class);
-        @Produces @Singleton
+        @Produces
+        @Singleton
         private BackendInternal backendInternal = mock(BackendInternal.class);
-        @Produces @Singleton
+        @Produces
+        @Singleton
         private NetworkDeviceHelper networkDeviceHelper = mock(NetworkDeviceHelper.class);
     }
 }

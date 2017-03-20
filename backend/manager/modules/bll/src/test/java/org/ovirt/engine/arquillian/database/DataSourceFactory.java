@@ -18,19 +18,24 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Singleton
 public class DataSourceFactory {
 
-    @Produces @Singleton
+    @Produces
+    @Singleton
     private final PostgresDbEngineDialect engineDialect;
 
-    @Produces @Singleton
+    @Produces
+    @Singleton
     private final PlatformTransactionManager transactionManager;
 
-    @Produces @Singleton
+    @Produces
+    @Singleton
     private final JdbcTemplate jdbcTemplate;
 
-    @Produces @Singleton
+    @Produces
+    @Singleton
     private final DataSource dataSource;
 
-    @Produces @Singleton
+    @Produces
+    @Singleton
     private final SimpleJdbcCallsHandler jdbcCallsHandler;
 
     public DataSourceFactory() throws ClassNotFoundException, IOException {

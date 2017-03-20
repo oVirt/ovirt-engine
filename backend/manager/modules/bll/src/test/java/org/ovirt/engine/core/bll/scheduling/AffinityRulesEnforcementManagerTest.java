@@ -59,7 +59,8 @@ public class AffinityRulesEnforcementManagerTest {
     @Mock
     VM vm2;
 
-    @InjectMocks @Spy
+    @InjectMocks
+    @Spy
     private AffinityRulesEnforcementManager arem;
 
     private Cluster cluster1;
