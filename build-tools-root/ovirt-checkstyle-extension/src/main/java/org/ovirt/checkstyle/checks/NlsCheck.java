@@ -59,7 +59,7 @@ public class NlsCheck extends AbstractCheck {
                         .start(), matcher.end()));
             }
 
-            if (startAnnotation == true) {
+            if (startAnnotation) {
 
                 int endAnno = hasEndAnno(lineText, i, stringList);
                 if (endAnno != -1) {
