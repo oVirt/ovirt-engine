@@ -401,7 +401,7 @@ public class SsoUtils {
 
     public static String getUserId(ExtMap principalRecord) {
         String principal = principalRecord.get(Authz.PrincipalRecord.PRINCIPAL);
-        return principal != null ? principal : principalRecord.<String>get(Authz.PrincipalRecord.NAME);
+        return principal != null ? principal : principalRecord.get(Authz.PrincipalRecord.NAME);
     }
 
     public static void persistUserPassword(
@@ -595,7 +595,7 @@ public class SsoUtils {
     }
 
     public static List<String> scopeAsList(String scope) {
-        return StringUtils.isEmpty(scope) ? Collections.<String>emptyList() : Arrays.asList(scope.trim().split("\\s *"));
+        return StringUtils.isEmpty(scope) ? Collections.emptyList() : Arrays.asList(scope.trim().split("\\s *"));
     }
 
     public static String encrypt(ServletContext ctx, String clientId, String rawText) throws Exception {
@@ -697,13 +697,13 @@ public class SsoUtils {
             if (!resolvedGroups.containsKey(origRecord.<String>get(Authz.GroupRecord.ID))) {
                 ExtMap groupRecord = new ExtMap(origRecord);
                 groupRecord.put(Authz.PrincipalRecord.PRINCIPAL, "");
-                resolvedGroups.put(groupRecord.<String>get(Authz.GroupRecord.ID), groupRecord);
+                resolvedGroups.put(groupRecord.get(Authz.GroupRecord.ID), groupRecord);
                 groupRecord.put(
                         Authz.GroupRecord.GROUPS,
                         processGroupMemberships(
-                                groupRecord.<Collection<ExtMap>>get(
+                                groupRecord.get(
                                         Authz.GroupRecord.GROUPS,
-                                        Collections.<ExtMap>emptyList()),
+                                        Collections.emptyList()),
                                 resolvedGroups
                         ));
             }
@@ -717,15 +717,15 @@ public class SsoUtils {
         Set<String> membershipIds = new HashSet<>();
         for (ExtMap origRecord : memberships) {
             ExtMap groupRecord = new ExtMap(origRecord);
-            membershipIds.add(groupRecord.<String>get(Authz.GroupRecord.ID));
+            membershipIds.add(groupRecord.get(Authz.GroupRecord.ID));
             if (!resolvedGroups.containsKey(groupRecord.<String>get(Authz.GroupRecord.ID))) {
-                resolvedGroups.put(groupRecord.<String>get(Authz.GroupRecord.ID), groupRecord);
+                resolvedGroups.put(groupRecord.get(Authz.GroupRecord.ID), groupRecord);
                 groupRecord.put(
                         Authz.GroupRecord.GROUPS,
                         processGroupMemberships(
-                                groupRecord.<Collection<ExtMap>>get(
+                                groupRecord.get(
                                         Authz.GroupRecord.GROUPS,
-                                        Collections.<ExtMap>emptyList()),
+                                        Collections.emptyList()),
                                 resolvedGroups
                         ));
             }
