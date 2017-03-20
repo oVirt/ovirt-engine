@@ -140,7 +140,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             InstallVdsParameters tempVar = new InstallVdsParameters(getVdsId(), getParameters().getPassword());
             tempVar.setIsReinstallOrUpgrade(getParameters().isReinstallOrUpgrade());
             tempVar.setoVirtIsoFile(getParameters().getoVirtIsoFile());
-            if (vdsDao.get(getVdsId()).getStatus() ==  VDSStatus.InstallingOS) {
+            if (vdsDynamicDao.get(getVdsId()).getStatus() ==  VDSStatus.InstallingOS) {
                 // TODO: remove hack when reinstall api will provider override-firewall parameter.
                 // https://bugzilla.redhat.com/show_bug.cgi?id=1177126 - for now we override firewall
                 // configurations on each deploy for provisioned host to avoid wrong deployment.
