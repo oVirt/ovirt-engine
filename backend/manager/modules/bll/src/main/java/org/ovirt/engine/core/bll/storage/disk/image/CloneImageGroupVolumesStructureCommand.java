@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.action.CloneImageGroupVolumesStructureComman
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -68,11 +67,6 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
     public CommandCallback getCallback() {
         return new SerialChildCommandsExecutionCallback();
     }
-
-    private StorageDomainStatic getStorageDomainStatic(Guid domainId) {
-        return storageDomainStaticDao.get(domainId);
-    }
-
 
     @Override
     public boolean performNextOperation(int completedChildren) {
