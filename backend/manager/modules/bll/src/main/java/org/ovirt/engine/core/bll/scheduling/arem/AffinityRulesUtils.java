@@ -354,8 +354,7 @@ public class AffinityRulesUtils {
                 //get all affinity groups with negative vm to vm affinity
                 .filter(AffinityGroup::isVmAffinityEnabled)
                 .filter(affinityGroup -> !affinityGroup.isVmPositive())
-                .forEach(affinityGroup ->
-                {
+                .forEach(affinityGroup -> {
                     affinityGroup.getVmIds()
                             .forEach(vm_first -> {
                                 affinityGroup.getVmIds().stream()
