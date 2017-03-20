@@ -92,6 +92,9 @@ rm -f ./*tar.gz
 make clean \
     "EXTRA_BUILD_FLAGS=$EXTRA_BUILD_FLAGS"
 
+# execute packaging/setup tests
+automation/packaging-setup-tests.sh
+
 # perform quick validations
 make validations
 
