@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.utils.network.predicate;
 
-import java.util.function.Predicate;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.function.Predicate;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;

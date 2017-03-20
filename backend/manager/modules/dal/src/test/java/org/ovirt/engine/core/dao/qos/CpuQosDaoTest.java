@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.dao.qos;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;

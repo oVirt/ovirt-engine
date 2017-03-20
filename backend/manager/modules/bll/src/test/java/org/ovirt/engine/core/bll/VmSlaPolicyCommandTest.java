@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.Function;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dao;
 
+import static org.ovirt.engine.core.utils.CollectionUtils.pairsToMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,8 +10,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import static org.ovirt.engine.core.utils.CollectionUtils.pairsToMap;
 
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.Pair;
