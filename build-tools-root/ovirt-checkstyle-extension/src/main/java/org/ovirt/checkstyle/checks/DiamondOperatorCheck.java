@@ -20,7 +20,7 @@
 
 package org.ovirt.checkstyle.checks;
 
-import com.puppycrawl.tools.checkstyle.api.Check;
+import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
@@ -34,7 +34,7 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
  *
  * @author <a href="mailto:amureini@redhat.com">Allon Mureinik</a> (oVirt adaptation)
  */
-public class DiamondOperatorCheck extends Check {
+public class DiamondOperatorCheck extends AbstractCheck {
     @Override
     public int[] getDefaultTokens() {
         return new int[] { TokenTypes.ASSIGN };

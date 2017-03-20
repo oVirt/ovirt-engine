@@ -1,6 +1,6 @@
 package org.ovirt.checkstyle.checks;
 
-import com.puppycrawl.tools.checkstyle.api.Check;
+import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 import com.puppycrawl.tools.checkstyle.utils.ScopeUtils;
@@ -19,7 +19,7 @@ import com.puppycrawl.tools.checkstyle.utils.ScopeUtils;
  * should be removed once such a check is integrated into the checkstyle project.
  * </p>
  */
-public class NoMemberInitializationCheck extends Check {
+public class NoMemberInitializationCheck extends AbstractCheck {
     private boolean run = true;
 
     @Override

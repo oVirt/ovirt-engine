@@ -1,6 +1,6 @@
 package org.ovirt.checkstyle.checks;
 
-import com.puppycrawl.tools.checkstyle.api.Check;
+import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
@@ -9,7 +9,7 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
  * href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-8.html#jls-8.8.9">default</a> constructor without
  * arguments.
  */
-public class NoArgConstructorCheck extends Check {
+public class NoArgConstructorCheck extends AbstractCheck {
 
     private boolean run = true;
 

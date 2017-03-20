@@ -1,6 +1,6 @@
 package org.ovirt.checkstyle.checks;
 
-import com.puppycrawl.tools.checkstyle.api.Check;
+import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
@@ -8,7 +8,7 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
  * Since GWT can't handle member variables which have the private modifier, this check was added to make sure it is not
  * used in the packages that need to undergo GWT compilation.
  */
-public class NoFinalMemberCheck extends Check {
+public class NoFinalMemberCheck extends AbstractCheck {
 
     private boolean run = true;
 
