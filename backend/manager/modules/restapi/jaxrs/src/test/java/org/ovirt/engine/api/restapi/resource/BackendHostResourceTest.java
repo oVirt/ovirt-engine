@@ -350,7 +350,11 @@ public class BackendHostResourceTest
                                            new String[] { "VdsId" },
                                            new Object[] { GUIDS[0] }));
 
-        verifyActionResponse(resource.approve(new Action() {{ setCluster(new org.ovirt.engine.api.model.Cluster()); getCluster().setId(GUIDS[0].toString()); }}));
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
+        cluster.setId(GUIDS[0].toString());
+        Action action = new Action();
+        action.setCluster(cluster);
+        verifyActionResponse(resource.approve(action));
     }
 
     @Test

@@ -89,6 +89,8 @@ public class BackendExternalVmImportsResourceTest extends AbstractBackendBaseTes
     }
 
     private ExternalVmImport createVmImport() {
+        File file = new File();
+        file.setId(DRIVERS_ISO);
         ExternalVmImport vmImport = new ExternalVmImport();
         vmImport.setName(EXTERNAL_VM_NAME);
         vmImport.setVm(new Vm());
@@ -101,7 +103,7 @@ public class BackendExternalVmImportsResourceTest extends AbstractBackendBaseTes
         vmImport.getHost().setId(HOST_ID.toString());
         vmImport.setSparse(true);
         vmImport.setProvider(ExternalVmProviderType.VMWARE);
-        vmImport.setDriversIso(new File() {{ setId(DRIVERS_ISO); }});
+        vmImport.setDriversIso(file);
         vmImport.setUsername(USERNAME);
         vmImport.setPassword(PASSWORD);
         vmImport.setUrl(VMWARE_URL);

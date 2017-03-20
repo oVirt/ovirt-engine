@@ -1355,9 +1355,9 @@ public class BackendVmsResourceTest
 
     @SuppressWarnings("serial")
     private List<DiskImage> createDiskList() {
-        return new ArrayList<DiskImage>(){{
-                                            add(new DiskImage(){{setId(GUIDS[0]);}});
-                                         }};
+        DiskImage diskImage = new DiskImage();
+        diskImage.setId(GUIDS[0]);
+        return Collections.singletonList(diskImage);
     }
 
     static org.ovirt.engine.core.common.businessentities.VM setUpEntityExpectations(
