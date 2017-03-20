@@ -79,7 +79,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
                 decoratedMacPoolFactory);
     }
 
-    @Test()
+    @Test
     public void testPoolDoesNotExistForGivenCluster() throws Exception {
         macPoolPerCluster.initialize();
         expectedException.expect(IllegalStateException.class);

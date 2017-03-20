@@ -40,14 +40,14 @@ public class CalculateBaseNicTest {
         calculateBaseNic.getBaseNic(null);
     }
 
-    @Test()
+    @Test
     public void testGetBaseNicBaseNicIsSimplyReturned() throws Exception {
         verifyNoMoreInteractions(interfaceDao);
         assertThat(calculateBaseNic.getBaseNic(baseNic, null), is(baseNic));
 
     }
 
-    @Test()
+    @Test
     public void testGetBaseNicVerifyDelegation() throws Exception {
         CalculateBaseNic spy = spy(calculateBaseNic);
 
@@ -55,7 +55,7 @@ public class CalculateBaseNicTest {
         verify(spy).getBaseNic(any(VdsNetworkInterface.class), isNull());
     }
 
-    @Test()
+    @Test
     public void testGetBaseNicWhenCacheIsNotProvided() throws Exception {
         when(interfaceDao.get(baseNic.getVdsId(), baseNic.getName())).thenReturn(baseNic);
         assertThat(calculateBaseNic.getBaseNic(vlanNic, null), is(baseNic));
@@ -63,7 +63,7 @@ public class CalculateBaseNicTest {
         verifyNoMoreInteractions(interfaceDao);
     }
 
-    @Test()
+    @Test
     public void testGetBaseNicUsingCacheNotHavingRequiredRecord() throws Exception {
         when(interfaceDao.get(baseNic.getVdsId(), baseNic.getName())).thenReturn(baseNic);
         Map<String, VdsNetworkInterface> cachedExistingInterfaces =
@@ -73,7 +73,7 @@ public class CalculateBaseNicTest {
         verifyNoMoreInteractions(interfaceDao);
     }
 
-    @Test()
+    @Test
     public void testGetBaseNicUsingCache() throws Exception {
         Map<String, VdsNetworkInterface> cachedExistingInterfaces =
             Collections.singletonMap(baseNic.getName(), baseNic);

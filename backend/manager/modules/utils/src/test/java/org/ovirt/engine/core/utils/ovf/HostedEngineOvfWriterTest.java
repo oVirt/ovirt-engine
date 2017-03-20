@@ -86,7 +86,7 @@ public class HostedEngineOvfWriterTest {
                 .hasMessageContaining("cpuId");
     }
 
-    @Test()
+    @Test
     public void notHostedEngineVM() {
         vm.setOrigin(OriginType.OVIRT);
         assertThatThrownBy(

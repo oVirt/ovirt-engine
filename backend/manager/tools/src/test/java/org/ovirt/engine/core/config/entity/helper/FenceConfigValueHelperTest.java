@@ -42,7 +42,7 @@ public class FenceConfigValueHelperTest {
         assertEquals(expectedResult, validator.validate(ConfigValues.VdsFenceType.name(), vdsFenceType).isOk());
     }
 
-    @Parameterized.Parameters()
+    @Parameterized.Parameters
     public static Object[][] fenceAgentMappingParams() {
         return new Object[][]{
                 {"agent1=agent2", "key1=val1", "agent1:secure=secure", "agent1", true},

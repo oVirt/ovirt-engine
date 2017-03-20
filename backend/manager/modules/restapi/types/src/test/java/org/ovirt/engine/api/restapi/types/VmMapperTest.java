@@ -423,14 +423,14 @@ public class VmMapperTest extends
         VmMapper.stringToVCpupin("X#X#X");
     }
 
-    @Test()
+    @Test
     public void stringToVCpupinIntervalsList() {
         VcpuPin pin = VmMapper.stringToVCpupin("1#1-4,6");
         assertEquals(1, (int) pin.getVcpu());
         assertEquals("1-4,6", pin.getCpuSet());
     }
 
-    @Test()
+    @Test
     public void stringToVCpupinSimple() {
         VcpuPin pin = VmMapper.stringToVCpupin("1#1");
         assertEquals(1, (int) pin.getVcpu());

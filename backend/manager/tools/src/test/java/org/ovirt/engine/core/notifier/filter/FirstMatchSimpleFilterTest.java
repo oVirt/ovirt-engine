@@ -268,7 +268,7 @@ public class FirstMatchSimpleFilterTest {
         assertEquals(4, smtp.getEvents().size());
     }
 
-    @Test()
+    @Test
     public void testParsePositive() throws Exception {
         // Should parse
         FirstMatchSimpleFilter.parse("include:message(kuku:pupu) include:message(kuku:pupu)");
