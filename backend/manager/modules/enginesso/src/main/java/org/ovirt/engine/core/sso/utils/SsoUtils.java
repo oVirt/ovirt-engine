@@ -101,7 +101,7 @@ public class SsoUtils {
             log.debug("Exception", ex);
             throw new RuntimeException(ex);
         } finally {
-            SsoUtils.getSsoSession(request).cleanup();
+            getSsoSession(request).cleanup();
         }
     }
 
@@ -134,7 +134,7 @@ public class SsoUtils {
         log.debug("Entered redirectToErrorPage");
         SsoSession ssoSession = null;
         try {
-            ssoSession = SsoUtils.getSsoSession(request, true);
+            ssoSession = getSsoSession(request, true);
             if (ssoSession.getStatus() != SsoSession.Status.authenticated) {
                 ssoSession.setStatus(SsoSession.Status.unauthenticated);
             }
@@ -332,7 +332,7 @@ public class SsoUtils {
         if (ssoSession == null) {
             try {
                 ssoSession = getSsoContext(request).getSsoSessionById(
-                        SsoUtils.getFormParameter(request, "sessionIdToken"));
+                        getFormParameter(request, "sessionIdToken"));
                 // If the server is restarted the session will be missing from SsoContext
                 if (ssoSession == null) {
                     throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT, "Session expired please try again.");
@@ -568,7 +568,7 @@ public class SsoUtils {
             if (ovirtData != null) {
                 Collection<ExtMap> groupIds = (Collection<ExtMap>) ovirtData.get("group_ids");
                 if (groupIds != null) {
-                    ovirtData.put("group_ids", SsoUtils.prepareGroupMembershipsForJson(groupIds));
+                    ovirtData.put("group_ids", prepareGroupMembershipsForJson(groupIds));
                 }
             }
             String jsonPayload = getJson(payload);
