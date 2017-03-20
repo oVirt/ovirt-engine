@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
 
-public class EventProvidingCollection<T> extends ObservableCollection<T> implements IProvideCollectionChangedEvent
-{
+public class EventProvidingCollection<T> extends ObservableCollection<T> implements IProvideCollectionChangedEvent {
     private Event<EventArgs> privateCollectionChangedEvent;
     public Event<EventArgs> getCollectionChangedEvent() {
         return privateCollectionChangedEvent;
