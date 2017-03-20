@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <!DOCTYPE suppressions PUBLIC "-//Puppy Crawl//DTD Suppressions 1.1//EN" "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 <suppressions>
+    <!-- Suppress all checks on generated sources -->
+    <suppress checks="." files="[\\/]generated-sources[\\/]"/>
+
+    <!-- Suppress checks on properties files brought from Zanata-->
+    <suppress checks="RegexpSingleline" files="[\\/].*.properties"/>
+    <suppress checks="NewlineAtEndOfFile" files="[\\/].*.properties"/>
+    <suppress checks="FileTabCharacter" files="[\\/].*.properties"/>
+
     <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files=".*Test\.java"/>
     <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files="VersionStorageFormatUtil.java"/>
     <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files="MapBackedPreferences.java"/>
