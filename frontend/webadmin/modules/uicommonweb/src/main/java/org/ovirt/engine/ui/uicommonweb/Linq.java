@@ -201,19 +201,6 @@ public final class Linq {
 
     }
 
-    /**
-     * Checks if Any StorageDomain Is Master And Active
-     */
-    public static boolean isAnyStorageDomainIsMasterAndActive(List<StorageDomain> sdl) {
-        for (StorageDomain a : sdl) {
-            if (a.getStorageDomainType() == StorageDomainType.Master && a.getStatus() != null
-                    && a.getStatus() == StorageDomainStatus.Active) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean isDataActiveStorageDomain(StorageDomain storageDomain) {
         boolean isData = storageDomain.getStorageDomainType().isDataDomain();
 

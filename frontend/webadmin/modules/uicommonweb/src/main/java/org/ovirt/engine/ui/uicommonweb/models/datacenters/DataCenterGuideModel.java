@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -337,7 +338,8 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
     // attached.
     private void updateAddAndAttachIsoDomainAvailability(List<VDS> upHosts, List<StorageDomain> attachedDataStorages, List<StorageDomain> attachedIsoStorages) {
         boolean attachOrAddIsoAvailable = attachedIsoStorages.isEmpty();
-        boolean masterStorageExistsAndRunning = Linq.isAnyStorageDomainIsMasterAndActive(attachedDataStorages);
+        boolean masterStorageExistsAndRunning = attachedDataStorages.stream().anyMatch
+                (d -> d.getStorageDomainType() == StorageDomainType.Master && d.getStatus() == StorageDomainStatus.Active);
         boolean addIsoAllowed =
                 attachedDataStorages.size() > 0 && masterStorageExistsAndRunning
                         && attachedIsoStorages.isEmpty() && upHosts.size() > 0;
