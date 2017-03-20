@@ -88,7 +88,7 @@ public class SsoUtils {
         log.debug("Entered redirectToModule");
         try {
             SsoSession ssoSession = getSsoSession(request);
-            URLBuilder redirectUrl = new URLBuilder(getRedirectUrl(request).toString())
+            URLBuilder redirectUrl = new URLBuilder(getRedirectUrl(request))
                     .addParameter("code", ssoSession.getAuthorizationCode());
             String appUrl = ssoSession.getAppUrl();
             if (StringUtils.isNotEmpty(appUrl)) {
