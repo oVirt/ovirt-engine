@@ -936,7 +936,7 @@ public enum ConfigValues {
     UploadImageChunkSizeKB,
 
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("10")
+    @DefaultValueAttribute("120")
     UploadImageXhrTimeoutInSeconds,
 
     @TypeConverterAttribute(Integer.class)
