@@ -136,11 +136,11 @@ public class PendingResourceManager {
 
             /* Make sure the index lists exist */
             if (!resourcesByVm.containsKey(resource.getVm())) {
-                resourcesByVm.put(resource.getVm(), new HashSet<>());
+                resourcesByVm.put(resource.getVm(), ConcurrentHashMap.newKeySet());
             }
 
             if (!resourcesByHost.containsKey(resource.getHost())) {
-                resourcesByHost.put(resource.getHost(), new HashSet<>());
+                resourcesByHost.put(resource.getHost(), ConcurrentHashMap.newKeySet());
             }
 
             /* Update indexes */

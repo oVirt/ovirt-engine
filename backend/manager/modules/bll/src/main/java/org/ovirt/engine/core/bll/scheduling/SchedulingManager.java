@@ -1069,17 +1069,14 @@ public class SchedulingManager implements BackendService {
 
     /**
      * Clear pending records for a VM.
-     * This operation locks the cluster to make sure a possible scheduling operation is not under way.
+     *
+     * While scheduling a VM, this function may be called by a different thread
+     * when another VM successfully starts. As an effect, policy units can see
+     * different states of pending resources.
+     * This is OK, because clearing pending resources should only increase the
+     * number of possible hosts that can run the VM.
      */
     public void clearPendingVm(VmStatic vm) {
-        prepareClusterLock(vm.getClusterId());
-        try {
-            lockCluster(vm.getClusterId());
-            getPendingResourceManager().clearVm(vm);
-        } catch (InterruptedException e) {
-            log.warn("Interrupted.. pending counters can be out of sync");
-        } finally {
-            releaseCluster(vm.getClusterId());
-        }
+        getPendingResourceManager().clearVm(vm);
     }
 }
