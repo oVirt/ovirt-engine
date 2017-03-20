@@ -362,6 +362,16 @@
               max-threads="{{ config.getinteger('HOST_CHECK_FOR_UPDATES_THREAD_POOL_SIZE') }}"
               keepalive-time="5000"
               reject-policy="RETRY_ABORT" />
+          <managed-executor-service
+              name="managedThreadPool"
+              long-running-tasks="true"
+              jndi-name="java:jboss/ee/concurrency/executor/managedThreadPool"
+              context-service="default"
+              thread-factory="default"
+              core-threads="{{ config.getinteger('MANAGED_THREAD_POOL_MIN_SIZE') }}"
+              max-threads="{{ config.getinteger('MANAGED_THREAD_POOL_MAX_SIZE') }}"
+              keepalive-time="5000"
+              reject-policy="RETRY_ABORT" />
         </managed-executor-services>
         <managed-scheduled-executor-services>
           <managed-scheduled-executor-service

@@ -11,6 +11,7 @@
     <module name="javax.activation.api"/>
     <module name="javax.ejb.api"/>
     <module name="javax.enterprise.api"/>
+    <module name="javax.enterprise.concurrent.api"/>
     <module name="javax.servlet.api"/>
     <module name="javax.servlet.jstl.api"/>
     <module name="javax.transaction.api"/>

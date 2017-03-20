@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.concurrent.Executors;
+
 import javax.transaction.TransactionManager;
 
 import org.junit.Before;
@@ -13,6 +15,7 @@ import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.aaa.SsoSessionUtils;
 import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class BaseCommandTest {
 
@@ -37,5 +40,6 @@ public abstract class BaseCommandTest {
         MockitoAnnotations.initMocks(this);
 
         injectorRule.bind(TransactionManager.class, transactionManager);
+        ThreadPoolUtil.setExecutorService(Executors.newFixedThreadPool(1));
     }
 }

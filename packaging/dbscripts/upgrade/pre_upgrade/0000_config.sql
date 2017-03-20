@@ -83,8 +83,6 @@ select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
 select fn_db_add_config_value('DBEngine','Postgres','general');
 select fn_db_add_config_value('DebugTimerLogging','true','general');
-select fn_db_add_config_value('DefaultMaxThreadPoolSize','500','general');
-select fn_db_add_config_value('DefaultMinThreadPoolSize','50','general');
 select fn_db_add_config_value('DefaultMaxThreadWaitQueueSize','100','general');
 
 select fn_db_add_config_value('DefaultWindowsTimeZone','GMT Standard Time','general');

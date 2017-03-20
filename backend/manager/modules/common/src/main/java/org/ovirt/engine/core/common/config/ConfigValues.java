@@ -850,20 +850,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("500")
     VdsLocalDisksCriticallyLowFreeSpace,
 
-    /**
-     * The minimal size of the internal thread pool. Minimal number of threads in pool
-     */
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("50")
-    DefaultMinThreadPoolSize,
-
-    /**
-     * The size of the internal thread pool
-     */
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("500")
-    DefaultMaxThreadPoolSize,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
     DefaultMaxThreadWaitQueueSize,
