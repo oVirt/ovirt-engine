@@ -9,7 +9,7 @@ postgresql-jdbc
 postgresql-server
 pyflakes
 python2-mock
-python-psycopg2
+python2-psycopg2
 python2-pytest
 python-devel
 python-isort
