@@ -15,11 +15,13 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransferDiskImageCommandTest extends TransferImageCommandTest {
@@ -29,6 +31,12 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
 
     @Mock
     DiskImagesValidator diskImagesValidator;
+
+    @Mock
+    StorageDomainValidator storageDomainValidator;
+
+    @Mock
+    StorageDomainDao storageDomainDao;
 
     @Override
     protected TransferDiskImageCommand spyCommand() {
@@ -48,6 +56,7 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
 
         doReturn(diskValidator).when(getCommand()).getDiskValidator(any());
         doReturn(diskImagesValidator).when(getCommand()).getDiskImagesValidator(any());
+        doReturn(storageDomainValidator).when(getCommand()).getStorageDomainValidator(any());
     }
 
     @Test
@@ -110,6 +119,19 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
                 "Can't start a transfer for an illegal image.",
                 getCommand(),
                 EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL);
+    }
+
+    @Test
+    public void validateCantUploadToNonActiveDomain() {
+        initializeSuppliedImage();
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2, ""))
+                .when(storageDomainValidator)
+                .isDomainExistAndActive();
+
+        ValidateTestUtils.runAndAssertValidateFailure(
+                "Can't start a transfer to a non-active storage domain.",
+                getCommand(),
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     @Test
