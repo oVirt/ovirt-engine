@@ -12,7 +12,7 @@ import javax.validation.Payload;
 
 import org.ovirt.engine.core.common.validation.MTUValidator;
 
-@Target({ FIELD })
+@Target(FIELD)
 @Retention(RUNTIME)
 @Documented
 @Constraint(validatedBy = MTUValidator.class)

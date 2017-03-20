@@ -25,7 +25,7 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @Startup
 @Singleton
-@DependsOn({ "InitBackendServicesOnStartupBean" })
+@DependsOn("InitBackendServicesOnStartupBean")
 final class RecoveryStartupBean {
 
     private final ResourceManager resourceManager;

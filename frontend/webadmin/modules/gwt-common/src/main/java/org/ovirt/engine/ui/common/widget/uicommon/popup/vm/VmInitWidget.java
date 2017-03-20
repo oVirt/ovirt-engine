@@ -77,7 +77,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     }
 
     public static interface Resources extends ClientBundle {
-        @Source({ CellTable.Style.DEFAULT_CSS})
+        @Source(CellTable.Style.DEFAULT_CSS)
         BasicStyle createStyle();
     }
 

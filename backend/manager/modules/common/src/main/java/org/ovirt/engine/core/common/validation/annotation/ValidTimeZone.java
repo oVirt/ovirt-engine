@@ -11,7 +11,7 @@ import javax.validation.Payload;
 
 import org.ovirt.engine.core.common.validation.TimeZoneValidator;
 
-@Target({TYPE})
+@Target(TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = TimeZoneValidator.class)
 public @interface ValidTimeZone {

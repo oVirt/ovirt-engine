@@ -12,7 +12,7 @@ import javax.validation.Payload;
 
 import org.ovirt.engine.core.common.validation.ClusterValidator;
 
-@Target({ TYPE })
+@Target(TYPE)
 @Retention(RUNTIME)
 @Constraint(validatedBy = ClusterValidator.class)
 @Documented

@@ -143,7 +143,7 @@ public class AssignTagsPopupView extends AbstractModelBoundTreePopupView<TagList
         }
 
         @Override
-        @Source({ "org/ovirt/engine/ui/webadmin/css/AssignTagTree.css" })
+        @Source("org/ovirt/engine/ui/webadmin/css/AssignTagTree.css")
         TableStyle cellTreeStyle();
 
     }

@@ -77,7 +77,7 @@ public class ProviderSecretPopupView extends AbstractModelBoundPopupView<Libvirt
         driver.initialize(this);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings("unchecked")
     private void initManualWidgets() {
         usageTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
         uuidEditor = new StringEntityModelTextBoxOnlyEditor();

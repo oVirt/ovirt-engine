@@ -16,6 +16,7 @@
     <property name="cacheFile" value="${checkstyle.cache.file}"/>
 
     <!-- Built-in checks -->
+    <module name="AnnotationUseStyle" />
     <module name="ArrayTypeStyle" />
     <module name="AtclauseOrder" />
     <module name="AvoidNestedBlocks"/>

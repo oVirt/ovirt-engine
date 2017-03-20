@@ -12,7 +12,7 @@ import javax.validation.Payload;
 
 import org.ovirt.engine.core.common.validation.NetworkInterfaceValidator;
 
-@Target({ TYPE })
+@Target(TYPE)
 @Retention(RUNTIME)
 @Constraint(validatedBy = NetworkInterfaceValidator.class)
 @Documented

@@ -266,7 +266,7 @@ public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> im
         }
 
         @Override
-        @Source({ "org/ovirt/engine/ui/webadmin/css/RoleTree.css" })
+        @Source("org/ovirt/engine/ui/webadmin/css/RoleTree.css")
         TableStyle cellTreeStyle();
 
     }

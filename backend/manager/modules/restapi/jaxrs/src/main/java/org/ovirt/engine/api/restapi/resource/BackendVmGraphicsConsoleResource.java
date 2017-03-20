@@ -73,7 +73,7 @@ public class BackendVmGraphicsConsoleResource
      * @return a console representation for virt-viewer (e.g. a .vv file)
      */
     @GET
-    @Produces({ApiMediaType.APPLICATION_X_VIRT_VIEWER})
+    @Produces(ApiMediaType.APPLICATION_X_VIRT_VIEWER)
     public Response generateDescriptor() {
         try {
             VdcQueryReturnValue consoleDescriptorReturnValue = generateDescriptorResponse();

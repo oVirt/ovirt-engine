@@ -4,7 +4,7 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 
 public interface VmPopupResources extends ClientBundle {
-    @Source({"org/ovirt/engine/ui/common/css/VmPopupStyle.css"})
+    @Source("org/ovirt/engine/ui/common/css/VmPopupStyle.css")
     VmPopupStyle createStyle();
 }
 

@@ -12,7 +12,7 @@ import javax.validation.Payload;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.SizeFromConfigValueValidator;
 
-@Target({FIELD})
+@Target(FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = SizeFromConfigValueValidator.class)
 public @interface SizeFromConfigValue {
