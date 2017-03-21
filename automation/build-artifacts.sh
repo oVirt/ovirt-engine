@@ -1,6 +1,5 @@
 #!/bin/bash -xe
 
-BUILD_UT=0
 SUFFIX=".git$(git rev-parse --short HEAD)"
 
 if [ -d /root/.m2/repository/org/ovirt ]; then
@@ -9,10 +8,16 @@ if [ -d /root/.m2/repository/org/ovirt ]; then
 fi
 
 MAVEN_SETTINGS="/etc/maven/settings.xml"
+
 export BUILD_JAVA_OPTS_MAVEN="\
     -Dgwt.compiler.localWorkers=1 \
 "
-export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS"
+
+# build permutations for chrome and firefox
+export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS \
+    -D gwt.userAgent=gecko1_8,safari \
+"
+
 export BUILD_JAVA_OPTS_GWT="\
     -Xms1G \
     -Xmx4G \
@@ -66,12 +71,14 @@ rpmbuild \
 # install any build requirements
 yum-builddep output/*src.rpm
 
-# build minimal rpms for CI, only using single permutation
+# build minimal rpms for CI
 rpmbuild \
     -D "_rpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
     -D "release_suffix ${SUFFIX}" \
-    -D "ovirt_build_minimal 1" \
+    -D "ovirt_build_ut 0" \
+    -D "ovirt_build_all_user_agents 0" \
+    -D "ovirt_build_locales 0" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
     --rebuild output/*.src.rpm
 
