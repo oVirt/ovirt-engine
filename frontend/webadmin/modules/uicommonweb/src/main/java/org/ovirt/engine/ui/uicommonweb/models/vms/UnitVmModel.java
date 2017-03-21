@@ -2994,7 +2994,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 new IntegerValidation(1, behavior.maxCpus),
                 new TotalCpuCoresComposableValidation() });
 
-        if (getIsAutoAssign().getEntity() != null && getIsAutoAssign().getEntity() == false) {
+        if (getIsAutoAssign().getEntity() != null && !getIsAutoAssign().getEntity()) {
             getDefaultHost().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         } else {
             getDefaultHost().setIsValid(true);

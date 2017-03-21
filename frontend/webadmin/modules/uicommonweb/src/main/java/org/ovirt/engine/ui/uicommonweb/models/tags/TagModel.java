@@ -33,11 +33,11 @@ public class TagModel extends Model implements TreeNodeInfo {
             Map<Guid, Boolean> attachedEntities,
             ArrayList<Guid> tagsToAttach,
             ArrayList<Guid> tagsToDetach) {
-        if (tagModel.getSelection() != null && tagModel.getSelection().equals(true)
-                && (!attachedEntities.containsKey(tagModel.getId()) || attachedEntities.get(tagModel.getId()) == false)) {
+        if (tagModel.getSelection() != null && tagModel.getSelection()
+                && (!attachedEntities.containsKey(tagModel.getId()) || !attachedEntities.get(tagModel.getId()))) {
             tagsToAttach.add(tagModel.getId());
         }
-        else if (tagModel.getSelection() != null && tagModel.getSelection().equals(false)
+        else if (tagModel.getSelection() != null && !tagModel.getSelection()
                 && attachedEntities.containsKey(tagModel.getId())) {
             tagsToDetach.add(tagModel.getId());
         }

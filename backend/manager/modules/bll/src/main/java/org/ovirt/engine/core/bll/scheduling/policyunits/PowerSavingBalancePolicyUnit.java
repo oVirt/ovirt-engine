@@ -246,8 +246,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         /* We have the right amount of empty hosts to start shutting the
            hosts that are resting in maintenance down.
          */
-        else if (requiredReserve == emptyHosts.size()
-                && pmMaintenanceHosts.isEmpty() == false) {
+        else if (requiredReserve == emptyHosts.size() && !pmMaintenanceHosts.isEmpty()) {
             log.info("Cluster '{}' does have enough spare hosts, shutting one host down.", cluster.getName());
             return new Pair<>(pmMaintenanceHosts.get(0), VDSStatus.Down);
         }
@@ -255,8 +254,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         /* We do not have enough free hosts, but we still have some hosts
            in maintenance. We can easily activate those.
          */
-        else if (requiredReserve > emptyHosts.size()
-                && pmMaintenanceHosts.isEmpty() == false) {
+        else if (requiredReserve > emptyHosts.size() && !pmMaintenanceHosts.isEmpty()) {
             log.info("Cluster '{}' does not have enough spare hosts, reactivating one.", cluster.getName());
             return new Pair<>(pmMaintenanceHosts.get(0), VDSStatus.Up);
         }

@@ -483,8 +483,7 @@ public class VolumeModel extends Model {
 
         setMessage(null);
         boolean validTransportTypes = true;
-        if (getTcpTransportType().getEntity() == false
-                && getRdmaTransportType().getEntity() == false) {
+        if (!getTcpTransportType().getEntity() && !getRdmaTransportType().getEntity()) {
             validTransportTypes = false;
             setMessage(ConstantsManager.getInstance().getConstants().volumeTransportTypesValidationMsg());
         }

@@ -222,8 +222,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         // check, if user can override default target host for VM
         if (getVm() != null) {
             final Guid destinationVdsId = getParameters().getDestinationVdsId();
-            if (destinationVdsId != null &&
-                getVm().getDedicatedVmForVdsList().contains(destinationVdsId) == false) {
+            if (destinationVdsId != null && !getVm().getDedicatedVmForVdsList().contains(destinationVdsId)) {
                 permissionList.add(new PermissionSubject(getParameters().getVmId(),
                     VdcObjectType.VM,
                     ActionGroup.EDIT_ADMIN_VM_PROPERTIES));

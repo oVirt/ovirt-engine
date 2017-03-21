@@ -1063,7 +1063,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
 
         Guid oldClusterID = ((VM) selectedItem.getEntity()).getClusterId();
         Guid newClusterID = model.getSelectedCluster().getId();
-        if (oldClusterID.equals(newClusterID) == false) {
+        if (!oldClusterID.equals(newClusterID)) {
             Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster,
                                              new ChangeVMClusterParameters(
                                                      newClusterID,

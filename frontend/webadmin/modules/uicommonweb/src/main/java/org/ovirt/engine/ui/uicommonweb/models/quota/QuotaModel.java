@@ -220,7 +220,7 @@ public class QuotaModel extends EntityModel<Quota> {
 
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getGlobalClusterQuota().getEntity() == true) {
+                if (getGlobalClusterQuota().getEntity()) {
                     getSpecificClusterQuota().setEntity(false);
                 }
             }
@@ -229,7 +229,7 @@ public class QuotaModel extends EntityModel<Quota> {
 
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getSpecificClusterQuota().getEntity() == true) {
+                if (getSpecificClusterQuota().getEntity()) {
                     getGlobalClusterQuota().setEntity(false);
                 }
             }
@@ -243,7 +243,7 @@ public class QuotaModel extends EntityModel<Quota> {
 
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getGlobalStorageQuota().getEntity() == true) {
+                if (getGlobalStorageQuota().getEntity()) {
                     getSpecificStorageQuota().setEntity(false);
                 }
             }
@@ -252,7 +252,7 @@ public class QuotaModel extends EntityModel<Quota> {
 
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getSpecificStorageQuota().getEntity() == true) {
+                if (getSpecificStorageQuota().getEntity()) {
                     getGlobalStorageQuota().setEntity(false);
                 }
             }

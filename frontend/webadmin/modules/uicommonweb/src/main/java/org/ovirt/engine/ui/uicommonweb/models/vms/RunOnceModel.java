@@ -1153,7 +1153,7 @@ public abstract class RunOnceModel extends Model {
     }
 
     private void isAutoAssign_EntityChanged(Object sender, EventArgs args) {
-        if (getIsAutoAssign().getEntity() == false) {
+        if (!getIsAutoAssign().getEntity()) {
             getDefaultHost().setIsChangeable(true);
         }
     }
@@ -1212,7 +1212,7 @@ public abstract class RunOnceModel extends Model {
             }
         }
 
-        if (getIsAutoAssign().getEntity() != null && getIsAutoAssign().getEntity() == false) {
+        if (getIsAutoAssign().getEntity() != null && !getIsAutoAssign().getEntity()) {
             getDefaultHost().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
         else {

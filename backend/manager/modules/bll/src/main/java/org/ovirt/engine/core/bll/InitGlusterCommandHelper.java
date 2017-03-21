@@ -90,8 +90,7 @@ public class InitGlusterCommandHelper {
         }
         refreshGlusterStorageDevices(vds);
         boolean ret = initGlusterPeerProcess(vds);
-        glusterServerDao.updatePeerStatus(vds.getId(),
-                ret == true ? PeerStatus.CONNECTED : PeerStatus.DISCONNECTED);
+        glusterServerDao.updatePeerStatus(vds.getId(), ret ? PeerStatus.CONNECTED : PeerStatus.DISCONNECTED);
         return ret;
     }
 

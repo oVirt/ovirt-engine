@@ -39,7 +39,7 @@ public class CustomPropertyValidation implements IValidation {
         RegexValidation regexValidation = tempVar;
 
         ValidationResult validationResult = regexValidation.validate(value);
-        if (validationResult.getSuccess() == false) {
+        if (!validationResult.getSuccess()) {
             return validationResult;
         }
 
@@ -104,7 +104,7 @@ public class CustomPropertyValidation implements IValidation {
                     RegexValidation tempVar3 = new RegexValidation();
                     tempVar3.setExpression(validKey.substring(validKey.indexOf('=') + 1));
                     RegexValidation testValue = tempVar3;
-                    if (testValue.validate(line.substring(line.indexOf('=') + 1)).getSuccess() == false) {
+                    if (!testValue.validate(line.substring(line.indexOf('=') + 1)).getSuccess()) {
                         falseProperty = validKey;
                         continue;
                     }

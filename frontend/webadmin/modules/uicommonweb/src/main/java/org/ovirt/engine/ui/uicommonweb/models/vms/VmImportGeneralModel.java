@@ -186,7 +186,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
             setAlert(null);
         }
 
-        setHasDefaultHost(vm.getDedicatedVmForVdsList().isEmpty() == false);
+        setHasDefaultHost(!vm.getDedicatedVmForVdsList().isEmpty());
         if (getHasDefaultHost()) {
             Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getClusterName() //$NON-NLS-1$
                     + " sortby name", SearchType.VDS), new AsyncQuery<>(//$NON-NLS-1$

@@ -399,7 +399,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                 setSelectedItems(null);
             }
 
-            if (getIsTimerDisabled() == false) {
+            if (!getIsTimerDisabled()) {
                 setIsQueryFirstTime(true);
                 onPropertyChanged(new PropertyChangedEventArgs(PropertyChangedEventArgs.PROGRESS));
                 syncSearch();

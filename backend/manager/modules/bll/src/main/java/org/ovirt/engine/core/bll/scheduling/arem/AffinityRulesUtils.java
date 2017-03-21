@@ -197,7 +197,7 @@ public class AffinityRulesUtils {
                 .collect(Collectors.toList());
 
         affinityGroupsWithHosts.stream()
-                .filter(ag -> ag.isVdsPositive() == false)
+                .filter(ag -> !ag.isVdsPositive())
                 .forEach(negativeGroup -> {
                     affinityGroupsWithHosts.stream()
                             .filter(AffinityGroup::isVdsPositive)

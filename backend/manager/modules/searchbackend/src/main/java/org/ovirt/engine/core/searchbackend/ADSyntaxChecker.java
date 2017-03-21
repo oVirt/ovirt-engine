@@ -159,8 +159,8 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                 // Doing this condition to identify whether this is the last
                 // searchObject and no space is predicted !!
                 if (final2) {
-                    if (((curChar == ' ') || (idx + 1 == searchCharArr.length)) && (betweenDoubleQuotes == false)
-                            && (addObjFlag == false)) {
+                    if (((curChar == ' ') || (idx + 1 == searchCharArr.length)) && !betweenDoubleQuotes &&
+                            !addObjFlag) {
                         strRealObj = strRealObj.trim();
                         if (nonSpaceRegexp.isMatch(strRealObj)) {
                             addObjFlag = true;
@@ -169,7 +169,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                         }
                     }
                 } else {
-                    if ((curChar == ' ') && (betweenDoubleQuotes == false) && (addObjFlag == false)) {
+                    if ((curChar == ' ') && !betweenDoubleQuotes && !addObjFlag) {
                         strRealObj = strRealObj.trim();
                         if (nonSpaceRegexp.isMatch(strRealObj)) {
                             addObjFlag = true;

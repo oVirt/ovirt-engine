@@ -187,7 +187,7 @@ public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> im
         object.getIsAdminRole().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (adminRole.getEntity() == true) {
+                if (adminRole.getEntity()) {
                     adminRadioButtonEditor.setValue(true);
                 } else {
                     userRadioButtonEditor.setValue(true);

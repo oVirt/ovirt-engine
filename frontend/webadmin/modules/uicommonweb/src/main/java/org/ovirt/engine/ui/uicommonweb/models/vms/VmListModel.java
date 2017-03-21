@@ -1646,7 +1646,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     private void preSave() {
         final UnitVmModel model = (UnitVmModel) getWindow();
 
-        if (model.getIsNew() == false && selectedItem == null) {
+        if (!model.getIsNew() && selectedItem == null) {
             cancel();
             return;
         }
@@ -1806,7 +1806,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         VM selectedItem = getSelectedItem();
         Guid oldClusterID = selectedItem.getClusterId();
         Guid newClusterID = model.getSelectedCluster().getId();
-        if (oldClusterID.equals(newClusterID) == false) {
+        if (!oldClusterID.equals(newClusterID)) {
             ChangeVMClusterParameters parameters =
                     new ChangeVMClusterParameters(
                             newClusterID,

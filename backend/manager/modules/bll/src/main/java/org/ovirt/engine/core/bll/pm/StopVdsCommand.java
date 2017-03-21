@@ -147,7 +147,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
     @Override
     protected void teardown() {
         // Successful fencing with reboot or shutdown op. Clear the power management policy flag
-        if (getParameters().getKeepPolicyPMEnabled() == false) {
+        if (!getParameters().getKeepPolicyPMEnabled()) {
             getVds().setPowerManagementControlledByPolicy(false);
             vdsDynamicDao.updateVdsDynamicPowerManagementPolicyFlag(
                     getVdsId(),

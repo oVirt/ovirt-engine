@@ -53,6 +53,7 @@
     </module>
     <module name="OneStatementPerLine"/>
     <module name="RedundantImport"/>
+    <module name="SimplifyBooleanExpression"/>
     <module name="StringLiteralEquality"/>
     <module name="TypeName" />
     <module name="UnnecessaryParentheses"/>

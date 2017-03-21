@@ -604,7 +604,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 @Override
                 protected boolean canEdit(EntityModel object) {
                     EntityModel<Boolean> bootModel = ((DiskModel) object.getEntity()).getIsBootable();
-                    return  bootModel.getIsChangable() || bootModel.getEntity() == true;
+                    return  bootModel.getIsChangable() || bootModel.getEntity();
                 }
 
                 @Override

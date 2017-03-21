@@ -281,7 +281,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
     }
 
     private void updateActionAvailability() {
-        if (getEntity() == null || getEntity().isGroup() == true) {
+        if (getEntity() == null || getEntity().isGroup()) {
             getManageEventsCommand().setIsExecutionAllowed(false);
         }
         else {

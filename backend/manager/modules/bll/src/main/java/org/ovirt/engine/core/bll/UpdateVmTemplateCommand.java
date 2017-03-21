@@ -467,7 +467,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             List<Guid> tmpltDdctHostsLst = getVmTemplate().getDedicatedVmForVdsList();
             List<Guid> prmTmpltDdctHostsLst = getParameters().getVmTemplateData().getDedicatedVmForVdsList();
             // tmpltDdctHostsLst.equals(prmTmpltDdctHostsLs is not good enough, lists order may change
-            if (CollectionUtils.isEqualCollection(tmpltDdctHostsLst, prmTmpltDdctHostsLst) == false) {
+            if (!CollectionUtils.isEqualCollection(tmpltDdctHostsLst, prmTmpltDdctHostsLst)) {
                 permissionList.add(
                         new PermissionSubject(getParameters().getVmTemplateId(),
                                 VdcObjectType.VmTemplate,

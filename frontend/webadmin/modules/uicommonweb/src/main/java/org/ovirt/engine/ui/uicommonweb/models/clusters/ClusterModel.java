@@ -626,13 +626,13 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     private MigrateOnErrorOptions migrateOnErrorOption = MigrateOnErrorOptions.values()[0];
 
     public MigrateOnErrorOptions getMigrateOnErrorOption() {
-        if (getMigrateOnErrorOption_NO().getEntity() == true) {
+        if (getMigrateOnErrorOption_NO().getEntity()) {
             return MigrateOnErrorOptions.NO;
         }
-        else if (getMigrateOnErrorOption_YES().getEntity() == true) {
+        else if (getMigrateOnErrorOption_YES().getEntity()) {
             return MigrateOnErrorOptions.YES;
         }
-        else if (getMigrateOnErrorOption_HA_ONLY().getEntity() == true) {
+        else if (getMigrateOnErrorOption_HA_ONLY().getEntity()) {
             return MigrateOnErrorOptions.HA_ONLY;
         }
         return MigrateOnErrorOptions.YES;
@@ -1174,10 +1174,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 if (getEnableKsm().getEntity() == null){
                     return;
                 }
-                if (getEnableKsm().getEntity() == true){
+                if (getEnableKsm().getEntity()) {
                     getKsmPolicyForNumaSelection().setIsChangeable(true);
                 }
-                if (getEnableKsm().getEntity() == false){
+                if (!getEnableKsm().getEntity()) {
                     getKsmPolicyForNumaSelection().setIsChangeable(false);
                 }
             }
@@ -1576,7 +1576,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             }
         }));
         // inactive KsmPolicyForNuma if KSM disabled
-        if (getEnableKsm().getEntity() == false) {
+        if (!getEnableKsm().getEntity()) {
             getKsmPolicyForNumaSelection().setIsChangeable(false);
         }
     }
@@ -2238,7 +2238,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             return;
         }
         KsmPolicyForNuma ksmPolicyForNuma = KsmPolicyForNuma.shareAcrossNumaNodes;
-        if (ksmPolicyForNumaFlag == false) {
+        if (!ksmPolicyForNumaFlag) {
             ksmPolicyForNuma = KsmPolicyForNuma.shareInsideEachNumaNode;
         }
 

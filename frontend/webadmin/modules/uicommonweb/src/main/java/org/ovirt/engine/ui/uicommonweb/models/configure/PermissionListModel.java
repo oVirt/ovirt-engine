@@ -276,7 +276,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
 
     private void updateActionAvailability() {
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
-        if (getRemoveCommand().getIsExecutionAllowed() == false) {
+        if (!getRemoveCommand().getIsExecutionAllowed()) {
             return;
         }
         Guid entityGuid = getEntityGuid();
