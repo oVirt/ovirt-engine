@@ -34,8 +34,6 @@ from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
 
-from ovirt_setup_lib import dialog
-
 
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -156,13 +154,6 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        before=(
-            oenginecons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
-        ),
-        after=(
-            osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
-            osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
-        ),
         name=oenginecons.Stages.NFS_CONFIG_ALLOWED
     )
     def _customization_enable(self):
@@ -172,52 +163,18 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=oenginecons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
-        before=(
-            osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
-        ),
         after=(
-            osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
-            osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
             oenginecons.Stages.NFS_CONFIG_ALLOWED,
         ),
         condition=lambda self: self._enabled,
     )
     def _customization(self):
-        """
-        If the application mode is gluster don't ask to configure NFS.
-        Else if not already configured, ask if you want to use NFS shares for
-        ISO domain. If acknowledged, configure NFS related services.
-        """
-        if self.environment[
-            osetupcons.ConfigEnv.APPLICATION_MODE
-        ] == 'gluster':
-            self.logger.info(
-                _('NFS configuration skipped with application mode Gluster')
-            )
-            self._enabled = False
-        else:
-            enabled = self.environment[
-                oenginecons.SystemEnv.NFS_CONFIG_ENABLED
-            ]
-            if enabled is None:
-                self._enabled = dialog.queryBoolean(
-                    dialog=self.dialog,
-                    name='NFS_CONFIG_ENABLED',
-                    note=_(
-                        'Configure an NFS share on this server to be used '
-                        'as an ISO Domain? '
-                        '(@VALUES@) [@DEFAULT@]: '
-                    ),
-                    prompt=True,
-                    default=False,
-                )
-            else:
-                self._enabled = enabled
-
-        # expose to other modules
-        self.environment[
+        # Do not ask about this anymore, as it's deprecated, see also:
+        # https://bugzilla.redhat.com/1332813
+        # Still allow setting in the answerfile.
+        self._enabled = self.environment[
             oenginecons.SystemEnv.NFS_CONFIG_ENABLED
-        ] = self._enabled
+        ]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
