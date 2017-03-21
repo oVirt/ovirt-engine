@@ -26,6 +26,7 @@ public class HostDeviceMapper {
         model.setName(entity.getDeviceName());
         model.setCapability(entity.getCapability());
         model.setParentDevice(getSameHostDeviceReference(entity.getHostId(), entity.getParentDeviceName()));
+        model.setDriver(entity.getDriver());
 
         if (entity.getProductId() != null || entity.getProductName() != null) {
             if (!model.isSetProduct()) {
