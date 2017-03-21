@@ -43,10 +43,6 @@
     <metamodel.version>1.2.1</metamodel.version>
     <model.version>4.2.8</model.version>
 
-    <!-- Name of the product and engine as used in the API documentation: -->
-    <product.name>oVirt</product.name>
-    <engine.name>oVirt Engine</engine.name>
-
     <!-- oVirt extensions versions -->
     <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
 
