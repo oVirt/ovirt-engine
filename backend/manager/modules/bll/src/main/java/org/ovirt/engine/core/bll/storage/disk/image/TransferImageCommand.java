@@ -299,7 +299,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
                             getImage().getImage().getDiskId(),
                             getImage().getImageId(),
                             getStorageDomainId(),
-                            false);
+                            transferingVdsId);
                     imageDao.update(getImage().getImage());
                 }
                 unLockImage();
