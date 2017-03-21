@@ -22,6 +22,7 @@
     <module name="AtclauseOrder" />
     <module name="AvoidNestedBlocks"/>
     <module name="AvoidStarImport"/>
+    <module name="CovariantEquals"/>
     <module name="EmptyBlock">
         <property name="option" value="text"/>
     </module>
