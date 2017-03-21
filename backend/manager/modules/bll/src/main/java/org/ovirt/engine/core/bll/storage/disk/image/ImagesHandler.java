@@ -834,8 +834,11 @@ public final class ImagesHandler {
             Guid newStorageDomainID,
             Guid newImageGroupId,
             Guid newImageId,
+            Guid vdsId,
             boolean shouldPrepareAndTeardown) {
-        Guid vdsId = VdsCommandsHelper.getHostForExecution(storagePoolId, Collections.emptyList());
+        if (vdsId == null) {
+            vdsId = VdsCommandsHelper.getHostForExecution(storagePoolId, Collections.emptyList());
+        }
         QemuImageInfo qemuImageInfo = null;
         if (shouldPrepareAndTeardown) {
             prepareImage(storagePoolId, newStorageDomainID, newImageGroupId, newImageId, vdsId);

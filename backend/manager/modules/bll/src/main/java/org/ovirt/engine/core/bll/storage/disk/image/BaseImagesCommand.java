@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
@@ -365,7 +366,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                     getDestinationDiskImage().getImage().setVolumeType(newImageIRS.getVolumeType());
                     getDestinationDiskImage().getImage().setVolumeFormat(newImageIRS.getVolumeFormat());
                     if (newImageIRS.getVolumeFormat().equals(VolumeFormat.COW)) {
-                        setQcowCompat(getDestinationDiskImage().getImage(), storagePoolId, newImageGroupId, newImageId, newStorageDomainID, true);
+                        setQcowCompatByQemuImageInfo(storagePoolId,
+                                newImageGroupId,
+                                newImageId,
+                                newStorageDomainID);
                     }
                 }
             } catch (EngineException e) {
@@ -387,19 +391,48 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         setSucceeded(true);
     }
 
+    private void setQcowCompatByQemuImageInfo(Guid storagePoolId,
+            Guid newImageGroupId,
+            Guid newImageId,
+            Guid newStorageDomainID) {
+
+        // If the VM is running then the volume is already prepared in the guest's host so there
+        // is no need for prepare and teardown.
+        Guid hostIdToExecuteQemuImageInfo = null;
+        List<Pair<VM, VmDevice>> attachedVmsInfo =
+                vmDao.getVmsWithPlugInfo(getDestinationDiskImage().getId());
+        for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
+            VM vm = pair.getFirst();
+            if (Boolean.TRUE.equals(pair.getSecond().getIsPlugged())) {
+                if (vm.isStartingOrUp()) {
+                    hostIdToExecuteQemuImageInfo = vm.getRunOnVds();
+                    break;
+                }
+            }
+        }
+
+        setQcowCompat(getDestinationDiskImage().getImage(),
+                storagePoolId,
+                newImageGroupId,
+                newImageId,
+                newStorageDomainID,
+                hostIdToExecuteQemuImageInfo);
+    }
+
     protected void setQcowCompat(Image diskImage,
             Guid storagePoolId,
             Guid newImageGroupId,
             Guid newImageId,
             Guid newStorageDomainID,
-            boolean shouldPrepareAndTeardown) {
+            Guid hostIdForExecution) {
         diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
         if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
             QemuImageInfo qemuImageInfo = ImagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
                     newStorageDomainID,
                     newImageGroupId,
                     newImageId,
-                    shouldPrepareAndTeardown);
+                    hostIdForExecution,
+                    hostIdForExecution == null);
             if (qemuImageInfo != null) {
                 diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
             }
