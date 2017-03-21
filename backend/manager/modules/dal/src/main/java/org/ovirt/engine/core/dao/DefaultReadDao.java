@@ -67,9 +67,13 @@ public abstract class DefaultReadDao<T extends BusinessEntity<ID>, ID extends Se
 
     @Override
     public T get(ID id) {
-        return getCallsHandler().executeRead(getProcedureNameForGet(),
-                createEntityRowMapper(),
-                createIdParameterMapper(id));
+        if (id == null) {
+            return null;
+        } else {
+            return getCallsHandler().executeRead(getProcedureNameForGet(),
+                    createEntityRowMapper(),
+                    createIdParameterMapper(id));
+        }
     }
 
     @Override
