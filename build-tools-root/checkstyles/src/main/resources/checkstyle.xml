@@ -12,6 +12,7 @@
     <property name="format" value="\s+$"/>
     <property name="message" value="Line has trailing spaces."/>
   </module>
+  <module name="UniqueProperties"/>
   <module name="TreeWalker">
     <property name="cacheFile" value="${checkstyle.cache.file}"/>
 

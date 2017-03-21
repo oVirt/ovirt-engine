@@ -30,17 +30,6 @@ public class AbstractPropertiesTestBase<E extends Enum<E>> {
     }
 
     @Test
-    public void testDuplicateKeys() throws IOException {
-        NoDuplicateProperties props = new NoDuplicateProperties();
-        try (InputStream is = new FileInputStream(file)) {
-            props.load(is);
-        }
-        catch (DuplicatePropertyException exception) {
-            fail("Check for duplicate keys in " + file.getAbsolutePath() + " failed: " + exception.getMessage());
-        }
-    }
-
-    @Test
     public void testRedundantMessages() throws IOException {
         EnumTranslationProperties props = new EnumTranslationProperties(enumClass);
         try (InputStream is = new FileInputStream(file)) {
