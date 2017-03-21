@@ -53,6 +53,7 @@
       <property name="tokens" value="SEMI"/>
     </module>
     <module name="OneStatementPerLine"/>
+    <module name="PackageDeclaration"/>
     <module name="RedundantImport"/>
     <module name="SimplifyBooleanExpression"/>
     <module name="StringLiteralEquality"/>
