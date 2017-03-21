@@ -52,6 +52,7 @@ public class BackendTemplatesResource
     implements TemplatesResource {
 
     public static final String CLONE_PERMISSIONS = "clone_permissions";
+    public static final String SEAL = "seal";
 
     public BackendTemplatesResource() {
         super(Template.class, VmTemplate.class);
@@ -124,7 +125,7 @@ public class BackendTemplatesResource
             params.getDestinationStorageDomainId(),
             isDomainSet));
 
-        setupCloneVmPermissions(params);
+        setupOptionalParameters(params);
         IconHelper.setIconToParams(template, params);
 
         Response response = performCreate(
@@ -149,10 +150,14 @@ public class BackendTemplatesResource
         }
     }
 
-    void setupCloneVmPermissions(AddVmTemplateParameters params) {
+    void setupOptionalParameters(AddVmTemplateParameters params) {
         boolean clonePermissions = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, CLONE_PERMISSIONS, true, false);
+        boolean seal = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, SEAL, true, false);
         if (clonePermissions) {
             params.setCopyVmPermissions(clonePermissions);
+        }
+        if (seal) {
+            params.setSealTemplate(seal);
         }
     }
 
