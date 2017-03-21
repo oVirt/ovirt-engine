@@ -278,14 +278,6 @@ public class DiskValidatorTest {
                 .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_FOR_PREALLOCATED));
     }
 
-    @Test
-    public void sparsifyNotSupportedOnLocalStorage() {
-        createStorageDomainForDisk(StorageType.LOCALFS);
-        assertThat(validator.isSparsifySupported(), failsWith(EngineMessage
-                .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_ON_LOCAL_STORAGE));
-    }
-
-
     private LunDisk createLunDisk(ScsiGenericIO sgio) {
         LunDisk lunDisk = createLunDisk();
         lunDisk.setSgio(sgio);
