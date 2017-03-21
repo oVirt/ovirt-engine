@@ -89,11 +89,11 @@ public class TransferTest extends TestCommon {
         if (client != null) {
             try {
                 client.executeCommand(String.format("rm -f '%1$s'", remote), null, null, null);
-            } catch (Exception e) {
+            } catch (Exception ignore) {
             }
             try {
                 client.close();
-            } catch (Exception e) {
+            } catch (Exception ignore) {
             }
             client = null;
         }

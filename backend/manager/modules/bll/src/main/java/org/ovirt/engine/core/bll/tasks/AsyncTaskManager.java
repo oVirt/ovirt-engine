@@ -133,7 +133,7 @@ public final class AsyncTaskManager {
         try {
             irsBrokerLatch.await();
             log.info("Initialization of AsyncTaskManager completed successfully.");
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignore) {
         }
 
     }

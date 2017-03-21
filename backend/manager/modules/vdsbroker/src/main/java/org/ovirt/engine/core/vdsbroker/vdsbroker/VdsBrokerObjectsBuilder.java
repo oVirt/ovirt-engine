@@ -745,7 +745,7 @@ public class VdsBrokerObjectsBuilder {
                     result = GraphicsType.SPICE;
                     break;
             }
-        } catch (Exception e) {
+        } catch (Exception ignore) {
         }
 
         return result;

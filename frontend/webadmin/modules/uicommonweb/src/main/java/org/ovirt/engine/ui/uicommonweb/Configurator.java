@@ -182,7 +182,7 @@ public abstract class Configurator {
                     }
                 }
             });
-        } catch (RequestException e) {
+        } catch (RequestException ignore) {
         }
     }
 

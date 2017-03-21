@@ -13,7 +13,7 @@ class DateUtils {
     static Date parse(String str) {
         try {
             return DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).parse(str);
-        } catch (IllegalArgumentException iae) {
+        } catch (IllegalArgumentException ignore) {
         }
         return null;
     }

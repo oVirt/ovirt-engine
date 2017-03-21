@@ -97,7 +97,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
                 log.info("Failed to acquire lock and wait lock '{}'", lock);
                 releasedLock.await();
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignore) {
 
         } finally {
             globalLock.unlock();

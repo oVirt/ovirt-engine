@@ -34,7 +34,7 @@ public class ReflectionHelper {
         R ret = null;
         try {
             ret = clz.newInstance();
-        } catch (Exception e) {
+        } catch (Exception ignore) {
         }
         return ret;
     }

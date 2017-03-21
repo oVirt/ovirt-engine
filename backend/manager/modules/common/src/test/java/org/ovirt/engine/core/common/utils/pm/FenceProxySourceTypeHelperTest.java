@@ -74,7 +74,7 @@ public class FenceProxySourceTypeHelperTest {
                 fail(String.format(
                         "Value '%s' is not valid argument of FenceProxySourceTypeHelper.parseFromString.",
                         invalidValue));
-            } catch (IllegalArgumentException ex) {
+            } catch (IllegalArgumentException ignore) {
             }
         }
     }
@@ -134,7 +134,7 @@ public class FenceProxySourceTypeHelperTest {
                 fail(String.format(
                         "Value '%s' is not valid argument of FenceProxySourceTypeHelper.parseFromString.",
                         Arrays.toString(invalidList.toArray())));
-            } catch (IllegalArgumentException ex) {
+            } catch (IllegalArgumentException ignore) {
             }
         }
     }

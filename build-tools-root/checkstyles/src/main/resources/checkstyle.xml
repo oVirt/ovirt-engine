@@ -25,6 +25,9 @@
     <module name="EmptyBlock">
         <property name="option" value="text"/>
     </module>
+    <module name="EmptyCatchBlock">
+        <property name="exceptionVariableName" value="ignore"/>
+    </module>
     <module name="EmptyForInitializerPad" />
     <module name="EmptyStatement"/>
     <module name="EqualsHashCode"/>

@@ -121,7 +121,7 @@ public class SSHD {
             try {
                 sshd.stop(true);
                 sshd = null;
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignore) {
             }
         }
     }

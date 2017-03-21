@@ -71,7 +71,7 @@ public final class StoragePoolStatusHandler {
                 if (pool != null && pool.getStatus() == StoragePoolStatus.NotOperational) {
                     nonOperationalPoolTreatment(pool);
                 }
-            } catch (Exception e) {
+            } catch (Exception ignore) {
             }
         }
     }

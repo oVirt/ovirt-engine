@@ -418,13 +418,13 @@ public class VdsFenceOptions implements Serializable {
                     else if (type.equalsIgnoreCase(LONG)) {
                         try {
                             result = Long.parseLong(fenceAgentInstanceOptions.get(key));
-                        } catch (NumberFormatException e) {
+                        } catch (NumberFormatException ignore) {
                         }
                     }
                     else if (type.equalsIgnoreCase(DOUBLE)) {
                         try {
                             result = Double.parseDouble(fenceAgentInstanceOptions.get(key));
-                        } catch (NumberFormatException e) {
+                        } catch (NumberFormatException ignore) {
                         }
                     } else { // return as string
                         result = fenceAgentInstanceOptions.get(key);

@@ -97,7 +97,7 @@ public class SSHDialogTest {
                     try {
                         thread.join();
                         break;
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException ignore) {
                     }
                 }
                 thread = null;
@@ -429,7 +429,7 @@ public class SSHDialogTest {
                     try {
                         thread.join();
                         break;
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException ignore) {
                     }
                 }
                 thread = null;

@@ -193,7 +193,7 @@ public class VmRngDevice extends VmDevice implements Serializable {
         } else if (o instanceof String) {
             try {
                 return Integer.parseInt((String) o);
-            } catch (Exception e) { }
+            } catch (Exception ignore) { }
         }
 
         return null;

@@ -212,7 +212,7 @@ public class RegisterServlet extends HttpServlet {
             try {
                 version = Integer.parseInt(versionString);
             }
-            catch(NumberFormatException e) {}
+            catch(NumberFormatException ignore) {}
         }
 
         switch(version) {

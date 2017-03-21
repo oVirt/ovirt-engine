@@ -303,7 +303,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
                         _thread.join();
                         break;
                     }
-                    catch (InterruptedException e) {}
+                    catch (InterruptedException ignore) {}
                 }
             }
             _thread = null;

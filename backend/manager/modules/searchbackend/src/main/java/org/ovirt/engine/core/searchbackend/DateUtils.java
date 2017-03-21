@@ -15,7 +15,7 @@ class DateUtils {
         for (DateFormat fmt : formats(DateFormat.DEFAULT, DateFormat.FULL, DateFormat.LONG, DateFormat.MEDIUM, DateFormat.SHORT)) {
             try {
                 return fmt.parse(str);
-            } catch (ParseException e) {
+            } catch (ParseException ignore) {
             }
         }
         return null;

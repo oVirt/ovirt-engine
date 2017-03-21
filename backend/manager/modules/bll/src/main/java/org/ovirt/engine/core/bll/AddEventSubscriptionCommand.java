@@ -59,7 +59,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         try {
             AuditLogType.valueOf(eventName);
             exists = true;
-        } catch (Exception ex) {
+        } catch (Exception ignore) {
         }
         return exists;
     }

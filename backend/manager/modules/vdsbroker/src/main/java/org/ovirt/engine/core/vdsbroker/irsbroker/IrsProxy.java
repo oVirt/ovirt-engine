@@ -247,7 +247,7 @@ public class IrsProxy {
                         }
                     }
                 }
-            } catch (Exception ex) {
+            } catch (Exception ignore) {
             }
         });
     }
