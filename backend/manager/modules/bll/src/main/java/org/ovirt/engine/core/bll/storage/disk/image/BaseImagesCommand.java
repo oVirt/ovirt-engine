@@ -121,7 +121,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected boolean isDataOperationsByHSM(StorageDomainStatic targetSd) {
         return FeatureSupported.dataOperationsByHSM(getStoragePool().getCompatibilityVersion()) &&
-               !targetSd.getStorageType().isLocal() && targetSd.getStorageDomainType().isDataDomain();
+               targetSd.getStorageDomainType().isDataDomain();
     }
 
     protected boolean isDataOperationsByHSM() {
