@@ -68,12 +68,13 @@
 
     <plugins>
 
-      <!-- Add the model .jar file as a generated resource: -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>2.10</version>
         <executions>
+
+          <!-- Add the model .jar file as a generated resource: -->
           <execution>
             <id>copy-model-file</id>
             <phase>generate-sources</phase>
@@ -94,6 +95,30 @@
               </artifactItems>
             </configuration>
           </execution>
+
+          <!-- Extract the API documentation contained in the model
+               documentation artifact, so that it can then be added
+               to the generated .war file: -->
+          <execution>
+            <id>extract-model-documentation</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.ovirt.engine.api</groupId>
+                  <artifactId>model</artifactId>
+                  <version>${model.version}</version>
+                  <type>jar</type>
+                  <classifier>javadoc</classifier>
+                  <outputDirectory>${project.basedir}/target/generated-resources</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
 
@@ -132,16 +157,11 @@
               <arguments>
                 <argument>org.ovirt.api.metamodel.tool.Tool</argument>
                 <argument>--model=${project.basedir}/target/generated-resources/model.jar</argument>
-                <argument>--xml-description=${project.basedir}/target/generated-resources/model.xml</argument>
-                <argument>--json-description=${project.basedir}/target/generated-resources/model.json</argument>
                 <argument>--in-schema=${project.basedir}/src/main/schema/api.xsd</argument>
                 <argument>--out-schema=${project.basedir}/target/generated-resources/v4/api.xsd</argument>
                 <argument>--jaxrs=${project.basedir}/target/generated-sources/model</argument>
                 <argument>--jaxrs-package=^services\.(.*)$=org.ovirt.engine.api.resource.$1</argument>
                 <argument>--jaxrs-package=org.ovirt.engine.api.resource</argument>
-                <argument>--docs=${project.basedir}/target/generated-adoc</argument>
-                <argument>--adoc-attribute=product-name:${product.name}</argument>
-                <argument>--adoc-attribute=engine-name:${engine.name}</argument>
               </arguments>
               <includePluginDependencies>true</includePluginDependencies>
               <includeProjectDependencies>false</includeProjectDependencies>
@@ -224,37 +244,6 @@
               <bindingIncludes>
                 <include>api.xjb</include>
               </bindingIncludes>
-            </configuration>
-          </execution>
-
-        </executions>
-      </plugin>
-
-      <!-- Process the AsciiDoc documentation of the model: -->
-      <plugin>
-        <groupId>org.asciidoctor</groupId>
-        <artifactId>asciidoctor-maven-plugin</artifactId>
-        <version>1.5.3</version>
-        <executions>
-
-          <!-- Generate HTML: -->
-          <execution>
-            <id>generate-html</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>process-asciidoc</goal>
-            </goals>
-            <configuration>
-              <sourceDirectory>${project.basedir}/target/generated-adoc</sourceDirectory>
-              <outputDirectory>${project.basedir}/target/generated-resources</outputDirectory>
-              <backend>html5</backend>
-              <attributes>
-                <toc>right</toc>
-                <sectnums>true</sectnums>
-                <sectlinks>true</sectlinks>
-                <sectanchors>true</sectanchors>
-                <source-highlighter>highlightjs</source-highlighter>
-              </attributes>
             </configuration>
           </execution>
 
