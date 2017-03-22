@@ -319,6 +319,8 @@ public class VmMapper extends VmBaseMapper {
             model.setStatus(mapVmStatus(entity.getStatus()));
             if (entity.getStatus() == VMStatus.Paused) {
                 model.setStatusDetail(entity.getVmPauseStatus().name().toLowerCase());
+            } else if (entity.getStatus() == VMStatus.Down && entity.getBackgroundOperationDescription() != null) {
+                model.setStatusDetail(entity.getBackgroundOperationDescription());
             }
         }
         if (entity.getStopReason() != null) {
