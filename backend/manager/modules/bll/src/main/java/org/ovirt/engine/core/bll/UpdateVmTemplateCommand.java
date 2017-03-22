@@ -407,9 +407,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (getParameters().isBalloonEnabled() != null) {
             getVmDeviceUtils().updateMemoryBalloon(getVmTemplateId(), getParameters().isBalloonEnabled());
         }
-        if (getParameters().getVmTemplateData().getDefaultDisplayType() == DisplayType.none) {
-            getVmDeviceUtils().removeVideoDevices(getVmTemplateId());
-        }
+        getVmDeviceUtils().updateVideoDevices(oldTemplate, getParameters().getVmTemplateData());
     }
 
     @Override

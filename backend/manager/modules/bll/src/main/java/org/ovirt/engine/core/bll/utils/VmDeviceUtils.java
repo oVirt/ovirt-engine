@@ -521,7 +521,7 @@ public class VmDeviceUtils {
      * Video device
      */
 
-    private void updateVideoDevices(VmBase oldVmBase, VmBase newVmBase) {
+    public void updateVideoDevices(VmBase oldVmBase, VmBase newVmBase) {
         boolean displayTypeChanged = oldVmBase.getDefaultDisplayType() != newVmBase.getDefaultDisplayType();
         boolean numOfMonitorsChanged = newVmBase.getDefaultDisplayType() == DisplayType.qxl &&
                 oldVmBase.getNumOfMonitors() != newVmBase.getNumOfMonitors();
