@@ -103,6 +103,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
                 sessionDataContainer.setProfile(engineSessionId, profile);
                 sessionDataContainer.setPrincipalName(engineSessionId, getParameters().getPrincipalName());
                 sessionDataContainer.setSsoAccessToken(engineSessionId, getParameters().getSsoToken());
+                sessionDataContainer.setSsoOvirtAppApiScope(engineSessionId, getParameters().getSsoScope());
                 getReturnValue().setActionReturnValue(engineSessionId);
                 setSucceeded(true);
             }
