@@ -2,9 +2,11 @@ package org.ovirt.engine.core.bll.aaa;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -58,10 +60,14 @@ public class SessionDataContainer {
     private static final String ENGINE_SESSION_ID = "engine_session_id";
     private static final String PRINCIPAL_PARAMETER_NAME = "username";
     private static final String SSO_ACCESS_TOKEN_PARAMETER_NAME = "sso_access_token";
+    private static final String SSO_IS_OVIRT_APP_API_SCOPE_PARAMETER_NAME = "sso_is_ovirt_app_api_scope";
     private static final String SESSION_VALID_PARAMETER_NAME = "session_valid";
     private static final String SOFT_LIMIT_INTERVAL_PARAMETER_NAME = "soft_limit_interval";
     private static final String SESSION_START_TIME = "session_start_time";
     private static final String SESSION_LAST_ACTIVE_TIME = "session_last_active_time";
+    private static final String OVIRT_APP_API_SCOPE = "ovirt-app-api";
+    private static final String OVIRT_APP_ADMIN_SCOPE = "ovirt-app-admin";
+    private static final String OVIRT_APP_PORTAL_SCOPE = "ovirt-app-portal";
 
     @Inject
     private EngineSessionDao engineSessionDao;
@@ -346,6 +352,22 @@ public class SessionDataContainer {
 
     public String getSsoAccessToken(String engineSessionId) {
         return (String) getData(engineSessionId, SSO_ACCESS_TOKEN_PARAMETER_NAME, false);
+    }
+
+    public void setSsoOvirtAppApiScope(String engineSessionId, String scope) {
+        List<String> scopes = StringUtils.isEmpty(scope) ?
+                Collections.emptyList() :
+                Arrays.asList(scope.trim().split("\\s *"));
+        setData(engineSessionId, SSO_IS_OVIRT_APP_API_SCOPE_PARAMETER_NAME,
+                scopes.contains(OVIRT_APP_API_SCOPE) &&
+                        !scopes.contains(OVIRT_APP_ADMIN_SCOPE) &&
+                        !scopes.contains(OVIRT_APP_PORTAL_SCOPE));
+    }
+
+    public boolean isSsoOvirtAppApiScope(String engineSessionId) {
+        return isSessionExists(engineSessionId) ?
+                (boolean) getData(engineSessionId, SSO_IS_OVIRT_APP_API_SCOPE_PARAMETER_NAME, false):
+                false;
     }
 
     public void setSourceIp(String engineSessionId, String sourceIp) {

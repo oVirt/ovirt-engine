@@ -99,7 +99,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     @Override
     protected void executeCommand() {
-        if (getParameters().getRefresh()) {
+        if (getParameters().getRefresh() || getSessionDataContainer().isSsoOvirtAppApiScope(getParameters().getSessionId())) {
             getSessionDataContainer().updateSessionLastActiveTime(getParameters().getSessionId());
         }
         if (validatePermissions()) {

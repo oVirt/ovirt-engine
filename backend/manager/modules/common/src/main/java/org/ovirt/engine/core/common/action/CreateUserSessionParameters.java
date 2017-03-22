@@ -7,6 +7,7 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
 
     private static final long serialVersionUID = 5238452182295928273L;
     private String ssoToken;
+    private String ssoScope;
     private String profileName;
     private String principalName;
     private String principalId;
@@ -22,6 +23,7 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
     }
 
     public CreateUserSessionParameters(String ssoToken,
+                                       String ssoScope,
                                        String profileName,
                                        String principalName,
                                        String principalId,
@@ -33,6 +35,7 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
                                        Collection<? extends Map> groupIds,
                                        boolean adminRequired) {
         setSsoToken(ssoToken);
+        setSsoScope(ssoScope);
         setProfileName(profileName);
         setPrincipalName(principalName);
         setPrincipalId(principalId);
@@ -99,6 +102,14 @@ public class CreateUserSessionParameters extends VdcActionParametersBase {
 
     public void setSsoToken(String ssoToken) {
         this.ssoToken = ssoToken;
+    }
+
+    public String getSsoScope() {
+        return ssoScope;
+    }
+
+    public void setSsoScope(String ssoScope) {
+        this.ssoScope = ssoScope;
     }
 
     public String getSourceIp() {
