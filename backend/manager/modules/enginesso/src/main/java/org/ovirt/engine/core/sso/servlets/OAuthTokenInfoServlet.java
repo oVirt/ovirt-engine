@@ -54,33 +54,38 @@ public class OAuthTokenInfoServlet extends HttpServlet {
         boolean isSearchAuthzRequest;
         boolean isPublicSearchAuthzRequest;
         try {
-            String[] clientIdAndSecret = SsoUtils.getClientIdClientSecret(request);
-
             String scope = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_SCOPE, "");
             isValidateRequest = SsoUtils.scopeAsList(scope).contains(SsoConstants.VALIDATE_SCOPE);
             isSearchAuthzRequest = SsoUtils.scopeAsList(scope).contains(SsoConstants.AUTHZ_SEARCH_SCOPE);
             isPublicSearchAuthzRequest = SsoUtils.scopeAsList(scope).contains(SsoConstants.PUBLIC_AUTHZ_SEARCH_SCOPE);
             SsoUtils.validateClientAcceptHeader(request);
-            SsoUtils.validateClientRequest(request, clientIdAndSecret[0], clientIdAndSecret[1], null, null);
 
-            if (isSearchAuthzRequest || isPublicSearchAuthzRequest) {
-                validateQueryType(request);
-            }
-
-            if (!isPublicSearchAuthzRequest) {
+            if (isValidateRequest) {
                 String token = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
-                SsoUtils.validateRequestScope(request, token, scope);
-                SsoUtils.getSsoSession(request, clientIdAndSecret[0], token, true)
-                        .getAssociatedClientIds()
-                        .add(clientIdAndSecret[0]);
-            }
+                SsoUtils.getSsoSession(request, null, token, true);
+                log.debug("Sending json response");
+                SsoUtils.sendJsonData(response, Collections.emptyMap());
+            } else {
+                String[] clientIdAndSecret = SsoUtils.getClientIdClientSecret(request);
+                SsoUtils.validateClientRequest(request, clientIdAndSecret[0], clientIdAndSecret[1], null, null);
 
-            log.debug("Sending json response");
-            SsoUtils.sendJsonData(response, isValidateRequest ?
-                    Collections.emptyMap() :
-                    isSearchAuthzRequest || isPublicSearchAuthzRequest ?
-                            buildSearchResponse(request, isPublicSearchAuthzRequest) :
-                            buildResponse(request, clientIdAndSecret[0], scope));
+                if (isSearchAuthzRequest || isPublicSearchAuthzRequest) {
+                    validateQueryType(request);
+                }
+
+                if (!isPublicSearchAuthzRequest) {
+                    String token = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
+                    SsoUtils.validateRequestScope(request, token, scope);
+                    SsoUtils.getSsoSession(request, clientIdAndSecret[0], token, true)
+                            .getAssociatedClientIds()
+                            .add(clientIdAndSecret[0]);
+                }
+
+                log.debug("Sending json response");
+                SsoUtils.sendJsonData(response, isSearchAuthzRequest || isPublicSearchAuthzRequest ?
+                        buildSearchResponse(request, isPublicSearchAuthzRequest) :
+                        buildResponse(request, clientIdAndSecret[0], scope));
+            }
         } catch(OAuthException ex) {
             SsoUtils.sendJsonDataWithMessage(response, ex, isValidateRequest);
         } catch(Exception ex) {
