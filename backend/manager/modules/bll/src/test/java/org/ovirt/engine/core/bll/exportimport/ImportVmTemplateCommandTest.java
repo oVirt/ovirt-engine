@@ -245,25 +245,25 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         return new ImportVmTemplateParameters(Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), t);
     }
 
-    private final String string100 = "0987654321" +
-            "0987654321" +
-            "0987654321" +
-            "0987654321" +
-            "0987654321" +
-            "0987654321" +
-            "0987654321" +
-            "0987654321" +
-            "0987654321" +
-            "0987654321";
+    private static String createDataSize(int size) {
+        StringBuilder sb = new StringBuilder(size);
+        for (int i = 0; i < size; i++) {
+            sb.append('a');
+        }
+        return sb.toString();
+    }
+
+    private final String string100 = createDataSize(100);
+    private final String string500 = createDataSize(500);
 
     @Test
     public void testValidateNameSizeImportAsCloned() {
-        checkTemplateName(true, string100);
+        checkTemplateName(true, string500);
     }
 
     @Test
     public void testDoNotValidateNameSizeImport() {
-        checkTemplateName(false, string100);
+        checkTemplateName(false, string500);
     }
 
     @Test
