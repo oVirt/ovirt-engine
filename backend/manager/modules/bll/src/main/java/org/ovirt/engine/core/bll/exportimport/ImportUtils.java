@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.exportimport;
 
-import java.util.ArrayList;
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 import java.util.Map;
 
@@ -73,15 +74,7 @@ public class ImportUtils {
     }
 
     private static List<VmDevice> getDevicesOfType(VmDeviceGeneralType type, Map<Guid, VmDevice> managedDevicesMap) {
-        List<VmDevice> devices = new ArrayList<>();
-
-        for (VmDevice vmDevice : managedDevicesMap.values()) {
-            if (vmDevice.getType() == type) {
-                devices.add(vmDevice);
-            }
-        }
-
-        return devices;
+        return managedDevicesMap.values().stream().filter(device -> device.getType() == type).collect(toList());
     }
 
     private static GraphicsDevice getCompatibleGraphics(VmDeviceType videoDeviceType, Version clusterVersion, VmBase vmBase) {
