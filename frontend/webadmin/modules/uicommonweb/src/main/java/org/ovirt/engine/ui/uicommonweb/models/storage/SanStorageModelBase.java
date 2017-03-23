@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -977,24 +978,24 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         if (getIsGrouppedByTarget()) {
             List<SanTargetModel> items = (List<SanTargetModel>) getItems();
             for (SanTargetModel item : items) {
-                for (LunModel lun : item.getLuns()) {
-                    if (lun.getIsSelected() && !lun.getIsIncluded()
-                            && Linq.firstOrNull(luns, new Linq.LunPredicate(lun)) == null) {
-                        luns.add(lun);
-                    }
-                }
+                luns.addAll(getAddedLuns(item.getLuns()));
             }
-        }
-        else {
+        } else {
             List<LunModel> items = (List<LunModel>) getItems();
-            for (LunModel lun : items) {
-                if (lun.getIsSelected() && !lun.getIsIncluded()
-                        && Linq.firstOrNull(luns, new Linq.LunPredicate(lun)) == null) {
-                    luns.add(lun);
-                }
-            }
+            luns.addAll(getAddedLuns(items));
         }
 
+        return luns;
+    }
+
+    private Collection<LunModel> getAddedLuns(List<LunModel> lunModels) {
+        Collection<LunModel> luns = new LinkedList<>();
+        for (LunModel lun : lunModels) {
+            if (lun.getIsSelected() && !lun.getIsIncluded()
+                    && Linq.firstOrNull(luns, new Linq.LunPredicate(lun)) == null) {
+                luns.add(lun);
+            }
+        }
         return luns;
     }
 
