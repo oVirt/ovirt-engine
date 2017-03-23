@@ -973,26 +973,34 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
     }
 
+    /**
+     * @return the new selected luns.
+     */
     public ArrayList<LunModel> getAddedLuns() {
+        return getLuns(true, false);
+    }
+
+    private ArrayList<LunModel> getLuns(boolean selectedLuns, boolean includedLuns) {
         ArrayList<LunModel> luns = new ArrayList<>();
         if (getIsGrouppedByTarget()) {
             List<SanTargetModel> items = (List<SanTargetModel>) getItems();
             for (SanTargetModel item : items) {
-                luns.addAll(getAddedLuns(item.getLuns()));
+                luns.addAll(getAddedLuns(item.getLuns(), selectedLuns, includedLuns));
             }
         } else {
             List<LunModel> items = (List<LunModel>) getItems();
-            luns.addAll(getAddedLuns(items));
+            luns.addAll(getAddedLuns(items, selectedLuns, includedLuns));
         }
 
         return luns;
     }
 
-    private Collection<LunModel> getAddedLuns(List<LunModel> lunModels) {
+    private Collection<LunModel> getAddedLuns(List<LunModel> lunModels, boolean selectedLuns, boolean includedLuns) {
         Collection<LunModel> luns = new LinkedList<>();
         for (LunModel lun : lunModels) {
-            if (lun.getIsSelected() && !lun.getIsIncluded()
-                    && Linq.firstOrNull(luns, new Linq.LunPredicate(lun)) == null) {
+            if (((selectedLuns && lun.getIsSelected() && !lun.getIsIncluded()) ||
+                    (includedLuns && lun.getIsIncluded() && !lun.getIsSelected())) &&
+                    Linq.firstOrNull(luns, new Linq.LunPredicate(lun)) == null) {
                 luns.add(lun);
             }
         }
