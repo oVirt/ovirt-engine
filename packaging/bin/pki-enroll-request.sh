@@ -6,6 +6,7 @@ sign() {
 	local days="$3"
 	local ovirt_ku="$4"
 	local ovirt_eku="$5"
+	local ovirt_san="$6"
 
 	local req="requests/${name}.req"
 	local cert="certs/${name}.cer"
@@ -15,10 +16,12 @@ sign() {
 	local EXTRA_COMMAND
 	if openssl x509 -text -in ca.pem | grep "Subject Key Identifier" > /dev/null; then
 		local extsection="v3_ca"
+		[ -n "${ovirt_san}" ] && extsection="v3_ca_san"
 		[ -n "${ovirt_ku}" -o -n "${ovirt_eku}" ] && extsection="custom"
 		EXTRA_COMMAND="-extfile cert.conf -extensions ${extsection}"
 	fi
-	OVIRT_KU="${ovirt_ku}" OVIRT_EKU="${ovirt_eku}" openssl ca \
+	OVIRT_KU="${ovirt_ku}" OVIRT_EKU="${ovirt_eku}" OVIRT_SAN="${ovirt_san}" \
+		openssl ca \
 		-batch \
 		-policy policy_match \
 		-config openssl.conf \
@@ -48,7 +51,8 @@ Certificate will be available at:     ${PKIDIR}/certs/PREFIX.cer
     --subject=subject     X.500 subject name.
     --days=n              issue days.
     --ku=ku               optional custom key usage.
-    --eku=ekus            optional custom extended key usage
+    --eku=ekus            optional custom extended key usage.
+    --san=san             optional X.509 subject alternative name.
     --timeout=n           lock timeout, default=20
 __EOF__
 }
@@ -85,6 +89,9 @@ while [ -n "$1" ]; do
 		;;
 		--eku=*)
 			OVIRT_EKU="${v}"
+		;;
+		--san=*)
+			OVIRT_SAN="${v}"
 		;;
 		--timeout=*)
 			TIMEOUT="${v}"
@@ -141,7 +148,7 @@ done
 (
 	flock -e -w "${TIMEOUT}" 9 || die "Timeout waiting for lock. Giving up"
 	cd "${PKIDIR}"
-	sign "${NAME}" "${SUBJECT}" "${DAYS}" "${OVIRT_KU}" "${OVIRT_EKU}"
+	sign "${NAME}" "${SUBJECT}" "${DAYS}" "${OVIRT_KU}" "${OVIRT_EKU}" "${OVIRT_SAN}"
 ) 9< "${LOCK}"
 result=$?
 
