@@ -834,7 +834,10 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         }
         else {
             getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().loadingFingerprint());
-            AsyncDataProvider.getInstance().getHostFingerprint(aQuery, getHost().getEntity());
+            AsyncDataProvider.getInstance().getHostFingerprint(
+                    aQuery,
+                    getHost().getEntity(),
+                    getAuthSshPort().getEntity());
         }
     }
 

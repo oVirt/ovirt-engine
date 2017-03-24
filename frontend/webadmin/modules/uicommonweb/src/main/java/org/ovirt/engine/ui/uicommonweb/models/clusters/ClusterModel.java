@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
@@ -1479,7 +1480,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     getGlusterHostFingerprint().setEntity(""); //$NON-NLS-1$
                     return;
                 }
-                fetchFingerprint(getGlusterHostAddress().getEntity());
+                fetchFingerprint(
+                        getGlusterHostAddress().getEntity(),
+                        VdsStatic.DEFAULT_SSH_PORT);
             }
         });
 
@@ -1513,7 +1516,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getIsImportGlusterConfiguration().setEntity(false);
     }
 
-    private void fetchFingerprint(String hostAddress) {
+    private void fetchFingerprint(String hostAddress, Integer hostPort) {
         AsyncDataProvider.getInstance().getHostFingerprint(new AsyncQuery<>(new AsyncCallback<String>() {
             @Override
             public void onSuccess(String fingerprint) {
@@ -1528,7 +1531,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     setIsFingerprintVerified(false);
                 }
             }
-        }), hostAddress);
+        }), hostAddress, hostPort);
         getGlusterHostFingerprint().setEntity(ConstantsManager.getInstance().getConstants().loadingFingerprint());
     }
 

@@ -20,7 +20,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     private static final long serialVersionUID = -1425566208615075937L;
     private static final int HOST_DEFAULT_SPM_PRIORITY = 5;
-    private static final int DEFAULT_SSH_PORT = 22;
+    public static final int DEFAULT_SSH_PORT = 22;
     private static final String DEFAULT_SSH_USERNAME = "root";
 
 

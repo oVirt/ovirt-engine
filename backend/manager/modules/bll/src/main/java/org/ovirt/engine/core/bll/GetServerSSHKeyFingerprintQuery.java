@@ -17,16 +17,17 @@ public class GetServerSSHKeyFingerprintQuery<P extends ServerParameters> extends
         super(parameters, engineContext);
     }
 
-    public String getServerFingerprint(String serverName) {
+    public String getServerFingerprint(String serverName, Integer port) {
         String fingerPrint = null;
         try (final EngineSSHClient client = getEngineSSHClient()) {
-            client.setHost(serverName);
+            client.setHost(serverName, port);
             client.setUser("dummy");
             client.connect();
             fingerPrint = client.getHostFingerprint();
         } catch (Throwable e) {
-            log.error("Could not fetch fingerprint of host '{}': {}",
+            log.error("Could not fetch fingerprint of host '{}:{}': {}",
                 serverName,
+                port,
                 e.getMessage()
             );
             log.debug("Exception", e);
@@ -36,7 +37,8 @@ public class GetServerSSHKeyFingerprintQuery<P extends ServerParameters> extends
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getServerFingerprint(getParameters().getServer()));
+        getQueryReturnValue().setReturnValue(
+                getServerFingerprint(getParameters().getServer(), getParameters().getPort()));
     }
 
     protected EngineSSHClient getEngineSSHClient() {

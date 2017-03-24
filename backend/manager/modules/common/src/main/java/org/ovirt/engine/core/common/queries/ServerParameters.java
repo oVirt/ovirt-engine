@@ -8,15 +8,25 @@ public class ServerParameters extends VdcQueryParametersBase {
     @NotNull(message = "VALIDATION_VDS_HOSTNAME_HOSTNAME_OR_IP")
     private String server;
 
+    private Integer port;
+
     public ServerParameters() {
     }
 
     public ServerParameters(String server) {
+        this(server, null);
+    }
+
+    public ServerParameters(String server, Integer port) {
         this.server = server;
+        this.port = port;
     }
 
     public String getServer() {
         return server;
     }
 
+    public Integer getPort() {
+        return port;
+    }
 }
