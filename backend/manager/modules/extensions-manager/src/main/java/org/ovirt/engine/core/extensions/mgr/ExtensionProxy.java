@@ -12,7 +12,7 @@ public class ExtensionProxy implements Extension {
     private final ExtMap context;
 
     private void dumpMap(String prefix, ExtMap map) {
-        Logger logger = context.<Logger> get(ExtensionsManager.TRACE_LOG_CONTEXT_KEY);
+        Logger logger = context.get(ExtensionsManager.TRACE_LOG_CONTEXT_KEY);
         if (logger.isTraceEnabled()) {
             logger.trace(prefix + " BEGIN");
             logger.trace(map.toString());
@@ -72,7 +72,7 @@ public class ExtensionProxy implements Extension {
         ExtMap output = new ExtMap();
         invoke(input, output);
 
-        String message = output.<String>get(Base.InvokeKeys.MESSAGE);
+        String message = output.get(Base.InvokeKeys.MESSAGE);
         switch(output.<Integer>get(Base.InvokeKeys.RESULT, Base.InvokeResult.FAILED)) {
         case Base.InvokeResult.SUCCESS:
             break;
@@ -92,7 +92,7 @@ public class ExtensionProxy implements Extension {
                     message == null ? "Invoke failed" : message,
                     input,
                     output,
-                    output.<Throwable>get(ExtensionsManager.CAUSE_OUTPUT_KEY)
+                    output.get(ExtensionsManager.CAUSE_OUTPUT_KEY)
                 );
             }
             break;
