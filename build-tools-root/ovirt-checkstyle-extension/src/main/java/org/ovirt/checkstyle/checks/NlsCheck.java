@@ -82,7 +82,7 @@ public class NlsCheck extends AbstractCheck {
             int j = 0;
             for (QuotedString str : stringList) {
                 ++j;
-                Pattern patternNls = Pattern.compile("\\$NON-NLS-" + j + "\\$"); //$NON-NLS-1$//$NON-NLS-2$
+                Pattern patternNls = Pattern.compile("\\$NON-NLS-" + j + "\\$");
                 Matcher matcherNls = patternNls.matcher(lineText);
 
                 int matchNum = 0;
@@ -90,8 +90,9 @@ public class NlsCheck extends AbstractCheck {
                     ++matchNum;
                 }
                 if (matchNum != 1) {
-                    log(i, "String " + str.text + " is non-externalized.\n Please externalize it by moving it to i18n Constants/Messages interface or add //$NON-NLS-" + j + "$" + " comment to marks the string as non externalized"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
+                    log(i, "String on line " + i + " (at index " + str.startIndex + ") is non-localized.\n" +
+                            "Please localize it via Constants/Messages interface " +
+                            "or use //$NON-NLS-" + j + "$" + " comment to indicate that it shouldn't be localized.");
                 }
             }
         }
@@ -132,6 +133,11 @@ public class NlsCheck extends AbstractCheck {
             this.text = text;
             this.startIndex = startIndex;
             this.endIndex = endIndex;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s [%d:%d]", text, startIndex, endIndex);
         }
     }
 
