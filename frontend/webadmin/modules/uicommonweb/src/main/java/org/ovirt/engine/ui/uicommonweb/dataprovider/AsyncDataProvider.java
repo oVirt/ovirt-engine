@@ -1462,9 +1462,11 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeOptionsInfo, new GlusterParameters(clusterId), aQuery);
     }
 
-    public void getHostFingerprint(AsyncQuery<String> aQuery, String hostAddress) {
+    public void getHostFingerprint(AsyncQuery<String> aQuery, String hostAddress, Integer hostPort) {
         aQuery.converterCallback = new StringConverter();
-        Frontend.getInstance().runQuery(VdcQueryType.GetServerSSHKeyFingerprint, new ServerParameters(hostAddress), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetServerSSHKeyFingerprint,
+                new ServerParameters(hostAddress, hostPort),
+                aQuery);
     }
 
     public void getEngineSshPublicKey(AsyncQuery<String> aQuery) {
