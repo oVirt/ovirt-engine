@@ -192,6 +192,11 @@ class Plugin(plugin.PluginBase):
                         self.environment[osetupcons.ConfigEnv.FQDN],
                     ),
                 ),
+                '--san=DNS:%s' % (
+                    self._subjectComponentEscape(
+                        self.environment[osetupcons.ConfigEnv.FQDN],
+                    ),
+                ),
             ) + (('--keep-key',) if keepKey else ())
         )
         uninstall_files.extend(

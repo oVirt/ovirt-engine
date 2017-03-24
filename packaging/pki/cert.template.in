@@ -12,12 +12,24 @@ x509_extensions = v3_ca
 
 [v3_ca]
 
+# On updating this section, [v3_ca_san] may be updated, too.
 subjectKeyIdentifier = hash
 authorityInfoAccess = caIssuers;URI:@AIA@
 authorityKeyIdentifier = keyid:always,issuer:always
 basicConstraints = CA:false
 keyUsage = critical,digitalSignature,keyEncipherment
 extendedKeyUsage = critical,serverAuth,clientAuth
+
+[v3_ca_san]
+
+# This section is a copy of the section [v3_ca] extended by subjectAltName.
+subjectKeyIdentifier = hash
+authorityInfoAccess = caIssuers;URI:@AIA@
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints = CA:false
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = critical,serverAuth,clientAuth
+subjectAltName = ${ENV::OVIRT_SAN}
 
 [custom]
 subjectKeyIdentifier = hash

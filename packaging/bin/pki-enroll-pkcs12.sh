@@ -6,7 +6,8 @@ enroll() {
 	local subj="$3"
 	local ovirt_ku="$4"
 	local ovirt_eku="$5"
-	local keep_key="$6"
+	local ovirt_san="$6"
+	local keep_key="$7"
 
 	local req="${PKIDIR}/requests/${name}.req"
 	local cert="${PKIDIR}/certs/${name}.cer"
@@ -49,6 +50,7 @@ enroll() {
 		--subject="${subj}" \
 		--ku="${ovirt_ku}" \
 		--eku="${ovirt_eku}" \
+		--san="${ovirt_san}" \
 		|| die "Cannot sign request"
 
 	touch "${pkcs12}"
@@ -77,6 +79,7 @@ Result will be at ${PKIDIR}/keys/PREFIX.p12
     --subject=subject     X.500 subject name.
     --ku=ku               optional custom key usage.
     --eku=ekus            optional custom extended key usage.
+    --san=san             optional X.509 subject alternative name.
     --keep-key            reissue certificate based on previous request.
 __EOF__
 }
@@ -111,6 +114,9 @@ while [ -n "$1" ]; do
 		--eku=*)
 			OVIRT_EKU="${v}"
 		;;
+		--san=*)
+			OVIRT_SAN="${v}"
+		;;
 		--keep-key)
 			KEEP_KEY="1"
 		;;
@@ -129,4 +135,4 @@ done
 [ -n "${PASSWORD}" ] || die "Please specify password"
 [ -n "${SUBJECT}" ] || die "Please specify subject"
 
-enroll "${NAME}" "${PASSWORD}" "${SUBJECT}" "${OVIRT_KU}" "${OVIRT_EKU}" "${KEEP_KEY}"
+enroll "${NAME}" "${PASSWORD}" "${SUBJECT}" "${OVIRT_KU}" "${OVIRT_EKU}" "${OVIRT_SAN}" "${KEEP_KEY}"
