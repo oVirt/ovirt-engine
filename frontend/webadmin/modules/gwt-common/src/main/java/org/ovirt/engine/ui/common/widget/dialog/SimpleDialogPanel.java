@@ -31,11 +31,11 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
-    public static interface InfoIconStyle extends CssResource {
+    public interface InfoIconStyle extends CssResource {
         String infoIconColor();
     }
 
-    public static interface InfoIconResources extends ClientBundle {
+    public interface InfoIconResources extends ClientBundle {
         @Source("org/ovirt/engine/ui/common/css/InfoIcon.css")
         InfoIconStyle iconStyle();
     }
@@ -86,7 +86,19 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
         infoIconStyle.ensureInjected();
         setWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         infoAnchor.addStyleName(infoIconStyle.infoIconColor());
+        addAttachHandler(event -> setDraggable(event.isAttached()));
     }
+
+    private native void setDraggable(boolean dragEnabled) /*-{
+        var containerElement = this.@org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel::getContainerElement()();
+        var $popupContent = $wnd.jQuery(containerElement).parent();
+
+        if (dragEnabled) {
+            $popupContent.draggable({ handle: '.modal-header' });
+        } else {
+            $popupContent.draggable('destroy');
+        }
+    }-*/;
 
     @Override
     @UiChild(tagname = "header", limit = 1)
@@ -175,4 +187,5 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
         helpCommand = command;
         infoAnchor.setVisible(command != null);
     }
+
 }

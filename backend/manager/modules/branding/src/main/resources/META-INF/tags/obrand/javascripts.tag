@@ -5,6 +5,7 @@
 
 <c:set var="baseTheme" value="${requestScope['brandingStyle'][0]}" />
 <script type="text/javascript" src="${pageContext.request.contextPath}${initParam['obrandThemePath']}${baseTheme.path}/ovirt-js-dependencies/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}${initParam['obrandThemePath']}${baseTheme.path}/ovirt-js-dependencies/jquery-ui-dist/jquery-ui.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}${initParam['obrandThemePath']}${baseTheme.path}/ovirt-js-dependencies/bootstrap/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}${initParam['obrandThemePath']}${baseTheme.path}/ovirt-js-dependencies/patternfly/dist/js/patternfly.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}${initParam['obrandThemePath']}${baseTheme.path}/ovirt-js-dependencies/insertion-query/insQ.min.js"></script>
