@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 <module name="Checker">
+  <module name="BeforeExecutionExclusionFileFilter">
+    <property name="fileNamePattern" value=".*generated-sources.*"/>
+  </module>
   <module name="FileTabCharacter">
     <property name="eachLine" value="true"/>
   </module>
