@@ -211,4 +211,8 @@ public class Version implements Comparable<Version>, Serializable {
     public static Version getLast() {
         return ALL.get(ALL.size() - 1);
     }
+
+    public static Version getLowest() {
+        return ALL.get(0);
+    }
 }
