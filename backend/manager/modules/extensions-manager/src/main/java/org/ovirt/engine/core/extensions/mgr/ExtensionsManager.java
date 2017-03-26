@@ -134,7 +134,7 @@ public class ExtensionsManager extends Observable {
 
     private ConcurrentMap<String, ExtensionEntry> loadedEntries = new ConcurrentHashMap<>();
     private ConcurrentMap<String, ExtensionEntry> initializedEntries = new ConcurrentHashMap<>();
-    private ExtMap globalContext = new ExtMap().mput(Base.GlobalContextKeys.EXTENSIONS, new ArrayList<ExtMap>());
+    private final ExtMap globalContext = new ExtMap().mput(Base.GlobalContextKeys.EXTENSIONS, new ArrayList<ExtMap>());
 
 
     public String load(Properties configuration) {
