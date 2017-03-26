@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
@@ -47,6 +48,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -60,6 +62,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
+import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -71,6 +74,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Inject
     private LockManager lockManager;
+    @Inject
+    private OvfHelper ovfHelper;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -262,9 +267,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     private boolean updateClusterCompatibilityVersionToOldCluster(boolean disableLock) {
         Version oldClusterVersion = getVm().getClusterCompatibilityVersionOrigin();
-            // if snapshot is taken in pre-3.6, set to to oldest supported (3.6)
-        oldClusterVersion = oldClusterVersion == null ? Version.v3_6 : oldClusterVersion;
-
         if (isRestoreMemory() && getVm().getCustomCompatibilityVersion() == null &&
                 oldClusterVersion.less(getVm().getClusterCompatibilityVersion())) {
             // the snapshot was taken before cluster version change, call the UpdateVmCommand
@@ -436,6 +438,27 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             return false;
         }
 
+        if (isRestoreMemory() && !validateMemoryTakenInSupportedVersion()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateMemoryTakenInSupportedVersion() {
+        VM vmFromSnapshot = null;
+        try {
+            vmFromSnapshot = ovfHelper.readVmFromOvf(getDstSnapshot().getVmConfiguration());
+        } catch (OvfReaderException e) {
+            // should never happen since the OVF was created by us
+            log.error("Failed to parse a given ovf configuration: {}", e.getMessage());
+            return false;
+        }
+        Version originalClusterVersion = vmFromSnapshot.getClusterCompatibilityVersionOrigin();
+        if (Version.getLowest().greater(originalClusterVersion)) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_MEMORY_TOO_OLD,
+                    String.format("$Cv %s", originalClusterVersion != null ? originalClusterVersion : "N/A"));
+        }
         return true;
     }
 
