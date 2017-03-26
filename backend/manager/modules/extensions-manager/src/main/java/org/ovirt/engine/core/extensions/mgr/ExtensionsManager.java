@@ -312,12 +312,7 @@ public class ExtensionsManager extends Observable {
         }
         try {
             log.info("Initializing extension '{}'", entry.name);
-            ExtMap output = entry.extension.invoke(
-                    new ExtMap().mput(
-                            Base.InvokeKeys.COMMAND,
-                            Base.InvokeCommands.INITIALIZE
-                            )
-                    );
+            entry.extension.invoke(new ExtMap().mput(Base.InvokeKeys.COMMAND, Base.InvokeCommands.INITIALIZE));
             log.info("Extension '{}' initialized", entry.name);
         } catch (Exception ex) {
             log.error("Error in activating extension '{}': {}", entry.name, ex.getMessage());
