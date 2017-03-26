@@ -130,7 +130,7 @@ public class ExtensionsManager extends Observable {
     private static final Map<String, BindingsLoader> bindingsLoaders = new HashMap<>();
     static {
         bindingsLoaders.put(Base.ConfigBindingsMethods.JBOSSMODULE, new JBossBindingsLoader());
-    };
+    }
 
     private ConcurrentMap<String, ExtensionEntry> loadedEntries = new ConcurrentHashMap<>();
     private ConcurrentMap<String, ExtensionEntry> initializedEntries = new ConcurrentHashMap<>();
@@ -144,7 +144,7 @@ public class ExtensionsManager extends Observable {
     public String load(File file) {
         try (
             InputStream is = new FileInputStream(file);
-            Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+            Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)
         ) {
             Properties props = new Properties();
             props.load(reader);
