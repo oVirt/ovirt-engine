@@ -136,7 +136,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             }
         } else {
             setCommandShouldBeLogged(false);
-            log.warn("VmCommand::EndVmCommand: Vm is null - not performing endAction on Vm");
+            log.warn("VM is null, not performing endAction");
         }
 
         setSucceeded(true);
@@ -245,9 +245,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 }
             });
         } else {
-            // if there are no disks to restore, no compensation context is saved and
-            //    the VM Configuration (incl. clusterCompatibilityVersionOrigin) is already restored at this point.
-            // Otherwise, if disks are being restored, the VM Configuration is restored later in endSuccessfully()
+            // if there are no disks to restore, no compensation context is saved and the VM Configuration
+            // (including clusterCompatibilityVersionOrigin) is already restored at this point. Otherwise,
+            // if disks are being restored, the VM Configuration is restored later in endSuccessfully()
             updateClusterCompatibilityVersionToOldCluster(true);
         }
 
@@ -438,7 +438,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         return true;
     }
 
-    public boolean validateCinder() {
+    private boolean validateCinder() {
         List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(diskDao.getAllForVm(getVmId()));
         if (!cinderDisks.isEmpty()) {
             CinderDisksValidator cinderDisksValidator = getCinderDisksValidator(cinderDisks);
