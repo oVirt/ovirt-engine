@@ -156,9 +156,9 @@ public class ExtensionsManager extends Observable {
     }
 
     private void dumpConfig(ExtensionProxy extension) {
-        Logger traceLogger = extension.getContext().<Logger> get(TRACE_LOG_CONTEXT_KEY);
+        Logger traceLogger = extension.getContext().get(TRACE_LOG_CONTEXT_KEY);
         if (traceLogger.isDebugEnabled()) {
-            Collection sensitive = extension.getContext().<Collection>get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
+            Collection sensitive = extension.getContext().get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
             traceLogger.debug("Config BEGIN");
             for (Map.Entry<Object, Object> entry : extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).entrySet()) {
                 traceLogger.debug(
