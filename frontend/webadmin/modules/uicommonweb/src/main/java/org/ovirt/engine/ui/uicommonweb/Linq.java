@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -64,7 +63,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
-import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
 public final class Linq {
@@ -830,16 +828,6 @@ public final class Linq {
                 return provider.getType().getProvidedTypes().contains(type);
             }
         });
-    }
-
-    public static final class ProviderTypeComparator implements Comparator<ProviderType>, Serializable {
-        private static final long serialVersionUID = -7917198421355959306L;
-
-        @Override
-        public int compare(ProviderType type1, ProviderType type2) {
-            final EnumTranslator enumTranslator = EnumTranslator.getInstance();
-            return LexoNumericComparator.comp(enumTranslator.translate(type1), enumTranslator.translate(type2));
-        }
     }
 
     /**
