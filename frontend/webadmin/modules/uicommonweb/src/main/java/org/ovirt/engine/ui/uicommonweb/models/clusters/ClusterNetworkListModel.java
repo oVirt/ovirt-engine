@@ -3,12 +3,14 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
@@ -21,7 +23,6 @@ import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.NetworkInClusterComparator;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -101,7 +102,10 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
             @Override
             public void onSuccess(VdcQueryReturnValue returnValue) {
                 final List<Network> newItems = returnValue.getReturnValue();
-                Collections.sort(newItems, new NetworkInClusterComparator());
+                Collections.sort(newItems,
+                        Comparator.comparing((Network n) -> n.getCluster().isManagement()).reversed()
+                            .thenComparing(Network::getName, new LexoNumericComparator())
+                        );
                 for (Network network : newItems) {
                     network.getCluster().setId(new NetworkClusterId(getEntity().getId(), network.getId()));
                 }

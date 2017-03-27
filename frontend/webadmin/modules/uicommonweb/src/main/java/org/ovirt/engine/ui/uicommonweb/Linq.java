@@ -775,26 +775,6 @@ public final class Linq {
         }
     }
 
-    public static final class NetworkInClusterComparator implements Comparator<Network>, Serializable {
-
-        private static final long serialVersionUID = 990203400356561587L;
-        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(Network net1, Network net2) {
-
-            final boolean managementNetwork1 = net1.getCluster().isManagement();
-            final boolean managementNetwork2 = net2.getCluster().isManagement();
-
-            int retVal = -1 * Boolean.compare(managementNetwork1, managementNetwork2);
-            if (retVal != 0) {
-                return retVal;
-            }
-
-            return lexoNumeric.compare(net1.getName(), net2.getName());
-        }
-    }
-
     public static final class VnicProfileViewComparator implements Comparator<VnicProfileView>, Serializable {
 
         private static final long serialVersionUID = 990203400356561587L;
