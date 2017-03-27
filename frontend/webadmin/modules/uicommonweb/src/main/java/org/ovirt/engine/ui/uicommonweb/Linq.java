@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -116,15 +115,6 @@ public final class Linq {
                     : deviceStatusComparison;
         }
 
-    }
-
-    public static class GlusterVolumeSnapshotConfigComparator implements Comparator<GlusterVolumeSnapshotConfig>, Serializable {
-        private static final long serialVersionUID = 2L;
-
-        @Override
-        public int compare(GlusterVolumeSnapshotConfig param0, GlusterVolumeSnapshotConfig param1) {
-            return param0.getParamName().compareTo(param1.getParamName());
-        }
     }
 
     public static class DiskImageByActualSizeComparer implements Comparator<DiskImage>, Serializable {

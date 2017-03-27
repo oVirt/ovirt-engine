@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -103,7 +103,7 @@ public class GlusterClusterSnapshotConfigModel extends Model {
                         returnValue.getReturnValue();
                 if (configs != null) {
                     List<GlusterVolumeSnapshotConfig> clusterConfigOptions = configs.getFirst();
-                    Collections.sort(clusterConfigOptions, new Linq.GlusterVolumeSnapshotConfigComparator());
+                    Collections.sort(clusterConfigOptions, Comparator.comparing(GlusterVolumeSnapshotConfig::getParamName));
                     setModelItems(getClusterConfigOptions(), clusterConfigOptions, existingClusterConfigs);
                 } else {
                     getClusterConfigOptions().setItems(null);
