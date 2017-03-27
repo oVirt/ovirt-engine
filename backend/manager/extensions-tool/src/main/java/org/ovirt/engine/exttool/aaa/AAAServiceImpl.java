@@ -76,7 +76,7 @@ public class AAAServiceImpl implements ModuleService {
                         );
                     }
 
-                    Dump.PRINCIPAL_RECORD.dump(module, outMap.<ExtMap>get(Authz.InvokeKeys.PRINCIPAL_RECORD));
+                    Dump.PRINCIPAL_RECORD.dump(module, outMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
                 }
             }
         ),
@@ -104,7 +104,7 @@ public class AAAServiceImpl implements ModuleService {
                         getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
                     );
 
-                    Dump.AUTH_RECORD.dump(module, outMap.<ExtMap>get(Authn.InvokeKeys.AUTH_RECORD));
+                    Dump.AUTH_RECORD.dump(module, outMap.get(Authn.InvokeKeys.AUTH_RECORD));
 
                     if (outMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
                         throw new RuntimeException(
@@ -183,7 +183,7 @@ public class AAAServiceImpl implements ModuleService {
                         getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
                     );
 
-                    ExtMap authRecord = outMap.<ExtMap>get(Authn.InvokeKeys.AUTH_RECORD);
+                    ExtMap authRecord = outMap.get(Authn.InvokeKeys.AUTH_RECORD);
                     Dump.AUTH_RECORD.dump(module, authRecord);
 
                     if (outMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
@@ -215,7 +215,7 @@ public class AAAServiceImpl implements ModuleService {
                                 authRecord
                             ),
                             true
-                        ).<ExtMap>get(
+                        ).get(
                             Authn.InvokeKeys.AUTH_RECORD,
                             authRecord
                         );
@@ -245,7 +245,7 @@ public class AAAServiceImpl implements ModuleService {
                         getFieldNameByValue(Authz.Status.class, outMap.<Integer> get(Authz.InvokeKeys.STATUS))
                     );
 
-                    ExtMap principalRecord = outMap.<ExtMap> get(Authz.InvokeKeys.PRINCIPAL_RECORD);
+                    ExtMap principalRecord = outMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD);
                     Dump.PRINCIPAL_RECORD.dump(module, principalRecord);
 
                     if (outMap.<Integer> get(Authz.InvokeKeys.STATUS) != Authz.Status.SUCCESS) {
@@ -320,7 +320,7 @@ public class AAAServiceImpl implements ModuleService {
                     ExtMap filter = createQueryFilter(entity, module.argMap);
                     Dump.QUERY_FILTER_RECORD.dump(module, filter, "");
 
-                    Collection<String> namespaces = authzExtension.getContext().<Collection<String>>get(
+                    Collection<String> namespaces = authzExtension.getContext().get(
                         Authz.ContextKeys.AVAILABLE_NAMESPACES,
                         Collections.<String>emptyList()
                     );
@@ -444,7 +444,7 @@ public class AAAServiceImpl implements ModuleService {
                 public void dump(AAAServiceImpl module, ExtMap map, String indent) {
                     if (map != null) {
                         log.info("--- Begin AuthRecord ---");
-                        dumpRecord(module, map, Collections.<ExtKey>emptyList(), "AuthRecord", "");
+                        dumpRecord(module, map, Collections.emptyList(), "AuthRecord", "");
                         log.info("--- End   AuthRecord ---");
                     }
                 }
@@ -497,7 +497,7 @@ public class AAAServiceImpl implements ModuleService {
 
         private static void dumpGroups(AAAServiceImpl module, ExtMap map, String indent, Set<String> loopPrevention) {
             if (map != null ) {
-                loopPrevention.add(map.<String>get(Authz.GroupRecord.ID));
+                loopPrevention.add(map.get(Authz.GroupRecord.ID));
                 log.info("{}--- Begin GroupRecord ---", indent);
                 dumpRecord(module, map, Arrays.asList(Authz.GroupRecord.GROUPS), "GroupRecord", indent);
                 map.<Collection<ExtMap>>get(Authz.GroupRecord.GROUPS, Collections.<ExtMap> emptyList())
@@ -559,7 +559,7 @@ public class AAAServiceImpl implements ModuleService {
     private String password;
 
     private static <T> List<T> safeList(List<T> list) {
-        return list == null ? Collections.<T>emptyList() : list;
+        return list == null ? Collections.emptyList() : list;
     }
 
     private ExtensionsManager getExtensionsManager() {
@@ -795,10 +795,10 @@ public class AAAServiceImpl implements ModuleService {
 
         String displayUser = null;
         if (displayUser == null && principalRecord != null) {
-            displayUser = principalRecord.<String>get(Authz.PrincipalRecord.NAME);
+            displayUser = principalRecord.get(Authz.PrincipalRecord.NAME);
         }
         if (displayUser == null && authRecord != null) {
-            displayUser = authRecord.<String>get(Authn.AuthRecord.PRINCIPAL);
+            displayUser = authRecord.get(Authn.AuthRecord.PRINCIPAL);
         }
         if (displayUser == null) {
             displayUser = user;
@@ -890,7 +890,7 @@ public class AAAServiceImpl implements ModuleService {
                                 user
                         ),
                         true
-                ).<String>get(Mapping.InvokeKeys.USER, user);
+                ).get(Mapping.InvokeKeys.USER, user);
                 log.info("API: <--Mapping.InvokeCommands.MAP_USER profile='{}' user='{}'", getProfile(), user);
             }
             return user;
