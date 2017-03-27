@@ -61,7 +61,6 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
@@ -113,17 +112,6 @@ public final class Linq {
                             : -1;
             return deviceStatusComparison == 0 ? device1.getName().compareTo(device2.getName())
                     : deviceStatusComparison;
-        }
-
-    }
-
-    public static class StorageDomainModelByNameComparer implements Comparator<StorageDomainModel>, Serializable {
-
-        private static final long serialVersionUID = 5142897643241941178L;
-
-        @Override
-        public int compare(StorageDomainModel x, StorageDomainModel y) {
-            return x.getStorageDomain().getStorageName().compareTo(y.getStorageDomain().getStorageName());
         }
 
     }

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -18,7 +19,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.StorageDomainModelByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -83,7 +83,7 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
     @Override
     public void setItems(final Collection<StorageDomainModel> value) {
         if (storageDomainModels != null) {
-            Collections.sort(storageDomainModels, new StorageDomainModelByNameComparer());
+            Collections.sort(storageDomainModels, Comparator.comparing(s -> s.getStorageDomain().getStorageName()));
             itemsChanging(value, items);
             items = storageDomainModels;
             itemsChanged();
