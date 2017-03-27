@@ -1741,6 +1741,14 @@ public enum ConfigValues {
     CORSDefaultOriginSuffixes,
 
     /**
+     * Port the Cockpit is listening on.
+     *
+     */
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("9090")
+    CockpitPort,
+
+    /**
      * Interval in seconds after which is safe to check host storage lease status when host stopped responding
      * to monitoring
      */

@@ -1122,6 +1122,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String removeHost();
 
+    String webConsole();
+
     String activateHost();
 
     String maintenanceHost();

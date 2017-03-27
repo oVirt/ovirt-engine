@@ -613,6 +613,7 @@ select fn_db_add_config_value('CORSSupport','false','general');
 select fn_db_add_config_value('CORSAllowedOrigins','','general');
 select fn_db_add_config_value('CORSAllowDefaultOrigins','false','general');
 select fn_db_add_config_value('CORSDefaultOriginSuffixes',':9090','general'); -- 9090 is port of Cockpit
+select fn_db_add_config_value('CockpitPort','9090','general');
 select fn_db_add_config_value('UsageHistoryLimit','40', 'general');
 
 select fn_db_add_config_value('HostStorageLeaseAliveCheckingInterval', '90', 'general');

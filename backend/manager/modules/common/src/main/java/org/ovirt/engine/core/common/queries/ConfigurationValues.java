@@ -86,6 +86,7 @@ public enum ConfigurationValues {
     CORSAllowedOrigins,
     CORSAllowDefaultOrigins,
     CORSDefaultOriginSuffixes,
+    CockpitPort,
     HostDevicePassthroughCapabilities,
     MaxIoThreadsPerVm(ConfigAuthType.User),
     DisplayUncaughtUIExceptions,

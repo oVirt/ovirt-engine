@@ -63,6 +63,7 @@ import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagAssigningModel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.Uri;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -94,6 +95,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 
 @SuppressWarnings("unchecked")
@@ -141,6 +143,16 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
+    }
+
+    private UICommand privateWebConsoleCommand;
+
+    public UICommand getWebConsoleCommand() {
+        return privateWebConsoleCommand;
+    }
+
+    private void setWebConsoleCommand(UICommand value) {
+        privateWebConsoleCommand = value;
     }
 
     private UICommand selectAsSpmCommand;
@@ -435,6 +447,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         setEditWithPMemphasisCommand(new UICommand("EditWithPMemphasis", this)); //$NON-NLS-1$
         setSelectAsSpmCommand(new UICommand("SelectAsSpm", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setWebConsoleCommand(new UICommand("WebConsole", this)); //$NON-NLS-1$
         setActivateCommand(new UICommand("Activate", this, true)); //$NON-NLS-1$
         setMaintenanceCommand(new UICommand("Maintenance", this, true)); //$NON-NLS-1$
         setApproveCommand(new UICommand("Approve", this)); //$NON-NLS-1$
@@ -1093,6 +1106,23 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                     cancel();
 
                 }, model);
+    }
+
+    public void onWebConsole() {
+        String cockpitPort = (String) AsyncDataProvider.getInstance()
+                .getConfigValuePreConverted(ConfigurationValues.CockpitPort);
+        for (VDS item : getSelectedItems()) { // open new browser-tab for every selected host
+            StringBuilder cockpitUrl = new StringBuilder();
+            cockpitUrl.append(Uri.SCHEME_HTTPS);
+            cockpitUrl.append("://"); //$NON-NLS-1$
+            cockpitUrl.append(item.getHostName());
+            if (!StringUtils.isEmpty(cockpitPort)) {
+                cockpitUrl.append(':');
+                cockpitUrl.append(cockpitPort);
+            }
+
+            Window.open(cockpitUrl.toString(), "_blank", "");//$NON-NLS-1$
+        }
     }
 
     public void activate() {
@@ -1968,6 +1998,9 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
         else if (command == getDisableGlobalHaMaintenanceCommand()) {
             setGlobalHaMaintenance(false);
+        }
+        else if (command == getWebConsoleCommand()) {
+            onWebConsole();
         }
         else if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
             onAssignTags();
