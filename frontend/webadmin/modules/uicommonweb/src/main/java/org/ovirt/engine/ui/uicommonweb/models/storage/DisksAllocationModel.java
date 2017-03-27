@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.DiskModelByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -130,7 +130,7 @@ public class DisksAllocationModel extends EntityModel {
 
     public void sortDisks() {
         if (disks != null) {
-            Collections.sort(disks, new DiskModelByAliasComparer());
+            Collections.sort(disks, Comparator.comparing(d -> d.getDisk().getDiskAlias()));
             onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
         }
     }

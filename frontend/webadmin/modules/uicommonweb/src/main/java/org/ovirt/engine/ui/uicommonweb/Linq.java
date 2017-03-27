@@ -116,15 +116,6 @@ public final class Linq {
 
     }
 
-    public static class DiskModelByAliasComparer implements Comparator<DiskModel>, Serializable {
-        private static final long serialVersionUID = 4293731121213688683L;
-
-        @Override
-        public int compare(DiskModel x, DiskModel y) {
-            return x.getDisk().getDiskAlias().compareTo(y.getDisk().getDiskAlias());
-        }
-    }
-
     public static class SnapshotByCreationDateCommparer implements Comparator<Snapshot>, Serializable {
 
         private static final long serialVersionUID = -4063737182979806402L;
