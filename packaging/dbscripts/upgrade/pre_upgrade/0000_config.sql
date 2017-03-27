@@ -884,6 +884,9 @@ select fn_db_update_default_config_value('DwhHeartBeatInterval', '30', '15', 'ge
 -- Increase default value of UploadImageXhrTimeoutInSeconds from 10 to 120 seconds
 select fn_db_update_default_config_value('UploadImageXhrTimeoutInSeconds', '10', '120', 'general', false);
 
+-- Increaded default value of maximum number of LVs per storage domain
+select fn_db_update_default_config_value('AlertOnNumberOfLVs', '300', '1000', 'general', false);
+
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

@@ -1680,7 +1680,7 @@ public enum ConfigValues {
     KdumpStartedTimeout,
 
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("300")
+    @DefaultValueAttribute("1000")
     AlertOnNumberOfLVs,
 
     /**
