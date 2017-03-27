@@ -594,7 +594,7 @@ public class AAAServiceImpl implements ModuleService {
             try(
                 InputStream is = new FileInputStream(value);
                 Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
-                BufferedReader breader = new BufferedReader(reader);
+                BufferedReader breader = new BufferedReader(reader)
             ) {
                 password = breader.readLine();
             } catch (IOException ex) {
@@ -642,7 +642,7 @@ public class AAAServiceImpl implements ModuleService {
         Properties props = new Properties();
         try (
             InputStream in = AAAServiceImpl.class.getResourceAsStream("arguments.properties");
-            Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
+            Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)
         ) {
             props.load(reader);
         }
