@@ -52,6 +52,7 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
             log.debug("Exception", e);
             throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         } catch (RuntimeException e) {
+            log.debug("Exception", e);
             throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }
     }
