@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -767,14 +768,25 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return recentClusterDefault;
         }
 
-        // previous cluster version default is expected
-        // example: recentDefault: pc-i440fx-rhel7.3.0  ; oldSupported: [pc-i440fx-rhel7.2.0, pc-i440fx-2.1, pseries-rhel7.2.0]
-        List<String> oldSupported = Config.getValue(ConfigValues.ClusterEmulatedMachines,
-                getVm().getCustomCompatibilityVersion().getValue());
-        Optional<String> best = oldSupported.stream().max(
-                (s1, s2) -> StringUtils.indexOfDifference(recentClusterDefault, s1) - StringUtils.indexOfDifference(recentClusterDefault, s2));
-        log.info("Emulated machine '{}' selected since Custom Compatibility Version is set for '{}'", best.orElse(recentClusterDefault), getVm());
-        return best.orElse(recentClusterDefault);
+        String bestMatch = findBestMatchForEmulatedMachine(
+                recentClusterDefault,
+                Config.getValue(
+                        ConfigValues.ClusterEmulatedMachines,
+                        getVm().getCustomCompatibilityVersion().getValue()));
+        log.info("Emulated machine '{}' selected since Custom Compatibility Version is set for '{}'", bestMatch, getVm());
+        return bestMatch;
+    }
+
+    protected String findBestMatchForEmulatedMachine(
+            String currentEmulatedMachine,
+            List<String> candidateEmulatedMachines) {
+        if (candidateEmulatedMachines.contains(currentEmulatedMachine)) {
+            return currentEmulatedMachine;
+        }
+        return candidateEmulatedMachines
+                .stream()
+                .max(Comparator.comparingInt(s -> StringUtils.indexOfDifference(currentEmulatedMachine, s)))
+                .orElse(currentEmulatedMachine);
     }
 
     /**
