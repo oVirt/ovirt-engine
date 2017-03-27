@@ -12,9 +12,11 @@ import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeepingVariable;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.dwh.DwhHistoryTimekeepingDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +51,11 @@ public class DwhHeartBeat implements BackendService {
     public void engineIsRunningNotification() {
         try {
             log.debug("DWH Heart Beat - Start");
-            heartBeatVar.setDateTime(new Date());
-            dwhHistoryTimekeepingDao.save(heartBeatVar);
+            TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew, () -> {
+                heartBeatVar.setDateTime(new Date());
+                dwhHistoryTimekeepingDao.save(heartBeatVar);
+                return null;
+            });
             log.debug("DWH Heart Beat - End");
         } catch (Exception ex) {
             log.error("Error updating DWH Heart Beat: {}", ex.getMessage());
