@@ -38,15 +38,14 @@ import org.slf4j.LoggerFactory;
 public class AAAServiceImpl implements ModuleService {
     private static final Logger log = LoggerFactory.getLogger(AAAServiceImpl.class);
 
+    @FunctionalInterface
     private interface Logic {
         void execute(AAAServiceImpl module);
     }
 
     private enum Action {
         AUTHZ_FETCH_PRINCIPAL_RECORD(
-            new Logic() {
-                @Override
-                public void execute(AAAServiceImpl module) {
+                module -> {
                     ExtensionProxy authzExtension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
 
                     log.info("API: -->Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD principal='{}'", module.argMap.get("principal-name"));
@@ -78,12 +77,9 @@ public class AAAServiceImpl implements ModuleService {
 
                     Dump.PRINCIPAL_RECORD.dump(module, outMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
                 }
-            }
         ),
         AUTHN_AUTHENTICATE_CREDENTIALS(
-            new Logic() {
-                @Override
-                public void execute(AAAServiceImpl module) {
+                module -> {
                     ExtensionProxy authnExtension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
 
                     log.info("API: -->Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS user='{}'", module.argMap.get("user-name"));
@@ -115,12 +111,9 @@ public class AAAServiceImpl implements ModuleService {
                         );
                     }
                 }
-            }
         ),
         CHANGE_CREDENTIALS(
-            new Logic() {
-                @Override
-                public void execute(AAAServiceImpl module) {
+                module -> {
                     AAAProfile aaaprofile = module.new AAAProfile((String)module.argMap.get("profile"));
                     if ((aaaprofile.getAuthnExtension().getContext().<Long>get(Authn.ContextKeys.CAPABILITIES, 0L) & Authn.Capabilities.CREDENTIALS_CHANGE) == 0 &&
                             !(Boolean)module.argMap.get("ignore-capabilities")) {
@@ -156,12 +149,9 @@ public class AAAServiceImpl implements ModuleService {
                     }
                     log.info("Password successfully changed");
                 }
-            }
         ),
         LOGIN_USER(
-            new Logic() {
-                @Override
-                public void execute(AAAServiceImpl module) {
+                module -> {
                     AAAProfile aaaprofile = module.new AAAProfile((String)module.argMap.get("profile"));
                     String user = aaaprofile.mapUser((String)module.argMap.get("user-name"));
                     log.info("API: -->Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS profile='{}' user='{}'", aaaprofile.getProfile(), user);
@@ -309,12 +299,9 @@ public class AAAServiceImpl implements ModuleService {
                         "Principal '%1$s' logged out"
                     );
                 }
-            }
         ),
         SEARCH(
-            new Logic() {
-                @Override
-                public void execute(AAAServiceImpl module) {
+                module -> {
                     ExtensionProxy authzExtension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
                     ExtUUID entity = getQueryEntity((String)module.argMap.get("entity"));
                     ExtMap filter = createQueryFilter(entity, module.argMap);
@@ -395,7 +382,6 @@ public class AAAServiceImpl implements ModuleService {
                         log.info("API: <--Authz.InvokeCommands.QUERY_CLOSE");
                     }
                 }
-            }
         );
 
         private Logic logic;
@@ -433,22 +419,20 @@ public class AAAServiceImpl implements ModuleService {
         }
     }
 
+    @FunctionalInterface
     private interface DumpFormat {
         void dump(AAAServiceImpl module, ExtMap map, String indent);
     }
 
     private enum Dump {
         AUTH_RECORD(
-            new DumpFormat() {
-                @Override
-                public void dump(AAAServiceImpl module, ExtMap map, String indent) {
+                (module, map, indent) -> {
                     if (map != null) {
                         log.info("--- Begin AuthRecord ---");
                         dumpRecord(module, map, Collections.emptyList(), "AuthRecord", "");
                         log.info("--- End   AuthRecord ---");
                     }
                 }
-            }
         ),
         PRINCIPAL_RECORD(
             new DumpFormat() {
@@ -466,12 +450,7 @@ public class AAAServiceImpl implements ModuleService {
             }
         ),
         GROUP_RECORD(
-            new DumpFormat() {
-                @Override
-                public void dump(AAAServiceImpl module, ExtMap map, String indent) {
-                    dumpGroups(module, map, indent, new HashSet<>());
-                }
-            }
+                (module, map, indent) -> dumpGroups(module, map, indent, new HashSet<>())
         ),
         QUERY_FILTER_RECORD(
             new DumpFormat() {
