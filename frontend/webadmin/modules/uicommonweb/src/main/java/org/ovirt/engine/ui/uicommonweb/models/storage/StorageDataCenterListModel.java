@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -189,7 +191,8 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                 for (StorageDomain domain : domains) {
                     domain.setId(domain.getStoragePoolId());
                 }
-                Collections.sort(domains, new Linq.StorageDomainByPoolNameComparator());
+                Collections.sort
+                        (domains, Comparator.comparing(StorageDomain::getStoragePoolName, new LexoNumericComparator()));
                 setItems(domains);
                 setIsEmpty(getItems().size() == 0);
             }

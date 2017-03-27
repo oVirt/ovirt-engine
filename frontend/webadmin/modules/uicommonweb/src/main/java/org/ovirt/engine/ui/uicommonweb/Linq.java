@@ -775,16 +775,6 @@ public final class Linq {
         }
     }
 
-    public static final class StorageDomainByPoolNameComparator implements Comparator<StorageDomain>, Serializable {
-        private static final long serialVersionUID = 990203400356561666L;
-        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(StorageDomain domain1, StorageDomain domain2) {
-            return lexoNumeric.compare(domain1.getStoragePoolName(), domain2.getStoragePoolName());
-        }
-    }
-
     public static final class NetworkInClusterComparator implements Comparator<Network>, Serializable {
 
         private static final long serialVersionUID = 990203400356561587L;
