@@ -10,7 +10,6 @@ import java.io.Reader;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -429,7 +428,7 @@ public class AAAServiceImpl implements ModuleService {
                 (module, map, indent) -> {
                     if (map != null) {
                         log.info("--- Begin AuthRecord ---");
-                        dumpRecord(module, map, Collections.emptyList(), "AuthRecord", "");
+                        dumpRecord(module, map, Collections.emptySet(), "AuthRecord", "");
                         log.info("--- End   AuthRecord ---");
                     }
                 }
@@ -440,7 +439,7 @@ public class AAAServiceImpl implements ModuleService {
                 public void dump(AAAServiceImpl module, ExtMap map, String indent) {
                     if (map != null) {
                         log.info("{}--- Begin PrincipalRecord ---", indent);
-                        dumpRecord(module, map, Arrays.asList(Authz.PrincipalRecord.GROUPS), "PrincipalRecord", indent);
+                        dumpRecord(module, map, Collections.singleton(Authz.PrincipalRecord.GROUPS), "PrincipalRecord", indent);
                         for (ExtMap group : map.<Collection<ExtMap>>get(Authz.PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
                             GROUP_RECORD.dump(module, group, indent + "  ");
                         }
@@ -458,7 +457,7 @@ public class AAAServiceImpl implements ModuleService {
                 public void dump(AAAServiceImpl module, ExtMap map, String indent) {
                     if (map != null) {
                         log.info("{}--- Begin QueryFilterRecord ---", indent);
-                        dumpRecord(module, map, Arrays.asList(Authz.QueryFilterRecord.FILTER), "QueryFilterRecord", indent);
+                        dumpRecord(module, map, Collections.singleton(Authz.QueryFilterRecord.FILTER), "QueryFilterRecord", indent);
                         for (ExtMap filter : map.<Collection<ExtMap>>get(Authz.QueryFilterRecord.FILTER, Collections.<ExtMap> emptyList())) {
                             dump(module, filter, indent + "  ");
                         }
@@ -478,7 +477,7 @@ public class AAAServiceImpl implements ModuleService {
             if (map != null ) {
                 loopPrevention.add(map.get(Authz.GroupRecord.ID));
                 log.info("{}--- Begin GroupRecord ---", indent);
-                dumpRecord(module, map, Arrays.asList(Authz.GroupRecord.GROUPS), "GroupRecord", indent);
+                dumpRecord(module, map, Collections.singleton(Authz.GroupRecord.GROUPS), "GroupRecord", indent);
                 map.<Collection<ExtMap>>get(Authz.GroupRecord.GROUPS, Collections.<ExtMap> emptyList())
                     .stream()
                     .filter(group -> !loopPrevention.contains(group.<String>get(Authz.GroupRecord.ID)))
@@ -487,7 +486,7 @@ public class AAAServiceImpl implements ModuleService {
             }
         }
 
-        private static void dumpRecord(AAAServiceImpl module, ExtMap extMap, List<ExtKey> ignore, String title, String indent) {
+        private static void dumpRecord(AAAServiceImpl module, ExtMap extMap, Set<ExtKey> ignore, String title, String indent) {
             if (extMap != null) {
                 log.debug("{}{}: {}", indent, title, extMap);
                 Collection<ExtKey> keys = new HashSet<>(extMap.keySet());
