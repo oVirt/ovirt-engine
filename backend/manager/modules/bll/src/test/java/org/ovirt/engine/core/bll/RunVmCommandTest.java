@@ -491,4 +491,19 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }
+
+    @Test
+    public void testFindBestMatchForEmulateMachine() {
+        String original = "pc-i440fx-rhel7.3.0";
+        String bestMatch = "pc-i440fx-rhel7.2.0";
+        List<String> candidates = Arrays.asList("pc-i440fx-2.1", bestMatch, "pseries-rhel7.2.0");
+        assertEquals(bestMatch, command.findBestMatchForEmulatedMachine(original, candidates));
+    }
+
+    @Test
+    public void testFindBestMatchForEmulateMachineKeepsCurrent() {
+        String original = "pc-i440fx-rhel7.3.0";
+        List<String> candidates = Arrays.asList("pc-i440fx-2.1", original, "pseries-rhel7.2.0");
+        assertEquals(original, command.findBestMatchForEmulatedMachine(original, candidates));
+    }
 }

@@ -732,17 +732,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return bestMatch;
     }
 
-    /**
-     * previous cluster version default is expected
-     * example: recentDefault: pc-i440fx-rhel7.3.0  ; oldSupported: [pc-i440fx-rhel7.2.0, pc-i440fx-2.1, pseries-rhel7.2.0]
-     */
     protected String findBestMatchForEmulatedMachine(
-            String originalEmulatedMachine,
+            String currentEmulatedMachine,
             List<String> candidateEmulatedMachines) {
+        if (candidateEmulatedMachines.contains(currentEmulatedMachine)) {
+            return currentEmulatedMachine;
+        }
         return candidateEmulatedMachines
                 .stream()
-                .max(Comparator.comparingInt(s -> StringUtils.indexOfDifference(originalEmulatedMachine, s)))
-                .orElse(originalEmulatedMachine);
+                .max(Comparator.comparingInt(s -> StringUtils.indexOfDifference(currentEmulatedMachine, s)))
+                .orElse(currentEmulatedMachine);
     }
 
     /**
