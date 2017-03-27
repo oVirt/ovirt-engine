@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -194,7 +195,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
                     @Override
                     public void onSuccess(List<GlusterVolumeSnapshotEntity> snapshots) {
-                        Collections.sort(snapshots, new Linq.GlusterVolumeSnapshotComparer());
+                        Collections.sort(snapshots, Comparator.comparing(GlusterVolumeSnapshotEntity::getSnapshotName));
                         setItems(snapshots);
                     }
                 }), getEntity().getId());
