@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +92,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
         parameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllDiskSnapshotsByStorageDomainId, parameters,
-                new SetSortedItemsAsyncQuery(Collections.reverseOrder(new Linq.DiskImageByActualSizeComparer())));
+                new SetSortedItemsAsyncQuery(Comparator.comparingDouble(DiskImage::getActualSize).reversed()));
     }
 
     private void updateActionAvailability() {

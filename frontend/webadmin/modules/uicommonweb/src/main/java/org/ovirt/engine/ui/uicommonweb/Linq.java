@@ -117,16 +117,6 @@ public final class Linq {
 
     }
 
-    public static class DiskImageByActualSizeComparer implements Comparator<DiskImage>, Serializable {
-        private static final long serialVersionUID = -7287055507900698918L;
-
-        @Override
-        public int compare(DiskImage x, DiskImage y) {
-            return Double.compare(x.getActualSize(), y.getActualSize());
-        }
-
-    }
-
     public static class StorageDomainModelByNameComparer implements Comparator<StorageDomainModel>, Serializable {
 
         private static final long serialVersionUID = 5142897643241941178L;
