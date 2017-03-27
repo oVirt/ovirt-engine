@@ -122,6 +122,12 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         fencingOptionsUrl.asWidget().addStyleName(style.fencingOptionsLink());
+        // set visibility of helper URL for agent parameter to false since the URL is deprecated
+        // TODO : when we will have a valid UR :
+        // 1. remove the call to set visibility to false
+        // 2. update packaging/branding/ovirt.brand/external_resources.properties:obrand.common.fencing_options_url
+        // to point to the right address
+        fencingOptionsUrl.setVisible(false);
         asWidget().addStatusWidget(fencingOptionsUrl);
         localize();
         driver.initialize(this);
