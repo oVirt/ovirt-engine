@@ -103,7 +103,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testVmsWithNoIsoAttached() {
+    public void vmsWithNoIsoAttached() {
         mockDomain();
         doReturn(domain).when(cmd).getStorageDomain();
         assertTrue(cmd.isRunningVmsWithIsoAttached());
@@ -111,7 +111,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testVmsWithIsoAttached() {
+    public void vmsWithIsoAttached() {
         mockDomain();
         domain.setStorageDomainType(StorageDomainType.ISO);
         doReturn(domain).when(cmd).getStorageDomain();
@@ -127,13 +127,13 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testDeactivateNoExistingDomainFails() {
+    public void deactivateNoExistingDomainFails() {
         doReturn(null).when(cmd).getStorageDomain();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
     @Test
-    public void testDeactivateNonMonitoredDomainFails() {
+    public void deactivateNonMonitoredDomainFails() {
         mockDomain();
         EnumSet<StorageDomainStatus> invalidStatuses = EnumSet.allOf(StorageDomainStatus.class);
         invalidStatuses.removeAll(StorageConstants.monitoredDomainStatuses);
@@ -144,7 +144,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testDeactivateMonitoredDomainSucceeds() {
+    public void deactivateMonitoredDomainSucceeds() {
         mockDomain();
         cmd.getParameters().setIsInternal(false);
         StorageConstants.monitoredDomainStatuses.forEach(s -> {
@@ -154,14 +154,14 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testDeactivateHostedDomainStorageFails() {
+    public void deactivateHostedDomainStorageFails() {
         mockDomain();
         domain.setHostedEngineStorage(true);
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
     }
 
     @Test
-    public void testDeactivateStorageDomainWithRunningVmWithLeaseFails() {
+    public void deactivateStorageDomainWithRunningVmWithLeaseFails() {
         VmStatic vm = new VmStatic();
         vm.setName("myRunningVmWithLease");
 
