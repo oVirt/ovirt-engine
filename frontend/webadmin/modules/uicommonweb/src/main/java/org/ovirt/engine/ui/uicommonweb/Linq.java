@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -117,16 +116,6 @@ public final class Linq {
                     : deviceStatusComparison;
         }
 
-    }
-
-    public static class GlusterVolumeGeoRepSessionComparer implements Comparator<GlusterGeoRepSession>, Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public int compare(GlusterGeoRepSession session0, GlusterGeoRepSession session1) {
-            return session0.getSlaveVolumeName().compareTo(session1.getSlaveVolumeName());
-        }
     }
 
     public static class GlusterVolumeSnapshotConfigComparator implements Comparator<GlusterVolumeSnapshotConfig>, Serializable {

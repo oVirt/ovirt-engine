@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -176,7 +176,8 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         }
 
         AsyncDataProvider.getInstance().getGlusterVolumeGeoRepStatusForMasterVolume(
-                new SetSortedRawItemsAsyncQuery(new Linq.GlusterVolumeGeoRepSessionComparer()), getEntity().getId());
+                new SetSortedRawItemsAsyncQuery(Comparator.comparing(GlusterGeoRepSession::getSlaveVolumeName)),
+                getEntity().getId());
     }
 
     private void updateActionAvailability(GlusterVolumeEntity volumeEntity) {
