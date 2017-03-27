@@ -144,7 +144,7 @@ public class AAAServiceImpl implements ModuleService {
 
                     if (outMap.<Integer>get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS ||
                             outMap.<Integer>get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
-                        throw new RuntimeException(String.format("Password change failed"));
+                        throw new RuntimeException("Password change failed");
                     }
                     log.info("Password successfully changed");
                 }
