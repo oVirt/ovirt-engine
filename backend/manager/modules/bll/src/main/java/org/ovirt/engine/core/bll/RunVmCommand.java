@@ -723,14 +723,26 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return recentClusterDefault;
         }
 
-        // previous cluster version default is expected
-        // example: recentDefault: pc-i440fx-rhel7.3.0  ; oldSupported: [pc-i440fx-rhel7.2.0, pc-i440fx-2.1, pseries-rhel7.2.0]
-        List<String> oldSupported = Config.getValue(ConfigValues.ClusterEmulatedMachines,
-                getVm().getCustomCompatibilityVersion().getValue());
-        Optional<String> best = oldSupported.stream().max(
-                Comparator.comparingInt(s -> StringUtils.indexOfDifference(recentClusterDefault, s)));
-        log.info("Emulated machine '{}' selected since Custom Compatibility Version is set for '{}'", best.orElse(recentClusterDefault), getVm());
-        return best.orElse(recentClusterDefault);
+        String bestMatch = findBestMatchForEmulatedMachine(
+                recentClusterDefault,
+                Config.getValue(
+                        ConfigValues.ClusterEmulatedMachines,
+                        getVm().getCustomCompatibilityVersion().getValue()));
+        log.info("Emulated machine '{}' selected since Custom Compatibility Version is set for '{}'", bestMatch, getVm());
+        return bestMatch;
+    }
+
+    /**
+     * previous cluster version default is expected
+     * example: recentDefault: pc-i440fx-rhel7.3.0  ; oldSupported: [pc-i440fx-rhel7.2.0, pc-i440fx-2.1, pseries-rhel7.2.0]
+     */
+    protected String findBestMatchForEmulatedMachine(
+            String originalEmulatedMachine,
+            List<String> candidateEmulatedMachines) {
+        return candidateEmulatedMachines
+                .stream()
+                .max(Comparator.comparingInt(s -> StringUtils.indexOfDifference(originalEmulatedMachine, s)))
+                .orElse(originalEmulatedMachine);
     }
 
     /**
