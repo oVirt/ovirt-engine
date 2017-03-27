@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
-import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -57,7 +56,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
-import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
@@ -791,16 +789,6 @@ public final class Linq {
 
             return retVal == 0 ? lexoNumeric.compare(vnicProfile1.getName(), vnicProfile2.getName()) : retVal;
         }
-    }
-
-    public static final class ExternalNetworkComparator implements Comparator<ExternalNetwork>, Serializable {
-        private static final long serialVersionUID = 4987035011384708563L;
-        private final NameableComparator comparator = new NameableComparator();
-
-        @Override
-        public int compare(ExternalNetwork net1, ExternalNetwork net2) {
-            return comparator.compare(net1.getNetwork(), net2.getNetwork());
-        };
     }
 
     public static <T extends Disk> Collection<T> filterNonSnapableDisks(

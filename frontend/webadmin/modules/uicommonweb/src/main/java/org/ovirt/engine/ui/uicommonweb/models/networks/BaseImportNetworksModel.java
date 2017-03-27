@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.networks;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -177,7 +178,7 @@ public class BaseImportNetworksModel extends Model {
 
                             items.add(externalNetwork);
                         }
-                        Collections.sort(items, new Linq.ExternalNetworkComparator());
+                        Collections.sort(items, Comparator.comparing(ExternalNetwork::getNetwork, new NameableComparator()));
                         providerNetworks.setItems(items);
                         importedNetworks.setItems(new LinkedList<ExternalNetwork>());
 
