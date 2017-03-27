@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventType;
@@ -94,9 +95,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             return false;
         }
 
-        // when the execution is internal, proceed also if the domain is in unknown status.
-        if (!((getParameters().getIsInternal() && checkStorageDomainStatus(StorageDomainStatus.Active,
-                StorageDomainStatus.Unknown)) || checkStorageDomainStatus(StorageDomainStatus.Active))) {
+        if (!validateDomainStatus()) {
             return false;
         }
 
@@ -134,6 +133,19 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
             }
         }
+        return true;
+    }
+
+    protected boolean validateDomainStatus() {
+        // Internal execution means that the domain status is being set to Inactive - therefore it's applicable for
+        // the Active/Unknown statuses.
+        // On user initiated execution, we allow to deactivate domain which is monitored.
+        if (!((getParameters().getIsInternal() && checkStorageDomainStatus(StorageDomainStatus.Active,
+                StorageDomainStatus.Unknown))
+                || checkStorageDomainStatus(StorageConstants.monitoredDomainStatuses))) {
+            return false;
+        }
+
         return true;
     }
 

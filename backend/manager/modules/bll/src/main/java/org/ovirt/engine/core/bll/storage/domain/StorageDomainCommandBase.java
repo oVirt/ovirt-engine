@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -145,10 +146,14 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected boolean checkStorageDomainStatus(final StorageDomainStatus... statuses) {
+        return checkStorageDomainStatus(Arrays.stream(statuses).collect(toSet()));
+    }
+
+    protected boolean checkStorageDomainStatus(Set<StorageDomainStatus> statuses) {
         boolean valid = false;
         StorageDomainStatus status = getStorageDomainStatus();
         if (status != null) {
-            valid = Arrays.asList(statuses).contains(status);
+            valid = statuses.contains(status);
         }
         if (!valid) {
             if (status != null && status.isStorageDomainInProcess()) {
@@ -215,7 +220,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS);
             Set<String> formattedIds = lunsUsedBySDs.stream()
                     .map(lun -> getFormattedLunId(lun, lun.getStorageDomainName()))
-                    .collect(Collectors.toSet());
+                    .collect(toSet());
             addValidationMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
         }
 
@@ -223,7 +228,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_USED_BY_DISKS);
             Set<String> formattedIds = lunsUsedByDisks.stream()
                     .map(lun -> getFormattedLunId(lun, lun.getDiskAlias()))
-                    .collect(Collectors.toSet());
+                    .collect(toSet());
             addValidationMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
         }
 

@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -78,7 +79,8 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
     }
 
     protected boolean shouldPerformOvfUpdate() {
-        return !getParameters().isInactive() && getStorageDomain().getStatus() == StorageDomainStatus.Active
+        return !getParameters().isInactive() &&
+                StorageConstants.monitoredDomainStatuses.contains(getStorageDomain().getStatus())
                 && getStorageDomain().getStorageDomainType().isDataDomain();
     }
 

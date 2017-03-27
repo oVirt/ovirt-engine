@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -132,13 +133,23 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testDeactivateNoActiveDomainFails() {
+    public void testDeactivateNonMonitoredDomainFails() {
         mockDomain();
         EnumSet<StorageDomainStatus> invalidStatuses = EnumSet.allOf(StorageDomainStatus.class);
-        invalidStatuses.remove(StorageDomainStatus.Active);
+        invalidStatuses.removeAll(StorageConstants.monitoredDomainStatuses);
         invalidStatuses.forEach(s -> {
             domain.setStatus(s);
             ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
+        });
+    }
+
+    @Test
+    public void testDeactivateMonitoredDomainSucceeds() {
+        mockDomain();
+        cmd.getParameters().setIsInternal(false);
+        StorageConstants.monitoredDomainStatuses.forEach(s -> {
+            domain.setStatus(s);
+            assertTrue(cmd.validateDomainStatus());
         });
     }
 

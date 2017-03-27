@@ -40,16 +40,12 @@ public class VdcActionUtilsTest {
         StorageDomain upStorageDomain = new StorageDomain();
         upStorageDomain.setStatus(StorageDomainStatus.Active);
 
-        StorageDomain downStorageDomain = new StorageDomain();
-        downStorageDomain.setStatus(StorageDomainStatus.Inactive);
-
         return new Object[][] {
                 { upVm, VdcActionType.MigrateVm, true },
                 { downVm, VdcActionType.MigrateVm, false },
                 { upVds, VdcActionType.RefreshHostCapabilities, true },
                 { downVds, VdcActionType.RefreshHostCapabilities, false },
                 { upStorageDomain, VdcActionType.DeactivateStorageDomainWithOvfUpdate, true },
-                { downStorageDomain, VdcActionType.DeactivateStorageDomainWithOvfUpdate, false },
                 { new StoragePool(), VdcActionType.UpdateStoragePool, true }
         };
     }
