@@ -8,10 +8,10 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
@@ -106,7 +106,7 @@ public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable, D 
         for (T item : getSelectedItems()) {
             entities.add(createImportEntityData(item));
         }
-        Collections.sort(entities, new Linq.ImportEntityComparator<T>());
+        Collections.sort(entities, Comparator.comparing(ImportEntityData::getName, new LexoNumericComparator()));
 
         return entities;
     }

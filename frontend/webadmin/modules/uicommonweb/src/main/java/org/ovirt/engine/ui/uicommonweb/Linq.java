@@ -58,7 +58,6 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
@@ -841,16 +840,6 @@ public final class Linq {
             } else {
                 return lexoNumeric.compare(o1.getName(), o2.getName());
             }
-        }
-    }
-
-    public static final class ImportEntityComparator<T> implements Comparator<ImportEntityData<T>>, Serializable {
-        private static final long serialVersionUID = 6596945138956015466L;
-        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(ImportEntityData<T> entity1, ImportEntityData<T> entity2) {
-            return lexoNumeric.compare(entity1.getName(), entity2.getName());
         }
     }
 
