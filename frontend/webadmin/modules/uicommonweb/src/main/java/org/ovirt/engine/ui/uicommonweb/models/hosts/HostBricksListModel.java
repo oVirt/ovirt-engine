@@ -1,9 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.Comparator;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -46,7 +47,8 @@ public class HostBricksListModel extends SearchableListModel<VDS, GlusterBrickEn
         }
 
         AsyncDataProvider.getInstance().getGlusterBricksForServer(
-                new SetSortedRawItemsAsyncQuery(new Linq.ServerBricksComparer()), getEntity().getId());
+                new SetSortedRawItemsAsyncQuery(Comparator.comparing(GlusterBrickEntity::getVolumeName)),
+                getEntity().getId());
 
     }
 

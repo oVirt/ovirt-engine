@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
@@ -103,17 +102,6 @@ public final class Linq {
                 return o1.getValue() - o2.getValue();
             }
         }
-    }
-
-    public static class ServerBricksComparer implements Comparator<GlusterBrickEntity>, Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public int compare(GlusterBrickEntity brick1, GlusterBrickEntity brick2) {
-            return brick1.getVolumeName().compareTo(brick2.getVolumeName());
-        }
-
     }
 
     public static class StorageDeviceComparer implements Comparator<StorageDevice>, Serializable {
