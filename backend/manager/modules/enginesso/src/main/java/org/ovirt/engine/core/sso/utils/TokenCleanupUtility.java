@@ -46,19 +46,24 @@ public class TokenCleanupUtility {
     public static void cleanupSsoSession(
             SsoContext ssoContext,
             SsoSession ssoSession,
-            Set<String> associateClientIds) throws Exception {
-        ssoContext.removeSsoSession(ssoSession.getAccessToken());
-        HttpSession existingSession = ssoSession.getHttpSession();
-        if (existingSession == null) {
-            log.debug("No existing Session found for token: {}, cannot invalidate session", ssoSession.getAccessToken());
-        } else {
-            log.debug("Existing Session found for token: {}, invalidating session", ssoSession.getAccessToken());
-            existingSession.invalidate();
+            Set<String> associateClientIds) {
+        try {
+            ssoContext.removeSsoSession(ssoSession.getAccessToken());
+            HttpSession existingSession = ssoSession.getHttpSession();
+            if (existingSession == null) {
+                log.debug("No existing Session found for token: {}, cannot invalidate session", ssoSession.getAccessToken());
+            } else {
+                log.debug("Existing Session found for token: {}, invalidating session", ssoSession.getAccessToken());
+                existingSession.invalidate();
+            }
+            invokeAuthnLogout(ssoContext, ssoSession);
+            SsoUtils.notifyClientsOfLogoutEvent(ssoContext,
+                    associateClientIds,
+                    ssoSession.getAccessToken());
+        } catch (Exception ex) {
+            log.error("Unable to cleanup SsoSession: {}", ex.getMessage());
+            log.debug("Exception", ex);
         }
-        invokeAuthnLogout(ssoContext, ssoSession);
-        SsoUtils.notifyClientsOfLogoutEvent(ssoContext,
-                associateClientIds,
-                ssoSession.getAccessToken());
     }
 
     private static void invokeAuthnLogout(SsoContext ssoContext, SsoSession ssoSession) throws Exception {
