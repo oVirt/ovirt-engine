@@ -281,7 +281,13 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
     }
 
     private ArrayList<PolicyUnit> sort(ArrayList<PolicyUnit> policyUnits) {
-        Collections.sort(policyUnits, new Linq.PolicyUnitComparator());
+        Collections.sort(policyUnits,
+                Comparator.comparing(PolicyUnit::isInternal).reversed()
+                    .thenComparing(PolicyUnit::isEnabled).reversed()
+                    .thenComparing(p -> p.getPolicyUnitType() == PolicyUnitType.FILTER).reversed()
+                    .thenComparing(p -> p.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING)
+                    .thenComparing(PolicyUnit::getName, new LexoNumericComparator())
+        );
         return policyUnits;
     }
 

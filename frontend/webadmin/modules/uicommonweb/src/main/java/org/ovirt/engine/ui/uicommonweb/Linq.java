@@ -43,8 +43,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -827,39 +825,6 @@ public final class Linq {
                 return provider.getType().getProvidedTypes().contains(type);
             }
         });
-    }
-
-    /**
-     * sort policy units by:
-     * first is external?
-     * second is disabled?
-     * third policyUnitType
-     * forth name (lexicography)
-     */
-    public static final class PolicyUnitComparator implements Comparator<PolicyUnit>, Serializable {
-        private static final long serialVersionUID = -6155037911174811346L;
-        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(PolicyUnit pu1, PolicyUnit pu2) {
-            if (pu1.isInternal() != pu2.isInternal()) {
-                return !pu1.isInternal() ? -1 : 1;
-            }
-            if (pu1.isEnabled() != pu2.isEnabled()) {
-                return !pu1.isEnabled() ? -1 : 1;
-            }
-            if (pu1.getPolicyUnitType() != pu2.getPolicyUnitType()) {
-                if (pu1.getPolicyUnitType().equals(PolicyUnitType.FILTER)
-                        || pu2.getPolicyUnitType().equals(PolicyUnitType.LOAD_BALANCING)) {
-                    return -1;
-                }
-                if (pu2.getPolicyUnitType().equals(PolicyUnitType.FILTER)
-                        || pu1.getPolicyUnitType().equals(PolicyUnitType.LOAD_BALANCING)) {
-                    return 1;
-                }
-            }
-            return lexoNumeric.compare(pu1.getName(), pu2.getName());
-        }
     }
 
     public static final class SharedMacPoolComparator implements Comparator<MacPool>, Serializable {
