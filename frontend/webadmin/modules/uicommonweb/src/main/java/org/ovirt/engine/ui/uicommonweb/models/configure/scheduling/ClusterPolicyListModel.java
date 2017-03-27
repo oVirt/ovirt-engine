@@ -2,9 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.configure.scheduling;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -132,7 +134,9 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
             @Override
             public void onSuccess(VdcQueryReturnValue returnValue) {
                 ArrayList<ClusterPolicy> list = returnValue.getReturnValue();
-                Collections.sort(list, new Linq.ClusterPolicyComparator());
+                Collections.sort(list,
+                        Comparator.comparing(ClusterPolicy::isLocked).reversed()
+                                .thenComparing(ClusterPolicy::getName, new LexoNumericComparator()));
                 setItems(list);
             }
         });

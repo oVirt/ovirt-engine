@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -828,22 +827,6 @@ public final class Linq {
                 return provider.getType().getProvidedTypes().contains(type);
             }
         });
-    }
-
-    /**
-     * pre-defined cluster policies should be ordered first, then order lexicographically
-     */
-    public static final class ClusterPolicyComparator implements Comparator<ClusterPolicy>, Serializable {
-        private static final long serialVersionUID = -409780241393930906L;
-        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(ClusterPolicy cp1, ClusterPolicy cp2) {
-            if (cp1.isLocked() != cp2.isLocked()) {
-                return cp1.isLocked() ? -1 : 1;
-            }
-            return lexoNumeric.compare(cp1.getName(), cp2.getName());
-        }
     }
 
     /**
