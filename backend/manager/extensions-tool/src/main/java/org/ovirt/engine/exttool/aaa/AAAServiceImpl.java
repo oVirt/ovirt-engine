@@ -534,7 +534,6 @@ public class AAAServiceImpl implements ModuleService {
     private Action action;
     private Map<String, Object> argModuleMap;
     private Map<String, Object> argMap;
-    private String password;
 
     private static <T> List<T> safeList(List<T> list) {
         return list == null ? Collections.emptyList() : list;
