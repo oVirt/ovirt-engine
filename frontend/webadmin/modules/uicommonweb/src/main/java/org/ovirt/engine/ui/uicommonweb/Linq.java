@@ -55,7 +55,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
@@ -791,23 +790,6 @@ public final class Linq {
             int retVal = lexoNumeric.compare(vnicProfile1.getNetworkName(), vnicProfile2.getNetworkName());
 
             return retVal == 0 ? lexoNumeric.compare(vnicProfile1.getName(), vnicProfile2.getName()) : retVal;
-        }
-    }
-
-    public static final class ClusterNetworkModelComparator implements Comparator<ClusterNetworkModel>, Serializable {
-
-        private static final long serialVersionUID = -8571840939180248617L;
-        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(ClusterNetworkModel model1, ClusterNetworkModel model2) {
-            // management first
-            int retVal = Boolean.compare(model1.isManagement(), model2.isManagement());
-            if (retVal != 0) {
-                return retVal;
-            }
-
-            return lexoNumeric.compare(model1.getNetworkName(), model2.getNetworkName());
         }
     }
 

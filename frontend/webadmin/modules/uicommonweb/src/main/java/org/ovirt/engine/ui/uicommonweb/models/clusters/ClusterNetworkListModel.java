@@ -160,7 +160,9 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
             networkList.add(networkManageModel);
         }
 
-        Collections.sort(networkList, new Linq.ClusterNetworkModelComparator());
+        Collections.sort(networkList,
+                Comparator.comparing(ClusterNetworkModel::isManagement).reversed()
+                        .thenComparing(ClusterNetworkModel::getNetworkName, new LexoNumericComparator()));
 
         ClusterNetworkManageModel listModel = new ClusterNetworkManageModel(this);
         listModel.setItems(networkList);
