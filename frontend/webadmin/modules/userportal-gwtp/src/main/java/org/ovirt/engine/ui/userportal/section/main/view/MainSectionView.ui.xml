@@ -104,7 +104,6 @@
         @external gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader;
         @external gwt-StackLayoutPanel .gwt-StackLayoutPanelContent;
         .gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
-            font-family: Arial, sans-serif;
             font-size: 14px;
             color: #333333;
             padding-top: 0px;
