@@ -16,6 +16,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -61,7 +62,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     }
 
     protected IVdsServer initializeVdsBroker(Guid vdsId) {
-        VdsManager vdsmanager = ResourceManager.getInstance().getVdsManager(vdsId);
+        VdsManager vdsmanager = Injector.get(ResourceManager.class).getVdsManager(vdsId);
         if (vdsmanager == null) {
             throw new EngineException(EngineError.RESOURCE_MANAGER_VDS_NOT_FOUND,
                     String.format("Vds with id: %1$s was not found", vdsId));

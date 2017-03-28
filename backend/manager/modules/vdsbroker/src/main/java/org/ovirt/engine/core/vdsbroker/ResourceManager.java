@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class ResourceManager implements BackendService {
 
-    private static ResourceManager instance;
     private final Map<Guid, HashSet<Guid>> vdsAndVmsList = new ConcurrentHashMap<>();
     private final Map<Guid, VdsManager> vdsManagersDict = new ConcurrentHashMap<>();
     private final Set<Guid> asyncRunningVms =
@@ -100,24 +99,8 @@ public class ResourceManager implements BackendService {
         this.parallelism = Config.getValue(ConfigValues.EventProcessingPoolSize);
     }
 
-    /**
-     * TODO remove this after moving all places to use CDI.
-     * kept for backward compatibility.
-     */
-    @Deprecated
-    public static ResourceManager getInstance() {
-        return instance;
-    }
-
-    private static void setInstance(ResourceManager manager) {
-        instance = manager;
-    }
-
     @PostConstruct
     private void init() {
-        // init the singleton. TODO remove once all code is using CDI
-        setInstance(this);
-
         log.info("Start initializing {}", getClass().getSimpleName());
         populateVdsAndVmsList();
 

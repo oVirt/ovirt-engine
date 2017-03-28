@@ -218,7 +218,7 @@ public class VdsManager {
                 refreshRate,
                 TimeUnit.MILLISECONDS));
 
-        vmsRefresher = getRefresherFactory().create(this);
+        vmsRefresher = getRefresherFactory().create(this, resourceManager);
         vmsRefresher.startMonitoring();
 
         hostRefresher = new HostConnectionRefresher(this, resourceManager);
