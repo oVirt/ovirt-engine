@@ -204,7 +204,7 @@ public class InfoServiceImpl implements ModuleService {
         Properties props = new Properties();
         try (
             InputStream in = InfoServiceImpl.class.getResourceAsStream("info.properties");
-            Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
+            Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)
         ) {
             props.load(reader);
         }
