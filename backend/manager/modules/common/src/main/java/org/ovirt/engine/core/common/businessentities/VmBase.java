@@ -73,6 +73,10 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableVmField(onHostedEngine = true)
     private Guid largeIconId;
 
+    // This is not actually editable fields,
+    // its a workaround that we enforce in RunVmCommand().validate() method due
+    // to different formats in snapshot ovf and the database format.
+    @EditableVmField
     private Date creationDate;
 
     @EditableVmField(onHostedEngine = true)

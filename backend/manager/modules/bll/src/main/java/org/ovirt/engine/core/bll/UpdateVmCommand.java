@@ -652,6 +652,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VM vmFromDB = getVm();
         VM vmFromParams = getParameters().getVm();
 
+        if (Math.abs(vmFromDB.getVmCreationDate().getTime() - vmFromParams.getVmCreationDate().getTime()) > 1000) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_CREATION_DATE);
+        }
+        vmFromParams.setVmCreationDate(vmFromDB.getVmCreationDate());
+
         // check if VM was changed to use latest
         if (vmFromDB.isUseLatestVersion() != vmFromParams.isUseLatestVersion() && vmFromParams.isUseLatestVersion()) {
             // check if a version change is actually required or just let the local command to update this field
