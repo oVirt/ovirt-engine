@@ -130,8 +130,7 @@ public class DiskVmElementValidator {
     }
 
     private ValidationResult isPassDiscardSupportedByUnderlyingStorageForDirectLun() {
-        Long discardMaxSize = ((LunDisk) disk).getLun().getDiscardMaxSize();
-        if (discardMaxSize != null && discardMaxSize > 0) {
+        if (((LunDisk) disk).getLun().supportsDiscard()) {
             return ValidationResult.VALID;
         }
         return new ValidationResult(

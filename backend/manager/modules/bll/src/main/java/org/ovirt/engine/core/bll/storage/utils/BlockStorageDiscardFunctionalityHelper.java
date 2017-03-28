@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -159,11 +158,11 @@ public class BlockStorageDiscardFunctionalityHelper {
     }
 
     public boolean allLunsSupportDiscard(Collection<LUNs> luns) {
-        return luns.stream().allMatch(getLunSupportsDiscardPredicate());
+        return luns.stream().allMatch(LUNs::supportsDiscard);
     }
 
     protected boolean allLunsHaveDiscardZeroesTheDataSupport(Collection<LUNs> luns) {
-        return luns.stream().allMatch(getLunHasDiscardZeroesTheDataSupportPredicate());
+        return luns.stream().allMatch(LUNs::hasDiscardZeroesTheDataSupport);
     }
 
     protected boolean vmDiskWithPassDiscardExists(Collection<DiskVmElement> diskVmElements) {
@@ -190,9 +189,8 @@ public class BlockStorageDiscardFunctionalityHelper {
                     vmDiskWithPassDiscardAndWadExists(sdDisks, diskVmElements);
 
             return luns.stream()
-                    .filter(getLunSupportsDiscardPredicate().negate()
-                            .or(lun -> sdContainsVmDiskWithPassDiscardAndWad &&
-                                    getLunHasDiscardZeroesTheDataSupportPredicate().negate().test(lun)))
+                    .filter(lun -> !lun.supportsDiscard() ||
+                            (sdContainsVmDiskWithPassDiscardAndWad && !lun.hasDiscardZeroesTheDataSupport()))
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();
@@ -202,19 +200,10 @@ public class BlockStorageDiscardFunctionalityHelper {
         StorageDomain storageDomain = storageDomainDao.get(storageDomainId);
         if (storageDomain.isDiscardAfterDelete()) {
             return luns.stream()
-                    .filter(getLunSupportsDiscardPredicate().negate())
+                    .filter(lun -> !lun.supportsDiscard())
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();
-    }
-
-    private Predicate<LUNs> getLunSupportsDiscardPredicate() {
-        return lun -> lun.getDiscardMaxSize() != null &&
-                lun.getDiscardMaxSize() > 0L;
-    }
-
-    private Predicate<LUNs> getLunHasDiscardZeroesTheDataSupportPredicate() {
-        return lun -> Boolean.TRUE.equals(lun.getDiscardZeroesData());
     }
 
     private void logLunsBrokeStorageDomainPassDiscardSupport(Collection<LUNs> lunsThatBreakSdPassDiscardSupport,
