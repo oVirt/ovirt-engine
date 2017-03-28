@@ -173,7 +173,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Test
     public void sufficientStorageSpace() {
         setupForStorageTests();
-        assertTrue(cmd.imagesRelatedChecks());
+        assertTrue(cmd.validateImages());
     }
 
     @Test
@@ -181,7 +181,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         setupForStorageTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(multipleSdValidator).allDomainsWithinThresholds();
-        assertFalse(cmd.imagesRelatedChecks());
+        assertFalse(cmd.validateImages());
     }
 
     @Test
@@ -189,7 +189,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         setupForStorageTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
-        assertFalse(cmd.imagesRelatedChecks());
+        assertFalse(cmd.validateImages());
     }
 
     @Test
@@ -197,7 +197,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         setupForStorageTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE))
                 .when(cmd).isPassDiscardSupportedForImagesDestSds();
-        assertFalse(cmd.imagesRelatedChecks());
+        assertFalse(cmd.validateImages());
     }
 
     @Test

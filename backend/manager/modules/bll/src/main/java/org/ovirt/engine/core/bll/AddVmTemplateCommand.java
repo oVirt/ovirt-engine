@@ -125,7 +125,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private Guid[] targetDiskIds;
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
-    protected Map<Guid, List<DiskImage>> sourceImageDomainsImageMap;
+    private Map<Guid, List<DiskImage>> sourceImageDomainsImageMap;
     private boolean isVmInDb;
     private boolean pendingAsyncTasks;
 
@@ -148,63 +148,62 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     protected void init() {
-        T parameters = getParameters();
         if (Guid.isNullOrEmpty(getParameters().getVmTemplateId())) {
             getParameters().setVmTemplateId(Guid.newGuid());
         }
         setVmTemplateId(getParameters().getVmTemplateId());
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
-        super.setVmTemplateName(parameters.getName());
-        VmStatic parameterMasterVm = parameters.getMasterVm();
-        if (parameterMasterVm != null) {
-            super.setVmId(parameterMasterVm.getId());
-            setClusterId(parameterMasterVm.getClusterId());
+        setVmTemplateName(getParameters().getName());
+        VmStatic masterVm = getParameters().getMasterVm();
+        if (masterVm != null) {
+            setVmId(masterVm.getId());
+            setClusterId(masterVm.getClusterId());
 
             // API backward compatibility
             if (getVmDeviceUtils().shouldOverrideSoundDevice(
-                    getParameters().getMasterVm(),
+                    masterVm,
                     getMasterVmCompatibilityVersion(),
                     getParameters().isSoundDeviceEnabled())) {
-                parameters.setSoundDeviceEnabled(true);
+                getParameters().setSoundDeviceEnabled(true);
             }
 
             if (getParameters().isSoundDeviceEnabled() == null) {
-                parameters.setSoundDeviceEnabled(false);
+                getParameters().setSoundDeviceEnabled(false);
             }
 
             if (getParameters().isConsoleEnabled() == null) {
-                parameters.setConsoleEnabled(false);
+                getParameters().setConsoleEnabled(false);
             }
-            vmHandler.updateDefaultTimeZone(parameterMasterVm);
-            vmHandler.autoSelectUsbPolicy(getParameters().getMasterVm());
+            vmHandler.updateDefaultTimeZone(masterVm);
+            vmHandler.autoSelectUsbPolicy(masterVm);
 
             vmHandler.autoSelectDefaultDisplayType(getVmId(),
-                    getParameters().getMasterVm(),
+                    masterVm,
                     getCluster(),
                     getParameters().getGraphicsDevices());
 
             vmHandler.autoSelectGraphicsDevice(getVmId(),
-                    parameterMasterVm,
+                    masterVm,
                     getCluster(),
                     getParameters().getGraphicsDevices(),
                     getMasterVmCompatibilityVersion());
 
-            separateCustomProperties(parameterMasterVm);
+            separateCustomProperties(masterVm);
         }
         if (getVm() != null) {
             updateVmDevices();
             images.addAll(getVmDisksFromDB());
             setStoragePoolId(getVm().getStoragePoolId());
             isVmInDb = true;
-        } else if (getCluster() != null && parameterMasterVm != null) {
-            VM vm = new VM(parameterMasterVm, new VmDynamic(), null);
+        } else if (getCluster() != null && masterVm != null) {
+            VM vm = new VM(masterVm, new VmDynamic(), null);
             vm.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
             setVm(vm);
             setStoragePoolId(getCluster().getStoragePoolId());
         }
         updateDiskInfoDestinationMap();
         generateTargetDiskIds();
-        parameters.setUseCinderCommandCallback(!getCinderDisks().isEmpty());
+        getParameters().setUseCinderCommandCallback(!getCinderDisks().isEmpty());
     }
 
     private Version getMasterVmCompatibilityVersion() {
@@ -227,7 +226,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return lockProperties.withScope(Scope.Command);
     }
 
-    protected void updateDiskInfoDestinationMap() {
+    private void updateDiskInfoDestinationMap() {
         diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {
             diskInfoDestinationMap = new HashMap<>();
@@ -248,7 +247,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         targetDiskIds = Stream.generate(Guid::newGuid).limit(images.size()).toArray(Guid[]::new);
     }
 
-    protected void updateVmDevices() {
+    private void updateVmDevices() {
         getVmDeviceUtils().setVmDevices(getVm().getStaticData());
     }
 
@@ -327,7 +326,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             if (!StringUtils.isEmpty(jobId)) {
                 log.info("Cancelling current running update for vms for base template id '{}'", getParameters().getBaseTemplateId());
                 try {
-                    getSchedulUtil().deleteJob(jobId);
+                    getSchedulerUtil().deleteJob(jobId);
                 } catch (Exception e) {
                     log.warn("Failed deleting job '{}' at cancelRecoveryJob", jobId);
                 }
@@ -359,7 +358,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getVmDeviceUtils().hasMemoryBalloon(getVmId()),
                         graphicsToSkip,
                         false,
-                        getEffectiveVersion());
+                        getEffectiveCompatibilityVersion());
             } else {
                 // for instance type and new template without a VM
                 getVmDeviceUtils().copyVmDevices(VmTemplateHandler.BLANK_VM_TEMPLATE_ID,
@@ -371,7 +370,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         Boolean.TRUE.equals(getParameters().isBalloonEnabled()),
                         graphicsToSkip,
                         false,
-                        getEffectiveVersion());
+                        getEffectiveCompatibilityVersion());
             }
 
             updateWatchdog(getVmTemplateId());
@@ -434,7 +433,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return VdcActionType.CreateAllTemplateDisks;
     }
 
-    private Version getEffectiveVersion() {
+    private Version getEffectiveCompatibilityVersion() {
         return CompatibilityVersionUtils.getEffective(getParameters().getMasterVm(), this::getCluster);
     }
 
@@ -537,7 +536,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return parameters;
     }
 
-    private boolean doClusterRelatedChecks() {
+    private boolean validateCluster() {
         // A Template cannot be added in a cluster without a defined architecture
         if (getCluster().getArchitecture() == ArchitectureType.undefined) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
@@ -588,8 +587,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        return imagesRelatedChecks() && validate(VmValidator.validateCpuSockets(getParameters().getMasterVm(),
-                getVm().getCompatibilityVersion()));
+        return true;
     }
 
     @Override
@@ -641,11 +639,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        if(!setAndValidateCpuProfile()) {
+        if (!setAndValidateCpuProfile()) {
             return false;
         }
 
-        if(!isDisksAliasNotEmpty()) {
+        if (!isDisksAliasNotEmpty()) {
             return false;
         }
 
@@ -686,9 +684,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         if (isInstanceType) {
             return true;
-        } else {
-            return doClusterRelatedChecks();
         }
+
+        return validateCluster()
+                && validateImages()
+                && validate(VmValidator.validateCpuSockets(
+                        getParameters().getMasterVm(),
+                        getVm().getCompatibilityVersion()));
     }
 
     protected boolean isVmStatusValid(VMStatus status) {
@@ -729,7 +731,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return getParameters().getBaseTemplateId() != null;
     }
 
-    protected boolean imagesRelatedChecks() {
+    protected boolean validateImages() {
         // images related checks
         if (!images.isEmpty()) {
             if (!validateVmNotDuringSnapshot()) {
@@ -750,8 +752,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
 
-            List<DiskImage> diskImagesToCheck = DisksFilter.filterImageDisks(images, ONLY_NOT_SHAREABLE,
-                    ONLY_ACTIVE);
+            List<DiskImage> diskImagesToCheck = DisksFilter.filterImageDisks(images, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
             diskImagesToCheck.addAll(cinderDisks);
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
             if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
@@ -841,7 +842,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
      * don't have all the needed data, and in order not to contaminate the command's data structures, an alter
      * one is created specifically for this validation - hence dummy.
      */
-    protected List<DiskImage> createDiskDummiesForSpaceValidations(Collection<DiskImage> disksList) {
+    private List<DiskImage> createDiskDummiesForSpaceValidations(Collection<DiskImage> disksList) {
         List<DiskImage> dummies = new ArrayList<>(disksList.size());
         for (DiskImage image : disksList) {
             Guid targetSdId = diskInfoDestinationMap.get(image.getId()).getStorageIds().get(0);
@@ -851,7 +852,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return dummies;
     }
 
-    protected void addVmTemplateToDb() {
+    private void addVmTemplateToDb() {
         // TODO: add timezone handling
         setVmTemplate(
                 new VmTemplate(
@@ -942,7 +943,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
     }
 
-    protected void addVmInterfaces(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
+    private void addVmInterfaces(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
         List<VmNic> interfaces = vmNicDao.getAllForVm(getParameters().getMasterVm().getId());
         for (VmNic iface : interfaces) {
             VmNic iDynamic = new VmNic();
@@ -1008,7 +1009,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // in case of new version of a template, update vms marked to use latest
         if (isTemplateVersion()) {
             updateVmsJobIdMap.put(getParameters().getBaseTemplateId(), StringUtils.EMPTY);
-            String jobId = getSchedulUtil().scheduleAOneTimeJob(this, "updateVmVersion", new Class[0],
+            String jobId = getSchedulerUtil().scheduleAOneTimeJob(this, "updateVmVersion", new Class[0],
                     new Object[0], 0, TimeUnit.SECONDS);
             updateVmsJobIdMap.put(getParameters().getBaseTemplateId(), jobId);
         }
@@ -1230,7 +1231,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return validate(cpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(), getUserId()));
     }
 
-    private SchedulerUtil getSchedulUtil() {
+    private SchedulerUtil getSchedulerUtil() {
         return schedulerUtil;
     }
 
