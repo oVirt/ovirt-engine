@@ -75,6 +75,10 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
             try {
                 Presenter<?, ?> presenter = (Presenter<?, ?>) content;
                 TabContentProxy<?> proxy = (TabContentProxy<?>) presenter.getProxy();
+                // Following is needed to address a bug in GWTP legacy slot handling.
+                // https://groups.google.com/forum/#!topic/gwt-platform/eDpwOubUCmE
+                getView().setActiveTab(proxy.getTab());
+                // Following is needed to inform the TabPanel about the history token.
                 getView().setActiveTabHistoryToken(proxy.getTargetHistoryToken());
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "Error while updating tab view", e); //$NON-NLS-1$
