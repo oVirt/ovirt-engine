@@ -24,111 +24,103 @@ public class InfoServiceImpl implements ModuleService {
 
     private static final Logger log = LoggerFactory.getLogger(InfoServiceImpl.class);
 
+    private static final List<ExtKey> CONTEXT_IGNORE_KEYS = Arrays.asList(
+            Base.ContextKeys.GLOBAL_CONTEXT,
+            Base.ContextKeys.CONFIGURATION,
+            Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS,
+            ExtensionsManager.TRACE_LOG_CONTEXT_KEY
+    );
+
+    @FunctionalInterface
     private interface Logic {
         void execute(InfoServiceImpl module);
     }
 
     private enum Action {
         CONFIGURATION(
-            new Logic() {
-                @Override
-                public void execute(InfoServiceImpl module) {
-                    ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
-                    Collection<?> sensitive = extension.getContext().get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
+            module -> {
+                ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
+                Collection<?> sensitive = extension.getContext().get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
 
 
-                    Map<Object, Object> config = extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION);
-                    Collection<Object> keys = new HashSet<>(config.keySet());
-                    if (module.argMap.get("key") != null) {
-                        keys.retainAll((List<String>)module.argMap.get("key"));
-                    }
+                Map<Object, Object> config = extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION);
+                Collection<Object> keys = new HashSet<>(config.keySet());
+                if (module.argMap.get("key") != null) {
+                    keys.retainAll((List<String>)module.argMap.get("key"));
+                }
 
-                    for (Object key : keys) {
-                        module.output(
-                            ((String)module.argMap.get("format")).replace(
-                                "{key}",
-                                String.format("%s", key)
-                            ).replace(
-                                "{value}",
-                                sensitive.contains(key) ? "***" : String.format("%s", config.get(key))
-                            ),
-                            "    "
-                        );
-                    }
+                for (Object key : keys) {
+                    module.output(
+                        ((String)module.argMap.get("format")).replace(
+                            "{key}",
+                            String.format("%s", key)
+                        ).replace(
+                            "{value}",
+                            sensitive.contains(key) ? "***" : String.format("%s", config.get(key))
+                        ),
+                        "    "
+                    );
                 }
             }
         ),
         CONTEXT(
-            new Logic() {
-                private List<ExtKey> IGNORE_KEYS = Arrays.asList(
-                    Base.ContextKeys.GLOBAL_CONTEXT,
-                    Base.ContextKeys.CONFIGURATION,
-                    Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS,
-                    ExtensionsManager.TRACE_LOG_CONTEXT_KEY
-                );
-
-                @Override
-                public void execute(InfoServiceImpl module) {
-                    ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
-                    Collection<ExtKey> keys = new HashSet<>(extension.getContext().keySet());
-                    if (module.argMap.get("key") != null) {
-                        Collection<ExtKey> k = new HashSet<>();
-                        for (String uuid : (List<String>)module.argMap.get("key")) {
-                            k.add(new ExtKey("Unknown", Object.class, uuid));
-                        }
-                        keys.retainAll(k);
+            module -> {
+                ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
+                Collection<ExtKey> keys = new HashSet<>(extension.getContext().keySet());
+                if (module.argMap.get("key") != null) {
+                    Collection<ExtKey> k = new HashSet<>();
+                    for (String uuid : (List<String>)module.argMap.get("key")) {
+                        k.add(new ExtKey("Unknown", Object.class, uuid));
                     }
-                    for (ExtKey key : keys) {
-                        if (IGNORE_KEYS.contains(key)) {
-                            continue;
-                        }
-                        if ((key.getFlags() & ExtKey.Flags.SKIP_DUMP) != 0) {
-                            continue;
-                        }
-
-                        module.output(
-                            ((String)module.argMap.get("format")).replace(
-                                "{key}",
-                                key.getUuid().getUuid().toString()
-                            ).replace(
-                                "{name}",
-                                key.getUuid().getName()
-                            ).replace(
-                                "{value}",
-                                (key.getFlags() & ExtKey.Flags.SENSITIVE) != 0 ? "***" : extension.getContext().get(key).toString()
-                            ),
-                            "    "
-                        );
+                    keys.retainAll(k);
+                }
+                for (ExtKey key : keys) {
+                    if (CONTEXT_IGNORE_KEYS.contains(key)) {
+                        continue;
                     }
+                    if ((key.getFlags() & ExtKey.Flags.SKIP_DUMP) != 0) {
+                        continue;
+                    }
+
+                    module.output(
+                        ((String)module.argMap.get("format")).replace(
+                            "{key}",
+                            key.getUuid().getUuid().toString()
+                        ).replace(
+                            "{name}",
+                            key.getUuid().getName()
+                        ).replace(
+                            "{value}",
+                            (key.getFlags() & ExtKey.Flags.SENSITIVE) != 0 ? "***" : extension.getContext().get(key).toString()
+                        ),
+                        "    "
+                    );
                 }
             }
         ),
         LIST_EXTENSIONS(
-            new Logic() {
-                @Override
-                public void execute(InfoServiceImpl module) {
-                    for (ExtensionProxy extension : module.getExtensionsManager().getExtensions()) {
-                        ExtMap extContext = extension.getContext();
-                        module.output(
-                            ((String)module.argMap.get("format")).replace(
-                                "{instance}",
-                                extContext.<String>get(Base.ContextKeys.INSTANCE_NAME, "")
-                            ).replace(
-                                "{name}",
-                                extContext.<String>get(Base.ContextKeys.EXTENSION_NAME, "")
-                            ).replace(
-                                "{version}",
-                                extContext.<String>get(Base.ContextKeys.VERSION, "")
-                            ).replace(
-                                "{license}",
-                                extContext.<String>get(Base.ContextKeys.LICENSE, "")
-                            ).replace(
-                                "{notes}",
-                                extContext.<String>get(Base.ContextKeys.EXTENSION_NOTES, "")
-                            ),
-                            ""
-                        );
-                    }
+            module -> {
+                for (ExtensionProxy extension : module.getExtensionsManager().getExtensions()) {
+                    ExtMap extContext = extension.getContext();
+                    module.output(
+                        ((String)module.argMap.get("format")).replace(
+                            "{instance}",
+                            extContext.<String>get(Base.ContextKeys.INSTANCE_NAME, "")
+                        ).replace(
+                            "{name}",
+                            extContext.<String>get(Base.ContextKeys.EXTENSION_NAME, "")
+                        ).replace(
+                            "{version}",
+                            extContext.<String>get(Base.ContextKeys.VERSION, "")
+                        ).replace(
+                            "{license}",
+                            extContext.<String>get(Base.ContextKeys.LICENSE, "")
+                        ).replace(
+                            "{notes}",
+                            extContext.<String>get(Base.ContextKeys.EXTENSION_NOTES, "")
+                        ),
+                        ""
+                    );
                 }
             }
         );
