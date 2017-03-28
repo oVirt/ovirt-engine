@@ -206,12 +206,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         getParameters().setUseCinderCommandCallback(!getCinderDisks().isEmpty());
     }
 
-    private Version getMasterVmCompatibilityVersion() {
-        return getVm() == null
-                ? CompatibilityVersionUtils.getEffective(getParameters().getMasterVm(), getCluster())
-                : getVm().getCompatibilityVersion();
-    }
-
     protected void separateCustomProperties(VmStatic parameterMasterVm) {
         if (getCluster() != null) {
             // Parses the custom properties field that was filled by frontend to
@@ -219,11 +213,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
                     getMasterVmCompatibilityVersion(), parameterMasterVm);
         }
-    }
-
-    @Override
-    protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Command);
     }
 
     private void updateDiskInfoDestinationMap() {
@@ -257,46 +246,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return getVm().getDiskList();
     }
 
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        switch (getActionState()) {
-        case EXECUTE:
-            if (isVmInDb) {
-                if (pendingAsyncTasks) {
-                    return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE : AuditLogType.USER_FAILED_ADD_VM_TEMPLATE;
-                } else {
-                    return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS : getAuditLogFailureType();
-                }
-            } else {
-                return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_SUCCESS : AuditLogType.USER_ADD_VM_TEMPLATE_FAILURE;
-            }
-
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS : getAuditLogFailureType();
-
-        default:
-            return getAuditLogFailureType();
+    private List<CinderDisk> getCinderDisks() {
+        if (cinderDisks == null) {
+            cinderDisks = DisksFilter.filterCinderDisks(images);
         }
-    }
-
-    private AuditLogType getAuditLogFailureType() {
-        switch (getParameters().getPhase()) {
-        case CREATE_TEMPLATE:
-            return AuditLogType.USER_ADD_VM_TEMPLATE_CREATE_TEMPLATE_FAILURE;
-        case ASSIGN_ILLEGAL:
-            return AuditLogType.USER_ADD_VM_TEMPLATE_ASSIGN_ILLEGAL_FAILURE;
-        case SEAL:
-            return AuditLogType.USER_ADD_VM_TEMPLATE_SEAL_FAILURE;
-        case ASSIGN_LEGAL_SHARED:
-        default:
-            return AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_FAILURE;
-        }
-    }
-
-    @Override
-    public Map<String, String> getJobMessageProperties() {
-        jobProperties.put("phase", getParameters().getPhase().name());
-        return jobProperties;
+        return cinderDisks;
     }
 
     @Override
@@ -433,6 +387,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return VdcActionType.CreateAllTemplateDisks;
     }
 
+    private Version getMasterVmCompatibilityVersion() {
+        return getVm() == null
+                ? CompatibilityVersionUtils.getEffective(getParameters().getMasterVm(), getCluster())
+                : getVm().getCompatibilityVersion();
+    }
+
     private Version getEffectiveCompatibilityVersion() {
         return CompatibilityVersionUtils.getEffective(getParameters().getMasterVm(), this::getCluster);
     }
@@ -534,60 +494,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
-    }
-
-    private boolean validateCluster() {
-        // A Template cannot be added in a cluster without a defined architecture
-        if (getCluster().getArchitecture() == ArchitectureType.undefined) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
-        }
-
-        if (!vmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
-                getCluster().getArchitecture(), getReturnValue().getValidationMessages())) {
-            return false;
-        }
-
-        // Check if the display type is supported
-        Guid srcId = isVmInDb ? getVmId() : VmTemplateHandler.BLANK_VM_TEMPLATE_ID;
-        if (!vmHandler.isGraphicsAndDisplaySupported(getParameters().getMasterVm().getOsId(),
-                vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(srcId),
-                        getParameters().getGraphicsDevices()),
-                getParameters().getMasterVm().getDefaultDisplayType(),
-                getReturnValue().getValidationMessages(),
-                getVm().getCompatibilityVersion())) {
-            return false;
-        }
-
-        if (getParameters().getVm().getSingleQxlPci() &&
-                !vmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
-                        getParameters().getVm().getOs(),
-                        getReturnValue().getValidationMessages())) {
-            return false;
-        }
-
-        // Check if the watchdog model is supported
-        if (getParameters().getWatchdog() != null) {
-            if (!validate(new VmWatchdogValidator.VmWatchdogClusterDependentValidator(getParameters().getMasterVm().getOsId(),
-                    getParameters().getWatchdog(),
-                    getVm().getCompatibilityVersion()).isValid())) {
-                return false;
-            }
-        }
-
-        // Disallow cross-DC template creation
-        if (!getStoragePoolId().equals(getCluster().getStoragePoolId())) {
-            addValidationMessage(EngineMessage.VDS_CLUSTER_ON_DIFFERENT_STORAGE_POOL);
-            return false;
-        }
-
-        if (!VmPropertiesUtils.getInstance().validateVmProperties(
-                getVm().getCompatibilityVersion(),
-                getParameters().getMasterVm().getCustomProperties(),
-                getReturnValue().getValidationMessages())) {
-            return false;
-        }
-
-        return true;
     }
 
     @Override
@@ -697,6 +603,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return status == VMStatus.Down;
     }
 
+    protected boolean setAndValidateCpuProfile() {
+        // cpu profile isn't supported for instance types.
+        if (getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
+            return true;
+        }
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(), getUserId()));
+    }
+
     protected boolean isDisksAliasNotEmpty() {
         // Check that all the template's allocated disk's aliases are not an empty string.
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
@@ -729,6 +643,60 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private boolean isTemplateVersion() {
         return getParameters().getBaseTemplateId() != null;
+    }
+
+    private boolean validateCluster() {
+        // A Template cannot be added in a cluster without a defined architecture
+        if (getCluster().getArchitecture() == ArchitectureType.undefined) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+        }
+
+        if (!vmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
+                getCluster().getArchitecture(), getReturnValue().getValidationMessages())) {
+            return false;
+        }
+
+        // Check if the display type is supported
+        Guid srcId = isVmInDb ? getVmId() : VmTemplateHandler.BLANK_VM_TEMPLATE_ID;
+        if (!vmHandler.isGraphicsAndDisplaySupported(getParameters().getMasterVm().getOsId(),
+                vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(srcId),
+                        getParameters().getGraphicsDevices()),
+                getParameters().getMasterVm().getDefaultDisplayType(),
+                getReturnValue().getValidationMessages(),
+                getVm().getCompatibilityVersion())) {
+            return false;
+        }
+
+        if (getParameters().getVm().getSingleQxlPci() &&
+                !vmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
+                        getParameters().getVm().getOs(),
+                        getReturnValue().getValidationMessages())) {
+            return false;
+        }
+
+        // Check if the watchdog model is supported
+        if (getParameters().getWatchdog() != null) {
+            if (!validate(new VmWatchdogValidator.VmWatchdogClusterDependentValidator(getParameters().getMasterVm().getOsId(),
+                    getParameters().getWatchdog(),
+                    getVm().getCompatibilityVersion()).isValid())) {
+                return false;
+            }
+        }
+
+        // Disallow cross-DC template creation
+        if (!getStoragePoolId().equals(getCluster().getStoragePoolId())) {
+            addValidationMessage(EngineMessage.VDS_CLUSTER_ON_DIFFERENT_STORAGE_POOL);
+            return false;
+        }
+
+        if (!VmPropertiesUtils.getInstance().validateVmProperties(
+                getVm().getCompatibilityVersion(),
+                getParameters().getMasterVm().getCustomProperties(),
+                getReturnValue().getValidationMessages())) {
+            return false;
+        }
+
+        return true;
     }
 
     protected boolean validateImages() {
@@ -1147,6 +1115,57 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        switch (getActionState()) {
+            case EXECUTE:
+                if (isVmInDb) {
+                    if (pendingAsyncTasks) {
+                        return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE : AuditLogType.USER_FAILED_ADD_VM_TEMPLATE;
+                    } else {
+                        return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS : getAuditLogFailureType();
+                    }
+                } else {
+                    return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_SUCCESS : AuditLogType.USER_ADD_VM_TEMPLATE_FAILURE;
+                }
+
+            case END_SUCCESS:
+                return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS : getAuditLogFailureType();
+
+            default:
+                return getAuditLogFailureType();
+        }
+    }
+
+    private AuditLogType getAuditLogFailureType() {
+        switch (getParameters().getPhase()) {
+            case CREATE_TEMPLATE:
+                return AuditLogType.USER_ADD_VM_TEMPLATE_CREATE_TEMPLATE_FAILURE;
+            case ASSIGN_ILLEGAL:
+                return AuditLogType.USER_ADD_VM_TEMPLATE_ASSIGN_ILLEGAL_FAILURE;
+            case SEAL:
+                return AuditLogType.USER_ADD_VM_TEMPLATE_SEAL_FAILURE;
+            case ASSIGN_LEGAL_SHARED:
+            default:
+                return AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_FAILURE;
+        }
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        jobProperties.put("phase", getParameters().getPhase().name());
+        return jobProperties;
+    }
+
+    @Override
+    protected boolean isQuotaDependant() {
+        if (getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
+            return false;
+        }
+
+        return super.isQuotaDependant();
+    }
+
     private Guid getQuotaIdForDisk(DiskImage diskImage) {
         // If the DiskInfoDestinationMap is available and contains information about the disk
         if (getParameters().getDiskInfoDestinationMap() != null
@@ -1178,6 +1197,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         List<QuotaConsumptionParameter> list = new ArrayList<>();
         list.add(new QuotaSanityParameter(quotaId, null));
         return list;
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override
@@ -1214,32 +1238,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return locks;
     }
 
-    @Override
-    protected boolean isQuotaDependant() {
-        if (getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
-            return false;
-        }
-
-        return super.isQuotaDependant();
-    }
-
-    protected boolean setAndValidateCpuProfile() {
-        // cpu profile isn't supported for instance types.
-        if (getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
-            return true;
-        }
-        return validate(cpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(), getUserId()));
-    }
-
     private SchedulerUtil getSchedulerUtil() {
         return schedulerUtil;
-    }
-
-    private List<CinderDisk> getCinderDisks() {
-        if (cinderDisks == null) {
-            cinderDisks = DisksFilter.filterCinderDisks(images);
-        }
-        return cinderDisks;
     }
 
     @Override
