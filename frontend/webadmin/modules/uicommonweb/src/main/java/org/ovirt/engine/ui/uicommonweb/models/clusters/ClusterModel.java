@@ -911,7 +911,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     private void initMacPools() {
-        setMacPoolListModel(new SortedListModel<>(new Linq.SharedMacPoolComparator()));
+        setMacPoolListModel(new SortedListModel<>(Linq.SharedMacPoolComparator));
         setMacPoolModel(new MacPoolModel());
         getMacPoolModel().setIsChangeable(false);
         getMacPoolListModel().getItemsChangedEvent().addListener(this);

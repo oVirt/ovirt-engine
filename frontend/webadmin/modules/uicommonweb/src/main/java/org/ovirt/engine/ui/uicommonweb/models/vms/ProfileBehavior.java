@@ -51,7 +51,7 @@ public abstract class ProfileBehavior {
 
                         }
 
-                        Collections.sort(vnicProfiles, new Linq.VnicProfileViewComparator());
+                        Collections.sort(vnicProfiles, Linq.VnicProfileViewComparator);
 
                         return vnicProfiles;
                     }

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.IdentifiableComparator;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -47,14 +46,11 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
 
     public void makeSortable() {
         makeSortable(new Comparator<T>() {
-
-            IdentifiableComparator<VMStatus> valueComparator = new Linq.IdentifiableComparator<>();
-
             @Override
             public int compare(T o1, T o2) {
                 VMStatus status1 = (getValue(o1) == null) ? null : getValue(o1).getStatus();
                 VMStatus status2 = (getValue(o2) == null) ? null : getValue(o2).getStatus();
-                return valueComparator.compare(status1, status2);
+                return Linq.IdentifiableComparator.compare(status1, status2);
             }
         });
     }

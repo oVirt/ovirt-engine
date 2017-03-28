@@ -63,95 +63,26 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
 public final class Linq {
+    public static final Comparator<AuditLog> AuditLogComparer = Comparator.comparing(AuditLog::getAuditLogId);
 
-    public static class AuditLogComparer implements Comparator<AuditLog>, Serializable {
-        private static final long serialVersionUID = 7488030875073130111L;
+    public static final Comparator<? super Identifiable> IdentifiableComparator =
+            Comparator.nullsFirst(Comparator.comparing(Identifiable::getValue));
 
-        @Override
-        public int compare(AuditLog x, AuditLog y) {
-            long xid = x.getAuditLogId();
-            long yid = y.getAuditLogId();
+    public static final Comparator<StorageDevice> StorageDeviceComparer =
+            Comparator.comparing(StorageDevice::getCanCreateBrick).reversed()
+                    .thenComparing(StorageDevice::getName);
 
-            return Long.compare(xid, yid);
-        }
-    }
+    public static final Comparator<Snapshot> SnapshotByCreationDateCommparer =
+            Comparator.comparing(Snapshot::getCreationDate);
 
-    public static final class IdentifiableComparator<T extends Identifiable> implements Comparator<T>, Serializable {
+    public static final Comparator<VnicProfileView> VnicProfileViewComparator =
+            Comparator.comparing((VnicProfileView v) -> v == VnicProfileView.EMPTY).reversed()
+                    .thenComparing(VnicProfileView::getNetworkName, new LexoNumericComparator())
+                    .thenComparing(new LexoNumericNameableComparator<>());
 
-        private static final long serialVersionUID = 1698501567658288106L;
-
-        @Override
-        public int compare(T o1, T o2) {
-            if (o1 == o2) {
-                return 0;
-            } else if (o1 == null || o2 == null) {
-                return (o1 == null) ? -1 : 1;
-            } else {
-                return o1.getValue() - o2.getValue();
-            }
-        }
-    }
-
-    public static class StorageDeviceComparer implements Comparator<StorageDevice>, Serializable {
-
-        private static final long serialVersionUID = -7569798731454543377L;
-
-        @Override
-        public int compare(StorageDevice device1, StorageDevice device2) {
-            // Descending order on canCreateBrick then ascending order on Name
-            int deviceStatusComparison =
-                    device1.getCanCreateBrick() == device2.getCanCreateBrick() ? 0 : device2.getCanCreateBrick() ? 1
-                            : -1;
-            return deviceStatusComparison == 0 ? device1.getName().compareTo(device2.getName())
-                    : deviceStatusComparison;
-        }
-
-    }
-
-    public static class SnapshotByCreationDateCommparer implements Comparator<Snapshot>, Serializable {
-
-        private static final long serialVersionUID = -4063737182979806402L;
-
-        @Override
-        public int compare(Snapshot x, Snapshot y) {
-            return x.getCreationDate().compareTo(y.getCreationDate());
-        }
-
-    }
-
-    public static final class VnicProfileViewComparator implements Comparator<VnicProfileView>, Serializable {
-
-        private static final long serialVersionUID = 990203400356561587L;
-        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(VnicProfileView vnicProfile1, VnicProfileView vnicProfile2) {
-            if (vnicProfile1 == VnicProfileView.EMPTY) {
-                return vnicProfile2 == VnicProfileView.EMPTY ? 0 : 1;
-            } else if (vnicProfile2 == VnicProfileView.EMPTY) {
-                return -1;
-            }
-
-            int retVal = lexoNumeric.compare(vnicProfile1.getNetworkName(), vnicProfile2.getNetworkName());
-
-            return retVal == 0 ? lexoNumeric.compare(vnicProfile1.getName(), vnicProfile2.getName()) : retVal;
-        }
-    }
-
-    public static final class SharedMacPoolComparator implements Comparator<MacPool>, Serializable {
-
-        private static final long serialVersionUID = 3603082617231645079L;
-        final LexoNumericNameableComparator<MacPool> lexoNumeric = new LexoNumericNameableComparator<>();
-
-        @Override
-        public int compare(MacPool o1, MacPool o2) {
-            int retVal = -1 * Boolean.compare(o1.isDefaultPool(), o2.isDefaultPool());
-            if (retVal != 0) {
-                return retVal;
-            }
-            return lexoNumeric.compare(o1, o2);
-        }
-    }
+    public static final Comparator<MacPool> SharedMacPoolComparator =
+            Comparator.comparing(MacPool::isDefaultPool).reversed()
+                    .thenComparing(new LexoNumericNameableComparator<>());
 
     public static boolean isDataActiveStorageDomain(StorageDomain storageDomain) {
         boolean isData = storageDomain.getStorageDomainType().isDataDomain();

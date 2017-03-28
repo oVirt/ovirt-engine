@@ -32,7 +32,7 @@ public class UserPortalTemplateEventListModel extends TemplateEventListModel {
     public void setItems(Collection<AuditLog> value) {
         List<AuditLog> list = (List<AuditLog>) value;
         if (list != null) {
-            Collections.sort(list, Collections.reverseOrder(new Linq.AuditLogComparer()));
+            Collections.sort(list, Collections.reverseOrder(Linq.AuditLogComparer));
         }
         super.setItems(list);
     }

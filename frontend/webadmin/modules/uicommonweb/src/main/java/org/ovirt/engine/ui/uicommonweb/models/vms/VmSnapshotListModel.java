@@ -30,7 +30,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.SnapshotByCreationDateCommparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.template.UnitToAddVmTemplateParametersBuilder;
@@ -219,7 +218,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         ArrayList<Snapshot> snapshots =
                 value != null ? Linq.<Snapshot> cast(value) : new ArrayList<Snapshot>();
 
-        Collections.sort(snapshots, Collections.reverseOrder(new SnapshotByCreationDateCommparer()));
+        Collections.sort(snapshots, Linq.SnapshotByCreationDateCommparer.reversed());
         ArrayList<Snapshot> sortedSnapshots = new ArrayList<>();
 
         for (Snapshot snapshot : snapshots) {

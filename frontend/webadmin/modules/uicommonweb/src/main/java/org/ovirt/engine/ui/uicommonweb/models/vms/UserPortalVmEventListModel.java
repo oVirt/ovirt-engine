@@ -31,7 +31,7 @@ public class UserPortalVmEventListModel extends VmEventListModel {
     public void setItems(Collection value) {
         List<AuditLog> list = (List<AuditLog>) value;
         if (list != null) {
-            Collections.sort(list, Collections.reverseOrder(new Linq.AuditLogComparer()));
+            Collections.sort(list, Linq.AuditLogComparer.reversed());
         }
         super.setItems(list);
     }

@@ -49,7 +49,7 @@ public class SharedMacPoolListModel extends ListWithSimpleDetailsModel<Void, Mac
         newCommand = new UICommand("New", this); //$NON-NLS-1$
         editCommand = new UICommand("Edit", this); //$NON-NLS-1$
         removeCommand = new UICommand("Remove", this); //$NON-NLS-1$
-        setComparator(new Linq.SharedMacPoolComparator());
+        setComparator(Linq.SharedMacPoolComparator);
 
         updateActionAvailability();
     }

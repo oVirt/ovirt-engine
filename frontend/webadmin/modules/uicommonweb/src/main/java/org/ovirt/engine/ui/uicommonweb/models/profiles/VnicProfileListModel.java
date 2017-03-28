@@ -59,7 +59,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
         // setSearchObjects(new String[] { SearchObjects.PROFILE_OBJ_NAME, SearchObjects.PROFILE_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);
 
-        setComparator(new Linq.VnicProfileViewComparator());
+        setComparator(Linq.VnicProfileViewComparator);
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$

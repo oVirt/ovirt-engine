@@ -29,7 +29,7 @@ public class NetworkProfileListModel extends SearchableListModel<NetworkView, Vn
         setHashName("profiles"); //$NON-NLS-1$
 
         setAvailableInModes(ApplicationMode.VirtOnly);
-        setComparator(new Linq.VnicProfileViewComparator());
+        setComparator(Linq.VnicProfileViewComparator);
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$

@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.IdentifiableComparator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.HostStatusCell;
@@ -37,14 +36,11 @@ public class HostStatusColumn<S> extends AbstractColumn<S, VDS> {
 
     public void makeSortable() {
         makeSortable(new Comparator<S>() {
-
-            IdentifiableComparator<VDSStatus> valueComparator = new Linq.IdentifiableComparator<>();
-
             @Override
             public int compare(S o1, S o2) {
                 VDSStatus status1 = (getValue(o1) == null) ? null : getValue(o1).getStatus();
                 VDSStatus status2 = (getValue(o2) == null) ? null : getValue(o2).getStatus();
-                return valueComparator.compare(status1, status2);
+                return Linq.IdentifiableComparator.compare(status1, status2);
             }
         });
     }

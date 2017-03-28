@@ -25,7 +25,7 @@ public class StorageDeviceStatusColumn extends AbstractImageResourceColumn<Stora
     }
 
     public void makeSortable() {
-        makeSortable(new Linq.StorageDeviceComparer());
+        makeSortable(Linq.StorageDeviceComparer);
     }
 
     @Override

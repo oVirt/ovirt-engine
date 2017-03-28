@@ -98,7 +98,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
 
             @Override
             public void onSuccess(List<StorageDevice> devices) {
-                Collections.sort(devices, new Linq.StorageDeviceComparer());
+                Collections.sort(devices, Linq.StorageDeviceComparer);
                 setItems(devices);
             }
         }), getEntity().getId());

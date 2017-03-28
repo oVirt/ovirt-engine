@@ -121,7 +121,7 @@ public class VnicProfileMappingModel extends Model {
                         final List<VnicProfileView> vnicProfiles = new ArrayList<>();
                         vnicProfiles.add(VnicProfileView.EMPTY);
                         vnicProfiles.addAll(returnValue);
-                        Collections.sort(vnicProfiles, new Linq.VnicProfileViewComparator());
+                        Collections.sort(vnicProfiles, Linq.VnicProfileViewComparator);
 
                         populateMappingRows(vnicProfiles);
 

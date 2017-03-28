@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,18 +76,9 @@ public class PreviewSnapshotModel extends Model {
 
     // Sort snapshots by creation date (keep active snapshot on top)
     private void sortSnapshots(ArrayList<Snapshot> snapshots) {
-        Collections.sort(snapshots, Collections.reverseOrder(new Linq.SnapshotByCreationDateCommparer() {
-            @Override
-            public int compare(Snapshot x, Snapshot y) {
-                if (x.getType() == Snapshot.SnapshotType.ACTIVE) {
-                    return 1;
-                }
-                if (y.getType() == Snapshot.SnapshotType.ACTIVE) {
-                    return -1;
-                }
-                return super.compare(x, y);
-            }
-        }));
+        Collections.sort(snapshots,
+                Comparator.comparing((Snapshot s) -> s.getType() == Snapshot.SnapshotType.ACTIVE).reversed()
+                        .thenComparing(Linq.SnapshotByCreationDateCommparer));
     }
 
     public SnapshotModel getSnapshotModel() {
