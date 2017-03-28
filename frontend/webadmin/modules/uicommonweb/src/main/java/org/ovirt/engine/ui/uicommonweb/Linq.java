@@ -118,6 +118,42 @@ public final class Linq {
 
     }
 
+    public static final class VnicProfileViewComparator implements Comparator<VnicProfileView>, Serializable {
+
+        private static final long serialVersionUID = 990203400356561587L;
+        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(VnicProfileView vnicProfile1, VnicProfileView vnicProfile2) {
+            if (vnicProfile1 == VnicProfileView.EMPTY) {
+                return vnicProfile2 == VnicProfileView.EMPTY ? 0 : 1;
+            } else if (vnicProfile2 == VnicProfileView.EMPTY) {
+                return -1;
+            }
+
+            int retVal = lexoNumeric.compare(vnicProfile1.getNetworkName(), vnicProfile2.getNetworkName());
+
+            return retVal == 0 ? lexoNumeric.compare(vnicProfile1.getName(), vnicProfile2.getName()) : retVal;
+        }
+    }
+
+    public static final class SharedMacPoolComparator implements Comparator<MacPool>, Serializable {
+
+        private static final long serialVersionUID = 3603082617231645079L;
+        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(MacPool o1, MacPool o2) {
+            if (o1.isDefaultPool()) {
+                return -1;
+            } else if (o2.isDefaultPool()) {
+                return 1;
+            } else {
+                return lexoNumeric.compare(o1.getName(), o2.getName());
+            }
+        }
+    }
+
     public static boolean isDataActiveStorageDomain(StorageDomain storageDomain) {
         boolean isData = storageDomain.getStorageDomainType().isDataDomain();
 
@@ -766,25 +802,6 @@ public final class Linq {
         }
     }
 
-    public static final class VnicProfileViewComparator implements Comparator<VnicProfileView>, Serializable {
-
-        private static final long serialVersionUID = 990203400356561587L;
-        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(VnicProfileView vnicProfile1, VnicProfileView vnicProfile2) {
-            if (vnicProfile1 == VnicProfileView.EMPTY) {
-                return vnicProfile2 == VnicProfileView.EMPTY ? 0 : 1;
-            } else if (vnicProfile2 == VnicProfileView.EMPTY) {
-                return -1;
-            }
-
-            int retVal = lexoNumeric.compare(vnicProfile1.getNetworkName(), vnicProfile2.getNetworkName());
-
-            return retVal == 0 ? lexoNumeric.compare(vnicProfile1.getName(), vnicProfile2.getName()) : retVal;
-        }
-    }
-
     public static <T extends Disk> Collection<T> filterNonSnapableDisks(
             Collection<Disk> source) {
         return (Collection<T>) where(source, new IPredicate<Disk>() {
@@ -824,23 +841,6 @@ public final class Linq {
                 return provider.getType().getProvidedTypes().contains(type);
             }
         });
-    }
-
-    public static final class SharedMacPoolComparator implements Comparator<MacPool>, Serializable {
-
-        private static final long serialVersionUID = 3603082617231645079L;
-        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-        @Override
-        public int compare(MacPool o1, MacPool o2) {
-            if (o1.isDefaultPool()) {
-                return -1;
-            } else if (o2.isDefaultPool()) {
-                return 1;
-            } else {
-                return lexoNumeric.compare(o1.getName(), o2.getName());
-            }
-        }
     }
 
     public static Collection<StorageDomain> filterStorageDomainsByStorageType(
