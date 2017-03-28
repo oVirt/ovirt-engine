@@ -17,11 +17,12 @@ import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
 import org.ovirt.engine.core.uutils.cli.parser.ArgumentsParser;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InfoServiceImpl implements ModuleService {
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(InfoServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(InfoServiceImpl.class);
 
     private interface Logic {
         void execute(InfoServiceImpl module);
