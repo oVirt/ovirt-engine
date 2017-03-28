@@ -36,6 +36,7 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.StandardHttpRequestRetryHandler;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
@@ -50,6 +51,8 @@ public class HttpClientBuilder {
     private Integer connectTimeout;
     private Integer readTimeout;
     private Integer poolSize;
+    private Integer retryCount;
+    private Integer validateAfterInactivity;
 
     public HttpClientBuilder() {
     }
@@ -101,6 +104,16 @@ public class HttpClientBuilder {
 
     public HttpClientBuilder setPoolSize(Integer poolSize) {
         this.poolSize = poolSize;
+        return this;
+    }
+
+    public HttpClientBuilder setRetryCount(Integer retryCount) {
+        this.retryCount = retryCount;
+        return this;
+    }
+
+    public HttpClientBuilder setValidateAfterInactivity(Integer validateAfterInactivity) {
+        this.validateAfterInactivity = validateAfterInactivity;
         return this;
     }
 
@@ -168,6 +181,7 @@ public class HttpClientBuilder {
                     new PoolingHttpClientConnectionManager(socketFactoryRegistry);
             poolManager.setDefaultMaxPerRoute(poolSize);
             poolManager.setMaxTotal(poolSize);
+            poolManager.setValidateAfterInactivity(validateAfterInactivity == null ? 100 : validateAfterInactivity);
             connectionManager = poolManager;
         } else {
             connectionManager = new BasicHttpClientConnectionManager(socketFactoryRegistry);
@@ -178,6 +192,7 @@ public class HttpClientBuilder {
                 .setDefaultRequestConfig(requestConfig)
                 .setSSLHostnameVerifier(sslHostnameVerifier)
                 .setConnectionManager(connectionManager)
+                .setRetryHandler(new StandardHttpRequestRetryHandler(retryCount == null ? 1 : retryCount, true))
                 .build();
     }
 }
