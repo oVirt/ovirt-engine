@@ -21,7 +21,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends VdsBrokerCommand<P> {
 
@@ -57,8 +56,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
 
                 boolean performSpmStop = true;
                 try {
-                    VDSReturnValue vdsReturnValue = ResourceManager
-                            .getInstance()
+                    VDSReturnValue vdsReturnValue = resourceManager
                             .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
                                     new VdsIdVDSCommandParametersBase(getVds().getId()));
 
