@@ -21,19 +21,19 @@
 import base64
 import gettext
 import uuid
+
 from M2Crypto import RSA
 
 from otopi import plugin
 from otopi import util
 
-from ovirt_setup_lib import dialog
-
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine_common import constants as oengcommcons
-
 from ovirt_engine_setup.engine.constants import FileLocations
 from ovirt_engine_setup.engine.constants import OvnEnv
+from ovirt_engine_setup.engine_common import constants as oengcommcons
+
+from ovirt_setup_lib import dialog
 
 
 def _(m):
