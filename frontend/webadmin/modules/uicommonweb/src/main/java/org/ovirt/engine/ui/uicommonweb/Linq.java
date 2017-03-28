@@ -786,11 +786,12 @@ public final class Linq {
             final boolean managementNetwork1 = net1.getCluster().isManagement();
             final boolean managementNetwork2 = net2.getCluster().isManagement();
 
-            if (!managementNetwork1 && !managementNetwork2) {
-                return lexoNumeric.compare(net1.getName(), net2.getName());
-            } else {
-                return managementNetwork1 ? -1 : 1;
+            int retVal = -1 * Boolean.compare(managementNetwork1, managementNetwork2);
+            if (retVal != 0) {
+                return retVal;
             }
+
+            return lexoNumeric.compare(net1.getName(), net2.getName());
         }
     }
 
