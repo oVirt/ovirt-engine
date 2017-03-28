@@ -507,8 +507,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         try {
             VDSReturnValue retVal = runVdsCommand(VDSCommandType.MigrateStatus,
                     new MigrateStatusVDSCommandParameters(getDestinationVdsId(), getVmId()));
-            if (retVal != null) {
-                setActualDowntime((Integer) retVal.getReturnValue());
+            if (retVal != null && retVal.getReturnValue() != null) {
+                setActualDowntime((int) retVal.getReturnValue());
             }
         } catch (EngineException e) {
             migrationErrorCode = e.getErrorCode();
@@ -853,13 +853,14 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return (actualDowntime == null) ? "(N/A)" : actualDowntime + "ms";
     }
 
-    public void setActualDowntime(Integer actualDowntime) {
+    private void setActualDowntime(int actualDowntime) {
         synchronized (actualDowntimeLock) {
-            if (this.actualDowntime == null && actualDowntime != null) {
+            if (this.actualDowntime == null) {
                 this.actualDowntime = actualDowntime;
             }
         }
     }
+
     @Override
     protected String getLockMessage() {
         return String.format("%1$s$VmName %2$s",
