@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
@@ -799,7 +798,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                 getPassDiscard().setIsChangeable(false);
             } else {
                 getPassDiscard().setIsChangeable(
-                        isLunSupportDiscard(getSanStorageModelBase().getAddedLuns().get(0).getEntity()),
+                        getSanStorageModelBase().getAddedLuns().get(0).getEntity().supportsDiscard(),
                         constants.discardIsNotSupportedByUnderlyingStorage());
                 if (!getPassDiscard().getIsChangable()) {
                     getPassDiscard().setEntity(false);
@@ -807,14 +806,9 @@ public abstract class AbstractDiskModel extends DiskModel {
             }
         } else if (getLunDisk() != null) {
             // Edit an existing direct lun.
-            getPassDiscard().setIsChangeable(isLunSupportDiscard(getLunDisk().getLun()),
+            getPassDiscard().setIsChangeable(getLunDisk().getLun().supportsDiscard(),
                     constants.discardIsNotSupportedByUnderlyingStorage());
         }
-    }
-
-    private boolean isLunSupportDiscard(LUNs lun) {
-        Long discardMaxSize = lun.getDiscardMaxSize();
-        return discardMaxSize != null && discardMaxSize > 0;
     }
 
     private void updatePassDiscardChangeabilityForDiskImage() {

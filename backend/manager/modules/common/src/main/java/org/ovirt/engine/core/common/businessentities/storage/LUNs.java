@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.Size;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -244,12 +245,22 @@ public class LUNs implements BusinessEntity<String> {
         this.discardMaxSize = discardMaxSize;
     }
 
+    @JsonIgnore
+    public boolean supportsDiscard() {
+        return getDiscardMaxSize() != null && getDiscardMaxSize() > 0;
+    }
+
     public Boolean getDiscardZeroesData() {
         return discardZeroesData;
     }
 
     public void setDiscardZeroesData(Boolean discardZeroesData) {
         this.discardZeroesData = discardZeroesData;
+    }
+
+    @JsonIgnore
+    public boolean hasDiscardZeroesTheDataSupport() {
+        return Boolean.TRUE.equals(getDiscardZeroesData());
     }
 
     public String getVendorName() {
