@@ -26,15 +26,15 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
     private Subscription subscription;
     @Inject
     private VmDynamicDao vmDynamicDao;
-    private ResourceManager resourceManager;
-    private PollVmStatsRefresher allVmStatsOnlyRefresher;
+    private final ResourceManager resourceManager;
+    private final PollVmStatsRefresher allVmStatsOnlyRefresher;
 
     @SuppressWarnings("deprecation")
-    public EventVmStatsRefresher(VdsManager manager) {
+    public EventVmStatsRefresher(VdsManager manager, ResourceManager resourceManager) {
         super(manager);
         // we still want to fetch GetAllVmStats as we did before
         allVmStatsOnlyRefresher = Injector.injectMembers(new PollVmStatsRefresher(vdsManager));
-        resourceManager = ResourceManager.getInstance();
+        this.resourceManager = resourceManager;
     }
 
     @Override
