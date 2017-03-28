@@ -411,10 +411,12 @@ public class SsoOAuthServiceUtils {
                 .setSslProtocol(config.getProperty("ENGINE_SSO_SERVICE_SSL_PROTOCOL"))
                 .setPoolSize(config.getInteger("ENGINE_SSO_SERVICE_CLIENT_POOL_SIZE"))
                 .setReadTimeout(0)
+                .setRetryCount(config.getInteger("ENGINE_SSO_SERVICE_CONNECTION_RETRY_COUNT"))
                 .setTrustManagerAlgorithm(TrustManagerFactory.getDefaultAlgorithm())
                 .setTrustStore(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE"))
                 .setTrustStorePassword(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_PASSWORD"))
                 .setTrustStoreType(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_TYPE"))
+                .setValidateAfterInactivity(config.getInteger("ENGINE_SSO_SERVICE_CONNECTION_VALIDATE_AFTER_INACTIVITY"))
                 .setVerifyChain(config.getBoolean("ENGINE_SSO_SERVICE_SSL_VERIFY_CHAIN"))
                 .setVerifyHost(config.getBoolean("ENGINE_SSO_SERVICE_SSL_VERIFY_HOST"))
                 .build();

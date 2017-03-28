@@ -681,10 +681,12 @@ public class SsoUtils {
             .setPoolSize(config.getInteger("SSO_CALLBACK_CLIENT_POOL_SIZE"))
             .setReadTimeout(config.getInteger("SSO_CALLBACK_READ_TIMEOUT"))
             .setConnectTimeout(config.getInteger("SSO_CALLBACK_CONNECT_TIMEOUT"))
+            .setRetryCount(config.getInteger("SSO_CALLBACK_CONNECTION_RETRY_COUNT"))
             .setTrustManagerAlgorithm(TrustManagerFactory.getDefaultAlgorithm())
             .setTrustStore(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE"))
             .setTrustStorePassword(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_PASSWORD"))
             .setTrustStoreType(config.getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_TYPE"))
+            .setValidateAfterInactivity(config.getInteger("SSO_CALLBACK_CONNECTION_VALIDATE_AFTER_INACTIVITY"))
             .setVerifyChain(clientInfo.isNotificationCallbackVerifyChain())
             .setVerifyHost(clientInfo.isNotificationCallbackVerifyHost())
             .build();
