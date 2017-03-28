@@ -802,10 +802,9 @@ public final class Linq {
         @Override
         public int compare(ClusterNetworkModel model1, ClusterNetworkModel model2) {
             // management first
-            if (model1.isManagement()) {
-                return -1;
-            } else if (model2.isManagement()) {
-                return 1;
+            int retVal = Boolean.compare(model1.isManagement(), model2.isManagement());
+            if (retVal != 0) {
+                return retVal;
             }
 
             return lexoNumeric.compare(model1.getNetworkName(), model2.getNetworkName());
