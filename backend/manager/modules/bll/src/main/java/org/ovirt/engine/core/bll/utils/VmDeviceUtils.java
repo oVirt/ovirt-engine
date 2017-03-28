@@ -535,6 +535,9 @@ public class VmDeviceUtils {
         if (displayTypeChanged || numOfMonitorsChanged || singleQxlChanged || guestOsChanged) {
             removeVideoDevices(oldVmBase.getId());
             addVideoDevices(newVmBase, getNeededNumberOfVideoDevices(newVmBase));
+        } else {
+            // fix vm's without video devices
+            addVideoDevicesOnlyIfNoVideoDeviceExists(newVmBase);
         }
     }
 
