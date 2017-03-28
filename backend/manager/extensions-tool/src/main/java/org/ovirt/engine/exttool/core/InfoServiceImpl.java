@@ -33,7 +33,7 @@ public class InfoServiceImpl implements ModuleService {
                 @Override
                 public void execute(InfoServiceImpl module) {
                     ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
-                    Collection<?> sensitive = extension.getContext().<Collection<?>>get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
+                    Collection<?> sensitive = extension.getContext().get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
 
 
                     Map<Object, Object> config = extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION);
