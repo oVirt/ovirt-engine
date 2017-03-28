@@ -144,13 +144,11 @@ public final class Linq {
 
         @Override
         public int compare(MacPool o1, MacPool o2) {
-            if (o1.isDefaultPool()) {
-                return -1;
-            } else if (o2.isDefaultPool()) {
-                return 1;
-            } else {
-                return lexoNumeric.compare(o1.getName(), o2.getName());
+            int retVal = -1 * Boolean.compare(o1.isDefaultPool(), o2.isDefaultPool());
+            if (retVal != 0) {
+                return retVal;
             }
+            return lexoNumeric.compare(o1.getName(), o2.getName());
         }
     }
 
