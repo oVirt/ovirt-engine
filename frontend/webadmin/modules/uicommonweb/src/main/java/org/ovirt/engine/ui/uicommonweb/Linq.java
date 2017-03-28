@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -140,7 +141,7 @@ public final class Linq {
     public static final class SharedMacPoolComparator implements Comparator<MacPool>, Serializable {
 
         private static final long serialVersionUID = 3603082617231645079L;
-        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+        final LexoNumericNameableComparator<MacPool> lexoNumeric = new LexoNumericNameableComparator<>();
 
         @Override
         public int compare(MacPool o1, MacPool o2) {
@@ -148,7 +149,7 @@ public final class Linq {
             if (retVal != 0) {
                 return retVal;
             }
-            return lexoNumeric.compare(o1.getName(), o2.getName());
+            return lexoNumeric.compare(o1, o2);
         }
     }
 
