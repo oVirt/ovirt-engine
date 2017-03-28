@@ -27,50 +27,48 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
 
     private static final long serialVersionUID = 2114985552063499069L;
 
-    public AddVmTemplateParameters() {
-        privateVmTemplateID = Guid.Empty;
-        templateType = VmEntityType.TEMPLATE;
-    }
+    private VmStatic masterVm;
 
-    private VmStatic _masterVm;
-    private Guid privateVmTemplateID;
+    private Guid vmTemplateId;
+    private VmEntityType templateType;
+    private String templateVersionName;
+    private Guid baseTemplateId;
+
     private Guid destinationStorageDomainId;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
-    private VmEntityType templateType;
     private String vmLargeIcon;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE, message = "VALIDATION_VM_TEMPLATE_NAME_MAX", groups = { CreateEntity.class, UpdateEntity.class })
     @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS")
-    private String _name;
+    private String name;
 
     @Pattern(regexp = ValidationUtils.ONLY_I18N_ASCII_OR_NONE,
             message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS")
-    private String _description;
+    private String description;
 
     private boolean publicUse;
-
     private boolean copyVmPermissions;
-
     private boolean sealTemplate;
+
     /*
      * This parameter is used to decide if to create sound device or not if it is null then legacy logic will be used:
      * create device for desktop type
      */
     private Boolean soundDeviceEnabled;
-
     private Boolean consoleEnabled;
-
-    private String templateVersionName;
-
-    private Guid baseTemplateId;
 
     private Phase phase = Phase.CREATE_TEMPLATE;
 
+    public AddVmTemplateParameters() {
+        vmTemplateId = Guid.Empty;
+        templateType = VmEntityType.TEMPLATE;
+    }
+
     public AddVmTemplateParameters(VmStatic masterVm, String name, String description) {
         this();
-        _masterVm = masterVm;
-        _name = name;
-        _description = description;
+        this.masterVm = masterVm;
+        this.name = name;
+        this.description = description;
     }
 
     public AddVmTemplateParameters(VM vm, String name, String description) {
@@ -78,98 +76,30 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
     }
 
     public VmStatic getMasterVm() {
-        return _masterVm;
+        return masterVm;
     }
 
-    public void setMasterVm(VmStatic value) {
-        _masterVm = value;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public void setName(String value) {
-        _name = value;
-    }
-
-    public String getDescription() {
-        return _description;
-    }
-
-    @Override
-    public Guid getVmTemplateId() {
-        return privateVmTemplateID;
-    }
-
-    public void setVmTemplateId(Guid value) {
-        privateVmTemplateID = value;
+    public void setMasterVm(VmStatic masterVm) {
+        this.masterVm = masterVm;
     }
 
     public VM getVm() {
         VM vm = new VM();
-        vm.setStaticData(_masterVm);
+        vm.setStaticData(masterVm);
         return vm;
     }
 
-    public void setVm(VM value) {
-        _masterVm = value.getStaticData();
+    public void setVm(VM vm) {
+        masterVm = vm.getStaticData();
     }
 
-    public void setPublicUse(boolean publicUse) {
-        this.publicUse = publicUse;
+    @Override
+    public Guid getVmTemplateId() {
+        return vmTemplateId;
     }
 
-    public boolean isPublicUse() {
-        return publicUse;
-    }
-
-    public void setDestinationStorageDomainId(Guid destinationStorageDomainId) {
-        this.destinationStorageDomainId = destinationStorageDomainId;
-    }
-
-    public Guid getDestinationStorageDomainId() {
-        return destinationStorageDomainId;
-    }
-
-    public HashMap<Guid, DiskImage> getDiskInfoDestinationMap() {
-        return diskInfoDestinationMap;
-    }
-
-    public void setDiskInfoDestinationMap(HashMap<Guid, DiskImage> diskInfoDestinationMap) {
-        this.diskInfoDestinationMap = diskInfoDestinationMap;
-    }
-
-    public Boolean isSoundDeviceEnabled() {
-        return soundDeviceEnabled;
-    }
-
-    public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
-        this.soundDeviceEnabled = soundDeviceEnabled;
-    }
-
-    public Boolean isConsoleEnabled() {
-        return consoleEnabled;
-    }
-
-    public void setConsoleEnabled(Boolean consoleEnabled) {
-        this.consoleEnabled = consoleEnabled;
-    }
-
-    public boolean isCopyVmPermissions() {
-        return copyVmPermissions;
-    }
-
-    public void setCopyVmPermissions(boolean copyVmPermissions) {
-        this.copyVmPermissions = copyVmPermissions;
-    }
-
-    public boolean isSealTemplate() {
-        return sealTemplate;
-    }
-
-    public void setSealTemplate(boolean sealTemplate) {
-        this.sealTemplate = sealTemplate;
+    public void setVmTemplateId(Guid vmTemplateId) {
+        this.vmTemplateId = vmTemplateId;
     }
 
     public VmEntityType getTemplateType() {
@@ -196,12 +126,82 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
         this.baseTemplateId = baseTemplateId;
     }
 
-    @Override public String getVmLargeIcon() {
+    public Guid getDestinationStorageDomainId() {
+        return destinationStorageDomainId;
+    }
+
+    public void setDestinationStorageDomainId(Guid destinationStorageDomainId) {
+        this.destinationStorageDomainId = destinationStorageDomainId;
+    }
+
+    public HashMap<Guid, DiskImage> getDiskInfoDestinationMap() {
+        return diskInfoDestinationMap;
+    }
+
+    public void setDiskInfoDestinationMap(HashMap<Guid, DiskImage> diskInfoDestinationMap) {
+        this.diskInfoDestinationMap = diskInfoDestinationMap;
+    }
+
+    @Override
+    public String getVmLargeIcon() {
         return vmLargeIcon;
     }
 
-    @Override public void setVmLargeIcon(String vmLargeIcon) {
+    @Override
+    public void setVmLargeIcon(String vmLargeIcon) {
         this.vmLargeIcon = vmLargeIcon;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isPublicUse() {
+        return publicUse;
+    }
+
+    public void setPublicUse(boolean publicUse) {
+        this.publicUse = publicUse;
+    }
+
+    public boolean isCopyVmPermissions() {
+        return copyVmPermissions;
+    }
+
+    public void setCopyVmPermissions(boolean copyVmPermissions) {
+        this.copyVmPermissions = copyVmPermissions;
+    }
+
+    public boolean isSealTemplate() {
+        return sealTemplate;
+    }
+
+    public void setSealTemplate(boolean sealTemplate) {
+        this.sealTemplate = sealTemplate;
+    }
+
+    public Boolean isSoundDeviceEnabled() {
+        return soundDeviceEnabled;
+    }
+
+    public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
+        this.soundDeviceEnabled = soundDeviceEnabled;
+    }
+
+    public Boolean isConsoleEnabled() {
+        return consoleEnabled;
+    }
+
+    public void setConsoleEnabled(Boolean consoleEnabled) {
+        this.consoleEnabled = consoleEnabled;
     }
 
     public Phase getPhase() {
