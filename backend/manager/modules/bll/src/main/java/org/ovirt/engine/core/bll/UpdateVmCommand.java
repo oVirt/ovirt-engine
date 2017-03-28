@@ -786,7 +786,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (!validate(VmValidator.validateCpuSockets(vmFromParams.getStaticData(),
-                getEffectiveCompatibilityVersion().toString()))) {
+                getEffectiveCompatibilityVersion()))) {
             return false;
         }
 

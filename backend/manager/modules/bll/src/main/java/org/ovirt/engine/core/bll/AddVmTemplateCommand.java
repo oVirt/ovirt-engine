@@ -589,7 +589,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         return imagesRelatedChecks() && validate(VmValidator.validateCpuSockets(getParameters().getMasterVm(),
-                getVm().getCompatibilityVersion().toString()));
+                getVm().getCompatibilityVersion()));
     }
 
     @Override

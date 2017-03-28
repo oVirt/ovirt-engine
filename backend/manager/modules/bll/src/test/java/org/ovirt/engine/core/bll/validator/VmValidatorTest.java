@@ -45,7 +45,7 @@ public class VmValidatorTest extends DbDependentTestBase {
 
     private VM vm;
 
-    private static final String COMPAT_VERSION_FOR_CPU_SOCKET_TEST = "4.0";
+    private static final Version COMPAT_VERSION_FOR_CPU_SOCKET_TEST = Version.v4_0;
     private static final int MAX_NUM_CPUS = 16;
     private static final int MAX_NUM_SOCKETS = 4;
     private static final int MAX_NUM_CPUS_PER_SOCKET = 3;

@@ -219,7 +219,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         if (returnValue) {
             returnValue = validate(VmValidator.validateCpuSockets(getParameters().getVmTemplateData(),
-                    getVmTemplate().getCompatibilityVersion().toString()));
+                    getVmTemplate().getCompatibilityVersion()));
         }
 
         if (returnValue && getParameters().getVmTemplateData().getSingleQxlPci() &&

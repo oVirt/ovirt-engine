@@ -325,22 +325,24 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
-    public static ValidationResult validateCpuSockets(VmBase vmBase, String compatibility_version) {
+    public static ValidationResult validateCpuSockets(VmBase vmBase, Version compatibilityVersion) {
         int num_of_sockets = vmBase.getNumOfSockets();
         int cpu_per_socket = vmBase.getCpuPerSocket();
         int threadsPerCpu = vmBase.getThreadsPerCpu();
 
+        String version = compatibilityVersion.toString();
+
         if ((num_of_sockets * cpu_per_socket * threadsPerCpu) >
-                Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus, compatibility_version)) {
+                Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus, version)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_CPU);
         }
-        if (num_of_sockets > Config.<Integer> getValue(ConfigValues.MaxNumOfVmSockets, compatibility_version)) {
+        if (num_of_sockets > Config.<Integer> getValue(ConfigValues.MaxNumOfVmSockets, version)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS);
         }
-        if (cpu_per_socket > Config.<Integer> getValue(ConfigValues.MaxNumOfCpuPerSocket, compatibility_version)) {
+        if (cpu_per_socket > Config.<Integer> getValue(ConfigValues.MaxNumOfCpuPerSocket, version)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET);
         }
-        if (threadsPerCpu > Config.<Integer> getValue(ConfigValues.MaxNumOfThreadsPerCpu, compatibility_version)) {
+        if (threadsPerCpu > Config.<Integer> getValue(ConfigValues.MaxNumOfThreadsPerCpu, version)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU);
         }
         if (cpu_per_socket < 1) {
