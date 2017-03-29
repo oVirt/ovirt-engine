@@ -32,7 +32,6 @@ public class UpdateAllTemplateDisksCommand<T extends UpdateAllTemplateDisksParam
 
     public UpdateAllTemplateDisksCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-        setVmTemplateId(parameters.getVmTemplateId());
     }
 
     private List<DiskImage> getDiskImages() {

@@ -13,7 +13,7 @@ public class UpdateAllTemplateDisksParameters extends VmTemplateParameters {
     }
 
     public UpdateAllTemplateDisksParameters(Guid vmTemplateId, Boolean legal, Boolean shared) {
-        setVmTemplateId(vmTemplateId);
+        super(vmTemplateId);
         this.legal = legal;
         this.shared = shared;
     }

@@ -34,12 +34,6 @@ public class SealVmTemplateCommand<T extends SealVmTemplateParameters> extends V
         }
     }
 
-    @Override
-    protected void init() {
-        super.init();
-        setVmTemplateId(getParameters().getVmTemplateId());
-    }
-
     private List<DiskImage> getDiskImages() {
         if (diskImages == null) {
             vmTemplateHandler.updateDisksFromDb(getVmTemplate());
