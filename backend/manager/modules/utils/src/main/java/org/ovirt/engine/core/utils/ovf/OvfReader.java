@@ -67,7 +67,6 @@ public abstract class OvfReader implements IOvfBuilder {
     protected String name = EmptyName;
     private String version;
     private final VmBase vmBase;
-    private DisplayType defaultDisplayType;
     private String lastReadEntry = "";
 
     public OvfReader(XmlDocument document, List<DiskImage> images, List<VmNetworkInterface> interfaces, VmBase vmBase) {
@@ -952,33 +951,27 @@ public abstract class OvfReader implements IOvfBuilder {
         if (resourceSubType == -1) {
             // we need special handling for Monitor to define it as vnc or spice
             if (Integer.parseInt(OvfHardware.Monitor) == resourceType) {
-                // if default display type is defined in the ovf, set the video device that is suitable for it
-                if (defaultDisplayType != null) {
-                    vmDevice.setDevice(defaultDisplayType.getDefaultVmDeviceType().getName());
-                }
-                else {
-                    // get number of monitors from VirtualQuantity in OVF
-                    if (selectSingleNode(node, OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS) != null
-                            && !StringUtils.isEmpty(selectSingleNode(node, OvfProperties.VMD_VIRTUAL_QUANTITY,
-                                    _xmlNS).innerText)) {
-                        int virtualQuantity =
-                                Integer.parseInt(selectSingleNode(node, OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS).innerText);
-                        if (virtualQuantity > 1) {
-                            vmDevice.setDevice(VmDeviceType.QXL.getName());
-                        } else {
-                            // get first supported display device
-                            List<Pair<GraphicsType, DisplayType>> supportedGraphicsAndDisplays =
-                                    osRepository.getGraphicsAndDisplays(vmBase.getOsId(), new Version(getVersion()));
-                            if (!supportedGraphicsAndDisplays.isEmpty()) {
-                                DisplayType firstDisplayType = supportedGraphicsAndDisplays.get(0).getSecond();
-                                vmDevice.setDevice(firstDisplayType.getDefaultVmDeviceType().getName());
-                            } else {
-                                vmDevice.setDevice(VmDeviceType.QXL.getName());
-                            }
-                        }
-                    } else { // default to spice if quantity not found
+                // get number of monitors from VirtualQuantity in OVF
+                if (selectSingleNode(node, OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS) != null
+                        && !StringUtils.isEmpty(selectSingleNode(node, OvfProperties.VMD_VIRTUAL_QUANTITY,
+                                _xmlNS).innerText)) {
+                    int virtualQuantity =
+                            Integer.parseInt(selectSingleNode(node, OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS).innerText);
+                    if (virtualQuantity > 1) {
                         vmDevice.setDevice(VmDeviceType.QXL.getName());
+                    } else {
+                        // get first supported display device
+                        List<Pair<GraphicsType, DisplayType>> supportedGraphicsAndDisplays =
+                                osRepository.getGraphicsAndDisplays(vmBase.getOsId(), new Version(getVersion()));
+                        if (!supportedGraphicsAndDisplays.isEmpty()) {
+                            DisplayType firstDisplayType = supportedGraphicsAndDisplays.get(0).getSecond();
+                            vmDevice.setDevice(firstDisplayType.getDefaultVmDeviceType().getName());
+                        } else {
+                            vmDevice.setDevice(VmDeviceType.QXL.getName());
+                        }
                     }
+                } else { // default to spice if quantity not found
+                    vmDevice.setDevice(VmDeviceType.QXL.getName());
                 }
             } else {
                 vmDevice.setDevice(VmDeviceType.getoVirtDevice(resourceType).getName());
