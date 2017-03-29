@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -53,6 +55,9 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
     private Guid storagePoolId;
     private VM diskVm;
     private List<PermissionSubject> permsList;
+
+    @Inject
+    private ImagesHandler imagesHandler;
 
     public GetDiskAlignmentCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -219,7 +224,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
                 getCompensationContext().snapshotEntityStatus(diskImage.getImage());
                 getCompensationContext().stateChanged();
                 diskImage.setImageStatus(ImageStatus.LOCKED);
-                ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
+                imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
                 return null;
             });
         }
@@ -230,7 +235,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             final DiskImage diskImage = (DiskImage) getDisk();
 
             diskImage.setImageStatus(ImageStatus.OK);
-            ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
+            imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
         }
     }
 

@@ -814,7 +814,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
         if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
             QemuImageInfo qemuImageInfo =
-                    ImagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
+                    imagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
                             diskImage.getStorageIds().get(0),
                             diskImage.getId(),
                             diskImage.getImageId(),
@@ -912,7 +912,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     /** Save the entire image, including it's storage mapping */
     protected void saveImage(DiskImage disk) {
-        ImagesHandler.saveImage(disk);
+        imagesHandler.saveImage(disk);
     }
 
     /** Updates an image of a disk */

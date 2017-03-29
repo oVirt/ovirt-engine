@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ColdMergeCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
@@ -114,7 +113,7 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
             lockVmSnapshotsWithWait(getVm());
             Snapshot snapshot = snapshotDao.get(getParameters().getVmSnapshotId());
             Snapshot snapshotWithoutImage =
-                    ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId(),
+                    imagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId(),
                             ovfManager);
             snapshotDao.update(snapshotWithoutImage);
             if (getSnapshotsEngineLock() != null) {

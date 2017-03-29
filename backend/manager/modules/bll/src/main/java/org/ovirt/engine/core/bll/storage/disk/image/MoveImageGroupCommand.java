@@ -47,7 +47,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void lockImage() {
-        ImagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(getRelevantDiskImage().getId(),
+        imagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(getRelevantDiskImage().getId(),
                 ImageStatus.LOCKED,
                 getRelevantDiskImage().getImageStatus(),
                 getCompensationContext());

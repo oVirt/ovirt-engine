@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -99,7 +98,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
             lockVmSnapshotsWithWait(getVm());
             Snapshot snapshot = snapshotDao.get(getParameters().getVmSnapshotId());
             Snapshot snapshotWithoutImage =
-                    ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId(),
+                    imagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot, getParameters().getImageId(),
                             ovfManager);
             snapshotDao.update(snapshotWithoutImage);
             if (getSnapshotsEngineLock() != null) {

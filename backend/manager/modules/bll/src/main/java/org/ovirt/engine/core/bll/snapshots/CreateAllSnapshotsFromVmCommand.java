@@ -129,7 +129,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     protected List<DiskImage> getDiskImagesForVm() {
         List<Disk> disks = diskDao.getAllForVm(getVmId());
         List<DiskImage> allDisks = new ArrayList<>(getDiskImages(disks));
-        allDisks.addAll(ImagesHandler.getCinderLeafImages(disks));
+        allDisks.addAll(imagesHandler.getCinderLeafImages(disks));
         return allDisks;
     }
 

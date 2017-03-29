@@ -121,6 +121,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Inject
     protected SnapshotsValidator snapshotsValidator;
 
+    @Inject
+    protected ImagesHandler imagesHandler;
+
     protected final List<DiskImage> images = new ArrayList<>();
     private Guid[] targetDiskIds;
     private List<PermissionSubject> permissionCheckSubject;
@@ -784,7 +787,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     protected boolean validateSpaceRequirements() {
         // update vm snapshots for storage free space check
-        ImagesHandler.fillImagesBySnapshots(getVm());
+        imagesHandler.fillImagesBySnapshots(getVm());
         List<DiskImage>  disksList =  DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE,
                 ONLY_ACTIVE);
         List<DiskImage> disksListForStorageChecks = createDiskDummiesForSpaceValidations(disksList);
@@ -816,7 +819,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         List<DiskImage> dummies = new ArrayList<>(disksList.size());
         for (DiskImage image : disksList) {
             Guid targetSdId = diskInfoDestinationMap.get(image.getId()).getStorageIds().get(0);
-            DiskImage dummy = ImagesHandler.createDiskImageWithExcessData(image, targetSdId);
+            DiskImage dummy = imagesHandler.createDiskImageWithExcessData(image, targetSdId);
             dummies.add(dummy);
         }
         return dummies;

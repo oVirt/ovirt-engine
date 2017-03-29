@@ -60,6 +60,9 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     @Inject
     private VmDeviceUtils vmDeviceUtils;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     private OpenStackImageProviderProxy providerProxy;
 
     public ImportRepoImageCommand(T parameters, CommandContext cmdContext) {
@@ -202,7 +205,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
     private void updateDiskStatus(ImageStatus status) {
         getParameters().getDiskImage().setImageStatus(status);
-        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), status);
+        imagesHandler.updateImageStatus(getParameters().getDestinationImageId(), status);
     }
 
     private Guid createTemplate() {

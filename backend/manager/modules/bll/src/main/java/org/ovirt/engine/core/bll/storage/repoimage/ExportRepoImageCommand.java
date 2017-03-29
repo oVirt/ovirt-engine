@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -46,6 +48,9 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     private DiskImage diskImage;
 
     private OpenStackImageProviderProxy providerProxy;
+
+    @Inject
+    private ImagesHandler imagesHandler;
 
     public ExportRepoImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -89,12 +94,12 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     protected void acquireImageDbLock() {
         getDiskImage().setImageStatus(ImageStatus.LOCKED);
-        ImagesHandler.updateImageStatus(getDiskImage().getImageId(), getDiskImage().getImageStatus());
+        imagesHandler.updateImageStatus(getDiskImage().getImageId(), getDiskImage().getImageStatus());
     }
 
     protected void releaseImageDbLock() {
         getDiskImage().setImageStatus(ImageStatus.OK);
-        ImagesHandler.updateImageStatus(getDiskImage().getImageId(), getDiskImage().getImageStatus());
+        imagesHandler.updateImageStatus(getDiskImage().getImageId(), getDiskImage().getImageStatus());
     }
 
     @Override

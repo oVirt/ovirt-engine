@@ -116,6 +116,9 @@ public class SnapshotsManager {
     @Inject
     private OvfManager ovfManager;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
      * The snapshot is created in status {@link SnapshotStatus#OK} by default.
@@ -402,7 +405,7 @@ public class SnapshotsManager {
 
         if (disks == null) {
             disks = DisksFilter.filterImageDisks(diskDao.getAllForVm(vm.getId()), ONLY_SNAPABLE, ONLY_ACTIVE);
-            disks.addAll(ImagesHandler.getCinderLeafImages(diskDao.getAllForVm(vm.getId())));
+            disks.addAll(imagesHandler.getCinderLeafImages(diskDao.getAllForVm(vm.getId())));
         }
         populateDisksWithVmData(disks, vm.getId());
         for (DiskImage image : disks) {
@@ -445,7 +448,7 @@ public class SnapshotsManager {
     public void removeAllIllegalDisks(Guid snapshotId, Guid vmId) {
         for (DiskImage diskImage : diskImageDao.getAllSnapshotsForVmSnapshot(snapshotId)) {
             if (diskImage.getImageStatus() == ImageStatus.ILLEGAL) {
-                ImagesHandler.removeDiskImage(diskImage, vmId);
+                imagesHandler.removeDiskImage(diskImage, vmId);
             }
         }
     }
@@ -706,15 +709,15 @@ public class SnapshotsManager {
                     diskImage.setImageStatus(ImageStatus.ILLEGAL);
                     diskImage.setVmSnapshotId(activeSnapshotId);
 
-                    ImagesHandler.addImage(diskImage, true, (diskImage.getStorageIds() == null) ? null :
+                    imagesHandler.addImage(diskImage, true, (diskImage.getStorageIds() == null) ? null :
                             new ImageStorageDomainMap(diskImage.getImageId(),
                                     diskImage.getStorageIds().get(0),
                                     diskImage.getQuotaId(),
                                     diskImage.getDiskProfileId()));
                 }
-                ImagesHandler.addDiskToVm(diskImage, vmId);
+                imagesHandler.addDiskToVm(diskImage, vmId);
             }
-            diskImage.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(diskImage, vmName, count));
+            diskImage.setDiskAlias(imagesHandler.getSuggestedDiskAlias(diskImage, vmName, count));
             count++;
         }
         removeDisksNotInSnapshot(vmId, diskIdsFromSnapshot);

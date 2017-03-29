@@ -22,6 +22,9 @@ public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExec
     @Inject
     private DiskDao diskDao;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     @Override
     protected void childCommandsExecutionEnded(CommandBase<?> command,
             boolean anyFailed,
@@ -48,7 +51,7 @@ public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExec
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
         ExtendCinderDiskCommand command = getCommand(cmdId);
-        ImagesHandler.updateImageStatus(getDiskId(command), ImageStatus.ILLEGAL);
+        imagesHandler.updateImageStatus(getDiskId(command), ImageStatus.ILLEGAL);
         log.error("Failed extending disk. ID: {}", getDiskId(command));
         updateAuditLog(command, AuditLogType.USER_EXTEND_DISK_SIZE_FAILURE, command.getNewDiskSizeInGB());
 

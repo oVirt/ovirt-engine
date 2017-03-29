@@ -21,7 +21,6 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -223,7 +222,7 @@ implements QuotaStorageDependent {
         ArrayList<Guid> emptyStorageIds = new ArrayList<>();
         for (DiskImage image : disksList) {
             image.setStorageIds(emptyStorageIds);
-            dummies.add(ImagesHandler.createDiskImageWithExcessData(image, getStorageDomainId()));
+            dummies.add(imagesHandler.createDiskImageWithExcessData(image, getStorageDomainId()));
         }
         return dummies;
     }

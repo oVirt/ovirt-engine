@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
@@ -47,6 +49,7 @@ import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
@@ -54,9 +57,17 @@ import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -65,23 +76,57 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ImagesHandler {
+@Singleton
+public class ImagesHandler {
     public static final String DISK = "_Disk";
     public static final String DefaultDriveName = "1";
     private static final Logger log = LoggerFactory.getLogger(ImagesHandler.class);
+
+    @Inject
+    private VDSBrokerFrontend resourceManager;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+
+    @Inject
+    private BaseDiskDao baseDiskDao;
+
+    @Inject
+    private ImageDao imageDao;
+
+    @Inject
+    private DiskImageDao diskImageDao;
+
+    @Inject
+    private DiskImageDynamicDao diskImageDynamicDao;
+
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+
+    @Inject
+    private DiskLunMapDao diskLunMapDao;
+
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
 
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
      * diskInfoDestinationMap by imageId mapping on active storage id where image is located. The second map is
      * mapping of founded storage ids to storage object
      */
-    public static void fillImagesMapBasedOnTemplate(VmTemplate template,
+    public void fillImagesMapBasedOnTemplate(VmTemplate template,
             Map<Guid, DiskImage> diskInfoDestinationMap,
             Map<Guid, StorageDomain> destStorages) {
-        List<StorageDomain> domains =
-                DbFacade.getInstance()
-                        .getStorageDomainDao()
-                        .getAllForStoragePool(template.getStoragePoolId());
+        List<StorageDomain> domains = storageDomainDao.getAllForStoragePool(template.getStoragePoolId());
         fillImagesMapBasedOnTemplate(template, domains, diskInfoDestinationMap, destStorages);
     }
 
@@ -216,7 +261,7 @@ public final class ImagesHandler {
      * @param imageStorageDomainMap
      *            storage domain map entry to map between the image and its storage domain
      */
-    public static void addDiskImage(DiskImage image, boolean active, ImageStorageDomainMap imageStorageDomainMap, Guid vmId) {
+    public void addDiskImage(DiskImage image, boolean active, ImageStorageDomainMap imageStorageDomainMap, Guid vmId) {
         try {
             addImage(image, active, imageStorageDomainMap);
             addDiskToVmIfNotExists(image, vmId);
@@ -300,7 +345,7 @@ public final class ImagesHandler {
      * @param imageStorageDomainMap
      *            entry of image storagte domain map
      */
-    public static void addDiskImageWithNoVmDevice(DiskImage image,
+    public void addDiskImageWithNoVmDevice(DiskImage image,
             boolean active,
             ImageStorageDomainMap imageStorageDomainMap) {
         try {
@@ -318,7 +363,7 @@ public final class ImagesHandler {
      * where besides adding images it is required to copy all vm devices (VmDeviceUtils.copyVmDevices) from the source
      * VM.
      */
-    public static void addDiskImageWithNoVmDevice(DiskImage image) {
+    public void addDiskImageWithNoVmDevice(DiskImage image) {
         addDiskImageWithNoVmDevice(image,
                 image.getActive(),
                 new ImageStorageDomainMap(image.getImageId(),
@@ -333,9 +378,9 @@ public final class ImagesHandler {
      * @param disk
      *            disk to add
      */
-    public static void addDisk(BaseDisk disk) {
-        if (!DbFacade.getInstance().getBaseDiskDao().exists(disk.getId())) {
-            DbFacade.getInstance().getBaseDiskDao().save(disk);
+    public void addDisk(BaseDisk disk) {
+        if (!baseDiskDao.exists(disk.getId())) {
+            baseDiskDao.save(disk);
         }
     }
 
@@ -346,7 +391,7 @@ public final class ImagesHandler {
      * @param image
      *            DiskImage to add
      */
-    public static void addDiskImage(DiskImage image, Guid vmId) {
+    public void addDiskImage(DiskImage image, Guid vmId) {
         addDiskImage(image, image.getActive(), new ImageStorageDomainMap(image.getImageId(), image.getStorageIds()
                 .get(0), image.getQuotaId(), image.getDiskProfileId()), vmId);
     }
@@ -361,15 +406,15 @@ public final class ImagesHandler {
      * @param imageStorageDomainMap
      *            entry of mapping between the storage domain and the image
      */
-    public static void addImage(DiskImage image, boolean active, ImageStorageDomainMap imageStorageDomainMap) {
+    public void addImage(DiskImage image, boolean active, ImageStorageDomainMap imageStorageDomainMap) {
         image.setActive(active);
-        DbFacade.getInstance().getImageDao().save(image.getImage());
+        imageDao.save(image.getImage());
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(image.getImageId());
         diskDynamic.setActualSize(image.getActualSizeInBytes());
-        DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
+        diskImageDynamicDao.save(diskDynamic);
         if (imageStorageDomainMap != null) {
-            DbFacade.getInstance().getImageStorageDomainMapDao().save(imageStorageDomainMap);
+            imageStorageDomainMapDao.save(imageStorageDomainMap);
         }
     }
 
@@ -381,8 +426,8 @@ public final class ImagesHandler {
      * @param vmId
      *            the ID of the vm to add to if the disk does not exist for this VM
      */
-    public static void addDiskToVmIfNotExists(BaseDisk disk, Guid vmId) {
-        if (!DbFacade.getInstance().getBaseDiskDao().exists(disk.getId())) {
+    public void addDiskToVmIfNotExists(BaseDisk disk, Guid vmId) {
+        if (!baseDiskDao.exists(disk.getId())) {
             addDiskToVm(disk, vmId);
         }
     }
@@ -395,10 +440,10 @@ public final class ImagesHandler {
      * @param vmId
      *            the ID of the VM to add to
      */
-    public static void addDiskToVm(BaseDisk disk, Guid vmId) {
-        DbFacade.getInstance().getBaseDiskDao().save(disk);
+    public void addDiskToVm(BaseDisk disk, Guid vmId) {
+        baseDiskDao.save(disk);
         if (disk.getDiskVmElementForVm(vmId) != null) {
-            getDiskVmElementDao().save(disk.getDiskVmElementForVm(vmId));
+            diskVmElementDao.save(disk.getDiskVmElementForVm(vmId));
         }
         final VmDeviceUtils vmDeviceUtils = Injector.get(VmDeviceUtils.class);
         vmDeviceUtils.addDiskDevice(vmId, disk.getId());
@@ -408,18 +453,16 @@ public final class ImagesHandler {
      * The following method unify saving of image, it will be also saved with its storage
      * mapping.
      */
-    public static ImageStorageDomainMap saveImage(DiskImage diskImage) {
-        DbFacade.getInstance().getImageDao().save(diskImage.getImage());
+    public ImageStorageDomainMap saveImage(DiskImage diskImage) {
+        imageDao.save(diskImage.getImage());
         ImageStorageDomainMap imageStorageDomainMap = new ImageStorageDomainMap(diskImage.getImageId(),
                 diskImage.getStorageIds()
                         .get(0), diskImage.getQuotaId(), diskImage.getDiskProfileId());
-        DbFacade.getInstance()
-                .getImageStorageDomainMapDao()
-                .save(imageStorageDomainMap);
+        imageStorageDomainMapDao.save(imageStorageDomainMap);
         return imageStorageDomainMap;
     }
 
-    public static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId) {
+    public boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId) {
         for (DiskImage image : images) {
             DiskImage fromIrs = isImageExist(storagePoolId, image);
             if (fromIrs == null) {
@@ -429,14 +472,12 @@ public final class ImagesHandler {
         return true;
     }
 
-    private static DiskImage isImageExist(Guid storagePoolId, DiskImage image) {
+    private DiskImage isImageExist(Guid storagePoolId, DiskImage image) {
         DiskImage fromIrs = null;
         Guid storageDomainId = image.getStorageIds().get(0);
         Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
         try {
-            fromIrs = (DiskImage) Backend
-                    .getInstance()
-                    .getResourceManager()
+            fromIrs = (DiskImage) resourceManager
                     .runVdsCommand(
                             VDSCommandType.GetImageInfo,
                             new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
@@ -466,11 +507,11 @@ public final class ImagesHandler {
                 || volumeType == VolumeType.Unassigned);
     }
 
-    public static boolean checkImagesConfiguration(Guid storageDomainId,
+    public boolean checkImagesConfiguration(Guid storageDomainId,
             Collection<? extends Disk> disksConfigList,
             List<String> messages) {
         boolean result = true;
-        StorageDomainStatic storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(storageDomainId);
+        StorageDomainStatic storageDomain = storageDomainStaticDao.get(storageDomainId);
         for (Disk diskInfo : disksConfigList) {
             if (DiskStorageType.IMAGE == diskInfo.getDiskStorageType()) {
                 result = checkImageConfiguration(storageDomain, (DiskImage) diskInfo, messages);
@@ -511,18 +552,16 @@ public final class ImagesHandler {
         return domainsIds;
     }
 
-    public static void fillImagesBySnapshots(VM vm) {
+    public void fillImagesBySnapshots(VM vm) {
         for (Disk disk : vm.getDiskMap().values()) {
             if (disk.getDiskStorageType().isInternal()) {
                 DiskImage diskImage = (DiskImage) disk;
-                diskImage.getSnapshots().addAll(DbFacade.getInstance()
-                        .getDiskImageDao()
-                        .getAllSnapshotsForLeaf(diskImage.getImageId()));
+                diskImage.getSnapshots().addAll(diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId()));
             }
         }
     }
 
-    public static void removeDiskImage(DiskImage diskImage, Guid vmId) {
+    public void removeDiskImage(DiskImage diskImage, Guid vmId) {
         try {
             removeDiskFromVm(vmId, diskImage.getId());
             removeImage(diskImage);
@@ -533,20 +572,13 @@ public final class ImagesHandler {
         }
     }
 
-    public static void removeLunDisk(LunDisk lunDisk) {
-        DbFacade.getInstance()
-                .getVmDeviceDao()
-                .remove(new VmDeviceId(lunDisk.getId(),
-                        null));
+    public void removeLunDisk(LunDisk lunDisk) {
+        vmDeviceDao.remove(new VmDeviceId(lunDisk.getId(), null));
         LUNs lun = lunDisk.getLun();
-        DbFacade.getInstance()
-                .getDiskLunMapDao()
-                .remove(new DiskLunMapId(lunDisk.getId(), lun.getLUNId()));
-        DbFacade.getInstance().getBaseDiskDao().remove(lunDisk.getId());
+        diskLunMapDao.remove(new DiskLunMapId(lunDisk.getId(), lun.getLUNId()));
+        baseDiskDao.remove(lunDisk.getId());
 
-        lun.setLunConnections(new ArrayList<>(DbFacade.getInstance()
-                .getStorageServerConnectionDao()
-                .getAllForLun(lun.getLUNId())));
+        lun.setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLUNId())));
 
         if (!lun.getLunConnections().isEmpty()) {
             StorageHelperDirector.getInstance().getItem(
@@ -622,38 +654,35 @@ public final class ImagesHandler {
         return -1;
     }
 
-    public static void removeImage(DiskImage diskImage) {
-        DbFacade.getInstance()
-                .getImageStorageDomainMapDao()
-                .remove(diskImage.getImageId());
-        DbFacade.getInstance().getDiskImageDynamicDao().remove(diskImage.getImageId());
-        DbFacade.getInstance().getImageDao().remove(diskImage.getImageId());
+    public void removeImage(DiskImage diskImage) {
+        imageStorageDomainMapDao.remove(diskImage.getImageId());
+        diskImageDynamicDao.remove(diskImage.getImageId());
+        imageDao.remove(diskImage.getImageId());
     }
 
-    public static void removeDiskFromVm(Guid vmGuid, Guid diskId) {
-        DbFacade.getInstance().getVmDeviceDao().remove(new VmDeviceId(diskId, vmGuid));
-        DbFacade.getInstance().getBaseDiskDao().remove(diskId);
+    public void removeDiskFromVm(Guid vmGuid, Guid diskId) {
+        vmDeviceDao.remove(new VmDeviceId(diskId, vmGuid));
+        baseDiskDao.remove(diskId);
     }
 
-    public static void updateImageStatus(Guid imageId, ImageStatus imageStatus) {
-        DbFacade.getInstance().getImageDao().updateStatus(imageId, imageStatus);
+    public void updateImageStatus(Guid imageId, ImageStatus imageStatus) {
+        imageDao.updateStatus(imageId, imageStatus);
     }
 
-    public static void updateAllDiskImageSnapshotsStatusWithCompensation(final Guid diskId,
+    public void updateAllDiskImageSnapshotsStatusWithCompensation(final Guid diskId,
             final ImageStatus status,
             ImageStatus statusForCompensation,
             final CompensationContext compensationContext) {
         updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(Collections.singletonList(diskId), status, statusForCompensation, compensationContext);
     }
 
-    public static DiskImage getSnapshotLeaf(Guid diskId) {
-        List<DiskImage> diskSnapshots =
-                DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(diskId);
+    public DiskImage getSnapshotLeaf(Guid diskId) {
+        List<DiskImage> diskSnapshots = diskImageDao.getAllSnapshotsForImageGroup(diskId);
         sortImageList(diskSnapshots);
         return diskSnapshots.get(diskSnapshots.size() - 1);
     }
 
-    public static List<DiskImage> getCinderLeafImages(List<Disk> disks) {
+    public List<DiskImage> getCinderLeafImages(List<Disk> disks) {
         List<DiskImage> leafCinderDisks = new ArrayList<>();
         List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(disks);
         for (CinderDisk cinder : cinderDisks) {
@@ -662,14 +691,13 @@ public final class ImagesHandler {
         return leafCinderDisks;
     }
 
-    public static void updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(final Collection<Guid> diskIds,
+    public void updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(final Collection<Guid> diskIds,
                                                                          final ImageStatus status,
                                                                          ImageStatus statusForCompensation,
                                                                          final CompensationContext compensationContext) {
         if (compensationContext != null) {
             for (Guid diskId : diskIds) {
-                List<DiskImage> diskSnapshots =
-                        DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(diskId);
+                List<DiskImage> diskSnapshots = diskImageDao.getAllSnapshotsForImageGroup(diskId);
                 for (DiskImage diskSnapshot : diskSnapshots) {
                     diskSnapshot.setImageStatus(statusForCompensation);
                     compensationContext.snapshotEntityStatus(diskSnapshot.getImage());
@@ -678,7 +706,7 @@ public final class ImagesHandler {
 
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
                 for (Guid diskId : diskIds) {
-                    DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
+                    imageDao.updateStatusOfImagesByImageGroupId(diskId, status);
                 }
                 compensationContext.stateChanged();
                 return null;
@@ -687,7 +715,7 @@ public final class ImagesHandler {
 
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
                 for (Guid diskId : diskIds) {
-                    DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
+                    imageDao.updateStatusOfImagesByImageGroupId(diskId, status);
                 }
                 return null;
             });
@@ -738,7 +766,7 @@ public final class ImagesHandler {
     /**
      * Prepare a single {@link org.ovirt.engine.core.common.businessentities.Snapshot} object representing a snapshot of a given VM without the given disk.
      */
-    public static Snapshot prepareSnapshotConfigWithoutImageSingleImage(Snapshot snapshot, Guid imageId, OvfManager ovfManager) {
+    public Snapshot prepareSnapshotConfigWithoutImageSingleImage(Snapshot snapshot, Guid imageId, OvfManager ovfManager) {
         return prepareSnapshotConfigWithAlternateImage(snapshot, imageId, null, ovfManager);
     }
 
@@ -746,7 +774,7 @@ public final class ImagesHandler {
      * Prepare a single {@link org.ovirt.engine.core.common.businessentities.Snapshot} object representing a snapshot of a given VM without the given disk,
      * substituting a new disk in its place if a new disk is provided to the method.
      */
-    public static Snapshot prepareSnapshotConfigWithAlternateImage(Snapshot snapshot, Guid oldImageId, DiskImage newImage, OvfManager ovfManager) {
+    public Snapshot prepareSnapshotConfigWithAlternateImage(Snapshot snapshot, Guid oldImageId, DiskImage newImage, OvfManager ovfManager) {
         try {
             String snapConfig = snapshot.getVmConfiguration();
 
@@ -769,7 +797,7 @@ public final class ImagesHandler {
 
                 if (newImage != null) {
                     log.debug("Adding image '{}' to vmSnapshot '{}'", newImage.getImageId(), snapshot.getId());
-                    newImage.setDiskVmElements(Collections.singletonList(getDiskVmElementDao().get(new VmDeviceId(newImage.getId(), vmSnapshot.getId()))));
+                    newImage.setDiskVmElements(Collections.singletonList(diskVmElementDao.get(new VmDeviceId(newImage.getId(), vmSnapshot.getId()))));
                     snapshotImages.add(newImage);
                 }
 
@@ -782,10 +810,10 @@ public final class ImagesHandler {
         return snapshot;
     }
 
-    public static DiskImage createDiskImageWithExcessData(DiskImage diskImage, Guid sdId) {
+    public DiskImage createDiskImageWithExcessData(DiskImage diskImage, Guid sdId) {
         DiskImage dummy = DiskImage.copyOf(diskImage);
         dummy.setStorageIds(new ArrayList<>(Collections.singletonList(sdId)));
-        dummy.getSnapshots().addAll(DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForLeaf(dummy.getImageId()));
+        dummy.getSnapshots().addAll(diskImageDao.getAllSnapshotsForLeaf(dummy.getImageId()));
         return dummy;
     }
 
@@ -805,13 +833,13 @@ public final class ImagesHandler {
         return diskDummies;
     }
 
-    public static List<DiskImage> getSnapshotsDummiesForStorageAllocations(Collection<DiskImage> originalDisks) {
+    public List<DiskImage> getSnapshotsDummiesForStorageAllocations(Collection<DiskImage> originalDisks) {
         List<DiskImage> diskDummies = new ArrayList<>();
         for (DiskImage snapshot : originalDisks) {
             DiskImage clone = DiskImage.copyOf(snapshot);
             // Add the child snapshot into which the deleted snapshot is going to be merged to the
             // DiskImage for StorageDomainValidator to handle
-            List<DiskImage> snapshots = DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForParent(clone.getImageId());
+            List<DiskImage> snapshots = diskImageDao.getAllSnapshotsForParent(clone.getImageId());
             clone.getSnapshots().clear();
             clone.getSnapshots().add(clone); // Add the clone itself since snapshots should contain the entire chain.
             clone.getSnapshots().addAll(snapshots);
@@ -820,7 +848,7 @@ public final class ImagesHandler {
         return diskDummies;
     }
 
-    protected static DiskImage getVolumeInfoFromVdsm(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
+    protected DiskImage getVolumeInfoFromVdsm(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
                                       Guid newImageId) {
         return (DiskImage) VdsCommandsHelper.runVdsCommandWithFailover(
                 VDSCommandType.GetVolumeInfo,
@@ -828,7 +856,7 @@ public final class ImagesHandler {
                         newImageId), storagePoolId, null).getReturnValue();
     }
 
-    public static QemuImageInfo getQemuImageInfoFromVdsm(Guid storagePoolId,
+    public QemuImageInfo getQemuImageInfoFromVdsm(Guid storagePoolId,
             Guid newStorageDomainID,
             Guid newImageGroupId,
             Guid newImageId,
@@ -842,8 +870,7 @@ public final class ImagesHandler {
             prepareImage(storagePoolId, newStorageDomainID, newImageGroupId, newImageId, vdsId);
         }
         try {
-            qemuImageInfo = (QemuImageInfo) Backend.getInstance()
-                    .getResourceManager()
+            qemuImageInfo = (QemuImageInfo) resourceManager
                     .runVdsCommand(VDSCommandType.GetQemuImageInfo,
                             new GetVolumeInfoVDSCommandParameters(vdsId,
                                     storagePoolId,
@@ -864,7 +891,7 @@ public final class ImagesHandler {
         return qemuImageInfo;
     }
 
-    public static DiskImage cloneDiskImage(Guid storageDomainId,
+    public DiskImage cloneDiskImage(Guid storageDomainId,
             Guid newImageGroupId,
             Guid newImageGuid,
             DiskImage srcDiskImage,
@@ -892,23 +919,15 @@ public final class ImagesHandler {
             if (volumeInfoChanged(diskImageFromClient, srcDiskImage)) {
                 changeVolumeInfo(clonedDiskImage, diskImageFromClient);
             } else {
-                DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getImageId());
+                DiskImage ancestorDiskImage = diskImageDao.getAncestor(srcDiskImage.getImageId());
                 changeVolumeInfo(clonedDiskImage, ancestorDiskImage);
             }
         } else {
-            DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getImageId());
+            DiskImage ancestorDiskImage = diskImageDao.getAncestor(srcDiskImage.getImageId());
             changeVolumeInfo(clonedDiskImage, ancestorDiskImage);
         }
 
         return clonedDiskImage;
-    }
-
-    private static DiskImageDao getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDao();
-    }
-
-    private static DiskVmElementDao getDiskVmElementDao() {
-        return DbFacade.getInstance().getDiskVmElementDao();
     }
 
     private static boolean volumeInfoChanged(DiskImage diskImageFromClient, DiskImage srcDiskImage) {
@@ -933,7 +952,7 @@ public final class ImagesHandler {
      * @param imageGroupID The image group GUID of the source image
      * @return the computed initial size in bytes or null if it is not needed/supported
      */
-    public static Long determineImageInitialSize(Image sourceImage,
+    public Long determineImageInitialSize(Image sourceImage,
             VolumeFormat destFormat,
             Guid storagePoolId,
             Guid srcDomain,
@@ -971,52 +990,48 @@ public final class ImagesHandler {
      * @param dstDomain The storage domain where the disk image will be copied to
      * @return the computed initial size in bytes or null if it is not needed/supported
      */
-    public static Long determineTotalImageInitialSize(DiskImage sourceImage,
+    public Long determineTotalImageInitialSize(DiskImage sourceImage,
             VolumeFormat destFormat,
             Guid dstDomain) {
 
         if (isInitialSizeSupportedForFormat(destFormat, dstDomain)) {
 
             double totalSizeForClonedDisk = getTotalActualSizeOfDisk(sourceImage,
-                    DbFacade.getInstance().getStorageDomainDao().get(dstDomain).getStorageStaticData());
+                    storageDomainDao.get(dstDomain).getStorageStaticData());
 
             return computeCowImageNeededSize(sourceImage.getVolumeFormat(), Double.valueOf(totalSizeForClonedDisk).longValue());
         }
         return null;
     }
 
-    private static boolean isInitialSizeSupportedForFormat(VolumeFormat destFormat, Guid dstDomain) {
+    private boolean isInitialSizeSupportedForFormat(VolumeFormat destFormat, Guid dstDomain) {
         return destFormat == VolumeFormat.COW &&
-                isImageInitialSizeSupported(
-                        DbFacade.getInstance().getStorageDomainDao().get(dstDomain).getStorageType());
+                isImageInitialSizeSupported(storageDomainDao.get(dstDomain).getStorageType());
     }
 
-    public static void prepareImage(Guid storagePoolId,
+    public void prepareImage(Guid storagePoolId,
                                     Guid newStorageDomainID,
                                     Guid newImageGroupId,
                                     Guid newImageId,
                                     Guid vdsId) {
-        Backend.getInstance()
-                .getResourceManager()
-                .runVdsCommand(VDSCommandType.PrepareImage, new PrepareImageVDSCommandParameters(vdsId,
-                        storagePoolId,
-                        newStorageDomainID,
-                        newImageGroupId,
-                        newImageId, true));
+        resourceManager.runVdsCommand(VDSCommandType.PrepareImage, new PrepareImageVDSCommandParameters(vdsId,
+                storagePoolId,
+                newStorageDomainID,
+                newImageGroupId,
+                newImageId,
+                true));
     }
 
-    public static void teardownImage(Guid storagePoolId,
+    public void teardownImage(Guid storagePoolId,
                                      Guid newStorageDomainID,
                                      Guid newImageGroupId,
                                      Guid newImageId,
                                      Guid vdsId) {
-        Backend.getInstance()
-                .getResourceManager()
-                .runVdsCommand(VDSCommandType.TeardownImage,
-                        new ImageActionsVDSCommandParameters(vdsId,
-                                storagePoolId,
-                                newStorageDomainID,
-                                newImageGroupId,
-                                newImageId));
+        resourceManager.runVdsCommand(VDSCommandType.TeardownImage,
+                new ImageActionsVDSCommandParameters(vdsId,
+                        storagePoolId,
+                        newStorageDomainID,
+                        newImageGroupId,
+                        newImageId));
     }
 }

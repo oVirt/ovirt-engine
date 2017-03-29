@@ -19,6 +19,9 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
     @Inject
     private VmDao vmDao;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     public GetUserVmsByUserIdAndGroupsQuery(P parameters) {
         super(parameters);
     }
@@ -44,7 +47,7 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
     }
 
     protected void fillImagesBySnapshots(VM vm) {
-        ImagesHandler.fillImagesBySnapshots(vm);
+        imagesHandler.fillImagesBySnapshots(vm);
     }
 
     protected void updateDisksFromDB(VM vm) {
