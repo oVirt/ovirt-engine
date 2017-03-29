@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016 Red Hat, Inc.
+Copyright (c) 2016-2017 Red Hat, Inc.
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -25,7 +25,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VnicProfile;
-import org.ovirt.engine.api.resource.AssignedNetworksResource;
+import org.ovirt.engine.api.resource.ClusterNetworksResource;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.NetworkResource;
@@ -70,7 +70,7 @@ public class V3NICHelper {
         Vm vm = vmService.get();
         ClustersResource clustersService = systemService.getClustersResource();
         ClusterResource clusterService = clustersService.getClusterResource(vm.getCluster().getId());
-        AssignedNetworksResource networksService = clusterService.getNetworksResource();
+        ClusterNetworksResource networksService = clusterService.getNetworksResource();
         Set<String> validNetworkIds = networksService.list().getNetworks().stream()
             .map(Network::getId)
             .collect(toSet());

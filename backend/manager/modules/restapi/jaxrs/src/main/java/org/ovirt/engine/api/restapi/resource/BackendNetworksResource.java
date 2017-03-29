@@ -1,10 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
-import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
@@ -13,97 +13,99 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendNetworksResource
-    extends AbstractBackendNetworksResource
+    extends AbstractBackendCollectionResource<Network, org.ovirt.engine.core.common.businessentities.network.Network>
     implements NetworksResource {
 
     public BackendNetworksResource() {
-        this(VdcQueryType.GetAllNetworks);
-    }
-
-    public BackendNetworksResource(VdcQueryType queryType) {
-        super(queryType, VdcActionType.AddNetwork);
-    }
-
-    @Override
-    public Response add(Network network) {
-        validateParameters(network, getRequiredAddFields());
-        org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
-        AddNetworkStoragePoolParameters params = getAddParameters(network, entity);
-        return performCreate(addAction,
-                               params,
-                               new DataCenterNetworkIdResolver(network.getName(), params.getStoragePoolId().toString()));
+        super(Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class);
     }
 
     @Override
     public Networks list() {
-        Networks networks;
-
+        List<org.ovirt.engine.core.common.businessentities.network.Network> entities;
         if (isFiltered()) {
-            networks = mapCollection(getBackendCollection(queryType, getQueryParameters(), SearchType.Network));
-        } else {
-            networks = mapCollection(getBackendCollection(SearchType.Network));
+            IdQueryParameters parameters = new IdQueryParameters(Guid.Empty);
+            entities = getBackendCollection(VdcQueryType.GetAllNetworks, parameters, SearchType.Network);
         }
-
+        else {
+            entities = getBackendCollection(SearchType.Network);
+        }
+        Networks networks = mapCollection(entities);
         for (Network network : networks.getNetworks()) {
             network.setDisplay(null);
         }
         return networks;
     }
 
-    @Override
-    protected Network addParents(Network model) {
-        Qos qos = model.getQos();
-        if (qos != null) {
-            qos.setDataCenter(model.getDataCenter());
+    private Networks mapCollection(List<org.ovirt.engine.core.common.businessentities.network.Network> entities) {
+        Networks collection = new Networks();
+        for (org.ovirt.engine.core.common.businessentities.network.Network entity : entities) {
+            collection.getNetworks().add(addLinks(map(entity)));
         }
-
-        return model;
+        return collection;
     }
 
     @Override
-    protected VdcQueryParametersBase getQueryParameters() {
-        return new IdQueryParameters(Guid.Empty);
-    }
-
-    @Override
-    protected AddNetworkStoragePoolParameters getAddParameters(Network network,
-            org.ovirt.engine.core.common.businessentities.network.Network entity) {
+    public Response add(Network network) {
+        validateParameters(network, "name", "dataCenter.name|id");
+        org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
         if (namedDataCenter(network)) {
             entity.setDataCenterId(getDataCenterId(network));
         }
-
-        AddNetworkStoragePoolParameters parameters =
-                new AddNetworkStoragePoolParameters(entity.getDataCenterId(), entity);
-        if (network != null && network.isSetProfileRequired()) {
+        AddNetworkStoragePoolParameters parameters = new AddNetworkStoragePoolParameters(
+            entity.getDataCenterId(),
+            entity
+        );
+        if (network.isSetProfileRequired()) {
             parameters.setVnicProfileRequired(network.isProfileRequired());
         }
-
-        return parameters;
+        return performCreate(
+            VdcActionType.AddNetwork,
+            parameters,
+            new AddedNetworkResolver()
+        );
     }
 
-    protected String[] getRequiredAddFields() {
-        return new String[] { "name", "dataCenter.name|id" };
+    private class AddedNetworkResolver extends EntityIdResolver<Guid> {
+        @Override
+        public org.ovirt.engine.core.common.businessentities.network.Network lookupEntity(Guid id)
+            throws BackendFailureException {
+            return getEntity(
+                org.ovirt.engine.core.common.businessentities.network.Network.class,
+                VdcQueryType.GetNetworkById,
+                new IdQueryParameters(id),
+                id.toString()
+            );
+        }
     }
 
     @Override
     public NetworkResource getNetworkResource(String id) {
-        return inject(new BackendNetworkResource(id, this));
+        return inject(new BackendNetworkResource(id));
     }
 
-    protected boolean namedDataCenter(Network network) {
+    @Override
+    protected Network addParents(Network model) {
+        return BackendNetworkHelper.addParents(model);
+    }
+
+    private boolean namedDataCenter(Network network) {
         return network != null && network.isSetDataCenter() && network.getDataCenter().isSetName() && !network.getDataCenter().isSetId();
     }
 
-    protected Guid getDataCenterId(Network network) {
+    private Guid getDataCenterId(Network network) {
         String networkName = network.getDataCenter().getName();
-        return getEntity(StoragePool.class, VdcQueryType.GetStoragePoolByDatacenterName,
-                new NameQueryParameters(networkName), "Datacenter: name="
-                        + networkName).getId();
-
+        StoragePool dataCenter = getEntity(
+            StoragePool.class,
+            VdcQueryType.GetStoragePoolByDatacenterName,
+            new NameQueryParameters(networkName),
+            networkName,
+            true
+        );
+        return dataCenter.getId();
     }
 }

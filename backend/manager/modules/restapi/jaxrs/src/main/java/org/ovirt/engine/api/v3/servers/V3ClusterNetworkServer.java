@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016 Red Hat, Inc.
+Copyright (c) 2017 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.resource.AssignedNetworkResource;
+import org.ovirt.engine.api.resource.ClusterNetworkResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Network;
 
 @Produces({"application/xml", "application/json"})
-public class V3AssignedNetworkServer extends V3Server<AssignedNetworkResource> {
-    public V3AssignedNetworkServer(AssignedNetworkResource delegate) {
+public class V3ClusterNetworkServer extends V3Server<ClusterNetworkResource> {
+    public V3ClusterNetworkServer(ClusterNetworkResource delegate) {
         super(delegate);
     }
 
