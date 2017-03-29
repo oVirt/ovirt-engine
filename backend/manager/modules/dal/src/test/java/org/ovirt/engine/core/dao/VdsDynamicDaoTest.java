@@ -190,4 +190,24 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
         VdsDynamic after = dao.get(existingVds.getId());
         assertEquals(before.isUpdateAvailable(), after.isUpdateAvailable());
     }
+
+    @Test
+    public void testCheckIfExistsHostWithStatusInCluster() {
+        Guid clusterId = existingVds.getClusterId();
+        VdsDynamic existingVdsDynamic = dao.get(existingVds.getId());
+        VDSStatus existingHostStatus = existingVdsDynamic.getStatus();
+
+        boolean resultBeforeUpdateStatus = dao.checkIfExistsHostWithStatusInCluster(clusterId, existingHostStatus);
+        assertTrue(resultBeforeUpdateStatus);
+
+        updateStatusForAllHostsInCluster(clusterId, VDSStatus.Connecting);
+        boolean resultAfterUpdateStatus = dao.checkIfExistsHostWithStatusInCluster(clusterId, existingHostStatus);
+        assertFalse(resultAfterUpdateStatus);
+    }
+
+    private void updateStatusForAllHostsInCluster(Guid clusterId, VDSStatus hostStatus) {
+        for (VdsStatic host : staticDao.getAllForCluster(clusterId)) {
+            dao.updateStatus(host.getId(), hostStatus);
+        }
+    }
 }

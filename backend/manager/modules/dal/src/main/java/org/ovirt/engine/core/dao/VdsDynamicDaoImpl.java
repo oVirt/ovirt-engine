@@ -21,6 +21,7 @@ import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -151,6 +152,17 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("maintenance_reason", host.getMaintenanceReason());
 
         getCallsHandler().executeModification("UpdateVdsDynamicStatusAndReasons", parameterSource);
+    }
+
+    @Override
+    public boolean checkIfExistsHostWithStatusInCluster(Guid clusterId, VDSStatus hostStatus) {
+        final MapSqlParameterSource customMapSqlParameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId)
+                .addValue("host_status", hostStatus);
+        return getCallsHandler().executeRead(
+                "CheckIfExistsHostWithStatusInCluster",
+                SingleColumnRowMapper.newInstance(Boolean.class),
+                customMapSqlParameterSource);
     }
 
     private MapSqlParameterSource getStatusSqlParameterSource(Guid id, VDSStatus status) {
