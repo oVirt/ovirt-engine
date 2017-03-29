@@ -243,7 +243,7 @@ public abstract class OvfReader implements IOvfBuilder {
             vmDevice.setSpecParams(getMapNode(specParamsNode));
         } else {
             // Empty map
-            vmDevice.setSpecParams(Collections.<String, Object>emptyMap());
+            vmDevice.setSpecParams(Collections.emptyMap());
         }
         if (selectSingleNode(node, OvfProperties.VMD_TYPE, _xmlNS) != null
                 && !StringUtils.isEmpty(selectSingleNode(node, OvfProperties.VMD_TYPE, _xmlNS).innerText)) {
@@ -566,9 +566,9 @@ public abstract class OvfReader implements IOvfBuilder {
             vmBase.setTimeZone(node.innerText);
         } else {
             if (osRepository.isWindows(vmBase.getOsId())) {
-                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone));
+                vmBase.setTimeZone(Config.getValue(ConfigValues.DefaultWindowsTimeZone));
             } else {
-                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultGeneralTimeZone));
+                vmBase.setTimeZone(Config.getValue(ConfigValues.DefaultGeneralTimeZone));
             }
         }
 
