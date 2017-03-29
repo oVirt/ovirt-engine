@@ -867,13 +867,12 @@ public abstract class OvfReader implements IOvfBuilder {
             interfaces.add(iface);
         }
         if (!list.iterator().hasNext()) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("//*/Item[");
-            sb.append(OvfProperties.VMD_RESOURCE_TYPE);
-            sb.append("=");
-            sb.append(OvfHardware.Network);
-            sb.append("]");
-            list = selectNodes(_document, sb.toString(), _xmlNS);
+            String pattern = "//*/Item[" +
+                    OvfProperties.VMD_RESOURCE_TYPE +
+                    "=" +
+                    OvfHardware.Network +
+                    "]";
+            list = selectNodes(_document, pattern, _xmlNS);
             for (XmlNode node : list) {
                 VmNetworkInterface iface = new VmNetworkInterface();
                 iface.setId(Guid.newGuid());
