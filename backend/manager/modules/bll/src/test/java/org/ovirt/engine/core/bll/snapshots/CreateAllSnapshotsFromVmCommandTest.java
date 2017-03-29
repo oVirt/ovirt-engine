@@ -29,7 +29,8 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
-import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
+import org.ovirt.engine.core.bll.utils.VgamemVideoSettings;
+import org.ovirt.engine.core.bll.utils.VideoDeviceSettings;
 import org.ovirt.engine.core.bll.utils.VmOverheadCalculatorImpl;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskExistenceValidator;
@@ -80,7 +81,15 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     private MemoryImageBuilder memoryImageBuilder;
 
     @Spy
-    private VmOverheadCalculator vmOverheadCalculator = new VmOverheadCalculatorImpl();
+    private VgamemVideoSettings vgamemVideoSettings;
+
+    @Spy
+    @InjectMocks
+    private VideoDeviceSettings videoDeviceSettings;
+
+    @Spy
+    @InjectMocks
+    private VmOverheadCalculatorImpl vmOverheadCalculator;
 
     @SuppressWarnings("unchecked")
     @Before

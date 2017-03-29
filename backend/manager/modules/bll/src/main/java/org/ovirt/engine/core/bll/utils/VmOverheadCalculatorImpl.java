@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.utils;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -8,6 +9,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 
 @Singleton
 public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
+
+    @Inject
+    private VideoDeviceSettings videoDeviceSettings;
+
     /**
      * Return total required RAM for running the given VM.
      * It includes VM size, expected QEMU overhead and other memory taken from
@@ -56,7 +61,7 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
      */
     @Override
     public int getPossibleOverheadInMb(VM vm) {
-        int videoRam = VideoDeviceSettings.totalVideoRAMSizeMb(vm);
+        int videoRam = videoDeviceSettings.totalVideoRAMSizeMb(vm);
         int cpuOverhead = 8 * vm.getNumOfCpus(true);
         int iothreadsOverhead = 8 * vm.getNumOfIoThreads();
 
@@ -104,7 +109,7 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
      */
     @Override
     public long getSnapshotMemorySizeInBytes(VM vm) {
-        long videoRam = (long)VideoDeviceSettings.totalVideoRAMSizeMb(vm);
+        long videoRam = (long)videoDeviceSettings.totalVideoRAMSizeMb(vm);
         return (vm.getVmMemSizeMb() + 200 + videoRam) * 1024 * 1024;
     }
 }
