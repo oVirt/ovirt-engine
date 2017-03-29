@@ -556,7 +556,7 @@ public class UpdateVdsGroupCommandTest {
         cluster.setEnableBallooning(false);
         createCommand(cluster);
         cpuExists();
-        canDoActionFailedWithReason(EngineMessage.VDS_GROUP_TO_ALLOW_MEMORY_OPTIMIZATION_YOU_MUST_ALLOW_KSM_OR_BALLOONING);
+        assertTrue(cmd.canDoAction());
     }
 
     @Test
