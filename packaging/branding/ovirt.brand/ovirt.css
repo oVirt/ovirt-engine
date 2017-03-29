@@ -23,6 +23,16 @@ label[for=LoginFormView_userName], label[for=LoginFormView_password], label[for=
     color: gray;
 }
 
+.icon-enabled {
+    color: #333333;
+    cursor: pointer;
+}
+
+.icon-disabled {
+    color: #BBBBBB;
+    cursor: default;
+}
+
 /***************************************
 Tooltips
 TODO: use SASS, break into tooltips.sass
