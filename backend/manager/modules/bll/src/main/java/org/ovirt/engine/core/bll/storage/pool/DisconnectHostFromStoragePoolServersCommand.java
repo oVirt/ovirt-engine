@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
-import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -35,7 +34,7 @@ public class DisconnectHostFromStoragePoolServersCommand extends
 
         for (Map.Entry<StorageType, List<StorageServerConnections>> connectionToType : getConnectionsTypeMap().entrySet()) {
             disconnectStorageByType(connectionToType.getKey(), connectionToType.getValue());
-            Pair<Boolean, AuditLogType> result = StorageHelperDirector.getInstance().getItem(connectionToType.getKey()).disconnectHostFromStoragePoolServersCommandCompleted(getParameters());
+            Pair<Boolean, AuditLogType> result = storageHelperDirector.getItem(connectionToType.getKey()).disconnectHostFromStoragePoolServersCommandCompleted(getParameters());
             if (!result.getFirst()) {
                 auditLogDirector.log(this, result.getSecond());
             }
@@ -49,14 +48,14 @@ public class DisconnectHostFromStoragePoolServersCommand extends
     }
 
     private void disconnectStorageByType(StorageType storageType, List<StorageServerConnections> connections) {
-        StorageHelperDirector.getInstance().getItem(storageType).prepareDisconnectHostFromStoragePoolServers(getParameters(), connections);
+        storageHelperDirector.getItem(storageType).prepareDisconnectHostFromStoragePoolServers(getParameters(), connections);
         VDSReturnValue vdsReturnValue = runVdsCommand(
                         VDSCommandType.DisconnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getVds().getId(), getStoragePool().getId(),
                                 storageType, connections));
         setSucceeded(vdsReturnValue.getSucceeded());
         if (!vdsReturnValue.getSucceeded()) {
-            StorageHelperDirector.getInstance().getItem(storageType)
+            storageHelperDirector.getItem(storageType)
                     .isConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(), connections);
         }
     }

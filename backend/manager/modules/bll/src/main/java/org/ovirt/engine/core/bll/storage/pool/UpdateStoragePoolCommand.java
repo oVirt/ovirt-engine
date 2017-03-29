@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
@@ -137,8 +136,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     protected Pair<Boolean, Guid> syncDomainLuns(StorageDomain storageDomain) {
         return new Pair<>(
-                StorageHelperDirector.getInstance()
-                        .getItem(storageDomain.getStorageType()).syncDomainInfo(storageDomain, null),
+                storageHelperDirector.getItem(storageDomain.getStorageType()).syncDomainInfo(storageDomain, null),
                 storageDomain.getId());
     }
 

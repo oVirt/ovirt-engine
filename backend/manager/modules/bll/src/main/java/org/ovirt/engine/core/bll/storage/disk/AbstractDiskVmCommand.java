@@ -57,6 +57,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
 
+    @Inject
+    private StorageHelperDirector storageHelperDirector;
+
     protected AbstractDiskVmCommand(Guid commandId) {
         super(commandId);
     }
@@ -95,7 +98,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     private IStorageHelper getStorageHelper(StorageType storageType) {
-        return StorageHelperDirector.getInstance().getItem(storageType);
+        return storageHelperDirector.getItem(storageType);
     }
 
     /**

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -60,7 +59,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
             }
         }
 
-        StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
+        storageHelperDirector.getItem(getStorageDomain().getStorageType())
                 .storageDomainRemoved(getStorageDomain().getStorageStaticData());
 
         storageDomainDao.remove(getStorageDomain().getId());

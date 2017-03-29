@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -27,6 +29,9 @@ import org.ovirt.engine.core.common.job.StepEnum;
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class RemoveDeviceFromSANStorageDomainCommand<T extends RemoveDeviceFromSANStorageDomainCommandParameters> extends CommandBase<T> implements SerialChildExecutingCommand {
+
+    @Inject
+    private StorageHelperDirector storageHelperDirector;
 
     public RemoveDeviceFromSANStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -84,8 +89,7 @@ public class RemoveDeviceFromSANStorageDomainCommand<T extends RemoveDeviceFromS
     }
 
     protected void endSuccessfully() {
-        StorageHelperDirector.getInstance()
-                .getItem(getStorageDomain().getStorageType())
+        storageHelperDirector.getItem(getStorageDomain().getStorageType())
                 .removeLunFromStorageDomain(getParameters().getDeviceId());
         setSucceeded(true);
     }

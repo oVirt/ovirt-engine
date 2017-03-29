@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -97,8 +96,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     // with the pool in db
                     StorageDomain storageDomain =
                             storageDomainDao.getForStoragePool(storageDomainId, getStoragePool().getId());
-                    StorageHelperDirector.getInstance()
-                            .getItem(storageDomain.getStorageType())
+                    storageHelperDirector.getItem(storageDomain.getStorageType())
                             .connectStorageToDomainByVdsId(storageDomain,
                                     getVds().getId());
                 }

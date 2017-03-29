@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
-import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -175,7 +174,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
         if (!getStoragePool().isLocal() || !masterDomain.isLocal()) {
             for (VDS vds : vdss) {
-                StorageHelperDirector.getInstance().getItem(masterDomain.getStorageType())
+                storageHelperDirector.getItem(masterDomain.getStorageType())
                         .disconnectStorageFromDomainByVdsId(masterDomain, vds.getId());
             }
         } else {
@@ -186,7 +185,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             } catch (EngineException e) {
                 // Do nothing, exception already printed at logs
             }
-            StorageHelperDirector.getInstance().getItem(masterDomain.getStorageType())
+            storageHelperDirector.getItem(masterDomain.getStorageType())
                     .disconnectStorageFromDomainByVdsId(masterDomain, vdss.get(0).getId());
             removeDomainFromDb(masterDomain);
         }
@@ -233,7 +232,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             // to rollback a deleted domain - it will only cause more
             // problems if a domain got deleted in VDSM and not in backend
             // as it will be impossible to remove it.
-            StorageHelperDirector.getInstance().getItem(domain.getStorageType())
+            storageHelperDirector.getItem(domain.getStorageType())
                     .storageDomainRemoved(domain.getStorageStaticData());
             storageDomainDao.remove(domain.getId());
             return null;

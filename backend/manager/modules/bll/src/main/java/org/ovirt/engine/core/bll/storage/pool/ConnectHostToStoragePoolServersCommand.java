@@ -7,7 +7,6 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
-import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -63,7 +62,7 @@ public class ConnectHostToStoragePoolServersCommand extends
     }
 
     private boolean connectStorageServersByType(StorageType storageType, List<StorageServerConnections> connections) {
-        if (!StorageHelperDirector.getInstance().getItem(storageType).prepareConnectHostToStoragePoolServers(getContext(), getParameters(), connections)) {
+        if (!storageHelperDirector.getItem(storageType).prepareConnectHostToStoragePoolServers(getContext(), getParameters(), connections)) {
             return false;
         }
 
@@ -71,7 +70,7 @@ public class ConnectHostToStoragePoolServersCommand extends
                         VDSCommandType.ConnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getVds().getId(),
                                 getStoragePool().getId(), storageType, connections)).getReturnValue();
-        return StorageHelperDirector.getInstance().getItem(storageType).isConnectSucceeded(retValues, connections);
+        return storageHelperDirector.getItem(storageType).isConnectSucceeded(retValues, connections);
     }
 
 }

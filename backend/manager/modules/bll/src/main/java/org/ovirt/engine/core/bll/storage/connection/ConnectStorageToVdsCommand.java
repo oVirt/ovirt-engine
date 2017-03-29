@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -32,6 +34,9 @@ import org.ovirt.engine.core.utils.StringMapUtils;
 public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParametersBase> extends
         StorageServerConnectionCommandBase<T> {
     private static final String KEY_VALUE_SEPARATOR = "=";
+
+    @Inject
+    private StorageHelperDirector storageHelperDirector;
 
     public ConnectStorageToVdsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -74,8 +79,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
                 new StorageServerConnectionManagementVDSParameters(getVds().getId(), Guid.Empty,
                         getConnection().getStorageType(), connections)).getReturnValue();
 
-        return new Pair<>(StorageHelperDirector.getInstance()
-                .getItem(getConnection().getStorageType())
+        return new Pair<>(storageHelperDirector.getItem(getConnection().getStorageType())
                 .isConnectSucceeded(result, connections),
                 Integer.parseInt(result.values().iterator().next()));
     }
