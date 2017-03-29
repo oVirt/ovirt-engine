@@ -1438,4 +1438,18 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-
+CREATE OR REPLACE FUNCTION CheckIfExistsHostWithStatusInCluster(
+    v_cluster_id   UUID,
+    v_host_status  INT
+    )
+RETURNS BOOLEAN AS $PROCEDURE$
+BEGIN
+    RETURN EXISTS (
+        SELECT 1
+        FROM vds_static
+        JOIN vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id
+        WHERE vds_static.cluster_id = v_cluster_id
+        AND vds_dynamic.status = v_host_status
+    );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
