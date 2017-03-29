@@ -79,6 +79,7 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
                 .append("imageSizeInBytes", getImageSizeInBytes())
                 .append("volumeFormat", getVolumeFormat())
                 .append("newImageId", getNewImageID())
+                .append("imageType", getImageType())
                 .append("newImageDescription", getNewImageDescription())
                 .append("imageInitialSizeInBytes", getImageInitialSizeInBytes());
     }
