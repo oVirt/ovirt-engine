@@ -2401,6 +2401,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_VM_IS_BEING_REMOVED_FROM_POOL();
 
+    String ACTION_TYPE_FAILED_VM_COMATIBILITY_VERSION_NOT_SUPPORTED();
+
     String VAR__FILTERTYPE__INTERNAL();
 
     String VAR__FILTERTYPE__EXTERNAL();

@@ -954,6 +954,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return false;
         }
 
+        if (getVm().getCustomCompatibilityVersion() != null &&
+                vm.getCustomCompatibilityVersion().less(getStoragePool().getCompatibilityVersion())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_COMATIBILITY_VERSION_NOT_SUPPORTED,
+                    String.format("$VmName %1$s", getVm().getName()),
+                    String.format("$VmVersion %1$s", getVm().getCustomCompatibilityVersion().toString()),
+                    String.format("$DcVersion %1$s", getStoragePool().getCompatibilityVersion()));
+        }
+
         RunVmValidator runVmValidator = getRunVmValidator();
 
         if (!runVmValidator.canRunVm(
