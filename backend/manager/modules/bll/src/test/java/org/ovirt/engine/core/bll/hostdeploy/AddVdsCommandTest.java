@@ -86,7 +86,6 @@ public class AddVdsCommandTest {
         mockHostValidator();
 
         doReturn(glusterEnabled).when(command).isGlusterSupportEnabled();
-        doReturn(clusterUtils).when(command).getClusterUtils();
 
         doReturn(true).when(command).validateCluster();
         doReturn(sshClient).when(command).getSSHClient();

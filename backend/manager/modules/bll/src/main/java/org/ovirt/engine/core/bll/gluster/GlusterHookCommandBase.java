@@ -29,12 +29,11 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
 
     protected GlusterHookEntity entity;
 
+    @Inject
+    protected ClusterUtils clusterUtils;
+
     public GlusterHookCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
-    }
-
-    protected ClusterUtils getClusterUtils() {
-        return ClusterUtils.getInstance();
     }
 
     @Override

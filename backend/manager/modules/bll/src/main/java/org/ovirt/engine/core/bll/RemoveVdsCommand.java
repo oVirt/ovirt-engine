@@ -69,6 +69,8 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     private GlusterVolumeDao glusterVolumeDao;
     @Inject
     private GlusterHooksDao glusterHooksDao;
+    @Inject
+    private ClusterUtils clusterUtils;
 
     public RemoveVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -226,10 +228,6 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         glusterHooksDao.removeAllInCluster(getClusterId());
     }
 
-    public ClusterUtils getClusterUtils() {
-        return ClusterUtils.getInstance();
-    }
-
     private void glusterHostRemove() {
         if (clusterHasMultipleHosts() && !hasVolumeBricksOnServer()) {
             try (EngineLock lock = glusterUtil.acquireGlusterLockWait(getClusterId())) {
@@ -264,7 +262,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                     }
                 }
                 // if last but one host in cluster, update the last host's known addresses
-                if (getClusterUtils().getServerCount(getClusterId()) == 2) {
+                if (clusterUtils.getServerCount(getClusterId()) == 2) {
                     removeOtherKnowAddressesForGlusterServer(upServer.getId());
                 }
             }
@@ -283,7 +281,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private boolean clusterHasMultipleHosts() {
-        return getClusterUtils().hasMultipleServers(getClusterId());
+        return clusterUtils.hasMultipleServers(getClusterId());
     }
 
     private void removeOtherKnowAddressesForGlusterServer(Guid lastServerId) {

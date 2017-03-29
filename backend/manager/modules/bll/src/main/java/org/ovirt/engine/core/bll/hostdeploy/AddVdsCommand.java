@@ -92,6 +92,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private ProviderProxyFactory providerProxyFactory;
     @Inject
     private LabelDao labelDao;
+    @Inject
+    private ClusterUtils clusterUtils;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -373,7 +375,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     private boolean clusterHasServers() {
-        return getClusterUtils().hasServers(getClusterId());
+        return clusterUtils.hasServers(getClusterId());
     }
 
     private boolean clusterHasNonInitializingServers() {
@@ -387,10 +389,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
         return false;
-    }
-
-    protected ClusterUtils getClusterUtils() {
-        return ClusterUtils.getInstance();
     }
 
     public EngineSSHClient getSSHClient() throws Exception {
