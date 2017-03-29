@@ -526,7 +526,7 @@ public class UpdateClusterCommandTest {
         cluster.setEnableBallooning(false);
         createCommand(cluster);
         cpuExists();
-        validateFailedWithReason(EngineMessage.CLUSTER_TO_ALLOW_MEMORY_OPTIMIZATION_YOU_MUST_ALLOW_KSM_OR_BALLOONING);
+        initAndAssertValidation(true);
     }
 
     @Test

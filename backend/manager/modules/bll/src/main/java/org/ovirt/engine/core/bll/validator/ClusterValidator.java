@@ -107,10 +107,10 @@ public class ClusterValidator {
     }
 
     public ValidationResult memoryOptimizationConfiguration() {
-        //if maxVdsMemoryOverCommit is set to a value <=0, it is later translated to maxVdsMemoryOverCommit = 200
-        //so we need to check that as well
+        //if maxVdsMemoryOverCommit is set to a value <=0, it is later translated to maxVdsMemoryOverCommit = 100
+        //so we need to allow it here
         return ValidationResult.failWith(EngineMessage.CLUSTER_TO_ALLOW_MEMORY_OPTIMIZATION_YOU_MUST_ALLOW_KSM_OR_BALLOONING)
-                .when((cluster.getMaxVdsMemoryOverCommit() > 100 || cluster.getMaxVdsMemoryOverCommit() <=0)
+                .when(cluster.getMaxVdsMemoryOverCommit() > 100
                         && !(cluster.isEnableKsm() || cluster.isEnableBallooning()));
     }
 
