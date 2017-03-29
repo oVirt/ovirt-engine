@@ -515,7 +515,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private void updateVmAfterMigrationToDifferentCluster() {
-        if (getVm().getClusterId().equals(getParameters().getTargetClusterId())) {
+        if (getParameters().getTargetClusterId() == null
+                || getVm().getClusterId().equals(getParameters().getTargetClusterId())) {
             return;
         }
 
