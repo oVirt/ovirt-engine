@@ -36,6 +36,9 @@ public class ConnectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOpe
     @Inject
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
+    @Inject
+    private StorageHelperDirector storageHelperDirector;
+
     public ConnectVDSToPoolAndDomains(List<VDS> vdss, StorageDomain domain, StoragePool storagePool) {
         super(vdss, domain, storagePool);
     }
@@ -51,7 +54,7 @@ public class ConnectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOpe
         VDS vds = getVdss().get(iterationId);
         try {
             boolean isConnectSucceeded =
-                    StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
+                    storageHelperDirector.getItem(getStorageDomain().getStorageType())
                             .connectStorageToDomainByVdsId(getStorageDomain(), vds.getId());
             if (isConnectSucceeded) {
                 resourceManager.runVdsCommand(

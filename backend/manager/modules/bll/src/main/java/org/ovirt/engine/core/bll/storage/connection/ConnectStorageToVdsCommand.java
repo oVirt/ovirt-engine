@@ -39,6 +39,9 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     @Inject
     private GlusterVolumeDao glusterVolumeDao;
 
+    @Inject
+    private StorageHelperDirector storageHelperDirector;
+
     public ConnectStorageToVdsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -80,8 +83,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
                 new StorageServerConnectionManagementVDSParameters(getVds().getId(), Guid.Empty,
                         getConnection().getStorageType(), connections)).getReturnValue();
 
-        return new Pair<>(StorageHelperDirector.getInstance()
-                .getItem(getConnection().getStorageType())
+        return new Pair<>(storageHelperDirector.getItem(getConnection().getStorageType())
                 .isConnectSucceeded(result, connections),
                 Integer.parseInt(result.values().iterator().next()));
     }

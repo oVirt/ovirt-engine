@@ -37,6 +37,9 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
     @Inject
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
+    @Inject
+    private StorageHelperDirector storageHelperDirector;
+
     public AfterDeactivateSingleAsyncOperation(List<VDS> vdss, StorageDomain domain,
             StoragePool storagePool, boolean isLastMaster, Guid newMasterStorageDomain) {
         super(vdss, domain, storagePool);
@@ -67,7 +70,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
             }
 
             if (getVdss().get(iterationId).getSpmStatus() == VdsSpmStatus.None) {
-                StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
+                storageHelperDirector.getItem(getStorageDomain().getStorageType())
                         .disconnectStorageFromDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());
             }
         } catch (RuntimeException e) {

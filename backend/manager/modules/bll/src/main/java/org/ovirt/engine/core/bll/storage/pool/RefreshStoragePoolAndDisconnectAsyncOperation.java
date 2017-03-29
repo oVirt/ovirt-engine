@@ -35,6 +35,9 @@ public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeact
     @Inject
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
+    @Inject
+    private StorageHelperDirector storageHelperDirector;
+
     public RefreshStoragePoolAndDisconnectAsyncOperation(List<VDS> vdss, StorageDomain domain,
             StoragePool storagePool) {
         super(vdss, domain, storagePool);
@@ -53,7 +56,7 @@ public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeact
                     VDSCommandType.ConnectStoragePool,
                     new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId), getStoragePool(),
                             masterStorageDomainId, storagePoolIsoMap, true));
-            StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
+            storageHelperDirector.getItem(getStorageDomain().getStorageType())
                     .disconnectStorageFromDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());
         } catch (RuntimeException e) {
             log.error("Failed to connect/refresh storagePool. Host '{}' to storage pool '{}': {}",

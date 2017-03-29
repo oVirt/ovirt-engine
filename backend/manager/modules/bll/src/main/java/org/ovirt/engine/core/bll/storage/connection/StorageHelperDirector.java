@@ -4,24 +4,22 @@ import java.lang.reflect.Constructor;
 import java.util.EnumMap;
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class StorageHelperDirector {
     private static final String ACTION_TYPE_PACKAGE = "org.ovirt.engine.core.bll.storage.connection";
     private static final String ACTION_TYPE_CLASS = "StorageHelper";
 
     private static final Logger log = LoggerFactory.getLogger(StorageHelperDirector.class);
 
-    private static StorageHelperDirector instance = new StorageHelperDirector();
     private Map<StorageType, IStorageHelper> helpers = new EnumMap<>(StorageType.class);
 
-    public static StorageHelperDirector getInstance() {
-        return instance;
-    }
-
-    private StorageHelperDirector() {
+    public StorageHelperDirector() {
         initializeHelpers();
     }
 
