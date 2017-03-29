@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.CopyImageGroupCommand;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
@@ -328,7 +327,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         } else {
             setSucceeded(true);
             if (isCopyOperation() && !isTemplate()) {
-                ImagesHandler.addDiskImageWithNoVmDevice(getImage());
+                imagesHandler.addDiskImageWithNoVmDevice(getImage());
             }
         }
     }

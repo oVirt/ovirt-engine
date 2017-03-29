@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.RemoveImageCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
@@ -125,7 +124,7 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
         if (vmSnapshotId != null && !Guid.Empty.equals(vmSnapshotId)) {
             Snapshot snapshot = snapshotDao.get(vmSnapshotId);
             if (snapshot != null) {
-                updated = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
+                updated = imagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
                         lastCinderVolume.getImageId(), ovfManager);
             }
         }

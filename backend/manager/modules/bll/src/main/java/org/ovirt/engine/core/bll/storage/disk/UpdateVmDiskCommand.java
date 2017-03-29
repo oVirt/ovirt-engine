@@ -955,7 +955,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
              getCompensationContext().snapshotEntityStatus(diskImage.getImage());
              getCompensationContext().stateChanged();
              diskImage.setImageStatus(ImageStatus.LOCKED);
-             ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
+             imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
              return null;
          });
     }
@@ -963,7 +963,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     public void unlockImageInDb() {
         final DiskImage diskImage = (DiskImage) getOldDisk();
         diskImage.setImageStatus(ImageStatus.OK);
-        ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
+        imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
     }
 
     private AmendImageGroupVolumesCommandParameters amendImageGroupVolumesCommandParameters() {

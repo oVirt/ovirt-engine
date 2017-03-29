@@ -103,6 +103,9 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     @Inject
     private DiskProfileDao diskProfileDao;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Map<Guid, List<DiskImage>> storageToDisksMap;
     private Map<Guid, StorageDomain> destStorages = new HashMap<>();
@@ -517,7 +520,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
                     diskInfoDestinationMap.put(image.getId(), image);
                 }
             } else {
-                ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
+                imagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
                         diskInfoDestinationMap,
                         destStorages);
             }
@@ -526,7 +529,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         }
 
         storageToDisksMap =
-                ImagesHandler.buildStorageToDiskMap(getVmTemplate().getDiskTemplateMap().values(),
+                imagesHandler.buildStorageToDiskMap(getVmTemplate().getDiskTemplateMap().values(),
                         diskInfoDestinationMap);
     }
 

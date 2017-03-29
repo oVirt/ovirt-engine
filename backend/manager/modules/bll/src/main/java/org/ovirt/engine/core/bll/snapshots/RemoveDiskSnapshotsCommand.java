@@ -401,7 +401,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 Snapshot snapshot = snapshotDao.get(cinderDisks.get(0).getSnapshotId());
                 lockVmSnapshotsWithWait(getVm());
                 for (CinderDisk cinderDisk : cinderDisks) {
-                    snapshotWithoutImage = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
+                    snapshotWithoutImage = imagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
                             snapshot, cinderDisk.getImageId(), ovfManager);
                 }
                 snapshotDao.update(snapshotWithoutImage);
@@ -510,7 +510,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         // Worst-case scenario when merging a snapshot in terms of space, is the outcome volume, along with the not-yet-deleted volumes.
         // The following implementation does just that. In this case only snapshots are passed to the validation
         // (as opposed to the whole chain).
-        List<DiskImage> disksList = ImagesHandler.getSnapshotsDummiesForStorageAllocations(getImages());
+        List<DiskImage> disksList = imagesHandler.getSnapshotsDummiesForStorageAllocations(getImages());
         return validate(getStorageDomainValidator().hasSpaceForClonedDisks(disksList));
     }
 

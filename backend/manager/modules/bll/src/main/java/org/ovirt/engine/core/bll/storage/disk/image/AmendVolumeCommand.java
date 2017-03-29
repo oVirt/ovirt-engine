@@ -61,7 +61,7 @@ public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
     @Override
     protected void executeCommand() {
         VdsmImageLocationInfo info = (VdsmImageLocationInfo) getParameters().getVolInfo();
-        DiskImage image = ImagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
+        DiskImage image = imagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
                 info.getStorageDomainId(), info.getImageGroupId(), info.getImageId());
         info.setGeneration(image.getImage().getGeneration());
         persistCommandIfNeeded();

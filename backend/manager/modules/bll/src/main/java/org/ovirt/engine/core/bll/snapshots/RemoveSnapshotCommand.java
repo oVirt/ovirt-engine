@@ -307,7 +307,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 }
 
                 if (imagesParams.getTaskGroupSuccess()) {
-                    snapshot = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
+                    snapshot = imagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
                             snapshot, imagesParams.getImageId(), ovfManager);
                 } else {
                     log.error("Could not delete image '{}' from snapshot '{}'",

@@ -269,7 +269,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             if (vmSnapshotId != null && !Guid.Empty.equals(vmSnapshotId)) {
                 Snapshot snapshot = snapshotDao.get(vmSnapshotId);
                 Snapshot updated =
-                        ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
+                        imagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snapshot,
                                 snapshotDisk.getImageId(), ovfManager);
                 if (updated != null) {
                     result.add(updated);
@@ -318,7 +318,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         if (getParameters().isShouldLockImage()) {
             // the image status should be set to ILLEGAL, so that in case compensation runs the image status will
             // be revert to be ILLEGAL, as we can't tell whether the task started on vdsm side or not.
-            ImagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(getRelevantDiskImage().getId(),
+            imagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(getRelevantDiskImage().getId(),
                     ImageStatus.LOCKED,
                     ImageStatus.ILLEGAL,
                     getCompensationContext());

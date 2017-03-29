@@ -80,6 +80,9 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     @Inject
     private DiskVmElementDao diskVmElementDao;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
     private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
     private Set<Guid> movedVmDiskIds;
@@ -128,7 +131,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     @Override
     protected void executeCommand() {
-        ImagesHandler.updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(getMovedDiskIds(),
+        imagesHandler.updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(getMovedDiskIds(),
                 ImageStatus.LOCKED,
                 ImageStatus.OK,
                 getCompensationContext());
@@ -490,7 +493,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     @Override
     public void endWithFailure() {
         if (getParameters().getStage() == LiveMigrateStage.CREATE_SNAPSHOT) {
-            ImagesHandler.updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(
+            imagesHandler.updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(
                     getMovedDiskIds(),
                     ImageStatus.OK,
                     ImageStatus.OK,

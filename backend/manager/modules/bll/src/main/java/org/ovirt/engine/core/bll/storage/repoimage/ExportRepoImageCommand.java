@@ -61,6 +61,9 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     private OpenStackImageProviderProxy providerProxy;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     public ExportRepoImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         getParameters().setCommandType(getActionType());
@@ -99,12 +102,12 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     protected void acquireImageDbLock() {
         getDiskImage().setImageStatus(ImageStatus.LOCKED);
-        ImagesHandler.updateImageStatus(getDiskImage().getImageId(), getDiskImage().getImageStatus());
+        imagesHandler.updateImageStatus(getDiskImage().getImageId(), getDiskImage().getImageStatus());
     }
 
     protected void releaseImageDbLock() {
         getDiskImage().setImageStatus(ImageStatus.OK);
-        ImagesHandler.updateImageStatus(getDiskImage().getImageId(), getDiskImage().getImageStatus());
+        imagesHandler.updateImageStatus(getDiskImage().getImageId(), getDiskImage().getImageStatus());
     }
 
     @Override

@@ -54,6 +54,9 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
 
     private DiskImage diskImage;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     public AmendImageGroupVolumesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -168,7 +171,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
 
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntityStatus(diskImage.getImage());
-            ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
+            imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
             getCompensationContext().stateChanged();
             return null;
         });
@@ -176,7 +179,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
 
     private void unlockImageInDb() {
         DiskImage diskImage = getDiskImage();
-        ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
+        imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
     }
 
     @Override

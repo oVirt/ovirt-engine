@@ -482,7 +482,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         int count = 1;
         for (DiskImage image : getImages()) {
             image.setActive(true);
-            ImageStorageDomainMap map = ImagesHandler.saveImage(image);
+            ImageStorageDomainMap map = imagesHandler.saveImage(image);
             getCompensationContext().snapshotNewEntity(image.getImage());
             getCompensationContext().snapshotNewEntity(map);
             if (!baseDiskDao.exists(image.getId())) {
@@ -680,7 +680,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
         if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
             QemuImageInfo qemuImageInfo =
-                    ImagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
+                    imagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
                             diskImage.getStorageIds().get(0),
                             diskImage.getId(),
                             diskImage.getImageId(),

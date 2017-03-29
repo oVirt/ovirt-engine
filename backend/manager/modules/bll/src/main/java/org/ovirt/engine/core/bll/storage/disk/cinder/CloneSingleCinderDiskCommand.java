@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -115,7 +114,7 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
 
     @Override
     protected void lockImage() {
-        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.LOCKED);
+        imagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.LOCKED);
     }
 
     @Override
@@ -125,16 +124,16 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
 
     @Override
     protected void endSuccessfully() {
-        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.OK);
-        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
+        imagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.OK);
+        imagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
         setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
-        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.ILLEGAL);
+        imagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.ILLEGAL);
         removeCinderDisk();
-        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
+        imagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
         setSucceeded(true);
     }
 

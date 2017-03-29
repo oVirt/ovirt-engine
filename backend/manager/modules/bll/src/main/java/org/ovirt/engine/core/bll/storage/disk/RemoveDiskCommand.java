@@ -81,6 +81,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     @Inject
     private SnapshotsValidator snapshotsValidator;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     private Disk disk;
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;
@@ -386,7 +389,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private void removeLunDisk() {
         TransactionSupport.executeInNewTransaction(() -> {
-            ImagesHandler.removeLunDisk((LunDisk) getDisk());
+            imagesHandler.removeLunDisk((LunDisk) getDisk());
             return null;
         });
         setSucceeded(true);

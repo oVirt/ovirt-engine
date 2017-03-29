@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -76,7 +75,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         newCinderVolume.setQuotaId(getParameters().getQuotaId());
 
         // Get the last snapshot to be the parent of the new volume.
-        DiskImage leaf = ImagesHandler.getSnapshotLeaf(getDiskImage().getId());
+        DiskImage leaf = imagesHandler.getSnapshotLeaf(getDiskImage().getId());
         newCinderVolume.setParentId(leaf.getImageId());
     }
 
@@ -173,7 +172,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
 
     @Override
     protected void lockImage() {
-        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.LOCKED);
+        imagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.LOCKED);
     }
 
     private void updateLastModifiedInParent(Guid parentId) {

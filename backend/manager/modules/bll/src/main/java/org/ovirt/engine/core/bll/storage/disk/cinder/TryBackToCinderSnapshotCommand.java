@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
@@ -109,7 +108,7 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
 
     @Override
     protected void lockImage() {
-        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.LOCKED);
+        imagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.LOCKED);
     }
 
     @Override
@@ -119,8 +118,8 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
 
     @Override
     protected void endSuccessfully() {
-        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.OK);
-        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
+        imagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.OK);
+        imagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
         if (!getParameters().isLeaveLocked()) {
             getDestinationDiskImage().setImageStatus(ImageStatus.OK);
             imageDao.update(getDestinationDiskImage().getImage());
@@ -130,8 +129,8 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
 
     @Override
     protected void endWithFailure() {
-        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.ILLEGAL);
-        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
+        imagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.ILLEGAL);
+        imagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
         updateOldImageAsActive(Snapshot.SnapshotType.ACTIVE, true);
 
         // Remove destination, unlock source:

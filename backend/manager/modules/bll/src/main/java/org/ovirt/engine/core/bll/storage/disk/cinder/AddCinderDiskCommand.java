@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.AddDiskCommand;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -122,14 +121,14 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
     @Override
     protected void endSuccessfully() {
         super.endSuccessfully();
-        ImagesHandler.updateImageStatus(getDiskId(), ImageStatus.OK);
+        imagesHandler.updateImageStatus(getDiskId(), ImageStatus.OK);
         auditLogDirector.log(this, getEndSuccessAuditLogTypeValue(true));
     }
 
     @Override
     protected void endWithFailure() {
         super.endWithFailure();
-        ImagesHandler.updateImageStatus(getDiskId(), ImageStatus.ILLEGAL);
+        imagesHandler.updateImageStatus(getDiskId(), ImageStatus.ILLEGAL);
         auditLogDirector.log(this, getEndSuccessAuditLogTypeValue(false));
     }
 

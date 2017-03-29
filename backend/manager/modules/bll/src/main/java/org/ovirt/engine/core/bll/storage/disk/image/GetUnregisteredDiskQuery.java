@@ -35,6 +35,9 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
     @Inject
     private StoragePoolDao storagePoolDao;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     public GetUnregisteredDiskQuery(P parameters, EngineContext context) {
         super(parameters, context);
     }
@@ -117,7 +120,7 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
             StoragePool sp = storagePoolDao.get(storagePoolId);
             QemuImageInfo qemuImageInfo = null;
             if (sp != null && FeatureSupported.qcowCompatSupported(sp.getCompatibilityVersion())) {
-                qemuImageInfo = ImagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
+                qemuImageInfo = imagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
                         storageDomainId,
                         diskId,
                         volumeId,

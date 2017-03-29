@@ -12,24 +12,25 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /** A test case for {@link ImagesHandler} */
 @RunWith(MockitoJUnitRunner.class)
-public class ImagesHandlerTest extends DbDependentTestBase {
+public class ImagesHandlerTest {
 
     @Mock
     private StorageDomainDao storageDomainDaoMock;
 
+    @InjectMocks
+    private ImagesHandler imagesHandler = new ImagesHandler();
 
     /** The prefix to use for all tests */
     private static final String prefix = "PREFIX";
@@ -44,7 +45,6 @@ public class ImagesHandlerTest extends DbDependentTestBase {
         disk1 = new DiskImage();
         disk2 = new DiskImage();
         disk3 = new DiskImage();
-        when(DbFacade.getInstance().getStorageDomainDao()).thenReturn(storageDomainDaoMock);
     }
 
     @Test
@@ -145,6 +145,6 @@ public class ImagesHandlerTest extends DbDependentTestBase {
 
         assertEquals("Total Initial Size should be 0",
                 Long.valueOf(0L),
-                ImagesHandler.determineTotalImageInitialSize(disk, VolumeFormat.COW, srcDomainGuid, dstDomainGuid));
+                imagesHandler.determineTotalImageInitialSize(disk, VolumeFormat.COW, srcDomainGuid, dstDomainGuid));
     }
 }
