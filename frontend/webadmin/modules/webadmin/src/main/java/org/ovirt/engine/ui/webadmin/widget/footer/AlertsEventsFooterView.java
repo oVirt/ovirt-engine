@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.common.widget.PatternflyIconType;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.cell.AbstractImageButtonCell;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractIconButtonCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
@@ -617,10 +617,10 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     }
 
     class DismissAuditLogImageButtonCell<T extends ModelProvider<U>, U extends ListModel<AuditLog> & HasEntity>
-            extends AbstractImageButtonCell<AuditLog> {
+            extends AbstractIconButtonCell<AuditLog> {
 
         public DismissAuditLogImageButtonCell(T modelProvider) {
-            super(PatternflyIconType.PF_CLOSE, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+            super(PatternflyIconType.PF_CLOSE);
         }
 
         @Override

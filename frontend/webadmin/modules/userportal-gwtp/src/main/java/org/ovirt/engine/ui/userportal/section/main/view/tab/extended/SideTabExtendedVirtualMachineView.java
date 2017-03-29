@@ -1,17 +1,16 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
-import org.ovirt.engine.ui.common.widget.table.cell.AbstractImageButtonCell;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractIconButtonCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
@@ -28,16 +27,12 @@ import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.AbstractConsoleButtonCell;
-import org.ovirt.engine.ui.userportal.widget.extended.vm.BorderedCompositeCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleButtonCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleEditButtonCell;
 import org.ovirt.engine.ui.userportal.widget.table.UserPortalSimpleActionTable;
-import org.ovirt.engine.ui.userportal.widget.table.cell.VmButtonsImageButtonCell;
 import org.ovirt.engine.ui.userportal.widget.table.column.AbstractUserportalMaskedDataurlImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
 
-import com.google.gwt.cell.client.CompositeCell;
-import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -45,7 +40,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.inject.Inject;
 
@@ -148,13 +142,6 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         };
         getTable().addColumn(nameAndDescriptionColumn, constants.empty(), "400px"); //$NON-NLS-1$
 
-        getTable().addColumn(new Column<UserPortalItemModel, UserPortalItemModel>(createActionsCompositeCell(elementIdPrefix)) {
-            @Override
-            public UserPortalItemModel getValue(UserPortalItemModel object) {
-                return object;
-            }
-        }, constants.empty(), "154px"); //$NON-NLS-1$
-
         ConsoleButtonCell openConsoleCell = new ConsoleButtonCell(
                 resources.sideTabExtendedVmStyle().enabledConsoleButton(),
                 resources.sideTabExtendedVmStyle().disabledConsoleButton(),
@@ -210,7 +197,108 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
         }, constants.empty(), "30px"); //$NON-NLS-1$
 
-        getTable().addColumn(new EmptyColumn<UserPortalItemModel>(), ""); //$NON-NLS-1$
+        // start
+        getTable().addColumn(new AbstractColumn<UserPortalItemModel, UserPortalItemModel>(
+                new AbstractIconButtonCell<UserPortalItemModel>(IconType.PLAY) {
+                    @Override
+                    protected UICommand resolveCommand(UserPortalItemModel value) {
+                        return value.isPool() ? value.getTakeVmCommand() : value.getRunCommand();
+                    }
+
+                }) {
+            @Override
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(value.isPool() ? constants.takeVmLabel() : constants.runVmLabel());
+            }
+
+            @Override
+            public UserPortalItemModel getValue(UserPortalItemModel object) {
+                return object;
+            }
+        }, constants.empty(), "15px"); //$NON-NLS-1$
+
+        // shutdown
+        getTable().addColumn(new AbstractColumn<UserPortalItemModel, UserPortalItemModel>(
+                new AbstractIconButtonCell<UserPortalItemModel>(IconType.STOP) {
+                    @Override
+                    protected UICommand resolveCommand(UserPortalItemModel value) {
+                        return value.isPool() ? value.getReturnVmCommand() : value.getShutdownCommand();
+                    }
+
+                }) {
+            @Override
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(value.isPool() ? constants.returnVmLabel() : constants.shutDownVm());
+            }
+
+            @Override
+            public UserPortalItemModel getValue(UserPortalItemModel object) {
+                return object;
+            }
+        }, constants.empty(), "15px"); //$NON-NLS-1$
+
+        // suspend
+        getTable().addColumn(new AbstractColumn<UserPortalItemModel, UserPortalItemModel>(
+                new AbstractIconButtonCell<UserPortalItemModel>(IconType.PAUSE) {
+                    @Override
+                    protected UICommand resolveCommand(UserPortalItemModel value) {
+                        return value.getPauseCommand();
+                    }
+
+                }) {
+            @Override
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(constants.suspendVmLabel());
+            }
+
+            @Override
+            public UserPortalItemModel getValue(UserPortalItemModel object) {
+                return object;
+            }
+        }, constants.empty(), "15px"); //$NON-NLS-1$
+
+        // poweroff
+        getTable().addColumn(new AbstractColumn<UserPortalItemModel, UserPortalItemModel>(
+                new AbstractIconButtonCell<UserPortalItemModel>(IconType.POWER_OFF) {
+                    @Override
+                    protected UICommand resolveCommand(UserPortalItemModel value) {
+                        return value.getStopCommand();
+                    }
+
+                }) {
+            @Override
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
+            }
+
+            @Override
+            public UserPortalItemModel getValue(UserPortalItemModel object) {
+                return object;
+            }
+        }, constants.empty(), "15px"); //$NON-NLS-1$
+
+        // reboot
+        getTable().addColumn(new AbstractColumn<UserPortalItemModel, UserPortalItemModel>(
+                // TODO: switch IconType.REFRESH to "pficon-spinner2" when ovirt-js-dependencies is
+                // updated with the latest version of patternfly
+                new AbstractIconButtonCell<UserPortalItemModel>(IconType.REFRESH) {
+                    @Override
+                    protected UICommand resolveCommand(UserPortalItemModel value) {
+                        return value.getRebootCommand();
+                    }
+
+                }) {
+            @Override
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(constants.rebootVm());
+            }
+
+            @Override
+            public UserPortalItemModel getValue(UserPortalItemModel object) {
+                return object;
+            }
+        }, constants.empty(), "20px"); //$NON-NLS-1$
+
 
         getTable().addActionButton(new UserPortalButtonDefinition<UserPortalItemModel>(constants.newVm()) {
             @Override
@@ -297,123 +385,4 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
         });
     }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected CompositeCell<UserPortalItemModel> createActionsCompositeCell(String elementIdPrefix) {
-        AbstractImageButtonCell<UserPortalItemModel> runCell = new VmButtonsImageButtonCell(
-                resources.playIcon(), resources.playDisabledIcon()) {
-            @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(value.isPool() ? constants.takeVmLabel() : constants.runVmLabel());
-            }
-
-            @Override
-            protected UICommand resolveCommand(UserPortalItemModel value) {
-                return value.isPool() ? value.getTakeVmCommand() : value.getRunCommand();
-            }
-        };
-        runCell.setElementIdPrefix(elementIdPrefix);
-        runCell.setColumnId("runButton"); //$NON-NLS-1$
-
-        AbstractImageButtonCell<UserPortalItemModel> shutdownCell = new VmButtonsImageButtonCell(
-                resources.stopIcon(), resources.stopDisabledIcon()) {
-            @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(value.isPool() ? constants.returnVmLabel() : constants.shutDownVm());
-            }
-
-            @Override
-            protected UICommand resolveCommand(UserPortalItemModel value) {
-                return value.isPool() ? value.getReturnVmCommand() : value.getShutdownCommand();
-            }
-        };
-        shutdownCell.setElementIdPrefix(elementIdPrefix);
-        shutdownCell.setColumnId("shutdownButton"); //$NON-NLS-1$
-
-        AbstractImageButtonCell<UserPortalItemModel> suspendCell = new VmButtonsImageButtonCell(
-                resources.suspendIcon(), resources.suspendDisabledIcon()) {
-            @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(constants.suspendVmLabel());
-            }
-
-            @Override
-            protected UICommand resolveCommand(UserPortalItemModel value) {
-                return value.getPauseCommand();
-            }
-        };
-        suspendCell.setElementIdPrefix(elementIdPrefix);
-        suspendCell.setColumnId("suspendButton"); //$NON-NLS-1$
-
-        AbstractImageButtonCell<UserPortalItemModel> stopCell = new VmButtonsImageButtonCell(
-                resources.powerIcon(), resources.powerDisabledIcon()) {
-            @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
-            }
-
-            @Override
-            protected UICommand resolveCommand(UserPortalItemModel value) {
-                return value.getStopCommand();
-            }
-        };
-        stopCell.setElementIdPrefix(elementIdPrefix);
-        stopCell.setColumnId("stopButton"); //$NON-NLS-1$
-
-        AbstractImageButtonCell<UserPortalItemModel> rebootCell = new VmButtonsImageButtonCell(
-                resources.rebootIcon(), resources.rebootDisabledIcon()) {
-
-            @Override
-            public SafeHtml getTooltip(UserPortalItemModel value) {
-                return SafeHtmlUtils.fromSafeConstant(constants.rebootVm());
-            }
-
-            @Override
-            protected UICommand resolveCommand(UserPortalItemModel value) {
-                return value.getRebootCommand();
-            }
-        };
-        rebootCell.setElementIdPrefix(elementIdPrefix);
-        rebootCell.setColumnId("rebootColumn"); //$NON-NLS-1$
-
-        List<HasCell<UserPortalItemModel, ?>> list = new ArrayList<>();
-
-        list.add(new AbstractColumn(runCell) {
-            @Override
-            public Object getValue(Object object) {
-                return object;
-            }
-        });
-
-        list.add(new AbstractColumn(shutdownCell) {
-            @Override
-            public Object getValue(Object object) {
-                return object;
-            }
-        });
-
-        list.add(new AbstractColumn(suspendCell) {
-            @Override
-            public Object getValue(Object object) {
-                return object;
-            }
-        });
-
-        list.add(new AbstractColumn(stopCell) {
-            @Override
-            public Object getValue(Object object) {
-                return object;
-            }
-        });
-
-        list.add(new AbstractColumn(rebootCell) {
-            @Override
-            public Object getValue(Object object) {
-                return object;
-            }
-        });
-
-        return new BorderedCompositeCell<>(list);
-    }
-
 }
