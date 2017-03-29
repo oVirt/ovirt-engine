@@ -4,17 +4,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public class VdsStaticDaoTest extends BaseDaoTestCase {
+    @Inject
+    private InterfaceDao interfaceDao;
+
     private VdsStaticDao dao;
     private VdsDynamicDao dynamicDao;
     private VdsStatisticsDao statisticsDao;
@@ -117,4 +125,52 @@ public class VdsStaticDaoTest extends BaseDaoTestCase {
         assertNull(resultStatistics);
     }
 
+    @Test
+    public void testIfExistsHostThatMissesNetworkInCluster() {
+        final String networkName = "networkName";
+        final VDSStatus initiallyNonExistingHostStatus = VDSStatus.Initializing;
+        final boolean resultBeforeStatusUpdate = dao.checkIfExistsHostThatMissesNetworkInCluster(
+                existingVds.getClusterId(),
+                networkName,
+                initiallyNonExistingHostStatus);
+        assertFalse(resultBeforeStatusUpdate);
+
+        dynamicDao.updateStatus(existingVds.getId(), initiallyNonExistingHostStatus);
+
+        final boolean resultBeforeAddingNic = dao.checkIfExistsHostThatMissesNetworkInCluster(
+                existingVds.getClusterId(),
+                networkName,
+                initiallyNonExistingHostStatus);
+
+        assertTrue(resultBeforeAddingNic);
+
+        final VdsNetworkInterface nic = createNic(existingVds.getId(), "nic1", networkName);
+        interfaceDao.saveInterfaceForVds(nic);
+
+        final boolean resultAfterAddingNic = dao.checkIfExistsHostThatMissesNetworkInCluster(
+                existingVds.getClusterId(),
+                networkName,
+                initiallyNonExistingHostStatus);
+
+        assertFalse(resultAfterAddingNic);
+
+        nic.setNetworkName("not" + networkName);
+        interfaceDao.updateInterfaceForVds(nic);
+
+        final boolean resultAfterChangingNetwork = dao.checkIfExistsHostThatMissesNetworkInCluster(
+                existingVds.getClusterId(),
+                networkName,
+                initiallyNonExistingHostStatus);
+
+        assertTrue(resultAfterChangingNetwork);
+    }
+
+    private VdsNetworkInterface createNic(Guid hostId, String nicName, String networkName) {
+        final VdsNetworkInterface result = new VdsNetworkInterface();
+        result.setId(Guid.newGuid());
+        result.setName(nicName);
+        result.setVdsId(hostId);
+        result.setNetworkName(networkName);
+        return result;
+    }
 }
