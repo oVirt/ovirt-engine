@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -32,13 +33,17 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class SparsifyImageCommand<T extends StorageJobCommandParameters> extends StorageJobCommand<T> {
 
-    private List<Pair<VM, VmDevice>> vmsForDisk = new ArrayList<>();
+    private List<Pair<VM, VmDevice>> vmsForDisk;
     private DiskImage diskImage;
+
+    @Inject
+    private VmDao vmDao;
 
     public SparsifyImageCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -53,6 +58,13 @@ public class SparsifyImageCommand<T extends StorageJobCommandParameters> extends
             diskImage = diskImageDao.get(getParameters().getImageId());
         }
         return diskImage;
+    }
+
+    private List<Pair<VM, VmDevice>> getVmsForDisk() {
+        if (vmsForDisk == null && getDiskImage() != null) {
+            vmsForDisk = vmDao.getVmsWithPlugInfo(getDiskImage().getId());
+        }
+        return vmsForDisk;
     }
 
     @Override
@@ -75,7 +87,7 @@ public class SparsifyImageCommand<T extends StorageJobCommandParameters> extends
     protected boolean validate() {
         DiskValidator diskValidator = new DiskValidator(getDiskImage());
         if (!validate(diskValidator.isDiskExists()) ||
-                !validate(diskValidator.isDiskPluggedToVmsThatAreNotDown(false, vmsForDisk)) ||
+                !validate(diskValidator.isDiskPluggedToVmsThatAreNotDown(false, getVmsForDisk())) ||
                 !validate(diskValidator.isSparsifySupported())) {
             return false;
         }
@@ -184,8 +196,8 @@ public class SparsifyImageCommand<T extends StorageJobCommandParameters> extends
     private Map<String, Pair<String, String>> getSharedLocksForVmDisk() {
         Map<String, Pair<String, String>> sharedLocks = new HashMap<>();
 
-        if (vmsForDisk != null) {
-            for (Pair<VM, VmDevice> vmForDisk : vmsForDisk) {
+        if (getVmsForDisk() != null) {
+            for (Pair<VM, VmDevice> vmForDisk : getVmsForDisk()) {
                 sharedLocks.put(vmForDisk.getFirst().getId().toString(),
                         LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED));
             }
