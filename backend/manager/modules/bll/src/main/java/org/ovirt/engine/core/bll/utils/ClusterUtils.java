@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll.utils;
 
-import java.util.List;
-
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,10 +14,6 @@ public class ClusterUtils {
 
     public static ClusterUtils getInstance() {
         return instance;
-    }
-
-     public List<VDS> getAllServers(Guid clusterId) {
-        return getVdsDao().getAllForCluster(clusterId);
     }
 
     public boolean hasMultipleServers(Guid clusterId) {
