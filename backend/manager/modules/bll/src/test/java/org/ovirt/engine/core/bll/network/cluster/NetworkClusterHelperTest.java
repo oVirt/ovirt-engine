@@ -2,19 +2,15 @@ package org.ovirt.engine.core.bll.network.cluster;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.Before;
@@ -23,16 +19,14 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.network.host.HostNicsUtil;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
@@ -52,11 +46,11 @@ public class NetworkClusterHelperTest {
     @Mock
     private NetworkAttachmentDao networkAttachmentDao;
     @Mock
-    private VdsDao vdsDao;
+    private VdsStaticDao vdsStaticDao;
+    @Mock
+    private VdsDynamicDao vdsDynamicDao;
     @Mock
     private ManagementNetworkUtil managementNetworkUtil;
-    @Mock
-    private HostNicsUtil hostNicsUtil;
 
     @InjectMocks
     private NetworkClusterHelper underTest;
@@ -75,6 +69,7 @@ public class NetworkClusterHelperTest {
         when(managementNetworkUtil.getManagementNetwork(CLUSTER_ID)).thenReturn(managementNetwork);
         when(networkClusterDao.get(new NetworkClusterId(CLUSTER_ID, MANAGEMENT_NETWORK_ID)))
                 .thenReturn(managementNetworkCluster);
+        when(vdsDynamicDao.checkIfExistsHostWithStatusInCluster(CLUSTER_ID, VDSStatus.Up)).thenReturn(true);
     }
 
     @Test
@@ -105,7 +100,10 @@ public class NetworkClusterHelperTest {
     public void testSetStatusForRequiredNetworkAbsentOnHost() {
         networkCluster.setStatus(NetworkStatus.OPERATIONAL);
 
-        testSetStatusForRequiredNetwork(createNetwork(NETWORK_ID1, NETWORK_NAME1), NETWORK_NAME2);
+        when(vdsStaticDao.checkIfExistsHostThatMissesNetworkInCluster(CLUSTER_ID, NETWORK_NAME1, VDSStatus.Up))
+                .thenReturn(true);
+
+        underTest.setStatus(CLUSTER_ID, singletonList(createNetwork(NETWORK_ID1, NETWORK_NAME1)));
 
         verify(networkClusterDao).updateStatus(same(networkCluster));
         assertThat(networkCluster.getStatus(), is(NetworkStatus.NON_OPERATIONAL));
@@ -118,7 +116,10 @@ public class NetworkClusterHelperTest {
         final List<Network> networks = asList(
                 createNetwork(NETWORK_ID1, NETWORK_NAME1),
                 createNetwork(NETWORK_ID2, NETWORK_NAME2));
-        testSetStatusForRequiredNetwork(networks, NETWORK_NAME2);
+        when(vdsStaticDao.checkIfExistsHostThatMissesNetworkInCluster(CLUSTER_ID, NETWORK_NAME1, VDSStatus.Up))
+                .thenReturn(true);
+
+        underTest.setStatus(CLUSTER_ID, networks);
 
         verify(networkClusterDao).updateStatus(same(networkCluster));
         assertThat(networkCluster.getStatus(), is(NetworkStatus.NON_OPERATIONAL));
@@ -128,8 +129,9 @@ public class NetworkClusterHelperTest {
     public void testSetStatusForRequiredNetworkPresentOnHost() {
         networkCluster.setStatus(NetworkStatus.OPERATIONAL);
 
-        testSetStatusForRequiredNetwork(createNetwork(NETWORK_ID1, NETWORK_NAME1), NETWORK_NAME1);
+        underTest.setStatus(CLUSTER_ID, singletonList(createNetwork(NETWORK_ID1, NETWORK_NAME1)));
 
+        verify(vdsStaticDao).checkIfExistsHostThatMissesNetworkInCluster(CLUSTER_ID, NETWORK_NAME1, VDSStatus.Up);
         verify(networkClusterDao, never()).updateStatus(same(networkCluster));
         assertThat(networkCluster.getStatus(), is(NetworkStatus.OPERATIONAL));
     }
@@ -155,32 +157,11 @@ public class NetworkClusterHelperTest {
         verify(networkClusterDao, never()).updateStatus(same(networkCluster));
     }
 
-    private void testSetStatusForRequiredNetwork(Network network, String networkNameOnNic) {
-        testSetStatusForRequiredNetwork(singletonList(network), networkNameOnNic);
-    }
-
-    private void testSetStatusForRequiredNetwork(Collection<Network> networks, String networkNameOnNic) {
-        final List<VDS> hosts = createHosts(false, true);
-        final VDS activeHost = hosts.get(1);
-        when(vdsDao.getAllForCluster(CLUSTER_ID)).thenReturn(hosts);
-        when(hostNicsUtil.findHostNics(activeHost.getStaticData())).thenReturn(singletonList(createNic(networkNameOnNic)));
-
-        underTest.setStatus(CLUSTER_ID, networks);
-
-        verify(vdsDao, atMost(1)).getAllForNetwork(CLUSTER_ID);
-    }
-
     private void testRemoveNetworkAndReassignRoles() {
         underTest.removeNetworkAndReassignRoles(networkCluster);
 
         verify(networkClusterDao).remove(CLUSTER_ID, NETWORK_ID1);
         verify(networkAttachmentDao).removeByNetworkId(NETWORK_ID1);
-    }
-
-    private VdsNetworkInterface createNic(String networkName) {
-        final VdsNetworkInterface result = new VdsNetworkInterface();
-        result.setNetworkName(networkName);
-        return result;
     }
 
     private NetworkCluster createNetworkCluster(Guid clusterId, Guid networkId) {
@@ -194,17 +175,5 @@ public class NetworkClusterHelperTest {
         result.setId(networkId);
         result.setName(networkName);
         return result;
-    }
-
-    private List<VDS> createHosts(Boolean... isHostUp) {
-        return Arrays.stream(isHostUp)
-                .map(isUp -> isUp ? VDSStatus.Up : VDSStatus.Down)
-                .map(hostStatus -> {
-                    VDS host = new VDS();
-                    host.setId(Guid.newGuid());
-                    host.setStatus(hostStatus);
-                    return host;
-                })
-                .collect(toList());
     }
 }

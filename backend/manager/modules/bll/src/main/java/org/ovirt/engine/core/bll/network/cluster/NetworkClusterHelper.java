@@ -2,23 +2,18 @@ package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.network.host.HostNicsUtil;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
@@ -29,21 +24,21 @@ public class NetworkClusterHelper {
 
     private final NetworkClusterDao networkClusterDao;
     private final NetworkAttachmentDao networkAttachmentDao;
-    private final VdsDao vdsDao;
+    private final VdsStaticDao vdsStaticDao;
+    private final VdsDynamicDao vdsDynamicDao;
     private final ManagementNetworkUtil managementNetworkUtil;
-    private final HostNicsUtil hostNicsUtil;
 
     @Inject
     public NetworkClusterHelper(NetworkClusterDao networkClusterDao,
             NetworkAttachmentDao networkAttachmentDao,
-            VdsDao vdsDao,
-            ManagementNetworkUtil managementNetworkUtil,
-            HostNicsUtil hostNicsUtil) {
+            VdsStaticDao vdsStaticDao,
+            VdsDynamicDao vdsDynamicDao,
+            ManagementNetworkUtil managementNetworkUtil) {
         this.networkClusterDao = Objects.requireNonNull(networkClusterDao);
         this.networkAttachmentDao = Objects.requireNonNull(networkAttachmentDao);
-        this.vdsDao = Objects.requireNonNull(vdsDao);
+        this.vdsStaticDao = Objects.requireNonNull(vdsStaticDao);
+        this.vdsDynamicDao = Objects.requireNonNull(vdsDynamicDao);
         this.managementNetworkUtil = Objects.requireNonNull(managementNetworkUtil);
-        this.hostNicsUtil = Objects.requireNonNull(hostNicsUtil);
     }
 
     private NetworkCluster getManagementNetworkCluster(NetworkCluster networkCluster) {
@@ -90,7 +85,7 @@ public class NetworkClusterHelper {
     }
 
     public void setStatus(Guid clusterId, final Collection<Network> networks) {
-        RequiredNetworkClusterStatusUpdater requiredNetworkClusterStatusUpdater =
+        final RequiredNetworkClusterStatusUpdater requiredNetworkClusterStatusUpdater =
                 new RequiredNetworkClusterStatusUpdater(clusterId);
         for (Network network : networks) {
             NetworkCluster networkCluster = networkClusterDao.get(new NetworkClusterId(clusterId, network.getId()));
@@ -103,23 +98,6 @@ public class NetworkClusterHelper {
                 }
             }
         }
-    }
-
-    /**
-     * @param hosts list of hosts to check
-     * @param networkName name of network
-     * @return true if there's at least one host, which does not have given network attached to one of its nics.
-     */
-    private boolean atLeastOneHostDoesNotHaveNetworkAttached(List<VDS> hosts, String networkName) {
-        for (VDS host : hosts) {
-            List<VdsNetworkInterface> hostInterfaces = hostNicsUtil.findHostNics(host.getStaticData());
-            boolean hostHasInterfaceWithGivenNetwork =
-                    hostInterfaces.stream().anyMatch(e -> StringUtils.equals(e.getNetworkName(), networkName));
-            if (!hostHasInterfaceWithGivenNetwork) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -139,7 +117,7 @@ public class NetworkClusterHelper {
     private class RequiredNetworkClusterStatusUpdater {
 
         private final Guid clusterId;
-        private List<VDS> activeHostsInCluster;
+        private Boolean atLeastOneHostIsUp;
 
         private RequiredNetworkClusterStatusUpdater(Guid clusterId) {
             this.clusterId = clusterId;
@@ -149,12 +127,11 @@ public class NetworkClusterHelper {
          * Updates status of the required network in the cluster. See {@link #setStatus(Guid, Network)} for details.
          */
         public void update(NetworkCluster networkCluster, String networkName) {
-            List<VDS> hostsWithUpStatusInCluster = findActiveHostsInCluster(clusterId);
-            boolean atLeastOneHostIsUp = !hostsWithUpStatusInCluster.isEmpty();
-
-            if (atLeastOneHostIsUp) {
-                NetworkStatus networkStatusToSet =
-                        atLeastOneHostDoesNotHaveNetworkAttached(hostsWithUpStatusInCluster, networkName)
+            if (isAtLeastOneHostIsUp()) {
+                final NetworkStatus networkStatusToSet = vdsStaticDao.checkIfExistsHostThatMissesNetworkInCluster(
+                        clusterId,
+                        networkName,
+                        VDSStatus.Up)
                                 ? NetworkStatus.NON_OPERATIONAL
                                 : NetworkStatus.OPERATIONAL;
 
@@ -162,20 +139,11 @@ public class NetworkClusterHelper {
             }
         }
 
-        /**
-         * Finds active hosts in the give cluster.
-         *
-         * @param clusterId
-         *            cluster id
-         * @return all hosts which has status {@link VDSStatus#Up}.
-         */
-        private List<VDS> findActiveHostsInCluster(Guid clusterId) {
-            if (activeHostsInCluster == null) {
-                final List<VDS> hostsInCluster = vdsDao.getAllForCluster(clusterId);
-                activeHostsInCluster =
-                        hostsInCluster.stream().filter(e -> e.getStatus() == VDSStatus.Up).collect(Collectors.toList());
+        private boolean isAtLeastOneHostIsUp() {
+            if (atLeastOneHostIsUp == null) {
+                atLeastOneHostIsUp = vdsDynamicDao.checkIfExistsHostWithStatusInCluster(clusterId, VDSStatus.Up);
             }
-            return activeHostsInCluster;
+            return atLeastOneHostIsUp;
         }
     }
 }
