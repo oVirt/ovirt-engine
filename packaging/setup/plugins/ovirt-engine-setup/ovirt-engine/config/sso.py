@@ -180,9 +180,12 @@ class Plugin(plugin.PluginBase):
                 email='',
                 trusted=True,
                 notification_callback=(
-                    'https://localhost:%s/ovirt-engine/'
+                    'https://%s:%s/ovirt-engine/'
                     'services/sso-callback'
-                ) % engine_port,
+                ) % (
+                    self.environment[osetupcons.ConfigEnv.FQDN],
+                    engine_port,
+                ),
                 notification_callback_host_protocol='TLS',
                 notification_callback_host_verification=False,
                 notification_callback_chain_validation=True,
