@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -57,4 +58,15 @@ public interface VdsStaticDao extends GenericDao<VdsStatic, Guid> {
      * race overwrites.
      */
     void updateLastStoredKernelCmdline(Guid vdsStaticId, String lastStoredKernelCmdline);
- }
+
+    /**
+     * Checks if exists a host with the given status in the cluster that do not have the network attached to its NIC's.
+     *
+     * @param clusterId cluster id
+     * @param networkName network name
+     * @param hostStatus host status
+     *
+     * @return <code>true</code> if such host exists otherwise <code>false</code>.
+     */
+    boolean checkIfExistsHostThatMissesNetworkInCluster(Guid clusterId, String networkName, VDSStatus hostStatus);
+}

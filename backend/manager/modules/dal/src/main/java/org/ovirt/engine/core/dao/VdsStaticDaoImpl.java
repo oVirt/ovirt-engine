@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
@@ -170,6 +171,18 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
                 getCustomMapSqlParameterSource()
                         .addValue("vds_id", vdsStaticId)
                         .addValue("last_stored_kernel_cmdline", lastStoredKernelCmdline));
+    }
+
+    @Override
+    public boolean checkIfExistsHostThatMissesNetworkInCluster(Guid clusterId, String networkName, VDSStatus hostStatus) {
+        final MapSqlParameterSource customMapSqlParameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId)
+                .addValue("network_name", networkName)
+                .addValue("host_status", hostStatus);
+        return getCallsHandler().executeRead(
+                "CheckIfExistsHostThatMissesNetworkInCluster",
+                SingleColumnRowMapper.newInstance(Boolean.class),
+                customMapSqlParameterSource);
     }
 
     /**
