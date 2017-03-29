@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -167,7 +166,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     private boolean hasUpServer(Cluster cluster) {
-        if (getClusterUtils().hasMultipleServers(cluster.getId())
+        if (clusterUtils.hasMultipleServers(cluster.getId())
                 && glusterUtil.getUpServer(cluster.getId()) == null) {
             addNoUpServerMessage(cluster);
             return false;
@@ -181,7 +180,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     private boolean hasUpServerInTarget(Cluster cluster) {
-        if (getClusterUtils().hasServers(cluster.getId())
+        if (clusterUtils.hasServers(cluster.getId())
                 && glusterUtil.getUpServer(cluster.getId()) == null) {
             addNoUpServerMessage(cluster);
             return false;
@@ -225,7 +224,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
-        if (getSourceCluster().supportsGlusterService() && getClusterUtils().hasServers(getSourceCluster().getId())) {
+        if (getSourceCluster().supportsGlusterService() && clusterUtils.hasServers(getSourceCluster().getId())) {
             if (!glusterHostRemove(getSourceCluster().getId())) {
                 setSucceeded(false);
                 return;
@@ -233,7 +232,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         if (getTargetCluster().supportsGlusterService()
-                && getClusterUtils().hasMultipleServers(getTargetCluster().getId())) {
+                && clusterUtils.hasMultipleServers(getTargetCluster().getId())) {
             if (!glusterHostAdd(getTargetCluster().getId())) {
                 setSucceeded(false);
                 return;
@@ -369,10 +368,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         getReturnValue().getFault().setError(errorCode);
         getReturnValue().getFault().setMessage(errorMsg);
         getReturnValue().getExecuteFailedMessages().add(errorMsg);
-    }
-
-    private ClusterUtils getClusterUtils() {
-        return ClusterUtils.getInstance();
     }
 
     private Cluster getSourceCluster() {

@@ -73,6 +73,7 @@ public class VmDeviceUtils {
     private final VmHandler vmHandler;
     private final MacPoolPerCluster macPoolPerCluster;
     private final VideoDeviceSettings videoDeviceSettings;
+    private final ClusterUtils clusterUtils;
 
     private OsRepository osRepository;
 
@@ -83,7 +84,8 @@ public class VmDeviceUtils {
             VmTemplateDao vmTemplateDao,
             VmHandler vmHandler,
             MacPoolPerCluster macPoolPerCluster,
-            VideoDeviceSettings videoDeviceSettings) {
+            VideoDeviceSettings videoDeviceSettings,
+            ClusterUtils clusterUtils) {
         this.vmDao = vmDao;
         this.vmDeviceDao = vmDeviceDao;
         this.clusterDao = clusterDao;
@@ -91,6 +93,7 @@ public class VmDeviceUtils {
         this.vmHandler = vmHandler;
         this.macPoolPerCluster = macPoolPerCluster;
         this.videoDeviceSettings = videoDeviceSettings;
+        this.clusterUtils = clusterUtils;
         init();
     }
 
@@ -478,7 +481,7 @@ public class VmDeviceUtils {
      * Add new sound device to the VM.
      */
     public VmDevice addSoundDevice(VmBase vmBase) {
-        return addSoundDevice(vmBase.getId(), vmBase.getOsId(), ClusterUtils.getCompatibilityVersion(vmBase));
+        return addSoundDevice(vmBase.getId(), vmBase.getOsId(), clusterUtils.getCompatibilityVersion(vmBase));
     }
 
     /**

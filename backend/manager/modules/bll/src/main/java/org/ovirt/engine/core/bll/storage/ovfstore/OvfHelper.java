@@ -56,6 +56,9 @@ public class OvfHelper {
     @Inject
     private OvfManager ovfManager;
 
+    @Inject
+    private ClusterUtils clusterUtils;
+
     /**
      * parses a given ovf to a vm, intialized with images and interfaces.
      * @return
@@ -130,7 +133,7 @@ public class OvfHelper {
             allVmImages.addAll(images);
         }
 
-        return ovfManager.exportVm(vm, allVmImages, ClusterUtils.getCompatibilityVersion(vm));
+        return ovfManager.exportVm(vm, allVmImages, clusterUtils.getCompatibilityVersion(vm));
     }
 
     private void loadVmData(VM vm) {

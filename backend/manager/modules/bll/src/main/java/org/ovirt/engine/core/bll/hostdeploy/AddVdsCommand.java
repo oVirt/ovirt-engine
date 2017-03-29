@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostValidator;
@@ -342,7 +341,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     private boolean clusterHasServers() {
-        return getClusterUtils().hasServers(getClusterId());
+        return clusterUtils.hasServers(getClusterId());
     }
 
     private boolean clusterHasNonInitializingServers() {
@@ -356,10 +355,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
         return false;
-    }
-
-    protected ClusterUtils getClusterUtils() {
-        return ClusterUtils.getInstance();
     }
 
     public EngineSSHClient getSSHClient() throws Exception {

@@ -119,6 +119,9 @@ public class SnapshotsManager {
     @Inject
     private ImagesHandler imagesHandler;
 
+    @Inject
+    private ClusterUtils clusterUtils;
+
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
      * The snapshot is created in status {@link SnapshotStatus#OK} by default.
@@ -411,7 +414,7 @@ public class SnapshotsManager {
         for (DiskImage image : disks) {
             image.setStorageIds(null);
         }
-        return ovfManager.exportVm(vm, new ArrayList<>(disks), ClusterUtils.getCompatibilityVersion(vm));
+        return ovfManager.exportVm(vm, new ArrayList<>(disks), clusterUtils.getCompatibilityVersion(vm));
     }
 
     private void populateDisksWithVmData(List<? extends Disk> disks, Guid vmId) {

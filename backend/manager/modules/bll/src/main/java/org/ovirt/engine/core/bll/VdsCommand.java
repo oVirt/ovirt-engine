@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
 import org.ovirt.engine.core.bll.provider.NetworkProviderValidator;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
@@ -63,6 +64,9 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     @Inject
     protected GlusterDBUtils glusterDBUtils;
+
+    @Inject
+    protected ClusterUtils clusterUtils;
 
     /**
      * Constructor for command creation when compensation is applied on startup

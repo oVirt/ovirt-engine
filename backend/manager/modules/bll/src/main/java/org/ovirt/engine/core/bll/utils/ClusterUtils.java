@@ -1,20 +1,23 @@
 package org.ovirt.engine.core.bll.utils;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
+@Singleton
 public class ClusterUtils {
 
-    private static ClusterUtils instance = new ClusterUtils();
+    @Inject
+    private VdsDao vdsDao;
 
-    public static ClusterUtils getInstance() {
-        return instance;
-    }
+    @Inject
+    private ClusterDao clusterDao;
 
     public boolean hasMultipleServers(Guid clusterId) {
         return getServerCount(clusterId) > 1;
@@ -25,25 +28,16 @@ public class ClusterUtils {
     }
 
     public int getServerCount(Guid clusterId) {
-        return getVdsDao().getAllForCluster(clusterId).size();
+        return vdsDao.getAllForCluster(clusterId).size();
     }
 
-    public VdsDao getVdsDao() {
-        return DbFacade.getInstance()
-                .getVdsDao();
-    }
-
-    public static Version getCompatibilityVersion(VM vm) {
+    public Version getCompatibilityVersion(VM vm) {
         return getCompatibilityVersion(vm.getStaticData());
     }
 
-    public static Version getCompatibilityVersion(VmBase vmBase) {
-        return vmBase.getClusterId() != null ?
-                getInstance().getClusterDao().get(vmBase.getClusterId()).getCompatibilityVersion()
+    public Version getCompatibilityVersion(VmBase vmBase) {
+        return vmBase.getClusterId() != null
+                ? clusterDao.get(vmBase.getClusterId()).getCompatibilityVersion()
                 : Version.ALL.get(0);
-    }
-
-    public ClusterDao getClusterDao() {
-        return DbFacade.getInstance().getClusterDao();
     }
 }

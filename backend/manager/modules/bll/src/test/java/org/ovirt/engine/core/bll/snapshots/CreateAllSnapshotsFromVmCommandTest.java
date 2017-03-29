@@ -26,6 +26,7 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VgamemVideoSettings;
 import org.ovirt.engine.core.bll.utils.VideoDeviceSettings;
 import org.ovirt.engine.core.bll.utils.VmOverheadCalculatorImpl;
@@ -75,6 +76,9 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Spy
     private VgamemVideoSettings vgamemVideoSettings;
+
+    @Spy
+    private ClusterUtils clusterUtils;
 
     @Spy
     @InjectMocks

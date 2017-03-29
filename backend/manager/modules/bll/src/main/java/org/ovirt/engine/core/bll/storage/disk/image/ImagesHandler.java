@@ -121,6 +121,9 @@ public class ImagesHandler {
     @Inject
     private StorageHelperDirector storageHelperDirector;
 
+    @Inject
+    private ClusterUtils clusterUtils;
+
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
      * diskInfoDestinationMap by imageId mapping on active storage id where image is located. The second map is
@@ -804,7 +807,7 @@ public class ImagesHandler {
                     snapshotImages.add(newImage);
                 }
 
-                String newOvf = ovfManager.exportVm(vmSnapshot, snapshotImages, ClusterUtils.getCompatibilityVersion(vmSnapshot));
+                String newOvf = ovfManager.exportVm(vmSnapshot, snapshotImages, clusterUtils.getCompatibilityVersion(vmSnapshot));
                 snapshot.setVmConfiguration(newOvf);
             }
         } catch (OvfReaderException e) {

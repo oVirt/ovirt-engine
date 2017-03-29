@@ -88,6 +88,9 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     @Inject
     private OvfManager ovfManager;
 
+    @Inject
+    private ClusterUtils clusterUtils;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -318,7 +321,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             vm.setVmtName(t.getName());
         }
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-        String vmMeta = ovfManager.exportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
+        String vmMeta = ovfManager.exportVm(vm, AllVmImages, clusterUtils.getCompatibilityVersion(vm));
 
         vmsAndMetaDictionary.put(vm.getId(), new KeyValuePairCompat<>(vmMeta, imageGroupIds));
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);

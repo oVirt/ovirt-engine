@@ -65,7 +65,7 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
         entity = getGlusterHook();
         addCustomValue(GlusterConstants.HOOK_NAME, entity.getName());
 
-        if (getAllUpServers().size() < getClusterUtils().getServerCount(getGlusterHook().getClusterId())) {
+        if (getAllUpServers().size() < clusterUtils.getServerCount(getGlusterHook().getClusterId())) {
             errors.add(EngineMessage.CLUSTER_ALL_SERVERS_NOT_UP.toString());
         }
 
