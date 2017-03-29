@@ -1,14 +1,22 @@
 package org.ovirt.engine.core.bll.provider.network.openstack;
 
+import static java.lang.Math.toIntExact;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -30,6 +38,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,14 +84,41 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
         @Override
         protected ClientExecutor createClientExecutor() {
-            int socketTimeOut = Config.<Integer> getValue(ConfigValues.ExternalNetworkProviderTimeout) * 1000;
-            int connectionTimeOut = Config.<Integer> getValue(ConfigValues.ExternalNetworkProviderConnectionTimeout) * 1000;
 
             DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpParams params = httpClient.getParams();
-            HttpConnectionParams.setConnectionTimeout(params, connectionTimeOut);
-            HttpConnectionParams.setSoTimeout(params, socketTimeOut);
+
+            configureTimeouts(httpClient);
+
+            registerExternalProvidersTrustStore(httpClient);
+
             return new ApacheHttpClient4Executor(httpClient);
+        }
+
+        private void configureTimeouts(DefaultHttpClient httpClient) {
+            long socketTimeOut = TimeUnit.SECONDS.toMillis(
+                    Config.<Integer> getValue(ConfigValues.ExternalNetworkProviderTimeout));
+
+            long connectionTimeOut = TimeUnit.SECONDS.toMillis(
+                    Config.<Integer> getValue(ConfigValues.ExternalNetworkProviderConnectionTimeout));
+
+            HttpParams params = httpClient.getParams();
+            HttpConnectionParams.setConnectionTimeout(params, toIntExact(connectionTimeOut));
+            HttpConnectionParams.setSoTimeout(params, toIntExact(socketTimeOut));
+        }
+
+        private void registerExternalProvidersTrustStore(DefaultHttpClient httpClient) {
+            try (FileInputStream inputStream = new FileInputStream(
+                    new File(EngineLocalConfig.getInstance().getExternalProvidersTrustStore().getAbsolutePath()));) {
+                KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                trustStore.load(inputStream,
+                        EngineLocalConfig.getInstance().getExternalProvidersTrustStorePassword().toCharArray());
+                SSLSocketFactory socketFactory = new SSLSocketFactory(trustStore);
+                Scheme scheme = new Scheme("https", 443, socketFactory);
+                httpClient.getConnectionManager().getSchemeRegistry().register(scheme);
+            } catch (Exception ex) {
+                log.warn("Cannot register external providers trust store: {}", ex.getMessage());
+                log.debug("Exception", ex);
+            }
         }
     }
 
