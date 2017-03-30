@@ -382,6 +382,9 @@ class Stages(object):
 
     REMOVE_CUSTOMIZATION_ENGINE = 'osetup.remove.customization.engine'
 
+    OVN_SERVICES_RESTART = 'osetup.ovn.services.restart'
+    OVN_PROVIDER_SERVICE_RESTART = 'osetup.ovn.provider.service.restart'
+
 
 @util.export
 @util.codegen
@@ -857,7 +860,44 @@ class OvnEnv(object):
     ENGINE_MACHINE_OVN_SERVICES = (
         OPENVSWITCH_SERVICE,
         OVN_NORTHD_SERVICE,
-        OVIRT_PROVIDER_OVN_SERVICE,
+    )
+
+
+@util.export
+class OvnFileLocations(object):
+
+    OVIRT_PROVIDER_CONFIG_FILE = (
+        '/etc/ovirt-provider-ovn/ovirt-provider-ovn.conf'
+    )
+
+    OVIRT_PROVIDER_OVN_NDB = 'ovn-ndb'
+    OVIRT_PROVIDER_OVN_SDB = 'ovn-sdb'
+    OVIRT_PROVIDER_OVN_HTTPS = 'ovirt-provider-ovn'
+
+    OVIRT_PROVIDER_OVN_NDB_KEY = os.path.join(
+        FileLocations.OVIRT_ENGINE_PKIKEYSDIR,
+        OVIRT_PROVIDER_OVN_NDB + '.key.nopass'
+    )
+    OVIRT_PROVIDER_OVN_SDB_KEY = os.path.join(
+        FileLocations.OVIRT_ENGINE_PKIKEYSDIR,
+        OVIRT_PROVIDER_OVN_SDB + '.key.nopass'
+    )
+    OVIRT_PROVIDER_OVN_HTTPS_KEY = os.path.join(
+        FileLocations.OVIRT_ENGINE_PKIKEYSDIR,
+        OVIRT_PROVIDER_OVN_HTTPS + '.key.nopass'
+    )
+
+    OVIRT_PROVIDER_OVN_NDB_CERT = os.path.join(
+        FileLocations.OVIRT_ENGINE_PKICERTSDIR,
+        OVIRT_PROVIDER_OVN_NDB + '.cer'
+    )
+    OVIRT_PROVIDER_OVN_SDB_CERT = os.path.join(
+        FileLocations.OVIRT_ENGINE_PKICERTSDIR,
+        OVIRT_PROVIDER_OVN_SDB + '.cer'
+    )
+    OVIRT_PROVIDER_OVN_HTTPS_CERT = os.path.join(
+        FileLocations.OVIRT_ENGINE_PKICERTSDIR,
+        OVIRT_PROVIDER_OVN_HTTPS + '.cer'
     )
 
 
