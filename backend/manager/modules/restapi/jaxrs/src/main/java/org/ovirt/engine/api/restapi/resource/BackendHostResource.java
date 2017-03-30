@@ -699,12 +699,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
-    protected Host deprecatedPopulate(Host model, VDS entity) {
-        parent.addStatistics(model, entity);
-        return model;
-    }
-
-    @Override
     public Response remove() {
         get();
         boolean force = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FORCE, true, false);

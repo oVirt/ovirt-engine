@@ -1,18 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-import java.util.Set;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.Hosts;
-import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostsResource;
-import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
@@ -95,25 +90,6 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     protected Host doPopulate(Host model, VDS entity) {
         Host host = addHostedEngineIfConfigured(model, entity);
         return host;
-    }
-
-    @Override
-    protected Host deprecatedPopulate(Host model, VDS entity) {
-        Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
-        if (details.contains("statistics")) {
-            addStatistics(model, entity);
-        }
-        return model;
-    }
-
-    public void addStatistics(Host model, VDS entity) {
-        model.setStatistics(new Statistics());
-        HostStatisticalQuery query = new HostStatisticalQuery(newModel(model.getId()));
-        List<Statistic> statistics = query.getStatistics(entity);
-        for (Statistic statistic : statistics) {
-            LinkHelper.addLinks(statistic, query.getParentType());
-        }
-        model.getStatistics().getStatistics().addAll(statistics);
     }
 
     private Hosts mapCollection(List<VDS> entities) {

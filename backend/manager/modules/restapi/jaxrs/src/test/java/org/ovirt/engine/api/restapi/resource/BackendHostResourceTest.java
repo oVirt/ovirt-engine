@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -119,25 +118,6 @@ public class BackendHostResourceTest
         setUpGetEntityExpectations(1);
 
         verifyModel(resource.get(), 0);
-    }
-
-
-    @Test
-    public void testGetIncludeStatistics() throws Exception {
-        try {
-            accepts.add("application/xml; detail=statistics");
-            setUriInfo(setUpBasicUriExpectations());
-            VdsStatistics stats = mock(VdsStatistics.class);
-            VDS entity = getEntity(0);
-            setUpStatisticalEntityExpectations(entity, stats);
-            setUpGetEntityExpectations(1, false, entity);
-
-            Host host = resource.get();
-            assertTrue(host.isSetStatistics());
-            verifyModel(host, 0);
-        } finally {
-            accepts.clear();
-        }
     }
 
     @Test

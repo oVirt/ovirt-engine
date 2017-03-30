@@ -5,7 +5,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -59,21 +58,6 @@ public class BackendHostsResourceTest
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
-    }
-
-    @Test
-    public void testListIncludeStatistics() throws Exception {
-        try {
-            accepts.add("application/xml; detail=statistics");
-            UriInfo uriInfo = setUpUriExpectations(null);
-            setUpQueryExpectations("");
-            collection.setUriInfo(uriInfo);
-            List<Host> hosts = getCollection();
-            assertTrue(hosts.get(0).isSetStatistics());
-            verifyCollection(hosts);
-        } finally {
-            accepts.clear();
-        }
     }
 
     @Test

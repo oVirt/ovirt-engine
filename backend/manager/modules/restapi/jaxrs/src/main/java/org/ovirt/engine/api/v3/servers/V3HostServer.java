@@ -35,6 +35,7 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.v3.V3Server;
+import org.ovirt.engine.api.v3.helpers.V3HostHelper;
 import org.ovirt.engine.api.v3.types.V3Action;
 import org.ovirt.engine.api.v3.types.V3Host;
 
@@ -112,7 +113,12 @@ public class V3HostServer extends V3Server<HostResource> {
                 throw adaptException(exception);
             }
         }
-        return adaptGet(getDelegate()::get);
+        V3Host host = adaptGet(getDelegate()::get);
+
+        // In V3 hosts used to have the statistics inline by default:
+        V3HostHelper.addStatistics(host);
+
+        return host;
     }
 
     @POST
