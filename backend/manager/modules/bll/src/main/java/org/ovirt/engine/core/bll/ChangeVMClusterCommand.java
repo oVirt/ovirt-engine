@@ -133,7 +133,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         vm.setClusterId(newClusterId);
 
         // Set cpu profile from the new cluster
-        cpuProfileHelper.assignFirstCpuProfile(vm.getStaticData(), getUserId());
+        cpuProfileHelper.assignFirstCpuProfile(vm.getStaticData(), getUserIdIfExternal().orElse(null));
 
         vmStaticDao.update(vm.getStaticData());
         moveMacsToAnotherMacPoolIfNeeded();
