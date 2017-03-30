@@ -48,6 +48,6 @@ public class ExternalNetworkTokenProvider implements OpenStackTokenProvider {
     }
 
     Keystone createKeystone(String authUrl) {
-        return new Keystone(authUrl);
+        return new Keystone(authUrl, new CustomizedRESTEasyConnector());
     }
 }
