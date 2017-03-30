@@ -190,6 +190,7 @@ class Plugin(plugin.PluginBase):
         pm = self._PM
 
         class MyPMSink(self._MiniPMSinkBase):
+
             def __init__(self, log):
                 super(MyPMSink, self).__init__()
                 self._log = log
@@ -245,18 +246,9 @@ class Plugin(plugin.PluginBase):
                 upgradeAvailable = True
 
                 for p in mpm.queryTransaction():
-                    self.logger.debug('PACKAGE: [%s] %s' % (
-                        p['operation'],
-                        p['display_name']
-                    ))
-                    plist.append(
-                        _(
-                            'PACKAGE: [{operation}] {display_name}'
-                        ).format(
-                            operation=p['operation'],
-                            display_name=p['display_name']
-                        )
-                    )
+                    plist.append((p['display_name'], p['operation']))
+
+                plist = self._arrangedPackageList(plist)
 
                 # Verify all installed packages available in yum
                 for package in mpm.queryTransaction():
@@ -487,5 +479,30 @@ class Plugin(plugin.PluginBase):
             else:
                 self.packager.installUpdate(packages=entry['packages'])
 
+    def _arrangedPackageList(self, plist):
+        verbs = {
+            "update": "is an update",
+            "updated": "will be updated",
+            "obsoleted": "will be removed",
+            "obsoleting": "will be installed",
+            "install": "will be installed"
+        }
+
+        res = []
+
+        for pname in plist:
+            res.append(
+                "[{operation}] {package} {verb}".format(
+                    operation=pname[1],
+                    package=pname[0],
+                    verb=verbs.get(pname[1], '')
+                )
+            )
+
+            self.logger.debug(res[-1])
+
+        res.sort(key=lambda s: s.split()[1])
+
+        return res
 
 # vim: expandtab tabstop=4 shiftwidth=4
