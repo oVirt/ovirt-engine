@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -385,6 +386,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     public void setUserId(final Guid value) {
         userId = value;
+    }
+
+    protected Optional<Guid> getUserIdIfExternal() {
+        return isInternalExecution() ? Optional.empty() : Optional.ofNullable(getUserId());
     }
 
     public String getUserName() {

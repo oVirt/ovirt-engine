@@ -1226,7 +1226,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
             return true;
         }
-        return validate(cpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(), getUserId()));
+        return validate(cpuProfileHelper.setAndValidateCpuProfile(
+                getParameters().getMasterVm(),
+                getUserIdIfExternal().orElse(null)));
     }
 
     private SchedulerUtil getSchedulUtil() {

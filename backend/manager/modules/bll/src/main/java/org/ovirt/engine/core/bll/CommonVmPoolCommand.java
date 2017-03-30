@@ -575,7 +575,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     protected boolean setAndValidateCpuProfile() {
         return validate(cpuProfileHelper.setAndValidateCpuProfile(
                 getParameters().getVmStaticData(),
-                getUserId()));
+                getUserIdIfExternal().orElse(null)));
     }
 
     @Override
