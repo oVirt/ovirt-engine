@@ -383,7 +383,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         endHardware();
     }
 
-    protected void writeManagedDeviceInfo(VmBase vmBase, XmlTextWriter writer, Guid deviceId) {
+    protected void writeManagedDeviceInfo(VmBase vmBase, Guid deviceId) {
         VmDevice vmDevice = vmBase.getManagedDeviceMap().get(deviceId);
         if (deviceId != null && vmDevice != null && vmDevice.getAddress() != null) {
             writeVmDeviceInfo(vmDevice);
@@ -653,7 +653,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeStartElement(RASD_URI, "last_modified_date");
             _writer.writeRaw(OvfParser.localDateToUtcDateString(image.getLastModifiedDate()));
             _writer.writeEndElement();
-            writeManagedDeviceInfo(vmBase, _writer, image.getId());
+            writeManagedDeviceInfo(vmBase, image.getId());
             _writer.writeEndElement(); // item
         }
     }
@@ -723,7 +723,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                         iface.getType()).getSpeed()));
             }
             _writer.writeEndElement();
-            writeManagedDeviceInfo(vmBase, _writer, iface.getId());
+            writeManagedDeviceInfo(vmBase, iface.getId());
             _writer.writeEndElement(); // item
         }
     }
