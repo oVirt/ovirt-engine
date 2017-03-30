@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.provider.network.openstack;
 
-import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +15,7 @@ import org.apache.http.params.HttpParams;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
-import org.ovirt.engine.core.bll.provider.ProviderValidator;
+import org.ovirt.engine.core.bll.provider.BaseProviderProxy;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -47,7 +46,8 @@ import com.woorea.openstack.quantum.model.Port.Binding;
 import com.woorea.openstack.quantum.model.Subnet;
 import com.woorea.openstack.quantum.model.Subnets;
 
-public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProviderProperties> implements NetworkProviderProxy {
+public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProviderProperties>
+        extends BaseProviderProxy implements NetworkProviderProxy {
 
     private static final List<String> DEFAULT_SECURITY_GROUP = null;
 
@@ -63,14 +63,12 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     private static final String VLAN_NETWORK = "vlan";
 
-    protected final Provider<P> provider;
-
     private Quantum client;
 
     private static Logger log = LoggerFactory.getLogger(BaseNetworkProviderProxy.class);
 
     public BaseNetworkProviderProxy(Provider<P> provider) {
-        this.provider = provider;
+        super(provider);
     }
 
     class CustomizedRESTEasyConnector extends RESTEasyConnector {
@@ -90,8 +88,8 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     private Quantum getClient() {
         if (client == null) {
-            client = new Quantum(provider.getUrl() + API_VERSION, new CustomizedRESTEasyConnector());
-            if (provider.isRequiringAuthentication()) {
+            client = new Quantum(getProvider().getUrl() + API_VERSION, new CustomizedRESTEasyConnector());
+            if (getProvider().isRequiringAuthentication()) {
                 setClientTokenProvider(client);
             }
         }
@@ -99,11 +97,11 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     }
 
     protected void setClientTokenProvider(Quantum client) {
-        String tenantName = provider.getAdditionalProperties().getTenantName();
+        String tenantName = getProvider().getAdditionalProperties().getTenantName();
         KeystoneTokenProvider keystoneTokenProvider =
-                new KeystoneTokenProvider(provider.getAuthUrl(),
-                        provider.getUsername(),
-                        provider.getPassword());
+                new KeystoneTokenProvider(getProvider().getAuthUrl(),
+                        getProvider().getUsername(),
+                        getProvider().getPassword());
         client.setTokenProvider(keystoneTokenProvider.getProviderByTenant(tenantName));
     }
 
@@ -133,7 +131,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
                 networkForCreate.setProviderNetworkType(FLAT_NETWORK);
             }
         }
-        if (!provider.isRequiringAuthentication()) {
+        if (!getProvider().isRequiringAuthentication()) {
             networkForCreate.setTenantId(DEVICE_OWNER);
         }
         return networkForCreate;
@@ -233,21 +231,13 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         }
     }
 
-    /**
-     * Currently, SSL is not supported by Openstack Network Providers.
-     */
-    @Override
-    public List<? extends Certificate> getCertificateChain() {
-        throw new UnsupportedOperationException();
-    }
-
     private List<Network> map(List<com.woorea.openstack.quantum.model.Network> externalNetworks) {
         List<Network> networks = new ArrayList<>(externalNetworks.size());
 
         for (com.woorea.openstack.quantum.model.Network externalNetwork : externalNetworks) {
             Network network = new Network();
             network.setVmNetwork(true);
-            network.setProvidedBy(new ProviderNetwork(provider.getId(), externalNetwork.getId()));
+            network.setProvidedBy(new ProviderNetwork(getProvider().getId(), externalNetwork.getId()));
             network.setName(externalNetwork.getName());
             networks.add(network);
         }
@@ -331,7 +321,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     protected Map<String, String> createPortAllocationRuntimeProperties(Port port) {
         Map<String, String> runtimeProperties = new HashMap<>();
         runtimeProperties.put("vnic_id", port.getId());
-        String providerType = provider.getType().name();
+        String providerType = getProvider().getType().name();
         runtimeProperties.put("provider_type", providerType);
         if (port.getSecurityGroups() != null && !port.getSecurityGroups().isEmpty()) {
             runtimeProperties.put("security_groups", StringUtils.join(port.getSecurityGroups(), ','));
@@ -402,7 +392,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     }
 
     @Override
-    public ProviderValidator getProviderValidator() {
-        return new ProviderValidator(provider);
+    public Provider<P> getProvider() {
+        return (Provider<P>)super.getProvider();
     }
 }

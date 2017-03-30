@@ -18,8 +18,8 @@ public class ExternalNetworkProviderProxy extends BaseNetworkProviderProxy<Opens
 
     @Override
     protected void setClientTokenProvider(Quantum client) {
-        if (StringUtils.isEmpty(provider.getAdditionalProperties().getTenantName())) {
-            OpenStackTokenProvider tokenProvider = new ExternalNetworkTokenProvider(provider);
+        if (StringUtils.isEmpty(getProvider().getAdditionalProperties().getTenantName())) {
+            OpenStackTokenProvider tokenProvider = new ExternalNetworkTokenProvider(getProvider());
             client.setTokenProvider(tokenProvider);
         } else {
             super.setClientTokenProvider(client);
@@ -51,7 +51,7 @@ public class ExternalNetworkProviderProxy extends BaseNetworkProviderProxy<Opens
     }
 
     private boolean isReadOnly(){
-        return provider.getAdditionalProperties().getReadOnly();
+        return getProvider().getAdditionalProperties().getReadOnly();
     }
 
     private void testProviderIsNotReadOnly() {

@@ -17,12 +17,12 @@ public class OpenstackNetworkProviderProxy extends BaseNetworkProviderProxy<Open
     @Override
     protected Map<String, String> createPortAllocationRuntimeProperties(Port port) {
         Map<String, String> runtimeProperties = super.createPortAllocationRuntimeProperties(port);
-        runtimeProperties.put("plugin_type", provider.getAdditionalProperties().getPluginType());
+        runtimeProperties.put("plugin_type", getProvider().getAdditionalProperties().getPluginType());
         return runtimeProperties;
     }
 
     @Override
     public ProviderValidator getProviderValidator() {
-        return new NetworkProviderValidator(provider);
+        return new NetworkProviderValidator(getProvider());
     }
 }
