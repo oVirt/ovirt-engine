@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -305,6 +306,7 @@ public class SsoUtils {
             String token,
             boolean mustExist) {
         TokenCleanupUtility.cleanupExpiredTokens(request.getServletContext());
+        SsoContext ssoContext = getSsoContext(request);
         SsoSession ssoSession = null;
         if (StringUtils.isNotEmpty(token)) {
             ssoSession = getSsoContext(request).getSsoSession(token);
@@ -314,7 +316,9 @@ public class SsoUtils {
         }
         if (mustExist && ssoSession == null) {
             throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
-                    "The provided authorization grant for the auth code has expired");
+                    ssoContext.getLocalizationUtils().localize(
+                            SsoConstants.APP_ERROR_INVALID_GRANT,
+                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         if (StringUtils.isNotEmpty(clientId) &&
                 StringUtils.isNotEmpty(ssoSession.getClientId()) &&
@@ -326,6 +330,7 @@ public class SsoUtils {
     }
 
     public static SsoSession getSsoSession(HttpServletRequest request) {
+        SsoContext ssoContext = getSsoContext(request);
         SsoSession ssoSession = request.getSession(false) == null ?
                 null : (SsoSession) request.getSession().getAttribute(SsoConstants.OVIRT_SSO_SESSION);
         // If the session has expired, attempt to extract the session from SsoContext persisted session
@@ -335,13 +340,19 @@ public class SsoUtils {
                         getFormParameter(request, "sessionIdToken"));
                 // If the server is restarted the session will be missing from SsoContext
                 if (ssoSession == null) {
-                    throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT, "Session expired please try again.");
+                    throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
+                            ssoContext.getLocalizationUtils().localize(
+                                    SsoConstants.APP_ERROR_SESSION_EXPIRED,
+                                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
                 }
                 HttpSession session = request.getSession(true);
                 session.setAttribute(SsoConstants.OVIRT_SSO_SESSION, ssoSession);
                 ssoSession.setHttpSession(session);
             } catch (UnsupportedEncodingException ex) {
-                throw new OAuthException(SsoConstants.ERR_CODE_SERVER_ERROR, "Unable to decode sessionIdToken.");
+                throw new OAuthException(SsoConstants.ERR_CODE_SERVER_ERROR,
+                        ssoContext.getLocalizationUtils().localize(
+                                SsoConstants.APP_ERROR_UNABLE_TO_DECODE_SESSION_ID_TOKEN,
+                                (Locale) request.getAttribute(SsoConstants.LOCALE)));
             }
         }
         return ssoSession;
