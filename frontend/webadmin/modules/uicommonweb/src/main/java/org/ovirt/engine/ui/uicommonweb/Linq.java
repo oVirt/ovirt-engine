@@ -208,8 +208,7 @@ public final class Linq {
         return true;
     }
 
-    public static <TSource> Collection<TSource> where(Collection<TSource> source,
-            IPredicate<? super TSource> predicate) {
+    public static <TSource> List<TSource> where(Collection<TSource> source, IPredicate<? super TSource> predicate) {
         List<TSource> list = new ArrayList<>();
 
         for (TSource item : source) {
@@ -732,19 +731,18 @@ public final class Linq {
         }
     }
 
-    public static <T extends Disk> Collection<T> filterNonSnapableDisks(
-            Collection<Disk> source) {
-        return (Collection<T>) where(source, new IPredicate<Disk>() {
+    public static <T extends Disk> Collection<T> filterNonSnapableDisks(Collection<T> source) {
+        return where(source, new IPredicate<T>() {
             @Override
-            public boolean match(Disk source) {
+            public boolean match(T source) {
                 return source.isAllowSnapshot();
             }
         });
     }
 
     public static <T extends AuditLog> Collection<T> filterAudidLogsByExcludingSeverity(
-            Collection<AuditLog> source, final AuditLogSeverity severity) {
-        return (Collection<T>) where(source, new IPredicate<AuditLog>() {
+            Collection<T> source, final AuditLogSeverity severity) {
+        return where(source, new IPredicate<T>() {
             @Override
             public boolean match(AuditLog source) {
                 return source.getSeverity() != severity;
@@ -753,8 +751,8 @@ public final class Linq {
     }
 
     public static <T extends Disk> Collection<T> filterDisksByStorageType(
-            Collection<Disk> source, final DiskStorageType diskStorageType) {
-        return (Collection<T>) where(source, new IPredicate<Disk>() {
+            Collection<T> source, final DiskStorageType diskStorageType) {
+        return where(source, new IPredicate<T>() {
             @Override
             public boolean match(Disk source) {
                 return source.getDiskStorageType() == diskStorageType;
@@ -762,7 +760,7 @@ public final class Linq {
         });
     }
 
-    public static Collection<Provider> filterProvidersByProvidedType(Collection<Provider> source,
+    public static List<Provider> filterProvidersByProvidedType(Collection<Provider> source,
             final VdcObjectType type) {
         return where(source, new IPredicate<Provider>() {
 

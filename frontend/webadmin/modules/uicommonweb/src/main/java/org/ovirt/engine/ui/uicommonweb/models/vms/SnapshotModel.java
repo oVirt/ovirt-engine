@@ -263,7 +263,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
     }
 
     private void updateSnapshotDisks(List<Disk> disks) {
-        ArrayList<DiskImage> diskImages = Linq.toList(Linq.<DiskImage>filterNonSnapableDisks(disks));
+        ArrayList<DiskImage> diskImages = Linq.cast(Linq.filterNonSnapableDisks(disks));
         Collections.sort(diskImages, new DiskByDiskAliasComparator());
         getSnapshotDisks().setItems(diskImages);
     }

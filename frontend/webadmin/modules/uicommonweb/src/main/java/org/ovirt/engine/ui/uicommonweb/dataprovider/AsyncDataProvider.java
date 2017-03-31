@@ -2356,7 +2356,7 @@ public class AsyncDataProvider {
                     return new ArrayList<>();
                 }
                 List<Provider> providers =
-                        Linq.toList(Linq.filterProvidersByProvidedType((Collection<Provider>) returnValue, providedEntity));
+                        Linq.filterProvidersByProvidedType((Collection<Provider>) returnValue, providedEntity);
                 Collections.sort(providers, new NameableComparator());
                 return providers;
             }
