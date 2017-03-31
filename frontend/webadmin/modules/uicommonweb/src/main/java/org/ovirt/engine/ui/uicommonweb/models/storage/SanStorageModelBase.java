@@ -598,8 +598,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         if (getIsGrouppedByTarget()) {
             List<SanTargetModel> items = (List<SanTargetModel>) getItems();
-
-            for (SanTargetModel target : Linq.toList(items)) {
+            items.removeIf(target -> {
                 boolean found = false;
 
                 // Ensure remove targets that are not in last dicovered targets list.
@@ -617,21 +616,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                     }
                 }
 
-                if (!found) {
-                    items.remove(target);
-                }
-            }
+                return !found;
+            });
         }
         else {
             List<LunModel> items = (List<LunModel>) getItems();
-
-            // Ensure remove targets that are not contain already included LUNs.
-            for (LunModel lun : Linq.toList(items)) {
-                LunModel foundItem = Linq.firstOrNull(includedLUNs, new Linq.LunPredicate(lun));
-                if (foundItem == null) {
-                    items.remove(lun);
-                }
-            }
+            items.removeIf(lun -> Linq.firstOrNull(includedLUNs, new Linq.LunPredicate(lun)) == null);
         }
     }
 
