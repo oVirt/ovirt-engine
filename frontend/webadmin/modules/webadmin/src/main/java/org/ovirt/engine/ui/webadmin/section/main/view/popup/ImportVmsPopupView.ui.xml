@@ -40,6 +40,10 @@
         .errorMessage {
             margin-top: 15px;
         }
+
+        .loadButton {
+            width: 42px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="800px" height="660px">
@@ -71,7 +75,7 @@
                         </b:Row>
                         <b:Row>
                             <b:Column size="SM_12">
-                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadVmsFromExportDomainButton"/>
+                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadVmsFromExportDomainButton" addStyleNames="{style.loadButton}" />
                             </b:Column>
                         </b:Row>
                     </g:FlowPanel>
@@ -110,7 +114,7 @@
                         </b:Row>
                         <b:Row>
                             <b:Column size="SM_2">
-                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadVmsFromVmwareButton"/>
+                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadVmsFromVmwareButton" addStyleNames="{style.loadButton}"/>
                             </b:Column>
                         </b:Row>
                     </g:FlowPanel>
@@ -123,7 +127,7 @@
                         </b:Row>
                         <b:Row>
                             <b:Column size="SM_12">
-                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadOvaButton"/>
+                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadOvaButton" addStyleNames="{style.loadButton}"/>
                             </b:Column>
                         </b:Row>
                     </g:FlowPanel>
@@ -136,7 +140,7 @@
                         </b:Row>
                         <b:Row>
                             <b:Column size="SM_12">
-                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadXenButton"/>
+                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadXenButton" addStyleNames="{style.loadButton}"/>
                             </b:Column>
                         </b:Row>
                     </g:FlowPanel>
@@ -160,7 +164,7 @@
                         </b:Row>
                         <b:Row>
                             <b:Column size="SM_12">
-                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadKvmButton"/>
+                                <w:UiCommandButton label="{constants.loadLabel}" ui:field="loadKvmButton" addStyleNames="{style.loadButton}" />
                             </b:Column>
                         </b:Row>
                     </g:FlowPanel>
