@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
@@ -220,7 +219,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getDetailModel().getAppListModel().getItems() != null) {
-                    applicationsTable.setRowData(Linq.toList(getDetailModel().getAppListModel().getItems()));
+                    applicationsTable.setRowData(new ArrayList<>(getDetailModel().getAppListModel().getItems()));
                 } else {
                     applicationsTable.setRowData(new ArrayList<String>());
                 }

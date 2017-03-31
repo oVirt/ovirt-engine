@@ -241,18 +241,6 @@ public final class Linq {
         return retVersion;
     }
 
-    /**
-     * Returns a new instance of list containing all items of the provided source.
-     */
-    public static <TSource> ArrayList<TSource> toList(Iterable<TSource> source) {
-        ArrayList<TSource> list = new ArrayList<>();
-        for (TSource item : source) {
-            list.add(item);
-        }
-
-        return list;
-    }
-
     public static <TSource> ArrayList<TSource> distinct(ArrayList<TSource> source,
             IEqualityComparer<TSource> comparer) {
         ArrayList<TSource> list = new ArrayList<>();
