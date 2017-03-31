@@ -69,15 +69,15 @@ class Plugin(plugin.PluginBase):
         ].execute(
             statement="""
                 select InsertProvider(
-                    %(provider_id)s,
-                    %(provider_name)s,
-                    %(provider_description)s,
-                    %(provider_type)s,
-                    %(provider_url)s,
-                    %(auth_required)s,
-                    %(auth_username)s,
-                    %(auth_password)s,
-                    %(custom_properties)s
+                    v_id:=%(provider_id)s,
+                    v_name:=%(provider_name)s,
+                    v_description:=%(provider_description)s,
+                    v_url:=%(provider_url)s,
+                    v_provider_type:=%(provider_type)s,
+                    v_auth_required:=%(auth_required)s,
+                    v_auth_username:=%(auth_username)s,
+                    v_auth_password:=%(auth_password)s,
+                    v_custom_properties:=%(custom_properties)s
                 )
             """,
             args=dict(
@@ -89,7 +89,7 @@ class Plugin(plugin.PluginBase):
                 auth_required=auth_required,
                 auth_username=self._user,
                 auth_password=password,
-                custom_properties=''
+                custom_properties=None
             ),
         )
 
