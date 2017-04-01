@@ -115,11 +115,11 @@ public final class Linq {
         });
     }
 
-    public static NetworkQoS findNetworkQosById(Iterable<NetworkQoS> items, Guid qosId) {
+    public static NetworkQoS findNetworkQosById(Collection<NetworkQoS> items, Guid qosId) {
         return firstOrDefault(items, new IdPredicate<>(qosId), NetworkQoSModel.EMPTY_QOS);
     }
 
-    public static HostNetworkQos findHostNetworkQosById(Iterable<HostNetworkQos> items, Guid qosId) {
+    public static HostNetworkQos findHostNetworkQosById(Collection<HostNetworkQos> items, Guid qosId) {
         return firstOrDefault(items, new IdPredicate<>(qosId), NetworkModel.EMPTY_HOST_NETWORK_QOS);
     }
 
@@ -167,7 +167,7 @@ public final class Linq {
         return second == null ? first : newIEnumerable;
     }
 
-    public static int count(Iterable<?> source) {
+    public static int count(Collection<?> source) {
         int result = 0;
         for (Object ignored : source) {
             result++;
@@ -176,15 +176,15 @@ public final class Linq {
         return result;
     }
 
-    public static <TSource> TSource firstOrNull(Iterable<TSource> source) {
+    public static <TSource> TSource firstOrNull(Collection<TSource> source) {
         return firstOrNull(source, new TruePredicate<TSource>());
     }
 
-    public static <TSource> TSource firstOrNull(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
+    public static <TSource> TSource firstOrNull(Collection<TSource> source, IPredicate<? super TSource> predicate) {
         return firstOrDefault(source, predicate, null);
     }
 
-    public static <TSource> TSource firstOrDefault(Iterable<TSource> source, IPredicate<? super TSource> predicate,
+    public static <TSource> TSource firstOrDefault(Collection<TSource> source, IPredicate<? super TSource> predicate,
             TSource defaultValue) {
         if (source != null) {
             for (TSource item : source) {
@@ -197,7 +197,7 @@ public final class Linq {
         return defaultValue;
     }
 
-    public static <TSource> boolean all(Iterable<TSource> source, IPredicate<? super TSource> predicate) {
+    public static <TSource> boolean all(Collection<TSource> source, IPredicate<? super TSource> predicate) {
 
         for (TSource item : source) {
             if (!predicate.match(item)) {
@@ -261,7 +261,7 @@ public final class Linq {
         return list;
     }
 
-    public static <TResult> ArrayList<TResult> cast(Iterable<?> source) {
+    public static <TResult> ArrayList<TResult> cast(Collection<?> source) {
         ArrayList<TResult> list = new ArrayList<>();
         for (Object a : source) {
             TResult item = (TResult) a;
@@ -413,7 +413,7 @@ public final class Linq {
         return aliases;
     }
 
-    public static List<DiskImage> imagesSubtract(Iterable<DiskImage> images, Iterable<DiskImage> imagesToSubtract) {
+    public static List<DiskImage> imagesSubtract(Collection<DiskImage> images, Collection<DiskImage> imagesToSubtract) {
         List<DiskImage> subtract = new ArrayList<>();
         for (DiskImage image : images) {
             if (Linq.getDiskImageById(image.getId(), imagesToSubtract) == null) {
@@ -423,7 +423,7 @@ public final class Linq {
         return subtract;
     }
 
-    private static DiskImage getDiskImageById(Guid id, Iterable<DiskImage> diskImages) {
+    private static DiskImage getDiskImageById(Guid id, Collection<DiskImage> diskImages) {
         return firstOrNull(diskImages, new IdPredicate<>(id));
     }
 
