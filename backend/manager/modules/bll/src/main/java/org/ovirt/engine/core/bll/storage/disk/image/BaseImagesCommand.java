@@ -392,7 +392,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         setSucceeded(true);
     }
 
-    private void setQcowCompatByQemuImageInfo(Guid storagePoolId,
+    protected void setQcowCompatByQemuImageInfo(Guid storagePoolId,
             Guid newImageGroupId,
             Guid newImageId,
             Guid newStorageDomainID,
