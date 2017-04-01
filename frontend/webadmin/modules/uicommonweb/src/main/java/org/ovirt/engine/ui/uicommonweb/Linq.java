@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -691,7 +692,12 @@ public final class Linq {
 
     }
 
-    public interface IPredicate<TSource> {
+    public interface IPredicate<TSource> extends Predicate<TSource> {
+        @Override
+        default boolean test(TSource tSource) {
+            return match(tSource);
+        }
+
         boolean match(TSource source);
     }
 
