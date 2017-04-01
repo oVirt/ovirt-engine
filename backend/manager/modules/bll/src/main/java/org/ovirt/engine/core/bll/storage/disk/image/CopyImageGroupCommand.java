@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainM
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MoveImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -255,9 +256,38 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                                 getParameters().getStorageDomainId(),
                                 getParameters().getQuotaId(),
                                 getParameters().getDiskProfileId()));
+                setQcowCompatForSnapshot(snapshot, null);
             }
         }
         super.endSuccessfully();
+    }
+
+    protected void setQcowCompatForSnapshot(DiskImage snapshot, DiskImage volInfo) {
+        DiskImage info = volInfo;
+        if (snapshot.getVolumeFormat().equals(VolumeFormat.COW)) {
+            try {
+                if (info == null) {
+                    info = getVolumeInfo(snapshot.getStoragePoolId(),
+                            getParameters().getStorageDomainId(),
+                            snapshot.getId(),
+                            snapshot.getImageId());
+                }
+                if (info != null) {
+                    setQcowCompatByQemuImageInfo(snapshot.getStoragePoolId(),
+                            snapshot.getId(),
+                            snapshot.getImageId(),
+                            getParameters().getStorageDomainId(),
+                            snapshot);
+                }
+                imageDao.update(snapshot.getImage());
+            } catch (EngineException e) {
+                // Logging only
+                log.error("Unable to update the image info for image '{}' (image group: '{}') on domain '{}'",
+                        snapshot.getImageId(),
+                        snapshot.getId(),
+                        getParameters().getStorageDomainId());
+            }
+        }
     }
 
     private boolean shouldUpdateStorageDisk() {
