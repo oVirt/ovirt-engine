@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -64,7 +65,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     public void postDataCenterWithClusterSelectedItemChanged() {
         super.postDataCenterWithClusterSelectedItemChanged();
 
-        Iterable<DataCenterWithCluster> dataCenterWithClusters = getModel().getDataCenterWithClustersList().getItems();
+        Collection<DataCenterWithCluster> dataCenterWithClusters = getModel().getDataCenterWithClustersList().getItems();
         DataCenterWithCluster selectDataCenterWithCluster =
                 Linq.firstOrNull(dataCenterWithClusters,
                         new Linq.DataCenterWithClusterPredicate(pool.getStoragePoolId(), pool.getClusterId()));
