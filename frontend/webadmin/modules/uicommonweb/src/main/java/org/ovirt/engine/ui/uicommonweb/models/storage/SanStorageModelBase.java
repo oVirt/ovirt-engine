@@ -963,7 +963,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     protected void proposeDiscover() {
-        setProposeDiscoverTargets(getItems() == null || Linq.count(getItems()) == 0);
+        setProposeDiscoverTargets(getItems() == null || getItems().isEmpty());
     }
 
     protected void isAllLunsSelectedChanged() {

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
@@ -53,7 +52,7 @@ public class AsyncIterator<T> {
         setCounter(0);
 
         // Call complete method in case source is an empty list.
-        if (Linq.count(getSource()) == 0) {
+        if (getSource().isEmpty()) {
             if (getComplete() != null) {
                 getComplete().run(null, null);
             }
@@ -91,7 +90,7 @@ public class AsyncIterator<T> {
                             // Call complete method even when there is no match.
                             iterator.setCounter(iterator.getCounter() + 1);
 
-                            if (!iterator.getStopped() && iterator.getCounter() == Linq.count(iterator.getSource())) {
+                            if (!iterator.getStopped() && iterator.getCounter() == iterator.getSource().size()) {
                                 callComplete = true;
                             }
 

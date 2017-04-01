@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -69,7 +68,7 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
 
     @Override
     protected void proposeDiscover() {
-        boolean proposeDiscover = Linq.count(getTargets().getItems()) == 0;
+        boolean proposeDiscover = getTargets().getItems().isEmpty();
         setProposeDiscoverTargets(proposeDiscover);
     }
 

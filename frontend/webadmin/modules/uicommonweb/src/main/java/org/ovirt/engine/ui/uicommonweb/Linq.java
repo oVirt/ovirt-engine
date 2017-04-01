@@ -168,15 +168,6 @@ public final class Linq {
         return second == null ? first : newIEnumerable;
     }
 
-    public static int count(Collection<?> source) {
-        int result = 0;
-        for (Object ignored : source) {
-            result++;
-        }
-
-        return result;
-    }
-
     public static <TSource> TSource firstOrNull(Collection<TSource> source) {
         return firstOrNull(source, new TruePredicate<TSource>());
     }
