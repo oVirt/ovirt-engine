@@ -189,17 +189,6 @@ public final class Linq {
         return defaultValue;
     }
 
-    public static <TSource> boolean all(Collection<TSource> source, IPredicate<? super TSource> predicate) {
-
-        for (TSource item : source) {
-            if (!predicate.match(item)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public static <TSource> List<TSource> where(Collection<TSource> source, IPredicate<? super TSource> predicate) {
         List<TSource> list = new ArrayList<>();
 
