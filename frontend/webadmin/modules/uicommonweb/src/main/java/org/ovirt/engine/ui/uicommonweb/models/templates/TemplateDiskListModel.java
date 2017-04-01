@@ -139,7 +139,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
         updateActionAvailability();
     }
 
-    private void setDisks(Iterable value) {
+    private void setDisks(Collection<DiskImage> value) {
         ArrayList<DiskImage> disks =
                 value != null ? Linq.<DiskImage> cast(value) : new ArrayList<DiskImage>();
 
