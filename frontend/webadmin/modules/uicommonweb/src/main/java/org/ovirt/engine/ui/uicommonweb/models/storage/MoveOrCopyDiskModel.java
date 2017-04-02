@@ -151,7 +151,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
             // Source storage domains
             ArrayList<Guid> diskStorageIds = diskImage.getStorageIds();
-            ArrayList<StorageDomain> sourceStorageDomains =
+            List<StorageDomain> sourceStorageDomains =
                     Linq.getStorageDomainsByIds(diskStorageIds, getActiveStorageDomains());
 
             boolean isDiskBasedOnTemplate = !diskImage.getParentId().equals(Guid.Empty);
@@ -180,7 +180,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     private ArrayList<StorageDomain> getDestinationDomains(ArrayList<StorageDomain> activeStorageDomains,
-            ArrayList<StorageDomain> sourceActiveStorageDomains, DiskModel diskModel, boolean isDiskBasedOnTemplate) {
+            List<StorageDomain> sourceActiveStorageDomains, DiskModel diskModel, boolean isDiskBasedOnTemplate) {
 
         DiskImage diskImage = (DiskImage) diskModel.getDisk();
 
@@ -203,7 +203,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         return destinationDomains;
     }
 
-    protected boolean allowedStorageDomain(ArrayList<StorageDomain> sourceActiveStorageDomains, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
+    protected boolean allowedStorageDomain(List<StorageDomain> sourceActiveStorageDomains, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
         // Destination should be in the same pool as the disk.
         boolean connectedToSamePool = sd.getStoragePoolId().equals(diskImage.getStoragePoolId());
         if (!connectedToSamePool) {
@@ -237,7 +237,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         disk.getSourceStorageDomainName().setChangeProhibitionReason(getNoActiveSourceDomainMessage());
     }
 
-    private void addSourceStorageDomainName(DiskModel disk, ArrayList<StorageDomain> sourceStorageDomains) {
+    private void addSourceStorageDomainName(DiskModel disk, List<StorageDomain> sourceStorageDomains) {
         String sourceStorageName = sourceStorageDomains.isEmpty() ?
                 constants.notAvailableLabel() : sourceStorageDomains.get(0).getStorageName();
         disk.getSourceStorageDomainName().setEntity(sourceStorageName);

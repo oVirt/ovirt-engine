@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.template;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -96,7 +97,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
     }
 
     @Override
-    protected ArrayList<StorageDomain> getNodeObjects(DiskImage disk) {
+    protected List<StorageDomain> getNodeObjects(DiskImage disk) {
         return Linq.getStorageDomainsByIds(disk.getStorageIds(), listModel.getStorageDomains());
     }
 }

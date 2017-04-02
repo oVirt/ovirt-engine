@@ -357,7 +357,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         for (DiskModel diskModel : getModel().getDisks()) {
                             if (diskModel.getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
                                 DiskImage diskImage = (DiskImage) diskModel.getDisk();
-                                ArrayList<StorageDomain> activeDiskStorages =
+                                List<StorageDomain> activeDiskStorages =
                                         Linq.getStorageDomainsByIds(diskImage.getStorageIds(), activeStorageDomainList);
 
                                 if (activeDiskStorages.isEmpty()) {

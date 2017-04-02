@@ -220,7 +220,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
     }
 
     @Override
-    protected boolean allowedStorageDomain(ArrayList<StorageDomain> sourceActiveStorageDomains, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
+    protected boolean allowedStorageDomain(List<StorageDomain> sourceActiveStorageDomains, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
         // can not move to the same storage domain
         if (sourceActiveStorageDomains.contains(sd)) {
             return false;

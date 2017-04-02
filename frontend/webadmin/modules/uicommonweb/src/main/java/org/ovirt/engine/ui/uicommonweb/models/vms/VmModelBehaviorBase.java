@@ -738,12 +738,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                 ArrayList<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
                 for (DiskModel diskModel : diskImages) {
-                    ArrayList<StorageDomain> availableDiskStorageDomains;
+                    List<StorageDomain> availableDiskStorageDomains;
                     diskModel.getQuota().setItems(getModel().getQuota().getItems());
                     ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
 
                     // Active storage domains that the disk resides on
-                    ArrayList<StorageDomain> activeDiskStorageDomains =
+                    List<StorageDomain> activeDiskStorageDomains =
                             Linq.getStorageDomainsByIds(storageIds, activeStorageDomains);
 
                     // Set target storage domains

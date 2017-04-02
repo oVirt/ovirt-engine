@@ -235,7 +235,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         return null;
     }
 
-    protected abstract ArrayList<N> getNodeObjects(R root);
+    protected abstract List<N> getNodeObjects(R root);
 
     protected boolean getIsNodeEnabled(N nodeObject) {
         return true;

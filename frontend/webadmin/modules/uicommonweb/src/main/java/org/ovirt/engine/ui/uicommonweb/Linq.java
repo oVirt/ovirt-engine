@@ -217,9 +217,9 @@ public final class Linq {
         return firstOrNull(storageDomains, new IdPredicate<>(storageId));
     }
 
-    public static ArrayList<StorageDomain> getStorageDomainsByIds(List<Guid> storageIds,
+    public static List<StorageDomain> getStorageDomainsByIds(List<Guid> storageIds,
             List<StorageDomain> storageDomains) {
-        ArrayList<StorageDomain> list = new ArrayList<>();
+        List<StorageDomain> list = new ArrayList<>();
         for (Guid storageId : storageIds) {
             StorageDomain storageDomain = getStorageById(storageId, storageDomains);
             if (storageDomain != null) {
