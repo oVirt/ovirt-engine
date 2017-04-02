@@ -369,7 +369,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                         setQcowCompatByQemuImageInfo(storagePoolId,
                                 newImageGroupId,
                                 newImageId,
-                                newStorageDomainID);
+                                newStorageDomainID,
+                                getDestinationDiskImage());
                     }
                 }
             } catch (EngineException e) {
@@ -394,13 +395,14 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     private void setQcowCompatByQemuImageInfo(Guid storagePoolId,
             Guid newImageGroupId,
             Guid newImageId,
-            Guid newStorageDomainID) {
+            Guid newStorageDomainID,
+            DiskImage diskImage) {
 
         // If the VM is running then the volume is already prepared in the guest's host so there
         // is no need for prepare and teardown.
         Guid hostIdToExecuteQemuImageInfo = null;
         List<Pair<VM, VmDevice>> attachedVmsInfo =
-                vmDao.getVmsWithPlugInfo(getDestinationDiskImage().getId());
+                vmDao.getVmsWithPlugInfo(diskImage.getId());
         for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
             VM vm = pair.getFirst();
             if (Boolean.TRUE.equals(pair.getSecond().isPlugged())) {
@@ -411,7 +413,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             }
         }
 
-        setQcowCompat(getDestinationDiskImage().getImage(),
+        setQcowCompat(diskImage.getImage(),
                 storagePoolId,
                 newImageGroupId,
                 newImageId,
