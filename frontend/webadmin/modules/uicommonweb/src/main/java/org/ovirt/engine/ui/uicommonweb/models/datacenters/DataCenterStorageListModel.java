@@ -289,8 +289,8 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                                     : new ArrayList<StorageDomain>();
                     for (StorageDomain a : list) {
                         addToList = false;
-                        if (Linq.isSDItemExistInList(items1, a.getId()) ||
-                                a.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached) {
+                        if (a.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached ||
+                                Linq.isSDItemExistInList(items1, a.getId())) {
                             continue;
                         }
                         if (a.getStorageDomainType() == StorageDomainType.Volume) {
