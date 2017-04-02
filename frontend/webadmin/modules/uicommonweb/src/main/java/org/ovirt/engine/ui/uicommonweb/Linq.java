@@ -219,14 +219,7 @@ public final class Linq {
 
     public static List<StorageDomain> getStorageDomainsByIds(List<Guid> storageIds,
             List<StorageDomain> storageDomains) {
-        List<StorageDomain> list = new ArrayList<>();
-        for (Guid storageId : storageIds) {
-            StorageDomain storageDomain = getStorageById(storageId, storageDomains);
-            if (storageDomain != null) {
-                list.add(storageDomain);
-            }
-        }
-        return list;
+        return where(storageDomains, new IdsPredicate<>(storageIds));
     }
 
     public static <T> ArrayList<EntityModel<T>> toEntityModelList(List<T> list) {
