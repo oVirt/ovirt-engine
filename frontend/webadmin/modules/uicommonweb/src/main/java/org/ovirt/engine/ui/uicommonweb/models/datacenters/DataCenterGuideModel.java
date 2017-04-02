@@ -234,9 +234,9 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         updateAddClusterAvailability();
 
-        ArrayList<VDS> hosts = new ArrayList<>();
-        ArrayList<VDS> availableHosts = new ArrayList<>();
-        ArrayList<VDS> upHosts = new ArrayList<>();
+        List<VDS> hosts = new ArrayList<>();
+        List<VDS> availableHosts = new ArrayList<>();
+        List<VDS> upHosts = new ArrayList<>();
         for (VDS vds : allHosts) {
             if (Linq.isClusterItemExistInList(clusters, vds.getClusterId())) {
                 hosts.add(vds);
@@ -274,7 +274,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         stopProgress();
     }
 
-    private void updateAddAndSelectHostAvailability(ArrayList<VDS> hosts, ArrayList<VDS> availableHosts) {
+    private void updateAddAndSelectHostAvailability(List<VDS> hosts, List<VDS> availableHosts) {
         UICommand addHostAction = new UICommand("AddHost", this); //$NON-NLS-1$
         addHostAction.setIsExecutionAllowed(clusters.size() > 0);
 
