@@ -95,6 +95,59 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
+    def _checkCompatibilityVersion(self):
+        statement = database.Statement(
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
+        versions = statement.execute(
+            statement="""
+                select
+                    option_value
+                from
+                    vdc_options
+                where
+                    option_name = 'SupportedClusterLevels'
+            """,
+            ownConnection=True,
+            transaction=False,
+        )
+        vms = statement.execute(
+            statement="""
+                select
+                    vm_name,
+                    custom_compatibility_version
+                from
+                    vms
+                where
+                    custom_compatibility_version is not null
+                    and
+                    custom_compatibility_version <> '';
+            """,
+            ownConnection=True,
+            transaction=False,
+        )
+        if vms:
+            names = [
+                vm['vm_name']
+                for vm in vms if
+                vm['custom_compatibility_version']
+                not in versions[0]['option_value']
+            ]
+            if names:
+                raise RuntimeError(
+                    _(
+                        'Cannot upgrade the Engine due to low '
+                        'custom_compatibility_version for virtual machines: '
+                        '%r. Please edit this virtual machines, in edit VM '
+                        'dialog go to System->Advanced Parameters -> Custom '
+                        'Compatibility Version and either reset to empty '
+                        '(cluster default) or set a value supported by the '
+                        'new installation: %s.' % (names,
+                                                   versions[0]['option_value'])
+                    )
+                )
+
     def _checkDatabaseOwnership(self):
         statement = database.Statement(
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
@@ -234,6 +287,7 @@ class Plugin(plugin.PluginBase):
     def _validation(self):
         self._checkDatabaseOwnership()
         self._checkSupportedVersionsPresent()
+        self._checkCompatibilityVersion()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
