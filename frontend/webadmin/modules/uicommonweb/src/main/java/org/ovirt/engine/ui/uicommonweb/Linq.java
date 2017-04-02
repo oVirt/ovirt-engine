@@ -87,15 +87,6 @@ public final class Linq {
         return isData && isActive;
     }
 
-    public static Collection<VDS> findAllVDSByPmEnabled(List<VDS> items) {
-        return where(items, new IPredicate<VDS>() {
-            @Override
-            public boolean match(VDS i) {
-                return i.isPmEnabled();
-            }
-        });
-    }
-
     public static Collection<StorageDomain> findAllStorageDomainsBySharedStatus(List<StorageDomain> items,
             final StorageDomainSharedStatus status) {
         return where(items, new IPredicate<StorageDomain>() {

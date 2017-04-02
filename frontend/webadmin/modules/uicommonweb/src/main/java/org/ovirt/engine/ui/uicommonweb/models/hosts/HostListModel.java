@@ -1843,7 +1843,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         ArrayList<VDS> items =
                 getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();
 
-        boolean isAllPMEnabled = Linq.findAllVDSByPmEnabled(items).size() == items.size();
+        boolean isAllPMEnabled = items.stream().allMatch(VDS::isPmEnabled);
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.UpdateVds));
