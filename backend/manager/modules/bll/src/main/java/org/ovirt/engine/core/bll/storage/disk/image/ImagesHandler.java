@@ -941,16 +941,19 @@ public final class ImagesHandler {
             //TODO: inspect if we can rely on the database to get the actual size.
             DiskImage imageInfoFromStorage = getVolumeInfoFromVdsm(storagePoolId,
                     srcDomain, imageGroupID, sourceImage.getId());
-            // When vdsm creates a COW volume with provided initial size the size is multiplied by 1.1 to prevent a
-            // case in which we won't have enough space. If the source is already COW we don't need the additional
-            // space.
-            return computeCowImageNeededSize(imageInfoFromStorage.getActualSizeInBytes());
+
+            return computeCowImageNeededSize(sourceImage.getVolumeFormat(), imageInfoFromStorage.getActualSizeInBytes());
         }
         return null;
     }
 
-    private static long computeCowImageNeededSize(long actualSize) {
-        return Double.valueOf(Math.ceil(actualSize / StorageConstants.QCOW_OVERHEAD_FACTOR)).longValue();
+    private static long computeCowImageNeededSize(VolumeFormat sourceFormat, long actualSize) {
+        // When vdsm creates a COW volume with provided initial size the size is multiplied by 1.1 to prevent a
+        // case in which we won't have enough space. If the source is already COW we don't need the additional
+        // space.
+        return sourceFormat == VolumeFormat.COW
+                ? Double.valueOf(Math.ceil(actualSize / StorageConstants.QCOW_OVERHEAD_FACTOR)).longValue()
+                : actualSize;
     }
 
     /**
@@ -973,7 +976,7 @@ public final class ImagesHandler {
             double totalSizeForClonedDisk = getTotalActualSizeOfDisk(sourceImage,
                     DbFacade.getInstance().getStorageDomainDao().get(dstDomain).getStorageStaticData());
 
-            return computeCowImageNeededSize(Double.valueOf(totalSizeForClonedDisk).longValue());
+            return computeCowImageNeededSize(sourceImage.getVolumeFormat(), Double.valueOf(totalSizeForClonedDisk).longValue());
         }
         return null;
     }
