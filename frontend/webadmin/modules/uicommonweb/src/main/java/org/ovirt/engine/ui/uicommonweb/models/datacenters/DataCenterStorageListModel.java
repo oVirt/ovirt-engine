@@ -266,7 +266,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                             getItems() != null ? new ArrayList<>(Linq.<StorageDomain>cast(getItems()))
                                     : new ArrayList<StorageDomain>();
                     for (StorageDomain a : list) {
-                        if (!Linq.isSDItemExistInList(items1, a.getId())) {
+                        if (items1.stream().noneMatch(new Linq.IdPredicate<>(a.getId()))) {
                             EntityModel tempVar = new EntityModel();
                             tempVar.setEntity(a);
                             models.add(tempVar);
@@ -290,7 +290,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                     for (StorageDomain a : list) {
                         addToList = false;
                         if (a.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached ||
-                                Linq.isSDItemExistInList(items1, a.getId())) {
+                                items1.stream().anyMatch(new Linq.IdPredicate<>(a.getId()))) {
                             continue;
                         }
                         if (a.getStorageDomainType() == StorageDomainType.Volume) {

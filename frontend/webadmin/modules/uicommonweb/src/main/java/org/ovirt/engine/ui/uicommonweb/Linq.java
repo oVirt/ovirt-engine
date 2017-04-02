@@ -93,13 +93,6 @@ public final class Linq {
     }
 
     /**
-     * Check if storage_domains item with specified Guid exist in List
-     */
-    public static boolean isSDItemExistInList(List<StorageDomain> items, Guid id) {
-        return firstOrNull(items, new IdPredicate<>(id)) != null;
-    }
-
-    /**
      * Check if Cluster item with specified id exist in List
      */
     public static boolean isClusterItemExistInList(List<Cluster> items, Guid id) {
