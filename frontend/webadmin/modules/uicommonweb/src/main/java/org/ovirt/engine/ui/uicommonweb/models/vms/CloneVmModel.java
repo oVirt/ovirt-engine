@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -42,7 +41,7 @@ public class CloneVmModel extends Model {
         AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(new AsyncCallback<List<Disk>>() {
             @Override
             public void onSuccess(List<Disk> disks) {
-                if (!Linq.filterDisksByStorageType(disks, DiskStorageType.LUN).isEmpty()) {
+                if (disks.stream().anyMatch(d -> d.getDiskStorageType() == DiskStorageType.LUN)) {
                     setMessage(ConstantsManager.getInstance().getConstants().cloneVmLunsWontBeCloned());
                 }
             }

@@ -609,16 +609,6 @@ public final class Linq {
         }
     }
 
-    public static <T extends Disk> Collection<T> filterDisksByStorageType(
-            Collection<T> source, final DiskStorageType diskStorageType) {
-        return where(source, new IPredicate<T>() {
-            @Override
-            public boolean match(Disk source) {
-                return source.getDiskStorageType() == diskStorageType;
-            }
-        });
-    }
-
     public static List<Provider> filterProvidersByProvidedType(Collection<Provider> source,
             final VdcObjectType type) {
         return where(source, new IPredicate<Provider>() {
