@@ -157,7 +157,11 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                     }
 
                     Guid storageId = storageIds.get(0);
-                    StorageDomain storageDomain = Linq.getStorageById(storageId, activeStorageDomains);
+                    StorageDomain storageDomain =
+                            activeStorageDomains.stream()
+                                    .filter(new Linq.IdPredicate<>(storageId))
+                                    .findFirst()
+                                    .orElse(null);
                     List<StorageDomain> diskStorageDomains = new ArrayList<>();
                     diskStorageDomains.add(storageDomain);
                     diskModel.getStorageDomain().setItems(diskStorageDomains);

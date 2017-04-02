@@ -213,10 +213,6 @@ public final class Linq {
         return result;
     }
 
-    public static StorageDomain getStorageById(Guid storageId, List<StorageDomain> storageDomains) {
-        return firstOrNull(storageDomains, new IdPredicate<>(storageId));
-    }
-
     public static List<StorageDomain> getStorageDomainsByIds(List<Guid> storageIds,
             List<StorageDomain> storageDomains) {
         return where(storageDomains, new IdsPredicate<>(storageIds));
