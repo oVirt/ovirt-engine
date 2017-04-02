@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -608,16 +607,6 @@ public final class Linq {
         public boolean match(TSource tSource) {
             return true;
         }
-    }
-
-    public static <T extends AuditLog> Collection<T> filterAudidLogsByExcludingSeverity(
-            Collection<T> source, final AuditLogSeverity severity) {
-        return where(source, new IPredicate<T>() {
-            @Override
-            public boolean match(AuditLog source) {
-                return source.getSeverity() != severity;
-            }
-        });
     }
 
     public static <T extends Disk> Collection<T> filterDisksByStorageType(

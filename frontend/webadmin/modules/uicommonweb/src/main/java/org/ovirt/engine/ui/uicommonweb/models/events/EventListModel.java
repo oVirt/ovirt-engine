@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.events;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
@@ -159,7 +159,10 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
                 List<AuditLog> newEvents = returnValue.getReturnValue();
                 List<AuditLog> currentEvents = (List<AuditLog>) getItems();
                 if (isDisplayEventsOnly()) {
-                    newEvents = new ArrayList<>(Linq.filterAudidLogsByExcludingSeverity(newEvents, AuditLogSeverity.ALERT));
+                    newEvents =
+                            newEvents.stream()
+                                    .filter(e -> e.getSeverity() != AuditLogSeverity.ALERT)
+                                    .collect(Collectors.toList());
                 }
                 if (!newEvents.isEmpty() &&
                         currentEvents != null &&
