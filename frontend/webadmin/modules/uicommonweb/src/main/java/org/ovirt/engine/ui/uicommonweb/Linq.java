@@ -233,15 +233,7 @@ public final class Linq {
     }
 
     public static List<DiskModel> filterDisksByType(List<DiskModel> diskModels, DiskStorageType type) {
-        ArrayList<DiskModel> filteredList = new ArrayList<>();
-
-        for (DiskModel item : diskModels) {
-            if (item.getDisk().getDiskStorageType() == type) {
-                filteredList.add(item);
-            }
-        }
-
-        return filteredList;
+        return where(diskModels, m -> m.getDisk().getDiskStorageType() == type);
     }
 
     public static <I, T extends I> T findByType(Collection<I> models, Class<T> specific) {
