@@ -319,7 +319,11 @@ public abstract class VnicProfileModel extends Model {
             @Override
             public void onSuccess(List<NetworkQoS> networkQoSes) {
                 getNetworkQoS().setItems(networkQoSes);
-                defaultQos = Linq.findNetworkQosById(networkQoSes, defaultQosId);
+                defaultQos =
+                        networkQoSes.stream()
+                                .filter(new Linq.IdPredicate<>(defaultQosId))
+                                .findFirst()
+                                .orElse(NetworkQoSModel.EMPTY_QOS);
                 getNetworkQoS().setSelectedItem(defaultQos);
             }
         }));

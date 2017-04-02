@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericName
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -51,7 +50,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
-import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
@@ -89,10 +87,6 @@ public final class Linq {
         boolean isActive = storageDomain.getStatus() == StorageDomainStatus.Active;
 
         return isData && isActive;
-    }
-
-    public static NetworkQoS findNetworkQosById(Collection<NetworkQoS> items, Guid qosId) {
-        return firstOrDefault(items, new IdPredicate<>(qosId), NetworkQoSModel.EMPTY_QOS);
     }
 
     public static HostNetworkQos findHostNetworkQosById(Collection<HostNetworkQos> items, Guid qosId) {
