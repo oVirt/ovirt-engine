@@ -1093,7 +1093,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             getBackend().endAction(VdcActionType.CopyImageGroup,
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
-            initQcowVersionForDisks(((MoveOrCopyImageGroupParameters) p).getDestImageGroupId());
         }
     }
 

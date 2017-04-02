@@ -533,7 +533,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             getBackend().endAction(VdcActionType.CopyImageGroup,
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
-            initQcowVersionForDisks(((MoveOrCopyImageGroupParameters) p).getDestImageGroupId());
         }
     }
 
