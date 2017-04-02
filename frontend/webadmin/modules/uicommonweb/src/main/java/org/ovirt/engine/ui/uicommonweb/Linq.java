@@ -202,14 +202,7 @@ public final class Linq {
     }
 
     public static <T> T retrieveFromSet(Set<T> set, final T object) {
-        return firstOrNull(
-                set,
-                new IPredicate<T>() {
-                    @Override
-                    public boolean match(T entry) {
-                        return object.equals(entry);
-                    }
-                });
+        return firstOrNull(set, new EqualsPredicate(object));
     }
 
     public static Version selectHighestVersion(List<Version> versions) {
