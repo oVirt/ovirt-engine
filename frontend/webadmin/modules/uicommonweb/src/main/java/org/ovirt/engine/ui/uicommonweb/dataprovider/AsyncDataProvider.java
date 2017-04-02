@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.aaa.ProfileEntry;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -2355,10 +2356,10 @@ public class AsyncDataProvider {
                 if (returnValue == null) {
                     return new ArrayList<>();
                 }
-                List<Provider> providers =
-                        Linq.filterProvidersByProvidedType((Collection<Provider>) returnValue, providedEntity);
-                Collections.sort(providers, new NameableComparator());
-                return providers;
+                return ((Collection<Provider>) returnValue).stream()
+                        .filter(p -> p.getType().getProvidedTypes().contains(providedEntity))
+                        .sorted(new NameableComparator())
+                        .collect(Collectors.toList());
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), query);

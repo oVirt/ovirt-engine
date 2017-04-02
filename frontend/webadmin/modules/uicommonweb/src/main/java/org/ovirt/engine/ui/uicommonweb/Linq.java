@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -607,17 +606,6 @@ public final class Linq {
         public boolean match(TSource tSource) {
             return true;
         }
-    }
-
-    public static List<Provider> filterProvidersByProvidedType(Collection<Provider> source,
-            final VdcObjectType type) {
-        return where(source, new IPredicate<Provider>() {
-
-            @Override
-            public boolean match(Provider provider) {
-                return provider.getType().getProvidedTypes().contains(type);
-            }
-        });
     }
 
     public static Collection<StorageDomain> filterStorageDomainsByStorageType(
