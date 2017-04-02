@@ -48,7 +48,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -203,16 +202,6 @@ public final class Linq {
 
     public static <T> T retrieveFromSet(Set<T> set, final T object) {
         return firstOrNull(set, new EqualsPredicate(object));
-    }
-
-    public static Version selectHighestVersion(List<Version> versions) {
-        Version retVersion = firstOrNull(versions);
-        for (Version version : versions) {
-            if (version.compareTo(retVersion) > 0) {
-                retVersion = version;
-            }
-        }
-        return retVersion;
     }
 
     public static <TSource> ArrayList<TSource> distinct(ArrayList<TSource> source,

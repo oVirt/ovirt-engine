@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -8,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
@@ -193,7 +193,7 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
                 getVersion().setItems(versions);
 
                 if (selectedVersion == null) {
-                    getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
+                    getVersion().setSelectedItem(versions.stream().max(Comparator.naturalOrder()).orElse(null));
                     if (getEntity() != null) {
                         initVersion();
                     }

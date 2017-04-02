@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -2044,7 +2045,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 if (!getIsEdit() && (selectedVersion == null || !versions.contains(selectedVersion) ||
                         selectedVersion.compareTo(selectedDataCenter.getCompatibilityVersion()) > 0)) {
                     if (ApplicationModeHelper.getUiMode().equals(ApplicationMode.GlusterOnly)) {
-                        return Linq.selectHighestVersion(versions);
+                        return versions.stream().max(Comparator.naturalOrder()).orElse(null);
                     } else {
                         return selectedDataCenter.getCompatibilityVersion();
                     }
