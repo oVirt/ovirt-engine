@@ -547,7 +547,10 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
             @Override
             public void onSuccess(List<HostNetworkQos> qos) {
                 getQos().setItems(qos);
-                getQos().setSelectedItem(Linq.findHostNetworkQosById(qos, getNetwork().getQosId()));
+                getQos().setSelectedItem(qos.stream()
+                                .filter(new Linq.IdPredicate<>(getNetwork().getQosId()))
+                                .findFirst()
+                                .orElse(EMPTY_HOST_NETWORK_QOS));
             }
         }));
 
