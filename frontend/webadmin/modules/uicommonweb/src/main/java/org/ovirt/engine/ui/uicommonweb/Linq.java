@@ -91,15 +91,6 @@ public final class Linq {
         return isData && isActive;
     }
 
-    public static Network findManagementNetwork(List<Network> networks) {
-        return firstOrNull(networks, new IPredicate<Network>() {
-            @Override
-            public boolean match(Network network) {
-                return network.getCluster().isManagement();
-            }
-        });
-    }
-
     public static NetworkQoS findNetworkQosById(Collection<NetworkQoS> items, Guid qosId) {
         return firstOrDefault(items, new IdPredicate<>(qosId), NetworkQoSModel.EMPTY_QOS);
     }

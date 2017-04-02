@@ -27,8 +27,11 @@ public abstract class ProfileBehavior {
         AsyncQuery<List<Network>> networksQuery = new AsyncQuery<>(new AsyncCallback<List<Network>>() {
             @Override
             public void onSuccess(final List<Network> clusterNetworks) {
-                Network managementNetwork = Linq.findManagementNetwork(clusterNetworks);
-                managementNetworkName = managementNetwork != null ? managementNetwork.getName() : null;
+                managementNetworkName = clusterNetworks.stream()
+                        .filter(n -> n.getCluster().isManagement())
+                        .map(Network::getName)
+                        .findFirst()
+                        .orElse(null);
 
                 profilesQuery.converterCallback = new Converter<List<VnicProfileView>>() {
 
