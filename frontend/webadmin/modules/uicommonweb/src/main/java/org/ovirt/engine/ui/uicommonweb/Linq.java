@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -85,16 +84,6 @@ public final class Linq {
         boolean isActive = storageDomain.getStatus() == StorageDomainStatus.Active;
 
         return isData && isActive;
-    }
-
-    public static Collection<StorageDomain> findAllStorageDomainsBySharedStatus(List<StorageDomain> items,
-            final StorageDomainSharedStatus status) {
-        return where(items, new IPredicate<StorageDomain>() {
-            @Override
-            public boolean match(StorageDomain i) {
-                return i.getStorageDomainSharedStatus() == status;
-            }
-        });
     }
 
     /**

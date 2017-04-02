@@ -922,7 +922,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         getRemoveCommand().setIsExecutionAllowed(items.size() == 1
                 && !items.get(0).getStorageType().isOpenStackDomain()
-                && Linq.findAllStorageDomainsBySharedStatus(items, StorageDomainSharedStatus.Unattached).size() == items.size());
+                && items.get(0).getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
 
         getDestroyCommand().setIsExecutionAllowed(item != null && items.size() == 1
                 && !items.get(0).getStorageType().isOpenStackDomain()
