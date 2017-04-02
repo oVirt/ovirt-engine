@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Nameable;
@@ -90,13 +89,6 @@ public final class Linq {
         boolean isActive = storageDomain.getStatus() == StorageDomainStatus.Active;
 
         return isData && isActive;
-    }
-
-    /**
-     * Check if Cluster item with specified id exist in List
-     */
-    public static boolean isClusterItemExistInList(List<Cluster> items, Guid id) {
-        return firstOrNull(items, new IdPredicate<>(id)) != null;
     }
 
     public static Network findManagementNetwork(List<Network> networks) {

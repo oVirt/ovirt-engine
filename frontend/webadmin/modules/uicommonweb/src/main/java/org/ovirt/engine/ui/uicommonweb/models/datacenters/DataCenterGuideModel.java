@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -234,23 +236,16 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         updateAddClusterAvailability();
 
-        List<VDS> hosts = new ArrayList<>();
-        List<VDS> availableHosts = new ArrayList<>();
-        List<VDS> upHosts = new ArrayList<>();
-        for (VDS vds : allHosts) {
-            if (Linq.isClusterItemExistInList(clusters, vds.getClusterId())) {
-                hosts.add(vds);
-            }
+        Set<Guid> clusterIds = clusters.stream().map(Cluster::getId).collect(Collectors.toSet());
+        List<VDS> hosts =
+                allHosts.stream().filter(h -> clusterIds.contains(h.getClusterId())).collect(Collectors.toList());
+        List<VDS> upHosts = hosts.stream().filter(v -> v.getStatus() == VDSStatus.Up).collect(Collectors.toList());
+        List<VDS> availableHosts =
+                allHosts.stream()
+                        .filter(v -> v.getStatus() == VDSStatus.Maintenance || v.getStatus() == VDSStatus.PendingApproval)
+                        .filter(v -> doesHostSupportAnyCluster(clusters, v))
+                        .collect(Collectors.toList());
 
-            if ((vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
-                && doesHostSupportAnyCluster(clusters, vds)) {
-                availableHosts.add(vds);
-            }
-
-            if (vds.getStatus() == VDSStatus.Up && Linq.isClusterItemExistInList(clusters, vds.getClusterId())) {
-                upHosts.add(vds);
-            }
-        }
 
         updateAddAndSelectHostAvailability(hosts, availableHosts);
 
