@@ -232,7 +232,7 @@ public final class Linq {
         return entityModelList;
     }
 
-    public static ArrayList<DiskModel> filterDisksByType(List<DiskModel> diskModels, DiskStorageType type) {
+    public static List<DiskModel> filterDisksByType(List<DiskModel> diskModels, DiskStorageType type) {
         ArrayList<DiskModel> filteredList = new ArrayList<>();
 
         if (diskModels != null) {

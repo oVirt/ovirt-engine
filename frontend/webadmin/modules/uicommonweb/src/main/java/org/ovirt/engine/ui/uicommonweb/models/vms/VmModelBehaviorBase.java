@@ -736,7 +736,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getModel().getDisks();
                 Collections.sort(activeStorageDomains, new NameableComparator());
 
-                ArrayList<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
+                List<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
                 for (DiskModel diskModel : diskImages) {
                     List<StorageDomain> availableDiskStorageDomains;
                     diskModel.getQuota().setItems(getModel().getQuota().getItems());
@@ -755,7 +755,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             constants.noActiveTargetStorageDomainAvailableMsg());
                     diskModel.getStorageDomain().setIsChangeable(!availableDiskStorageDomains.isEmpty());
                 }
-                ArrayList<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
+                List<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
                 Collection<StorageDomain> cinderStorageDomains =
                         Linq.filterStorageDomainsByStorageType(storageDomains, StorageType.CINDER);
                 initStorageDomainsForCinderDisks(cinderDisks, cinderStorageDomains);
@@ -763,7 +763,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }), dataCenter.getId(), actionGroup);
     }
 
-    private void initStorageDomainsForCinderDisks(ArrayList<DiskModel> cinderDisks, Collection<StorageDomain> cinderStorageDomains) {
+    private void initStorageDomainsForCinderDisks(List<DiskModel> cinderDisks, Collection<StorageDomain> cinderStorageDomains) {
         for (DiskModel diskModel : cinderDisks) {
             CinderDisk cinderDisk = (CinderDisk) diskModel.getDisk();
             diskModel.getStorageDomain().setItems(Linq.filterStorageDomainById(

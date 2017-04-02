@@ -401,11 +401,11 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
                         Collections.sort(activeStorageDomainList, new NameableComparator());
                         if (disks != null) {
-                            ArrayList<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
+                            List<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
                             for (DiskModel diskModel : diskImages) {
                                 diskModel.getStorageDomain().setItems(activeStorageDomainList);
                             }
-                            ArrayList<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
+                            List<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
                             if (!cinderDisks.isEmpty()) {
                                 Collection<StorageDomain> cinderStorageDomains =
                                         Linq.filterStorageDomainsByStorageType(storageDomains, StorageType.CINDER);
@@ -418,7 +418,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 ActionGroup.CREATE_TEMPLATE);
     }
 
-    private void initStorageDomainsForCinderDisks(ArrayList<DiskModel> cinderDisks, Collection<StorageDomain> cinderStorageDomains) {
+    private void initStorageDomainsForCinderDisks(List<DiskModel> cinderDisks, Collection<StorageDomain> cinderStorageDomains) {
         for (DiskModel diskModel : cinderDisks) {
             CinderDisk cinderDisk = (CinderDisk) diskModel.getDisk();
             diskModel.getStorageDomain().setItems(Linq.filterStorageDomainById(
