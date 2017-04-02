@@ -621,8 +621,4 @@ public final class Linq {
             Collection<StorageDomain> source, final Guid id) {
         return where(source, new IdPredicate<>(id));
     }
-
-    public static VDS findHostByIdFromIdList(Collection<VDS> items, List<Guid> hostIdList) {
-        return firstOrNull(items, new IdsPredicate<>(hostIdList));
-    }
 }

@@ -50,10 +50,11 @@ public class ModelWithPinnedHost extends Model {
     }
 
     private void selectCurrentPinnedHost() {
-        VDS host = Linq.findHostByIdFromIdList(getPinnedHost().getItems(), vm.getDedicatedVmForVdsList());
-        if (host != null) {
-            getPinnedHost().setSelectedItem(host);
-        }
+        getPinnedHost().getItems()
+                .stream()
+                .filter(new Linq.IdsPredicate<>(vm.getDedicatedVmForVdsList()))
+                .findFirst()
+                .ifPresent(vds -> getPinnedHost().setSelectedItem(vds));
     }
 
     private Collection<VDS> filterHostDevicePassthroughCapableHosts(Collection<VDS> hosts) {
