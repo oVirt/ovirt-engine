@@ -52,6 +52,11 @@ public enum VmDeviceGeneralType {
     REDIR,
 
     /**
+     * USB device redirection channel
+     */
+    REDIRDEV,
+
+    /**
      * A console device
      */
     CONSOLE,

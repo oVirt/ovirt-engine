@@ -769,6 +769,7 @@ public class VmDeviceUtils {
     private void disableSpiceUsb(Guid vmId) {
         removeUsbControllers(vmId);
         removeUsbSlots(vmId);
+        removeUsbChannels(vmId);
     }
 
     private void enableNormalUsb(VmBase vmBase) {
@@ -863,11 +864,25 @@ public class VmDeviceUtils {
                 VmDeviceType.SPICEVMC.getName());
     }
 
+    public List<VmDevice> getUsbChannels(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vmId,
+                VmDeviceGeneralType.REDIRDEV,
+                VmDeviceType.SPICEVMC.getName());
+    }
+
     /**
      * Remove all USB slots from the VM.
      */
     public void removeUsbSlots(Guid vmId) {
         removeVmDevices(getUsbSlots(vmId));
+    }
+
+    /**
+     * Remove all USB redir channels.
+     */
+    public void removeUsbChannels(Guid vmId) {
+        removeVmDevices(getUsbChannels(vmId));
     }
 
     /**

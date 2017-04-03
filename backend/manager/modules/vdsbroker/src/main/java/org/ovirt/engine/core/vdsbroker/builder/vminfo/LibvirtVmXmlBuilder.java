@@ -608,6 +608,8 @@ public class LibvirtVmXmlBuilder {
             case REDIR:
                 writeRedir(device);
                 break;
+            case REDIRDEV:
+                break;
             case CHANNEL:
                 break;
             case HOSTDEV:
