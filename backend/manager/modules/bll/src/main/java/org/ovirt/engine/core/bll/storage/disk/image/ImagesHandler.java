@@ -856,7 +856,11 @@ public final class ImagesHandler {
             log.error("Unable to get qemu image info from storage", e);
         } finally {
             if (shouldPrepareAndTeardown) {
-                teardownImage(storagePoolId, newStorageDomainID, newImageGroupId, newImageId, vdsId);
+                try {
+                    teardownImage(storagePoolId, newStorageDomainID, newImageGroupId, newImageId, vdsId);
+                } catch (Exception e) {
+                    log.warn("Unable to tear down image", e);
+                }
             }
         }
         return qemuImageInfo;
