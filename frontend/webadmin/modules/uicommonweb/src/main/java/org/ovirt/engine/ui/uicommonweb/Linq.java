@@ -114,11 +114,11 @@ public final class Linq {
         return firstOrNull(source, new TruePredicate<TSource>());
     }
 
-    public static <TSource> TSource firstOrNull(Collection<TSource> source, IPredicate<? super TSource> predicate) {
+    public static <TSource> TSource firstOrNull(Collection<TSource> source, Predicate<? super TSource> predicate) {
         return firstOrDefault(source, predicate, null);
     }
 
-    public static <TSource> TSource firstOrDefault(Collection<TSource> source, IPredicate<? super TSource> predicate,
+    public static <TSource> TSource firstOrDefault(Collection<TSource> source, Predicate<? super TSource> predicate,
             TSource defaultValue) {
         return Optional.ofNullable(source)
                 .orElse(Collections.emptyList())
@@ -128,7 +128,7 @@ public final class Linq {
                 .orElse(defaultValue);
     }
 
-    public static <TSource> List<TSource> where(Collection<TSource> source, IPredicate<? super TSource> predicate) {
+    public static <TSource> List<TSource> where(Collection<TSource> source, Predicate<? super TSource> predicate) {
         return source.stream().filter(predicate).collect(Collectors.toList());
     }
 
