@@ -6,7 +6,6 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.FenceVolumeJobCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVolumeVDSCommandParameters;
@@ -25,7 +24,7 @@ public class FenceVolumeJobCommand<T extends FenceVolumeJobCommandParameters> ex
         UpdateVolumeVDSCommandParameters p = new UpdateVolumeVDSCommandParameters(getParameters().getStorageJobId(),
                 getParameters().getImageLocationInfo());
         p.setGeneration(getParameters().getImageLocationInfo().getGeneration() + ENTITY_FENCING_GENERATION_DIFF);
-        VdsCommandsHelper.runVdsCommandWithoutFailover(VDSCommandType.UpdateVolume,
+        vdsCommandsHelper.runVdsCommandWithoutFailover(VDSCommandType.UpdateVolume,
                 p,
                 getParameters().getStoragePoolId(),
                 this);

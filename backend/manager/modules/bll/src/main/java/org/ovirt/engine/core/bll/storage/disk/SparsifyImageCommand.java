@@ -12,7 +12,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -115,7 +114,7 @@ public class SparsifyImageCommand<T extends StorageJobCommandParameters> extends
     @Override
     protected void executeCommand() {
         lockImageInDb();
-        VDSReturnValue vdsReturnValue = VdsCommandsHelper.runVdsCommandWithFailover(
+        VDSReturnValue vdsReturnValue = vdsCommandsHelper.runVdsCommandWithFailover(
                 VDSCommandType.SparsifyImage,
                 new SparsifyImageVDSCommandParameters(
                         getParameters().getStorageJobId(),

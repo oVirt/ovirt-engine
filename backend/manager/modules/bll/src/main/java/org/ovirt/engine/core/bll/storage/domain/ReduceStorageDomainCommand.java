@@ -4,7 +4,6 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.action.ReduceStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -27,7 +26,7 @@ public class ReduceStorageDomainCommand<T extends ReduceStorageDomainCommandPara
                         getParameters().getStorageDomainId(),
                         getParameters().getDeviceId());
         p.setVdsId(getParameters().getVdsRunningOn());
-        VdsCommandsHelper.runVdsCommandWithoutFailover(VDSCommandType.ReduceStorageDomain,
+        vdsCommandsHelper.runVdsCommandWithoutFailover(VDSCommandType.ReduceStorageDomain,
                 p,
                 getParameters().getStoragePoolId(),
                 this);

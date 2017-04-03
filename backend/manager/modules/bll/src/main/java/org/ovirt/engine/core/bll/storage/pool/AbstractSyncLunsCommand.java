@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
@@ -17,6 +19,9 @@ import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
 public abstract class AbstractSyncLunsCommand<T extends SyncLunsParameters> extends StorageHandlingCommandBase<T> {
+
+    @Inject
+    protected VdsCommandsHelper vdsCommandsHelper;
 
     protected AbstractSyncLunsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -68,7 +73,7 @@ public abstract class AbstractSyncLunsCommand<T extends SyncLunsParameters> exte
     protected List<LUNs> runGetDeviceList(Set<String> lunsIds) {
         GetDeviceListVDSCommandParameters parameters = new GetDeviceListVDSCommandParameters(
                 getParameters().getVdsId(), StorageType.UNKNOWN, false, lunsIds);
-        return (List<LUNs>) VdsCommandsHelper.runVdsCommandWithoutFailover(
+        return (List<LUNs>) vdsCommandsHelper.runVdsCommandWithoutFailover(
                 VDSCommandType.GetDeviceList, parameters, getParameters().getStoragePoolId(), null)
                 .getReturnValue();
     }

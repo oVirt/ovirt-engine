@@ -7,7 +7,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVolumeJobCommandParameters;
@@ -40,7 +39,7 @@ public class UpdateVolumeCommand<T extends UpdateVolumeCommandParameters> extend
         parameters.setGeneration(getParameters().getGeneration());
         parameters.setShared(getParameters().getShared());
 
-        VdsCommandsHelper.runVdsCommandWithoutFailover(VDSCommandType.UpdateVolume,
+        vdsCommandsHelper.runVdsCommandWithoutFailover(VDSCommandType.UpdateVolume,
                 parameters,
                 getParameters().getStoragePoolId(),
                 this);

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
@@ -18,13 +19,16 @@ import org.slf4j.LoggerFactory;
 public final class VdsmImagePoller {
     private static final Logger log = LoggerFactory.getLogger(VdsmImagePoller.class);
 
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
+
     private VdsmImagePoller() {
     }
 
     protected HostJobStatus pollImage(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId, Guid imageId,
                                       int executionGeneration, Guid cmdId, ActionType actionType) {
         Image imageInfo =
-                ((DiskImage) VdsCommandsHelper.runVdsCommandWithoutFailover(
+                ((DiskImage) vdsCommandsHelper.runVdsCommandWithoutFailover(
                         VDSCommandType.GetVolumeInfo,
                         new GetVolumeInfoVDSCommandParameters(storagePoolId,
                                 storageDomainId,

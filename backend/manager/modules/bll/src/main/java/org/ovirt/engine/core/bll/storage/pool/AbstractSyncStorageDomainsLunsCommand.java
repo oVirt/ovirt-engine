@@ -26,6 +26,9 @@ public abstract class AbstractSyncStorageDomainsLunsCommand<T extends SyncLunsPa
     @Inject
     private AuditLogDirector auditLogDirector;
 
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
+
     public AbstractSyncStorageDomainsLunsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -84,7 +87,7 @@ public abstract class AbstractSyncStorageDomainsLunsCommand<T extends SyncLunsPa
         if (Guid.isNullOrEmpty(getParameters().getStoragePoolId())) {
             return getParameters().getVdsId();
         }
-        return VdsCommandsHelper.getHostForExecution(getParameters().getStoragePoolId());
+        return vdsCommandsHelper.getHostForExecution(getParameters().getStoragePoolId());
     }
 
     protected abstract Stream<StorageDomain> getStorageDomainsToSync();

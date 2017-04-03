@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
@@ -22,6 +24,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class SealVmTemplateCommand<T extends SealVmTemplateParameters> extends VmTemplateCommand<T> implements HostJobCommand {
 
     private List<DiskImage> diskImages;
+
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
 
     public SealVmTemplateCommand(Guid commandId) {
         super(commandId);
@@ -50,7 +55,7 @@ public class SealVmTemplateCommand<T extends SealVmTemplateParameters> extends V
             return;
         }
 
-        VDSReturnValue vdsReturnValue = VdsCommandsHelper.runVdsCommandWithFailover(
+        VDSReturnValue vdsReturnValue = vdsCommandsHelper.runVdsCommandWithFailover(
                 VDSCommandType.SealDisks,
                 buildSealDisksVDSCommandParameters(),
                 getDiskImages().get(0).getStoragePoolId(),

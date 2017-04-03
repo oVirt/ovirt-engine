@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -44,7 +43,7 @@ public class ColdMergeCommand<T extends ColdMergeCommandParameters> extends Stor
     @Override
     protected void executeCommand() {
         completeGenerationInfo();
-        VdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.ColdMerge,
+        vdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.ColdMerge,
                 new ColdMergeVDSCommandParameters(getParameters().getStorageJobId(),
                         getParameters().getSubchainInfo()),
                 getParameters().getStoragePoolId(), this);

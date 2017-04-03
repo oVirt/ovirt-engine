@@ -4,7 +4,6 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.action.MoveStorageDomainDeviceCommandParameters;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -27,7 +26,7 @@ public class MoveStorageDomainDeviceCommand<T extends MoveStorageDomainDeviceCom
                 getParameters().getSrcDeviceId(),
                 getParameters().getDstDevicesIds());
         p.setVdsId(getParameters().getVdsRunningOn());
-        VdsCommandsHelper.runVdsCommandWithoutFailover(VDSCommandType.MoveStorageDomainDevice,
+        vdsCommandsHelper.runVdsCommandWithoutFailover(VDSCommandType.MoveStorageDomainDevice,
                 p,
                 getParameters().getStoragePoolId(),
                 this);

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.HostJobCommand;
 import org.ovirt.engine.core.bll.StorageJobCallback;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
@@ -22,6 +23,9 @@ public abstract class StorageJobCommand<T extends StorageJobCommandParameters> e
 
     @Inject
     protected ImagesHandler imagesHandler;
+
+    @Inject
+    protected VdsCommandsHelper vdsCommandsHelper;
 
     public StorageJobCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

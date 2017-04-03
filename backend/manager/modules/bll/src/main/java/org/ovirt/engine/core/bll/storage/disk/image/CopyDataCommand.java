@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -39,7 +38,7 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
     @Override
     protected void executeCommand() {
         completeGenerationInfo();
-        VdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.CopyVolumeData,
+        vdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.CopyVolumeData,
                 new CopyVolumeDataVDSCommandParameters(getParameters().getStorageJobId(),
                         getParameters().getSrcInfo(),
                         getParameters().getDstInfo(),

@@ -124,6 +124,9 @@ public class ImagesHandler {
     @Inject
     private ClusterUtils clusterUtils;
 
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
+
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
      * diskInfoDestinationMap by imageId mapping on active storage id where image is located. The second map is
@@ -794,7 +797,7 @@ public class ImagesHandler {
 
     protected DiskImage getVolumeInfoFromVdsm(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
                                       Guid newImageId) {
-        return (DiskImage) VdsCommandsHelper.runVdsCommandWithFailover(
+        return (DiskImage) vdsCommandsHelper.runVdsCommandWithFailover(
                 VDSCommandType.GetVolumeInfo,
                 new GetVolumeInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
                         newImageId), storagePoolId, null).getReturnValue();
@@ -807,7 +810,7 @@ public class ImagesHandler {
             Guid vdsId,
             boolean shouldPrepareAndTeardown) {
         if (vdsId == null) {
-            vdsId = VdsCommandsHelper.getHostForExecution(storagePoolId);
+            vdsId = vdsCommandsHelper.getHostForExecution(storagePoolId);
         }
         QemuImageInfo qemuImageInfo = null;
         if (shouldPrepareAndTeardown) {

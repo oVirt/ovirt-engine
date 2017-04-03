@@ -6,7 +6,6 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AllocateImageGroupVolumeCommandParameters;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
@@ -32,7 +31,7 @@ public class AllocateImageGroupVolumeCommand<T extends AllocateImageGroupVolumeC
 
     @Override
     protected void executeCommand() {
-        VdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.AllocateVolume,
+        vdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.AllocateVolume,
                 new AllocateVolumeVDSCommandParameters(getParameters().getStorageDomainId(),
                         getParameters().getJobId(),
                         getParameters().getImageGroupID(),

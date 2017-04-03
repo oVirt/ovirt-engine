@@ -9,7 +9,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.bll.Backend;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
@@ -27,7 +30,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.StepDao;
@@ -37,29 +39,43 @@ import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class VdsCommandsHelper {
 
     private static final Logger log = LoggerFactory.getLogger(VdsCommandsHelper.class);
 
+    @Inject
+    private BackendInternal backend;
+
+    @Inject
+    private VDSBrokerFrontend resourceManager;
+
+    @Inject
+    private VdsDao vdsDao;
+
+    @Inject
+    private StepDao stepDao;
+
+    @Inject
+    private StepSubjectEntityDao stepSubjectEntityDao;
+
     private VdsCommandsHelper() {
     }
 
-    public static VDSReturnValue runVdsCommandWithFailover(VDSCommandType vdsCommandType,
-                                                           VdsIdVDSCommandParametersBase params,
-                                                           Guid storagePoolId, CommandBase<?> cmd) {
+    public VDSReturnValue runVdsCommandWithFailover(VDSCommandType vdsCommandType,
+                                                    VdsIdVDSCommandParametersBase params,
+                                                    Guid storagePoolId, CommandBase<?> cmd) {
         return runVdsCommand(vdsCommandType, params, storagePoolId, cmd, true);
     }
 
-    public static VDSReturnValue runVdsCommandWithoutFailover(VDSCommandType vdsCommandType,
-                                                              VdsIdVDSCommandParametersBase parametersBase, Guid
-                                                                      storagePoolId, CommandBase<?> cmd) {
+    public VDSReturnValue runVdsCommandWithoutFailover(VDSCommandType vdsCommandType,
+                                                       VdsIdVDSCommandParametersBase parametersBase,
+                                                       Guid storagePoolId, CommandBase<?> cmd) {
         return runVdsCommand(vdsCommandType, parametersBase, storagePoolId, cmd, false);
     }
 
-    private static VDSReturnValue runVdsCommand(VDSCommandType vdsCommandType,
-                                                            VdsIdVDSCommandParametersBase params, Guid
-                                                                    storagePoolId, CommandBase<?> cmd,
-                                                            boolean performFailover) {
+    private VDSReturnValue runVdsCommand(VDSCommandType vdsCommandType, VdsIdVDSCommandParametersBase params,
+                                         Guid storagePoolId, CommandBase<?> cmd, boolean performFailover) {
         Set<Guid> executedHosts = new HashSet<>();
         VDSReturnValue returnValue = null;
         if (params.getVdsId() == null) {
@@ -74,7 +90,7 @@ public class VdsCommandsHelper {
         while (attempts <= Config.<Integer>getValue(ConfigValues.HsmCommandFailOverRetries)) {
             try {
                 attempts++;
-                returnValue = getBackend().getResourceManager().runVdsCommand(vdsCommandType, params);
+                returnValue = resourceManager.runVdsCommand(vdsCommandType, params);
                 if (returnValue != null && returnValue.getSucceeded()) {
                     return returnValue;
                 }
@@ -98,8 +114,8 @@ public class VdsCommandsHelper {
         return VdsHandler.handleVdsResult(returnValue);
     }
 
-    private static void chooseHostForExecution(VdsIdVDSCommandParametersBase parametersBase, Guid storagePoolId,
-                                               CommandBase<?> cmd, Collection<Guid> executedHosts) {
+    private void chooseHostForExecution(VdsIdVDSCommandParametersBase parametersBase, Guid storagePoolId,
+                                        CommandBase<?> cmd, Collection<Guid> executedHosts) {
         Guid vdsForExecution = getHostForExecution(storagePoolId, executedHosts);
         parametersBase.setVdsId(vdsForExecution);
 
@@ -107,11 +123,11 @@ public class VdsCommandsHelper {
             if (cmd.getCommandStep() != null && cmd.getExecutionContext().getStep() != null) {
                 Guid stepId = cmd.getExecutionContext().getStep().getId();
                 if (cmd.getParameters().getVdsRunningOn() != null) {
-                    getStepSubjectEntityDao().remove(cmd.getParameters().getVdsRunningOn(), stepId);
+                    stepSubjectEntityDao.remove(cmd.getParameters().getVdsRunningOn(), stepId);
                 }
 
                 if (vdsForExecution != null) {
-                    getStepSubjectEntityDao().saveAll(Collections.singletonList(
+                    stepSubjectEntityDao.saveAll(Collections.singletonList(
                             new StepSubjectEntity(stepId, VdcObjectType.EXECUTION_HOST, vdsForExecution)));
 
                     updateStepMessage(cmd, vdsForExecution);
@@ -124,12 +140,12 @@ public class VdsCommandsHelper {
         }
     }
 
-    public static Guid getHostForExecution(Guid poolId) {
+    public Guid getHostForExecution(Guid poolId) {
         return getHostForExecution(poolId, Collections.emptyList());
     }
 
-    public static Guid getHostForExecution(Guid poolId, Collection<Guid> hostsToFilter) {
-        List<Guid> hostsForExecution = getVdsDao()
+    public Guid getHostForExecution(Guid poolId, Collection<Guid> hostsToFilter) {
+        List<Guid> hostsForExecution = vdsDao
                 .getAllForStoragePoolAndStatus(poolId, VDSStatus.Up).stream()
                 .filter(x -> !hostsToFilter.contains(x.getId()))
                 .map(x -> x.getId()).collect(Collectors.toList());
@@ -140,23 +156,7 @@ public class VdsCommandsHelper {
         return hostsForExecution.get(new Random().nextInt(hostsForExecution.size()));
     }
 
-    protected static BackendInternal getBackend() {
-        return Backend.getInstance();
-    }
-
-    protected static VdsDao getVdsDao() {
-        return DbFacade.getInstance().getVdsDao();
-    }
-
-    protected static StepSubjectEntityDao getStepSubjectEntityDao() {
-        return DbFacade.getInstance().getStepSubjectEntityDao();
-    }
-
-    protected static StepDao getStepDao() {
-        return DbFacade.getInstance().getStepDao();
-    }
-
-    private static void updateStepMessage(CommandBase<?> cmd, Guid vdsForExecution) {
+    private void updateStepMessage(CommandBase<?> cmd, Guid vdsForExecution) {
         // As an HSM job can run on any host, we want to display the host running the job when it is
         // chosen. To do so, we look for a corresponding command step with an "_ON_HOST" suffix that
         // is supposed to contain a "vds" placeholder.
@@ -171,9 +171,9 @@ public class VdsCommandsHelper {
 
         Step step = cmd.getExecutionContext().getStep();
         Map<String, String> jobProperties = cmd.getJobMessageProperties();
-        jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), getVdsDao().get(vdsForExecution).getName());
+        jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), vdsDao.get(vdsForExecution).getName());
         step.setDescription(ExecutionMessageDirector.resolveStepMessage(stepEnum, jobProperties));
-        getStepDao().update(step);
+        stepDao.update(step);
 
         // Add an audit log entry if a corresponding AuditLogType exists. Note that we expect an AuditLogType
         // with name equals to Step_Enum to exist. If an AuditLogType exists, the arguments in the audit

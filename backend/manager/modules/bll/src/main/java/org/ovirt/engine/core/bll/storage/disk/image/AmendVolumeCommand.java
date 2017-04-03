@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -66,7 +65,7 @@ public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
         info.setGeneration(image.getImage().getGeneration());
         persistCommandIfNeeded();
 
-        VDSReturnValue vdsReturnValue = VdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.AmendVolume,
+        VDSReturnValue vdsReturnValue = vdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.AmendVolume,
                 new AmendVolumeVDSCommandParameters(getParameters().getStorageJobId(),
                         info.getStorageDomainId(),
                         info.getImageGroupId(),
