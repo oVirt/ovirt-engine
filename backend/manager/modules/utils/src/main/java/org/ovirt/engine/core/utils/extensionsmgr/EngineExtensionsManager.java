@@ -111,7 +111,7 @@ public class EngineExtensionsManager extends ExtensionsManager {
     private String normalizeName(String s) {
         StringBuilder ret = new StringBuilder();
         for (char c : s.toCharArray()) {
-            if (c == '_' || Character.isLetterOrDigit(c)) {
+            if (Character.isLetterOrDigit(c)) {
                 ret.append(c);
             } else {
                 ret.append('_');
