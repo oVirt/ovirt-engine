@@ -235,11 +235,9 @@ public final class Linq {
     public static List<DiskModel> filterDisksByType(List<DiskModel> diskModels, DiskStorageType type) {
         ArrayList<DiskModel> filteredList = new ArrayList<>();
 
-        if (diskModels != null) {
-            for (DiskModel item : diskModels) {
-                if (item.getDisk().getDiskStorageType() == type) {
-                    filteredList.add(item);
-                }
+        for (DiskModel item : diskModels) {
+            if (item.getDisk().getDiskStorageType() == type) {
+                filteredList.add(item);
             }
         }
 
