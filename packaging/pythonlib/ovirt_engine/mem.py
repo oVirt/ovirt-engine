@@ -74,6 +74,8 @@ def javaX_mb(xvalue):
     mem = int(match.group('value'))
     if match.group('unit') in ('g', 'G'):
         mem *= 1024
+    elif match.group('unit') in ('m', 'M'):
+        pass  # Value is already in MB
     elif match.group('unit') in ('k', 'K'):
         mem //= 1024
     elif match.group('unit') == '':
