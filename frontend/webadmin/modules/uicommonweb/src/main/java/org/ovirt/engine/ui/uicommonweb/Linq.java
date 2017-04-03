@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -614,26 +613,6 @@ public final class Linq {
             @Override
             public boolean match(StorageDomain source) {
                 return source.getStorageType() == storageType;
-            }
-        });
-    }
-
-    public static Collection<StorageDomain> filterStorageDomainsByStorageDomainType(
-            Collection<StorageDomain> source, final StorageDomainType storageDomainType) {
-        return where(source, new IPredicate<StorageDomain>() {
-            @Override
-            public boolean match(StorageDomain source) {
-                return source.getStorageDomainType() == storageDomainType;
-            }
-        });
-    }
-
-    public static Collection<StorageDomain> filterStorageDomainsByStorageStatus(
-            Collection<StorageDomain> source, final StorageDomainStatus storageDomainStatus) {
-        return where(source, new IPredicate<StorageDomain>() {
-            @Override
-            public boolean match(StorageDomain source) {
-                return source.getStatus() == storageDomainStatus;
             }
         });
     }

@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -12,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -372,23 +373,26 @@ public abstract class AbstractDiskModel extends DiskModel {
         AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
             @Override
             public void onSuccess(List<StorageDomain> storageDomains) {
-                ArrayList<StorageDomain> filteredStorageDomains = new ArrayList<>();
+                Predicate<StorageDomain> domainByDiskType;
                 switch (getDiskStorageType().getEntity()) {
                     case IMAGE:
-                        filteredStorageDomains.addAll(Linq.filterStorageDomainsByStorageDomainType(
-                                storageDomains, StorageDomainType.Master));
-                        filteredStorageDomains.addAll(Linq.filterStorageDomainsByStorageDomainType(
-                                storageDomains, StorageDomainType.Data));
+                        domainByDiskType = d -> d.getStorageDomainType().isDataDomain();
                         break;
                     case CINDER:
-                        filteredStorageDomains.addAll(Linq.filterStorageDomainsByStorageType(
-                                storageDomains, StorageType.CINDER));
+                        domainByDiskType = d -> d.getStorageType() == StorageType.CINDER;
                         break;
+                    default:
+                        domainByDiskType = s -> true;
                 }
 
-                filteredStorageDomains = (ArrayList<StorageDomain>) Linq.filterStorageDomainsByStorageStatus(
-                        filteredStorageDomains, StorageDomainStatus.Active);
-                Collections.sort(filteredStorageDomains, new NameableComparator());
+                List<StorageDomain> filteredStorageDomains =
+                        storageDomains.stream()
+                                .filter(domainByDiskType)
+                                .filter(d -> d.getStatus() == StorageDomainStatus.Active)
+                                .sorted(new NameableComparator())
+                                .collect(Collectors.toList());
+
+
                 StorageDomain storage = Linq.firstOrNull(filteredStorageDomains);
                 getStorageDomain().setItems(filteredStorageDomains, storage);
                 if (storage == null) {
