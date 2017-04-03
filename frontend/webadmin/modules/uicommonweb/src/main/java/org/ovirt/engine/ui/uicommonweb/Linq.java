@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -128,15 +129,7 @@ public final class Linq {
     }
 
     public static <TSource> List<TSource> where(Collection<TSource> source, IPredicate<? super TSource> predicate) {
-        List<TSource> list = new ArrayList<>();
-
-        for (TSource item : source) {
-            if (predicate.match(item)) {
-                list.add(item);
-            }
-        }
-
-        return list;
+        return source.stream().filter(predicate).collect(Collectors.toList());
     }
 
     public static <TSource> ArrayList<TSource> distinct(ArrayList<TSource> source,
