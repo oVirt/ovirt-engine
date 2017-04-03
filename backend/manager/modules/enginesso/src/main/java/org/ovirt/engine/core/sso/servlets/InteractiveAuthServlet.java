@@ -90,7 +90,7 @@ public class InteractiveAuthServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response,
             Credentials userCredentials) throws ServletException, IOException, AuthenticationException {
-        if (userCredentials == null || !userCredentials.isValid()) {
+        if (userCredentials == null || !SsoUtils.areCredentialsValid(request, userCredentials, true)) {
             throw new AuthenticationException(
                     ssoContext.getLocalizationUtils().localize(
                             SsoConstants.APP_ERROR_INVALID_CREDENTIALS,

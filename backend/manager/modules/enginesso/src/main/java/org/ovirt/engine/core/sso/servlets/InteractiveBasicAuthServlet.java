@@ -26,7 +26,7 @@ public class InteractiveBasicAuthServlet extends HttpServlet {
         Credentials credentials = SsoUtils.getUserCredentialsFromHeader(request);
         boolean credentialsValid = false;
         try {
-            credentialsValid = credentials != null && credentials.isValid();
+            credentialsValid = credentials != null && SsoUtils.areCredentialsValid(request, credentials);
         } catch (AuthenticationException ex) {
             log.error("Error validating credentials: {}", ex.getMessage());
             log.debug("Exception", ex);

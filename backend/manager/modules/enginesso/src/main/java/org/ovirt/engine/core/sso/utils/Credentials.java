@@ -58,21 +58,12 @@ public class Credentials {
         this.profile = profile;
     }
 
-    public boolean isValid() throws AuthenticationException {
-        if (StringUtils.isEmpty(username)) {
-            throw new AuthenticationException(String.format("No user name found in credentials"));
-        }
-        if (!profileValid) {
-            throw new AuthenticationException(String.format("No valid profile found in credentials"));
-        }
-        if (StringUtils.isEmpty(profile)) {
-            throw new AuthenticationException(String.format("No profile found in credentials"));
-        }
-        return true;
-    }
-
     public void setProfileValid(boolean profileValid) {
         this.profileValid = profileValid;
+    }
+
+    public boolean isProfileValid() {
+        return profileValid;
     }
 
     @Override
