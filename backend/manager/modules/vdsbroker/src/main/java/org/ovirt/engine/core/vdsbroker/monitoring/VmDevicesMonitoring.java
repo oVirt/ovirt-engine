@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -47,7 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class VmDevicesMonitoring implements BackendService {
+public class VmDevicesMonitoring {
 
     private enum DevicesChange {
         NOT_CHANGED,
@@ -283,8 +282,6 @@ public class VmDevicesMonitoring implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(VmDevicesMonitoring.class);
 
-    private static VmDevicesMonitoring instance;
-
     public static final String EMPTY_HASH = "";
     public static final String UPDATE_HASH = "UPDATE_HASH";
 
@@ -304,23 +301,14 @@ public class VmDevicesMonitoring implements BackendService {
     private ConcurrentMap<Guid, ReentrantLock> vmDevicesLocks = new ConcurrentHashMap<>();
     private final Object devicesStatusesLock = new Object();
 
-    public VmDevicesMonitoring() {
-    }
-
     @PostConstruct
     private void init() {
-        instance = this;
-
         initDevicesStatuses(System.nanoTime());
     }
 
     void initDevicesStatuses(long fetchTime) {
         getVmDynamicDao().getAllDevicesHashes().forEach(pair -> vmDevicesStatuses.put(pair.getFirst(),
                 new DevicesStatus(pair.getSecond(), fetchTime)));
-    }
-
-    public static VmDevicesMonitoring getInstance() {
-        return instance;
     }
 
     ResourceManager getResourceManager() {

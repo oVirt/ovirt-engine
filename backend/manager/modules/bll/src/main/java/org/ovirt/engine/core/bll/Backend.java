@@ -91,7 +91,6 @@ import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 import org.ovirt.engine.core.utils.osinfo.OsInfoPreferencesLoader;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmMigrationProgressMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -303,7 +302,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // Set start-up time
         _startedAt = DateTime.getNow();
 
-        serviceLoader.load(VmDevicesMonitoring.class);
         serviceLoader.load(VmPoolHandler.class);
         serviceLoader.load(VmPoolMonitor.class);
         serviceLoader.load(HaAutoStartVmsRunner.class);

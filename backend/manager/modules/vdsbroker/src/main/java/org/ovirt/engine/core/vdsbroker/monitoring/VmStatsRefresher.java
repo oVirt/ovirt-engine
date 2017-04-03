@@ -22,6 +22,8 @@ public abstract class VmStatsRefresher {
     protected AuditLogDirector auditLogDirector;
     @Inject
     private Instance<VmsMonitoring> vmsMonitoring;
+    @Inject
+    private Instance<VmDevicesMonitoring> vmDevicesMonitoring;
 
     public VmStatsRefresher(VdsManager vdsManager) {
         this.vdsManager = vdsManager;
@@ -38,10 +40,7 @@ public abstract class VmStatsRefresher {
     public abstract void stopMonitoring();
 
     protected void processDevices(Stream<VdsmVm> vms, long fetchTime) {
-        // VmDevicesMonitoring may be injected if this class is converted to a managed bean. Currently the injection
-        // here is not performed by container and creates circular dependency during ResourceManager initialization.
-        VmDevicesMonitoring.Change deviceChange =
-                VmDevicesMonitoring.getInstance().createChange(vdsManager.getVdsId(), fetchTime);
+        VmDevicesMonitoring.Change deviceChange = getVmDevicesMonitoring().createChange(vdsManager.getVdsId(), fetchTime);
         vms.filter(vm -> vm.getVmDynamic() != null && vm.getVmDynamic().getStatus() != VMStatus.MigratingTo)
                 .sorted(Comparator.comparing(VdsmVm::getId)) // Important to avoid deadlock
                 .forEach(vm -> deviceChange.updateVm(vm.getId(), vm.getDevicesHash()));
@@ -52,4 +51,7 @@ public abstract class VmStatsRefresher {
         return vmsMonitoring.get();
     }
 
+    protected VmDevicesMonitoring getVmDevicesMonitoring() {
+        return vmDevicesMonitoring.get();
+    }
 }
