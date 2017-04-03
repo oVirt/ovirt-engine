@@ -109,7 +109,7 @@ public class EngineExtensionsManager extends ExtensionsManager {
     }
 
     private String normalizeName(String s) {
-        StringBuilder ret = new StringBuilder();
+        StringBuilder ret = new StringBuilder(s.length());
         for (char c : s.toCharArray()) {
             if (Character.isLetterOrDigit(c)) {
                 ret.append(c);
