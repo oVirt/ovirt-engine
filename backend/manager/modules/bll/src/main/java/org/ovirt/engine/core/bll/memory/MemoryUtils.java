@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -102,6 +103,7 @@ public class MemoryUtils {
         image.setSize(MemoryUtils.METADATA_SIZE_IN_BYTES);
         image.setVolumeType(VolumeType.Preallocated);
         image.setVolumeFormat(VolumeFormat.RAW);
+        image.setContentType(DiskContentType.MEMORY_METADATA_VOLUME);
         return image;
     }
 
@@ -128,6 +130,7 @@ public class MemoryUtils {
         image.setSize(vmOverheadCalculator.getSnapshotMemorySizeInBytes(vm));
         image.setVolumeType(storageTypeToMemoryVolumeType(storageType));
         image.setVolumeFormat(VolumeFormat.RAW);
+        image.setContentType(DiskContentType.MEMORY_DUMP_VOLUME);
         return image;
     }
 

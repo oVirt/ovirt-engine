@@ -85,6 +85,7 @@ SELECT images.image_guid AS image_guid,
     base_disks.wipe_after_delete AS wipe_after_delete,
     base_disks.propagate_errors,
     base_disks.sgio AS sgio,
+    base_disks.disk_content_type AS disk_content_type,
     image_storage_domain_map.quota_id AS quota_id,
     quota.quota_name AS quota_name,
     storage_pool.quota_enforcement_type,
@@ -100,19 +101,6 @@ SELECT images.image_guid AS image_guid,
     base_disks.disk_storage_type AS disk_storage_type,
     base_disks.cinder_volume_type AS cinder_volume_type,
     base_disks.last_alignment_scan AS last_alignment_scan,
-    EXISTS (
-        SELECT 1
-        FROM storage_domains_ovf_info
-        WHERE images.image_group_id = storage_domains_ovf_info.ovf_disk_id
-        ) AS ovf_store,
-    EXISTS (
-        SELECT 1
-        FROM snapshots
-        WHERE images.image_group_id IN (
-                snapshots.memory_metadata_disk_id,
-                snapshots.memory_dump_disk_id
-                )
-        ) AS memory_image,
     image_transfers.phase AS image_transfer_phase,
     image_transfers.bytes_sent AS image_transfer_bytes_sent,
     image_transfers.bytes_total AS image_transfer_bytes_total,
@@ -149,7 +137,8 @@ CREATE OR REPLACE VIEW images_storage_domain_view AS -- TODO: Change code to tre
 
 SELECT *
 FROM memory_and_disk_images_storage_domain_view
-WHERE memory_image = FALSE;
+WHERE disk_content_type NOT IN (2, 3) -- Not memory dump volume or memory metadata volume
+    OR disk_content_type IS NULL; -- Content type might be null in case the image doesn't have a disk
 
 CREATE OR REPLACE VIEW storage_domain_file_repos AS
 
@@ -226,6 +215,7 @@ SELECT storage_for_image_view.storage_id AS storage_id,
     images_storage_domain_view.wipe_after_delete AS wipe_after_delete,
     images_storage_domain_view.propagate_errors AS propagate_errors,
     images_storage_domain_view.sgio AS sgio,
+    images_storage_domain_view.disk_content_type AS disk_content_type,
     images_storage_domain_view.entity_type AS entity_type,
     images_storage_domain_view.number_of_vms AS number_of_vms,
     images_storage_domain_view.vm_names AS vm_names,
@@ -241,7 +231,6 @@ SELECT storage_for_image_view.storage_id AS storage_id,
     images_storage_domain_view.shareable AS shareable,
     images_storage_domain_view.alignment AS alignment,
     images_storage_domain_view.last_alignment_scan AS last_alignment_scan,
-    images_storage_domain_view.ovf_store AS ovf_store,
     images_storage_domain_view.image_transfer_phase AS image_transfer_phase,
     images_storage_domain_view.image_transfer_bytes_sent AS image_transfer_bytes_sent,
     images_storage_domain_view.image_transfer_bytes_total AS image_transfer_bytes_total,
@@ -269,7 +258,8 @@ SELECT storage_impl.*,
     bd.alignment,
     bd.last_alignment_scan,
     bd.disk_storage_type,
-    bd.cinder_volume_type
+    bd.cinder_volume_type,
+    bd.disk_content_type
 FROM (
     SELECT storage_for_image_view.storage_id AS storage_id,
         -- Storage fields
@@ -308,7 +298,6 @@ FROM (
         -- Quota fields
         storage_for_image_view.quota_name AS quota_name,
         quota_enforcement_type,
-        ovf_store,
         image_transfer_phase,
         image_transfer_bytes_sent,
         image_transfer_bytes_total,
@@ -365,7 +354,6 @@ FROM (
         storage_for_image_view.quota_id,
         storage_for_image_view.quota_name,
         quota_enforcement_type,
-        ovf_store,
         image_transfer_phase,
         image_transfer_bytes_sent,
         image_transfer_bytes_total,
@@ -412,7 +400,6 @@ FROM (
         -- Quota fields
         NULL AS quota_name,
         NULL AS quota_enforcement_type,
-        FALSE AS ovf_store,
         NULL AS image_transfer_phase,
         NULL AS image_transfer_bytes_sent,
         NULL AS image_transfer_bytes_total,
@@ -457,7 +444,8 @@ SELECT storage_impl.*,
     bd.alignment,
     bd.last_alignment_scan,
     bd.disk_storage_type,
-    bd.cinder_volume_type
+    bd.cinder_volume_type,
+    bd.disk_content_type
 FROM (
     SELECT storage_for_image_view.storage_id AS storage_id,
         -- Storage fields
@@ -496,7 +484,6 @@ FROM (
         -- Quota fields
         storage_for_image_view.quota_name AS quota_name,
         quota_enforcement_type,
-        ovf_store,
         image_transfer_phase,
         image_transfer_bytes_sent,
         image_transfer_bytes_total,
@@ -504,7 +491,6 @@ FROM (
         storage_for_image_view.disk_profile_id AS disk_profile_id,
         -- disk profile fields
         storage_for_image_view.disk_profile_name AS disk_profile_name,
-        memory_image,
         NULL AS lun_id,
         -- LUN fields
         NULL AS physical_volume_id,
@@ -554,14 +540,12 @@ FROM (
         storage_for_image_view.quota_id,
         storage_for_image_view.quota_name,
         quota_enforcement_type,
-        ovf_store,
         image_transfer_phase,
         image_transfer_bytes_sent,
         image_transfer_bytes_total,
         progress,
         storage_for_image_view.disk_profile_id,
-        storage_for_image_view.disk_profile_name,
-        memory_image
+        storage_for_image_view.disk_profile_name
 
     UNION ALL
 
@@ -602,7 +586,6 @@ FROM (
         -- Quota fields
         NULL AS quota_name,
         NULL AS quota_enforcement_type,
-        FALSE AS ovf_store,
         NULL AS image_transfer_phase,
         NULL AS image_transfer_bytes_sent,
         NULL AS image_transfer_bytes_total,
@@ -610,7 +593,6 @@ FROM (
         NULL AS disk_profile_id,
         -- disk profile fields
         NULL AS disk_profile_name,
-        FALSE AS memory_image,
         l.lun_id,
         -- LUN fields
         l.physical_volume_id,
@@ -643,8 +625,7 @@ CREATE OR REPLACE VIEW all_disks_including_memory AS
 SELECT *
 FROM all_disks_including_snapshots_and_memory
 WHERE active IS NULL
-    OR active = TRUE
-    OR memory_image = TRUE;
+    OR active = TRUE;
 
 CREATE OR REPLACE VIEW all_disks_for_vms AS
 
@@ -2491,6 +2472,7 @@ SELECT vm_images_view.storage_id,
     vm_images_view.qcow_compat,
     vm_images_view.wipe_after_delete,
     vm_images_view.propagate_errors,
+    vm_images_view.disk_content_type,
     vm_images_view.entity_type,
     vm_images_view.number_of_vms,
     vm_images_view.vm_names,

@@ -65,6 +65,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         newDiskImage.setVmSnapshotId(getParameters().getVmSnapshotId());
         newDiskImage.setQuotaId(getParameters().getQuotaId());
         newDiskImage.setDiskProfileId(getParameters().getDiskProfileId());
+        newDiskImage.setContentType(getParameters().getDiskInfo().getContentType());
 
         TransactionSupport.executeInNewTransaction(() -> {
             if (!getParameters().isShouldRemainIllegalOnFailedExecution()) {

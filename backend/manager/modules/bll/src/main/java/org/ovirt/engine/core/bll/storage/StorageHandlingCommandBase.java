@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.config.Config;
@@ -366,6 +367,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             ovfStoreDiskImage.setDiskAlias(OvfInfoFileConstants.OvfStoreDescriptionLabel);
             ovfStoreDiskImage.setDiskDescription(OvfInfoFileConstants.OvfStoreDescriptionLabel);
             ovfStoreDiskImage.setShareable(true);
+            ovfStoreDiskImage.setContentType(DiskContentType.OVF_STORE);
             RegisterDiskParameters registerDiskParams =
                     new RegisterDiskParameters(ovfStoreDiskImage, storageDomainId);
 

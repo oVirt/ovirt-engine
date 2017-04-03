@@ -72,6 +72,8 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid>, ProgressEn
 
     private Integer progress;
 
+    private DiskContentType contentType;
+
     /**
      * @return an unmodifiable collection, we don't want anyone messing with the values without going through the setter
      */
@@ -114,6 +116,7 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid>, ProgressEn
     public BaseDisk() {
         propagateErrors = PropagateErrors.Off;
         alignment = DiskAlignment.Unknown;
+        contentType = DiskContentType.DATA;
     }
 
     @Override
@@ -232,6 +235,14 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid>, ProgressEn
         return null;
     }
 
+    public DiskContentType getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(DiskContentType contentType) {
+        this.contentType = contentType;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -242,7 +253,8 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid>, ProgressEn
                 shareable,
                 wipeAfterDelete,
                 sgio,
-                cinderVolumeType
+                cinderVolumeType,
+                contentType
         );
     }
 
@@ -267,6 +279,7 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid>, ProgressEn
                 && shareable == other.shareable
                 && isWipeAfterDelete() == other.isWipeAfterDelete()
                 && sgio == other.sgio
-                && Objects.equals(cinderVolumeType, other.cinderVolumeType);
+                && Objects.equals(cinderVolumeType, other.cinderVolumeType)
+                && contentType == other.contentType;
     }
 }

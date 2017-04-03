@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -79,6 +80,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
 
     public DiskImage createDisk(Guid domainId) {
         DiskImage createdDiskImage = new DiskImage();
+        createdDiskImage.setContentType(DiskContentType.OVF_STORE);
         createdDiskImage.setWipeAfterDelete(false);
         createdDiskImage.setDiskAlias(OvfInfoFileConstants.OvfStoreDescriptionLabel);
         createdDiskImage.setDiskDescription(OvfInfoFileConstants.OvfStoreDescriptionLabel);

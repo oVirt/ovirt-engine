@@ -36,7 +36,8 @@ public class BaseDiskDaoImpl extends DefaultGenericDao<BaseDisk, Guid> implement
                 .addValue("alignment", entity.getAlignment())
                 .addValue("last_alignment_scan", entity.getLastAlignmentScan())
                 .addValue("disk_storage_type", entity.getDiskStorageType())
-                .addValue("cinder_volume_type", entity.getCinderVolumeType());
+                .addValue("cinder_volume_type", entity.getCinderVolumeType())
+                .addValue("disk_content_type", entity.getContentType().getValue());
     }
 
     @Override

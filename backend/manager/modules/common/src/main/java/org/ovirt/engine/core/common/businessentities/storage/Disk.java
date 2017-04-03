@@ -26,7 +26,6 @@ public abstract class Disk extends BaseDisk {
     private VmEntityType vmEntityType;
     private int numberOfVms;
     private ArrayList<String> vmNames;
-    private DiskContentType contentType;
     private List<String> templateVersionNames;
 
     /**
@@ -43,10 +42,6 @@ public abstract class Disk extends BaseDisk {
     private ImageTransferPhase imageTransferPhase;
     private Long imageTransferBytesSent;
     private Long imageTransferBytesTotal;
-
-    public Disk() {
-        contentType = DiskContentType.DATA;
-    }
 
     /**
      * @return Whether taking snapshots of this disk is allowed
@@ -175,14 +170,6 @@ public abstract class Disk extends BaseDisk {
 
     @JsonIgnore
     public boolean isOvfStore() {
-        return contentType == DiskContentType.OVF_STORE;
-    }
-
-    public DiskContentType getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(DiskContentType contentType) {
-        this.contentType = contentType;
+        return getContentType() == DiskContentType.OVF_STORE;
     }
 }

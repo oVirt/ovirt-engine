@@ -13,7 +13,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -221,7 +220,6 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setReadRate(rs.getInt("read_rate"));
             entity.setWriteRate(rs.getInt("write_rate"));
-            entity.setContentType(rs.getBoolean("ovf_store") ? DiskContentType.OVF_STORE : DiskContentType.DATA);
             entity.setImageTransferPhase(rs.getObject("image_transfer_phase") != null
                     ? ImageTransferPhase.forValue(rs.getInt("image_transfer_phase")) : null);
             entity.setImageTransferBytesSent(rs.getLong("image_transfer_bytes_sent"));
