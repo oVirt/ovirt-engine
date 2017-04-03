@@ -3,15 +3,20 @@ package org.ovirt.engine.core.bll;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmPoolDao;
 
 public class RemoveVmFromPoolRunner extends PrevalidatingMultipleActionsRunner {
+
+    @Inject
+    private VmPoolDao vmPoolDao;
 
     public RemoveVmFromPoolRunner(VdcActionType actionType, List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
@@ -39,7 +44,7 @@ public class RemoveVmFromPoolRunner extends PrevalidatingMultipleActionsRunner {
             return;
         }
 
-        boolean allVmsRemoved = DbFacade.getInstance().getVmPoolDao().getVmPoolsMapByVmPoolId(poolId).size() == 0;
+        boolean allVmsRemoved = vmPoolDao.getVmPoolsMapByVmPoolId(poolId).size() == 0;
         if (!allVmsRemoved) {
             return;
         }
