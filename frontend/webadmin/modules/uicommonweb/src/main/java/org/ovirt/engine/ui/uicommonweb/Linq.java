@@ -317,19 +317,6 @@ public final class Linq {
         }
     }
 
-    public static class EqualsPredicate implements IPredicate<Object> {
-        private final Object object;
-
-        public EqualsPredicate(Object object) {
-            this.object = object;
-        }
-
-        @Override
-        public boolean match(Object source) {
-            return source.equals(object);
-        }
-    }
-
     public static class DataCenterWithClusterAccordingClusterPredicate implements IPredicate<DataCenterWithCluster> {
 
         private IdPredicate<Guid> idPredicate;

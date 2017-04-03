@@ -949,13 +949,12 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 glusterTunedProfile.setIsAvailable(glusterTunedProfile.getItems().size() > 0);
                 String newSelectedItem = null;
                 if (oldSelectedProfile != null) {
-                    newSelectedItem =
-                            Linq.firstOrNull(glusterTunedProfiles, new Linq.EqualsPredicate(oldSelectedProfile));
+                    newSelectedItem = Linq.firstOrNull(glusterTunedProfiles, x -> x.equals(oldSelectedProfile));
                 }
                 if (newSelectedItem != null) {
                     glusterTunedProfile.setSelectedItem(newSelectedItem);
                 } else if (getIsEdit()) {
-                    glusterTunedProfile.setSelectedItem(Linq.firstOrNull(glusterTunedProfiles, new Linq.EqualsPredicate(getEntity().getGlusterTunedProfile())));
+                    glusterTunedProfile.setSelectedItem(Linq.firstOrNull(glusterTunedProfiles, x -> x.equals(getEntity().getGlusterTunedProfile())));
                 }
             }
         }));
@@ -2050,8 +2049,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                         return selectedDataCenter.getCompatibilityVersion();
                     }
                 } else if (getIsEdit()) {
-                    return Linq.firstOrNull(versions,
-                            new Linq.EqualsPredicate(getEntity().getCompatibilityVersion()));
+                    return Linq.firstOrNull(versions, x -> x.equals(getEntity().getCompatibilityVersion()));
                 } else {
                     return selectedVersion;
                 }
