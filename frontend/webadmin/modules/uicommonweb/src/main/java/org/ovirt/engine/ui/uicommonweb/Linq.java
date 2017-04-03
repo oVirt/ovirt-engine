@@ -229,12 +229,7 @@ public final class Linq {
             return Collections.emptyList();
         }
 
-        return where(items, new IPredicate<EntityModel<?>>() {
-            @Override
-            public boolean match(EntityModel<?> entityModel) {
-                return entityModel.getIsSelected();
-            }
-        });
+        return where(items, EntityModel::getIsSelected);
     }
 
     public static DiskModel diskToModel(Disk disk) {
@@ -553,12 +548,7 @@ public final class Linq {
 
     public static Collection<StorageDomain> filterStorageDomainsByStorageType(
             Collection<StorageDomain> source, final StorageType storageType) {
-        return where(source, new IPredicate<StorageDomain>() {
-            @Override
-            public boolean match(StorageDomain source) {
-                return source.getStorageType() == storageType;
-            }
-        });
+        return where(source, sd -> sd.getStorageType() == storageType);
     }
 
     public static Collection<StorageDomain> filterStorageDomainById(
