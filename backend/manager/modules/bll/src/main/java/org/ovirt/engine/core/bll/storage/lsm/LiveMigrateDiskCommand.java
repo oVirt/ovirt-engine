@@ -255,8 +255,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                             getParameters().getTargetStorageDomainId(),
                             getParameters().getImageGroupID(),
                             image.getImageId()));
-
             DiskImage imageFromIRS = (DiskImage) ret.getReturnValue();
+            setQcowCompatForSnapshot(image, imageFromIRS);
             DiskImageDynamic diskImageDynamic = diskImageDynamicDao.get(image.getImageId());
 
             // Update image's actual size in DB
