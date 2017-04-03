@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -118,15 +119,12 @@ public final class Linq {
 
     public static <TSource> TSource firstOrDefault(Collection<TSource> source, IPredicate<? super TSource> predicate,
             TSource defaultValue) {
-        if (source != null) {
-            for (TSource item : source) {
-                if (predicate.match(item)) {
-                    return item;
-                }
-            }
-        }
-
-        return defaultValue;
+        return Optional.ofNullable(source)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(predicate)
+                .findFirst()
+                .orElse(defaultValue);
     }
 
     public static <TSource> List<TSource> where(Collection<TSource> source, IPredicate<? super TSource> predicate) {
