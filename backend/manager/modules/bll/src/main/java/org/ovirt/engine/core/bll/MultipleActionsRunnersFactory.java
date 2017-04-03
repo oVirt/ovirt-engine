@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.AttachStorageDomainsMultipleActionRunner;
 import org.ovirt.engine.core.bll.storage.domain.DeactivateStorageDomainsMultipleActionRunner;
@@ -13,13 +16,22 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
 
-public final class MultipleActionsRunnersFactory {
-    public static MultipleActionsRunner createMultipleActionsRunner(VdcActionType actionType,
-                                                                    ArrayList<VdcActionParametersBase> parameters,
-                                                                    boolean isInternal, CommandContext commandContext) {
+@Singleton
+public class MultipleActionsRunnersFactory {
+
+    @Inject
+    private VdsDao vdsDao;
+
+    @Inject
+    private ClusterDao clusterDao;
+
+    public MultipleActionsRunner createMultipleActionsRunner(VdcActionType actionType,
+                                                             ArrayList<VdcActionParametersBase> parameters,
+                                                             boolean isInternal, CommandContext commandContext) {
         MultipleActionsRunner runner;
         switch (actionType) {
         case DeactivateStorageDomainWithOvfUpdate:
@@ -80,12 +92,12 @@ public final class MultipleActionsRunnersFactory {
         return Injector.injectMembers(runner);
     }
 
-    private static boolean containsGlusterServer(ArrayList<VdcActionParametersBase> parameters) {
+    private boolean containsGlusterServer(ArrayList<VdcActionParametersBase> parameters) {
         Set<Guid> processed = new HashSet<>();
         for (VdcActionParametersBase param : parameters) {
-            VDS vds = DbFacade.getInstance().getVdsDao().get(((RemoveVdsParameters) param).getVdsId());
+            VDS vds = vdsDao.get(((RemoveVdsParameters) param).getVdsId());
             if (vds != null && !processed.contains(vds.getClusterId())) {
-                Cluster cluster = DbFacade.getInstance().getClusterDao().get(vds.getClusterId());
+                Cluster cluster = clusterDao.get(vds.getClusterId());
                 if (cluster.supportsGlusterService()) {
                     return true;
                 }

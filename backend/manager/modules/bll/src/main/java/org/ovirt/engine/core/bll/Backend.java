@@ -159,6 +159,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Inject
     private Instance<BackendQueryExecutor> queryExecutor;
 
+    @Inject
+    private MultipleActionsRunnersFactory multipleActionsRunnersFactory;
+
     public static BackendInternal getInstance() {
         return Injector.get(BackendInternal.class);
     }
@@ -617,7 +620,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             boolean isRunOnlyIfAllValidationPass,
             boolean isWaitForResult,
             CommandContext commandContext) {
-        MultipleActionsRunner runner = MultipleActionsRunnersFactory.createMultipleActionsRunner(actionType,
+        MultipleActionsRunner runner = multipleActionsRunnersFactory.createMultipleActionsRunner(actionType,
                 parameters, isInternal, commandContext);
         runner.setIsRunOnlyIfAllValidatePass(isRunOnlyIfAllValidationPass);
         runner.setIsWaitForResult(isWaitForResult);
