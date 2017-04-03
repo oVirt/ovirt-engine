@@ -141,10 +141,6 @@ public final class Linq {
         return list;
     }
 
-    public static <T> T retrieveFromSet(Set<T> set, final T object) {
-        return firstOrNull(set, new EqualsPredicate(object));
-    }
-
     public static <TSource> ArrayList<TSource> distinct(ArrayList<TSource> source,
             IEqualityComparer<TSource> comparer) {
         ArrayList<TSource> list = new ArrayList<>();

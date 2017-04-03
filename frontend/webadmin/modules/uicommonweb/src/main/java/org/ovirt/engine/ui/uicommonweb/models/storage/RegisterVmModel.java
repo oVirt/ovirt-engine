@@ -23,7 +23,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.ErrorTranslator;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.Linq.Negative;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -250,12 +249,12 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
         for (VmNetworkInterface vnic : registerVmData.getEntity().getInterfaces()) {
             final VnicProfileMappingEntity newMapping =
                     new VnicProfileMappingEntity(vnic.getNetworkName(), vnic.getVnicProfileName(), null);
-            final VnicProfileMappingEntity mapping;
-            if (previousClusterVnicProfileMappings.contains(newMapping)) {
-                mapping = Linq.retrieveFromSet(previousClusterVnicProfileMappings, newMapping);
-            } else {
-                mapping = newMapping;
-            }
+            final VnicProfileMappingEntity mapping =
+                    previousClusterVnicProfileMappings
+                            .stream()
+                            .filter(x -> x.equals(newMapping))
+                            .findFirst()
+                            .orElse(newMapping);
             result.add(mapping);
         }
         return result;
