@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -19,6 +20,8 @@ public abstract class VmStatsRefresher {
     protected VdsManager vdsManager;
     @Inject
     protected AuditLogDirector auditLogDirector;
+    @Inject
+    private Instance<VmsMonitoring> vmsMonitoring;
 
     public VmStatsRefresher(VdsManager vdsManager) {
         this.vdsManager = vdsManager;
@@ -46,9 +49,7 @@ public abstract class VmStatsRefresher {
     }
 
     protected VmsMonitoring getVmsMonitoring() {
-        // VmsMonitoring may be injected if this class is converted to a managed bean. Currently the injection
-        // here is not performed by container and creates circular dependency during ResourceManager initialization.
-        return VmsMonitoring.getInstance();
+        return vmsMonitoring.get();
     }
 
 }

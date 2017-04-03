@@ -8,11 +8,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -40,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * hand-over migration and save-to-db
  */
 @Singleton
-public class VmsMonitoring implements BackendService {
+public class VmsMonitoring {
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -69,20 +67,6 @@ public class VmsMonitoring implements BackendService {
     private VdsDynamicDao vdsDynamicDao;
 
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
-
-    private static VmsMonitoring instance;
-
-    public VmsMonitoring() {
-    }
-
-    @PostConstruct
-    private void init() {
-        instance = this;
-    }
-
-    public static VmsMonitoring getInstance() {
-        return instance;
-    }
 
     /**
      * analyze and react upon changes on the monitoredVms. relevant changes would
