@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster;
 
+import java.util.Optional;
+
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -15,7 +17,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.external.Optional;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
