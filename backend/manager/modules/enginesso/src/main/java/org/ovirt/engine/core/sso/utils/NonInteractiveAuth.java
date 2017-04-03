@@ -19,7 +19,7 @@ public enum NonInteractiveAuth {
             log.debug("Performing Basic Auth");
             Credentials credentials = SsoUtils.getUserCredentialsFromHeader(request);
             AuthResult retVal = new AuthResult();
-            if (credentials == null || !credentials.isValid()) {
+            if (credentials == null || !SsoUtils.areCredentialsValid(request, credentials)) {
                 retVal.setStatus(Authn.AuthResult.CREDENTIALS_INVALID);
             } else {
                 retVal.setCredentials(credentials);

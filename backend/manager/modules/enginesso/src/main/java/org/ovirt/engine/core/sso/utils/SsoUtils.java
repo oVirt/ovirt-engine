@@ -408,6 +408,34 @@ public class SsoUtils {
         return credentials;
     }
 
+    public static boolean areCredentialsValid(HttpServletRequest request, Credentials credentials)
+            throws AuthenticationException {
+        return areCredentialsValid(request, credentials, false);
+    }
+
+    public static boolean areCredentialsValid(HttpServletRequest request,
+            Credentials credentials,
+            boolean isInteractiveAuth) throws AuthenticationException {
+        SsoContext ssoContext = getSsoContext(request);
+        if (StringUtils.isEmpty(credentials.getUsername())) {
+            throw new AuthenticationException(ssoContext.getLocalizationUtils().localize(
+                    isInteractiveAuth ? SsoConstants.APP_ERROR_NO_USER_NAME_IN_CREDENTIALS_INTERACTIVE_AUTH
+                            : SsoConstants.APP_ERROR_NO_USER_NAME_IN_CREDENTIALS,
+                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
+        }
+        if (!credentials.isProfileValid()) {
+            throw new AuthenticationException(ssoContext.getLocalizationUtils().localize(
+                    SsoConstants.APP_ERROR_NO_VALID_PROFILE_IN_CREDENTIALS,
+                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
+        }
+        if (StringUtils.isEmpty(credentials.getProfile())) {
+            throw new AuthenticationException(ssoContext.getLocalizationUtils().localize(
+                    SsoConstants.APP_ERROR_NO_PROFILE_IN_CREDENTIALS,
+                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
+        }
+        return true;
+    }
+
     public static Credentials translateUser(String user, String password, SsoContext ssoContext) {
         Credentials credentials = new Credentials();
         String username = user;
