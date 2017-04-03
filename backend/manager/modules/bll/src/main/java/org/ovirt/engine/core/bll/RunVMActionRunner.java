@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 public class RunVMActionRunner extends SortedMultipleActionsRunnerBase {
+
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     public RunVMActionRunner(VdcActionType actionType, ArrayList<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
@@ -28,7 +33,7 @@ public class RunVMActionRunner extends SortedMultipleActionsRunnerBase {
 
         List<Guid> guids = new ArrayList<>();
         guids.addAll(runVmCommandsMap.keySet());
-        List<Guid> orderedGuids = DbFacade.getInstance().getVmStaticDao().getOrderedVmGuidsForRunMultipleActions(guids);
+        List<Guid> orderedGuids = vmStaticDao.getOrderedVmGuidsForRunMultipleActions(guids);
 
         commandsList.clear();
 
