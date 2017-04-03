@@ -610,15 +610,6 @@ public final class Linq {
         }
     }
 
-    public static <T extends Disk> Collection<T> filterNonSnapableDisks(Collection<T> source) {
-        return where(source, new IPredicate<T>() {
-            @Override
-            public boolean match(T source) {
-                return source.isAllowSnapshot();
-            }
-        });
-    }
-
     public static <T extends AuditLog> Collection<T> filterAudidLogsByExcludingSeverity(
             Collection<T> source, final AuditLogSeverity severity) {
         return where(source, new IPredicate<T>() {

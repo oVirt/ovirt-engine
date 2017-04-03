@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -263,8 +263,13 @@ public class SnapshotModel extends EntityModel<Snapshot> {
     }
 
     private void updateSnapshotDisks(List<Disk> disks) {
-        ArrayList<DiskImage> diskImages = Linq.cast(Linq.filterNonSnapableDisks(disks));
-        Collections.sort(diskImages, new DiskByDiskAliasComparator());
+        List<DiskImage> diskImages =
+                disks.stream()
+                        .filter(Disk::isAllowSnapshot)
+                        .map(d -> (DiskImage) d)
+                        .sorted(new DiskByDiskAliasComparator())
+                        .collect(Collectors.toList());
+
         getSnapshotDisks().setItems(diskImages);
     }
 
