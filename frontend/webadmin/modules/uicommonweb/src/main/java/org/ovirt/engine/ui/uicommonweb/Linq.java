@@ -111,7 +111,7 @@ public final class Linq {
     }
 
     public static <TSource> TSource firstOrNull(Collection<TSource> source) {
-        return firstOrNull(source, new TruePredicate<TSource>());
+        return firstOrNull(source, x -> true);
     }
 
     public static <TSource> TSource firstOrNull(Collection<TSource> source, Predicate<? super TSource> predicate) {
@@ -562,13 +562,6 @@ public final class Linq {
         }
 
         boolean match(TSource source);
-    }
-
-    private static class TruePredicate<TSource> implements IPredicate<TSource> {
-        @Override
-        public boolean match(TSource tSource) {
-            return true;
-        }
     }
 
     public static Collection<StorageDomain> filterStorageDomainsByStorageType(
