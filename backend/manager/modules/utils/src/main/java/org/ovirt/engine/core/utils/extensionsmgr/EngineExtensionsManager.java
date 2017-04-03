@@ -91,7 +91,7 @@ public class EngineExtensionsManager extends ExtensionsManager {
                             ).getProperty(Base.ConfigKeys.ENABLED, "true")
                     )
                 ) &&
-                !((Collection<String>)extension.getContext().get(Base.ContextKeys.PROVIDES)).stream()
+                !extension.getContext().<Collection<String>> get(Base.ContextKeys.PROVIDES).stream()
                         .anyMatch(p -> pattern.matcher(p).matches())
             ) {
                 try {
