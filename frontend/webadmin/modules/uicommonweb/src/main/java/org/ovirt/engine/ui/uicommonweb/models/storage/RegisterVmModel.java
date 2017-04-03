@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -23,8 +24,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.ErrorTranslator;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
-import org.ovirt.engine.ui.uicommonweb.Linq.Negative;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.RegisterVmData;
@@ -42,9 +41,8 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
     public static final String VNIC_PROFILE_MAPPING_COMMAND = "vnicProfileMapping"; //$NON-NLS-1$
     private static final String NEWLINE = "\n"; //$NON-NLS-1$
 
-    private static final IPredicate<RegisterVmData> REASSIGN_MACS_PREDICATE = new ReassignMacsPredicate();
-    private static final IPredicate<RegisterVmData> NOT_REASSIGN_MACS_PREDICATE =
-            Negative.create(REASSIGN_MACS_PREDICATE);
+    private static final Predicate<RegisterVmData> REASSIGN_MACS_PREDICATE = rvd -> rvd.getReassignMacs().getEntity();
+    private static final Predicate<RegisterVmData> NOT_REASSIGN_MACS_PREDICATE = REASSIGN_MACS_PREDICATE.negate();
 
     private VnicProfileMappingModel vnicProfileMappingModel;
     private UICommand vnicProfileMappingCommand;
@@ -314,12 +312,5 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
 
     public UICommand getVnicProfileMappingCommand() {
         return vnicProfileMappingCommand;
-    }
-
-    private static class ReassignMacsPredicate implements IPredicate<RegisterVmData> {
-        @Override
-        public boolean match(RegisterVmData registerVmData) {
-            return registerVmData.getReassignMacs().getEntity();
-        }
     }
 }

@@ -564,23 +564,6 @@ public final class Linq {
         boolean match(TSource source);
     }
 
-    public static final class Negative<T> implements IPredicate<T> {
-        private final IPredicate<? super T> predicate;
-
-        private Negative(IPredicate<? super T> predicate) {
-            this.predicate = predicate;
-        }
-
-        @Override
-        public boolean match(T t) {
-            return !predicate.match(t);
-        }
-
-        public static <T> IPredicate<T> create(IPredicate<? super T> predicate) {
-            return new Negative<>(predicate);
-        }
-    }
-
     private static class TruePredicate<TSource> implements IPredicate<TSource> {
         @Override
         public boolean match(TSource tSource) {
