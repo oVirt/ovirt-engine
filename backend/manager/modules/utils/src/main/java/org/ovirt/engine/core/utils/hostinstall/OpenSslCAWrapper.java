@@ -97,7 +97,7 @@ public class OpenSslCAWrapper {
         log.debug("Entered signCertificateRequest");
         boolean returnValue = true;
         if (executable.exists()) {
-            String organization = Config.<String> getValue(ConfigValues.OrganizationName);
+            String organization = Config.getValue(ConfigValues.OrganizationName);
             int days = Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears) * 365;
             Integer signatureTimeout = Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds);
             returnValue = runCommandArray(
