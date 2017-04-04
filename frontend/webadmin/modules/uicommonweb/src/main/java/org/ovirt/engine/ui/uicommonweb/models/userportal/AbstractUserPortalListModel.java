@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -225,12 +226,9 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
      * @return only pools with existing representatives
      */
     List<Pair<Object, VM>> filterNonNullPools(List<Pair<Object, VM>> poolsWithRepresentatives) {
-        return Collections.unmodifiableList(Linq.where(poolsWithRepresentatives,
-                new Linq.IPredicate<Pair<Object, VM>>() {
-                    @Override public boolean match(Pair<Object, VM> poolAndVm) {
-                        return poolAndVm.getSecond() != null;
-                    }
-                }));
+        return poolsWithRepresentatives.stream()
+                .filter(p -> p.getSecond() != null)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     private void finishSearch(List<Pair<Object, VM>> vmOrPoolAndPoolRepresentants) {
