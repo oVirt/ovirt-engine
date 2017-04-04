@@ -787,23 +787,65 @@ public class VmDeviceUtils {
     }
 
     private void updateNormalUsb(VmBase vmBase) {
-        final List<VmDevice> usbControllers = getUsbControllers(vmBase.getId());
-        if (usbControllers.size() > 1) {
-            throw new IllegalStateException(format("At most one USB controller expected for VM=%s(%s), found=%s",
-                    vmBase.getName(),
-                    vmBase.getId(),
-                    usbControllers));
-        }
-        final UsbControllerModel newUsbControllerModel = getUsbControllerModel(vmBase);
-        if ((usbControllers.isEmpty() && newUsbControllerModel == null)
-            || (!usbControllers.isEmpty()
-                && newUsbControllerModel != null
-                && newUsbControllerModel.libvirtName.equals(
-                        getUsbControllerModelName(usbControllers.get(0))))) {
+        final Collection<VmDevice> usbControllers = getUsbControllers(vmBase.getId());
+
+        final List<VmDevice> unmanagedControllers = usbControllers.stream().filter(d -> !d.isManaged()).collect(Collectors.toList());
+        final List<VmDevice> managedUsbControllers = usbControllers.stream().filter(VmDevice::isManaged).collect(Collectors.toList());
+
+        if (unmanagedControllers.size() > 0) {
+            acquireUnmanagedUsbController(vmBase, managedUsbControllers, unmanagedControllers);
             return;
         }
+
+        final UsbControllerModel controllerModel = getUsbControllerModel(vmBase);
+
+        if ((managedUsbControllers.isEmpty() && controllerModel == null)
+            || (managedUsbControllers.size() == 1
+                && controllerModel != null
+                && controllerModel.libvirtName.equals(
+                        getUsbControllerModelName(managedUsbControllers.get(0))))) {
+            return;
+        }
+
         disableNormalUsb(vmBase.getId());
         enableNormalUsb(vmBase);
+    }
+
+    /**
+     * If there is an existing unmanaged usb controller, it drops all managed ones and acquires it.
+     *
+     * <p>This can be dropped together with support of USB controllers without specified model. Used till engine 3.6.
+     * they may survive as part of long-running VMs and snapshots.</p>
+     */
+    private void acquireUnmanagedUsbController(
+            VmBase vmBase,
+            List<VmDevice> managedUsbControllers,
+            List<VmDevice> unmanagedControllers) {
+        if (unmanagedControllers.size() > 1) {
+            throw new IllegalStateException(format("At most one unmanaged USB controller expected for VM=%s(%s), found=%s",
+                    vmBase.getName(),
+                    vmBase.getId(),
+                    unmanagedControllers));
+        }
+
+        final UsbControllerModel controllerModel = getUsbControllerModel(vmBase);
+
+        if (unmanagedControllers.isEmpty()) {
+            return;
+        }
+
+        // should not be here but due to https://bugzilla.redhat.com/1438188 can appear one
+        // remove it
+        removeVmDevices(managedUsbControllers);
+
+        // has been created on pre 4.0 engine by VDSM, adopt it as ours
+        VmDevice device = unmanagedControllers.iterator().next();
+        device.setManaged(true);
+        device.setPlugged(true);
+        device.setReadOnly(false);
+        device.setSpecParams(createUsbControllerSpecParams(controllerModel.libvirtName, 0));
+
+        vmDeviceDao.update(device);
     }
 
     /**
