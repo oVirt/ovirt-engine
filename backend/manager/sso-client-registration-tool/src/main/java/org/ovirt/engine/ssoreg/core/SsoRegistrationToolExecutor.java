@@ -186,7 +186,11 @@ public class SsoRegistrationToolExecutor {
                                                      String certificateFile,
                                                      String callbackPrefix)
             throws FileNotFoundException {
-        File tmpFile = new File(SsoLocalConfig.getInstance().getTmpDir(),
+        File tmpDir = SsoLocalConfig.getInstance().getTmpDir();
+        if (tmpDir.mkdirs()) {
+            log.debug("Created ovirt temp directory: {}", tmpDir.getAbsolutePath());
+        }
+        File tmpFile = new File(tmpDir,
                 String.format("99_sso_client_%s.conf", System.currentTimeMillis()));
         try (
                 PrintWriter pw = new PrintWriter(new FileOutputStream(tmpFile))
