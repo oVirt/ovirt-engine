@@ -46,7 +46,9 @@ MAVEN_SETTINGS="/etc/maven/settings.xml"
 export BUILD_JAVA_OPTS_MAVEN="\
     -Dgwt.compiler.localWorkers=1 \
 "
-export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS"
+export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS \
+    -Dovirt.surefire.reportsDirectory=${PWD}/exported-artifacts/tests \
+"
 export BUILD_JAVA_OPTS_GWT="\
     -Xms1G \
     -Xmx4G \
@@ -89,6 +91,8 @@ fi
 # remove any previous artifacts
 rm -rf output
 rm -f ./*tar.gz
+rm -rf exported-artifacts
+mkdir -p exported-artifacts/tests
 make clean \
     "EXTRA_BUILD_FLAGS=$EXTRA_BUILD_FLAGS"
 
@@ -135,8 +139,6 @@ rpmbuild \
 
 # Move any relevant artifacts to exported-artifacts for the ci system to
 # archive
-rm -rf exported-artifacts
-mkdir -p exported-artifacts
 find output -iname \*rpm -exec mv "{}" exported-artifacts/ \;
 
 # Collect any mvn findbugs artifacts
@@ -149,3 +151,6 @@ find * -name "*findbugs.xml" -o -name "*findbugsxml.xml" | \
         mv $source_file exported-artifacts/find-bugs/"$destination_file"
     done
 mv ./*tar.gz exported-artifacts/
+
+# Rename junit surefire reports to match jenkins report plugin
+rename .xml .junit.xml exported-artifacts/tests/*
