@@ -120,19 +120,26 @@ public class ValidationUtils {
                 if(constraintDescriptor != null) {
                     Map<String, Object> violationAttributes = constraintDescriptor.getAttributes();
                     for (Map.Entry violationAttribute : violationAttributes.entrySet()) {
-                        String message =  String.format("$%s %s", violationAttribute.getKey(), violationAttribute.getValue());
-                        messages.add(message);
+                        String propertyName = violationAttribute.getKey().toString();
+                        Object value = violationAttribute.getValue();
+
+                        messages.add(createSetVariableString(propertyName, value));
                     }
                 }
                 if (constraintViolation.getPropertyPath() != null) {
                     messages.add(EngineMessage.ACTION_TYPE_FAILED_ATTRIBUTE_PATH.name());
-                    messages.add(
-                        String.format("$path %s", constraintViolation.getPropertyPath())
-                    );
+                    messages.add(createSetVariableString("path", constraintViolation.getPropertyPath()));
                 }
+
+                messages.add(createSetVariableString("validatedValue", constraintViolation.getInvalidValue()));
             }
         }
         return messages;
+    }
+
+    private static String createSetVariableString(String propertyName, Object value) {
+        final String setVariableValueFormat = "$%s %s";
+        return String.format(setVariableValueFormat, propertyName, value);
     }
 
     public static boolean validatePort(int port) {
