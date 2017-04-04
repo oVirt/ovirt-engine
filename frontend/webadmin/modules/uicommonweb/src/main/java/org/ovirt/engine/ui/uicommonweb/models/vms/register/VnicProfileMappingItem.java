@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.register;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -46,27 +46,18 @@ public class VnicProfileMappingItem extends EntityModel<VnicProfileMappingEntity
     }
 
     private void selectInitialTargetVnicProfile() {
-        final IPredicate<VnicProfileView> predicate;
+        final Predicate<VnicProfileView> predicate;
         if (getEntity().isChanged()) {
-            predicate = new IPredicate<VnicProfileView>() {
-                @Override
-                public boolean match(VnicProfileView vnicProfile) {
-                    return Objects.equals(getEntity().getVnicProfileId(), vnicProfile.getId());
-                }
-            };
+            predicate = vnicProfile -> Objects.equals(getEntity().getVnicProfileId(), vnicProfile.getId());
         } else {
-            predicate = new IPredicate<VnicProfileView>() {
-                @Override
-                public boolean match(VnicProfileView vnicProfile) {
-                    return Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getNetworkName())
-                            && Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getName());
-                }
-            };
+            predicate = vnicProfile ->
+                    Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getNetworkName())
+                    && Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getName());
         }
         selectTargetVnicProfileByPredicate(predicate);
     }
 
-    private void selectTargetVnicProfileByPredicate(IPredicate<VnicProfileView> predicate) {
+    private void selectTargetVnicProfileByPredicate(Predicate<VnicProfileView> predicate) {
         final VnicProfileView vnicProfile =
                 Linq.firstOrDefault(targetVnicProfile.getItems(), predicate, VnicProfileView.EMPTY);
         targetVnicProfile.setSelectedItem(vnicProfile);
