@@ -601,7 +601,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             items.removeIf(target -> {
                 boolean found = false;
 
-                // Ensure remove targets that are not in last dicovered targets list.
+                // Ensure remove targets that are not in last discovered targets list.
                 if (Linq.firstOrNull(lastDiscoveredTargets, new Linq.TargetPredicate(target)) != null) {
                     found = true;
                 }
