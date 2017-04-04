@@ -970,17 +970,19 @@ public final class ImagesHandler {
      *
      * @param sourceImage The source disk image
      * @param destFormat The volume format of the destination image (COW/RAW)
+     * @param srcDomain The storage domain where the disk image is copied from
      * @param dstDomain The storage domain where the disk image will be copied to
      * @return the computed initial size in bytes or null if it is not needed/supported
      */
     public static Long determineTotalImageInitialSize(DiskImage sourceImage,
             VolumeFormat destFormat,
+            Guid srcDomain,
             Guid dstDomain) {
 
         if (isInitialSizeSupportedForFormat(destFormat, dstDomain)) {
 
             double totalSizeForClonedDisk = getTotalActualSizeOfDisk(sourceImage,
-                    DbFacade.getInstance().getStorageDomainDao().get(dstDomain).getStorageStaticData());
+                    DbFacade.getInstance().getStorageDomainDao().get(srcDomain).getStorageStaticData());
 
             return computeCowImageNeededSize(sourceImage.getVolumeFormat(), Double.valueOf(totalSizeForClonedDisk).longValue());
         }
