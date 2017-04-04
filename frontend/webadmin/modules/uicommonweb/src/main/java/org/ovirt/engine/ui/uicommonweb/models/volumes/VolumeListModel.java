@@ -40,7 +40,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils.VolumeStatus;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -1006,13 +1005,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                                                             list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "server.allow-insecure", "on")));//$NON-NLS-1$ $NON-NLS-2$
 
                                                             final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "30");//$NON-NLS-1$//$NON-NLS-2$
-                                                            IPredicate<GlusterVolumeOptionEntity> predicaetFilter = new IPredicate<GlusterVolumeOptionEntity>() {
-                                                                @Override
-                                                                public boolean match(GlusterVolumeOptionEntity obj) {
-                                                                    return obj.getKey().equalsIgnoreCase(checkOption.getKey());
-                                                                }
-                                                            };
-                                                            if(!isOptionEnabledOnVolume(volume, predicaetFilter)) {
+                                                            if (volume.getOptions().stream().noneMatch
+                                                                    (obj -> obj.getKey().equalsIgnoreCase(checkOption.getKey()))) {
                                                                 list.add(new GlusterVolumeOptionParameters(checkOption));//$NON-NLS-1$
                                                             }
                                                         }
@@ -1023,10 +1017,6 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                                 }));
                     }
                 }));
-    }
-
-    private boolean isOptionEnabledOnVolume(GlusterVolumeEntity volume, IPredicate<GlusterVolumeOptionEntity> predicate) {
-        return Linq.firstOrNull(volume.getOptions(), predicate) != null;
     }
 
     private GlusterVolumeOptionEntity getOption(Guid volumeId, String key, String value) {
