@@ -95,7 +95,7 @@ public class OpenSslCAWrapper {
         String hostname
     ) {
         log.debug("Entered signCertificateRequest");
-        boolean returnValue = true;
+        boolean returnValue;
         if (executable.exists()) {
             String organization = Config.getValue(ConfigValues.OrganizationName);
             int days = Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears) * 365;
@@ -125,7 +125,7 @@ public class OpenSslCAWrapper {
         String principal
     ) {
         log.debug("Entered signOpenSSHCertificate");
-        boolean returnValue = true;
+        boolean returnValue;
         if (executable.exists()) {
             int days = Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears) * 365;
             returnValue = runCommandArray(
