@@ -499,7 +499,7 @@ public final class Linq {
         }
     }
 
-    public static class NetworkSameProviderPredicate implements IPredicate<Provider> {
+    public static class NetworkSameProviderPredicate implements IPredicate<Provider<?>> {
 
         private final Network network;
 
@@ -508,7 +508,7 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(Provider provider) {
+        public boolean match(Provider<?> provider) {
             return network.isExternal() && provider.getId().equals(network.getProvidedBy().getProviderId());
         }
 

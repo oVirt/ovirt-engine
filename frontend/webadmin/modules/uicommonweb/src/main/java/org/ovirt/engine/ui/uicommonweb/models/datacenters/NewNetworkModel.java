@@ -128,7 +128,7 @@ public class NewNetworkModel extends NetworkModel {
 
         // New network
         if (getExport().getEntity()) {
-            Provider externalProvider = getExternalProviders().getSelectedItem();
+            Provider<?> externalProvider = getExternalProviders().getSelectedItem();
             ProviderNetwork providerNetwork = new ProviderNetwork();
             providerNetwork.setProviderId(externalProvider.getId());
             getNetwork().setProvidedBy(providerNetwork);

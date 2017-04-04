@@ -67,7 +67,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     private EntityModel<String> privateName;
     private EntityModel<String> privateDescription;
     private EntityModel<Boolean> export;
-    private ListModel<Provider> externalProviders;
+    private ListModel<Provider<?>> externalProviders;
     private ListModel<String> networkLabel;
     private EntityModel<String> neutronPhysicalNetwork;
     private EntityModel<String> privateComment;
@@ -121,7 +121,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         setNeutronPhysicalNetwork(new EntityModel<String>());
 
         setNetworkLabel(new ListModel<String>());
-        setExternalProviders(new ListModel<Provider>());
+        setExternalProviders(new ListModel<Provider<?>>());
         initExternalProviderList();
 
         EntityModel<Boolean> stpEnabled = new EntityModel<>();
@@ -236,7 +236,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         AsyncQuery getProvidersQuery = new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
             @Override
             public void onSuccess(List<Provider<?>> result) {
-                List<Provider> providers = getNonReadOnlyExternalNetworkProviders(result);
+                List<Provider<?>> providers = getNonReadOnlyExternalNetworkProviders(result);
                 getExternalProviders().setItems(providers);
                 selectExternalProvider();
             }
@@ -244,9 +244,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         AsyncDataProvider.getInstance().getAllNetworkProviders(getProvidersQuery);
     }
 
-    private List<Provider> getNonReadOnlyExternalNetworkProviders(List<Provider<?>> result) {
-        List<Provider> providers = new LinkedList<>();
-        for (Provider provider : result){
+    private List<Provider<?>> getNonReadOnlyExternalNetworkProviders(List<Provider<?>> result) {
+        List<Provider<?>> providers = new LinkedList<>();
+        for (Provider<?> provider : result){
             if (isExternalNetworkProviderReadOnly(provider)){
                 continue;
             }
@@ -255,7 +255,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         return providers;
     }
 
-    private boolean isExternalNetworkProviderReadOnly(Provider provider) {
+    private boolean isExternalNetworkProviderReadOnly(Provider<?> provider) {
         OpenstackNetworkProviderProperties properties =
                 (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
         if (properties.getReadOnly()){
@@ -289,11 +289,11 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         export = value;
     }
 
-    public ListModel<Provider> getExternalProviders() {
+    public ListModel<Provider<?>> getExternalProviders() {
         return externalProviders;
     }
 
-    public void setExternalProviders(ListModel<Provider> externalProviders) {
+    public void setExternalProviders(ListModel<Provider<?>> externalProviders) {
         this.externalProviders = externalProviders;
     }
 
