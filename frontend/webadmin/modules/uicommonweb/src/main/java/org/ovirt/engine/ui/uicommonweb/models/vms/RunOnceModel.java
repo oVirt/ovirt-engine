@@ -883,15 +883,7 @@ public abstract class RunOnceModel extends Model {
                     @Override
                     public void onSuccess(VdcQueryReturnValue returnValue) {
                         Collection<VmNetworkInterface> nics = returnValue.getReturnValue();
-                        Collection<VmNetworkInterface> pluggedNics =
-                                Linq.where(nics, new Linq.IPredicate<VmNetworkInterface>() {
-
-                                    @Override
-                                    public boolean match(VmNetworkInterface vnic) {
-                                        return vnic.isPlugged();
-                                    }
-                                });
-                        boolean hasPluggedNics = !pluggedNics.isEmpty();
+                        boolean hasPluggedNics = nics.stream().anyMatch(VmNetworkInterface::isPlugged);
 
                         if (!hasPluggedNics) {
                             BootSequenceModel bootSequenceModel = getBootSequence();
