@@ -160,7 +160,7 @@ public class OpenSslCAWrapper {
             Process process = getRuntime().exec(command_array);
             try (
                 final BufferedReader stdOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
-                final BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
+                final BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))
             ) {
                 int exitCode = 0;
                 boolean completed = false;
