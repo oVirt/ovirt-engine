@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -27,8 +26,6 @@ public class ThreadPoolUtil {
 
     private static class InternalThreadExecutor extends ThreadPoolExecutor {
 
-        RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
-
         /**
          * The pool which will be created with corePoolSize equal to ConfigValues.DefaultMinThreadPoolSize
          * maximumPoolSize equal to DefaultMaxThreadPoolSize
@@ -38,8 +35,8 @@ public class ThreadPoolUtil {
                     Config.<Integer> getValue(ConfigValues.DefaultMaxThreadPoolSize),
                     60L,
                     TimeUnit.SECONDS,
-                    new ArrayBlockingQueue<>(Config.<Integer>getValue(ConfigValues.DefaultMaxThreadWaitQueueSize)));
-
+                    new ArrayBlockingQueue<>(Config.<Integer>getValue(ConfigValues.DefaultMaxThreadWaitQueueSize)),
+                    new ThreadPoolExecutor.CallerRunsPolicy());
         }
 
         @Override
@@ -64,11 +61,6 @@ public class ThreadPoolUtil {
             }
             super.afterExecute(r, t);
             CorrelationIdTracker.clean();
-        }
-
-        @Override
-        public RejectedExecutionHandler getRejectedExecutionHandler() {
-            return rejectedExecutionHandler;
         }
     }
 
