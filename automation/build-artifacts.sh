@@ -11,6 +11,7 @@ MAVEN_SETTINGS="/etc/maven/settings.xml"
 
 export BUILD_JAVA_OPTS_MAVEN="\
     -Dgwt.compiler.localWorkers=1 \
+    -Dovirt.surefire.reportsDirectory=${PWD}/exported-artifacts/tests \
 "
 
 # build permutations for chrome and firefox
@@ -54,6 +55,8 @@ EOS
 # remove any previous artifacts
 rm -rf output
 rm -f ./*tar.gz
+rm -rf exported-artifacts
+mkdir -p exported-artifacts/tests
 make clean \
     "EXTRA_BUILD_FLAGS=$EXTRA_BUILD_FLAGS"
 
@@ -84,7 +87,8 @@ rpmbuild \
 
 # Store any relevant artifacts in exported-artifacts for the ci system to
 # archive
-rm -rf exported-artifacts
-mkdir -p exported-artifacts
 find output -iname \*rpm -exec mv "{}" exported-artifacts/ \;
 mv ./*tar.gz exported-artifacts/
+
+# Rename junit surefire reports to match jenkins report plugin
+rename .xml .junit.xml exported-artifacts/tests/*

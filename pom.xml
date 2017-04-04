@@ -102,6 +102,9 @@
     <hamcrest.version>1.3</hamcrest.version>
     <reflections.version>0.9.9</reflections.version>
     <checkstyle.version>7.6</checkstyle.version>
+
+    <!-- Plugins configurations-->
+    <ovirt.surefire.reportsDirectory>${project.build.directory}/surefire-reports</ovirt.surefire.reportsDirectory>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -555,6 +558,9 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
+          <configuration>
+            <reportsDirectory>${ovirt.surefire.reportsDirectory}</reportsDirectory>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
