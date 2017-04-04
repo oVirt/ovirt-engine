@@ -162,6 +162,10 @@ public class AuditLogableBase extends TimeoutBase {
         return userId;
     }
 
+    protected Guid getUserIdIfExternal() {
+        return isInternalExecution() ? null : getUserId();
+    }
+
     public void setUserId(final Guid value) {
         userId = value;
     }

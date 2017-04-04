@@ -94,7 +94,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         vm.setVdsGroupId(getParameters().getClusterId());
 
         // Set cpu profile from the new cluster
-        cpuProfileHelper.assignFirstCpuProfile(vm.getStaticData(), getUserId());
+        cpuProfileHelper.assignFirstCpuProfile(vm.getStaticData(), getUserIdIfExternal());
 
         getVmStaticDao().update(vm.getStaticData());
 

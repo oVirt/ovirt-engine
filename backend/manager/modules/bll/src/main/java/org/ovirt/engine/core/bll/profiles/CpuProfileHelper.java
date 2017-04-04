@@ -37,7 +37,7 @@ public class CpuProfileHelper {
 
     public ValidationResult assignFirstCpuProfile(VmBase vmBase, Guid userId) {
         List<CpuProfile> cpuProfilesWithPermissions = cpuProfileDao.getAllForCluster(
-                vmBase.getVdsGroupId(), userId, userId != null, ActionGroup.ASSIGN_CPU_PROFILE);
+                vmBase.getVdsGroupId(), userId, !Guid.isNullOrEmpty(userId), ActionGroup.ASSIGN_CPU_PROFILE);
 
             /* TODO use a properly selected default CPU profile for the cluster once the API becomes available
                see bug https://bugzilla.redhat.com/show_bug.cgi?id=1262293 for the explanation. We should probably
@@ -51,7 +51,7 @@ public class CpuProfileHelper {
     }
 
     private boolean checkPermissions(Guid cpuProfileId, Guid userId) {
-        return userId == null ||
+        return Guid.isNullOrEmpty(userId) ||
                 permissionDao.getEntityPermissions(userId,
                         ActionGroup.ASSIGN_CPU_PROFILE,
                         cpuProfileId,

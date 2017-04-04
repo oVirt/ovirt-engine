@@ -1107,7 +1107,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return true;
         }
         return validate(cpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(),
-                getVdsGroup().getCompatibilityVersion(), getUserId()));
+                getVdsGroup().getCompatibilityVersion(), getUserIdIfExternal()));
     }
 
     private Guid getVmSnapshotId() {
