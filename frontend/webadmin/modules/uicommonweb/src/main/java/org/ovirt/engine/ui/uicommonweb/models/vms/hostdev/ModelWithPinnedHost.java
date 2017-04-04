@@ -58,11 +58,6 @@ public class ModelWithPinnedHost extends Model {
     }
 
     private Collection<VDS> filterHostDevicePassthroughCapableHosts(Collection<VDS> hosts) {
-        return Linq.where(hosts, new Linq.IPredicate<VDS>() {
-            @Override
-            public boolean match(VDS host) {
-                return host.isHostDevicePassthroughEnabled();
-            }
-        });
+        return Linq.where(hosts, VDS::isHostDevicePassthroughEnabled);
     }
 }

@@ -848,13 +848,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
                 images.add(0, ConsoleModel.getEjectLabel());
                 _attachCdModel.getIsoImage().setItems(images);
                 if (_attachCdModel.getIsoImage().getIsChangable()) {
-                    String selectedIso = Linq.firstOrNull(images, new Linq.IPredicate<String>() {
-                        @Override
-                        public boolean match(String s) {
-                            return vm.getCurrentCd().equals(s);
-                        }
-                    });
-                    _attachCdModel.getIsoImage().setSelectedItem(selectedIso == null ? ConsoleModel.getEjectLabel() : selectedIso);
+                    String selectedIso =
+                            Linq.firstOrDefault(images, s -> vm.getCurrentCd().equals(s), ConsoleModel.getEjectLabel());
+                    _attachCdModel.getIsoImage().setSelectedItem(selectedIso);
                 }
             }
         });

@@ -26,7 +26,6 @@ import org.ovirt.engine.core.compat.DayOfWeek;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -615,12 +614,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
                 if (schedule.getRecurrence() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN) {
                     Map<String, String> timeZones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
                     snapshotModel.getTimeZones().setSelectedItem(Linq.firstOrNull(timeZones.entrySet(),
-                            new IPredicate<Map.Entry<String, String>>() {
-                                @Override
-                                public boolean match(Map.Entry<String, String> item) {
-                                    return item.getKey().startsWith(schedule.getTimeZone()); //$NON-NLS-1$
-                                }
-                            }));
+                            item -> item.getKey().startsWith(schedule.getTimeZone())));
                 }
                 switch (schedule.getRecurrence()) {
                 case INTERVAL:

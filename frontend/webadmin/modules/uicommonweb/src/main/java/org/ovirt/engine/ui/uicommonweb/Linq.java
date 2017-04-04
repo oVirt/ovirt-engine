@@ -285,7 +285,7 @@ public final class Linq {
         return firstOrNull(diskImages, new IdPredicate<>(id));
     }
 
-    public static class TimeZonePredicate implements IPredicate<TimeZoneModel> {
+    public static class TimeZonePredicate implements Predicate<TimeZoneModel> {
         private final String timeZone;
 
         public TimeZonePredicate(String timeZone) {
@@ -293,12 +293,12 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(TimeZoneModel source) {
+        public boolean test(TimeZoneModel source) {
             return Objects.equals(source.getTimeZoneKey(), timeZone);
         }
     }
 
-    public static class ServerCpuPredicate implements IPredicate<ServerCpu> {
+    public static class ServerCpuPredicate implements Predicate<ServerCpu> {
         private final String cpuName;
 
         public ServerCpuPredicate(String cpuName) {
@@ -306,12 +306,12 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(ServerCpu source) {
+        public boolean test(ServerCpu source) {
             return Objects.equals(source.getCpuName(), cpuName);
         }
     }
 
-    public static class DataCenterWithClusterAccordingClusterPredicate implements IPredicate<DataCenterWithCluster> {
+    public static class DataCenterWithClusterAccordingClusterPredicate implements Predicate<DataCenterWithCluster> {
 
         private IdPredicate<Guid> idPredicate;
 
@@ -320,13 +320,13 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(DataCenterWithCluster source) {
-            return idPredicate.match(source.getCluster());
+        public boolean test(DataCenterWithCluster source) {
+            return idPredicate.test(source.getCluster());
         }
 
     }
 
-    public static class DataCenterWithClusterPredicate implements IPredicate<DataCenterWithCluster> {
+    public static class DataCenterWithClusterPredicate implements Predicate<DataCenterWithCluster> {
 
         private final Guid dataCenterId;
 
@@ -338,7 +338,7 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(DataCenterWithCluster source) {
+        public boolean test(DataCenterWithCluster source) {
             return source.getDataCenter() != null &&
                     source.getCluster() != null &&
                     source.getDataCenter().getId().equals(dataCenterId) &&
@@ -348,7 +348,7 @@ public final class Linq {
 
     }
 
-    public static class DataCenterStatusPredicate implements IPredicate<StoragePool> {
+    public static class DataCenterStatusPredicate implements Predicate<StoragePool> {
         private StoragePoolStatus status = StoragePoolStatus.values()[0];
 
         public DataCenterStatusPredicate(StoragePoolStatus status) {
@@ -356,12 +356,12 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(StoragePool source) {
+        public boolean test(StoragePool source) {
             return source.getStatus() == status;
         }
     }
 
-    public static class HostStatusPredicate implements IPredicate<VDS> {
+    public static class HostStatusPredicate implements Predicate<VDS> {
         private VDSStatus status = VDSStatus.values()[0];
 
         public HostStatusPredicate(VDSStatus status) {
@@ -369,12 +369,12 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(VDS source) {
+        public boolean test(VDS source) {
             return source.getStatus().equals(status);
         }
     }
 
-    public static class TemplateWithVersionPredicate implements IPredicate<TemplateWithVersion> {
+    public static class TemplateWithVersionPredicate implements Predicate<TemplateWithVersion> {
         protected final Guid id;
         protected boolean useLatest;
 
@@ -384,7 +384,7 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(TemplateWithVersion templateWithVersion) {
+        public boolean test(TemplateWithVersion templateWithVersion) {
             if (useLatest) {
                 return templateWithVersion.getTemplateVersion() instanceof LatestVmTemplate;
             } else {
@@ -400,7 +400,7 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(TemplateWithVersion templateWithVersion) {
+        public boolean test(TemplateWithVersion templateWithVersion) {
             if (useLatest) {
                 return id.equals(templateWithVersion.getTemplateVersion().getId())
                         && templateWithVersion.getTemplateVersion() instanceof LatestVmTemplate;
@@ -411,19 +411,20 @@ public final class Linq {
         }
     }
 
-    public static class IdPredicate<T extends Serializable> implements IPredicate<BusinessEntity<T>> {
+    public static class IdPredicate<T extends Serializable> implements Predicate<BusinessEntity<T>> {
         private T id;
 
         public IdPredicate(T id) {
             this.id = id;
         }
 
-        public boolean match(BusinessEntity<T> entity) {
+        @Override
+        public boolean test(BusinessEntity<T> entity) {
             return entity != null && Objects.equals(entity.getId(), id);
         }
     }
 
-    public static class IdsPredicate<T extends Serializable> implements IPredicate<BusinessEntity<T>> {
+    public static class IdsPredicate<T extends Serializable> implements Predicate<BusinessEntity<T>> {
 
         private Set<T> ids;
 
@@ -432,12 +433,12 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(BusinessEntity<T> entity) {
+        public boolean test(BusinessEntity<T> entity) {
             return ids.contains(entity.getId());
         }
     }
 
-    public static class NamePredicate implements IPredicate<Nameable> {
+    public static class NamePredicate implements Predicate<Nameable> {
 
         private final String name;
 
@@ -446,12 +447,12 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(Nameable entity) {
+        public boolean test(Nameable entity) {
             return Objects.equals(name, entity.getName());
         }
     }
 
-    public static class LunPredicate implements IPredicate<LunModel> {
+    public static class LunPredicate implements Predicate<LunModel> {
         private final LunModel lun;
 
         public LunPredicate(LunModel lun) {
@@ -459,12 +460,12 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(LunModel source) {
+        public boolean test(LunModel source) {
             return Objects.equals(source.getLunId(), lun.getLunId());
         }
     }
 
-    public static class TargetPredicate implements IPredicate<SanTargetModel> {
+    public static class TargetPredicate implements Predicate<SanTargetModel> {
         private final SanTargetModel target;
 
         public TargetPredicate(SanTargetModel target) {
@@ -472,14 +473,14 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(SanTargetModel source) {
+        public boolean test(SanTargetModel source) {
             return Objects.equals(source.getName(), target.getName())
                     && Objects.equals(source.getAddress(), target.getAddress())
                     && Objects.equals(source.getPort(), target.getPort());
         }
     }
 
-    public static class DbUserPredicate implements IPredicate<DbUser> {
+    public static class DbUserPredicate implements Predicate<DbUser> {
         private final DbUser target;
 
         public DbUserPredicate(DbUser target) {
@@ -487,7 +488,7 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(DbUser source) {
+        public boolean test(DbUser source) {
             String targetName = target.getLoginName();
             if (!StringHelper.isNullOrEmpty(targetName)) {
                 targetName = targetName.toLowerCase();
@@ -499,7 +500,7 @@ public final class Linq {
         }
     }
 
-    public static class NetworkSameProviderPredicate implements IPredicate<Provider<?>> {
+    public static class NetworkSameProviderPredicate implements Predicate<Provider<?>> {
 
         private final Network network;
 
@@ -508,19 +509,10 @@ public final class Linq {
         }
 
         @Override
-        public boolean match(Provider<?> provider) {
+        public boolean test(Provider<?> provider) {
             return network.isExternal() && provider.getId().equals(network.getProvidedBy().getProviderId());
         }
 
-    }
-
-    public interface IPredicate<TSource> extends Predicate<TSource> {
-        @Override
-        default boolean test(TSource tSource) {
-            return match(tSource);
-        }
-
-        boolean match(TSource source);
     }
 
     public static Collection<StorageDomain> filterStorageDomainsByStorageType(

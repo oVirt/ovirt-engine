@@ -131,13 +131,9 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
         }
 
         final String selectedCapability = getCapability().getSelectedItem();
-        availableHostDevices.setItems(Linq.where(allAvailableHostDevices.getItems(), new Linq.IPredicate<EntityModel<HostDeviceView>>() {
-            @Override
-            public boolean match(EntityModel<HostDeviceView> hostDevice) {
-                return hostDevice.getEntity().getCapability().equals(selectedCapability) &&
-                        !getSelectedHostDevices().getItems().contains(hostDevice);
-            }
-        }));
+        availableHostDevices.setItems(Linq.where(allAvailableHostDevices.getItems(),
+                hostDevice -> hostDevice.getEntity().getCapability().equals(selectedCapability) &&
+                        !getSelectedHostDevices().getItems().contains(hostDevice)));
     }
 
     public ListModel<String> getCapability() {

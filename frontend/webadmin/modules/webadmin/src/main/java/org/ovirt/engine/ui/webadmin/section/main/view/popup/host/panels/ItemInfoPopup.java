@@ -205,14 +205,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private List<ReportedConfiguration> filterSyncProperties(LogicalNetworkModel networkModel){
         ReportedConfigurations reportedConfigurations = networkModel.getReportedConfigurations();
         List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
-        List<ReportedConfiguration> output = Linq.where(reportedConfigurationList,
-                new Linq.IPredicate<ReportedConfiguration>() {
-                    @Override
-                    public boolean match(ReportedConfiguration reportedConfiguration) {
-                        return !reportedConfiguration.isInSync();
-                    }
-                });
-        return output;
+        return Linq.where(reportedConfigurationList, reportedConfiguration -> !reportedConfiguration.isInSync());
     }
 
     private void showNic(NetworkInterfaceModel nic) {

@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -217,22 +216,12 @@ public class VmInitModel extends Model {
         Map<String, String> timezones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
         getTimeZoneList().setItems(timezones.entrySet());
         getTimeZoneList().setSelectedItem(Linq.firstOrNull(timezones.entrySet(),
-                new IPredicate<Map.Entry<String, String>>() {
-                    @Override
-                    public boolean match(Map.Entry<String, String> item) {
-                        return item.getValue().startsWith("(GMT) Greenwich"); //$NON-NLS-1$
-                    }
-                }));
+                item -> item.getValue().startsWith("(GMT) Greenwich"))); //$NON-NLS-1$
 
         Map<String, String> windowsTimezones = TimeZoneType.WINDOWS_TIMEZONE.getTimeZoneList();
         getWindowsSysprepTimeZone().setItems(windowsTimezones.entrySet());
         getWindowsSysprepTimeZone().setSelectedItem(Linq.firstOrNull(windowsTimezones.entrySet(),
-                new IPredicate<Map.Entry<String, String>>() {
-                    @Override
-                    public boolean match(Map.Entry<String, String> item) {
-                        return item.getValue().startsWith("(GMT) Greenwich"); //$NON-NLS-1$
-                    }
-                }));
+                item -> item.getValue().startsWith("(GMT) Greenwich"))); //$NON-NLS-1$
 
         isWindowsOS = vm != null ? AsyncDataProvider.getInstance().isWindowsOsType(vm.getOsId()) : true;
 
@@ -366,13 +355,7 @@ public class VmInitModel extends Model {
 
 
     private void selectTimeZone(ListModel<Map.Entry<String, String>> specificTimeZoneModel, Map<String, String> timezones, final String tz) {
-        specificTimeZoneModel.setSelectedItem(Linq.firstOrNull(timezones.entrySet(),
-                new IPredicate<Map.Entry<String, String>>() {
-                    @Override
-                    public boolean match(Map.Entry<String, String> item) {
-                        return item.getKey().equals(tz);
-                    }
-                }));
+        specificTimeZoneModel.setSelectedItem(Linq.firstOrNull(timezones.entrySet(), item -> item.getKey().equals(tz)));
     }
 
     public boolean validate() {
