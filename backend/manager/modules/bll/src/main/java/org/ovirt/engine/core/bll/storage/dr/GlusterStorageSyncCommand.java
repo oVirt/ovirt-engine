@@ -174,6 +174,7 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
                             getSession().getId());
             parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
             parameters.setParentCommand(getActionType());
+            parameters.setParentParameters(getParameters());
             getParameters().setNextStep(DRStep.REMOVE_TMP_SNAPSHOTS);
             runInternalActionWithTasksContext(VdcActionType.GlusterStorageGeoRepSyncInternal, parameters);
             persistCommandIfNeeded();
