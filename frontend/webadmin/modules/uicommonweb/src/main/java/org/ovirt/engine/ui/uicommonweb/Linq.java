@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
@@ -359,14 +358,6 @@ public final class Linq {
         @Override
         public boolean match(StoragePool source) {
             return source.getStatus() == status;
-        }
-    }
-
-    public static class ValidateSucceedPredicate implements IPredicate<VdcReturnValueBase> {
-
-        @Override
-        public boolean match(VdcReturnValueBase source) {
-            return source.isValid();
         }
     }
 

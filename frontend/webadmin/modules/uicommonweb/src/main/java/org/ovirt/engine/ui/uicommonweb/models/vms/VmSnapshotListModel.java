@@ -559,7 +559,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         model.stopProgress();
 
-        if (returnValues != null && returnValues.stream().allMatch(new Linq.ValidateSucceedPredicate())) {
+        if (returnValues != null && returnValues.stream().allMatch(VdcReturnValueBase::isValid)) {
             cancel();
         }
     }
