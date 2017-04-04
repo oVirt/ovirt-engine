@@ -362,20 +362,6 @@ public final class Linq {
         }
     }
 
-    public static class DataCenterNotStatusPredicate implements IPredicate<StoragePool> {
-
-        private DataCenterStatusPredicate predicate;
-
-        public DataCenterNotStatusPredicate(StoragePoolStatus status) {
-            this.predicate = new DataCenterStatusPredicate(status);
-        }
-
-        @Override
-        public boolean match(StoragePool source) {
-            return !predicate.match(source);
-        }
-    }
-
     public static class ValidateSucceedPredicate implements IPredicate<VdcReturnValueBase> {
 
         @Override

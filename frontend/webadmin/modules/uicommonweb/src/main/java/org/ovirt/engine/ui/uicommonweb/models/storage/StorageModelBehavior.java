@@ -26,7 +26,7 @@ public abstract class StorageModelBehavior extends Model {
     }
 
     public List<StoragePool> filterDataCenter(List<StoragePool> source) {
-        return Linq.where(source, new Linq.DataCenterNotStatusPredicate(StoragePoolStatus.NotOperational));
+        return Linq.where(source, new Linq.DataCenterStatusPredicate(StoragePoolStatus.NotOperational).negate());
     }
 
     public abstract void updateItemsAvailability();
