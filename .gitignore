@@ -20,6 +20,7 @@ tmp.*
 .classpath
 .factorypath
 .externalToolBuilders
+.checkstyle
 maven-eclipse.xml
 .pmd
 *.ipr
