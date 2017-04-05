@@ -56,6 +56,8 @@ public class DashboardDataServlet extends HttpServlet {
     @Resource(mappedName = "java:/ENGINEDataSource")
     private DataSource engineDataSource;
 
+    private boolean enableBackgroundCacheUpdate = false;
+
     @Resource(lookup = "java:jboss/infinispan/ovirt-engine")
     private CacheContainer cacheContainer;
 
@@ -74,14 +76,13 @@ public class DashboardDataServlet extends HttpServlet {
         inventoryCache = cacheContainer.getCache(INVENTORY);
 
         EngineLocalConfig config = EngineLocalConfig.getInstance();
-        boolean enableBackground;
         try {
-            enableBackground = config.getBoolean(ENABLE_CACHE_UPDATE_KEY, Boolean.FALSE);
+            enableBackgroundCacheUpdate = config.getBoolean(ENABLE_CACHE_UPDATE_KEY, Boolean.FALSE);
         } catch (IllegalArgumentException e) {
             log.error("Missing/Invalid key \"{}\", using default value of 'false'", ENABLE_CACHE_UPDATE_KEY, e); //$NON-NLS-1$
-            enableBackground = false;
+            enableBackgroundCacheUpdate = false;
         }
-        if (!enableBackground) {
+        if (!enableBackgroundCacheUpdate) {
             log.info("Dashboard DB query cache has been disabled."); //$NON-NLS-1$
             return;
         }
@@ -95,7 +96,7 @@ public class DashboardDataServlet extends HttpServlet {
             log.error("Missing/Invalid key \"{}\", using default value of 300", UTILIZATION_CACHE_UPDATE_INTERVAL_KEY, e); //$NON-NLS-1$
             UTILIZATION_CACHE_UPDATE_INTERVAL = 300;
         }
-        utilizationCacheUpdate = scheduledExecutor.scheduleAtFixedRate(new Runnable() {
+        utilizationCacheUpdate = scheduledExecutor.scheduleWithFixedDelay(new Runnable() {
             Logger log = LoggerFactory.getLogger(DashboardDataServlet.class.getName() + ".CacheUpdate.Utilization"); //$NON-NLS-1$
 
             @Override
@@ -108,6 +109,7 @@ public class DashboardDataServlet extends HttpServlet {
                 }
             }
         }, 0, UTILIZATION_CACHE_UPDATE_INTERVAL, TimeUnit.SECONDS);
+        log.info("Dashboard utilization cache updater initialized (update interval {}s)", UTILIZATION_CACHE_UPDATE_INTERVAL); //$NON-NLS-1$
 
         /*
          * Update the inventory cache now and every 60 seconds (by default) thereafter, but never run 2 updates simultaneously.
@@ -118,7 +120,7 @@ public class DashboardDataServlet extends HttpServlet {
             log.error("Missing/Invalid key \"{}\", using default value of 60", INVENTORY_CACHE_UPDATE_INTERVAL_KEY, e); //$NON-NLS-1$
             INVENTORY_CACHE_UPDATE_INTERVAL = 60;
         }
-        inventoryCacheUpdate = scheduledExecutor.scheduleAtFixedRate(new Runnable() {
+        inventoryCacheUpdate = scheduledExecutor.scheduleWithFixedDelay(new Runnable() {
             Logger log = LoggerFactory.getLogger(DashboardDataServlet.class.getName() + ".CacheUpdate.Inventory"); //$NON-NLS-1$
 
             @Override
@@ -132,6 +134,7 @@ public class DashboardDataServlet extends HttpServlet {
 
             }
         }, 0, INVENTORY_CACHE_UPDATE_INTERVAL, TimeUnit.SECONDS);
+        log.info("Dashboard inventory cache updater initialized (update interval {}s)", INVENTORY_CACHE_UPDATE_INTERVAL); //$NON-NLS-1$
     }
 
     @PreDestroy
@@ -228,9 +231,11 @@ public class DashboardDataServlet extends HttpServlet {
         Dashboard dashboard = getDashboard();
         long endTime = System.currentTimeMillis();
 
-        // Put the data in the cache for a default of 5 minutes, after 5 minutes it is evicted and the next
-        // request will populate it again.
-        dashboardCache.put(UTILIZATION_KEY, dashboard, UTILIZATION_CACHE_UPDATE_INTERVAL, TimeUnit.SECONDS);
+        if (enableBackgroundCacheUpdate) {
+            dashboardCache.put(UTILIZATION_KEY, dashboard);
+        } else {
+            dashboardCache.put(UTILIZATION_KEY, dashboard, UTILIZATION_CACHE_UPDATE_INTERVAL, TimeUnit.SECONDS);
+        }
         log.debug("Dashboard utilization cache updated in {}ms", endTime-startTime); //$NON-NLS-1$
         return dashboard;
     }
@@ -240,9 +245,11 @@ public class DashboardDataServlet extends HttpServlet {
         Inventory inventory = lookupInventory();
         long endTime = System.currentTimeMillis();
 
-        // Put the inventory in the cache for a default of 60 seconds, after 60 seconds it is evicted and the
-        // next request will populate it again.
-        inventoryCache.put(INVENTORY_KEY, inventory, INVENTORY_CACHE_UPDATE_INTERVAL, TimeUnit.SECONDS);
+        if (enableBackgroundCacheUpdate) {
+            inventoryCache.put(INVENTORY_KEY, inventory);
+        } else {
+            inventoryCache.put(INVENTORY_KEY, inventory, INVENTORY_CACHE_UPDATE_INTERVAL, TimeUnit.SECONDS);
+        }
         log.debug("Dashboard inventoy cache updated in {}ms", endTime-startTime); //$NON-NLS-1$
         return inventory;
     }
