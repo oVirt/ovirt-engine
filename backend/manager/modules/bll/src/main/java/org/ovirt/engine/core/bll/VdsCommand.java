@@ -131,11 +131,16 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      *            Operation name.
      */
     private void alert(AuditLogType logType, String operation) {
-        AuditLogableBase alert = Injector.injectMembers(new AuditLogableBase());
-        alert.setVdsId(getVds().getId());
+        AuditLogableBase alert = createAlert(operation);
+        AlertDirector.alert(alert, logType, auditLogDirector);
+    }
+
+    private AuditLogableBase createAlert(String operation) {
+        AuditLogableBase alert = new AuditLogableBase();
+        alert.setVdsName(getVds().getName());
         String op = (operation == null) ? getActionType().name(): operation;
         alert.addCustomValue("Operation", op);
-        AlertDirector.alert(alert, logType, auditLogDirector);
+        return alert;
     }
 
     /**
@@ -149,10 +154,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      *            Throwable object with exception details.
      */
     private void alert(AuditLogType logType, String operation, Throwable throwable) {
-        AuditLogableBase alert = Injector.injectMembers(new AuditLogableBase());
-        alert.setVdsId(getVds().getId());
-        String op = (operation == null) ? getActionType().name(): operation;
-        alert.addCustomValue("Operation", op);
+        AuditLogableBase alert = createAlert(operation);
         alert.updateCallStackFromThrowable(throwable);
         AlertDirector.alert(alert, logType, auditLogDirector);
     }

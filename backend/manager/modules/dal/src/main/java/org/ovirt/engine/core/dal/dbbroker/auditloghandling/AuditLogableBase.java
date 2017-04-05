@@ -518,7 +518,7 @@ public class AuditLogableBase extends TimeoutBase {
         return vdsName;
     }
 
-    protected void setVdsName(final String value) {
+    public void setVdsName(final String value) {
         vdsName = value;
     }
 
