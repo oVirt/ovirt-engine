@@ -84,6 +84,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.qos.CpuQosDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
@@ -114,6 +115,8 @@ public class VdsEventListener implements IVdsEventListener {
     private ColdRebootAutoStartVmsRunner coldRebootAutoStartVmsRunner;
     @Inject
     private VdsDao vdsDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
     @Inject
     private StoragePoolDao storagePoolDao;
     @Inject
@@ -433,10 +436,7 @@ public class VdsEventListener implements IVdsEventListener {
     public void runFailedAutoStartVMs(List<Guid> vmIds) {
         for (Guid vmId : vmIds) {
             // Alert that the virtual machine failed:
-            AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
-            event.setVmId(vmId);
-            auditLogDirector.log(event, AuditLogType.HA_VM_FAILED);
-
+            AuditLogableBase event = createVmEvent(vmId, AuditLogType.HA_VM_FAILED);
             log.info("Highly Available VM went down. Attempting to restart. VM Name '{}', VM Id '{}'",
                     event.getVmName(), vmId);
         }
@@ -447,15 +447,19 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void runColdRebootVms(List<Guid> vmIds) {
         for (Guid vmId : vmIds) {
-            AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
-            event.setVmId(vmId);
-            auditLogDirector.log(event, AuditLogType.COLD_REBOOT_VM_DOWN);
-
+            AuditLogableBase event = createVmEvent(vmId, AuditLogType.COLD_REBOOT_VM_DOWN);
             log.info("VM is down as a part of cold reboot process. Attempting to restart. VM Name '{}', VM Id '{}",
                     event.getVmName(), vmId);
         }
 
         coldRebootAutoStartVmsRunner.addVmsToRun(vmIds);
+    }
+
+    private AuditLogableBase createVmEvent(Guid vmId, AuditLogType logType) {
+        AuditLogableBase event = new AuditLogableBase();
+        event.setVmName(vmStaticDao.get(vmId).getName());
+        auditLogDirector.log(event, logType);
+        return event;
     }
 
     @Override
