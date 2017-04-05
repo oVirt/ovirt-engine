@@ -94,7 +94,6 @@ import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.dao.EntityDao;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.StatusAwareDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
@@ -747,7 +746,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             String newEntityName = renameable.getEntityNewName();
             if (!StringUtils.equals(oldEntityName, newEntityName)) {
                 // log entity rename details
-                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
+                AuditLogableBase logable = new AuditLogableBase();
                 String entityType = renameable.getEntityType();
                 logable.addCustomValue("EntityType", entityType);
                 logable.addCustomValue("OldEntityName", oldEntityName);
