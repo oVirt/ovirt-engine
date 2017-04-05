@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016-2017 Red Hat, Inc.
+Copyright (c) 2016 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -76,8 +76,8 @@ public class V3DataCenterServer extends V3Server<DataCenterResource> {
     }
 
     @Path("networks")
-    public V3DataCenterNetworksServer getNetworksResource() {
-        return new V3DataCenterNetworksServer(getDelegate().getNetworksResource());
+    public V3NetworksServer getNetworksResource() {
+        return new V3NetworksServer(getDelegate().getNetworksResource());
     }
 
     @Path("permissions")

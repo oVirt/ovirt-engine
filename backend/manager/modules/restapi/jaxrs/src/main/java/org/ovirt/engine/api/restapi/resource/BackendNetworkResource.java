@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -13,63 +12,44 @@ import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
-public class BackendNetworkResource
-    extends AbstractBackendSubResource<Network, org.ovirt.engine.core.common.businessentities.network.Network>
-    implements NetworkResource {
+public class BackendNetworkResource extends AbstractBackendNetworkResource implements NetworkResource {
 
-    public BackendNetworkResource(String id) {
-        super(id, Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class);
+    public BackendNetworkResource(String id, BackendNetworksResource parent) {
+        super(id, parent, VdcActionType.RemoveNetwork);
     }
 
     @Override
     public Network get() {
-        return performGet(VdcQueryType.GetNetworkById, new IdQueryParameters(guid));
+        org.ovirt.engine.core.common.businessentities.network.Network entity = parent.lookupNetwork(guid);
+        if (entity == null) {
+            return notFound();
+        }
+        Network network = map(entity);
+        network.setDisplay(null);
+        return addLinks(network);
+    }
+
+    @Override
+    protected Network addParents(Network model) {
+        return parent.addParents(model);
     }
 
     @Override
     public Network update(Network incoming) {
-        return performUpdate(
-            incoming,
-            new UpdatedNetworkResolver(),
-            VdcActionType.UpdateNetwork,
-            new UpdateParametersProvider()
-        );
+        return performUpdate(incoming,
+                             getParent().getNetworkIdResolver(),
+                             VdcActionType.UpdateNetwork,
+                             new UpdateParametersProvider());
     }
 
-    private class UpdateParametersProvider
-        implements ParametersProvider<Network, org.ovirt.engine.core.common.businessentities.network.Network> {
-
+    protected class UpdateParametersProvider implements ParametersProvider<Network, org.ovirt.engine.core.common.businessentities.network.Network> {
         @Override
-        public VdcActionParametersBase getParameters(Network incoming,
-                org.ovirt.engine.core.common.businessentities.network.Network entity) {
-            org.ovirt.engine.core.common.businessentities.network.Network updated =
-                BackendNetworkResource.this.map(incoming, entity);
+        public VdcActionParametersBase getParameters(Network incoming, org.ovirt.engine.core.common.businessentities.network.Network entity) {
+            org.ovirt.engine.core.common.businessentities.network.Network updated = getMapper(modelType, org.ovirt.engine.core.common.businessentities.network.Network.class).map(incoming, entity);
             return new AddNetworkStoragePoolParameters(entity.getDataCenterId(), updated);
         }
-    }
-
-    private class UpdatedNetworkResolver extends EntityIdResolver<Guid> {
-        @Override
-        public org.ovirt.engine.core.common.businessentities.network.Network lookupEntity(Guid ignore)
-            throws BackendFailureException {
-            // We already know the identifier of the network, so we can use it directly, ignoring the argument.
-            return getEntity(
-                org.ovirt.engine.core.common.businessentities.network.Network.class,
-                VdcQueryType.GetNetworkById,
-                new IdQueryParameters(guid),
-                id
-            );
-        }
-    }
-
-    @Override
-    public Response remove() {
-        get();
-        return performAction(VdcActionType.RemoveNetwork, new RemoveNetworkParameters(guid));
     }
 
     @Override
@@ -92,7 +72,7 @@ public class BackendNetworkResource
     }
 
     @Override
-    protected Network addParents(Network model) {
-        return BackendNetworkHelper.addParents(model);
+    protected VdcActionParametersBase getRemoveParameters(org.ovirt.engine.core.common.businessentities.network.Network entity) {
+        return new RemoveNetworkParameters(entity.getId());
     }
 }

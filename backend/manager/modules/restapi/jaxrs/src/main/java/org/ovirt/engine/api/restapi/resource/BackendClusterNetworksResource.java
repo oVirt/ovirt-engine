@@ -1,71 +1,71 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-import javax.ws.rs.WebApplicationException;
+
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.api.model.Networks;
-import org.ovirt.engine.api.resource.ClusterNetworkResource;
-import org.ovirt.engine.api.resource.ClusterNetworksResource;
+import org.ovirt.engine.api.resource.AssignedNetworkResource;
+import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterNetworksResource
-    extends AbstractBackendCollectionResource<Network, org.ovirt.engine.core.common.businessentities.network.Network>
-    implements ClusterNetworksResource {
+    extends AbstractBackendNetworksResource
+    implements AssignedNetworksResource {
 
-    private Guid clusterId;
+    private String clusterId;
 
-    public BackendClusterNetworksResource(Guid clusterId) {
-        super(Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class);
+    public BackendClusterNetworksResource(String clusterId) {
+        super(VdcQueryType.GetAllNetworksByClusterId, VdcActionType.AttachNetworkToCluster);
         this.clusterId = clusterId;
-    }
-
-    @Override
-    public Networks list() {
-        List<org.ovirt.engine.core.common.businessentities.network.Network> entities = getNetworks();
-        Networks networks = mapCollection(entities);
-        for (Network network : networks.getNetworks()) {
-            network.setDisplay(null);
-        }
-        return networks;
-    }
-
-    private Networks mapCollection(List<org.ovirt.engine.core.common.businessentities.network.Network> entities) {
-        Networks collection = new Networks();
-        for (org.ovirt.engine.core.common.businessentities.network.Network entity : entities) {
-            collection.getNetworks().add(addLinks(map(entity)));
-        }
-        return collection;
     }
 
     @Override
     public Response add(Network network) {
         validateParameters(network, "id|name");
 
+        String networkName = null;
         List<org.ovirt.engine.core.common.businessentities.network.Network> networks = getNetworks();
 
-        org.ovirt.engine.core.common.businessentities.network.Network net = null;
         if (network.isSetId()) {
-            net = getNetworkById(network.getId(), networks);
-        }
-        else if (network.isSetName()) {
-            net = getNetworkByName(network.getName(), networks);
-        }
-        if (net == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            org.ovirt.engine.core.common.businessentities.network.Network net =
+                    getNetworkById(network.getId(), networks);
+            if (net == null) {
+                notFound(Network.class);
+            } else {
+                networkName = net.getName();
+            }
         }
 
-        return performCreate(
-            VdcActionType.AttachNetworkToCluster,
-            new AttachNetworkToClusterParameter(getCluster(), net),
-            new AttachedNetworkResolver(net.getId())
-        );
+        String networkId = null;
+        if (network.isSetName()) {
+            org.ovirt.engine.core.common.businessentities.network.Network net =
+                    getNetworkByName(network.getName(), networks);
+            if (net == null) {
+                notFound(Network.class);
+            } else {
+                networkId = net.getId().toString();
+            }
+        }
+
+        if (!network.isSetId()) {
+            network.setId(networkId);
+        } else if (network.isSetName() && !network.getId().equals(networkId)) {
+            badRequest("Network ID provided does not match the ID for network with name: " + network.getName());
+        }
+
+        org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
+        return performCreate(addAction,
+                               getAddParameters(network, entity),
+                               new NetworkIdResolver(StringUtils.defaultIfEmpty(network.getName(), networkName)));
     }
 
     private org.ovirt.engine.core.common.businessentities.network.Network getNetworkById(String networkId,
@@ -88,50 +88,39 @@ public class BackendClusterNetworksResource
         return null;
     }
 
-    private class AttachedNetworkResolver extends EntityIdResolver<Guid> {
-        private Guid guid;
-
-        public AttachedNetworkResolver(Guid guid) {
-            this.guid = guid;
-        }
-
-        @Override
-        public org.ovirt.engine.core.common.businessentities.network.Network lookupEntity(Guid ignore)
-            throws BackendFailureException {
-            return getEntity(
-                org.ovirt.engine.core.common.businessentities.network.Network.class,
-                VdcQueryType.GetNetworkById,
-                new IdQueryParameters(guid),
-                guid.toString()
-            );
-        }
+    @Override
+    protected VdcQueryParametersBase getQueryParameters() {
+        return new IdQueryParameters(asGuid(clusterId));
     }
 
     @Override
-    public Network addParents(Network model) {
-        model = BackendNetworkHelper.addParents(model);
-        model.setCluster(new org.ovirt.engine.api.model.Cluster());
-        model.getCluster().setId(clusterId.toString());
-        return model;
+    protected VdcActionParametersBase getAddParameters(Network network,
+            org.ovirt.engine.core.common.businessentities.network.Network entity) {
+        return new AttachNetworkToClusterParameter(getCluster(), entity);
     }
 
     @Override
-    public ClusterNetworkResource getNetworkResource(String id) {
-        return inject(new BackendClusterNetworkResource(clusterId, id));
+    public Network addParents(Network network) {
+        network.setCluster(new org.ovirt.engine.api.model.Cluster());
+        network.getCluster().setId(clusterId);
+        return network;
+    }
+
+    protected Cluster getCluster() {
+        return getEntity(Cluster.class,
+                         VdcQueryType.GetClusterById,
+                         new IdQueryParameters(asGuid(clusterId)),
+                         clusterId);
+    }
+
+    @Override
+    public AssignedNetworkResource getNetworkResource(String id) {
+        return inject(new BackendClusterNetworkResource(id, this));
     }
 
     private List<org.ovirt.engine.core.common.businessentities.network.Network> getNetworks() {
         Guid dataCenterId = getCluster().getStoragePoolId();
         IdQueryParameters params = new IdQueryParameters(dataCenterId);
         return getBackendCollection(VdcQueryType.GetAllNetworks, params);
-    }
-
-    private Cluster getCluster() {
-        return getEntity(
-            Cluster.class,
-            VdcQueryType.GetClusterById,
-            new IdQueryParameters(clusterId),
-            clusterId.toString()
-        );
     }
 }

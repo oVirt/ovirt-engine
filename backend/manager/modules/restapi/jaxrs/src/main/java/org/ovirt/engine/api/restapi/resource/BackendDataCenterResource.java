@@ -7,9 +7,9 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
 import org.ovirt.engine.api.resource.ClustersResource;
-import org.ovirt.engine.api.resource.DataCenterNetworksResource;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.IscsiBondsResource;
+import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.api.resource.QossResource;
 import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
@@ -66,8 +66,8 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     }
 
     @Override
-    public DataCenterNetworksResource getNetworksResource() {
-        return inject(new BackendDataCenterNetworksResource(guid));
+    public NetworksResource getNetworksResource() {
+        return inject(new BackendDataCenterNetworksResource(id));
     }
 
     @Override

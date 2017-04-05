@@ -2,10 +2,9 @@
     <!-- Ignore auto-generated code -->
     <Match>
         <Or>
-            <Class name="~.*ResourceHelper" />
             <Class name="~.*\.ObjectFactory" />
-            <Package name="org.ovirt.engine.api.json" />
             <Package name="org.ovirt.engine.api.xml" />
+            <Package name="org.ovirt.engine.api.json" />
         </Or>
     </Match>
 

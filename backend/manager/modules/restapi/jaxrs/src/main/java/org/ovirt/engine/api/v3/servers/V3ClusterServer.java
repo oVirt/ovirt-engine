@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016-2017 Red Hat, Inc.
+Copyright (c) 2016 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -86,8 +86,8 @@ public class V3ClusterServer extends V3Server<ClusterResource> {
     }
 
     @Path("networks")
-    public V3ClusterNetworksServer getNetworksResource() {
-        return new V3ClusterNetworksServer(getDelegate().getNetworksResource());
+    public V3AssignedNetworksServer getNetworksResource() {
+        return new V3AssignedNetworksServer(getDelegate().getNetworksResource());
     }
 
     @Path("permissions")

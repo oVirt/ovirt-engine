@@ -43,7 +43,7 @@ public class BackendIscsiBondResource
 
     @Override
     public NetworksResource getNetworksResource() {
-        return inject(new BackendIscsiBondNetworksResource(guid));
+        return inject(new BackendIscsiBondNetworksResource(id));
     }
 
     @Override
