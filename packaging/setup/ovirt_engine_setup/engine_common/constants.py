@@ -154,6 +154,7 @@ class Defaults(object):
 
 @util.export
 class Stages(object):
+    ADMIN_PASSWORD_SET = 'osetup.admin.password.set'
     APACHE_RESTART = 'osetup.apache.core.restart'
 
     CORE_ENGINE_START = 'osetup.core.engine.start'

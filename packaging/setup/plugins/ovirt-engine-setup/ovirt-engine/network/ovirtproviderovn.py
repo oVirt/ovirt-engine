@@ -217,8 +217,11 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            osetupcons.Stages.DISTRO_RPM_PACKAGE_UPDATE_CHECK,
+        ),
         after=(
-            oengcommcons.Stages.DIALOG_TITLES_E_STORAGE,
+            osetupcons.Stages.DIALOG_TITLES_S_PACKAGES,
         ),
     )
     def _customization(self):
@@ -235,8 +238,19 @@ class Plugin(plugin.PluginBase):
 
         if not self._enabled:
             return
-
         self._setup_packages()
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_MISC,
+        ),
+        after=(
+            oengcommcons.Stages.ADMIN_PASSWORD_SET,
+        ),
+        condition=lambda self: self._enabled,
+    )
+    def _customization_credentials(self):
         self._user, self._password = self._get_provider_credentials()
 
     @plugin.event(

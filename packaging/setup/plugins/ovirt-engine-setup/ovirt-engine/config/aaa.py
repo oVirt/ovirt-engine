@@ -101,6 +101,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=oengcommcons.Stages.ADMIN_PASSWORD_SET,
         before=(
             oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
         ),
