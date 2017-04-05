@@ -61,6 +61,8 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
             displayNetworkClusterHelper.warnOnActiveVm();
         }
 
+        preserveStatus();
+
         networkClusterDao.update(getNetworkCluster());
 
         final Network managementNetwork;
@@ -94,6 +96,13 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
         networkClusterHelper.setStatus(getClusterId(), getPersistedNetwork());
         setSucceeded(true);
+    }
+
+    /**
+     * Status is a calculated value, thus the value from the command input should be ignored.
+     */
+    private void preserveStatus() {
+        getNetworkCluster().setStatus(getOldNetworkCluster().getStatus());
     }
 
     @Override
