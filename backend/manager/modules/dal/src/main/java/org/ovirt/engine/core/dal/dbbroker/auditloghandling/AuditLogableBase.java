@@ -469,7 +469,7 @@ public class AuditLogableBase extends TimeoutBase {
         return vmName;
     }
 
-    protected void setVmName(final String value) {
+    public void setVmName(final String value) {
         vmName = value;
     }
 

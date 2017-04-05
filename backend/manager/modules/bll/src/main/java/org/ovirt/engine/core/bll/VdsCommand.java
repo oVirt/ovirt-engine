@@ -33,7 +33,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -210,8 +209,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED, operation, throwable);
     }
 
-    protected void logSettingVmToDown(Guid vdsId, Guid vmId) {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsId, vmId));
+    protected void logSettingVmToDown(String vmName) {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.setVdsName(getVds().getName());
+        logable.setVmName(vmName);
         auditLogDirector.log(logable,
                 AuditLogType.VM_WAS_SET_DOWN_DUE_TO_HOST_REBOOT_OR_MANUAL_FENCE);
     }
