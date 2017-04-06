@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 
 /**
@@ -59,19 +59,30 @@ public class ExternalNetworkManager {
      */
     public void deallocateIfExternal() {
         if (getNetwork() != null && getNetwork().isExternal()) {
-            Provider<?> provider =
-                    DbFacade.getInstance().getProviderDao().get(getNetwork().getProvidedBy().getProviderId());
-            NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
+            Provider<?> provider = getProviderDao().get(getNetwork().getProvidedBy().getProviderId());
+            NetworkProviderProxy providerProxy = getProviderProxyFactory().create(provider);
 
             try {
                 providerProxy.deallocate(nic);
             } catch (EngineException e) {
-                AuditLogableBase removePortFailureEvent = Injector.injectMembers(new AuditLogableBase());
+                AuditLogableBase removePortFailureEvent = new AuditLogableBase();
                 removePortFailureEvent.addCustomValue("NicName", nic.getName());
                 removePortFailureEvent.addCustomValue("NicId", nic.getId().toString());
                 removePortFailureEvent.addCustomValue("ProviderName", provider.getName());
-                new AuditLogDirector().log(removePortFailureEvent, AuditLogType.REMOVE_PORT_FROM_EXTERNAL_PROVIDER_FAILED);
+                getAuditLogDirector().log(removePortFailureEvent, AuditLogType.REMOVE_PORT_FROM_EXTERNAL_PROVIDER_FAILED);
             }
         }
+    }
+
+    ProviderProxyFactory getProviderProxyFactory() {
+        return ProviderProxyFactory.getInstance();
+    }
+
+    private ProviderDao getProviderDao() {
+        return Injector.get(ProviderDao.class);
+    }
+
+    private AuditLogDirector getAuditLogDirector() {
+        return Injector.get(AuditLogDirector.class);
     }
 }
