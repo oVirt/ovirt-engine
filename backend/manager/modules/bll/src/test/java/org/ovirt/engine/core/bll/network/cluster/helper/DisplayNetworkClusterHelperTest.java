@@ -19,12 +19,14 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.di.InjectorRule;
@@ -33,6 +35,7 @@ import org.ovirt.engine.core.di.InjectorRule;
 public class DisplayNetworkClusterHelperTest {
 
     private static final String TEST_NETWORK_NAME = "test network";
+    private static final String TEST_CLUSTER_NAME = "cluster name";
     private static final Guid TEST_NETWORK_ID = new Guid("1-2-3-4-5");
     private static final Guid TEST_CLUSTER_ID = new Guid("a-b-c-d-e");
     private static final NetworkClusterId TEST_NETWORK_CLUSTER_ID = new NetworkClusterId(
@@ -46,6 +49,8 @@ public class DisplayNetworkClusterHelperTest {
     private NetworkClusterDao mockNetworkClusterDao;
     @Mock
     private VmDao mockVmDao;
+    @Mock
+    private ClusterDao mockClusterDao;
     @Mock
     private NetworkCluster mockNetworkCluster;
     @Mock
@@ -65,12 +70,20 @@ public class DisplayNetworkClusterHelperTest {
         underTest = new DisplayNetworkClusterHelper(
                 mockNetworkClusterDao,
                 mockVmDao,
+                mockClusterDao,
                 mockNetworkCluster,
                 TEST_NETWORK_NAME,
                 mockAuditLogDirector);
 
         when(mockNetworkCluster.getId()).thenReturn(TEST_NETWORK_CLUSTER_ID);
         when(mockNetworkClusterDao.get(TEST_NETWORK_CLUSTER_ID)).thenReturn(mockNetworkClusterBeforeUpdate);
+        when(mockClusterDao.get(TEST_CLUSTER_ID)).thenReturn(createCluster(TEST_CLUSTER_NAME));
+    }
+
+    private Cluster createCluster(String clusterName) {
+        final Cluster cluster = new Cluster();
+        cluster.setName(clusterName);
+        return cluster;
     }
 
     /**
@@ -142,7 +155,7 @@ public class DisplayNetworkClusterHelperTest {
                 same(AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM));
 
         final AuditLogableBase actualLoggable = auditLogableBaseCaptor.getValue();
-        assertEquals(TEST_CLUSTER_ID, actualLoggable.getClusterId());
+        assertEquals(TEST_CLUSTER_NAME, actualLoggable.getClusterName());
         assertEquals(TEST_NETWORK_NAME, actualLoggable.getCustomValue("networkname"));
     }
 

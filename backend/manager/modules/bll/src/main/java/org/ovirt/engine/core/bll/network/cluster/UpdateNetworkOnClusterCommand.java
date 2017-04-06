@@ -53,6 +53,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         final DisplayNetworkClusterHelper displayNetworkClusterHelper = new DisplayNetworkClusterHelper(
                 networkClusterDao,
                 vmDao,
+                clusterDao,
                 getNetworkCluster(),
                 getNetworkName(),
                 auditLogDirector);

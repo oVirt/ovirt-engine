@@ -121,6 +121,7 @@ public class AuditLogableBase extends TimeoutBase {
     private Guid storagePoolId;
     private Guid clusterId;
     private Cluster cluster;
+    private String clusterName;
     private String correlationId;
     private Guid jobId;
     private boolean isInternalExecution = false;
@@ -722,11 +723,20 @@ public class AuditLogableBase extends TimeoutBase {
         cluster = value;
     }
 
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName == null ? "" : clusterName;
+    }
+
     public String getClusterName() {
-        if (getCluster() != null) {
-            return getCluster().getName();
+        if (clusterName == null) {
+            if (getCluster() != null) {
+                clusterName = getCluster().getName();
+            } else {
+                clusterName = "";
+            }
         }
-        return "";
+        return clusterName;
     }
 
     protected void log() {
