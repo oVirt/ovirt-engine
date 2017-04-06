@@ -11,11 +11,14 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmPoolDao;
 
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
 
     @Inject
     protected VmHandler vmHandler;
+    @Inject
+    private VmPoolDao vmPoolDao;
 
     private VmPool vmPool;
 

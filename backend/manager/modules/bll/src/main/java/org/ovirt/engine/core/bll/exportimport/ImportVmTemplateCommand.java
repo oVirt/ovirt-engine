@@ -65,6 +65,16 @@ import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -80,15 +90,32 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Inject
     VmNicMacsUtils vmNicMacsUtils;
-
     @Inject
     private CpuProfileHelper cpuProfileHelper;
-
     @Inject
     private DiskProfileHelper diskProfileHelper;
-
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private DiskImageDynamicDao diskImageDynamicDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private VmNetworkStatisticsDao vmNetworkStatisticsDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private VmDao vmDao;
 
     private Version effectiveCompatibilityVersion;
     private StorageDomain sourceDomain;

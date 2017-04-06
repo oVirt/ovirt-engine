@@ -31,6 +31,10 @@ import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.UnregisteredDisksDao;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -47,6 +51,14 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     @Inject
     private OvfHelper ovfHelper;
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private UnregisteredOVFDataDao unregisteredOVFDataDao;
+    @Inject
+    private UnregisteredDisksDao unregisteredDisksDao;
 
     public ImportVmTemplateFromConfigurationCommand(Guid commandId) {
         super(commandId);

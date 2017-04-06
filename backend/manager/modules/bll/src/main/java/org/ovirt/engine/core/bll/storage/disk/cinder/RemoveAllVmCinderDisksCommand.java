@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -22,10 +24,14 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.dao.DiskDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParameters> extends VmCommand<T> {
+
+    @Inject
+    private DiskDao diskDao;
 
     public RemoveAllVmCinderDisksCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -34,6 +34,11 @@ import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.FenceAgentDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -63,6 +68,16 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             "cluster_id",
             "protocol");
     private VdcActionType actionType;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private FenceAgentDao fenceAgentDao;
 
     public UpdateVdsCommand(T parameters, CommandContext cmdContext) {
         this(parameters, cmdContext, VdcActionType.InstallVdsInternal);

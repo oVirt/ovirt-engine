@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -43,12 +44,12 @@ public class HotUnplugMemoryCommand<P extends HotUnplugMemoryParameters> extends
 
     @Inject
     private VmDeviceDao vmDeviceDao;
-
     @Inject
     private VmHandler vmHandler;
-
     @Inject
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     public HotUnplugMemoryCommand(P parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

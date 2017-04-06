@@ -38,6 +38,9 @@ import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -54,6 +57,13 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
 
     @Inject
     private HostedEngineHelper hostedEngineHelper;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private BaseDiskDao baseDiskDao;
+
     private StorageDomain heStorageDomain;
 
     static final StorageType[] SUPPORTED_DOMAIN_TYPES =

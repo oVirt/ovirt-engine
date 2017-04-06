@@ -34,6 +34,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
@@ -64,6 +66,10 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     private ImageTransferUpdater imageTransferUpdater;
     @Inject
     protected ImageTransferDao imageTransferDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private ImageDao imageDao;
 
     // Container for context needed by state machine handlers
     class StateContext {

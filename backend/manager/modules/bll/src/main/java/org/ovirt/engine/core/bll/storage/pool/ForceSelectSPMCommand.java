@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,10 +22,17 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.AsyncTaskDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 
 @NonTransactiveCommandAttribute
 public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends CommandBase<T> {
+
+    @Inject
+    private AsyncTaskDao asyncTaskDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     private StoragePool storagePoolForVds;
 

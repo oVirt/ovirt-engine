@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -18,11 +20,15 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetUpPasswordLessSSHParameters> {
+
+    @Inject
+    private VdsDao vdsDao;
 
     public SetUpPasswordLessSSHInternalCommand(SetUpPasswordLessSSHParameters params, CommandContext commandContext) {
         super(params, commandContext);

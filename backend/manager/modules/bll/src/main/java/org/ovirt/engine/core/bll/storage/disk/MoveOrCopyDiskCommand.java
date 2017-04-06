@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.CopyImageGroupCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -54,6 +55,14 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.UnregisteredDisksDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
@@ -62,6 +71,24 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private SnapshotsValidator snapshotsValidator;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private UnregisteredDisksDao unregisteredDisksDao;
+    @Inject
+    private VmDao vmDao;
 
     private List<PermissionSubject> cachedPermsList;
     private List<Pair<VM, VmDevice>> cachedVmsDeviceInfo;

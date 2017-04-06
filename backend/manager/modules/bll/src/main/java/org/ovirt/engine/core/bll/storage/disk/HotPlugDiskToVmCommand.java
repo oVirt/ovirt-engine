@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -26,6 +28,12 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 @NonTransactiveCommandAttribute
 public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> extends AbstractDiskVmCommand<T> {
@@ -33,6 +41,19 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
     private Disk disk;
     private DiskVmElement diskVmElement;
     protected VmDevice oldVmDevice;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
 
     public HotPlugDiskToVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

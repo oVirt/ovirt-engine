@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -10,11 +12,15 @@ import org.ovirt.engine.core.common.action.AllocateImageGroupVolumeCommandParame
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.vdscommands.AllocateVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class AllocateImageGroupVolumeCommand<T extends AllocateImageGroupVolumeCommandParameters> extends
         StorageJobCommand<T> {
+
+    @Inject
+    private BaseDiskDao baseDiskDao;
 
     public AllocateImageGroupVolumeCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

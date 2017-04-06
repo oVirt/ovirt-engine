@@ -50,15 +50,29 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateManagementCommand<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
 
     @Inject
     private CpuProfileHelper cpuProfileHelper;
-
     @Inject
     private RngDeviceUtils rngDeviceUtils;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDao vmDao;
 
     private VmTemplate oldTemplate;
     private List<GraphicsDevice> cachedGraphics;

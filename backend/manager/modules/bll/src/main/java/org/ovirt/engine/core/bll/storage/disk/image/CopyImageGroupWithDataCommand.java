@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -25,11 +27,18 @@ import org.ovirt.engine.core.common.businessentities.LocationInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataCommandParameters>
         extends CommandBase<T> implements SerialChildExecutingCommand {
+
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private DiskDao diskDao;
 
     private DiskImage diskImage;
 

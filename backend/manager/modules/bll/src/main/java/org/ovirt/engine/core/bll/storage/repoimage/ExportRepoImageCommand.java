@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -39,9 +41,19 @@ import org.ovirt.engine.core.common.vdscommands.UploadImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 @SuppressWarnings("unused")
 public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends CommandBase<T> {
+
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private VmDao vmDao;
 
     private DiskImage diskImage;
 

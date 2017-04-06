@@ -26,6 +26,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.IscsiBondDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
@@ -34,6 +36,11 @@ public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> ex
     protected IscsiBondDao iscsiBondDao;
 
     protected boolean encounterConnectionProblems;
+
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private VdsDao vdsDao;
 
     public BaseIscsiBondCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

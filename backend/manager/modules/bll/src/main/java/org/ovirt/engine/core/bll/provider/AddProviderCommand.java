@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.provider;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -14,8 +16,12 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 public class AddProviderCommand<P extends ProviderParameters> extends CommandBase<P> {
+
+    @Inject
+    private ProviderDao providerDao;
 
     public AddProviderCommand(Guid commandId) {
         super(commandId);

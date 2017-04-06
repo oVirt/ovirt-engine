@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -11,8 +13,13 @@ import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.QuotaDao;
 
 public class RemoveQuotaCommand extends CommandBase<IdParameters> {
+
+    @Inject
+    private QuotaDao quotaDao;
+
     private Quota quota;
 
     public RemoveQuotaCommand(IdParameters parameters, CommandContext cmdContext) {

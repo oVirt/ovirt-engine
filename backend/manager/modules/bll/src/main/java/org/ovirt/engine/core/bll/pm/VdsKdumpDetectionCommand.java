@@ -28,6 +28,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dao.ExternalVariableDao;
+import org.ovirt.engine.core.dao.VdsKdumpStatusDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.ThreadUtils;
 
 /**
@@ -35,6 +37,12 @@ import org.ovirt.engine.core.utils.ThreadUtils;
  */
 @NonTransactiveCommandAttribute
 public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+
+    @Inject
+    private VdsKdumpStatusDao vdsKdumpStatusDao;
+    @Inject
+    private VmDao vmDao;
+
     /**
      * Name of external variable to store fence_kdump listener heartbeat
      */

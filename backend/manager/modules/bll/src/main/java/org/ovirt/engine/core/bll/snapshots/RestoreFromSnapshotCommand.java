@@ -21,6 +21,9 @@ import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /**
  * This command responsible to make snapshot of some Vm mapped to some drive be
@@ -32,9 +35,14 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
 
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;
-
     @Inject
     private PostDeleteActionHandler postDeleteActionHandler;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     private final ArrayList<Guid> _imagesToDelete = new ArrayList<>();
 

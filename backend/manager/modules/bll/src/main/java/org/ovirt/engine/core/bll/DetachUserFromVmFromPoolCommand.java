@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DetachUserFromVmFromPoolParameters;
@@ -11,10 +13,20 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 @DisableInPrepareMode
 public class DetachUserFromVmFromPoolCommand<T extends DetachUserFromVmFromPoolParameters> extends
         VmPoolUserCommandBase<T> {
+
+    @Inject
+    private PermissionDao permissionDao;
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private VmDao vmDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

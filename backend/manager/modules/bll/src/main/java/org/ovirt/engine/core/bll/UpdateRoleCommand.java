@@ -1,13 +1,19 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.RoleDao;
 
 public class UpdateRoleCommand<T extends RolesOperationsParameters> extends RolesOperationCommandBase<T> {
+
+    @Inject
+    private RoleDao roleDao;
 
     public UpdateRoleCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

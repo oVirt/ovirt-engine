@@ -28,6 +28,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -36,9 +38,12 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
 
     @Inject
     protected VmHandler vmHandler;
-
     @Inject
     protected VmTemplateHandler vmTemplateHandler;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected Map<Guid, DiskImage> imageFromSourceDomainMap;

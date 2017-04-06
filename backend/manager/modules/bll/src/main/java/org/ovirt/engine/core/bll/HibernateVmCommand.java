@@ -34,6 +34,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HibernateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +51,10 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     private VmOverheadCalculator vmOverheadCalculator;
     @Inject
     private MemoryStorageHandler memoryStorageHandler;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -39,6 +41,15 @@ import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -46,6 +57,25 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameter
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
+
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VnicProfileDao vnicProfileDao;
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VmDao vmDao;
 
     private Map<String, Pair<String, String>> sharedLocks;
 

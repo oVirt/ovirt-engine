@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.UpdateVmDiskCommand;
@@ -14,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,9 @@ import org.slf4j.LoggerFactory;
 public class ExtendCinderDiskCommand<T extends VmDiskOperationParameterBase> extends UpdateVmDiskCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ExtendCinderDiskCommand.class);
+
+    @Inject
+    private ImageDao imageDao;
 
     public ExtendCinderDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

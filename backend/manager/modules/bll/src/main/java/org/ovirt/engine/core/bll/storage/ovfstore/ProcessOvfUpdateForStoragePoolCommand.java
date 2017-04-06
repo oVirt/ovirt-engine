@@ -41,6 +41,13 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
+import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
@@ -48,12 +55,24 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
 
     @Inject
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
-
     @Inject
     private VmHandler vmHandler;
-
     @Inject
     private VmTemplateHandler vmTemplateHandler;
+    @Inject
+    private VmAndTemplatesGenerationsDao vmAndTemplatesGenerationsDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private VmDao vmDao;
 
     private int itemsCountPerUpdate;
     private List<Guid> proccessedIdsInfo;

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -32,6 +34,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -41,6 +48,16 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     private VmDevice oldVmDevice;
     private boolean macShouldBeChanged;
     private RequiredAction requiredAction = null;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private InterfaceDao interfaceDao;
+    @Inject
+    private VnicProfileDao vnicProfileDao;
 
     public UpdateVmInterfaceCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -1,13 +1,22 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.TagDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class AttachVmsToTagCommand<T extends AttachEntityToTagParameters> extends VmsTagMapBase<T> {
+
+    @Inject
+    private TagDao tagDao;
+    @Inject
+    private VmDao vmDao;
 
     public AttachVmsToTagCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -1,13 +1,19 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 public class AddAffinityGroupCommand extends AffinityGroupCRUDCommand {
+
+    @Inject
+    private AffinityGroupDao affinityGroupDao;
 
     public AddAffinityGroupCommand(AffinityGroupCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

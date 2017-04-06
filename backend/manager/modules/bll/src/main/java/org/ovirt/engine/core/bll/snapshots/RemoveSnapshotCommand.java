@@ -54,6 +54,10 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -67,6 +71,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Inject
     private OvfManager ovfManager;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     public RemoveSnapshotCommand(T parameters, CommandContext context) {
         super(parameters, context);

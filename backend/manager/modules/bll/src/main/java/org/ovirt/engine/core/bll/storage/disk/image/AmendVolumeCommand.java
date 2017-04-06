@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ImageDao;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
@@ -35,6 +36,10 @@ public class AmendVolumeCommand<T extends AmendVolumeCommandParameters> extends
 
     @Inject
     private VdsmImagePoller poller;
+
+    @Inject
+    private ImageDao imageDao;
+
     private Image image;
 
     public AmendVolumeCommand(T parameters, CommandContext commandContext) {

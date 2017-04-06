@@ -10,15 +10,18 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.pm.FenceConfigHelper;
 
 public class UpdateFenceAgentCommand<T extends FenceAgentCommandParameterBase> extends FenceAgentCommandBase {
-    @Inject
-    private VdsDao vdsDao;
 
     @Inject
+    private VdsDao vdsDao;
+    @Inject
     private ClusterDao clusterDao;
+    @Inject
+    private FenceAgentDao fenceAgentDao;
 
     public UpdateFenceAgentCommand(FenceAgentCommandParameterBase parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

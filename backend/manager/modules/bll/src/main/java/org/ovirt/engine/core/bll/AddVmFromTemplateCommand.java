@@ -32,6 +32,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 /**
  * This class adds a cloned VM from a template (Deep disk copy)
@@ -42,6 +44,10 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
 
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public AddVmFromTemplateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

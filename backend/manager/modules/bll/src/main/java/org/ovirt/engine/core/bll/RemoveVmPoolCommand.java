@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -31,6 +33,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -40,6 +44,11 @@ import org.slf4j.LoggerFactory;
 public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolCommandBase<T> {
 
     private static final Logger log = LoggerFactory.getLogger(RemoveVmPoolCommand.class);
+
+    @Inject
+    private VmPoolDao vmPoolDao;
+    @Inject
+    private VmDao vmDao;
 
     private List<VM> cachedVmsInPool;
     private Set<Guid> vmsRemoved = new HashSet<>();

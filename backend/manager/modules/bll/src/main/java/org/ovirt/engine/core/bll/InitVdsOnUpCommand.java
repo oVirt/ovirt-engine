@@ -53,6 +53,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsKdumpStatusDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationService;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationValue;
@@ -81,6 +87,18 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private InitGlusterCommandHelper glusterCommandHelper;
     @Inject
     private IrsProxyManager irsProxyManager;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private VdsKdumpStatusDao vdsKdumpStatusDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters, CommandContext commandContext) {
         super(parameters, commandContext);

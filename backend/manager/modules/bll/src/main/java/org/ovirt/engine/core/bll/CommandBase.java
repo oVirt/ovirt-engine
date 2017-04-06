@@ -93,7 +93,9 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.dao.EntityDao;
 import org.ovirt.engine.core.dao.GenericDao;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.StatusAwareDao;
+import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
@@ -157,6 +159,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     @Inject
     private BusinessEntitySnapshotDao businessEntitySnapshotDao;
+
+    @Inject
+    private PermissionDao permissionDao;
+
+    @Inject
+    private StepDao stepDao;
 
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;

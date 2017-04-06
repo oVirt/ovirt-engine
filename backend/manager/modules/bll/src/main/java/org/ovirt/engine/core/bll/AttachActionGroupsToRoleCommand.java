@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -14,8 +16,16 @@ import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.RoleDao;
+import org.ovirt.engine.core.dao.RoleGroupMapDao;
 
 public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParameter> extends RolesCommandBase<T> {
+
+    @Inject
+    private RoleGroupMapDao roleGroupMapDao;
+
+    @Inject
+    private RoleDao roleDao;
 
     public AttachActionGroupsToRoleCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

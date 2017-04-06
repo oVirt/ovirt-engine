@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -44,10 +46,30 @@ import org.ovirt.engine.core.common.vdscommands.GetDiskImageAlignmentVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.GetDiskLunAlignmentVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> extends CommandBase<T> {
+
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private VmDao vmDao;
+
     private Disk diskToScan;
     private Guid vdsInPool;
     private Guid storagePoolId;
@@ -192,6 +214,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
 
         getDisk().setAlignment(isDiskAligned ? DiskAlignment.Aligned : DiskAlignment.Misaligned);
         getDisk().setLastAlignmentScan(new Date());
+
 
         baseDiskDao.update(getDisk());
         setSucceeded(true);

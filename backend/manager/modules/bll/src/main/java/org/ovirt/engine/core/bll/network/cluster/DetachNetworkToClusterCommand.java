@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 @NonTransactiveCommandAttribute
 public class DetachNetworkToClusterCommand<T extends AttachNetworkToClusterParameter> extends ClusterCommandBase<T> {
@@ -26,6 +27,8 @@ public class DetachNetworkToClusterCommand<T extends AttachNetworkToClusterParam
 
     @Inject
     private DetachNetworkClusterPermissionFinder permissionFinder;
+    @Inject
+    private NetworkDao networkDao;
 
     public DetachNetworkToClusterCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

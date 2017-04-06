@@ -26,15 +26,19 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VmPoolDao;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVmPoolCommand<T>
         implements RenamedEntityInfoProvider {
 
-    private VmPool oldPool;
     @Inject
     private VmPoolMonitor vmPoolMonitor;
+    @Inject
+    private VmPoolDao vmPoolDao;
+
+    private VmPool oldPool;
 
     /**
      * Constructor for command creation when compensation is applied on startup

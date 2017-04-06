@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -36,6 +37,9 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
     @Inject
     private NetworkClusterHelper networkClusterHelper;
+
+    @Inject
+    private NetworkDao networkDao;
 
     private boolean haMaintenanceFailed;
 

@@ -86,6 +86,14 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
@@ -107,6 +115,22 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private RngDeviceUtils rngDeviceUtils;
     @Inject
     private OvfDataUpdater ovfDataUpdater;
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private ProviderDao providerDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;

@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 
 @InternalCommandAttribute
@@ -36,6 +37,8 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
 
     @Inject
     private AuditLogDirector auditLogDirector;
+    @Inject
+    private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
 
     public CreateOvfVolumeForStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

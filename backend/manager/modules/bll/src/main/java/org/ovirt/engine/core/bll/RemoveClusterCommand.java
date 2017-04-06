@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
@@ -10,8 +12,24 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class RemoveClusterCommand<T extends ClusterParametersBase> extends ClusterCommandBase<T> {
+
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private VmPoolDao vmPoolDao;
 
     public RemoveClusterCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

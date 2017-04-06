@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -12,9 +14,13 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 
 public class AddExistingFileStorageDomainCommand<T extends StorageDomainManagementParameter> extends
         AddNFSStorageDomainCommand<T> {
+
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

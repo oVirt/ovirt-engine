@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -10,8 +12,12 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.AuditLogDao;
 
 public class DisplayAllAuditLogAlertsCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
+
+    @Inject
+    private AuditLogDao auditLogDao;
 
     public DisplayAllAuditLogAlertsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

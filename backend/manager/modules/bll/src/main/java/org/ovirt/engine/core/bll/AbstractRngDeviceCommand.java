@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
@@ -15,12 +17,21 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 /**
  * Base class for crud for random number generator devices
  */
 public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> extends CommandBase<T>  {
 
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
     private VmBase cachedEntity = null;
     private VmEntityType templateType = null;
     private List<VmDevice> cachedRngDevices = null;

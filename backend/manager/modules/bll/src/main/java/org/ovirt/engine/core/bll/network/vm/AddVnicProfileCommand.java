@@ -17,8 +17,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
 
 public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends VnicProfileCommandBase<T> {
+
+    @Inject
+    private VnicProfileDao vnicProfileDao;
 
     public AddVnicProfileCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

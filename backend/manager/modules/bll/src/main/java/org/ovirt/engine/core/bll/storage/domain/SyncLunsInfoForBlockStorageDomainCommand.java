@@ -29,6 +29,9 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -40,6 +43,12 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
 
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
+    @Inject
+    private LunDao lunDao;
 
     protected final Consumer<List<LUNs>> updateExistingLuns = luns -> {
         lunDao.updateAll(luns);

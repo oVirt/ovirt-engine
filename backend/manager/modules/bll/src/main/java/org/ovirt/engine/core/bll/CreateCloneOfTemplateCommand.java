@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /**
  * This command responsible to creating a copy of template image. Usually it
@@ -33,6 +34,8 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
 
     @Inject
     private PostDeleteActionHandler postDeleteActionHandler;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public CreateCloneOfTemplateCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

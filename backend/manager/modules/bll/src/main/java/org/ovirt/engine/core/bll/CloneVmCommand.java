@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -40,10 +42,17 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneImageCommand<T> {
+
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VmDao vmDao;
 
     private Collection<DiskImage> diskImagesFromConfiguration;
 

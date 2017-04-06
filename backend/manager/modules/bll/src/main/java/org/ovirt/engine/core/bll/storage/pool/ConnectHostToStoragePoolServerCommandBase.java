@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
@@ -21,11 +23,19 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.vdscommands.RegisterLibvirtSecretsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 @InternalCommandAttribute
 public abstract class ConnectHostToStoragePoolServerCommandBase<T extends StoragePoolParametersBase> extends
         StorageHandlingCommandBase<T> {
+
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
     private List<StorageServerConnections> connections;
     private Map<StorageType, List<StorageServerConnections>> connectionsTypeMap;
 

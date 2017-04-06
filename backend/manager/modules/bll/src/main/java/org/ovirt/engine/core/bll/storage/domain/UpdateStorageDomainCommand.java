@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -17,10 +19,14 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetStorageDomainDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
 public class UpdateStorageDomainCommand<T extends StorageDomainManagementParameter> extends
         StorageDomainManagementCommandBase<T>  implements RenamedEntityInfoProvider {
+
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     public UpdateStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

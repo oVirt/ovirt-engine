@@ -28,70 +28,15 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.AsyncTaskDao;
-import org.ovirt.engine.core.dao.AuditLogDao;
-import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.DbGroupDao;
-import org.ovirt.engine.core.dao.DbUserDao;
-import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDao;
-import org.ovirt.engine.core.dao.DiskImageDynamicDao;
-import org.ovirt.engine.core.dao.DiskLunMapDao;
-import org.ovirt.engine.core.dao.DiskVmElementDao;
-import org.ovirt.engine.core.dao.FenceAgentDao;
-import org.ovirt.engine.core.dao.ImageDao;
-import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
-import org.ovirt.engine.core.dao.JobDao;
-import org.ovirt.engine.core.dao.LunDao;
-import org.ovirt.engine.core.dao.PermissionDao;
-import org.ovirt.engine.core.dao.QuotaDao;
-import org.ovirt.engine.core.dao.RoleDao;
-import org.ovirt.engine.core.dao.RoleGroupMapDao;
-import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StepDao;
-import org.ovirt.engine.core.dao.StepSubjectEntityDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
-import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
-import org.ovirt.engine.core.dao.StorageServerConnectionDao;
-import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
-import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
-import org.ovirt.engine.core.dao.TagDao;
-import org.ovirt.engine.core.dao.UnregisteredDisksDao;
-import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.dao.VdsKdumpStatusDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
-import org.ovirt.engine.core.dao.VdsStatisticsDao;
-import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.dao.VmIconDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.dao.VmPoolDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
-import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
-import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
-import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.dao.network.NetworkClusterDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
-import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.dao.network.VnicProfileDao;
-import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
-import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
-import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,6 +47,24 @@ public class AuditLogableBase implements AuditLogable {
 
     @Inject
     protected AuditLogDirector auditLogDirector;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
 
     private Guid vmId = Guid.Empty;
     private DbUser dbUser;
@@ -149,199 +112,6 @@ public class AuditLogableBase implements AuditLogable {
     private boolean repeatable;
     private String storagePoolName;
     private String storageDomainName;
-
-    // DAOs for injection
-
-    @Inject
-    protected GlusterVolumeDao glusterVolumeDao;
-
-    @Inject
-    protected GlusterBrickDao glusterBrickDao;
-
-    @Inject
-    protected GlusterHooksDao glusterHooksDao;
-
-    @Inject
-    protected StorageDomainDao storageDomainDao;
-
-    @Inject
-    protected StorageDomainStaticDao storageDomainStaticDao;
-
-    @Inject
-    protected StorageDomainDynamicDao storageDomainDynamicDao;
-
-    @Inject
-    protected StorageServerConnectionDao storageServerConnectionDao;
-
-    @Inject
-    protected StorageServerConnectionExtensionDao storageServerConnectionExtensionDao;
-
-    @Inject
-    protected StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
-
-    @Inject
-    protected LunDao lunDao;
-
-    @Inject
-    protected StoragePoolDao storagePoolDao;
-
-    @Inject
-    protected StoragePoolIsoMapDao storagePoolIsoMapDao;
-
-    @Inject
-    protected StorageDomainOvfInfoDao storageDomainOvfInfoDao;
-
-    @Inject
-    protected VmAndTemplatesGenerationsDao vmAndTemplatesGenerationsDao;
-
-    @Inject
-    protected UnregisteredOVFDataDao unregisteredOVFDataDao;
-
-    @Inject
-    protected UnregisteredDisksDao unregisteredDisksDao;
-
-    @Inject
-    protected BaseDiskDao baseDiskDao;
-
-    @Inject
-    protected DiskDao diskDao;
-
-    @Inject
-    protected DiskImageDao diskImageDao;
-
-    @Inject
-    protected DiskImageDynamicDao diskImageDynamicDao;
-
-    @Inject
-    protected ImageDao imageDao;
-
-    @Inject
-    protected ImageStorageDomainMapDao imageStorageDomainMapDao;
-
-    @Inject
-    protected DiskLunMapDao diskLunMapDao;
-
-    @Inject
-    protected DiskVmElementDao diskVmElementDao;
-
-    @Inject
-    protected SnapshotDao snapshotDao;
-
-    @Inject
-    protected VmDao vmDao;
-
-    @Inject
-    protected VmStaticDao vmStaticDao;
-
-    @Inject
-    protected VmDynamicDao vmDynamicDao;
-
-    @Inject
-    protected VmStatisticsDao vmStatisticsDao;
-
-    @Inject
-    protected VmTemplateDao vmTemplateDao;
-
-    @Inject
-    protected VmPoolDao vmPoolDao;
-
-    @Inject
-    protected VmDeviceDao vmDeviceDao;
-
-    @Inject
-    protected VmIconDao vmIconDao;
-
-    @Inject
-    protected ClusterDao clusterDao;
-
-    @Inject
-    protected VdsDao vdsDao;
-
-    @Inject
-    protected VdsStaticDao vdsStaticDao;
-
-    @Inject
-    protected VdsDynamicDao vdsDynamicDao;
-
-    @Inject
-    protected VdsStatisticsDao vdsStatisticsDao;
-
-    @Inject
-    protected NetworkDao networkDao;
-
-    @Inject
-    protected NetworkClusterDao networkClusterDao;
-
-    @Inject
-    protected InterfaceDao interfaceDao;
-
-    @Inject
-    protected VmNetworkInterfaceDao vmNetworkInterfaceDao;
-
-    @Inject
-    protected VmNetworkStatisticsDao vmNetworkStatisticsDao;
-
-    @Inject
-    protected VmNicDao vmNicDao;
-
-    @Inject
-    protected DiskProfileDao diskProfileDao;
-
-    @Inject
-    protected VnicProfileDao vnicProfileDao;
-
-    @Inject
-    protected CpuProfileDao cpuProfileDao;
-
-    @Inject
-    protected PermissionDao permissionDao;
-
-    @Inject
-    protected RoleDao roleDao;
-
-    @Inject
-    protected RoleGroupMapDao roleGroupMapDao;
-
-    @Inject
-    protected DbGroupDao dbGroupDao;
-
-    @Inject
-    protected DbUserDao dbUserDao;
-
-    @Inject
-    protected TagDao tagDao;
-
-    @Inject
-    protected ProviderDao providerDao;
-
-    @Inject
-    protected AuditLogDao auditLogDao;
-
-    @Inject
-    protected JobDao jobDao;
-
-    @Inject
-    protected StepDao stepDao;
-
-    @Inject
-    protected StepSubjectEntityDao subjectEntityDao;
-
-    @Inject
-    protected AsyncTaskDao asyncTaskDao;
-
-    @Inject
-    protected VmNumaNodeDao vmNumaNodeDao;
-
-    @Inject
-    protected AffinityGroupDao affinityGroupDao;
-
-    @Inject
-    protected FenceAgentDao fenceAgentDao;
-
-    @Inject
-    protected QuotaDao quotaDao;
-    @Inject
-    protected VdsKdumpStatusDao vdsKdumpStatusDao;
 
     public AuditLogableBase() {
     }

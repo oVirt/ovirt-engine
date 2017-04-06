@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -12,9 +14,19 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.AuditLogDao;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.di.Injector;
 
 public class AddExternalEventCommand<T extends AddExternalEventParameters> extends ExternalEventCommandBase<T> {
+
+    @Inject
+    private AuditLogDao auditLogDao;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private StorageDomainDynamicDao storageDomainDynamicDao;
 
     public AddExternalEventCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

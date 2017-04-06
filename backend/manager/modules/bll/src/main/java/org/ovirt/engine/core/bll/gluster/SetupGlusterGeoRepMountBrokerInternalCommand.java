@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -21,11 +23,15 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.SetUpGlusterGeoRepMountBrokerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommandBase<SetUpMountBrokerParameters> {
+
+    @Inject
+    private VdsDao vdsDao;
 
     GlusterVolumeEntity slaveVolume;
 

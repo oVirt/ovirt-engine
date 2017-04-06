@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.template;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -18,9 +20,13 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 
 public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters>
         extends VmTemplateInterfaceCommandBase<T> {
+
+    @Inject
+    private VmNicDao vmNicDao;
 
     public AddVmTemplateInterfaceCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

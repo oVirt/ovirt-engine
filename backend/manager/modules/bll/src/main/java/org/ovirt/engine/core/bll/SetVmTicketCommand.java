@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -16,6 +18,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.Ticketing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +28,10 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     // The log:
     private static final Logger log = LoggerFactory.getLogger(SetVmTicketCommand.class);
 
-    private String ticket;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
 
+    private String ticket;
     // This flag is calculated during the authorization phase and indicates if
     // the user needed additional permission in order to connect to the console
     // of the virtual machine:

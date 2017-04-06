@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
 import org.ovirt.engine.core.dao.qos.CpuQosDao;
 
@@ -26,6 +27,8 @@ public class UpdateCpuProfileCommand extends UpdateProfileCommandBase<CpuProfile
 
     @Inject
     private CpuQosDao cpuQosDao;
+    @Inject
+    private CpuProfileDao cpuProfileDao;
 
     public UpdateCpuProfileCommand(CpuProfileParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

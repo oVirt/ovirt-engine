@@ -19,11 +19,17 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 
 public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
 
     @Inject
     private NumericSuffixNameableComparator numericSuffixNameableComparator;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
     public ReorderVmNicsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

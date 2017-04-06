@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.vm;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,10 +22,23 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends AbstractVmInterfaceCommand<T> {
+
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private VmNetworkStatisticsDao vmNetworkStatisticsDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
 
     private MacPool macPool;
 

@@ -63,6 +63,10 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 /**
  * Restores the given snapshot, including all the VM configuration that was stored in it.<br>
@@ -80,6 +84,15 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     @Inject
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private ImageDao imageDao;
+
 
     private final Set<Guid> snapshotsToRemove = new HashSet<>();
     private Snapshot snapshot;

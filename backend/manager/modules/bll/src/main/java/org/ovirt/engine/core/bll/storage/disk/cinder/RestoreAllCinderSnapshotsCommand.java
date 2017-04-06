@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -22,10 +24,23 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshotsParameters> extends VmCommand<T> {
+
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     public RestoreAllCinderSnapshotsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

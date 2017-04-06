@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FailedToRunVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsMonitor;
@@ -64,18 +65,16 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     @Inject
     protected VfScheduler vfScheduler;
-
     @Inject
     protected NetworkDeviceHelper networkDeviceHelper;
-
     @Inject
     protected SchedulingManager schedulingManager;
-
     @Inject
     private ResourceManager resourceManager;
-
     @Inject
     protected JobRepository jobRepository;
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
 
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);

@@ -31,6 +31,10 @@ import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.di.Injector;
 
 public abstract class ClusterOperationCommandBase<T extends ClusterOperationParameters> extends
@@ -41,9 +45,16 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
     @Inject
     private SchedulingManager schedulingManager;
-
     @Inject
     private InClusterUpgradeValidator upgradeValidator;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
+    @Inject
+    private VmDao vmDao;
 
     protected ClusterOperationCommandBase(Guid commandId) {
         super(commandId);

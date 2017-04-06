@@ -46,6 +46,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -56,9 +64,24 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
-
     @Inject
     private MoveMacs moveMacs;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VmDao vmDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

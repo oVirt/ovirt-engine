@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -12,6 +14,8 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 
 /**
  * This command responsible to creating new snapshot. Usually it will be called
@@ -26,6 +30,11 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTemplateParameters> extends
         CreateSnapshotCommand<T> {
+
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private DiskImageDynamicDao diskImageDynamicDao;
 
     public CreateSnapshotFromTemplateCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

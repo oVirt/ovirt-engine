@@ -5,6 +5,8 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTI
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -17,6 +19,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 /**
  * This command responsible to removing all Image Templates, of a VmTemplate
@@ -25,6 +33,20 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 
 @InternalCommandAttribute
 public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateManagementParameters> extends VmTemplateManagementCommand<T> {
+
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private ImageDao imageDao;
+
     public RemoveAllVmTemplateImageTemplatesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         super.setVmTemplateId(parameters.getVmTemplateId());

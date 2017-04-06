@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.domain;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
@@ -24,8 +26,12 @@ import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public ForceRemoveStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

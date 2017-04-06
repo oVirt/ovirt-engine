@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
@@ -19,6 +21,11 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -26,6 +33,17 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
 
     private CinderDisk disk;
+
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private DiskImageDynamicDao diskImageDynamicDao;
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public CloneSingleCinderDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

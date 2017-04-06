@@ -11,6 +11,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.utils.ExecutionMethod;
+import org.ovirt.engine.core.dao.JobDao;
+import org.ovirt.engine.core.dao.StepDao;
 
 public abstract class AddStepCommand<T extends AddStepParameters> extends CommandBase<T> {
 
@@ -19,6 +21,10 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
 
     @Inject
     private JobRepository jobRepository;
+    @Inject
+    private JobDao jobDao;
+    @Inject
+    private StepDao stepDao;
 
     protected AddStepCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

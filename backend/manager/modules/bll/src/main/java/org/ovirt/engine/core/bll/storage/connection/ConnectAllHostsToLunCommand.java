@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.GetDevicesVisibilityVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LunDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +32,9 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         StorageDomainCommandBase<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ConnectAllHostsToLunCommand.class);
+
+    @Inject
+    private LunDao lunDao;
 
     public ConnectAllHostsToLunCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
@@ -59,12 +60,12 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
 
     @Inject
     private Instance<HostedEngineImporter> hostedEngineImporterProvider;
-
     @Inject
     private VmDevicesMonitoring vmDevicesMonitoring;
-
     @Inject
     private ResourceManager resourceManager;
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     private Set<String> graphicsDeviceTypes = new HashSet<>(Arrays.asList(
             GraphicsType.SPICE.toString().toLowerCase(),

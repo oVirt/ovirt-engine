@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -16,11 +18,15 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ImageDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class MergeExtendCommand<T extends MergeParameters>
         extends CommandBase<T> {
+
+    @Inject
+    private ImageDao imageDao;
 
     public MergeExtendCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

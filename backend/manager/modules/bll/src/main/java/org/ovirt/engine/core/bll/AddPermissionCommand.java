@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -21,10 +23,26 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbGroupDao;
+import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.RoleDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @ValidateSupportsTransaction
 public class AddPermissionCommand<T extends PermissionsOperationsParameters> extends PermissionsCommandBase<T> {
+
+    @Inject
+    private PermissionDao permissionDao;
+    @Inject
+    private RoleDao roleDao;
+    @Inject
+    private DbUserDao dbUserDao;
+    @Inject
+    private DbGroupDao dbGroupDao;
+    @Inject
+    private VmDao vmDao;
 
     public AddPermissionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

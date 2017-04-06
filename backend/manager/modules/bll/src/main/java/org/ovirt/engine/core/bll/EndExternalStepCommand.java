@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -13,12 +15,21 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.utils.ExecutionMethod;
+import org.ovirt.engine.core.dao.JobDao;
+import org.ovirt.engine.core.dao.StepDao;
 
 public class EndExternalStepCommand <T extends EndExternalStepParameters> extends CommandBase<T> {
+
     /**
     *
     */
     private static final long serialVersionUID = 1L;
+
+    @Inject
+    private StepDao stepDao;
+    @Inject
+    private JobDao jobDao;
+
     private Job job;
     private Step step;
 

@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -39,9 +41,17 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 @NonTransactiveCommandAttribute
 public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParameters> extends RemoveVmCommand<T>{
+
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private VmDao vmDao;
 
     // this is needed since overriding getVmTemplate()
     private VM exportVm;

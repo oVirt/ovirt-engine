@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
@@ -23,9 +25,19 @@ import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 
 @NonTransactiveCommandAttribute
 public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<ReconstructMasterParameters> {
+
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

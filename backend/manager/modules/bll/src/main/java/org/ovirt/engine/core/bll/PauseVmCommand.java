@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -9,8 +11,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.PauseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
+
+    @Inject
+    private VmDao vmDao;
 
     public PauseVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

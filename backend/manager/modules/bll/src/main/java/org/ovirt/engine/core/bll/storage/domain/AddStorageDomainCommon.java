@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.domain;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -11,8 +13,15 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> extends AddStorageDomainCommand<T> {
+
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

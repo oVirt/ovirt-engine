@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -13,10 +15,15 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ImageDao;
 
 @SuppressWarnings("serial")
 @InternalCommandAttribute
 public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> extends CopyImageGroupCommand<T> {
+
+    @Inject
+    private ImageDao imageDao;
+
     public MoveImageGroupCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

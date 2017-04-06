@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,11 +22,15 @@ import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters> extends CreateSnapshotCommand<T> {
+
+    @Inject
+    private DiskImageDynamicDao diskImageDynamicDao;
 
     public AddImageFromScratchCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

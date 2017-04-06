@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.aaa;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -9,8 +11,18 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbGroupDao;
+import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.PermissionDao;
 
 public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandlingCommandBase<T> {
+
+    @Inject
+    private PermissionDao permissionDao;
+    @Inject
+    private DbUserDao dbUserDao;
+    @Inject
+    private DbGroupDao dbGroupDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

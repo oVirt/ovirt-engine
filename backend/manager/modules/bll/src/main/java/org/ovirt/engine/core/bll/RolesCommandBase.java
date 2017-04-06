@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -12,8 +14,16 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.RoleDao;
+import org.ovirt.engine.core.dao.RoleGroupMapDao;
 
 public abstract class RolesCommandBase<T extends RolesParameterBase> extends CommandBase<T> {
+
+    @Inject
+    private RoleDao roleDao;
+    @Inject
+    private RoleGroupMapDao roleGroupMapDao;
+
     private Role _role;
 
     /**

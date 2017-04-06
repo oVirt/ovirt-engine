@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -21,9 +23,25 @@ import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameters> extends RemoveImageCommand<T> implements SerialChildExecutingCommand {
+
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+    @Inject
+    private DiskImageDynamicDao diskImageDynamicDao;
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public RemoveCinderVolumeParentCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

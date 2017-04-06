@@ -11,8 +11,12 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.JobDao;
 
 public abstract class AddJobCommand<T extends AddJobParameters> extends CommandBase<T> {
+
+    @Inject
+    private JobDao jobDao;
 
     protected AddJobCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

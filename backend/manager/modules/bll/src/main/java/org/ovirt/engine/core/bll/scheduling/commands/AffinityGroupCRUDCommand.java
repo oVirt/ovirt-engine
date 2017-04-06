@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
@@ -19,11 +21,21 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroupCRUDParameters> {
 
     private static final String Entity_VM = "VM";
     private static final String Entity_VDS = "VDS";
+
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+    @Inject
+    private AffinityGroupDao affinityGroupDao;
 
     AffinityGroup affinityGroup = null;
 

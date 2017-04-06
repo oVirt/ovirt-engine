@@ -17,12 +17,15 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters> extends AddStorageDomainCommand<T> {
 
     @Inject
     private BlockStorageDomainHelper blockStorageDomainHelper;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

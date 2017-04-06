@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
@@ -18,8 +20,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
 
 public abstract class StorageServerConnectionExtensionCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
+
+    @Inject
+    private StorageServerConnectionExtensionDao storageServerConnectionExtensionDao;
 
     private StorageServerConnectionExtensionValidator connectionExtensionValidator = new StorageServerConnectionExtensionValidator();
 

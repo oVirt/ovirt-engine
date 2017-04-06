@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -32,11 +34,31 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends ConnectStorageToVdsCommand<T> {
+
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private LunDao lunDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private StorageDomainDynamicDao storageDomainDynamicDao;
+    @Inject
+    private VmDao vmDao;
+
     private List<StorageDomain> domains = new ArrayList<>();
     private List<LUNs> luns = new ArrayList<>();
 

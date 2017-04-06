@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -13,8 +15,18 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class RemovePermissionCommand<T extends PermissionsOperationsParameters> extends PermissionsCommandBase<T> {
+
+    @Inject
+    private PermissionDao permissionDao;
+    @Inject
+    private DbUserDao dbUserDao;
+    @Inject
+    private VmDao vmDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

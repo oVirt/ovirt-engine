@@ -15,12 +15,15 @@ import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
 
 public class UpdateDiskProfileCommand extends UpdateProfileCommandBase<DiskProfileParameters, DiskProfile, DiskProfileValidator> {
 
     @Inject
     private VmSlaPolicyUtils vmSlaPolicyUtils;
+    @Inject
+    private DiskProfileDao diskProfileDao;
 
     public UpdateDiskProfileCommand(DiskProfileParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

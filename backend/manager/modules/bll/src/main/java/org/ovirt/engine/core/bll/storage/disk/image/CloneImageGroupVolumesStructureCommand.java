@@ -22,6 +22,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -29,6 +31,10 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
 
     @Inject
     private CommandsWeightsUtils commandsWeightsUtils;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private ImageDao imageDao;
 
     public CloneImageGroupVolumesStructureCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

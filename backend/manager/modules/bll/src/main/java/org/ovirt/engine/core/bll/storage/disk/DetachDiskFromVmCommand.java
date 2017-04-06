@@ -14,11 +14,26 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
     @Inject
     private DiskHandler diskHandler;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     private Disk disk;
     private VmDevice vmDevice;

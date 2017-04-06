@@ -67,8 +67,18 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 
@@ -77,28 +87,41 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Inject
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
-
     @Inject
     private SupportedHostFeatureDao hostFeatureDao;
-
     @Inject
     private ClusterFeatureDao clusterFeatureDao;
-
     @Inject
     @MomPolicyUpdate
     private Event<Cluster> momPolicyUpdatedEvent;
-
     @Inject
     private MoveMacs moveMacs;
-
     @Inject
     private InitGlusterCommandHelper glusterCommandHelper;
-
     @Inject
     private ResourceManager resourceManager;
-
     @Inject
     private RngDeviceUtils rngDeviceUtils;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private NetworkClusterDao networkClusterDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private InterfaceDao interfaceDao;
+    @Inject
+    private VmDao vmDao;
 
     private List<VDS> allForCluster;
     private Cluster oldCluster;

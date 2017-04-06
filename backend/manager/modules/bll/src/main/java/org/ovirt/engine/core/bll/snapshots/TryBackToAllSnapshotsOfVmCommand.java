@@ -60,6 +60,11 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -76,6 +81,16 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     private LockManager lockManager;
     @Inject
     private OvfHelper ovfHelper;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
@@ -23,6 +25,10 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -32,6 +38,15 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> extends VmCommand<T> {
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private ImageDao imageDao;
 
     public RemoveAllVmImagesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -67,6 +67,18 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.UnregisteredDisksDao;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.OvfUtils;
@@ -83,10 +95,33 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected List<UnregisteredDisk> unregisteredDisks = new ArrayList<>();
 
     @Inject
-    protected MacPoolPerCluster macPoolPerCluster;
-
+    private  MacPoolPerCluster macPoolPerCluster;
     @Inject
-    protected SnapshotsValidator snapshotsValidator;
+    private  SnapshotsValidator snapshotsValidator;
+    @Inject
+    private  VdsDao vdsDao;
+    @Inject
+    private  StoragePoolDao storagePoolDao;
+    @Inject
+    private  StorageDomainDao storageDomainDao;
+    @Inject
+    private  VmTemplateDao vmTemplateDao;
+    @Inject
+    private  DiskImageDao diskImageDao;
+    @Inject
+    private  UnregisteredOVFDataDao unregisteredOVFDataDao;
+    @Inject
+    private  VmNicDao vmNicDao;
+    @Inject
+    private  ClusterDao clusterDao;
+    @Inject
+    private  StorageDomainOvfInfoDao storageDomainOvfInfoDao;
+    @Inject
+    private  StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private  UnregisteredDisksDao unregisteredDisksDao;
+    @Inject
+    private VmDao vmDao;
 
     protected StorageHandlingCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

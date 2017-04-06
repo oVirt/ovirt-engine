@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -17,8 +19,15 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 
 public abstract class VmTemplateManagementCommand<T extends VmTemplateManagementParameters> extends VmTemplateCommand<T> {
+
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
     public VmTemplateManagementCommand(Guid commandId) {
         super(commandId);

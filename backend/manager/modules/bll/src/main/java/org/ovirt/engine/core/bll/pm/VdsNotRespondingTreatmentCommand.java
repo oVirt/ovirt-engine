@@ -37,6 +37,8 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -60,6 +62,10 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
     @Inject
     private MonitoringStrategyFactory monitoringStrategyFactory;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private VdsDao vdsDao;
 
     public VdsNotRespondingTreatmentCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

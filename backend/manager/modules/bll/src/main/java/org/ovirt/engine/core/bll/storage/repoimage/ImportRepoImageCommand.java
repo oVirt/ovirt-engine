@@ -54,11 +54,20 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends CommandBase<T> implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     @Inject
     private VmDeviceUtils vmDeviceUtils;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
 
     private OpenStackImageProviderProxy providerProxy;
 

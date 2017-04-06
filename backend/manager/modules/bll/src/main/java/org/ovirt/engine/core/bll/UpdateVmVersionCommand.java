@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -33,6 +35,10 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +49,15 @@ import org.slf4j.LoggerFactory;
 public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends VmCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(UpdateVmVersionCommand.class);
+
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private PermissionDao permissionDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

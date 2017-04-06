@@ -42,6 +42,10 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
 
@@ -77,6 +81,14 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Inject
     private HostDeviceManager hostDeviceManager;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VnicProfileDao vnicProfileDao;
+    @Inject
+    private ProviderDao providerDao;
+    @Inject
+    private InterfaceDao interfaceDao;
 
     public ActivateDeactivateVmNicCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

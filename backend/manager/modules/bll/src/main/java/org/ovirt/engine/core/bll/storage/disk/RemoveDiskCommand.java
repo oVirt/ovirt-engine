@@ -63,6 +63,13 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -77,6 +84,20 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;
     private String cachedDiskIsBeingRemovedLockMessage;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDao vmDao;
 
     public RemoveDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

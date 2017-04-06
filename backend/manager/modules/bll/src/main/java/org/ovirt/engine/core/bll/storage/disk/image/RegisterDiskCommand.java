@@ -38,6 +38,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -47,6 +50,12 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private UnregisteredDisksDao unregisteredDisksDao;
+    @Inject
+    private ImageDao imageDao;
 
     public RegisterDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

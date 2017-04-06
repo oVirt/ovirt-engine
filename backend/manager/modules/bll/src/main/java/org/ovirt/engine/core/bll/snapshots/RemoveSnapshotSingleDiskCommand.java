@@ -23,6 +23,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -31,6 +35,14 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
 
     @Inject
     private PostDeleteActionHandler postDeleteActionHandler;
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public RemoveSnapshotSingleDiskCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

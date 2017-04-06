@@ -18,6 +18,10 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 @InternalCommandAttribute
 @ValidateSupportsTransaction
@@ -26,6 +30,16 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
 
     @Inject
     private NetworkClusterHelper networkClusterHelper;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+    @Inject
+    private GlusterBrickDao glusterBrickDao;
+    @Inject
+    private VmDao vmDao;
 
     public DetachNetworkFromClusterInternalCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

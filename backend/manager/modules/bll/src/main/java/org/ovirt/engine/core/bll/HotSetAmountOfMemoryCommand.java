@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.vdsbroker.SetAmountOfMemoryVDSCommand;
 
 @NonTransactiveCommandAttribute
@@ -35,6 +38,9 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
     public static final String LOGABLE_FIELD_ERROR_MESSAGE = "ErrorMessage";
     public static final String DEVICE_SIZE_FIELD_KEY = "size";
     public static final String DEVICE_NODE_FIELD_KEY = "node";
+
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
     private int memoryToConsume;
 

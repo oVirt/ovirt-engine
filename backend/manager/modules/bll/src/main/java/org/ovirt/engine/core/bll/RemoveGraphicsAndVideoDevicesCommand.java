@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -11,8 +13,18 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class RemoveGraphicsAndVideoDevicesCommand extends RemoveGraphicsDeviceCommand {
+
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
 
     public RemoveGraphicsAndVideoDevicesCommand(GraphicsParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

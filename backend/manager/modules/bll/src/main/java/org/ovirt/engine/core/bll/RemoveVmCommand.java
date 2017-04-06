@@ -55,6 +55,10 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -63,6 +67,14 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Inject
     private Event<Guid> vmDeleted;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private VmIconDao vmIconDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     private List<CinderDisk> cinderDisks;
 

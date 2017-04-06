@@ -42,6 +42,11 @@ import org.ovirt.engine.core.common.vdscommands.VmReplicateDiskParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
@@ -53,9 +58,18 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     @Inject
     private LiveStorageMigrationHelper liveStorageMigrationHelper;
-
     @Inject
     private ResourceManager resourceManager;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+    @Inject
+    private DiskImageDynamicDao diskImageDynamicDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private VmDao vmDao;
 
     public LiveMigrateDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

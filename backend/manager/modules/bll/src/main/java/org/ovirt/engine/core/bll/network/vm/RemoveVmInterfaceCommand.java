@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network.vm;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -12,10 +14,26 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> extends VmCommand<T> {
+
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private VmNetworkStatisticsDao vmNetworkStatisticsDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
 
     private String interfaceName = "";
 

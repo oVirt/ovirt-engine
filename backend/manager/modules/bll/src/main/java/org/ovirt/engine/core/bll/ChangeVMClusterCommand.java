@@ -22,15 +22,29 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
 public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends VmCommand<T> {
 
     @Inject
     private CpuProfileHelper cpuProfileHelper;
-
     @Inject
     private MoveMacs moveMacs;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private AffinityGroupDao affinityGroupDao;
 
     private boolean dedicatedHostWasCleared;
 

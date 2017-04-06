@@ -1,11 +1,17 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDao;
 
 public abstract class VmPoolUserCommandBase<T extends VmPoolUserParameters> extends VmPoolCommandBase<T> {
+
+    @Inject
+    private DbUserDao dbUserDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

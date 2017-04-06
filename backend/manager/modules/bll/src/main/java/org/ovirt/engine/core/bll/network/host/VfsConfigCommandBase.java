@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.VfsConfigBaseParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public abstract class VfsConfigCommandBase<T extends VfsConfigBaseParameters> extends VdsCommand<T> {
 
@@ -18,6 +19,8 @@ public abstract class VfsConfigCommandBase<T extends VfsConfigBaseParameters> ex
 
     @Inject
     private HostNicVfsConfigDao hostNicVfsConfigDao;
+    @Inject
+    private InterfaceDao interfaceDao;
 
     public VfsConfigCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

@@ -28,7 +28,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -52,8 +54,13 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
     @Inject
     private NetworkDeviceHelper networkDeviceHelper;
 
-    private Map<String, HostDevice> fetchedMap;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
+    @Inject
+    private InterfaceDao interfaceDao;
+
+    private Map<String, HostDevice> fetchedMap;
     private Map<String, List<VmDevice>> attachedVmDevicesMap;
 
     public RefreshHostDevicesCommand(T parameters, CommandContext commandContext) {

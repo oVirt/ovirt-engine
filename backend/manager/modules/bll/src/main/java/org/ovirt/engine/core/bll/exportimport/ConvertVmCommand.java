@@ -41,6 +41,8 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -55,9 +57,12 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
 
     @Inject
     private ResourceManager resourceManager;
-
     @Inject
     private OvfHelper ovfHelper;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
 
     private ConvertVmCallback cachedCallback;
 

@@ -34,6 +34,11 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 /**
  * Base class for all Gluster commands
@@ -45,6 +50,16 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     @Inject
     protected GlusterUtil glusterUtil;
+    @Inject
+    protected VdsStaticDao vdsStaticDao;
+    @Inject
+    protected NetworkDao networkDao;
+    @Inject
+    protected InterfaceDao interfaceDao;
+    @Inject
+    protected GlusterBrickDao glusterBrickDao;
+    @Inject
+    protected GlusterVolumeDao glusterVolumeDao;
 
     public GlusterCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);

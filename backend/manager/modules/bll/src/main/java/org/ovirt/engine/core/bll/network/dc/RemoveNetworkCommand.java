@@ -19,6 +19,10 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -26,6 +30,14 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
 
     @Inject
     private NetworkClusterHelper networkClusterHelper;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private ProviderDao providerDao;
+    @Inject
+    private NetworkClusterDao networkClusterDao;
+    @Inject
+    private VmDao vmDao;
 
     private Network network;
     private Provider<?> provider;

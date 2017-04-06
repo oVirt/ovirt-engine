@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.lsm;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -16,10 +18,15 @@ import org.ovirt.engine.core.common.vdscommands.TargetDomainImageGroupVDSCommand
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class CreateImagePlaceholderCommand<T extends CreateImagePlaceholderCommandParameters> extends CommandBase<T> {
+
+    @Inject
+    private DiskDao diskDao;
+
     public CreateImagePlaceholderCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setStoragePoolId(getParameters().getStoragePoolId());

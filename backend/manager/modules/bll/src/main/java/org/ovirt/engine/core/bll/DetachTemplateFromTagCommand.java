@@ -1,13 +1,22 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.TagDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class DetachTemplateFromTagCommand<T extends AttachEntityToTagParameters> extends TemplatesTagMapBase<T> {
+
+    @Inject
+    private TagDao tagDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
 
     public DetachTemplateFromTagCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

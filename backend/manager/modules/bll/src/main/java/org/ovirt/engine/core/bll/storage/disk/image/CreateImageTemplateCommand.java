@@ -24,6 +24,12 @@ import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 /**
  * This command responsible to create new Image Template from image.
@@ -33,6 +39,18 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
 
     @Inject
     private PostDeleteActionHandler postDeleteActionHandler;
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private DiskImageDynamicDao diskImageDynamicDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
 
     public CreateImageTemplateCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

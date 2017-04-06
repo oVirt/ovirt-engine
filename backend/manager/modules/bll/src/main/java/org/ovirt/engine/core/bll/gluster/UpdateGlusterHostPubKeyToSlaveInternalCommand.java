@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -13,10 +15,14 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.UpdateGlusterGeoRepKeysVDSParameters;
+import org.ovirt.engine.core.dao.VdsDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class UpdateGlusterHostPubKeyToSlaveInternalCommand extends GlusterCommandBase<UpdateGlusterHostPubKeyToSlaveParameters> {
+
+    @Inject
+    private VdsDao vdsDao;
 
     public UpdateGlusterHostPubKeyToSlaveInternalCommand(UpdateGlusterHostPubKeyToSlaveParameters params, CommandContext commandContext) {
         super(params, commandContext);

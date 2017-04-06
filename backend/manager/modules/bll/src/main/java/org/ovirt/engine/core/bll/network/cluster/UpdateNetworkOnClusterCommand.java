@@ -15,18 +15,34 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 @ValidateSupportsTransaction
 public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> extends NetworkClusterCommandBase<T> {
 
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
-
     @Inject
     private UpdateNetworkClusterPermissionsChecker permissionsChecker;
-
     @Inject
     private NetworkClusterHelper networkClusterHelper;
+    @Inject
+    private NetworkClusterDao networkClusterDao;
+    @Inject
+    private InterfaceDao interfaceDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private ClusterDao clusterDao;
 
     private NetworkCluster oldNetworkCluster;
 

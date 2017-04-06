@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
@@ -16,9 +18,19 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
 public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetachStorageConnectionParameters>
         extends StorageDomainCommandBase<T> {
+
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
+    @Inject
+    private LunDao lunDao;
 
     public AttachStorageConnectionToStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

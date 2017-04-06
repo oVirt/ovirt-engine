@@ -20,11 +20,14 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.HostDeviceDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParameters> extends VmCommand<P> {
 
     @Inject
     private HostDeviceDao hostDeviceDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
     private List<HostDevice> hostDevices;
 

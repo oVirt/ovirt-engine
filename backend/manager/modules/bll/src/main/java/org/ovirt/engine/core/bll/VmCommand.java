@@ -48,6 +48,12 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.QuotaDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.TagDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
@@ -58,27 +64,32 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Inject
     protected MacPoolPerCluster macPoolPerCluster;
-
     @Inject
     private VmDeviceUtils vmDeviceUtils;
-
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
-
     @Inject
     private SnapshotsManager snapshotsManager;
-
     @Inject
     protected SnapshotsValidator snapshotsValidator;
-
     @Inject
     protected VmHandler vmHandler;
-
     @Inject
     protected VmTemplateHandler vmTemplateHandler;
-
     @Inject
     private ResourceManager resourceManager;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private TagDao tagDao;
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private QuotaDao quotaDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     protected final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     private Boolean skipCommandExecution;

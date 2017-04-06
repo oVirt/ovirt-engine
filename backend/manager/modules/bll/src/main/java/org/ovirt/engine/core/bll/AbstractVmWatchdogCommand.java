@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
@@ -13,11 +15,15 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 /**
  * Abstract base-class for watchdog manipulation commands.
  */
 public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> extends CommandBase<T> {
+
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
     public AbstractVmWatchdogCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

@@ -14,17 +14,18 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmTemplateParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public abstract class VmTemplateCommand<T extends VmTemplateParameters> extends CommandBase<T> {
 
     @Inject
     private VmDeviceUtils vmDeviceUtils;
-
     @Inject
     protected VmHandler vmHandler;
-
     @Inject
     protected VmTemplateHandler vmTemplateHandler;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

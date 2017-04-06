@@ -3,12 +3,15 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 
 /**
@@ -19,6 +22,9 @@ import org.ovirt.engine.core.utils.GuidUtils;
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters> extends CommandBase<T> {
+
+    @Inject
+    private SnapshotDao snapshotDao;
 
     public RemoveMemoryVolumesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

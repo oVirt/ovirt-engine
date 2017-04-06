@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,6 +22,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 /**
@@ -28,6 +32,10 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @NonTransactiveCommandAttribute
 public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHookManageParameters> {
 
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private GlusterHooksDao glusterHooksDao;
     protected List<String> errors = new ArrayList<>();
     private List<VDS> serversInCluster = null;
 

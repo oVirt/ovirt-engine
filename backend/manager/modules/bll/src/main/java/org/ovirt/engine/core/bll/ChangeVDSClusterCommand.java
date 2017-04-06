@@ -42,6 +42,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -56,11 +58,21 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkAttachmentsPersister
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> extends VdsCommand<T> {
-    @Inject
-    private NetworkAttachmentDao networkAttachmentDao;
 
     @Inject
+    private NetworkAttachmentDao networkAttachmentDao;
+    @Inject
     private ChangeClusterParametersBuilder changeClusterParametersBuilder;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private InterfaceDao interfaceDao;
+    @Inject
+    private ClusterDao clusterDao;
 
     private StoragePool targetStoragePool;
 

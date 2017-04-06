@@ -2,14 +2,20 @@ package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
 
 public class RemoveVnicProfileCommand<T extends VnicProfileParameters> extends VnicProfileCommandBase<T> {
+
+    @Inject
+    private VnicProfileDao vnicProfileDao;
 
     public RemoveVnicProfileCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

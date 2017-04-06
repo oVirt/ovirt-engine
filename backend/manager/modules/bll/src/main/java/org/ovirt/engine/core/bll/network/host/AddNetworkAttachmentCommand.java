@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
@@ -23,9 +24,10 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> extends VdsCommand<T> {
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;
-
     @Inject
     private NetworkIdNetworkNameCompleter networkIdNameCompleter;
+    @Inject
+    private InterfaceDao interfaceDao;
 
     private List<VdsNetworkInterface> hostNics;
 

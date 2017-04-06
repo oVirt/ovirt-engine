@@ -17,7 +17,13 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkAttachmentsPersister;
 
 @InternalCommandAttribute
@@ -27,9 +33,20 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
 
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;
-
     @Inject
     private NetworkClusterHelper networkClusterHelper;
+    @Inject
+    private InterfaceDao interfaceDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private NetworkClusterDao networkClusterDao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private ClusterDao clusterDao;
 
     public AttachNetworkToClusterInternalCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

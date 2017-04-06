@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
 public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters> extends GlusterVolumeCommandBase<T> {
@@ -34,9 +35,10 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
 
     @Inject
     private JobRepository jobRepository;
-
     @Inject
     protected GlusterTaskUtils glusterTaskUtils;
+    @Inject
+    private StepDao stepDao;
 
     public GlusterAsyncCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);

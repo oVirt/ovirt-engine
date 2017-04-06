@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -38,12 +40,22 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoolParameters> extends
         StorageDomainCommandBase<T> {
+
+    @Inject
+    private DiskProfileDao diskProfileDao;
+
     private StoragePoolIsoMap map;
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private UnregisteredOVFDataDao unregisteredOVFDataDao;
 
     public AttachStorageDomainToPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

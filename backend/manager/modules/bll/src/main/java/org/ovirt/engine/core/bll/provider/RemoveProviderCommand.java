@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class RemoveProviderCommand<P extends ProviderParameters> extends CommandBase<P> {
@@ -27,6 +30,12 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
     private Provider<?> deletedProvider;
 
     private ProviderProxy providerProxy;
+    @Inject
+    private ProviderDao providerDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VmDao vmDao;
 
     public RemoveProviderCommand(Guid commandId) {
         super(commandId);

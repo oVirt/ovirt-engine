@@ -16,16 +16,24 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbGroupDao;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.EntityDao;
+import org.ovirt.engine.core.dao.RoleDao;
 
 public abstract class PermissionsCommandBase<T extends PermissionsOperationsParameters> extends CommandBase<T> {
 
     @Named
     @Inject
     private Predicate<Guid> isSystemSuperUserPredicate;
-
     @Inject
     private EntityDao entityDao;
+    @Inject
+    private RoleDao roleDao;
+    @Inject
+    private DbUserDao dbUserDao;
+    @Inject
+    private DbGroupDao dbGroupDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

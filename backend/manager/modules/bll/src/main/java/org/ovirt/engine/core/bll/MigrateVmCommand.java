@@ -69,6 +69,11 @@ import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +85,18 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Inject
     ConvergenceConfigProvider convergenceConfigProvider;
-
     @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+    @Inject
+    private InterfaceDao interfaceDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private DiskDao diskDao;
 
     /** The VDS that the VM is going to migrate to */
     private VDS destinationVds;

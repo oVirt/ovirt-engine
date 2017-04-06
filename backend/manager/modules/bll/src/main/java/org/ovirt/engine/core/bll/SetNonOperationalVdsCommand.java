@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -14,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 /**
@@ -23,6 +26,9 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @SuppressWarnings("serial")
 @NonTransactiveCommandAttribute
 public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameters> extends MaintenanceVdsCommand<T> {
+
+    @Inject
+    private GlusterBrickDao glusterBrickDao;
 
     public SetNonOperationalVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

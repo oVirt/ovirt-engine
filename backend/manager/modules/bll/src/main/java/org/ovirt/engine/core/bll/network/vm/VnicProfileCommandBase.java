@@ -15,6 +15,9 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 
 public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> extends CommandBase<T> {
@@ -23,6 +26,12 @@ public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> ex
 
     @Inject
     private NetworkFilterDao networkFilterDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VmDao vmDao;
 
     public VnicProfileCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

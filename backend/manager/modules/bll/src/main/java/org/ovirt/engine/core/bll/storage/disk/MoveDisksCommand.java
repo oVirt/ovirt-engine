@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
@@ -28,9 +30,19 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase<T> {
+
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private VmDao vmDao;
 
     private List<VdcReturnValueBase> vdcReturnValues = new ArrayList<>();
     private List<MoveDiskParameters> moveDiskParametersList = new ArrayList<>();

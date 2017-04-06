@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -36,11 +38,21 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesCommandParameters>
         extends CommandBase<T> implements SerialChildExecutingCommand {
+
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private VmDao vmDao;
 
     private DiskImage diskImage;
     private List<Pair<VM, VmDevice>> vmsForDisk = new ArrayList<>();

@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.connection;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.StorageServerConnectionExtensionParameters;
@@ -10,8 +12,12 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnec
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
 
 public class AddStorageServerConnectionExtensionCommand<T extends StorageServerConnectionExtensionParameters> extends StorageServerConnectionExtensionCommandBase<StorageServerConnectionExtensionParameters> {
+
+    @Inject
+    private StorageServerConnectionExtensionDao storageServerConnectionExtensionDao;
 
     public AddStorageServerConnectionExtensionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

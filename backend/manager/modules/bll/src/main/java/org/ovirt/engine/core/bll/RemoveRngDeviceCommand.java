@@ -4,14 +4,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 @InternalCommandAttribute
 public class RemoveRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
+
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
     public RemoveRngDeviceCommand(RngDeviceParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);

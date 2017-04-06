@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.utils.ExecutionMethod;
+import org.ovirt.engine.core.dao.JobDao;
 
 public class EndExternalJobCommand <T extends EndExternalJobParameters> extends CommandBase<T>{
 
@@ -22,6 +23,8 @@ public class EndExternalJobCommand <T extends EndExternalJobParameters> extends 
 
     @Inject
     private JobRepository jobRepository;
+    @Inject
+    private JobDao jobDao;
 
     public EndExternalJobCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -59,6 +59,12 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
@@ -75,12 +81,22 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     @Inject
     ExternalVmMacsFinder externalVmMacsFinder;
-
     @Inject
     private CpuProfileHelper cpuProfileHelper;
-
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmStatisticsDao vmStatisticsDao;
 
     private final List<String> macsAdded = new ArrayList<>();
     private static VmStatic vmStaticForDefaultValues = new VmStatic();

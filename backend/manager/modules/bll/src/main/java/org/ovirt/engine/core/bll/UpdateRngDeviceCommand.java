@@ -1,14 +1,20 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 @InternalCommandAttribute
 @ValidateSupportsTransaction
 public class UpdateRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
+
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
     public UpdateRngDeviceCommand(RngDeviceParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);

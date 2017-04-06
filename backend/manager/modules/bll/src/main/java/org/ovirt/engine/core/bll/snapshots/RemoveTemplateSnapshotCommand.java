@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParame
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /**
  * This command is responsible for removing a template image.
@@ -25,6 +26,8 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
 
     @Inject
     private PostDeleteActionHandler postDeleteActionHandler;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public RemoveTemplateSnapshotCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

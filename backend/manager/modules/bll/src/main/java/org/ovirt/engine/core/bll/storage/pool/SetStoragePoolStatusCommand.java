@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 
 public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameters> extends
@@ -19,6 +20,8 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
 
     @Inject
     private StoragePoolDomainHelper storagePoolDomainHelper;
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     public SetStoragePoolStatusCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

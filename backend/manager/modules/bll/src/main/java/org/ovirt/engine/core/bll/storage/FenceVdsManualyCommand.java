@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.pm.FenceVdsBaseCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -27,6 +29,8 @@ import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsDao;
 
 /**
  * Confirm a host has been rebooted, clear spm flag, its VMs(optional) and alerts.
@@ -37,6 +41,12 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
  * @see RestartVdsCommand
  */
 public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends StorageHandlingCommandBase<T> {
+
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
     private VDS problematicVds;
 
     /**

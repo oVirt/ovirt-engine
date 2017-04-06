@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.LocationInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -32,6 +33,8 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
 
     @Inject
     private CommandsWeightsUtils commandsWeightsUtils;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public CopyImageGroupVolumesDataCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -32,10 +34,14 @@ import org.ovirt.engine.core.common.queries.GetVmFromOvaQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.di.Injector;
 
 @NonTransactiveCommandAttribute
 public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlParameters> extends CommandBase<P> {
+
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     private ExternalVmImporter vmImporter;
 

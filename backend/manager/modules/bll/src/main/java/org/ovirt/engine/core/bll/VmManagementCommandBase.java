@@ -25,6 +25,8 @@ import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class VmManagementCommandBase<T extends VmManagementParametersBase> extends VmCommand<T> {
 
@@ -37,9 +39,12 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     @Inject
     private NumaValidator numaValidator;
-
     @Inject
     private CpuProfileHelper cpuProfileHelper;
+    @Inject
+    protected VmTemplateDao vmTemplateDao;
+    @Inject
+    private VdsDao vdsDao;
 
     private InstanceType instanceType;
     private Version effectiveCompatibilityVersion;

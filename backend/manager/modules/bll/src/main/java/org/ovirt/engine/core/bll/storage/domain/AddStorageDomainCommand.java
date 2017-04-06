@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -38,10 +40,23 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class AddStorageDomainCommand<T extends StorageDomainManagementParameter> extends
         StorageDomainManagementCommandBase<T> {
+
+    @Inject
+    private StorageDomainDynamicDao storageDomainDynamicDao;
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     protected AddStorageDomainCommand(Guid commandId) {
         super(commandId);

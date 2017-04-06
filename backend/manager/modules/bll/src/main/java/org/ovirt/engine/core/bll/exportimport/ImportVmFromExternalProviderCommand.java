@@ -54,6 +54,10 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -67,9 +71,16 @@ implements QuotaStorageDependent {
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
-
     @Inject
     private IsoDomainListSynchronizer isoDomainListSynchronizer;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
     public ImportVmFromExternalProviderCommand(Guid cmdId) {
         super(cmdId);

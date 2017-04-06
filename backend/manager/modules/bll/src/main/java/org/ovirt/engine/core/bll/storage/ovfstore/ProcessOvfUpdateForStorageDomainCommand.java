@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -49,12 +51,35 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
+import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.archivers.tar.InMemoryTar;
 import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 
 @NonTransactiveCommandAttribute
 public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateForStorageDomainCommandParameters> extends StorageDomainCommandBase<T> implements SerialChildExecutingCommand {
+
+    @Inject
+    private VmAndTemplatesGenerationsDao vmAndTemplatesGenerationsDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
+    @Inject
+    private UnregisteredOVFDataDao unregisteredOVFDataDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
     private LinkedList<Pair<StorageDomainOvfInfo, DiskImage>> domainOvfStoresInfoForUpdate = new LinkedList<>();
     private int ovfDiskCount;
     private String postUpdateDescription;

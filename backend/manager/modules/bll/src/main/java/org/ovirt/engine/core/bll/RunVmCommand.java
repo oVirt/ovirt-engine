@@ -82,6 +82,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.RngUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
@@ -109,9 +116,22 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Inject
     private HostDeviceManager hostDeviceManager;
-
     @Inject
     private IsoDomainListSynchronizer isoDomainListSynchronizer;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VnicProfileDao vnicProfileDao;
+    @Inject
+    private ProviderDao providerDao;
+    @Inject
+    private VmPoolDao vmPoolDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);

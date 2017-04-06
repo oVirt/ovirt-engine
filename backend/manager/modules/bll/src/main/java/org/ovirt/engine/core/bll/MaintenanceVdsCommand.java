@@ -35,6 +35,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.Injector;
 
 @NonTransactiveCommandAttribute
@@ -44,6 +46,10 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     private boolean haMaintenanceFailed;
     @Inject
     private SchedulingManager schedulingManager;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VmDao vmDao;
 
     public MaintenanceVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

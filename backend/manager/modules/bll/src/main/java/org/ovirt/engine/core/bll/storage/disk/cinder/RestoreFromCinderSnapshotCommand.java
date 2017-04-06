@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -16,10 +18,17 @@ import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
 public class RestoreFromCinderSnapshotCommand<T extends RemoveCinderDiskParameters> extends RemoveCinderVolumeParentCommand<T> {
+
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public RestoreFromCinderSnapshotCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

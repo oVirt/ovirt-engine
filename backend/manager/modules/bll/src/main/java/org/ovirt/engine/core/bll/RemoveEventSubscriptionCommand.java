@@ -1,13 +1,19 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.DbUserDao;
 
 public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametesBase> extends
         EventSubscriptionCommandBase<T> {
+
+    @Inject
+    private DbUserDao dbUserDao;
 
     public RemoveEventSubscriptionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

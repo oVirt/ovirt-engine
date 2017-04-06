@@ -28,6 +28,10 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -35,6 +39,14 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
 
     @Inject
     protected OvfManager ovfManager;
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     protected RemoveSnapshotSingleDiskCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

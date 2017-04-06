@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -18,9 +20,16 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddQuotaCommand extends QuotaCRUDCommand {
+
+    @Inject
+    private PermissionDao permissionDao;
+    @Inject
+    private QuotaDao quotaDao;
 
     public AddQuotaCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -11,9 +13,13 @@ import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDao;
 
 public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBase> extends
         EventSubscriptionCommandBase<T> {
+
+    @Inject
+    private DbUserDao dbUserDao;
 
     public AddEventSubscriptionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

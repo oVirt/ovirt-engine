@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
@@ -22,10 +24,20 @@ import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.UnregisteredDisksDao;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 
 public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
+
+    @Inject
+    private UnregisteredOVFDataDao unregisteredOVFDataDao;
+    @Inject
+    private UnregisteredDisksDao unregisteredDisksDao;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {

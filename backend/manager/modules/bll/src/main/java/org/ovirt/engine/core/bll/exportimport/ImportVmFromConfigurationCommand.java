@@ -35,6 +35,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.UnregisteredDisksDao;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.slf4j.Logger;
@@ -56,6 +58,10 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
 
     @Inject
     private ImportedNetworkInfoUpdater importedNetworkInfoUpdater;
+    @Inject
+    private UnregisteredOVFDataDao unregisteredOVFDataDao;
+    @Inject
+    private UnregisteredDisksDao unregisteredDisksDao;
 
     public ImportVmFromConfigurationCommand(Guid commandId) {
         super(commandId);

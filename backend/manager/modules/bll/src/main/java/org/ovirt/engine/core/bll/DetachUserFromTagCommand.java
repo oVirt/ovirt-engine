@@ -1,12 +1,21 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.TagDao;
 
 public class DetachUserFromTagCommand<T extends AttachEntityToTagParameters> extends UserTagMapBase<T> {
+
+    @Inject
+    private DbUserDao dbUserDao;
+    @Inject
+    private TagDao tagDao;
 
     public DetachUserFromTagCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

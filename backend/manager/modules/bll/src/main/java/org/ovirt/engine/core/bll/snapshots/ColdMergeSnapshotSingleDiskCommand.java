@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
@@ -25,11 +27,18 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDiskParameters>
         extends RemoveSnapshotSingleDiskCommandBase<T> implements SerialChildExecutingCommand, QuotaStorageDependent {
+
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private ImageDao imageDao;
 
     public ColdMergeSnapshotSingleDiskCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

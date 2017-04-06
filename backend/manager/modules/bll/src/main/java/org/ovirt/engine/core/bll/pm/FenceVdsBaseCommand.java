@@ -30,12 +30,21 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.AuditLogDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
     protected FenceValidator fenceValidator;
 
     @Inject
     private PreviousHostedEngineHost previousHostedEngineHost;
+    @Inject
+    private AuditLogDao auditLogDao;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private VmDao vmDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

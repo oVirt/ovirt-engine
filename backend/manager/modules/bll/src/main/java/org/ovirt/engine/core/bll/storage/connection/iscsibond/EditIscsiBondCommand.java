@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -16,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -26,6 +29,9 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
     private List<String> addedConnections = new ArrayList<>();
     private List<Guid> addedNetworks = new ArrayList<>();
     private Set<Guid> removedNetworks = new HashSet<>();
+
+    @Inject
+    private NetworkDao networkDao;
 
     public EditIscsiBondCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

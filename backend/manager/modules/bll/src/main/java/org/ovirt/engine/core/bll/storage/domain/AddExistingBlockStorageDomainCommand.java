@@ -21,6 +21,8 @@ import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagementParameter> extends
@@ -28,6 +30,10 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
 
     @Inject
     private BlockStorageDomainHelper blockStorageDomainHelper;
+    @Inject
+    private LunDao lunDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

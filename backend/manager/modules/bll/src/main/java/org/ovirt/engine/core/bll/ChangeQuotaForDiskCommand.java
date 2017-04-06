@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.ChangeQuotaCommand;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -13,8 +15,16 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 
 public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
+
+    @Inject
+    private DiskDao diskDao;
+
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
 
     private DiskImage disk;
 

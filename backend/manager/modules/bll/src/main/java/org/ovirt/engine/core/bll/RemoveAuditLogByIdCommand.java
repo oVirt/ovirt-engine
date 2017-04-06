@@ -18,11 +18,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.EventFloodRegulator;
+import org.ovirt.engine.core.dao.AuditLogDao;
 
 public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> extends ExternalEventCommandBase<T> {
 
     @Inject
     private AuditLogDirector auditLogDirector;
+    @Inject
+    private AuditLogDao auditLogDao;
     private AuditLog auditLog;
 
     public RemoveAuditLogByIdCommand(T parameters, CommandContext cmdContext) {

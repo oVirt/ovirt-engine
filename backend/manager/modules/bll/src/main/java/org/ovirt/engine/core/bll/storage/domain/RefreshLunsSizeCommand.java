@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -29,12 +31,19 @@ import org.ovirt.engine.core.common.vdscommands.ResizeStorageDomainPVVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> extends
         StorageDomainCommandBase<T> {
+
+    @Inject
+    private StorageDomainDynamicDao storageDomainDynamicDao;
+    @Inject
+    private LunDao lunDao;
 
     private boolean deviceSizeVisibilityError = false;
 

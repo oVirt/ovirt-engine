@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.AuditLogDao;
 
 /**
  * Send a Stop followed by Start action to a power management device.
@@ -53,6 +54,8 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
 
     @Inject
     private PreviousHostedEngineHost previousHostedEngineHost;
+    @Inject
+    private AuditLogDao auditLogDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

@@ -29,8 +29,13 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationParameters>
         extends ClusterOperationCommandBase<T> {
@@ -39,12 +44,20 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
     @Inject
     protected MacPoolDao macPoolDao;
-
     @Inject
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
-
     @Inject
     private ClusterFeatureDao clusterFeatureDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private NetworkClusterDao networkClusterDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private InterfaceDao interfaceDao;
+    @Inject
+    private VdsDao vdsDao;
 
     private Network managementNetwork;
 

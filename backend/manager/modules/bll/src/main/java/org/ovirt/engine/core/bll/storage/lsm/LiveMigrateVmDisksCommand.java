@@ -55,6 +55,11 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -64,6 +69,16 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
 
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
     private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();

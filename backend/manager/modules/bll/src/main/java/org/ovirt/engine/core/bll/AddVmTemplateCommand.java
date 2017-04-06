@@ -95,6 +95,15 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
@@ -108,18 +117,32 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
-
     @Inject
     private CpuProfileHelper cpuProfileHelper;
-
     @Inject
     private DiskHandler diskHandler;
-
     @Inject
     private DiskProfileHelper diskProfileHelper;
-
     @Inject
     protected SnapshotsValidator snapshotsValidator;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private PermissionDao permissionDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     protected final List<DiskImage> images = new ArrayList<>();
     private Guid[] targetDiskIds;

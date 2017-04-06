@@ -22,12 +22,18 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 
 @NonTransactiveCommandAttribute
 public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
     @Inject
     private HaAutoStartVmsRunner haAutoStartVmsRunner;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmDao vmDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

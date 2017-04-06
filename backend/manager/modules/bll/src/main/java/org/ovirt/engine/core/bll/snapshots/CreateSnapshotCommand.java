@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -22,6 +24,9 @@ import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParamete
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -32,6 +37,14 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extends BaseImagesCommand<T> {
+
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private VmDao vmDao;
+
     protected DiskImage newDiskImage;
 
     public CreateSnapshotCommand(Guid commandId) {
@@ -84,27 +97,27 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
 
             VDSReturnValue vdsReturnValue =
                     runVdsCommand(
-                                    VDSCommandType.CreateSnapshot,
-                                    new CreateSnapshotVDSCommandParameters(getStoragePoolId(),
-                                            getDestinationStorageDomainId(),
-                                            getImageGroupId(),
-                                            getImage().getImageId(),
-                                            getDiskImage().getSize(),
-                                            newDiskImage.getVolumeType(),
-                                            newDiskImage.getVolumeFormat(),
-                                            getDiskImage().getId(),
-                                            getDestinationImageId(),
-                                            ""));
+                            VDSCommandType.CreateSnapshot,
+                            new CreateSnapshotVDSCommandParameters(getStoragePoolId(),
+                                    getDestinationStorageDomainId(),
+                                    getImageGroupId(),
+                                    getImage().getImageId(),
+                                    getDiskImage().getSize(),
+                                    newDiskImage.getVolumeType(),
+                                    newDiskImage.getVolumeFormat(),
+                                    getDiskImage().getId(),
+                                    getDestinationImageId(),
+                                    ""));
 
             if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
                 getParameters().setVdsmTaskIds(new ArrayList<>());
                 getParameters().getVdsmTaskIds().add(
                         createTask(taskId,
-                        vdsReturnValue.getCreationInfo(),
-                        getParameters().getParentCommand(),
-                        VdcObjectType.Storage,
-                        getParameters().getStorageDomainId(),
-                        getParameters().getDestinationImageId()));
+                                vdsReturnValue.getCreationInfo(),
+                                getParameters().getParentCommand(),
+                                VdcObjectType.Storage,
+                                getParameters().getStorageDomainId(),
+                                getParameters().getDestinationImageId()));
                 getReturnValue().getInternalVdsmTaskIdList().add(getParameters().getVdsmTaskIds().get(0));
 
                 // Shouldn't happen anymore:

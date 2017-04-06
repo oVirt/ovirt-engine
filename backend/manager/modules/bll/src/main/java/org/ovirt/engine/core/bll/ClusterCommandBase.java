@@ -9,14 +9,16 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 
 public abstract class ClusterCommandBase<T extends ClusterParametersBase> extends CommandBase<T> {
 
     @Inject
     private ClusterPermissionsFinder clusterPermissionsFinder;
-
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
+    @Inject
+    private ClusterDao clusterDao;
 
     private Cluster cluster;
 

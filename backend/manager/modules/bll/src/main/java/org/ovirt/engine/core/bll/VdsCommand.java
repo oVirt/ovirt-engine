@@ -33,6 +33,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -45,24 +46,20 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     @Inject
     private PmHealthCheckManager pmHealthCheckManager;
-
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
-
     @Inject
     private ResourceManager resourceManager;
-
     @Inject
     private HostLocking hostLocking;
-
     @Inject
     protected VdsSpmIdMapDao vdsSpmIdMapDao;
-
     @Inject
     protected GlusterUtil glusterUtil;
-
     @Inject
     protected GlusterDBUtils glusterDBUtils;
+    @Inject
+    private ProviderDao providerDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,9 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
 
     @Inject
     private PostDeleteActionHandler postDeleteActionHandler;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     private static final Logger log = LoggerFactory.getLogger(DestroyImageCommand.class);
 

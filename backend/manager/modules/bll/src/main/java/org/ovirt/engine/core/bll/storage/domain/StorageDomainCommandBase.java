@@ -48,6 +48,9 @@ import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -57,15 +60,18 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     @Inject
     private EventQueue eventQueue;
-
     @Inject
     private VmDeviceUtils vmDeviceUtils;
-
     @Inject
     private DiskProfileHelper diskProfileHelper;
-
     @Inject
     protected LunHelper lunHelper;
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private LunDao lunDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     protected StorageDomainCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

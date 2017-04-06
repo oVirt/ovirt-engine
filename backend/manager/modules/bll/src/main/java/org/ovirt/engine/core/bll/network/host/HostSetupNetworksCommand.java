@@ -77,7 +77,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -151,6 +157,18 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Inject
     private NetworkClusterHelper networkClusterHelper;
+    @Inject
+    private NetworkClusterDao networkClusterDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private InterfaceDao interfaceDao;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private VmDao vmDao;
 
     public HostSetupNetworksCommand(T parameters) {
         this(parameters, null);

@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
@@ -12,11 +14,16 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 
 /**
  * Base class for all Gluster Hook commands
  */
 public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> extends GlusterCommandBase<T> {
+
+    @Inject
+    private GlusterHooksDao glusterHooksDao;
+
     protected GlusterHookEntity entity;
 
     public GlusterHookCommandBase(T params, CommandContext commandContext) {

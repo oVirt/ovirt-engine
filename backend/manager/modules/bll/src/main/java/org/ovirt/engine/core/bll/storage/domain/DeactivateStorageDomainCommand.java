@@ -46,7 +46,16 @@ import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.CommandEntityDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 
@@ -56,6 +65,24 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Inject
     private CommandEntityDao commandEntityDao;
+    @Inject
+    private AsyncTaskDao asyncTaskDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private VmDao vmDao;
 
     private boolean isLastMaster;
 

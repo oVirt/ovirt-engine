@@ -55,6 +55,11 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +74,18 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
     @Inject
     private OvfManager ovfManager;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private SnapshotsValidator snapshotsValidator;
+    @Inject
+    private VmDao vmDao;
 
     public RemoveDiskSnapshotsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -26,12 +28,16 @@ import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.StringMapUtils;
 
 @InternalCommandAttribute
 public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParametersBase> extends
         StorageServerConnectionCommandBase<T> {
     private static final String KEY_VALUE_SEPARATOR = "=";
+
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
 
     public ConnectStorageToVdsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

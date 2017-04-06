@@ -38,6 +38,9 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
 public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoolAndRunParameters>
@@ -45,6 +48,12 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
 
     @Inject
     private VmPoolHandler vmPoolHandler;
+    @Inject
+    private PermissionDao permissionDao;
+    @Inject
+    private DbUserDao dbUserDao;
+    @Inject
+    private VmDao vmDao;
 
     protected AttachUserToVmFromPoolAndRunCommand(Guid commandId) {
         super(commandId);

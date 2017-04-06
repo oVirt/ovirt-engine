@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.connection;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
@@ -11,9 +13,16 @@ import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParamete
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 public class DetachStorageConnectionFromStorageDomainCommand<T extends AttachDetachStorageConnectionParameters>
         extends StorageDomainCommandBase<T> {
+
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private LunDao lunDao;
 
     public DetachStorageConnectionFromStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

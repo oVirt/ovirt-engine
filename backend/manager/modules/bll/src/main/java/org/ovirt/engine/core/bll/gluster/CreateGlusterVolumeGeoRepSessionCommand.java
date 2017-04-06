@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeCommandBase<GlusterVolumeGeoRepSessionParameters> {
 
@@ -37,6 +38,9 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
 
     @Inject
     private GlusterGeoRepSyncJob glusterGeoRepSyncJob;
+
+    @Inject
+    private VdsDao vdsDao;
 
     public CreateGlusterVolumeGeoRepSessionCommand(GlusterVolumeGeoRepSessionParameters params, CommandContext context) {
         super(params, context);

@@ -43,6 +43,15 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.AsyncTaskDao;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 
@@ -55,9 +64,26 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
     @Inject
     private GlusterHostValidator glusterHostValidator;
-
     @Inject
     private NetworkClusterHelper networkClusterHelper;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private AsyncTaskDao asyncTaskDao;
+    @Inject
+    private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private StepDao stepDao;
 
     public MaintenanceNumberOfVdssCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

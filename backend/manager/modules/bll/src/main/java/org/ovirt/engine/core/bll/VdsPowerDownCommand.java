@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
@@ -13,12 +15,16 @@ import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 
 /**
  * Tries to shutdown a host using SSH connection. The host has to be in maintenance mode.
  */
 @NonTransactiveCommandAttribute
 public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCommand<T> {
+
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
 
     public VdsPowerDownCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

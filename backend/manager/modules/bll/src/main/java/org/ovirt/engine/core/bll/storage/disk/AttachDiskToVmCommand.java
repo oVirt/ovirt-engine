@@ -44,11 +44,32 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
     @Inject
     private DiskHandler diskHandler;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     private List<PermissionSubject> permsList = null;
     private Disk disk;

@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.provider;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -17,9 +19,13 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 public class UpdateProviderCommand<P extends ProviderParameters> extends CommandBase<P>
         implements RenamedEntityInfoProvider {
+
+    @Inject
+    private ProviderDao providerDao;
 
     private Provider<?> oldProvider;
 

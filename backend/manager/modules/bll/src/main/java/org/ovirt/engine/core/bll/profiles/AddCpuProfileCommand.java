@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.profiles;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.bll.ValidateSupportsTransaction;
@@ -17,10 +19,14 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
 
 @ValidateSupportsTransaction
 public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParameters, CpuProfile, CpuProfileValidator> {
+
+    @Inject
+    private CpuProfileDao cpuProfileDao;
 
     public AddCpuProfileCommand(CpuProfileParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

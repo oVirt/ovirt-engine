@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
@@ -27,13 +29,29 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
 public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> extends RemoveCinderVolumeParentCommand<T> {
 
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private DiskDao diskDao;
+
     private CinderDisk cinderDisk;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public RemoveCinderDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

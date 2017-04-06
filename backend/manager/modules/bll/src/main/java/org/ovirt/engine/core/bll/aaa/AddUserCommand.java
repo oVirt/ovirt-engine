@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.aaa;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -11,8 +13,12 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.dao.DbUserDao;
 
 public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> {
+
+    @Inject
+    private DbUserDao dbUserDao;
 
     public AddUserCommand(T params, CommandContext commandContext) {
         super(params, commandContext);

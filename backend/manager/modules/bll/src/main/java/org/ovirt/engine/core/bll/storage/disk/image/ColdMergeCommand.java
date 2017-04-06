@@ -23,6 +23,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.ColdMergeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
@@ -30,6 +32,10 @@ public class ColdMergeCommand<T extends ColdMergeCommandParameters> extends Stor
 
     @Inject
     private VdsmImagePoller poller;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     public ColdMergeCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

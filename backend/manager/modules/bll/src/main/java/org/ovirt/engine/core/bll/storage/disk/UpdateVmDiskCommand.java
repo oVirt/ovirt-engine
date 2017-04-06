@@ -69,6 +69,18 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -87,15 +99,39 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     @Inject
     VmSlaPolicyUtils vmSlaPolicyUtils;
-
     @Inject
     private DiskProfileHelper diskProfileHelper;
+    @Inject
+    private VmDao vmDao;
+
     /**
      * vm device for the given vm and disk
      */
     private VmDevice vmDeviceForVm;
     private Disk oldDisk;
     private DiskVmElement oldDiskVmElement;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     public UpdateVmDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

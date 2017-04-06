@@ -27,13 +27,24 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkModification<T> {
     @Inject
     NetworkFilterDao networkFilterDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VnicProfileDao vnicProfileDao;
+    @Inject
+    private ProviderDao providerDao;
+    @Inject
+    private VmDao vmDao;
 
     public AddNetworkCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

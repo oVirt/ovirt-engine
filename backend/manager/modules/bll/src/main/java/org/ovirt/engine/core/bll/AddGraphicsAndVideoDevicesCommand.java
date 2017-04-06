@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -7,8 +9,18 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class AddGraphicsAndVideoDevicesCommand extends AddGraphicsDeviceCommand {
+
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
 
     public AddGraphicsAndVideoDevicesCommand(GraphicsParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

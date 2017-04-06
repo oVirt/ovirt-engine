@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomainPoolParametersBase> extends
@@ -29,6 +30,8 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
 
     @Inject
     private AuditLogDirector auditLogDirector;
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     public DeactivateStorageDomainWithOvfUpdateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

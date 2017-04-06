@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -23,9 +25,16 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 
 @InternalCommandAttribute
 public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
+
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

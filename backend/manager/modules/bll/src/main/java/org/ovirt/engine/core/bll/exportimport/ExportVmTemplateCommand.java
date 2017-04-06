@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -44,6 +45,9 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     @Inject
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
+
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     private String cachedTemplateIsBeingExportedMessage;
 

@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -46,6 +48,10 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -53,6 +59,15 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * the process
  */
 public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> extends AddVmCommand<T> {
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     protected AddVmAndCloneImageCommand(Guid commandId) {
         super(commandId);

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RemoveVmTemplateCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -30,10 +32,14 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 @NonTransactiveCommandAttribute
 public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportExportParameters> extends
         RemoveVmTemplateCommand<T> {
+
+    @Inject
+    private VmTemplateDao vmTemplateDao;
 
     private Map<VmTemplate, List<DiskImage>> templatesFromExport;
     // this is needed since overriding getVmTemplate()

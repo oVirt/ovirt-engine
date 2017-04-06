@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
@@ -10,9 +12,12 @@ import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.QuotaDao;
 
 public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> {
     private Quota quota;
+    @Inject
+    private QuotaDao quotaDao;
 
     public QuotaCRUDCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

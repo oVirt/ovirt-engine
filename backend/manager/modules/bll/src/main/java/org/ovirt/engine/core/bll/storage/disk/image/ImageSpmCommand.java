@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -15,9 +17,12 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 
 public abstract class ImageSpmCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
     private Guid cachedSpmId;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
 
     public ImageSpmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

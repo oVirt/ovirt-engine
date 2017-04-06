@@ -36,12 +36,30 @@ import org.ovirt.engine.core.common.vdscommands.MoveImageGroupVDSCommandParamete
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 
 @InternalCommandAttribute
 public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> extends BaseImagesCommand<T> {
 
     @Inject
     private PostDeleteActionHandler postDeleteActionHandler;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private ImageDao imageDao;
 
     public CopyImageGroupCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

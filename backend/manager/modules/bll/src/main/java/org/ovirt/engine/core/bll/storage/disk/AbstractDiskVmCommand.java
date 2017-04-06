@@ -43,6 +43,11 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -56,6 +61,16 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VmDao vmDao;
 
     protected AbstractDiskVmCommand(Guid commandId) {
         super(commandId);

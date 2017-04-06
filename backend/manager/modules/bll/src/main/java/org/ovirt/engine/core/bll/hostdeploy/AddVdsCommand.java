@@ -51,6 +51,12 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.FenceAgentDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.uutils.ssh.ConstraintByteArrayOutputStream;
@@ -63,6 +69,18 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     @Inject
     private HostedEngineHelper hostedEngineHelper;
+    @Inject
+    private ProviderDao providerDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private VdsStatisticsDao vdsStatisticsDao;
+    @Inject
+    private FenceAgentDao fenceAgentDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup

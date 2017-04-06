@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.dc;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -12,8 +14,12 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
 
 public abstract class NetworkCommon<T extends VdcActionParametersBase> extends CommandBase<T> {
+
+    @Inject
+    private VnicProfileDao vnicProfileDao;
 
     public NetworkCommon(Guid id) {
         super(id);

@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LibvirtSecretDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecretParameters> {
 
@@ -26,6 +28,10 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
 
     @Inject
     protected LibvirtSecretDao libvirtSecretDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private VdsDao vdsDao;
 
     public LibvirtSecretCommandBase(LibvirtSecretParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

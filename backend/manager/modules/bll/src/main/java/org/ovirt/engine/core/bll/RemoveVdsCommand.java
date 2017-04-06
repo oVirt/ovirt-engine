@@ -27,7 +27,17 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -39,6 +49,26 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     @Inject
     private GlusterServerDao glusterServerDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private VdsStatisticsDao vdsStatisticsDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private GlusterBrickDao glusterBrickDao;
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
+    @Inject
+    private GlusterHooksDao glusterHooksDao;
 
     public RemoveVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

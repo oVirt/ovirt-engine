@@ -36,6 +36,10 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.slf4j.Logger;
@@ -50,17 +54,21 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
     @Inject
     private HostDeviceManager hostDeviceManager;
-
     @Inject
     private NetworkDeviceHelper networkDeviceHelper;
-
     @Inject
     private SnapshotsManager snapshotsManager;
-
     @Inject
     private LockManager lockManager;
-
     private VmPool vmPoolCached;
+    @Inject
+    private VmPoolDao vmPoolDao;
+    @Inject
+    private DbUserDao dbUserDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     protected ProcessDownVmCommand(Guid commandId) {
         super(commandId);

@@ -26,6 +26,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.slf4j.Logger;
@@ -42,6 +44,10 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
     @Inject
     private ResourceManager resourceManager;
+    @Inject
+    private ProviderDao providerDao;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
 
     public InstallVdsInternalCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

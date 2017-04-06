@@ -4,6 +4,8 @@ import static org.ovirt.engine.core.common.errors.EngineMessage.VAR__ACTION__STO
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RestartVdsVmsOperation;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,6 +22,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +39,11 @@ import org.slf4j.LoggerFactory;
 @NonTransactiveCommandAttribute
 public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     private static final Logger log = LoggerFactory.getLogger(StopVdsCommand.class);
+
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
 
     public StopVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

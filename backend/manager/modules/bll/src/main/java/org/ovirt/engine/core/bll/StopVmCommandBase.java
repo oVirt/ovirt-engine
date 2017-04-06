@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
@@ -21,12 +23,20 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends VmOperationCommandBase<T>
         implements QuotaVdsDependent, QuotaStorageDependent {
     private static final Logger log = LoggerFactory.getLogger(StopVmCommandBase.class);
+
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+
+    @Inject
+    private SnapshotDao snapshotDao;
 
     private boolean suspendedVm;
 

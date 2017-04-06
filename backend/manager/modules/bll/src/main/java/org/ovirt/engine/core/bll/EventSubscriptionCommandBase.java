@@ -21,12 +21,16 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.EventDao;
+import org.ovirt.engine.core.dao.TagDao;
 
 public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionParametesBase> extends
         CommandBase<T> {
 
     @Inject
     protected EventDao eventDao;
+
+    @Inject
+    private TagDao tagDao;
 
     public EventSubscriptionCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

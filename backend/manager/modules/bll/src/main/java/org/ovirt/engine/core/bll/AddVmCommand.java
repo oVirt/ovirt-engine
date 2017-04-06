@@ -111,6 +111,17 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
+import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -145,6 +156,28 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Inject
     private InClusterUpgradeValidator clusterUpgradeValidator;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private VmNetworkStatisticsDao vmNetworkStatisticsDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmStatisticsDao vmStatisticsDao;
+    @Inject
+    private PermissionDao permissionDao;
 
     protected AddVmCommand(Guid commandId) {
         super(commandId);

@@ -55,6 +55,12 @@ import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
 
 /**
@@ -72,18 +78,26 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
 
     @Inject
     private MacPoolPerCluster macPoolPerCluster;
-
     @Inject
     private VmDeviceUtils vmDeviceUtils;
-
     @Inject
     private DiskProfileHelper diskProfileHelper;
-
     @Inject
     private CpuProfileHelper cpuProfileHelper;
-
     @Inject
     protected VmTemplateHandler vmTemplateHandler;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private VmPoolDao vmPoolDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private DiskProfileDao diskProfileDao;
 
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Map<Guid, List<DiskImage>> storageToDisksMap;

@@ -3,14 +3,20 @@ package org.ovirt.engine.core.bll.scheduling.commands;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
+import org.ovirt.engine.core.dao.ClusterDao;
 
 public class RemoveClusterPolicyCommand extends ClusterPolicyCRUDCommand {
+
+    @Inject
+    private ClusterDao clusterDao;
 
     public RemoveClusterPolicyCommand(ClusterPolicyCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

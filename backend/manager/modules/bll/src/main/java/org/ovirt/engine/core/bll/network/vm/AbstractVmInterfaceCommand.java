@@ -25,11 +25,17 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
     @Inject
     private BackwardCompatibilityVnicHelper backwardCompatibilityVnicHelper;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
 
     protected AbstractVmInterfaceCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

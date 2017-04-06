@@ -37,15 +37,20 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 
 @NonTransactiveCommandAttribute
 public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDomainDevicesCommandParameters> extends StorageDomainCommandBase<T> implements SerialChildExecutingCommand {
 
     @Inject
     private BlockStorageDomainValidator blockSDValidator;
-
     @Inject
     private BlockStorageDomainHelper blockStorageDomainHelper;
+    @Inject
+    private LunDao lunDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     public ReduceSANStorageDomainDevicesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

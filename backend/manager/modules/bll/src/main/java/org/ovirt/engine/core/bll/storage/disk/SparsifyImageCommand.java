@@ -33,7 +33,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -44,6 +46,10 @@ public class SparsifyImageCommand<T extends StorageJobCommandParameters> extends
 
     @Inject
     private VmDao vmDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
 
     public SparsifyImageCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

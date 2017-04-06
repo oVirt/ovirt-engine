@@ -90,6 +90,16 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -107,21 +117,38 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     @Inject
     private VmNicMacsUtils vmNicMacsUtils;
-
     @Inject
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
-
     @Inject
     private MemoryStorageHandler memoryStorageHandler;
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmStatisticsDao vmStatisticsDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private DiskImageDynamicDao diskImageDynamicDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     private List<DiskImage> imageList;
 
     private MacPool macPool;
 
     protected Map<Guid, String> failedDisksToImportForAuditLog = new HashMap<>();
-
-    @Inject
-    private DiskProfileHelper diskProfileHelper;
 
     @Override
     protected void init() {

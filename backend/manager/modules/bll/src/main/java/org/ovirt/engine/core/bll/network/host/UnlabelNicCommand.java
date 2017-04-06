@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.host;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -16,8 +18,12 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase<T> {
+
+    @Inject
+    private InterfaceDao interfaceDao;
 
     private VdsNetworkInterface nic;
 

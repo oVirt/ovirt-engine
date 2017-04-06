@@ -16,12 +16,15 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 
 public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInterfaceParameters>
         extends VmTemplateCommand<T> {
 
     @Inject
     private BackwardCompatibilityVnicHelper backwardCompatibilityVnicHelper;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
 
     public VmTemplateInterfaceCommandBase(Guid commandId) {
         super(commandId);

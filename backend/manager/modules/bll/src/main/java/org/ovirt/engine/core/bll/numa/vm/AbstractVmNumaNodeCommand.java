@@ -10,14 +10,16 @@ import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
 public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationParameters> extends VmCommand<T> {
 
     @Inject
     private VdsNumaNodeDao vdsNumaNodeDao;
-
     @Inject
     private NumaValidator numaValidator;
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
 
     private List<VmNumaNode> vmNumaNodesForValidation;
 
