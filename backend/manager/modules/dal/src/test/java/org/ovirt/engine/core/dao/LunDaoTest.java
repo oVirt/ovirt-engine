@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class LunDaoTest extends BaseGenericDaoTestCase<String, LUNs, LunDao> {
 
     @Override
     protected int getEntitiesTotalCount() {
-        return 8;
+        return 10;
     }
 
     /**
@@ -89,5 +90,11 @@ public class LunDaoTest extends BaseGenericDaoTestCase<String, LUNs, LunDao> {
         for (LUNs lun : result) {
             assertEquals(existingEntity.getVolumeGroupId(), lun.getVolumeGroupId());
         }
+    }
+
+    @Test
+    public void testRemoveAll() {
+        dao.removeAll(Arrays.asList(FixturesTool.ORPHAN_LUN_ID1, FixturesTool.ORPHAN_LUN_ID2));
+        assertEquals(getEntitiesTotalCount() - 2, dao.getAll().size());
     }
 }

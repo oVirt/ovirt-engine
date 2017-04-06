@@ -526,6 +526,28 @@
             <value>2147450880</value>
             <value>false</value>
         </row>
+        <row>
+            <value></value>
+            <value>1IET_00180005</value>
+            <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsR</value>
+            <value>ORPHAN_LUN</value>
+            <value>1</value>
+            <value>IET</value>
+            <value>ORPHAN_PRODUCT</value>
+            <value>2147450880</value>
+            <value>false</value>
+        </row>
+        <row>
+            <value></value>
+            <value>1IET_00180006</value>
+            <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsS</value>
+            <value>ORPHAN_LUN</value>
+            <value>1</value>
+            <value>IET</value>
+            <value>ORPHAN_PRODUCT</value>
+            <value>2147450880</value>
+            <value>false</value>
+        </row>
     </table>
 
     <table name="LUN_storage_server_connection_map">
