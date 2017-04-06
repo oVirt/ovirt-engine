@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.di.Injector;
 
 @Singleton
 public class OvirtNodeUpgradeManager implements UpdateAvailable {
@@ -38,8 +37,8 @@ public class OvirtNodeUpgradeManager implements UpdateAvailable {
         HostUpgradeManagerResult hostUpgradeManagerResult = new HostUpgradeManagerResult();
         hostUpgradeManagerResult.setUpdatesAvailable(updateAvailable);
         if (updateAvailable) {
-            AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
-            auditLog.setVds(host);
+            AuditLogableBase auditLog = new AuditLogableBase();
+            auditLog.setVdsName(host.getName());
             auditLogDirector.log(auditLog, AuditLogType.HOST_UPDATES_ARE_AVAILABLE);
         }
 
