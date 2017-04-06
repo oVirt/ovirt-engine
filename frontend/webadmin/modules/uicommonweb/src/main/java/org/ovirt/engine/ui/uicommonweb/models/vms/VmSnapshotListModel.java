@@ -383,7 +383,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             @Override
             public void onSuccess(VM vm) {
                 ArrayList<DiskImage> snapshotDisks = vm.getDiskList();
-                List<DiskImage> disksExcludedFromSnapshot = Linq.imagesSubtract(getVmDisks(), snapshotDisks);
+                List<DiskImage> disksExcludedFromSnapshot = imagesSubtract(getVmDisks(), snapshotDisks);
 
                 boolean showMemorySnapshotWarning = isMemorySnapshotSupported() && !snapshot.getMemoryVolume().isEmpty();
                 boolean showPartialSnapshotWarning = !disksExcludedFromSnapshot.isEmpty();
@@ -491,7 +491,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                     // get snapshot disks
                     disks = snapshotModel.getDisks();
                     // add active disks missed from snapshot
-                    disks.addAll(Linq.imagesSubtract(getVmDisks(), disks));
+                    disks.addAll(imagesSubtract(getVmDisks(), disks));
                     break;
                 case excludeActiveDisks:
                     // nothing to do - default behaviour
@@ -508,6 +508,20 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         }
 
         runTryBackToAllSnapshotsOfVm(snapshotModel, vm, snapshot, memory, disks);
+    }
+
+    private static List<DiskImage> imagesSubtract(Collection<DiskImage> images, Collection<DiskImage> imagesToSubtract) {
+        List<DiskImage> subtract = new ArrayList<>();
+        for (DiskImage image : images) {
+            if (getDiskImageById(image.getId(), imagesToSubtract) == null) {
+                subtract.add(image);
+            }
+        }
+        return subtract;
+    }
+
+    private static DiskImage getDiskImageById(Guid id, Collection<DiskImage> diskImages) {
+        return Linq.firstOrNull(diskImages, new Linq.IdPredicate<>(id));
     }
 
     private void onCustomPreview() {

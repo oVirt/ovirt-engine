@@ -271,20 +271,6 @@ public final class Linq {
         return aliases;
     }
 
-    public static List<DiskImage> imagesSubtract(Collection<DiskImage> images, Collection<DiskImage> imagesToSubtract) {
-        List<DiskImage> subtract = new ArrayList<>();
-        for (DiskImage image : images) {
-            if (Linq.getDiskImageById(image.getId(), imagesToSubtract) == null) {
-                subtract.add(image);
-            }
-        }
-        return subtract;
-    }
-
-    private static DiskImage getDiskImageById(Guid id, Collection<DiskImage> diskImages) {
-        return firstOrNull(diskImages, new IdPredicate<>(id));
-    }
-
     public static class TimeZonePredicate implements Predicate<TimeZoneModel> {
         private final String timeZone;
 
