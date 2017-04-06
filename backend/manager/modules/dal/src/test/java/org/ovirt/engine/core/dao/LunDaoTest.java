@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 
 public class LunDaoTest extends BaseDaoTestCase {
-    private static final String STORAGE_SERVER_CONNECTION_ID = "0cc146e8-e5ed-482c-8814-270bc48c297e";
     private LunDao dao;
     private LUNs existingLUN;
     private LUNs newLUN;
@@ -23,7 +22,7 @@ public class LunDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getLunDao();
 
-        existingLUN = dao.get("1IET_00180001");
+        existingLUN = dao.get(FixturesTool.LUN_ID1);
 
         newLUN = new LUNs();
         newLUN.setLUNId("oicu812");
@@ -67,7 +66,7 @@ public class LunDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStorageServerConnection() {
-        List<LUNs> result = dao.getAllForStorageServerConnection(STORAGE_SERVER_CONNECTION_ID);
+        List<LUNs> result = dao.getAllForStorageServerConnection(FixturesTool.STORAGE_CONNECTION_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
