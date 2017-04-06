@@ -6,8 +6,8 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.api.resource.AssignedCpuProfilesResource;
-import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
+import org.ovirt.engine.api.resource.ClusterNetworksResource;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.NetworkFiltersResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
@@ -52,7 +52,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
     }
 
     @Override
-    public AssignedNetworksResource getNetworksResource() {
+    public ClusterNetworksResource getNetworksResource() {
         return inject(new BackendClusterNetworksResource(id));
     }
 

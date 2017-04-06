@@ -3,13 +3,20 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.List;
 
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.resource.DataCenterNetworkResource;
+import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 
-public class BackendDataCenterNetworkResource extends BackendNetworkResource {
+public class BackendDataCenterNetworkResource
+    extends AbstractBackendNetworkResource
+    implements DataCenterNetworkResource {
 
     private BackendDataCenterNetworksResource parent;
 
     public BackendDataCenterNetworkResource(String id, BackendDataCenterNetworksResource parent) {
-        super(id, parent);
+        super(id, parent, VdcActionType.RemoveNetwork);
         this.parent = parent;
     }
 
@@ -35,5 +42,36 @@ public class BackendDataCenterNetworkResource extends BackendNetworkResource {
     @Override
     public BackendDataCenterNetworksResource getParent() {
         return parent;
+    }
+
+    @Override
+    public Network update(Network incoming) {
+        return performUpdate(
+            incoming,
+            getParent().getNetworkIdResolver(),
+            VdcActionType.UpdateNetwork,
+            new UpdateParametersProvider()
+        );
+    }
+
+    private class UpdateParametersProvider
+        implements ParametersProvider<Network, org.ovirt.engine.core.common.businessentities.network.Network> {
+
+        @Override
+        public VdcActionParametersBase getParameters(
+                Network incoming,
+                org.ovirt.engine.core.common.businessentities.network.Network entity) {
+            org.ovirt.engine.core.common.businessentities.network.Network updated = getMapper(
+                Network.class,
+                org.ovirt.engine.core.common.businessentities.network.Network.class
+            ).map(incoming, entity);
+            return new AddNetworkStoragePoolParameters(entity.getDataCenterId(), updated);
+        }
+    }
+
+    @Override
+    protected VdcActionParametersBase getRemoveParameters(
+            org.ovirt.engine.core.common.businessentities.network.Network entity) {
+        return new RemoveNetworkParameters(entity.getId());
     }
 }

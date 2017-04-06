@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.api.resource.AssignedNetworkResource;
+import org.ovirt.engine.api.resource.ClusterNetworkResource;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class BackendClusterNetworkResource
     extends AbstractBackendNetworkResource
-    implements AssignedNetworkResource {
+    implements ClusterNetworkResource {
 
     protected BackendClusterNetworksResource cluster;
 
