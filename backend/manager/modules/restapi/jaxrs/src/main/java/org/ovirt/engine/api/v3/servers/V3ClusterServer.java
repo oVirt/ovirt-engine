@@ -86,8 +86,8 @@ public class V3ClusterServer extends V3Server<ClusterResource> {
     }
 
     @Path("networks")
-    public V3AssignedNetworksServer getNetworksResource() {
-        return new V3AssignedNetworksServer(getDelegate().getNetworksResource());
+    public V3ClusterNetworksServer getNetworksResource() {
+        return new V3ClusterNetworksServer(getDelegate().getNetworksResource());
     }
 
     @Path("permissions")

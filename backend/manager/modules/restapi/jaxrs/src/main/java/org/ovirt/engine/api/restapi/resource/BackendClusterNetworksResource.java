@@ -1,13 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.api.resource.AssignedNetworkResource;
-import org.ovirt.engine.api.resource.AssignedNetworksResource;
+import org.ovirt.engine.api.resource.ClusterNetworkResource;
+import org.ovirt.engine.api.resource.ClusterNetworksResource;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -19,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterNetworksResource
     extends AbstractBackendNetworksResource
-    implements AssignedNetworksResource {
+    implements ClusterNetworksResource {
 
     private String clusterId;
 
@@ -114,7 +113,7 @@ public class BackendClusterNetworksResource
     }
 
     @Override
-    public AssignedNetworkResource getNetworkResource(String id) {
+    public ClusterNetworkResource getNetworkResource(String id) {
         return inject(new BackendClusterNetworkResource(id, this));
     }
 

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016 Red Hat, Inc.
+Copyright (c) 2017 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,14 +24,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.resource.AssignedNetworksResource;
+import org.ovirt.engine.api.resource.DataCenterNetworksResource;
 import org.ovirt.engine.api.v3.V3Server;
 import org.ovirt.engine.api.v3.types.V3Network;
 import org.ovirt.engine.api.v3.types.V3Networks;
 
 @Produces({"application/xml", "application/json"})
-public class V3AssignedNetworksServer extends V3Server<AssignedNetworksResource> {
-    public V3AssignedNetworksServer(AssignedNetworksResource delegate) {
+public class V3DataCenterNetworksServer extends V3Server<DataCenterNetworksResource> {
+    public V3DataCenterNetworksServer(DataCenterNetworksResource delegate) {
         super(delegate);
     }
 
@@ -47,7 +47,7 @@ public class V3AssignedNetworksServer extends V3Server<AssignedNetworksResource>
     }
 
     @Path("{id}")
-    public V3AssignedNetworkServer getNetworkResource(@PathParam("id") String id) {
-        return new V3AssignedNetworkServer(getDelegate().getNetworkResource(id));
+    public V3DataCenterNetworkServer getNetworkResource(@PathParam("id") String id) {
+        return new V3DataCenterNetworkServer(id, getDelegate().getNetworkResource(id));
     }
 }

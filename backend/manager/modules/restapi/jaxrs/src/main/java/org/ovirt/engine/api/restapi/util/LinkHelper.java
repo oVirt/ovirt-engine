@@ -127,8 +127,6 @@ import org.ovirt.engine.api.resource.AffinityLabelVmsResource;
 import org.ovirt.engine.api.resource.AffinityLabelsResource;
 import org.ovirt.engine.api.resource.AssignedAffinityLabelResource;
 import org.ovirt.engine.api.resource.AssignedAffinityLabelsResource;
-import org.ovirt.engine.api.resource.AssignedNetworkResource;
-import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedTagResource;
@@ -141,6 +139,8 @@ import org.ovirt.engine.api.resource.BookmarkResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
 import org.ovirt.engine.api.resource.ClusterLevelResource;
 import org.ovirt.engine.api.resource.ClusterLevelsResource;
+import org.ovirt.engine.api.resource.ClusterNetworkResource;
+import org.ovirt.engine.api.resource.ClusterNetworksResource;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.CpuProfileResource;
@@ -506,7 +506,7 @@ public class LinkHelper {
         TYPES.put(Permission.class, map);
 
         map = new LocationByParentMap(NetworkResource.class, NetworksResource.class);
-        map.add(AssignedNetworkResource.class, AssignedNetworksResource.class, Cluster.class);
+        map.add(ClusterNetworkResource.class, ClusterNetworksResource.class, Cluster.class);
         map.add(NetworkResource.class, NetworksResource.class, Network.class);
         map.add(VirtualFunctionAllowedNetworkResource.class, VirtualFunctionAllowedNetworksResource.class, HostNic.class);
         TYPES.put(Network.class, map);

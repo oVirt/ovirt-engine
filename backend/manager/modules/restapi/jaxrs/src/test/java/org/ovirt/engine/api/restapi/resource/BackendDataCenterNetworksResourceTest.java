@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDataCenterNetworksResourceTest
-        extends AbstractBackendNetworksResourceTest<BackendNetworksResource> {
+        extends AbstractBackendNetworksResourceTest<BackendDataCenterNetworksResource> {
 
     private static final Guid DATA_CENTER_ID = GUIDS[1];
 

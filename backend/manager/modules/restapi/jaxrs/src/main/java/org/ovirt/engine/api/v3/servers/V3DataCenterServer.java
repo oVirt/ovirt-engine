@@ -76,8 +76,8 @@ public class V3DataCenterServer extends V3Server<DataCenterResource> {
     }
 
     @Path("networks")
-    public V3NetworksServer getNetworksResource() {
-        return new V3NetworksServer(getDelegate().getNetworksResource());
+    public V3DataCenterNetworksServer getNetworksResource() {
+        return new V3DataCenterNetworksServer(getDelegate().getNetworksResource());
     }
 
     @Path("permissions")
