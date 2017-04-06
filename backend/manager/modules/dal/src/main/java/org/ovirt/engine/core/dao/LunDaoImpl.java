@@ -20,6 +20,7 @@ public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implement
         super("luns");
         setProcedureNameForGet("GetLUNByLUNId");
         setProcedureNameForGetAll("GetAllFromLUNs");
+        setProcedureNameForRemove("DeleteLUN");
     }
 
     protected static final RowMapper<LUNs> MAPPER = (rs, rowNum) -> {

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -136,4 +137,9 @@ public class LunDaoTest extends BaseDaoTestCase {
         assertEquals(existingLUN, result);
     }
 
+    @Test
+    public void testRemoveAll() {
+        dao.removeAll(Arrays.asList(FixturesTool.ORPHAN_LUN_ID1, FixturesTool.ORPHAN_LUN_ID2));
+        assertEquals(8, dao.getAll().size());
+    }
 }
