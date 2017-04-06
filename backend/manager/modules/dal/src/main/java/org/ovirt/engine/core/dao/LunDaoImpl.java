@@ -46,14 +46,6 @@ public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implement
     };
 
     @Override
-    public LUNs get(String id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("lun_id", id);
-
-        return getCallsHandler().executeRead("GetLUNByLUNId", MAPPER, parameterSource);
-    }
-
-    @Override
     public List<LUNs> getAllForStorageServerConnection(String id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_server_connection", id);
@@ -70,13 +62,6 @@ public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implement
     }
 
     @Override
-    public List<LUNs> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        return getCallsHandler().executeReadList("GetAllFromLUNs", MAPPER, parameterSource);
-    }
-
-    @Override
     protected MapSqlParameterSource createIdParameterMapper(String id) {
         return getCustomMapSqlParameterSource().addValue("lun_id", id);
     }
@@ -84,48 +69,6 @@ public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implement
     @Override
     protected RowMapper<LUNs> createEntityRowMapper() {
         return MAPPER;
-    }
-
-    @Override
-    public void save(LUNs lun) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("lun_id", lun.getLUNId())
-                .addValue("physical_volume_id", lun.getPhysicalVolumeId())
-                .addValue("volume_group_id", lun.getVolumeGroupId())
-                .addValue("serial", lun.getSerial())
-                .addValue("lun_mapping", lun.getLunMapping())
-                .addValue("vendor_id", lun.getVendorId())
-                .addValue("product_id", lun.getProductId())
-                .addValue("device_size", lun.getDeviceSize())
-                .addValue("discard_max_size", lun.getDiscardMaxSize())
-                .addValue("discard_zeroes_data", lun.getDiscardZeroesData());
-
-        getCallsHandler().executeModification("InsertLUNs", parameterSource);
-    }
-
-    @Override
-    public void update(LUNs lun) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("lun_id", lun.getLUNId())
-                .addValue("physical_volume_id", lun.getPhysicalVolumeId())
-                .addValue("volume_group_id", lun.getVolumeGroupId())
-                .addValue("serial", lun.getSerial())
-                .addValue("lun_mapping", lun.getLunMapping())
-                .addValue("vendor_id", lun.getVendorId())
-                .addValue("product_id", lun.getProductId())
-                .addValue("device_size", lun.getDeviceSize())
-                .addValue("discard_max_size", lun.getDiscardMaxSize())
-                .addValue("discard_zeroes_data", lun.getDiscardZeroesData());
-
-        getCallsHandler().executeModification("UpdateLUNs", parameterSource);
-    }
-
-    @Override
-    public void remove(String id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("lun_id", id);
-
-        getCallsHandler().executeModification("DeleteLUN", parameterSource);
     }
 
     @Override
