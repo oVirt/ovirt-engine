@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
@@ -511,17 +513,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     }
 
     private static List<DiskImage> imagesSubtract(Collection<DiskImage> images, Collection<DiskImage> imagesToSubtract) {
-        List<DiskImage> subtract = new ArrayList<>();
-        for (DiskImage image : images) {
-            if (getDiskImageById(image.getId(), imagesToSubtract) == null) {
-                subtract.add(image);
-            }
-        }
-        return subtract;
-    }
-
-    private static DiskImage getDiskImageById(Guid id, Collection<DiskImage> diskImages) {
-        return Linq.firstOrNull(diskImages, new Linq.IdPredicate<>(id));
+        Set<Guid> idsToSubtract = imagesToSubtract.stream().map(DiskImage::getImageId).collect(Collectors.toSet());
+        return images.stream().filter(new Linq.IdsPredicate<>(idsToSubtract).negate()).collect(Collectors.toList());
     }
 
     private void onCustomPreview() {
