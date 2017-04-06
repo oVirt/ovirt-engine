@@ -892,6 +892,19 @@ public class VmDeviceUtils {
         removeVmDevices(getUsbSlots(vmId), numberOfSlotsToRemove);
     }
 
+    /**
+     * Remove unmanaged devices that are no longer necessary in the current configuration.
+     */
+    public void removeLeftOverDevices(VmBase vmBase) {
+        if (!hasGraphicsDevice(vmBase.getId(), GraphicsType.SPICE)) {
+            // remove spice channel if we are no longer using spice
+            List<VmDevice> spiceChannels = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                    vmBase.getId(), VmDeviceGeneralType.CHANNEL,
+                    VmDeviceType.SPICEVMC.getName());
+            removeVmDevices(spiceChannels);
+        }
+    }
+
     /*
      * Memory balloon device
      */
@@ -1199,6 +1212,7 @@ public class VmDeviceUtils {
     public void updateVmDevicesOnRun(VmBase vmBase) {
         if (vmBase != null) {
             updateUsbSlots(vmBase, vmBase);
+            removeLeftOverDevices(vmBase);
         }
     }
 
