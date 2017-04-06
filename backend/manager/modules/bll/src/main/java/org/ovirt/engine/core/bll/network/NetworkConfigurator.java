@@ -43,18 +43,25 @@ import org.slf4j.LoggerFactory;
 
 public class NetworkConfigurator {
 
+    private static final Logger log = LoggerFactory.getLogger(NetworkConfigurator.class);
+
     private static final String MANAGEMENT_NETWORK_CONFIG_ERR = "Failed to configure management network";
     private static final String NETWORK_CONFIG_LOG_ERR = "Failed to configure management network: {0}";
-    private static final Logger log = LoggerFactory.getLogger(NetworkConfigurator.class);
+
     private final VDS host;
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private final AuditLogDirector auditLogDirector;
     private final Network managementNetwork;
     private CommandContext commandContext;
 
-    public NetworkConfigurator(VDS host, CommandContext commandContext) {
+    NetworkConfigurator(VDS host, CommandContext commandContext, AuditLogDirector auditLogDirector) {
         this.host = host;
         this.commandContext = commandContext;
+        this.auditLogDirector = auditLogDirector;
         this.managementNetwork = getManagementNetworkUtil().getManagementNetwork(host.getClusterId());
+    }
+
+    public NetworkConfigurator(VDS host, CommandContext commandContext) {
+        this(host, commandContext, new AuditLogDirector());
     }
 
     public void createManagementNetworkIfRequired() {
@@ -181,8 +188,8 @@ public class NetworkConfigurator {
     }
 
     private AuditLogableBase createEvent() {
-        final AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
-        event.setVds(host);
+        final AuditLogableBase event = new AuditLogableBase();
+        event.setVdsName(host.getName());
         return event;
     }
 
@@ -248,7 +255,7 @@ public class NetworkConfigurator {
         }
     }
 
-    private BackendInternal getBackend() {
+    BackendInternal getBackend() {
         return Backend.getInstance();
     }
 

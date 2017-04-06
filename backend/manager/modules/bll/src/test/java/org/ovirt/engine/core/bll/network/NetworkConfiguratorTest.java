@@ -1,25 +1,43 @@
 package org.ovirt.engine.core.bll.network;
 
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.network.NetworkConfigurator.NetworkConfiguratorException;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -31,6 +49,8 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -49,6 +69,10 @@ public class NetworkConfiguratorTest {
     private static final Guid MANAGEMENT_NETWORK_ID = Guid.newGuid();
     private static final Guid CLUSTER_ID = Guid.newGuid();
     private static final String NIC_NAME = "nic name";
+    private static final String MANAGEMENT_NETWORK_NAME = "management network name";
+    private static final int NIC_VLAN_ID = 666;
+    private static final int MANAGMENT_NETWORK_VLAN_ID = 777;
+    private static final String HOST_NAME = "host name";
 
     @Rule
     public InjectorRule injectorRule = new InjectorRule();
@@ -61,6 +85,13 @@ public class NetworkConfiguratorTest {
     @Mock
     private ManagementNetworkUtil mockManagementNetworkUtil;
 
+    @Mock
+    private BackendInternal backend;
+    @Mock
+    private AuditLogDirector auditLogDirector;
+    @Captor
+    private ArgumentCaptor<AuditLogableBase> auditLogableBaseArgumentCaptor;
+
     private VDS host;
     private VdsNetworkInterface nic = new VdsNetworkInterface();
     private Network managementNetwork = new Network();
@@ -72,17 +103,19 @@ public class NetworkConfiguratorTest {
         injectorRule.bind(ManagementNetworkUtil.class, mockManagementNetworkUtil);
 
         managementNetwork.setId(MANAGEMENT_NETWORK_ID);
+        managementNetwork.setName(MANAGEMENT_NETWORK_NAME);
         when(mockManagementNetworkUtil.getManagementNetwork(CLUSTER_ID)).thenReturn(managementNetwork);
 
         nic.setNetworkName(NETWORK_NAME1);
         nic.setName(NIC_NAME);
 
         host = new VDS();
+        host.setVdsName(HOST_NAME);
         host.setClusterId(CLUSTER_ID);
         host.setClusterCompatibilityVersion(Version.v4_0);
         host.getInterfaces().add(nic);
 
-        underTest = new NetworkConfigurator(host, COMMAND_CONTEXT);
+        underTest = new NetworkConfigurator(host, COMMAND_CONTEXT, auditLogDirector);
     }
 
     @Test
@@ -129,6 +162,82 @@ public class NetworkConfiguratorTest {
         final IpConfiguration actual =
                 createSetupNetworkParamsTest(Version.v4_0, hasSize(1));
         assertIpv6Details(actual);
+    }
+
+    @Test
+    public void testCreateManagementNetworkIfRequiredFailedOnSetupNetworks() {
+        host.setActiveNic(NIC_NAME);
+
+        final NetworkConfigurator spiedUnderTest = spy(underTest);
+        doReturn(backend).when(spiedUnderTest).getBackend();
+        when(backend.runInternalAction(
+                eq(VdcActionType.HostSetupNetworks),
+                any(HostSetupNetworksParameters.class),
+                any(CommandContext.class)))
+                .thenReturn(createReturnValue(false));
+
+        verifyAuditLoggableBaseFilledProperly(
+                spiedUnderTest,
+                AuditLogType.SETUP_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK_CONFIGURATION);
+    }
+
+    @Test
+    public void testCreateManagementNetworkIfRequiredFailedOnCommitNetworkChanges() {
+        host.setActiveNic(NIC_NAME);
+
+        final NetworkConfigurator spiedUnderTest = spy(underTest);
+        doReturn(backend).when(spiedUnderTest).getBackend();
+        when(backend.runInternalAction(
+                eq(VdcActionType.HostSetupNetworks),
+                any(HostSetupNetworksParameters.class),
+                any(CommandContext.class)))
+                .thenReturn(createReturnValue(true));
+        when(backend.runInternalAction(
+                eq(VdcActionType.CommitNetworkChanges),
+                any(VdsActionParameters.class),
+                any(CommandContext.class)))
+                .thenReturn(createReturnValue(false));
+
+        verifyAuditLoggableBaseFilledProperly(
+                spiedUnderTest,
+                AuditLogType.PERSIST_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK);
+    }
+
+    @Test
+    public void testCreateManagementNetworkIfRequiredFailsOnDifferentVlanId() {
+        host.setActiveNic(NIC_NAME);
+        nic.setVlanId(NIC_VLAN_ID);
+        managementNetwork.setVlanId(MANAGMENT_NETWORK_VLAN_ID);
+
+        final Map<String, String> capturedCustomValues = verifyAuditLoggableBaseFilledProperly(
+                underTest,
+                AuditLogType.VLAN_ID_MISMATCH_FOR_MANAGEMENT_NETWORK_CONFIGURATION);
+        assertThat(capturedCustomValues, allOf(
+                hasEntry("vlanid", String.valueOf(NIC_VLAN_ID)),
+                hasEntry("mgmtvlanid", String.valueOf(MANAGMENT_NETWORK_VLAN_ID)),
+                hasEntry("interfacename", NIC_NAME)));
+    }
+
+    private Map<String, String> verifyAuditLoggableBaseFilledProperly(NetworkConfigurator underTest, AuditLogType auditLogType) {
+        try {
+            underTest.createManagementNetworkIfRequired();
+        } catch (NetworkConfiguratorException e) {
+            verify(auditLogDirector).log(
+                    auditLogableBaseArgumentCaptor.capture(),
+                    eq(auditLogType),
+                    anyString());
+            final AuditLogableBase capturedEvent = auditLogableBaseArgumentCaptor.getValue();
+            assertThat(capturedEvent.getVdsName(), is(HOST_NAME));
+            return capturedEvent.getCustomValues();
+        }
+        fail("The test should lead to NetworkConfiguratorException");
+        return null;
+    }
+
+    private VdcReturnValueBase createReturnValue(boolean succeed) {
+        final VdcReturnValueBase setupNetsReturnValue = new VdcReturnValueBase();
+        setupNetsReturnValue.setSucceeded(succeed);
+        return setupNetsReturnValue;
     }
 
     private IpConfiguration createSetupNetworkParamsTest(
