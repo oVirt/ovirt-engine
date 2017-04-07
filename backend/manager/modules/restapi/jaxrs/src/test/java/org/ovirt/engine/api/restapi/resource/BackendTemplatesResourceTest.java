@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
@@ -68,9 +69,9 @@ public class BackendTemplatesResourceTest
                 setUpVm(GUIDS[1]));
         setUpGetEntityExpectations(0);
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetConsoleExpectations(0, 0, 1);
         setUpGetVirtioScsiExpectations(0, 0);
-        setUpGetSoundcardExpectations(0, 0, 0);
+        setUpGetSoundcardExpectations(0, 0, 1);
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
@@ -119,9 +120,9 @@ public class BackendTemplatesResourceTest
         setUriInfo(setUpBasicUriExpectations());
 
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(0, 0);
+        setUpGetConsoleExpectations(0, 1);
         setUpGetVirtioScsiExpectations(0);
-        setUpGetSoundcardExpectations(0, 0);
+        setUpGetSoundcardExpectations(0, 1);
         setUpGetRngDeviceExpectations(0);
         setUpGetBallooningExpectations(new Integer[] {0});
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
@@ -156,8 +157,8 @@ public class BackendTemplatesResourceTest
 
     public void testAdd() throws Exception {
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(0, 0, 0);
-        setUpGetSoundcardExpectations(0);
+        setUpGetConsoleExpectations(0, 0, 1);
+        setUpGetSoundcardExpectations(1);
         setUpGetBallooningExpectations(0, 0);
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
@@ -213,9 +214,9 @@ public class BackendTemplatesResourceTest
         setUpHttpHeaderExpectations("Expect", "201-created");
 
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(2, 0, 2);
+        setUpGetConsoleExpectations(2, 2, 1);
         setUpGetVirtioScsiExpectations(2, 2);
-        setUpGetSoundcardExpectations(2, 2, 0);
+        setUpGetSoundcardExpectations(2, 2, 1);
         setUpGetRngDeviceExpectations(2, 2);
         setUpGetBallooningExpectations(2, 2);
 
@@ -263,9 +264,9 @@ public class BackendTemplatesResourceTest
 
         setUpGetEntityExpectations(0);
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetConsoleExpectations(0, 0, 1);
         setUpGetVirtioScsiExpectations(0, 0);
-        setUpGetSoundcardExpectations(0, 0, 0);
+        setUpGetSoundcardExpectations(0, 0, 1);
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
@@ -310,9 +311,9 @@ public class BackendTemplatesResourceTest
 
         setUpGetEntityExpectations(0);
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetConsoleExpectations(0, 0, 1);
         setUpGetVirtioScsiExpectations(0, 0);
-        setUpGetSoundcardExpectations(0, 0, 0);
+        setUpGetSoundcardExpectations(0, 0, 1);
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
@@ -355,9 +356,9 @@ public class BackendTemplatesResourceTest
         setUpGetEntityExpectations(0);
 
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetConsoleExpectations(0, 0, 1);
         setUpGetVirtioScsiExpectations(0, 0);
-        setUpGetSoundcardExpectations(0, 0, 0);
+        setUpGetSoundcardExpectations(0, 0, 1);
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
@@ -405,9 +406,9 @@ public class BackendTemplatesResourceTest
         setUpGetEntityExpectations(0);
 
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(0, 0, 0);
+        setUpGetConsoleExpectations(0, 0, 1);
         setUpGetVirtioScsiExpectations(0, 0);
-        setUpGetSoundcardExpectations(0, 0, 0);
+        setUpGetSoundcardExpectations(0, 0, 1);
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
@@ -468,8 +469,8 @@ public class BackendTemplatesResourceTest
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
 
-        setUpGetConsoleExpectations(0);
-        setUpGetSoundcardExpectations(0);
+        setUpGetConsoleExpectations(1);
+        setUpGetSoundcardExpectations(1);
 
         super.doTestBadAdd(valid, success, detail);
     }
@@ -490,8 +491,8 @@ public class BackendTemplatesResourceTest
     @Test
     public void testAddUploadIcon() throws Exception {
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(0, 0, 0);
-        setUpGetSoundcardExpectations(0);
+        setUpGetConsoleExpectations(0, 0, 1);
+        setUpGetSoundcardExpectations(1);
         setUpGetBallooningExpectations(0, 0);
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
@@ -529,8 +530,8 @@ public class BackendTemplatesResourceTest
     @Test
     public void testAddUseExistingIcons() throws Exception {
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(0, 0, 0);
-        setUpGetSoundcardExpectations(0);
+        setUpGetConsoleExpectations(0, 0, 1);
+        setUpGetSoundcardExpectations(1);
         setUpGetBallooningExpectations(0, 0);
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
@@ -579,9 +580,12 @@ public class BackendTemplatesResourceTest
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM setUpVm(Guid id) {
+        VmStatic vmStatic = mock(VmStatic.class);
+        when(vmStatic.getId()).thenReturn(id);
         org.ovirt.engine.core.common.businessentities.VM vm =
             mock(org.ovirt.engine.core.common.businessentities.VM.class);
         when(vm.getId()).thenReturn(id);
+        when(vm.getStaticData()).thenReturn(vmStatic);
         return vm;
     }
 

@@ -86,7 +86,9 @@ public class BackendTemplatesResource
         if (template.getVersion() != null) {
             validateParameters(template.getVersion(), "baseTemplate");
         }
-        VmStatic staticVm = getMapper(Template.class, VmStatic.class).map(template, getVm(cluster, template));
+
+        VmStatic originalVm = getVm(cluster, template);
+        VmStatic staticVm = getMapper(Template.class, VmStatic.class).map(template, originalVm);
         if (namedCluster(template)) {
             staticVm.setClusterId(clusterId);
         }
@@ -101,13 +103,13 @@ public class BackendTemplatesResource
         }
         params.setConsoleEnabled(template.getConsole() != null && template.getConsole().isSetEnabled() ?
                         template.getConsole().isEnabled() :
-                        !getConsoleDevicesForEntity(staticVm.getId()).isEmpty());
+                        !getConsoleDevicesForEntity(originalVm.getId()).isEmpty());
         params.setVirtioScsiEnabled(template.isSetVirtioScsi() && template.getVirtioScsi().isSetEnabled() ?
                 template.getVirtioScsi().isEnabled() : null);
         if(template.isSetSoundcardEnabled()) {
             params.setSoundDeviceEnabled(template.isSoundcardEnabled());
         } else {
-            params.setSoundDeviceEnabled(!VmHelper.getSoundDevicesForEntity(this, staticVm.getId()).isEmpty());
+            params.setSoundDeviceEnabled(!VmHelper.getSoundDevicesForEntity(this, originalVm.getId()).isEmpty());
         }
         if (template.isSetRngDevice()) {
             params.setUpdateRngDevice(true);
@@ -121,9 +123,14 @@ public class BackendTemplatesResource
             params.setDestinationStorageDomainId(asGuid(template.getStorageDomain().getId()));
             isDomainSet = true;
         }
-        params.setDiskInfoDestinationMap(getDestinationTemplateDiskMap(template.getVm(),
-            params.getDestinationStorageDomainId(),
-            isDomainSet));
+        params.setDiskInfoDestinationMap(
+            getDestinationTemplateDiskMap(
+                template.getVm(),
+                originalVm.getId(),
+                params.getDestinationStorageDomainId(),
+                isDomainSet
+            )
+        );
 
         setupOptionalParameters(params);
         IconHelper.setIconToParams(template, params);
@@ -165,11 +172,12 @@ public class BackendTemplatesResource
         return getEntity(Cluster.class, VdcQueryType.GetClusterById, new IdQueryParameters(id), "GetClusterById");
     }
 
-    protected HashMap<Guid, DiskImage> getDestinationTemplateDiskMap(Vm vm, Guid storageDomainId, boolean isTemplateGeneralStorageDomainSet) {
+    protected HashMap<Guid, DiskImage> getDestinationTemplateDiskMap(Vm vm, Guid vmId, Guid storageDomainId,
+            boolean isTemplateGeneralStorageDomainSet) {
         HashMap<Guid, DiskImage> destinationTemplateDiskMap = null;
         if (vm.isSetDiskAttachments() && vm.getDiskAttachments().isSetDiskAttachments()) {
             destinationTemplateDiskMap = new HashMap<>();
-            Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> vmSourceDisks = queryVmDisksMap(vm);
+            Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> vmSourceDisks = queryVmDisksMap(vmId);
 
             for (DiskAttachment diskAttachment : vm.getDiskAttachments().getDiskAttachments()) {
                 Disk disk = diskAttachment.getDisk();
@@ -204,11 +212,12 @@ public class BackendTemplatesResource
         return disk.getDiskStorageType() == DiskStorageType.IMAGE;
     }
 
-    private Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> queryVmDisksMap(Vm vm) {
-        List<org.ovirt.engine.core.common.businessentities.storage.Disk> vmDisks =
-                getBackendCollection(org.ovirt.engine.core.common.businessentities.storage.Disk.class,
-                        VdcQueryType.GetAllDisksByVmId,
-                        new IdQueryParameters(asGuid(vm.getId())));
+    private Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> queryVmDisksMap(Guid vmId) {
+        List<org.ovirt.engine.core.common.businessentities.storage.Disk> vmDisks = getBackendCollection(
+            org.ovirt.engine.core.common.businessentities.storage.Disk.class,
+            VdcQueryType.GetAllDisksByVmId,
+            new IdQueryParameters(vmId)
+        );
         return Entities.businessEntitiesById(vmDisks);
     }
 
