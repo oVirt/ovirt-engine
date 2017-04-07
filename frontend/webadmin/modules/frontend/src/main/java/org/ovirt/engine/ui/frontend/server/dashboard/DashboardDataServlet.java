@@ -1,6 +1,10 @@
 package org.ovirt.engine.ui.frontend.server.dashboard;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Random;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.infinispan.Cache;
 import org.infinispan.manager.CacheContainer;
@@ -56,13 +61,14 @@ public class DashboardDataServlet extends HttpServlet {
     @Resource(mappedName = "java:/ENGINEDataSource")
     private DataSource engineDataSource;
 
+    private boolean dwhAvailable = false;
     private boolean enableBackgroundCacheUpdate = false;
 
     @Resource(lookup = "java:jboss/infinispan/ovirt-engine")
     private CacheContainer cacheContainer;
 
-    private static Cache<String, Dashboard> dashboardCache;
-    private static Cache<String, Inventory> inventoryCache;
+    private Cache<String, Dashboard> dashboardCache;
+    private Cache<String, Inventory> inventoryCache;
 
     @Resource
     private ManagedScheduledExecutorService scheduledExecutor;
@@ -75,6 +81,8 @@ public class DashboardDataServlet extends HttpServlet {
         dashboardCache = cacheContainer.getCache(DASHBOARD);
         inventoryCache = cacheContainer.getCache(INVENTORY);
 
+        dwhAvailable = checkDwhConfigInEngine() && checkDwhDataSource();
+
         EngineLocalConfig config = EngineLocalConfig.getInstance();
         try {
             enableBackgroundCacheUpdate = config.getBoolean(ENABLE_CACHE_UPDATE_KEY, Boolean.FALSE);
@@ -82,7 +90,7 @@ public class DashboardDataServlet extends HttpServlet {
             log.error("Missing/Invalid key \"{}\", using default value of 'false'", ENABLE_CACHE_UPDATE_KEY, e); //$NON-NLS-1$
             enableBackgroundCacheUpdate = false;
         }
-        if (!enableBackgroundCacheUpdate) {
+        if (!enableBackgroundCacheUpdate || !dwhAvailable) {
             log.info("Dashboard DB query cache has been disabled."); //$NON-NLS-1$
             return;
         }
@@ -137,6 +145,67 @@ public class DashboardDataServlet extends HttpServlet {
         log.info("Dashboard inventory cache updater initialized (update interval {}s)", INVENTORY_CACHE_UPDATE_INTERVAL); //$NON-NLS-1$
     }
 
+    /**
+     * Check that <b>dwhHostname</b> and <b>dwhUuid</b> have been both defined in the Engine
+     * table <b>dwh_history_timekeeping</b>.  These two records only have values defined when
+     * the engine has been configured with DWH.
+     */
+    private boolean checkDwhConfigInEngine() {
+        boolean isOk = true;
+
+        String hostname = null;
+        String uuid = null;
+        try (Connection c = engineDataSource.getConnection();
+             Statement s = c.createStatement();
+             ResultSet rs = s.executeQuery("SELECT * FROM dwh_history_timekeeping WHERE var_name IN ('dwhHostname', 'dwhUuid')")) { //$NON-NLS-1$
+            while (rs.next()) {
+                String varName = StringUtils.trimToNull(rs.getString("var_name")); //$NON-NLS-1$
+                String varValue = StringUtils.trimToNull(rs.getString("var_value")); //$NON-NLS-1$
+
+                switch (varName) {
+                    case "dwhHostname": //$NON-NLS-1$
+                        hostname = varValue;
+                        break;
+                    case "dwhUuid": //$NON-NLS-1$
+                        uuid = varValue;
+                        break;
+                }
+            }
+        } catch (SQLException e) {
+            log.error("Could not access engine's DWH configuration table", e); //$NON-NLS-1$
+        }
+
+        if (StringUtils.isEmpty(hostname) || StringUtils.isEmpty(uuid)) {
+            log.warn("No valid DWH configurations were found, assuming DWH database isn't setup."); //$NON-NLS-1$
+            isOk = false;
+        }
+
+        return isOk;
+    }
+
+    /**
+     * Check that the JNDI managed DWH DataSource has been injected and that it
+     * can successfully open a connection to the DWH database.
+     */
+    private boolean checkDwhDataSource() {
+        boolean isOk;
+
+        if (dwhDataSource == null) {
+            log.warn("DWH DataSource has not been configured and injected."); //$NON-NLS-1$
+            isOk = false;
+        } else {
+            try (Connection c = dwhDataSource.getConnection()) {
+                isOk = true;
+            }
+            catch (SQLException e) {
+                log.warn("Could not establish a connection to the DWH via the DWH DataSource: {}", e.getMessage()); //$NON-NLS-1$
+                isOk = false;
+            }
+        }
+
+        return isOk;
+    }
+
     @PreDestroy
     private void stopScheduledTasks() {
         if (utilizationCacheUpdate != null) {
@@ -176,13 +245,16 @@ public class DashboardDataServlet extends HttpServlet {
                 }
             }
 
-            // Respond to the client based on the preferred method
+            // Respond to the client based on the preferred method and state of servlet configuration
             if (preferError) {
                 log.debug("client requested an error condition"); //$NON-NLS-1$
                 throw new ServletException("An error condition was requested."); //$NON-NLS-1$
             } else if (preferFake) {
                 log.debug("client requested fake data"); //$NON-NLS-1$
                 dashboard = getFakeDashboard();
+            } else if (!dwhAvailable) {
+                log.debug("client request cannot be fulfilled, DWH is not available"); //$NON-NLS-1$
+                throw new ServletException("Dashboard data is not available."); //$NON-NLS-1$
             } else if (preferNoCache) {
                 log.debug("client requested non-cache direct query data"); //$NON-NLS-1$
                 dashboard = getDashboard();
