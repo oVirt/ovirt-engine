@@ -66,7 +66,7 @@
                 </b:Row>
                 <b:Row>
                     <b:Column size="LG_12">
-                        <k:KeyValueWidget ui:field="addRemoveVmWidget" usePatternFly="true" />
+                        <k:KeyWidget ui:field="addRemoveVmWidget" usePatternFly="true" />
                     </b:Column>
                 </b:Row>
             </b:Container>

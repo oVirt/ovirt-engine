@@ -2,20 +2,18 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.key_value;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 
-public class KeyValueLineModel extends Model {
+public class KeyValueLineModel extends KeyLineModel {
 
-    ListModel<String> keys;
     ListModel<String> values;
     EntityModel<String> value;
 
-    public ListModel<String> getKeys() {
-        return keys;
-    }
-
-    public void setKeys(ListModel<String> keys) {
-        this.keys = keys;
+    public KeyValueLineModel() {
+        super();
+        setValue(new EntityModel<String>());
+        setValues(new ListModel<String>());
+        getValue().setIsAvailable(false);
+        getValues().setIsAvailable(false);
     }
 
     public ListModel<String> getValues() {
@@ -34,17 +32,8 @@ public class KeyValueLineModel extends Model {
         this.value = value;
     }
 
-    public KeyValueLineModel() {
-        setKeys(new ListModel<String>());
-        setValue(new EntityModel<String>());
-        setValues(new ListModel<String>());
-        getValue().setIsAvailable(false);
-        getValues().setIsAvailable(false);
-    }
-
     @Override
     public void cleanup() {
-        getKeys().cleanup();
         getValue().cleanup();
         getValues().cleanup();
         super.cleanup();

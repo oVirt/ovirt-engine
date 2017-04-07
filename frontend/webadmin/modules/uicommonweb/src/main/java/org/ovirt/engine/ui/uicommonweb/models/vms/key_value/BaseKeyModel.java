@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-public abstract class BaseKeyModel extends ListModel<KeyValueLineModel> {
+public abstract class BaseKeyModel<M extends KeyLineModel> extends ListModel<M> {
     private final String selectKey;
     private final String noKeys;
     boolean disableEvent = false;
@@ -26,21 +26,15 @@ public abstract class BaseKeyModel extends ListModel<KeyValueLineModel> {
     protected void init(Set<String> allKeys, Set<String> usedKeys) {
         this.allKeys = new HashSet<>(allKeys);
         this.usedKeys = new HashSet<>(usedKeys);
-        List<KeyValueLineModel> list = new ArrayList<>();
         disableEvent = true;
-        for (String key : usedKeys) {
-            KeyValueLineModel lineModel = createNewLineModel(key);
-            lineModel.getKeys().setSelectedItem(key);
-            setValueByKey(lineModel, key);
-            list.add(lineModel);
-        }
+        List<M> list = createLineModels(usedKeys);
         disableEvent = false;
         setItems(list);
     }
 
-    protected abstract void initLineModel(KeyValueLineModel lineModel, String key);
+    protected abstract List<M> createLineModels(Set<String> usedKeys);
 
-    protected abstract void setValueByKey(KeyValueLineModel lineModel, String key);
+    protected abstract void initLineModel(M lineModel, String key);
 
     public final IEventListener<EventArgs> keyChangedListener = (ev, sender, args) -> {
         if (disableEvent) {
@@ -51,7 +45,7 @@ public abstract class BaseKeyModel extends ListModel<KeyValueLineModel> {
         if (listModel.getSelectedItem() != null) {
             key = listModel.getSelectedItem();
         }
-        for (KeyValueLineModel lineModel : getItems()) {
+        for (M lineModel : getItems()) {
             if (lineModel.getKeys().getSelectedItem().equals(key)) {
                 initLineModel(lineModel, key);
             }
@@ -59,23 +53,17 @@ public abstract class BaseKeyModel extends ListModel<KeyValueLineModel> {
         updateKeys();
     };
 
-    public KeyValueLineModel createNewLineModel() {
+    public M createNewLineModel() {
         return createNewLineModel(null);
     }
 
-    public KeyValueLineModel createNewLineModel(String key) {
-        KeyValueLineModel lineModel = new KeyValueLineModel();
-        lineModel.getKeys().setItems(key == null ? getAvailableKeys() : getAvailableKeys(key));
-        lineModel.getKeys().getSelectedItemChangedEvent().addListener(keyChangedListener);
-        initLineModel(lineModel, key);
-        return lineModel;
-    }
+    public abstract M createNewLineModel(String key);
 
     public boolean isKeyValid(String key) {
         return !(key == null || key.equals(selectKey) || key.equals(noKeys));
     }
 
-    private List<String> getAvailableKeys(String key) {
+    protected List<String> getAvailableKeys(String key) {
         List<String> list = getAvailableKeys();
         boolean realKey = isKeyValid(key);
         if (realKey && !list.contains(key)) {
@@ -96,9 +84,9 @@ public abstract class BaseKeyModel extends ListModel<KeyValueLineModel> {
         return list;
     }
 
-    private List<String> getAvailableKeys() {
+    protected List<String> getAvailableKeys() {
         List<String> list =
-                (allKeys == null) ? new LinkedList<String>() : new LinkedList<>(allKeys);
+                (allKeys == null) ? new LinkedList<>() : new LinkedList<>(allKeys);
         list.removeAll(getUsedKeys());
         if (list.size() > 0) {
             list.add(0, selectKey);
@@ -121,11 +109,11 @@ public abstract class BaseKeyModel extends ListModel<KeyValueLineModel> {
         if (getItems() != null && usedKeys != null) {
             disableEvent = true;
             usedKeys.clear();
-            for (KeyValueLineModel lineModel : getItems()) {
+            for (M lineModel : getItems()) {
                 String key = lineModel.getKeys().getSelectedItem();
                 usedKeys.add(key);
             }
-            for (KeyValueLineModel lineModel : getItems()) {
+            for (M lineModel : getItems()) {
                 String key = lineModel.getKeys().getSelectedItem();
                 lineModel.getKeys().setItems(getAvailableKeys(key));
                 lineModel.getKeys().setSelectedItem(lineModel.getKeys().getItems().iterator().next());

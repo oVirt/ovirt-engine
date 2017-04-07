@@ -1,24 +1,16 @@
 package org.ovirt.engine.ui.common.widget.form.key_value;
 
-import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
-import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueLineModel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Widget;
 
-public class KeyValueLineWidget extends Composite implements HasValueChangeHandlers<KeyValueLineModel>, HasEditorDriver<KeyValueLineModel>, HasEnabled {
+public class KeyValueLineWidget extends BaseKeyLineWidget<KeyValueLineModel> {
 
     interface WidgetUiBinder extends UiBinder<Widget, KeyValueLineWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -27,15 +19,7 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
     interface Driver extends UiCommonEditorDriver<KeyValueLineModel, KeyValueLineWidget> {
     }
 
-    private boolean enabled = true;
-
-    @UiField
-    @Ignore
-    Row panel;
-
-    @UiField
-    @Path(value = "keys.selectedItem")
-    ListModelListBoxEditor<String> keyField;
+    protected final Driver driver = GWT.create(Driver.class);
 
     @UiField
     @Path(value = "value.entity")
@@ -45,44 +29,43 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
     @Path(value = "values.selectedItem")
     ListModelListBoxEditor<String> valuesField;
 
-    private final Driver driver = GWT.create(Driver.class);
-
     KeyValueLineWidget() {
+        super();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+        init();
+    }
+
+    @Override
+    protected void init() {
         driver.initialize(this);
         hideLabels();
     }
 
-    private void hideLabels() {
-        keyField.hideLabel();
+    @Override
+    protected void hideLabels() {
+        super.hideLabels();
         valueField.hideLabel();
         valuesField.hideLabel();
     }
 
+    @Override
     public void setUsePatternFly(boolean use) {
-        keyField.setUsePatternFly(use);
+        super.setUsePatternFly(use);
         valueField.setUsePatternFly(use);
         valuesField.setUsePatternFly(use);
     }
 
     @Override
     public void edit(final KeyValueLineModel object) {
-        updateKeyTitle(object);
-        object.getKeys().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
-            ValueChangeEvent.fire(KeyValueLineWidget.this, object);
-            updateKeyTitle(object);
-        });
+        super.doEdit(object);
         driver.edit(object);
     }
 
-    /**
-     * set dropdown with selected key tooltip.
-     */
-    private void updateKeyTitle(KeyValueLineModel object) {
-        String selectedKey = object.getKeys().getSelectedItem();
-        if (selectedKey != null) {
-            keyField.setWidgetTooltip(selectedKey);
-        }
+    @Override
+    public void setEnabled(boolean enabled) {
+        keyField.setEnabled(enabled);
+        valueField.setEnabled(enabled);
+        valuesField.setEnabled(enabled);
     }
 
     @Override
@@ -94,23 +77,4 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
     public void cleanup() {
         driver.cleanup();
     }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        keyField.setEnabled(enabled);
-        valueField.setEnabled(enabled);
-        valuesField.setEnabled(enabled);
-        this.enabled = enabled;
-    }
-
-    @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<KeyValueLineModel> handler) {
-        return addHandler(handler, ValueChangeEvent.getType());
-    }
-
 }

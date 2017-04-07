@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -13,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class KeyValueModel extends BaseKeyModel {
+public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
 
     public static final String PROPERTIES_DELIMETER = ";"; //$NON-NLS-1$
     public static final String KEY_VALUE_DELIMETER = "="; //$NON-NLS-1$
@@ -44,7 +45,6 @@ public class KeyValueModel extends BaseKeyModel {
         }
     }
 
-    @Override
     protected void setValueByKey(KeyValueLineModel lineModel, String key) {
         if (allRegExKeys.containsKey(key)) {
             lineModel.getValues().setSelectedItem(keyValueMap_used.get(key));
@@ -198,8 +198,8 @@ public class KeyValueModel extends BaseKeyModel {
     /**
      * Converts properties from map to string.
      *
-     * @param properties
-     *            specified properties
+     * @param map
+     *            map of properties
      * @return string containing all properties in map
      */
     public static String convertProperties(Map<String, String> map) {
@@ -217,4 +217,25 @@ public class KeyValueModel extends BaseKeyModel {
         return sb.toString();
     }
 
+    @Override
+    public KeyValueLineModel createNewLineModel(String key) {
+        KeyValueLineModel lineModel = new KeyValueLineModel();
+        lineModel.getKeys().setItems(key == null ? getAvailableKeys() : getAvailableKeys(key));
+        lineModel.getKeys().getSelectedItemChangedEvent().addListener(keyChangedListener);
+        initLineModel(lineModel, key);
+        return lineModel;
+    }
+
+    @Override
+    protected List<KeyValueLineModel> createLineModels(Set<String> usedKeys) {
+        List<KeyValueLineModel> lineModels = new ArrayList<>();
+
+        for (String key : usedKeys) {
+            KeyValueLineModel lineModel = createNewLineModel(key);
+            lineModel.getKeys().setSelectedItem(key);
+            lineModels.add(lineModel);
+        }
+
+        return lineModels;
+    }
 }

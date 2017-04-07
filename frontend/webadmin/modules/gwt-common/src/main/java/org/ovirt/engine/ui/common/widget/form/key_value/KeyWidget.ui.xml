@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+    <ui:style type="org.ovirt.engine.ui.common.widget.AddRemoveRowWidget.WidgetStyle">
+    .margin {
+        margin-left: 10px;
+        margin-top: 10px;
+    }
+
+    .buttonStyle {
+        margin-left: 2px;
+    }
+    </ui:style>
+
+    <g:FlowPanel>
+        <g:FlowPanel ui:field="contentPanel" addStyleNames="{style.margin}"/>
+    </g:FlowPanel>
+
+</ui:UiBinder>
