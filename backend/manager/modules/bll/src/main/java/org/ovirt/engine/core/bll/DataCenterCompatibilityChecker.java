@@ -16,9 +16,9 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -65,8 +65,9 @@ public class DataCenterCompatibilityChecker implements BackendService {
     }
 
     private void logAlert(Version version, StoragePool storagePool) {
-        AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
-        auditLog.setStoragePool(storagePool);
+        AuditLogable auditLog = new AuditLogableImpl();
+        auditLog.setStoragePoolId(storagePool.getId());
+        auditLog.setStoragePoolName(storagePool.getName());
         auditLog.addCustomValue("engineVersion", version.toString());
         auditLog.addCustomValue("dcVersion", storagePool.getCompatibilityVersion().toString());
         auditLogDirector.log(auditLog, AuditLogType.STORAGE_POOL_LOWER_THAN_ENGINE_HIGHEST_CLUSTER_LEVEL);
