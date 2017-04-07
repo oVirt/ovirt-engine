@@ -4,23 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
-import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueLineModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyLineModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class KeyValueWidget<T extends KeyValueModel> extends AddRemoveRowWidget<T, KeyValueLineModel, KeyValueLineWidget> {
+public class KeyWidget<T extends KeyModel> extends AddRemoveRowWidget<T, KeyLineModel, KeyLineWidget> {
 
-    interface WidgetUiBinder extends UiBinder<Widget, KeyValueWidget> {
+    interface WidgetUiBinder extends UiBinder<Widget, KeyWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
     private T model;
-    private final List<KeyValueLineWidget> widgets = new ArrayList<>();
+    private final List<KeyLineWidget> widgets = new ArrayList<>();
 
-    KeyValueWidget() {
+    KeyWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
@@ -33,11 +33,11 @@ public class KeyValueWidget<T extends KeyValueModel> extends AddRemoveRowWidget<
 
     @Override
     public T flush() {
-        super.flush();
-        for (KeyValueLineWidget lineWidget : widgets) {
-            lineWidget.flush();
+        for (KeyLineWidget widget : widgets) {
+            widget.flush();
         }
-        return model;
+
+        return super.flush();
     }
 
     @Override
@@ -49,37 +49,35 @@ public class KeyValueWidget<T extends KeyValueModel> extends AddRemoveRowWidget<
     }
 
     @Override
-    protected KeyValueLineWidget createWidget(KeyValueLineModel value) {
-        KeyValueLineWidget keyValueLineWidget = new KeyValueLineWidget();
-        keyValueLineWidget.edit(value);
-        keyValueLineWidget.setUsePatternFly(usePatternFly);
-        widgets.add(keyValueLineWidget);
-        return keyValueLineWidget;
+    protected KeyLineWidget createWidget(KeyLineModel value) {
+        KeyLineWidget keyLineWidget = new KeyLineWidget();
+        keyLineWidget.edit(value);
+        keyLineWidget.setUsePatternFly(usePatternFly);
+        widgets.add(keyLineWidget);
+        return keyLineWidget;
     }
 
     @Override
-    protected KeyValueLineModel createGhostValue() {
+    protected KeyLineModel createGhostValue() {
         return model.createNewLineModel();
     }
 
     @Override
-    protected boolean isGhost(KeyValueLineModel value) {
+    protected boolean isGhost(KeyLineModel value) {
         return !model.isKeyValid(value.getKeys().getSelectedItem());
     }
 
     @Override
-    protected void toggleGhost(KeyValueLineModel value, KeyValueLineWidget widget, boolean becomingGhost) {
+    protected void toggleGhost(KeyLineModel value, KeyLineWidget widget, boolean becomingGhost) {
         if (!widget.isEnabled()) {
             return;
         }
 
         super.toggleGhost(value, widget, becomingGhost);
-        widget.valueField.setEnabled(!becomingGhost);
-        widget.valuesField.setEnabled(!becomingGhost);
     }
 
     @Override
-    protected void onRemove(KeyValueLineModel value, KeyValueLineWidget widget) {
+    protected void onRemove(KeyLineModel value, KeyLineWidget widget) {
         super.onRemove(value, widget);
         model.updateKeys();
         widgets.remove(widget);

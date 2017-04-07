@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:style>
+        .fullWidth {
+            width: 90%;
+        }
+    </ui:style>
+
+    <b:Row ui:field="panel" addStyleNames="{style.fullWidth}">
+        <b:Column size="SM_12">
+            <e:ListModelListBoxEditor ui:field="keyField" usePatternFly="true" />
+        </b:Column>
+    </b:Row>
+
+</ui:UiBinder>
