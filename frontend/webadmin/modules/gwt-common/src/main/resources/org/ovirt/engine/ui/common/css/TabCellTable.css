@@ -7,7 +7,9 @@
 .cellTableHeader {
     border-top: 1px solid #E3EDF6;
     border-bottom: 1px solid #E3EDF6;
+    border-right: 1px solid #D7D7E1;
     padding: 0 0 0 2px;
+    margin-right: 3px;
     text-align: left;
     color: #111111;
     font-family: Arial,sans-serif;
@@ -19,12 +21,12 @@
 }
 
 .cellTableCell {
-    padding: 0px 8px 0px 2px;
+    padding: 0 8px 0 2px;
     height: 26px !important;
-    border-top: 0px;
+    border-top: 0;
     border-bottom: 1px solid #EDEEF0;
-    border-right: 0px;
-    border-left: 0px;
+    border-right: 0;
+    border-left: 0;
     white-space: nowrap;
     cursor: pointer;
 }

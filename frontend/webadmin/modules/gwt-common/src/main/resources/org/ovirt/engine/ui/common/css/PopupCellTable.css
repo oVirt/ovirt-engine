@@ -3,28 +3,9 @@
 }
 
 .cellTableHeader {
-    border-top: 1px solid #E3EDF6;
-    border-bottom: 1px solid #E3EDF6;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 2px;
-    padding-right: 2px;
-    text-align: left;
-    color: #111111;
-    font-family: Arial,sans-serif;
-    font-size: 11px;
-    background-color: #F0F2FF;
-    height: 28px;
-    white-space: nowrap;
+    padding: 0 2px 0 2px;
 }
 
 .cellTableCell {
-    padding: 0px 3px;
-    height: 26px !important;
-    border-top: 0px;
-    border-bottom: 1px solid #EDEEF0;
-    border-right: 0px;
-    border-left: 0px;
-    white-space: nowrap;
-    cursor: pointer;
+    padding: 0 3px;
 }
