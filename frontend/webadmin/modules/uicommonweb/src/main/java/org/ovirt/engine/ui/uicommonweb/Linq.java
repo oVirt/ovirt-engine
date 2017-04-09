@@ -52,7 +52,6 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
-import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
 public final class Linq {
     public static final Comparator<AuditLog> AuditLogComparer = Comparator.comparing(AuditLog::getAuditLogId);
@@ -129,25 +128,6 @@ public final class Linq {
 
     public static <TSource> List<TSource> where(Collection<TSource> source, Predicate<? super TSource> predicate) {
         return source.stream().filter(predicate).collect(Collectors.toList());
-    }
-
-    public static <TSource> ArrayList<TSource> distinct(List<TSource> source, IEqualityComparer<TSource> comparer) {
-        ArrayList<TSource> list = new ArrayList<>();
-        for (TSource a : source) {
-            boolean found = false;
-            for (TSource b : list) {
-                if (comparer.equals(a, b)) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                list.add(a);
-            }
-        }
-
-        return list;
     }
 
     public static <TResult> ArrayList<TResult> cast(Collection<?> source) {

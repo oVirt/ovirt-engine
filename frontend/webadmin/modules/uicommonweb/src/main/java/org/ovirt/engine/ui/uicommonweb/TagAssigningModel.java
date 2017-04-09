@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
@@ -12,17 +12,11 @@ public interface TagAssigningModel<T> {
 
     default void postGetAttachedTags(TagListModel tagListModel) {
         if (getLastExecutedCommand() == getAssignTagsCommand()) {
-            ArrayList<Tags> attachedTags =
-                    Linq.distinct(getAllAttachedTags(), new TagsEqualityComparer());
-            for (Tags tag : attachedTags) {
-                int count = 0;
-                for (Tags tag2 : getAllAttachedTags()) {
-                    if (tag2.getTagId().equals(tag.getTagId())) {
-                        count++;
-                    }
-                }
-                getAttachedTagsToEntities().put(tag.getTagId(), count == getSelectedItems().size());
-            }
+            getAllAttachedTags().stream()
+                    .collect(Collectors.groupingBy(Tags::getTagId, Collectors.counting()))
+                    .forEach((id, count) ->
+                            getAttachedTagsToEntities().put(id, count.intValue() == getSelectedItems().size()));
+
             tagListModel.setAttachedTagsToEntities(getAttachedTagsToEntities());
         }
         else if ("OnAssignTags".equals(getLastExecutedCommand().getName())) { //$NON-NLS-1$
