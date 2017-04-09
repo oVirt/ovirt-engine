@@ -9,29 +9,21 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class VnicProfileHelper {
     private Set<String> invalidNetworkNames = new HashSet<>();
@@ -101,12 +93,17 @@ public class VnicProfileHelper {
 
         for (VnicProfile profile : networkProfiles) {
             if ((user == null && !profile.isPortMirroring())
-                    || (user != null && isVnicProfilePermitted(user, profile, false))) {
+                    || (user != null
+                            && getBackwardCompatibilityVnicHelper().isVnicProfilePermitted(user, profile, false))) {
                 return profile;
             }
         }
 
         return null;
+    }
+
+    private BackwardCompatibilityVnicHelper getBackwardCompatibilityVnicHelper() {
+        return Injector.get(BackwardCompatibilityVnicHelper.class);
     }
 
     private VnicProfile getVnicProfileForNetwork(Network network, String vnicProfileName) {
@@ -125,14 +122,6 @@ public class VnicProfileHelper {
         return null;
     }
 
-    private static boolean isVnicProfilePermitted(DbUser user, VnicProfile profile, boolean portMirroringRequired) {
-        return portMirroringRequired == profile.isPortMirroring()
-                && getPermissionDao().getEntityPermissions(user.getId(),
-                        ActionGroup.CONFIGURE_VM_NETWORK,
-                        profile.getId(),
-                        VdcObjectType.VnicProfile) != null;
-    }
-
     private void markNicHasNoProfile(VmNetworkInterface iface) {
         invalidNetworkNames.add(iface.getNetworkName());
         invalidIfaceNames.add(iface.getName());
@@ -147,81 +136,6 @@ public class VnicProfileHelper {
             logable.addCustomValue("Interfaces", StringUtils.join(invalidIfaceNames, ','));
             new AuditLogDirector().log(logable, logType);
         }
-    }
-
-    /**
-     * Since the network name and port mirroring attributed were replaced on the {@link VmNic} with the vnic profile id,
-     * a certain logic should be applied to translate a given usage of the former api to the expected one.
-     *
-     * @param nic
-     *            the candidate nic to apply the logic for
-     * @param oldNic
-     *            the existing nic
-     * @param networkName
-     *            the network name to be configured for the nic
-     * @param portMirroring
-     *            indicator if port mirroring should be configured for the network
-     * @param vm
-     *            the vm which contains the nic
-     * @param user
-     *            the user which execute the action
-     */
-    public static ValidationResult updateNicForBackwardCompatibility(VmNic nic,
-            VmNic oldNic,
-            String networkName,
-            boolean portMirroring,
-            VmBase vm,
-            DbUser user) {
-
-        // if network wasn't provided, no need for backward compatibility logic
-        if (networkName == null) {
-            return ValidationResult.VALID;
-        }
-
-        // if the network was provided but unchanged, use the provided vnic profile id
-        if (oldNic != null && oldNic.getVnicProfileId() != null) {
-            VnicProfile oldProfile = getVnicProfileDao().get(oldNic.getVnicProfileId());
-            Network oldNetwork = getNetworkDao().get(oldProfile.getNetworkId());
-            if (StringUtils.equals(networkName, oldNetwork.getName())) {
-                return ValidationResult.VALID;
-            }
-        }
-
-        // empty network name is considered as an empty (unlinked) network
-        if ("".equals(networkName)) {
-            if (portMirroring) {
-                return new ValidationResult(EngineMessage.PORT_MIRRORING_REQUIRES_NETWORK);
-            } else {
-                nic.setVnicProfileId(null);
-                return ValidationResult.VALID;
-            }
-        }
-
-        if (vm.getClusterId() == null) {
-            return networkOfGivenNameNotExistsInCluster(networkName);
-        }
-
-        // if the network was provided with changed name, resolve a suitable profile for it
-        Network network = getNetworkDao().getByNameAndCluster(networkName, vm.getClusterId());
-        if (network == null) {
-            return networkOfGivenNameNotExistsInCluster(networkName);
-        }
-
-        List<VnicProfile> vnicProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
-        for (VnicProfile profile : vnicProfiles) {
-            if (isVnicProfilePermitted(user, profile, portMirroring)) {
-                nic.setVnicProfileId(profile.getId());
-                return ValidationResult.VALID;
-            }
-        }
-
-        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_FIND_VNIC_PROFILE_FOR_NETWORK);
-    }
-
-    private static ValidationResult networkOfGivenNameNotExistsInCluster(String networkName) {
-        EngineMessage engineMessage = EngineMessage.NETWORK_OF_GIVEN_NAME_NOT_EXISTS_IN_CLUSTER;
-        return new ValidationResult(engineMessage,
-            ReplacementUtils.getVariableAssignmentString(engineMessage, networkName));
     }
 
     private Map<String, Network> getNetworksInCluster() {
@@ -244,7 +158,7 @@ public class VnicProfileHelper {
         return vnicProfilesInDc;
     }
 
-    private static NetworkDao getNetworkDao() {
+    private NetworkDao getNetworkDao() {
         return DbFacade.getInstance().getNetworkDao();
     }
 
@@ -252,11 +166,7 @@ public class VnicProfileHelper {
         return DbFacade.getInstance().getVnicProfileViewDao();
     }
 
-    private static VnicProfileDao getVnicProfileDao() {
+    private VnicProfileDao getVnicProfileDao() {
         return DbFacade.getInstance().getVnicProfileDao();
-    }
-
-    private static PermissionDao getPermissionDao() {
-        return DbFacade.getInstance().getPermissionDao();
     }
 }

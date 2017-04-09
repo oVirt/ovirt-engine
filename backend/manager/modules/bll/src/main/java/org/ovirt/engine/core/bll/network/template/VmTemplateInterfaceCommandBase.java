@@ -2,11 +2,13 @@ package org.ovirt.engine.core.bll.network.template;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
+import org.ovirt.engine.core.bll.network.vm.BackwardCompatibilityVnicHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -17,6 +19,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInterfaceParameters>
         extends VmTemplateCommand<T> {
+
+    @Inject
+    private BackwardCompatibilityVnicHelper backwardCompatibilityVnicHelper;
 
     public VmTemplateInterfaceCommandBase(Guid commandId) {
         super(commandId);
@@ -51,12 +56,14 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
     }
 
     protected boolean updateVnicForBackwardCompatibility(VmNic oldNic) {
-        if (!validate(VnicProfileHelper.updateNicForBackwardCompatibility(getParameters().getInterface(),
-                oldNic,
-                getParameters().getNetworkName(),
-                getParameters().isPortMirroring(),
-                getVmTemplate(),
-                getCurrentUser()))) {
+        if (!validate(
+                backwardCompatibilityVnicHelper.updateNicForBackwardCompatibility(
+                        getParameters().getInterface(),
+                        oldNic,
+                        getParameters().getNetworkName(),
+                        getParameters().isPortMirroring(),
+                        getVmTemplate(),
+                        getCurrentUser()))) {
             return false;
         }
 

@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
@@ -25,6 +27,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
+
+    @Inject
+    private BackwardCompatibilityVnicHelper backwardCompatibilityVnicHelper;
 
     protected AbstractVmInterfaceCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -94,7 +99,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     }
 
     protected boolean updateVnicForBackwardCompatibility(VmNic oldNic) {
-        if (!validate(VnicProfileHelper.updateNicForBackwardCompatibility(getParameters().getInterface(),
+        if (!validate(backwardCompatibilityVnicHelper.updateNicForBackwardCompatibility(getParameters().getInterface(),
                 oldNic,
                 getParameters().getNetworkName(),
                 getParameters().isPortMirroring(),
