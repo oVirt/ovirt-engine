@@ -9,9 +9,13 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.GetCinderEntityByStorageDomainIdParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -22,10 +26,14 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParameters> extends QueriesCommandBase<P> {
     @Inject
     private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     public GetUnregisteredDiskQuery(P parameters) {
         super(parameters);
@@ -86,8 +94,11 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
             getQueryReturnValue().setSucceeded(false);
             return;
         }
-
         DiskImage newDiskImage = (DiskImage) imageInfoReturn.getReturnValue();
+        if (!fetchQcowCompat(storagePoolId, storageDomainId, diskId, volumeId, newDiskImage)) {
+            getQueryReturnValue().setSucceeded(false);
+            return;
+        }
         if (StringUtils.isNotEmpty(newDiskImage.getDescription())) {
             try {
                 MetadataDiskDescriptionHandler.getInstance()
@@ -96,9 +107,33 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
                 log.warn("Exception while parsing JSON for disk. Exception: '{}'", e);
             }
         }
-
         newDiskImage.setStoragePoolId(storagePoolId);
         getQueryReturnValue().setReturnValue(newDiskImage);
         getQueryReturnValue().setSucceeded(true);
+    }
+
+    private boolean fetchQcowCompat(Guid storagePoolId,
+            Guid storageDomainId,
+            Guid diskId,
+            Guid volumeId,
+            DiskImage newDiskImage) {
+        if (newDiskImage.getVolumeFormat().equals(VolumeFormat.COW)) {
+            StoragePool sp = storagePoolDao.get(storagePoolId);
+            QemuImageInfo qemuImageInfo = null;
+            if (sp != null && FeatureSupported.qcowCompatSupported(sp.getCompatibilityVersion())) {
+                qemuImageInfo = ImagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
+                        storageDomainId,
+                        diskId,
+                        volumeId,
+                        null,
+                        true);
+                if (qemuImageInfo == null) {
+                    getQueryReturnValue().setExceptionString("Failed to fetch qemu image info from storage");
+                    return false;
+                }
+                newDiskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
+            }
+        }
+        return true;
     }
 }
