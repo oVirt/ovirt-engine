@@ -3801,7 +3801,7 @@ GROUP BY labels.label_id, labels.label_name, labels.read_only;
 
 
 CREATE OR REPLACE VIEW disk_vm_element_extended AS
-    SELECT dve.*, vd.is_plugged, vd.logical_name
+    SELECT dve.*, vd.is_plugged, vd.logical_name, vd.is_readonly
     FROM disk_vm_element dve
     JOIN vm_device vd
         ON dve.disk_id = vd.device_id
