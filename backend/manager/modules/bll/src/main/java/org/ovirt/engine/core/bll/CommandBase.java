@@ -563,7 +563,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 freeLockEndAction();
                 // NOTE: this update persists updates made during the endSuccessfully()/endWithFailure() execution.
                 // The update is done intentionally after the freeLock() call, change with care.
-                persistCommandIfNeeded();
+                updateCommandIfNeeded();
                 if (getCommandShouldBeLogged()) {
                     logCommand();
                 }
