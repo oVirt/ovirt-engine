@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.FenceVolumeJobCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -37,5 +38,27 @@ public class FenceVolumeJobCommand<T extends FenceVolumeJobCommandParameters> ex
         // case another FenceVolumeJobCommand call will be executed and this job will silently fail because of an
         // unmatched generation.
         return true;
+    }
+
+    @Override
+    protected void endSuccessfully() {
+        endActions();
+    }
+
+    @Override
+    protected void endWithFailure() {
+        endActions();
+    }
+
+    private void endActions() {
+        // FenceVolumeJob is executed in order to fence operations that were submitted and are supposed
+        // to be performed on the volume.
+        // In case of failure to fence an operation, the engine may attempt to fence it again - when the fencing
+        // fails constantly the number of commands will grow indefinitely. As we store a record for each command in
+        // the commands table - that's something we should avoid.
+        // The engine uses the command record just for polling (to avoid executing another fence operation before the
+        // previous one ended) and not for determining if the fencing succeeded (it polls the entity to verify that),
+        // therefore we are fine with deleting the command entity after the execution ends.
+        CommandCoordinatorUtil.removeAllCommandsInHierarchy(getCommandId());
     }
 }
