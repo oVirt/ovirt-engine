@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -179,8 +180,12 @@ public class AttachDiskModel extends NewDiskModel {
                                     diskModel.getIsBootable().setIsChangeable(false);
                                 }
                             }
-                            List<EntityModel<DiskModel>> entities = Linq.toEntityModelList(
-                                    Linq.filterDisksByType(diskModels, diskStorageType));
+                            List<EntityModel<DiskModel>> entities =
+                                    diskModels.stream()
+                                        .filter(m -> m.getDisk().getDiskStorageType() == diskStorageType)
+                                        .map(EntityModel::new)
+                                        .collect(Collectors.toList());
+
                             initAttachableDisks(entities);
                         }
                     }), getVmId());

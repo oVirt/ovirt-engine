@@ -172,17 +172,6 @@ public final class Linq {
         return where(storageDomains, new IdsPredicate<>(storageIds));
     }
 
-    public static <T> ArrayList<EntityModel<T>> toEntityModelList(List<T> list) {
-        ArrayList<EntityModel<T>> entityModelList = new ArrayList<>();
-
-        for (T item : list) {
-            EntityModel<T> model = new EntityModel<>(item);
-            entityModelList.add(model);
-        }
-
-        return entityModelList;
-    }
-
     public static List<DiskModel> filterDisksByType(List<DiskModel> diskModels, DiskStorageType type) {
         return where(diskModels, m -> m.getDisk().getDiskStorageType() == type);
     }
