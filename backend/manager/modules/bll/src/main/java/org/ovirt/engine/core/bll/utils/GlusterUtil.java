@@ -63,7 +63,6 @@ import org.w3c.dom.NodeList;
 @Singleton
 public class GlusterUtil {
     private static final Logger log = LoggerFactory.getLogger(GlusterUtil.class);
-    private static final int SSH_PORT = 22;
     private static final String PEER = "peer";
     private static final String HOST_NAME = "hostname";
     private static final String STATE = "state";
@@ -190,7 +189,7 @@ public class GlusterUtil {
         Integer timeout = Config.<Integer> getValue(ConfigValues.ConnectToServerTimeoutInSeconds) * 1000;
         client.setHardTimeout(timeout);
         client.setSoftTimeout(timeout);
-        client.setHost(serverName, SSH_PORT);
+        client.setHost(serverName);
         client.setUser(userId);
         client.setPassword(password);
         try {
