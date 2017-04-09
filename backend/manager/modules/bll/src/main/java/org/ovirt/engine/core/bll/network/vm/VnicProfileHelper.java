@@ -44,7 +44,7 @@ public class VnicProfileHelper {
      * Updates the vnic profile id of a given {@code VmNic} by a network name and vnic profile name and marks the vnic
      * as invalid if no match for vnic profile found.
      *
-     * @param iface
+     * @param vmInterface
      *            The vm network interface to be updated
      * @param user
      *            The user which performs the action
@@ -102,7 +102,7 @@ public class VnicProfileHelper {
         return null;
     }
 
-    private BackwardCompatibilityVnicHelper getBackwardCompatibilityVnicHelper() {
+    BackwardCompatibilityVnicHelper getBackwardCompatibilityVnicHelper() {
         return Injector.get(BackwardCompatibilityVnicHelper.class);
     }
 
@@ -130,11 +130,11 @@ public class VnicProfileHelper {
 
     public void auditInvalidInterfaces(String entityName) {
         if (!invalidNetworkNames.isEmpty()) {
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
+            AuditLogableBase logable = new AuditLogableBase();
             logable.addCustomValue("EntityName", entityName);
             logable.addCustomValue("Networks", StringUtils.join(invalidNetworkNames, ','));
             logable.addCustomValue("Interfaces", StringUtils.join(invalidIfaceNames, ','));
-            new AuditLogDirector().log(logable, logType);
+            createAuditLogDirector().log(logable, logType);
         }
     }
 
@@ -158,7 +158,7 @@ public class VnicProfileHelper {
         return vnicProfilesInDc;
     }
 
-    private NetworkDao getNetworkDao() {
+    NetworkDao getNetworkDao() {
         return DbFacade.getInstance().getNetworkDao();
     }
 
@@ -168,5 +168,9 @@ public class VnicProfileHelper {
 
     private VnicProfileDao getVnicProfileDao() {
         return DbFacade.getInstance().getVnicProfileDao();
+    }
+
+    AuditLogDirector createAuditLogDirector() {
+        return new AuditLogDirector();
     }
 }
