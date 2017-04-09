@@ -182,7 +182,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
                             allAttachedTags.addAll(returnValue);
                             selectedItemsCounter++;
                             if (selectedItemsCounter == getSelectedItems().size()) {
-                                postGetAttachedTags(UserListModel.this, model);
+                                postGetAttachedTags(model);
                             }
 
                         }
@@ -198,7 +198,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
                             allAttachedTags.addAll(returnValue);
                             selectedItemsCounter++;
                             if (selectedItemsCounter == getSelectedItems().size()) {
-                                postGetAttachedTags(UserListModel.this, model);
+                                postGetAttachedTags(model);
                             }
 
                         }
@@ -207,10 +207,9 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         }
     }
 
-    private void postGetAttachedTags(UserListModel userListModel, TagListModel tagListModel) {
-        if (userListModel.getLastExecutedCommand() == getAssignTagsCommand()) {
-            ArrayList<Tags> attachedTags =
-                    Linq.distinct(userListModel.allAttachedTags, new TagsEqualityComparer());
+    private void postGetAttachedTags(TagListModel tagListModel) {
+        if (getLastExecutedCommand() == getAssignTagsCommand()) {
+            ArrayList<Tags> attachedTags = Linq.distinct(allAttachedTags, new TagsEqualityComparer());
             for (Tags a : attachedTags) {
                 int count = 0;
                 for (Tags b : allAttachedTags) {
@@ -219,13 +218,12 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
                     }
                 }
 
-                userListModel.attachedTagsToEntities.put(a.getTagId(), count == userListModel.getSelectedItems()
-                        .size());
+                attachedTagsToEntities.put(a.getTagId(), count == getSelectedItems().size());
             }
-            tagListModel.setAttachedTagsToEntities(userListModel.attachedTagsToEntities);
+            tagListModel.setAttachedTagsToEntities(attachedTagsToEntities);
         }
-        else if ("OnAssignTags".equals(userListModel.getLastExecutedCommand().getName())) { //$NON-NLS-1$
-            userListModel.postOnAssignTags(tagListModel.getAttachedTagsToEntities());
+        else if ("OnAssignTags".equals(getLastExecutedCommand().getName())) { //$NON-NLS-1$
+            postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
     }
 
