@@ -431,7 +431,7 @@ install-packaging-files: \
 	# copy all of packaging/setup but exclude all tests.
 	$(MAKE) copy-recursive SOURCEDIR=packaging/setup TARGETDIR="$(DESTDIR)$(DATA_DIR)/setup" \
 		EXCLUDE_GEN="$(GENERATED)" \
-		EXCLUDE="$$(echo $$(find packaging/setup/tests))"
+		EXCLUDE="$$(echo $$(find packaging/setup/tests)) packaging/setup/plugins/README"
 
 ifneq ($(PYTHON3),)
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON3_DIR)" EXCLUDE_GEN="$(GENERATED)"

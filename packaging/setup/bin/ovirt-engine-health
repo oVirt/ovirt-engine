@@ -1,7 +1,7 @@
 #!/bin/sh
 #
-# ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# ovirt-engine-health -- ovirt engine setup health check
+# Copyright (C) 2017 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ Usage: $0
         Load configuration files.
     --config-append=file
         Load extra configuration files or answer file.
-    --offline
-        Offline mode.
+    --no-offline
+        Online mode.
     --generate-answer=file
         Generate answer file.
     --reconfigure-optional-components
@@ -45,9 +45,11 @@ __EOF__
 script="$(readlink -f "$0")"
 scriptdir="$(dirname "${script}")"
 . "${scriptdir}/ovirt-engine-setup.env"
-baseenv="\"APPEND:BASE/pluginPath=str:${scriptdir}/../plugins\" APPEND:BASE/pluginGroups=str:ovirt-engine-common:ovirt-engine-setup:ovirt-engine-checks"
+baseenv="\"APPEND:BASE/pluginPath=str:${scriptdir}/../plugins\" APPEND:BASE/pluginGroups=str:ovirt-engine-common:ovirt-engine-checks:ovirt-engine-health"
 otopienv=""
 environment=""
+
+OFFLINE=1
 
 while [ -n "$1" ]; do
 	x="$1"
@@ -72,8 +74,8 @@ while [ -n "$1" ]; do
 		--jboss-home=*)
 			environment="${environment} \"OVESETUP_CONFIG/jbossHome=str:${v}\""
 		;;
-		--offline)
-			environment="${environment} OVESETUP_CORE/offlinePackager=bool:True PACKAGER/yumpackagerEnabled=bool:False"
+		--no-offline)
+			OFFLINE=
 		;;
 		--reconfigure-optional-components)
 			environment="${environment} OVESETUP_CORE/reconfigureOptionalComponents=bool:True"
@@ -92,5 +94,12 @@ while [ -n "$1" ]; do
 		;;
 	esac
 done
+
+[ -n "${OFFLINE}" ] && environment="${environment} OVESETUP_CORE/offlinePackager=bool:True PACKAGER/yumpackagerEnabled=bool:False"
+
+if ! python -c 'import psycopg2' > /dev/null 2>&1; then
+	echo "Missing library psycopg2. This is probably not an oVirt engine machine."
+	exit 1
+fi
 
 exec "${otopidir}/otopi" "${baseenv} ${environment} ${otopienv}"

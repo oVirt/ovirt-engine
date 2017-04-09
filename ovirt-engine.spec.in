@@ -389,7 +389,6 @@ Conflicts:	%{name}-reports-setup < 4.0.0
 %description setup-base
 %{ovirt_product_name_short} suite base setup components.
 
-
 %pre setup-base
 %ovirt_create_user_engine
 
@@ -607,6 +606,16 @@ Requires:	python-docker-py
 %description setup-plugin-dockerc
 Docker container plugin for %{ovirt_product_name_short}'s setup
 %endif
+
+%package health-check-bundler
+Summary:	%{ovirt_product_name_short} health check bundler.
+Group:		%{ovirt_product_group}
+Requires:	%{name}-setup-base = %{version}-%{release}
+Requires:	makeself >= 2.2
+Requires:	otopi-devtools >= 1.6.0
+
+%description health-check-bundler
+A utility for creating a bundle script that runs a health check.
 
 %prep
 %setup -c -q
@@ -1128,6 +1137,10 @@ fi
 %{_mandir}/man8/engine-backup.*
 %{engine_data}/bin/engine-backup.sh
 %{engine_data}/bin/engine-migrate-he.py
+
+%files health-check-bundler
+%{engine_data}/setup/bin/bundle-ovirt-engine-health
+%{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
 * Mon Dec 19 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.0

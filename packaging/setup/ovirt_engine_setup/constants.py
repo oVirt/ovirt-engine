@@ -91,6 +91,7 @@ class FileLocations(object):
     OVIRT_OVIRT_REMOVE_LOG_PREFIX = 'ovirt-engine-remove'
     OVIRT_OVIRT_RENAME_LOG_PREFIX = 'ovirt-engine-rename'
     OVIRT_OVIRT_PROVISIONDB_LOG_PREFIX = 'ovirt-engine-provisiondb'
+    OVIRT_OVIRT_HEALTH_CHECK_LOG_PREFIX = 'ovirt-engine-health-check'
 
     OVIRT_OVIRT_SETUP_CONFIG_FILE = config.ENGINE_SETUP_CONFIG
     OVIRT_SETUP_OSINFO_REPOSITORY_DIR = os.path.join(
@@ -258,6 +259,7 @@ class Const(object):
     ACTION_REMOVE = 'cleanup'
     ACTION_RENAME = 'rename'
     ACTION_PROVISIONDB = 'provisiondb'
+    ACTION_HEALTHCHECK = 'health-check'
     FIREWALL_MANAGER_HUMAN = 'skip'
     FIREWALL_MANAGER_IPTABLES = 'iptables'
     FIREWALL_MANAGER_FIREWALLD = 'firewalld'

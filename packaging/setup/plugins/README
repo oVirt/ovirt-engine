@@ -1,0 +1,13 @@
+The subdirectories of plugins/ are split according to the utility that runs
+them. Most utilities use plugins from ovirt-engine-common. E.g. 'engine-setup'
+loads plugins from 'ovirt-engine-common' and from 'ovirt-engine-setup'.
+
+Subdirectories of these subdirectories are split according to the package
+that provides them. E.g. all of these:
+
+ovirt-engine-common/ovirt-engine-common
+ovirt-engine-provisiondb/ovirt-engine-common
+ovirt-engine-remove/ovirt-engine-common
+ovirt-engine-setup/ovirt-engine-common
+
+are provided by the package ovirt-engine-setup-plugin-ovirt-engine-common.
