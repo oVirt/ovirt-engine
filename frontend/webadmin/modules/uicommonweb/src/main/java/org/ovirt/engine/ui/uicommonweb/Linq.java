@@ -131,8 +131,7 @@ public final class Linq {
         return source.stream().filter(predicate).collect(Collectors.toList());
     }
 
-    public static <TSource> ArrayList<TSource> distinct(ArrayList<TSource> source,
-            IEqualityComparer<TSource> comparer) {
+    public static <TSource> ArrayList<TSource> distinct(List<TSource> source, IEqualityComparer<TSource> comparer) {
         ArrayList<TSource> list = new ArrayList<>();
         for (TSource a : source) {
             boolean found = false;
