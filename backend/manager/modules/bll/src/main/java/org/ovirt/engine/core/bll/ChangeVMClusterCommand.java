@@ -46,6 +46,9 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     @Inject
     private AffinityGroupDao affinityGroupDao;
 
+    @Inject
+    private NetworkHelper networkHelper;
+
     private boolean dedicatedHostWasCleared;
 
     private Guid originalClusterId;
@@ -126,7 +129,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
         for (final VmNic iface : interfaces) {
             if (iface.getVnicProfileId() != null) {
-                final Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
+                final Network network = networkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
                 boolean networkFoundInCluster =
                         networks.stream().anyMatch(n -> Objects.equals(n.getId(), network.getId()));
 

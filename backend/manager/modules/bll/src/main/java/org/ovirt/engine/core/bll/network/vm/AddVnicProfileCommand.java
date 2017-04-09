@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 
 public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends VnicProfileCommandBase<T> {
@@ -29,7 +28,7 @@ public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends V
     }
 
     @Inject
-    private NetworkFilterDao networkFilterDao;
+    private NetworkHelper networkHelper;
 
     @Override
     protected boolean validate() {
@@ -53,7 +52,7 @@ public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends V
         getVnicProfile().setId(Guid.newGuid());
         updateDefaultNetworkFilterIfRequired();
         vnicProfileDao.save(getVnicProfile());
-        NetworkHelper.addPermissionsOnVnicProfile(getCurrentUser().getId(),
+        networkHelper.addPermissionsOnVnicProfile(getCurrentUser().getId(),
                 getVnicProfile().getId(),
                 getParameters().isPublicUse());
         getReturnValue().setActionReturnValue(getVnicProfile().getId());
@@ -62,7 +61,7 @@ public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends V
 
     private void updateDefaultNetworkFilterIfRequired() {
         if (getParameters().isUseDefaultNetworkFilterId() && !getVnicProfile().isPassthrough()) {
-            final NetworkFilter networkFilter = NetworkHelper.resolveVnicProfileDefaultNetworkFilter(networkFilterDao);
+            final NetworkFilter networkFilter = networkHelper.resolveVnicProfileDefaultNetworkFilter();
             if (networkFilter != null) {
                 final Guid networkFilterId = networkFilter.getId();
                 setNetworkFilterId(networkFilterId);

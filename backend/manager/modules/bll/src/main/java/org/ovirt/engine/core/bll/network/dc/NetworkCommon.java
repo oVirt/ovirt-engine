@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -20,6 +21,9 @@ public abstract class NetworkCommon<T extends ActionParametersBase> extends Comm
 
     @Inject
     private VnicProfileDao vnicProfileDao;
+
+    @Inject
+    protected NetworkHelper networkHelper;
 
     public NetworkCommon(Guid id) {
         super(id);

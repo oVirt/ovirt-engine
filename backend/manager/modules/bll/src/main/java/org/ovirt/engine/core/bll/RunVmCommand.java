@@ -138,6 +138,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Inject
     private ProviderProxyFactory providerProxyFactory;
 
+    @Inject
+    private NetworkHelper networkHelper;
+
     protected RunVmCommand(Guid commandId) {
         super(commandId);
     }
@@ -613,7 +616,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         for (VmNic iface : getVm().getInterfaces()) {
             VnicProfile vnicProfile = vnicProfileDao.get(iface.getVnicProfileId());
-            Network network = NetworkHelper.getNetworkByVnicProfile(vnicProfile);
+            Network network = networkHelper.getNetworkByVnicProfile(vnicProfile);
             VmDevice vmDevice = nicDevices.get(new VmDeviceId(iface.getId(), getVmId()));
             if (network != null && network.isExternal() && vmDevice.isPlugged()) {
                 Provider<?> provider = providerDao.get(network.getProvidedBy().getProviderId());

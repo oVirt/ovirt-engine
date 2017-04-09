@@ -63,6 +63,9 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Inject
     private ExternalNetworkManagerFactory externalNetworkManagerFactory;
 
+    @Inject
+    private NetworkHelper networkHelper;
+
     public UpdateVmInterfaceCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVmId(parameters.getVmId());
@@ -100,8 +103,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         try {
             if (isVnicProfileChanged(oldIface, getInterface())) {
-                Network newNetwork = NetworkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
-                Network oldNetwork = NetworkHelper.getNetworkByVnicProfileId(oldIface.getVnicProfileId());
+                Network newNetwork = networkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
+                Network oldNetwork = networkHelper.getNetworkByVnicProfileId(oldIface.getVnicProfileId());
                 if (!Objects.equals(oldNetwork, newNetwork)) {
                     externalNetworkManagerFactory.create(oldIface).deallocateIfExternal();
                 }
@@ -239,9 +242,9 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        Network network = NetworkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
+        Network network = networkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
         if (getRequiredAction() == RequiredAction.UPDATE_VM_DEVICE) {
-            Network oldNetwork = NetworkHelper.getNetworkByVnicProfileId(oldIface.getVnicProfileId());
+            Network oldNetwork = networkHelper.getNetworkByVnicProfileId(oldIface.getVnicProfileId());
             if (!validate(nicValidator.hotUpdateDoneWithInternalNetwork(oldNetwork, network))
                     || !validate(nicValidator.networkExistsOnHost(network))) {
                 return false;

@@ -47,6 +47,9 @@ public class ChangeVmClusterValidator {
     @Inject
     private VmHandler vmHandler;
 
+    @Inject
+    private NetworkHelper networkHelper;
+
     private VmCommand parentCommand;
     private final Guid targetClusterId;
     private Version vmCompatibilityVersion;
@@ -172,7 +175,7 @@ public class ChangeVmClusterValidator {
         List<Network> networks = networkDao.getAllForCluster(targetClusterId);
         StringBuilder missingNets = new StringBuilder();
         for (VmNic iface : interfaces) {
-            Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
+            Network network = networkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
             if (network != null) {
                 boolean exists = false;
                 for (Network net : networks) {

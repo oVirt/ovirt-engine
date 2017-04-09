@@ -45,6 +45,8 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     private VnicProfileDao vnicProfileDao;
     @Inject
     private StoragePoolDao storagePoolDao;
+    @Inject
+    private NetworkHelper networkHelper;
 
     public AddEmptyStoragePoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -106,10 +108,10 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         net.setDataCenterId(getStoragePool().getId());
         net.setVmNetwork(true);
         networkDao.save(net);
-        NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), net.getId());
-        VnicProfile profile = NetworkHelper.createVnicProfile(net, networkFilterDao);
+        networkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), net.getId());
+        VnicProfile profile = networkHelper.createVnicProfile(net);
         vnicProfileDao.save(profile);
-        NetworkHelper.addPermissionsOnVnicProfile(getCurrentUser().getId(), profile.getId(), true);
+        networkHelper.addPermissionsOnVnicProfile(getCurrentUser().getId(), profile.getId(), true);
     }
 
     @Override

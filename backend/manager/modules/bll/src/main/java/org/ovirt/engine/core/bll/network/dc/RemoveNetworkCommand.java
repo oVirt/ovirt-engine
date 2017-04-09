@@ -102,7 +102,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     }
 
     private void removeNetworkFromHosts() {
-        NetworkHelper.removeNetworkFromHostsInDataCenter(getNetwork(),
+        networkHelper.removeNetworkFromHostsInDataCenter(getNetwork(),
                 getStoragePoolId(),
                 cloneContextAndDetachFromParent()
         );

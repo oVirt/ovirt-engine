@@ -3,10 +3,13 @@ package org.ovirt.engine.core.bll.network.cluster;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.Backend;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -19,15 +22,35 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 /**
- * Class to hold common static methods that are used in several different places.
+ * Class to hold common network methods that are used in several different places.
  */
+@Singleton
 public class NetworkHelper {
+
+    @Inject
+    private BackendInternal backend;
+
+    @Inject
+    private VnicProfileDao vnicProfileDao;
+
+    @Inject
+    private NetworkDao networkDao;
+
+    @Inject
+    private InterfaceDao interfaceDao;
+
+    @Inject
+    private NetworkFilterDao networkFilterDao;
+
+    @Inject
+    private RemoveNetworkParametersBuilder removeNetworkParametersBuilder;
 
     /**
      * Grants permissions on the network entity to the given user
@@ -37,7 +60,7 @@ public class NetworkHelper {
      * @param networkId
      *            the Network ID
      */
-    public static void addPermissionsOnNetwork(Guid userId, Guid networkId) {
+    public void addPermissionsOnNetwork(Guid userId, Guid networkId) {
         MultiLevelAdministrationHandler.addPermission(userId, networkId, PredefinedRoles.NETWORK_ADMIN, VdcObjectType.Network);
     }
 
@@ -52,7 +75,7 @@ public class NetworkHelper {
      * @param publicUse
      *            Indicates of the network is intended for a public user
      */
-    public static void addPermissionsOnVnicProfile(Guid userId, Guid vnicProfileId, boolean publicUse) {
+    public void addPermissionsOnVnicProfile(Guid userId, Guid vnicProfileId, boolean publicUse) {
         MultiLevelAdministrationHandler.addPermission(userId,
                 vnicProfileId,
                 PredefinedRoles.NETWORK_ADMIN,
@@ -67,52 +90,52 @@ public class NetworkHelper {
         }
     }
 
-    public static VnicProfile createVnicProfile(Network net, NetworkFilterDao networkFilterDao) {
+    public VnicProfile createVnicProfile(Network net) {
         VnicProfile profile = new VnicProfile();
         profile.setId(Guid.newGuid());
         profile.setName(net.getName());
         profile.setNetworkId(net.getId());
         profile.setPortMirroring(false);
 
-        NetworkFilter defaultNetworkFilter = resolveVnicProfileDefaultNetworkFilter(networkFilterDao);
+        NetworkFilter defaultNetworkFilter = resolveVnicProfileDefaultNetworkFilter();
         profile.setNetworkFilterId(defaultNetworkFilter == null ? null : defaultNetworkFilter.getId());
         return profile;
     }
 
-    public static NetworkFilter resolveVnicProfileDefaultNetworkFilter(NetworkFilterDao networkFilterDao) {
+    public NetworkFilter resolveVnicProfileDefaultNetworkFilter() {
         if (Config.<Boolean> getValue(ConfigValues.EnableMACAntiSpoofingFilterRules)) {
             return networkFilterDao.getNetworkFilterByName(NetworkFilter.VDSM_NO_MAC_SPOOFING);
         }
         return null;
     }
 
-    public static Network getNetworkByVnicProfileId(Guid vnicProfileId) {
+    public Network getNetworkByVnicProfileId(Guid vnicProfileId) {
         VnicProfile vnicProfile = getVnicProfile(vnicProfileId);
         return getNetworkByVnicProfile(vnicProfile);
     }
 
-    public static VnicProfile getVnicProfile(Guid vnicProfileId) {
+    public VnicProfile getVnicProfile(Guid vnicProfileId) {
         if (vnicProfileId == null) {
             return null;
         }
 
-        return DbFacade.getInstance().getVnicProfileDao().get(vnicProfileId);
+        return vnicProfileDao.get(vnicProfileId);
     }
 
-    public static Network getNetworkByVnicProfile(VnicProfile vnicProfile) {
+    public Network getNetworkByVnicProfile(VnicProfile vnicProfile) {
         if (vnicProfile == null || vnicProfile.getNetworkId() == null) {
             return null;
         }
 
-        return DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
+        return networkDao.get(vnicProfile.getNetworkId());
     }
 
-    public static boolean isNetworkInCluster(Network network, Guid clusterId) {
+    public boolean isNetworkInCluster(Network network, Guid clusterId) {
         if (clusterId == null) {
             return false;
         }
 
-        List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(clusterId);
+        List<Network> networks = networkDao.getAllForCluster(clusterId);
         for (Network clusterNetwork : networks) {
             if (clusterNetwork.getId().equals(network.getId())) {
                 return true;
@@ -122,18 +145,17 @@ public class NetworkHelper {
         return false;
     }
 
-    public static void removeNetworkFromHostsInDataCenter(Network network, Guid dataCenterId, CommandContext context) {
-        List<VdsNetworkInterface> nics = DbFacade.getInstance().getInterfaceDao().getAllInterfacesByLabelForDataCenter(dataCenterId, network.getLabel());
+    public void removeNetworkFromHostsInDataCenter(Network network, Guid dataCenterId, CommandContext context) {
+        List<VdsNetworkInterface> nics = interfaceDao.getAllInterfacesByLabelForDataCenter(dataCenterId, network.getLabel());
         removeNetworkFromHosts(network, context, nics);
     }
 
-    private static void removeNetworkFromHosts(Network network, CommandContext context, List<VdsNetworkInterface> nics) {
-        RemoveNetworkParametersBuilder builder = Injector.get(RemoveNetworkParametersBuilder.class);
-        ArrayList<ActionParametersBase> parameters = builder.buildParameters(network, nics);
+    private void removeNetworkFromHosts(Network network, CommandContext context, List<VdsNetworkInterface> nics) {
+        ArrayList<ActionParametersBase> parameters = removeNetworkParametersBuilder.buildParameters(network, nics);
 
         if (!parameters.isEmpty()) {
             HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
-            Backend.getInstance().runInternalMultipleActions(ActionType.PersistentHostSetupNetworks, parameters, context);
+            backend.runInternalMultipleActions(ActionType.PersistentHostSetupNetworks, parameters, context);
         }
     }
 

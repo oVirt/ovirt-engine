@@ -144,6 +144,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private VmTemplateDao vmTemplateDao;
     @Inject
     private LabelDao labelDao;
+    @Inject
+    private NetworkHelper networkHelper;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -673,7 +675,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             List<VmNic> interfaces = vmNicDao.getAllForVm(getParameters().getVmStaticData().getId());
 
             for (final VmNic iface : interfaces) {
-                final Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
+                final Network network = networkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
                 boolean networkFound = networks.stream().anyMatch(n -> Objects.equals(n.getId(), network.getId()));
 
                 // if network not exists in cluster we remove the network from the interface

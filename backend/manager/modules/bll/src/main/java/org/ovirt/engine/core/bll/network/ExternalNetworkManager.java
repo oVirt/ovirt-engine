@@ -25,6 +25,9 @@ public class ExternalNetworkManager {
     private Network network;
 
     @Inject
+    private NetworkHelper networkHelper;
+
+    @Inject
     private ProviderDao providerDao;
 
     @Inject
@@ -58,7 +61,7 @@ public class ExternalNetworkManager {
 
     private Network getNetwork() {
         if (network == null) {
-            network = NetworkHelper.getNetworkByVnicProfileId(nic.getVnicProfileId());
+            network = networkHelper.getNetworkByVnicProfileId(nic.getVnicProfileId());
         }
 
         return network;

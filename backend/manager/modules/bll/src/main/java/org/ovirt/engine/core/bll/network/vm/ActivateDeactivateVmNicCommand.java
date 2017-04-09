@@ -97,6 +97,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     @Inject
     private ExternalNetworkManagerFactory externalNetworkManagerFactory;
 
+    @Inject
+    private NetworkHelper networkHelper;
+
     public ActivateDeactivateVmNicCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVmId(parameters.getVmId());
@@ -201,7 +204,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     public Network getNetwork() {
         if (getParameters().getNic().getVnicProfileId() != null && network == null) {
             vnicProfile = vnicProfileDao.get(getParameters().getNic().getVnicProfileId());
-            network = NetworkHelper.getNetworkByVnicProfile(vnicProfile);
+            network = networkHelper.getNetworkByVnicProfile(vnicProfile);
         }
 
         return network;

@@ -150,6 +150,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;
 
+    @Inject
+    private NetworkHelper networkHelper;
+
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
@@ -1723,8 +1726,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private void updateProfileOnNic(VmNic iface) {
-        Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
-        if (network != null && !NetworkHelper.isNetworkInCluster(network, getClusterId())) {
+        Network network = networkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
+        if (network != null && !networkHelper.isNetworkInCluster(network, getClusterId())) {
             iface.setVnicProfileId(null);
         }
     }

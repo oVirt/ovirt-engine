@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * A class that can validate a {@link VmNic} is valid from certain aspects.
@@ -106,11 +107,11 @@ public class VmNicValidator {
     }
 
     protected Network getNetworkByVnicProfile(VnicProfile vnicProfile) {
-        return NetworkHelper.getNetworkByVnicProfile(vnicProfile);
+        return getNetworkHelper().getNetworkByVnicProfile(vnicProfile);
     }
 
     protected boolean isNetworkInCluster(Network network, Guid clusterId) {
-        return NetworkHelper.isNetworkInCluster(network, clusterId);
+        return getNetworkHelper().isNetworkInCluster(network, clusterId);
     }
 
     protected VnicProfile getVnicProfile() {
@@ -122,7 +123,11 @@ public class VmNicValidator {
     }
 
     VnicProfile loadVnicProfile(Guid vnicProfileId) {
-        return NetworkHelper.getVnicProfile(vnicProfileId);
+        return getNetworkHelper().getVnicProfile(vnicProfileId);
+    }
+
+    private NetworkHelper getNetworkHelper() {
+        return Injector.get(NetworkHelper.class);
     }
 
     protected Network getNetwork() {
