@@ -631,7 +631,7 @@ public class VmDeviceUtils {
         VmInterfaceManager vmIfaceManager = new VmInterfaceManager();
 
         if (vmIfaceManager.tooManyPluggedInterfaceWithSameMac(iface, macPool)) {
-            vmIfaceManager.auditLogMacInUseUnplug(iface);
+            vmIfaceManager.auditLogMacInUseUnplug(iface, vmBase.getName());
             return false;
         } else {
             return true;

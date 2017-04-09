@@ -1,8 +1,12 @@
 package org.ovirt.engine.core.bll.network;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -14,27 +18,42 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import javax.transaction.TransactionManager;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmInterfaceManagerTest {
 
     private static final int OS_ID = 0;
+    private static final String VM_NAME = "vm name";
+
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private MacPool macPool;
@@ -44,6 +63,15 @@ public class VmInterfaceManagerTest {
 
     @Mock
     private VmNicDao vmNicDao;
+
+    @Mock
+    private AuditLogDirector auditLogDirector;
+
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private TransactionManager transactionManager;
+
+    @Captor
+    private ArgumentCaptor<AuditLogableBase> auditLogableBaseCaptor;
 
     private VmInterfaceManager vmInterfaceManager;
 
@@ -56,7 +84,10 @@ public class VmInterfaceManagerTest {
         vmInterfaceManager = spy(new VmInterfaceManager(macPool));
         doReturn(vmNetworkStatisticsDao).when(vmInterfaceManager).getVmNetworkStatisticsDao();
         doReturn(vmNicDao).when(vmInterfaceManager).getVmNicDao();
+        doReturn(auditLogDirector).when(vmInterfaceManager).getAuditLogDirector();
         doNothing().when(vmInterfaceManager).removeFromExternalNetworks(anyList());
+
+        injectorRule.bind(TransactionManager.class, transactionManager);
     }
 
     @Test
@@ -86,8 +117,6 @@ public class VmInterfaceManagerTest {
         verifyAddDelegatedCorrectly(iface, addMacVerification);
     }
 
-
-
     @Test
     public void removeAll() {
         List<VmNic> interfaces = Arrays.asList(createNewInterface(), createNewInterface());
@@ -99,6 +128,35 @@ public class VmInterfaceManagerTest {
         for (VmNic iface : interfaces) {
             verifyRemoveAllDelegatedCorrectly(iface);
         }
+    }
+
+    @Test
+    public void testAuditLogMacInUse() {
+        final VmNic iface = createNewInterface();
+
+        vmInterfaceManager.auditLogMacInUse(iface);
+
+        verifyCommonAuditLogFilledProperly(AuditLogType.MAC_ADDRESS_IS_IN_USE, iface);
+    }
+
+    @Test
+    public void testAuditLogMacInUseUnplug() {
+        final VmNic iface = createNewInterface();
+
+        vmInterfaceManager.auditLogMacInUseUnplug(iface, VM_NAME);
+
+        final Map<String, String> capturedCustomValues =
+                verifyCommonAuditLogFilledProperly(AuditLogType.MAC_ADDRESS_IS_IN_USE_UNPLUG, iface);
+        assertThat(capturedCustomValues, hasEntry("vmname", VM_NAME));
+    }
+
+    private Map<String, String> verifyCommonAuditLogFilledProperly(AuditLogType auditLogType, VmNic iface) {
+        verify(auditLogDirector).log(auditLogableBaseCaptor.capture(), same(auditLogType));
+        final Map<String, String> capturedCustomValues = auditLogableBaseCaptor.getValue().getCustomValues();
+        assertThat(capturedCustomValues, allOf(
+                hasEntry("macaddr", iface.getMacAddress()),
+                hasEntry("ifacename", iface.getName())));
+        return capturedCustomValues;
     }
 
     /**

@@ -27,7 +27,6 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,9 +108,10 @@ public class VmInterfaceManager {
         });
     }
 
-    public void auditLogMacInUseUnplug(final VmNic iface) {
+    public void auditLogMacInUseUnplug(final VmNic iface, String vmName) {
         TransactionSupport.executeInNewTransaction(() -> {
             AuditLogableBase logable = createAuditLog(iface);
+            logable.addCustomValue("VmName", vmName);
             log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE_UNPLUG);
             log.warn("Network Interface '{}' has MAC address '{}' which is in use, " +
                     "therefore it is being unplugged from VM '{}'.", iface.getName(), iface.getMacAddress(),
@@ -215,8 +215,12 @@ public class VmInterfaceManager {
     /**
      * Log the given loggable & message to the {@link AuditLogDirector}.
      */
-    protected void log(AuditLogableBase logable, AuditLogType auditLogType) {
-        new AuditLogDirector().log(logable, auditLogType);
+    private void log(AuditLogableBase logable, AuditLogType auditLogType) {
+        getAuditLogDirector().log(logable, auditLogType);
+    }
+
+    AuditLogDirector getAuditLogDirector() {
+        return new AuditLogDirector();
     }
 
     protected VmNetworkStatisticsDao getVmNetworkStatisticsDao() {
@@ -236,8 +240,7 @@ public class VmInterfaceManager {
     }
 
     private AuditLogableBase createAuditLog(final VmNic iface) {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-        logable.setVmId(iface.getVmId());
+        AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("MACAddr", iface.getMacAddress());
         logable.addCustomValue("IfaceName", iface.getName());
         return logable;
