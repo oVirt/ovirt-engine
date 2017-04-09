@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * A class that can validate a {@link VmNic} is valid from certain aspects.
@@ -112,10 +111,6 @@ public class VmNicValidator {
 
     protected boolean isNetworkInCluster(Network network, Guid clusterId) {
         return NetworkHelper.isNetworkInCluster(network, clusterId);
-    }
-
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 
     protected VnicProfile getVnicProfile() {
