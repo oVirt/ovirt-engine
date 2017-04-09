@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -24,7 +25,6 @@ public class RegisterServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(RegisterServlet.class);
 
-    private static final int SSH_PORT = 22;
     private static final int VDSM_PORT = 54321;
     private static final int INTERFACE_VERSION = 1;
 
@@ -135,7 +135,7 @@ public class RegisterServlet extends HttpServlet {
             hostAddress = InetAddress.getByName(request.getRemoteHost()).getHostName();
         }
 
-        int hostSSHPort = SSH_PORT;
+        int hostSSHPort = VdsStatic.DEFAULT_SSH_PORT;
         if (hostSSHPortString != null) {
             hostSSHPort = Integer.parseInt(hostSSHPortString);
         }
