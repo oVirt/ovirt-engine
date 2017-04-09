@@ -71,6 +71,7 @@ public class DiskAttachmentMapper {
         model.setActive(entity.isPlugged());
         model.setLogicalName(entity.getLogicalName());
         model.setUsesScsiReservation(entity.isUsingScsiReservation());
+        model.setReadOnly(entity.isReadOnly());
         return model;
     }
 }

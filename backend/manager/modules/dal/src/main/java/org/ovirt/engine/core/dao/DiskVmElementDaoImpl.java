@@ -57,6 +57,7 @@ public class DiskVmElementDaoImpl extends DefaultGenericDao<DiskVmElement, VmDev
         }
         dve.setPlugged(rs.getBoolean("is_plugged"));
         dve.setLogicalName(rs.getString("logical_name"));
+        dve.setReadOnly(rs.getBoolean("is_readonly"));
         dve.setUsingScsiReservation(rs.getBoolean("is_using_scsi_reservation"));
         return dve;
     };
