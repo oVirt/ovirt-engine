@@ -176,8 +176,7 @@ public final class Linq {
         ArrayList<EntityModel<T>> entityModelList = new ArrayList<>();
 
         for (T item : list) {
-            EntityModel<T> model = new EntityModel<>();
-            model.setEntity(item);
+            EntityModel<T> model = new EntityModel<>(item);
             entityModelList.add(model);
         }
 
