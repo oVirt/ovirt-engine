@@ -150,6 +150,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Inject
     protected ImagesHandler imagesHandler;
 
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
+
     protected final List<DiskImage> images = new ArrayList<>();
     private Guid[] targetDiskIds;
     private List<PermissionSubject> permissionCheckSubject;
@@ -1112,7 +1115,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         if (!permissionsToAdd.isEmpty()) {
             List<Permission> permissionsList = permissionsToAdd.asPermissionList();
-            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permission[permissionsList.size()]));
+            multiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permission[permissionsList.size()]));
         }
     }
 

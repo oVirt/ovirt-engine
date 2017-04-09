@@ -107,6 +107,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Inject
     private SnapshotDao snapshotDao;
 
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -628,7 +631,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                             PredefinedRoles.DISK_OPERATOR.getId(),
                             disk.getId(),
                             VdcObjectType.Disk);
-            MultiLevelAdministrationHandler.addPermission(perms);
+            multiLevelAdministrationHandler.addPermission(perms);
         }
     }
 

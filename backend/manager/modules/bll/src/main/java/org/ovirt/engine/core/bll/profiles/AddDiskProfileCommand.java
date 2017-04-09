@@ -23,6 +23,9 @@ public class AddDiskProfileCommand extends AddProfileCommandBase<DiskProfilePara
     @Inject
     private DiskProfileDao diskProfileDao;
 
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
+
     public AddDiskProfileCommand(DiskProfileParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -58,7 +61,7 @@ public class AddDiskProfileCommand extends AddProfileCommandBase<DiskProfilePara
 
     @Override
     protected void addPermissions() {
-        MultiLevelAdministrationHandler.addPermission(new Permission(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
+        multiLevelAdministrationHandler.addPermission(new Permission(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
                 PredefinedRoles.DISK_PROFILE_USER.getId(),
                 getProfileId(),
                 VdcObjectType.DiskProfile));

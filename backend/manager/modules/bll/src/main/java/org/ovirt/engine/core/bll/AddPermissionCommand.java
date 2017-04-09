@@ -43,6 +43,8 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
     private DbGroupDao dbGroupDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
 
     public AddPermissionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -206,7 +208,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         // lastAdminCheckStatus to true
         Role role = roleDao.get(perm.getRoleId());
         if (role.getType() == RoleType.ADMIN) {
-            MultiLevelAdministrationHandler.setIsAdminGUIFlag(perm.getAdElementId(), true);
+            multiLevelAdministrationHandler.setIsAdminGUIFlag(perm.getAdElementId(), true);
         }
     }
 

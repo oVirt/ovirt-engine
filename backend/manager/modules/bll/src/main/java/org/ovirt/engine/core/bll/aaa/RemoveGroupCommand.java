@@ -23,6 +23,8 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
     private DbUserDao dbUserDao;
     @Inject
     private DbGroupDao dbGroupDao;
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -81,6 +83,6 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
     }
 
     protected boolean isLastSuperUserGroup(Guid groupId) {
-        return MultiLevelAdministrationHandler.isLastSuperUserGroup(groupId);
+        return multiLevelAdministrationHandler.isLastSuperUserGroup(groupId);
     }
 }

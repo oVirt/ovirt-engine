@@ -9,13 +9,15 @@ import org.ovirt.engine.core.dao.RoleDao;
 public class GetAllRolesQuery<P extends QueryParametersBase> extends QueriesCommandBase<P> {
     @Inject
     private RoleDao roleDao;
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
 
     public GetAllRolesQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
 
     protected boolean isAdminUser() {
-        return MultiLevelAdministrationHandler.isAdminUser(getUser());
+        return multiLevelAdministrationHandler.isAdminUser(getUser());
     }
 
     @Override

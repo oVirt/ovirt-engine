@@ -153,6 +153,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Inject
     private NetworkHelper networkHelper;
 
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
+
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
@@ -1528,7 +1531,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (!permissionsToAdd.isEmpty()) {
             List<Permission> permissionsList = permissionsToAdd.asPermissionList();
-            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permission[permissionsList.size()]));
+            multiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permission[permissionsList.size()]));
 
             getCompensationContext().snapshotNewEntities(permissionsList);
         }
@@ -1572,7 +1575,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                             newDiskImageIds.get(i),
                             VdcObjectType.Disk);
         }
-        MultiLevelAdministrationHandler.addPermission(permsArray);
+        multiLevelAdministrationHandler.addPermission(permsArray);
     }
 
     private Guid getUserIdOfDiskOperator() {

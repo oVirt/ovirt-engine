@@ -30,6 +30,8 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     private PermissionDao permissionDao;
     @Inject
     private QuotaDao quotaDao;
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
 
     public AddQuotaCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -128,7 +130,7 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
         }
         if (!permissionsToAdd.isEmpty()) {
             List<Permission> permissionsList = permissionsToAdd.asPermissionList();
-            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permission[permissionsList.size()]));
+            multiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permission[permissionsList.size()]));
         }
     }
 

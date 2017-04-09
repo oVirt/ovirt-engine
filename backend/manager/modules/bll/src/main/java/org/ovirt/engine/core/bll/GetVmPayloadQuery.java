@@ -18,13 +18,16 @@ public class GetVmPayloadQuery<P extends IdQueryParameters> extends QueriesComma
     @Inject
     private VmDeviceDao dao;
 
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
+
     public GetVmPayloadQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
 
     @Override
     protected void executeQueryCommand() {
-        if (MultiLevelAdministrationHandler.isAdminUser(getUser())) {
+        if (multiLevelAdministrationHandler.isAdminUser(getUser())) {
             List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceGeneralType.DISK);
 
             for (VmDevice disk : disks) {

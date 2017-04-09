@@ -27,6 +27,8 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
     private DbUserDao dbUserDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -49,7 +51,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
     protected boolean validate() {
         boolean returnValue = true;
         Permission p = permissionDao.get(getParameters().getPermission().getId());
-        if (MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getRoleId())) {
+        if (multiLevelAdministrationHandler.isLastSuperUserPermission(p.getRoleId())) {
             getReturnValue().getValidationMessages()
                     .add(EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString());
             returnValue = false;

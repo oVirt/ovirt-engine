@@ -52,6 +52,9 @@ public class NetworkHelper {
     @Inject
     private RemoveNetworkParametersBuilder removeNetworkParametersBuilder;
 
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
+
     /**
      * Grants permissions on the network entity to the given user
      *
@@ -61,7 +64,7 @@ public class NetworkHelper {
      *            the Network ID
      */
     public void addPermissionsOnNetwork(Guid userId, Guid networkId) {
-        MultiLevelAdministrationHandler.addPermission(userId, networkId, PredefinedRoles.NETWORK_ADMIN, VdcObjectType.Network);
+        multiLevelAdministrationHandler.addPermission(userId, networkId, PredefinedRoles.NETWORK_ADMIN, VdcObjectType.Network);
     }
 
     /**
@@ -76,14 +79,14 @@ public class NetworkHelper {
      *            Indicates of the network is intended for a public user
      */
     public void addPermissionsOnVnicProfile(Guid userId, Guid vnicProfileId, boolean publicUse) {
-        MultiLevelAdministrationHandler.addPermission(userId,
+        multiLevelAdministrationHandler.addPermission(userId,
                 vnicProfileId,
                 PredefinedRoles.NETWORK_ADMIN,
                 VdcObjectType.VnicProfile);
 
         // if the profile is for public use, set EVERYONE as a VNICProfileUser on the profile
         if (publicUse) {
-            MultiLevelAdministrationHandler.addPermission(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
+            multiLevelAdministrationHandler.addPermission(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
                     vnicProfileId,
                     PredefinedRoles.VNIC_PROFILE_USER,
                     VdcObjectType.VnicProfile);

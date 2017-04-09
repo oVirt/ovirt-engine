@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -15,6 +17,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
 
 public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
+
+    @Inject
+    private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
 
     public AddMacPoolCommand(MacPoolParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -80,7 +85,7 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
     }
 
     private void addPermission(Guid userId, Guid macPoolId) {
-        MultiLevelAdministrationHandler.addPermission(userId, macPoolId, PredefinedRoles.MAC_POOL_ADMIN, VdcObjectType.MacPool);
+        multiLevelAdministrationHandler.addPermission(userId, macPoolId, PredefinedRoles.MAC_POOL_ADMIN, VdcObjectType.MacPool);
     }
 
     private class CustomTransactionCompletionListener extends NoOpTransactionCompletionListener {
