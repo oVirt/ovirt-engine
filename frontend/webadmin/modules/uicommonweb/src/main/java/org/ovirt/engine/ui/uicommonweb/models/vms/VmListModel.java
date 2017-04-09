@@ -58,7 +58,7 @@ import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
+import org.ovirt.engine.ui.uicommonweb.TagAssigningModel;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -104,7 +104,8 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSystemTreeContext, ICancelable, HasDiskWindow {
+public class VmListModel<E> extends VmBaseListModel<E, VM>
+        implements ISupportSystemTreeContext, ICancelable, HasDiskWindow, TagAssigningModel<VM> {
 
     public static final String CMD_CONFIGURE_VMS_TO_IMPORT = "ConfigureVmsToImport"; //$NON-NLS-1$
     public static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
@@ -322,6 +323,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     private UICommand privateAssignTagsCommand;
 
+    @Override
     public UICommand getAssignTagsCommand() {
         return privateAssignTagsCommand;
     }
@@ -486,7 +488,19 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     }
 
     public Map<Guid, Boolean> attachedTagsToEntities;
+
+    @Override
+    public Map<Guid, Boolean> getAttachedTagsToEntities() {
+        return attachedTagsToEntities;
+    }
+
     public ArrayList<Tags> allAttachedTags;
+
+    @Override
+    public List<Tags> getAllAttachedTags() {
+        return allAttachedTags;
+    }
+
     public int selectedItemsCounter;
 
     private void getAttachedTagsToSelectedVMs(final TagListModel model) {
@@ -518,32 +532,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
     }
 
-    private void postGetAttachedTags(TagListModel tagListModel) {
-        if (getLastExecutedCommand() == getAssignTagsCommand()) {
-            ArrayList<Tags> attachedTags =
-                    Linq.distinct(allAttachedTags, new TagsEqualityComparer());
-            for (Tags tag : attachedTags) {
-                int count = 0;
-                for (Tags tag2 : allAttachedTags) {
-                    if (tag2.getTagId().equals(tag.getTagId())) {
-                        count++;
-                    }
-                }
-                attachedTagsToEntities.put(tag.getTagId(), count == getSelectedItems().size());
-            }
-            tagListModel.setAttachedTagsToEntities(attachedTagsToEntities);
-        }
-        else if ("OnAssignTags".equals(getLastExecutedCommand().getName())) { //$NON-NLS-1$
-            postOnAssignTags(tagListModel.getAttachedTagsToEntities());
-        }
-    }
-
     private void onAssignTags() {
         TagListModel model = (TagListModel) getWindow();
 
         getAttachedTagsToSelectedVMs(model);
     }
 
+    @Override
     public void postOnAssignTags(Map<Guid, Boolean> attachedTags) {
         TagListModel model = (TagListModel) getWindow();
         ArrayList<Guid> vmIds = new ArrayList<>();

@@ -62,7 +62,7 @@ import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
+import org.ovirt.engine.ui.uicommonweb.TagAssigningModel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -103,7 +103,9 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import com.google.inject.Inject;
 
 @SuppressWarnings("unchecked")
-public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> implements ISupportSystemTreeContext {
+public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> implements
+        ISupportSystemTreeContext, TagAssigningModel<VDS> {
+
     private final HostGeneralModel generalModel;
 
     private UICommand privateNewCommand;
@@ -279,6 +281,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     private UICommand privateAssignTagsCommand;
 
+    @Override
     public UICommand getAssignTagsCommand() {
         return privateAssignTagsCommand;
     }
@@ -513,9 +516,20 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
-
     public Map<Guid, Boolean> attachedTagsToEntities;
+
+    @Override
+    public Map<Guid, Boolean> getAttachedTagsToEntities() {
+        return attachedTagsToEntities;
+    }
+
     public ArrayList<Tags> allAttachedTags;
+
+    @Override
+    public List<Tags> getAllAttachedTags() {
+        return allAttachedTags;
+    }
+
     public int selectedItemsCounter;
 
     private void getAttachedTagsToSelectedHosts(final TagListModel model) {
@@ -547,33 +561,13 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
     }
 
-    private void postGetAttachedTags(TagListModel tagListModel) {
-        if (getLastExecutedCommand() == getAssignTagsCommand()) {
-            ArrayList<Tags> attachedTags =
-                    Linq.distinct(allAttachedTags, new TagsEqualityComparer());
-            for (Tags tag : attachedTags) {
-                int count = 0;
-                for (Tags tag2 : allAttachedTags) {
-                    if (tag2.getTagId().equals(tag.getTagId())) {
-                        count++;
-                    }
-                }
-                attachedTagsToEntities.put(tag.getTagId(), count == getSelectedItems()
-                        .size());
-            }
-            tagListModel.setAttachedTagsToEntities(attachedTagsToEntities);
-        }
-        else if ("OnAssignTags".equals(getLastExecutedCommand().getName())) { //$NON-NLS-1$
-            postOnAssignTags(tagListModel.getAttachedTagsToEntities());
-        }
-    }
-
     public void onAssignTags() {
         TagListModel model = (TagListModel) getWindow();
 
         getAttachedTagsToSelectedHosts(model);
     }
 
+    @Override
     public void postOnAssignTags(Map<Guid, Boolean> attachedTags) {
         TagListModel model = (TagListModel) getWindow();
         ArrayList<Guid> hostIds = new ArrayList<>();

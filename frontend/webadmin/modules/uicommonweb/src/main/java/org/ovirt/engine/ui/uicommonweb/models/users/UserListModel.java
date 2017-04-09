@@ -26,7 +26,7 @@ import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.Us
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
+import org.ovirt.engine.ui.uicommonweb.TagAssigningModel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -48,7 +48,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.inject.Inject;
 
-public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
+public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> implements TagAssigningModel<DbUser> {
     private UICommand privateAddCommand;
 
     public UICommand getAddCommand() {
@@ -71,6 +71,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
 
     private UICommand privateAssignTagsCommand;
 
+    @Override
     public UICommand getAssignTagsCommand() {
         return privateAssignTagsCommand;
     }
@@ -152,7 +153,19 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     }
 
     public Map<Guid, Boolean> attachedTagsToEntities;
+
+    @Override
+    public Map<Guid, Boolean> getAttachedTagsToEntities() {
+        return attachedTagsToEntities;
+    }
+
     public ArrayList<Tags> allAttachedTags;
+
+    @Override
+    public List<Tags> getAllAttachedTags() {
+        return allAttachedTags;
+    }
+
     public int selectedItemsCounter;
     private UserOrGroup userOrGroup;
 
@@ -207,32 +220,13 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         }
     }
 
-    private void postGetAttachedTags(TagListModel tagListModel) {
-        if (getLastExecutedCommand() == getAssignTagsCommand()) {
-            ArrayList<Tags> attachedTags = Linq.distinct(allAttachedTags, new TagsEqualityComparer());
-            for (Tags a : attachedTags) {
-                int count = 0;
-                for (Tags b : allAttachedTags) {
-                    if (b.getTagId().equals(a.getTagId())) {
-                        count++;
-                    }
-                }
-
-                attachedTagsToEntities.put(a.getTagId(), count == getSelectedItems().size());
-            }
-            tagListModel.setAttachedTagsToEntities(attachedTagsToEntities);
-        }
-        else if ("OnAssignTags".equals(getLastExecutedCommand().getName())) { //$NON-NLS-1$
-            postOnAssignTags(tagListModel.getAttachedTagsToEntities());
-        }
-    }
-
     private void onAssignTags() {
         TagListModel model = (TagListModel) getWindow();
 
         getAttachedTagsToSelectedUsers(model);
     }
 
+    @Override
     public void postOnAssignTags(Map<Guid, Boolean> attachedTags) {
         TagListModel model = (TagListModel) getWindow();
         ArrayList<Guid> userIds = new ArrayList<>();
