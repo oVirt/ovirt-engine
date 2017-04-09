@@ -175,12 +175,10 @@ public final class Linq {
     public static <T> ArrayList<EntityModel<T>> toEntityModelList(List<T> list) {
         ArrayList<EntityModel<T>> entityModelList = new ArrayList<>();
 
-        if (list != null) {
-            for (T item : list) {
-                EntityModel<T> model = new EntityModel<>();
-                model.setEntity(item);
-                entityModelList.add(model);
-            }
+        for (T item : list) {
+            EntityModel<T> model = new EntityModel<>();
+            model.setEntity(item);
+            entityModelList.add(model);
         }
 
         return entityModelList;
