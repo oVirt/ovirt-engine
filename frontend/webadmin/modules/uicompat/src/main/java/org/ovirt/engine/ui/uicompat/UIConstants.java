@@ -1625,8 +1625,6 @@ public interface UIConstants extends Constants {
 
     String trustedServiceDisabled();
 
-    String defaultHostSSHPort();
-
     String removeNetworkQoSTitle();
 
     String removeStorageQoSTitle();

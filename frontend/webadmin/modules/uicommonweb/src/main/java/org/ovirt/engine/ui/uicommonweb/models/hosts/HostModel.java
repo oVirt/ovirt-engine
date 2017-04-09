@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -688,7 +689,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setHost(new EntityModel<String>());
         setPkSection(new EntityModel<Void>());
         setAuthSshPort(new EntityModel<Integer>());
-        getAuthSshPort().setEntity(Integer.parseInt(constants.defaultHostSSHPort()));
+        getAuthSshPort().setEntity(VdsStatic.DEFAULT_SSH_PORT);
         setUserName(new EntityModel<String>());
         getUserName().setEntity(RootUserName);
         // TODO: remove setIsChangeable when configured ssh username is enabled
