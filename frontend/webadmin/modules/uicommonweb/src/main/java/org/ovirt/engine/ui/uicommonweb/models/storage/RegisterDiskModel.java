@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class RegisterDiskModel extends DisksAllocationModel {
             RegisterDiskParameters registerDiskParams =
                     new RegisterDiskParameters(disk, disk.getStorageIds().get(0));
             registerDiskParams.setRefreshFromStorage(true);
-            Frontend.getInstance().runAction(VdcActionType.RegisterDisk, registerDiskParams);
+            Frontend.getInstance().runMultipleAction(VdcActionType.RegisterDisk, Arrays.asList(registerDiskParams));
         }
 
         stopProgress();

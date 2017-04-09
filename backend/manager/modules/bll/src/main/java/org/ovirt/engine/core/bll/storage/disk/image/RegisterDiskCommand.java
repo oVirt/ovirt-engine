@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -27,6 +28,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
@@ -34,7 +37,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute
 public class RegisterDiskCommand <T extends RegisterDiskParameters> extends BaseImagesCommand<T> implements QuotaStorageDependent {
 
     private static final String DEFAULT_REGISTRATION_FORMAT = "RegisteredDisk_%1$tY-%1$tm-%1$td_%1$tH-%1$tM-%1$tS";
@@ -113,21 +119,56 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     @Override
     protected void executeCommand() {
-        if (getDiskImage().getDiskStorageType() == DiskStorageType.IMAGE) {
-            final DiskImage newDiskImage = getDiskImage();
-            newDiskImage.setDiskAlias(ImagesHandler.getDiskAliasWithDefault(newDiskImage,
-                    generateDefaultAliasForRegiteredDisk(Calendar.getInstance())));
-            ArrayList<Guid> storageIds = new ArrayList<>();
-            storageIds.add(getParameters().getStorageDomainId());
-            newDiskImage.setStorageIds(storageIds);
-            addDiskImageToDb(newDiskImage, getCompensationContext(), Boolean.TRUE);
-            unregisteredDisksDao.removeUnregisteredDisk(newDiskImage.getId(), null);
-            getReturnValue().setActionReturnValue(newDiskImage.getId());
-            getReturnValue().setSucceeded(true);
-        } else if (getDiskImage().getDiskStorageType() == DiskStorageType.CINDER) {
-            VdcReturnValueBase returnValue = runInternalAction(VdcActionType.RegisterCinderDisk, new RegisterCinderDiskParameters(
-                    (CinderDisk) getDiskImage(), getParameters().getStorageDomainId()));
-            setReturnValue(returnValue);
+        TransactionSupport.executeInNewTransaction(() -> {
+            if (getDiskImage().getDiskStorageType() == DiskStorageType.IMAGE) {
+                final DiskImage newDiskImage = getDiskImage();
+                newDiskImage.setDiskAlias(ImagesHandler.getDiskAliasWithDefault(newDiskImage,
+                        generateDefaultAliasForRegiteredDisk(Calendar.getInstance())));
+                addRegisterInitatedAuditLog();
+                ArrayList<Guid> storageIds = new ArrayList<>();
+                storageIds.add(getParameters().getStorageDomainId());
+                newDiskImage.setStorageIds(storageIds);
+                addDiskImageToDb(newDiskImage, getCompensationContext(), Boolean.TRUE);
+
+                unregisteredDisksDao.removeUnregisteredDisk(newDiskImage.getId(), null);
+                getReturnValue().setActionReturnValue(newDiskImage.getId());
+                getReturnValue().setSucceeded(true);
+            } else if (getDiskImage().getDiskStorageType() == DiskStorageType.CINDER) {
+                VdcReturnValueBase returnValue = runInternalAction(VdcActionType.RegisterCinderDisk, new RegisterCinderDiskParameters(
+                        (CinderDisk) getDiskImage(), getParameters().getStorageDomainId()));
+                setReturnValue(returnValue);
+            }
+            return null;
+        });
+        fetchQcowCompat();
+    }
+
+    private void addRegisterInitatedAuditLog() {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("DiskAlias", getDiskImage().getDiskAlias());
+        auditLogDirector.log(logable, AuditLogType.USER_REGISTER_DISK_INITIATED);
+    }
+
+    private void fetchQcowCompat() {
+        if (getDiskImage().getDiskStorageType() == DiskStorageType.IMAGE
+                && getDiskImage().getVolumeFormat().equals(VolumeFormat.COW)) {
+            DiskImage newDiskImage = getDiskImage();
+            try {
+                setQcowCompat(newDiskImage.getImage(),
+                        newDiskImage.getStoragePoolId(),
+                        newDiskImage.getId(),
+                        newDiskImage.getImageId(),
+                        getParameters().getStorageDomainId(),
+                        null);
+                // TODO: We should update the insert to also set qcow compat.
+                imageDao.update(newDiskImage.getImage());
+            } catch (EngineException e) {
+                // Logging only
+                log.error("Unable to update the image info for image '{}' (image group: '{}') on domain '{}'",
+                        newDiskImage.getImageId(),
+                        newDiskImage.getId(),
+                        getParameters().getStorageDomainId());
+            }
         }
     }
 
