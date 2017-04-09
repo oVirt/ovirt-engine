@@ -167,14 +167,6 @@ public final class Linq {
         return result;
     }
 
-    public static <U, V> List<Pair<U, V>> wrapAsFirst(List<U> list, Class<V> secondComponentClass) {
-        final List<Pair<U, V>> result = new ArrayList<>();
-        for (U object : list) {
-            result.add(new Pair<>(object, (V) null));
-        }
-        return result;
-    }
-
     public static List<StorageDomain> getStorageDomainsByIds(List<Guid> storageIds,
             List<StorageDomain> storageDomains) {
         return where(storageDomains, new IdsPredicate<>(storageIds));

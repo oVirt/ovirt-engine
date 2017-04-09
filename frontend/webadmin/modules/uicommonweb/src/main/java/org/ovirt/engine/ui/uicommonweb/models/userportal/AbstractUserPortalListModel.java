@@ -155,8 +155,8 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
             }
         }
 
-        final List<Object> vmsObjectList = Collections.<Object>unmodifiableList(vms);
-        final List<Pair<Object, VM>> vmPairs = Linq.wrapAsFirst(vmsObjectList, VM.class);
+        final List<Pair<Object, VM>> vmPairs =
+                vms.stream().map(v -> new Pair<Object, VM>(v, null)).collect(Collectors.toList());
 
         if (filteredPools.isEmpty()) {
             IconUtils.prefetchIcons(vms, true, fetchLargeIcons(), new IconCache.IconsCallback() {
