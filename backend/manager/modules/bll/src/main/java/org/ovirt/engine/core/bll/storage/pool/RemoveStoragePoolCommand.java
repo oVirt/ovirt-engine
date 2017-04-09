@@ -12,7 +12,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
+import org.ovirt.engine.core.bll.network.ExternalNetworkManagerFactory;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -77,6 +77,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     private Map<String, Pair<String, String>> sharedLocks;
 
+    @Inject
+    private ExternalNetworkManagerFactory externalNetworkManagerFactory;
+
     public RemoveStoragePoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -128,7 +131,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         for (Network network : networks) {
             if (network.isExternal()) {
                 for (VmNic nic : vmNicDao.getAllForNetwork(network.getId())) {
-                    new ExternalNetworkManager(nic, network).deallocateIfExternal();
+                    externalNetworkManagerFactory.create(nic, network).deallocateIfExternal();
                 }
             }
         }

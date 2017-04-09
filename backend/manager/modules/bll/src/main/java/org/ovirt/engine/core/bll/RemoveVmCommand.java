@@ -18,7 +18,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
-import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
+import org.ovirt.engine.core.bll.network.ExternalNetworkManagerFactory;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -76,6 +76,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     @Inject
     private SnapshotDao snapshotDao;
 
+    @Inject
+    private ExternalNetworkManagerFactory externalNetworkManagerFactory;
+
     private List<CinderDisk> cinderDisks;
 
     /**
@@ -120,7 +123,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 DisksFilter.filterLunDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE);
 
         for (VmNic nic : getInterfaces()) {
-            new ExternalNetworkManager(nic).deallocateIfExternal();
+            externalNetworkManagerFactory.create(nic).deallocateIfExternal();
         }
 
         removeMemoryVolumes();

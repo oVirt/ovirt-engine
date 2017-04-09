@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
+import org.ovirt.engine.core.bll.network.ExternalNetworkManagerFactory;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -34,6 +34,8 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
     private VmDeviceDao vmDeviceDao;
     @Inject
     private VmDynamicDao vmDynamicDao;
+    @Inject
+    private ExternalNetworkManagerFactory externalNetworkManagerFactory;
 
     private String interfaceName = "";
 
@@ -59,7 +61,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
                 addCustomValue("InterfaceType", interType);
             }
 
-            new ExternalNetworkManager(iface).deallocateIfExternal();
+            externalNetworkManagerFactory.create(iface).deallocateIfExternal();
 
             // return mac to pool
             getMacPool().freeMac(iface.getMacAddress());

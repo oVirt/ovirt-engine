@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
-import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
+import org.ovirt.engine.core.bll.network.ExternalNetworkManagerFactory;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
@@ -93,6 +93,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private InterfaceDao interfaceDao;
     @Inject
     private ProviderProxyFactory providerProxyFactory;
+
+    @Inject
+    private ExternalNetworkManagerFactory externalNetworkManagerFactory;
 
     public ActivateDeactivateVmNicCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -375,7 +378,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private void unplugFromExternalNetwork() {
-        new ExternalNetworkManager(getParameters().getNic(), getNetwork()).deallocateIfExternal();
+        externalNetworkManagerFactory.create(getParameters().getNic(), getNetwork()).deallocateIfExternal();
     }
 
     private NetworkProviderProxy getProviderProxy() {

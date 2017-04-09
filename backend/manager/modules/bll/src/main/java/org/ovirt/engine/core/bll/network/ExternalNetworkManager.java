@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
@@ -12,7 +14,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.di.Injector;
 
 /**
  * Utility class to help manage external networks, such as deallocate NICs.
@@ -23,13 +24,22 @@ public class ExternalNetworkManager {
 
     private Network network;
 
+    @Inject
+    private ProviderDao providerDao;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     /**
      * Create a manager for the specific vNIC.
      *
      * @param nic
      *            The vNIC to create a manager for.
      */
-    public ExternalNetworkManager(VmNic nic) {
+    ExternalNetworkManager(VmNic nic) {
         this.nic = nic;
     }
 
@@ -41,7 +51,7 @@ public class ExternalNetworkManager {
      * @param network
      *            The network to manage.
      */
-    public ExternalNetworkManager(VmNic nic, Network network) {
+    ExternalNetworkManager(VmNic nic, Network network) {
         this.nic = nic;
         this.network = network;
     }
@@ -60,8 +70,8 @@ public class ExternalNetworkManager {
      */
     public void deallocateIfExternal() {
         if (getNetwork() != null && getNetwork().isExternal()) {
-            Provider<?> provider = getProviderDao().get(getNetwork().getProvidedBy().getProviderId());
-            NetworkProviderProxy providerProxy = getProviderProxyFactory().create(provider);
+            Provider<?> provider = providerDao.get(getNetwork().getProvidedBy().getProviderId());
+            NetworkProviderProxy providerProxy = providerProxyFactory.create(provider);
 
             try {
                 providerProxy.deallocate(nic);
@@ -70,20 +80,9 @@ public class ExternalNetworkManager {
                 removePortFailureEvent.addCustomValue("NicName", nic.getName());
                 removePortFailureEvent.addCustomValue("NicId", nic.getId().toString());
                 removePortFailureEvent.addCustomValue("ProviderName", provider.getName());
-                getAuditLogDirector().log(removePortFailureEvent, AuditLogType.REMOVE_PORT_FROM_EXTERNAL_PROVIDER_FAILED);
+                auditLogDirector.log(removePortFailureEvent, AuditLogType.REMOVE_PORT_FROM_EXTERNAL_PROVIDER_FAILED);
             }
         }
     }
 
-    ProviderProxyFactory getProviderProxyFactory() {
-        return Injector.get(ProviderProxyFactory.class);
-    }
-
-    private ProviderDao getProviderDao() {
-        return Injector.get(ProviderDao.class);
-    }
-
-    private AuditLogDirector getAuditLogDirector() {
-        return Injector.get(AuditLogDirector.class);
-    }
 }

@@ -3,9 +3,7 @@ package org.ovirt.engine.core.bll.network;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
@@ -59,26 +58,23 @@ public class ExternalNetworkManagerTest {
     @Captor
     private ArgumentCaptor<AuditLogable> auditLogableCaptor;
 
-    private ExternalNetworkManager underTest;
+    private VmNic nic = new VmNic();
 
-    private VmNic nic;
-    private Network network;
+    private Network network = createNetwork();
+
+    @InjectMocks
+    private ExternalNetworkManager underTest = new ExternalNetworkManager(nic, network);
+
     private ProviderNetwork providerNetwork;
     private Provider provider;
 
     @Before
     public void setUp() {
-        nic = new VmNic();
-        network = createNetwork();
-
-        underTest = spy(new ExternalNetworkManager(nic, network));
-
         injectorRule.bind(ProviderDao.class, providerDao);
         injectorRule.bind(AuditLogDirector.class, auditLogDirector);
 
         provider = new Provider<>();
         when(providerDao.get(PROVIDER_ID)).thenReturn(provider);
-        doReturn(providerProxyFactory).when(underTest).getProviderProxyFactory();
         when(providerProxyFactory.create(provider)).thenReturn(networkProviderProxy);
     }
 

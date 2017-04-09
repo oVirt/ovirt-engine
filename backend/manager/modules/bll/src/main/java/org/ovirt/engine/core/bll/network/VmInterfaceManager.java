@@ -144,7 +144,7 @@ public class VmInterfaceManager {
     protected void removeFromExternalNetworks(List<VmNic> interfaces) {
         Transaction transaction = TransactionSupport.suspend();
         for (VmNic iface : interfaces) {
-            new ExternalNetworkManager(iface).deallocateIfExternal();
+            getExternalNetworkManagerFactory().create(iface).deallocateIfExternal();
         }
 
         TransactionSupport.resume(transaction);
@@ -239,6 +239,10 @@ public class VmInterfaceManager {
 
     protected VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
+    }
+
+    private ExternalNetworkManagerFactory getExternalNetworkManagerFactory() {
+        return Injector.get(ExternalNetworkManagerFactory.class);
     }
 
     private AuditLogable createAuditLog(final VmNic iface) {

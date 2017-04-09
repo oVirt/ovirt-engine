@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
+import org.ovirt.engine.core.bll.network.ExternalNetworkManagerFactory;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -60,6 +60,9 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Inject
     private VnicProfileDao vnicProfileDao;
 
+    @Inject
+    private ExternalNetworkManagerFactory externalNetworkManagerFactory;
+
     public UpdateVmInterfaceCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVmId(parameters.getVmId());
@@ -100,7 +103,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 Network newNetwork = NetworkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
                 Network oldNetwork = NetworkHelper.getNetworkByVnicProfileId(oldIface.getVnicProfileId());
                 if (!Objects.equals(oldNetwork, newNetwork)) {
-                    new ExternalNetworkManager(oldIface).deallocateIfExternal();
+                    externalNetworkManagerFactory.create(oldIface).deallocateIfExternal();
                 }
             }
 
