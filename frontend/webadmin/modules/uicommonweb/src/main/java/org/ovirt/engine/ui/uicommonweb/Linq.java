@@ -83,31 +83,6 @@ public final class Linq {
         return isData && isActive;
     }
 
-    /**
-     * Produces the set difference of two sequences by using the default equality
-     *
-     * @param first
-     *            A {@link List} whose elements that are not also in second will be returned.
-     * @param second
-     *            A {@link List} whose elements that also occur in the first sequence will
-     *            cause those elements to be removed from the returned sequence.
-     * @return A sequence that contains the set difference of the elements of two sequences.
-     */
-    public static <TSource> ArrayList<TSource> except(ArrayList<TSource> first,
-            ArrayList<TSource> second) {
-        ArrayList<TSource> newIEnumerable = new ArrayList<>();
-
-        if (first != null && second != null) {
-            for (TSource t : first) {
-                if (!second.contains(t)) {
-                    newIEnumerable.add(t);
-                }
-            }
-        }
-
-        return second == null ? first : newIEnumerable;
-    }
-
     public static <TSource> TSource firstOrNull(Collection<TSource> source) {
         return firstOrNull(source, x -> true);
     }

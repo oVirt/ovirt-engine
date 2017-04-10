@@ -127,7 +127,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
     }
 
     private CommandType commandType = CommandType.values()[0];
-    public ArrayList<ActionGroup> publicAttachedActions;
+    public ArrayList<ActionGroup> publicAttachedActions = new ArrayList<>();
     public ArrayList<ActionGroup> detachActionGroup;
     public ArrayList<ActionGroup> attachActionGroup;
     public Role role;
@@ -448,8 +448,11 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         }
         else {
 
-            detachActionGroup = Linq.except(publicAttachedActions, actions);
-            attachActionGroup = Linq.except(actions, publicAttachedActions);
+            detachActionGroup = new ArrayList<>(publicAttachedActions);
+            detachActionGroup.removeAll(actions);
+
+            attachActionGroup = actions;
+            attachActionGroup.removeAll(publicAttachedActions);
 
             Frontend.getInstance().runAction(VdcActionType.UpdateRole, new RolesOperationsParameters(role),
                     new IFrontendActionAsyncCallback() {
