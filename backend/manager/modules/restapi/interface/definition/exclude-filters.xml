@@ -3,6 +3,7 @@
     <Match>
         <Or>
             <Class name="~.*\.ObjectFactory" />
+            <Class name="~^.*\.[^.]+ResourceHelper$" />
             <Package name="org.ovirt.engine.api.xml" />
             <Package name="org.ovirt.engine.api.json" />
         </Or>
