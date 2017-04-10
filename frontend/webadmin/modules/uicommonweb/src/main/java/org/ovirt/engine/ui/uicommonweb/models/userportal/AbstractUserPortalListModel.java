@@ -6,13 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.PairFirstComparator;
@@ -20,7 +21,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.IconUtils;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
@@ -179,16 +179,16 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
                     new IFrontendMultipleQueryAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleQueryAsyncResult result) {
-                            List<VM> poolRepresentants = new LinkedList<>();
-                            List<VdcQueryReturnValue> poolRepresentantsRetval = result.getReturnValues();
-                            for (VdcQueryReturnValue poolRepresentant : poolRepresentantsRetval) { // extract from return value
-                                poolRepresentants.add((VM) poolRepresentant.getReturnValue());
-                            }
-                            final List<Pair<Object, VM>> poolsPairs =
-                                    Linq.zip(Collections.<Object>unmodifiableList(filteredPools),
-                                            poolRepresentants);
-                            final List<Pair<Object, VM>> nonNullPools = filterNonNullPools(poolsPairs);
-                            final List<Pair<Object, VM>> all = Linq.concat(vmPairs, nonNullPools);
+                            final List<Pair<Object, VM>> all =
+                                    Stream.concat(vmPairs.stream(),
+                                            IntStream.range(0, filteredPools.size())
+                                                    .filter(i -> result.getReturnValues().get(i).getReturnValue() != null)
+                                                    .mapToObj(i -> new Pair<Object, VM>(
+                                                            filteredPools.get(i),
+                                                            result.getReturnValues().get(i).getReturnValue())
+                                                    )
+                                    ).collect(Collectors.toList());
+
                             final List<VM> vmsAndPoolRepresentants = extractVms(all);
                             IconUtils.prefetchIcons(vmsAndPoolRepresentants, true, fetchLargeIcons(),
                                     new IconCache.IconsCallback() {

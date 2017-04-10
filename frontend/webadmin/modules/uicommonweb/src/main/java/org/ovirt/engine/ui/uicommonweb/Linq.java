@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -129,17 +128,6 @@ public final class Linq {
     @SafeVarargs
     public static <T> List<T> concat(List<T>... lists) {
         return concatUnsafe(lists);
-    }
-
-    public static <U, V> List<Pair<U, V>> zip(List<U> objects, List<V> vms) {
-        if (objects.size() != vms.size()) {
-            throw new RuntimeException("Zip called on lists of different lengths"); //$NON-NLS-1$
-        }
-        final List<Pair<U, V>> result = new ArrayList<>();
-        for (int i = 0; i < objects.size(); i++) {
-            result.add(new Pair<>(objects.get(i), vms.get(i)));
-        }
-        return result;
     }
 
     public static List<StorageDomain> getStorageDomainsByIds(List<Guid> storageIds,
