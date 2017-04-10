@@ -142,6 +142,17 @@ public class OAuthTokenServlet extends HttpServlet {
         log.debug("Entered issueTokenForPasswd");
         Credentials credentials = null;
         try {
+            boolean isOpenIdScope = SsoUtils.scopeAsList(scope).contains(SsoConstants.OPENID_SCOPE);
+            String clientId = null;
+            if (isOpenIdScope) {
+                String[] clientIdAndSecret = SsoUtils.getClientIdClientSecret(request);
+                SsoUtils.validateClientRequest(request,
+                        clientIdAndSecret[0],
+                        clientIdAndSecret[1],
+                        scope,
+                        null);
+                clientId = clientIdAndSecret[0];
+            }
             credentials = SsoUtils.translateUser(SsoUtils.getRequestParameter(request, "username"),
                     SsoUtils.getRequestParameter(request, "password"),
                     ssoContext);
@@ -161,7 +172,10 @@ public class OAuthTokenServlet extends HttpServlet {
             }
             SsoUtils.validateRequestScope(request, token, scope);
             log.debug("Sending json response");
-            SsoUtils.sendJsonData(response, buildResponse(ssoSession));
+            SsoUtils.sendJsonData(response,
+                    isOpenIdScope ?
+                            buildResponse(request, ssoSession, clientId) :
+                            buildResponse(ssoSession));
         } catch (AuthenticationException ex) {
             String profile = "N/A";
             if (credentials != null) {

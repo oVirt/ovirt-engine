@@ -582,8 +582,9 @@ public class SsoUtils {
     }
 
     public static void validateScope(List<String> scope, String requestScope) {
+        List<String> strippedScope = strippedScopeAsList(scope);
         List<String> requestedScope = strippedScopeAsList(scopeAsList(requestScope));
-        if (!scope.containsAll(requestedScope)) {
+        if (!strippedScope.containsAll(requestedScope)) {
             throw new OAuthException(SsoConstants.ERR_CODE_INVALID_SCOPE,
                     String.format(SsoConstants.ERR_CODE_INVALID_SCOPE_MSG, requestedScope));
         }
