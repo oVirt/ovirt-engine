@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.gwt.dom.client.ImageElement;
@@ -46,7 +46,8 @@ public class IconValidation implements IValidation {
         if (dimensionsValidation.getSuccess() && sizeValidation.getSuccess()) {
             return ValidationResult.ok();
         }
-        final List<String> reasons = Linq.concat(dimensionsValidation.getReasons(), sizeValidation.getReasons());
+        final List<String> reasons = new ArrayList<>(dimensionsValidation.getReasons());
+        reasons.addAll(sizeValidation.getReasons());
         return new ValidationResult(false, reasons);
     }
 

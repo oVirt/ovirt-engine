@@ -125,11 +125,6 @@ public final class Linq {
         return result;
     }
 
-    @SafeVarargs
-    public static <T> List<T> concat(List<T>... lists) {
-        return concatUnsafe(lists);
-    }
-
     public static List<StorageDomain> getStorageDomainsByIds(List<Guid> storageIds,
             List<StorageDomain> storageDomains) {
         return where(storageDomains, new IdsPredicate<>(storageIds));
