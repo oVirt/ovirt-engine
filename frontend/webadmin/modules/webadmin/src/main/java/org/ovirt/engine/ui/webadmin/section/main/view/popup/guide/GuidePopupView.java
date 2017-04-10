@@ -1,12 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.guide;
 
+import java.util.stream.Stream;
+
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGuideModel;
@@ -119,14 +120,10 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> i
                     if (guideModel.getProgress() == null) {
 
                         // Check whether there any available actions.
-                        boolean hasAllowedActions = false;
-                        for (Object item : Linq.concatUnsafe(guideModel.getCompulsoryActions(), guideModel.getOptionalActions())) {
-                            UICommand command = (UICommand) item;
-                            if (command.getIsExecutionAllowed()) {
-                                hasAllowedActions = true;
-                                break;
-                            }
-                        }
+                        boolean hasAllowedActions =
+                                Stream.concat(guideModel.getCompulsoryActions().stream(),
+                                        guideModel.getOptionalActions().stream())
+                                        .anyMatch(UICommand::getIsExecutionAllowed);
 
                         // Choose an appropriate message matching the entity type (DC, Cluster or VM).
                         String message = null;

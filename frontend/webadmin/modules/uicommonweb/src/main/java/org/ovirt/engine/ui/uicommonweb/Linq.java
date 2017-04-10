@@ -114,17 +114,6 @@ public final class Linq {
         return list;
     }
 
-    public static List concatUnsafe(List... lists) {
-        List result = new ArrayList<>();
-        for (List list : lists) {
-            for (Object item : list) {
-                result.add(item);
-            }
-        }
-
-        return result;
-    }
-
     public static List<StorageDomain> getStorageDomainsByIds(List<Guid> storageIds,
             List<StorageDomain> storageDomains) {
         return where(storageDomains, new IdsPredicate<>(storageIds));
