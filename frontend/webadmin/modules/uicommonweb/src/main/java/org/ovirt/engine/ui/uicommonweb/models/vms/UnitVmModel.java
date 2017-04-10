@@ -3006,7 +3006,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setValidTab(TabName.RESOURCE_ALLOCATION_TAB, getMinAllocatedMemory().getIsValid() && getNumOfIoThreads().getIsValid());
 
-        setValidTab(TabName.SYSTEM_TAB, getMemSize().getIsValid() &&
+        setValidTab(TabName.SYSTEM_TAB,
+                getMemSize().getIsValid() &&
+                getMaxMemorySize().getIsValid() &&
                 getTotalCPUCores().getIsValid() &&
                 getSerialNumberPolicy().getCustomSerialNumber().getIsValid() &&
                 getEmulatedMachine().getIsValid() &&
