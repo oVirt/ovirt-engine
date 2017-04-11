@@ -783,7 +783,7 @@ public class SsoUtils {
                 request.getServerPort());
 
         // Compose the JWT claims set
-        JWTClaimsSet jwtClaims = (new JWTClaimsSet.Builder())
+        JWTClaimsSet jwtClaims = new JWTClaimsSet.Builder()
                 .jwtID(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.ID))
                 .issueTime(new Date(System.currentTimeMillis()))
                 .issuer(issuer)
