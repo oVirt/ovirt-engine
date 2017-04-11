@@ -131,7 +131,9 @@ public class CertificationValidityChecker implements BackendService {
         if (eventType != null) {
             AuditLogableBase event = new AuditLogableBase();
             event.addCustomValue("ExpirationDate", new SimpleDateFormat("yyyy-MM-dd").format(expirationDate));
-            event.setVdsName(host.getName());
+            if (host != null) {
+                event.setVdsName(host.getName());
+            }
             auditLogDirector.log(event, eventType);
             return false;
         }
