@@ -3,8 +3,9 @@ package org.ovirt.engine.core.bll.aaa;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,11 +49,13 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         user.setNamespace(params.getNamespace());
         user.setLoginName(params.getPrincipalName());
         List<Guid> groupIds = new ArrayList<>();
-        List<String> groupRecordIds = new ArrayList<>();
-        flatGroups((Collection<ExtMap>) params.getGroupIds(), groupRecordIds);
-        for (String groupId : groupRecordIds) {
-            DbGroup dbGroup = dbGroupDao.getByExternalId(authzName, groupId);
+        Map<String, ExtMap> groupRecords = new HashMap<>();
+        flatGroups((Collection<ExtMap>) params.getGroupIds(), groupRecords);
+        for (Map.Entry<String, ExtMap> group: groupRecords.entrySet()) {
+            DbGroup dbGroup = dbGroupDao.getByExternalId(authzName, group.getKey());
             if (dbGroup != null) {
+                dbGroup.setName(group.getValue().get(Authz.GroupRecord.NAME));
+                dbGroupDao.update(dbGroup);
                 groupIds.add(dbGroup.getId());
             }
         }
@@ -110,19 +113,19 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         }
     }
 
-    private static void flatGroups(Collection<ExtMap> groupIds, List<String> accumulator) {
+    private static void flatGroups(Collection<ExtMap> groupIds, Map<String, ExtMap> accumulator) {
         for (ExtMap group : groupIds) {
-            if (!accumulator.contains(group.<String>get(Authz.GroupRecord.ID))) {
-                accumulator.add(group.<String>get(Authz.GroupRecord.ID));
+            if (!accumulator.containsKey(group.<String>get(Authz.GroupRecord.ID))) {
+                accumulator.put(group.get(Authz.GroupRecord.ID), group);
                 flatGroups(group, Authz.GroupRecord.GROUPS, accumulator);
             }
         }
     }
 
-    private static void flatGroups(ExtMap entity, ExtKey key, List<String> accumulator) {
+    private static void flatGroups(ExtMap entity, ExtKey key, Map<String, ExtMap> accumulator) {
         for (ExtMap group : entity.<Collection<ExtMap>>get(key, Collections.<ExtMap>emptyList())) {
-            if (!accumulator.contains(group.<String>get(Authz.GroupRecord.ID))) {
-                accumulator.add(group.<String>get(Authz.GroupRecord.ID));
+            if (!accumulator.containsKey(group.<String>get(Authz.GroupRecord.ID))) {
+                accumulator.put(group.get(Authz.GroupRecord.ID), group);
                 flatGroups(group, Authz.GroupRecord.GROUPS, accumulator);
             }
         }
