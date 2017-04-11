@@ -22,7 +22,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class StorageDiskListModel extends SearchableListModel<StorageDomain, Object> {
+public class StorageDiskListModel extends SearchableListModel<StorageDomain, DiskImage> {
     private UICommand removeCommand;
 
     public UICommand getRemoveCommand() {
@@ -236,7 +236,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Obj
                 this,
                 HelpTag.resume_upload_image_to_domain,
                 getEntity().getId(),
-                (DiskImage) getSelectedItem());
+                getSelectedItem());
     }
 
     private void cancelUpload() {
