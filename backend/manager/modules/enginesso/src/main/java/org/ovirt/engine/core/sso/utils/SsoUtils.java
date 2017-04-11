@@ -788,7 +788,7 @@ public class SsoUtils {
                 .issueTime(new Date(System.currentTimeMillis()))
                 .issuer(issuer)
                 .subject(String.format("%s@%s", ssoSession.getUserId(), ssoSession.getProfile()))
-                .audience(Arrays.asList(clientId))
+                .audience(clientId)
                 .claim("sub", String.format("%s@%s", ssoSession.getUserId(), ssoSession.getProfile()))
                 .claim("preferred_username", String.format("%s@%s", ssoSession.getUserId(), ssoSession.getProfile()))
                 .claim("email", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.EMAIL))
