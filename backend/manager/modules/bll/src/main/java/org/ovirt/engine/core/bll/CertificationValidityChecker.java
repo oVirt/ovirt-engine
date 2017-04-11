@@ -112,7 +112,7 @@ public class CertificationValidityChecker implements BackendService {
             AuditLogType alertExpirationEventType,
             AuditLogType alertAboutToExpireEventType,
             AuditLogType warnAboutToExpireEventType,
-        VDS host) {
+            VDS host) {
         Date expirationDate = cert.getNotAfter();
         Date certWarnTime = getExpirationDate(expirationDate, ConfigValues.CertExpirationWarnPeriodInDays);
         Date certAlertTime = getExpirationDate(expirationDate, ConfigValues.CertExpirationAlertPeriodInDays);
