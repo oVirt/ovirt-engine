@@ -784,7 +784,7 @@ public class SsoUtils {
 
         // Compose the JWT claims set
         JWTClaimsSet jwtClaims = (new JWTClaimsSet.Builder())
-                .jwtID(ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.ID))
+                .jwtID(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.ID))
                 .issueTime(new Date(System.currentTimeMillis()))
                 .issuer(issuer)
                 .subject(String.format("%s@%s", ssoSession.getUserId(), ssoSession.getProfile()))
