@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
@@ -60,6 +62,9 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private ImageDao imageDao;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public CopyImageGroupCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -209,7 +214,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     public CommandCallback getCallback() {
         if (isUsingSPDMFlow()){
-            return new ConcurrentChildCommandsExecutionCallback();
+            return callbackProvider.get();
         }
 
         return null;

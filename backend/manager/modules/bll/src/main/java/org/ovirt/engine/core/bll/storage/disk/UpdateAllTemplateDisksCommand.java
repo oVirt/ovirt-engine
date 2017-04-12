@@ -2,6 +2,10 @@ package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -25,6 +29,10 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class UpdateAllTemplateDisksCommand<T extends UpdateAllTemplateDisksParameters> extends VmTemplateCommand<T> {
+
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public UpdateAllTemplateDisksCommand(Guid commandId) {
         super(commandId);
@@ -72,7 +80,7 @@ public class UpdateAllTemplateDisksCommand<T extends UpdateAllTemplateDisksParam
 
     @Override
     public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     @Override

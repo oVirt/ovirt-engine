@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -52,6 +54,9 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     private VmStaticDao vmStaticDao;
     @Inject
     private DiskImageDao diskImageDao;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public AddVmFromTemplateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -223,7 +228,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
 
     @Override
     public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     @Override

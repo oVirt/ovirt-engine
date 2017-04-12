@@ -9,6 +9,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -52,6 +54,11 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
 
     @Inject
     private GlusterGeoRepDao geoRepDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     private GlusterGeoRepSession geoRepSession;
 
@@ -90,7 +97,7 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
         Map<Guid, Guid> vmIdSnapshotIdMap = new HashMap<>();
         for (VM vm : vms) {
             try {
-                Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+                Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                         ActionType.CreateAllSnapshotsFromVm,
                         getCreateSnapshotParameters(vm),
                         cloneContextAndDetachFromParent());
@@ -133,7 +140,7 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
             removeSnapshotParameters.setParentParameters(getParameters());
             removeSnapshotParameters.setNeedsLocking(false);
 
-            CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveSnapshot,
+            commandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveSnapshot,
                     removeSnapshotParameters,
                     cloneContextAndDetachFromParent());
         }
@@ -198,6 +205,6 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
 
     @Override
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 }

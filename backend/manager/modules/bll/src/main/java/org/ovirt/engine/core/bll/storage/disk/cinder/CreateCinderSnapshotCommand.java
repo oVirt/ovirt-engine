@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -27,7 +29,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -40,6 +41,11 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
     private DiskImageDao diskImageDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(CreateCinderSnapshotCommandCallback.class)
+    private Instance<CreateCinderSnapshotCommandCallback> callbackProvider;
 
     private CinderDisk disk;
 
@@ -144,7 +150,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         RemoveCinderDiskVolumeParameters removeDiskVolumeParam =
                 new RemoveCinderDiskVolumeParameters(diskVolumeVolume);
 
-        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+        Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.RemoveCinderDiskVolume,
                 removeDiskVolumeParam,
                 null);
@@ -198,7 +204,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
 
     @Override
     public CommandCallback getCallback() {
-        return Injector.injectMembers(new CreateCinderSnapshotCommandCallback());
+        return callbackProvider.get();
     }
 
 }

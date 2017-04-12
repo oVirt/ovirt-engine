@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -23,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
-import org.ovirt.engine.core.di.Injector;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -31,6 +32,11 @@ public class GlusterStorageGeoRepSyncInternalCommand<T extends GlusterVolumeGeoR
 
     @Inject
     private GlusterGeoRepDao geoRepDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(GlusterStorageGeoRepSyncCallback.class)
+    private Instance<GlusterStorageGeoRepSyncCallback> callbackProvider;
 
     private GlusterGeoRepSession geoRepSession;
 
@@ -54,7 +60,7 @@ public class GlusterStorageGeoRepSyncInternalCommand<T extends GlusterVolumeGeoR
         if (getSession().getStatus() != GeoRepSessionStatus.ACTIVE) {
             // Start geo-replication
             Future<ActionReturnValue> geoRepCmd =
-                    CommandCoordinatorUtil.executeAsyncCommand(ActionType.StartGlusterVolumeGeoRep,
+                    commandCoordinatorUtil.executeAsyncCommand(ActionType.StartGlusterVolumeGeoRep,
                             new GlusterVolumeGeoRepSessionParameters(getSession().getMasterVolumeId(),
                                     getSession().getId()),
                             cloneContext());
@@ -92,6 +98,6 @@ public class GlusterStorageGeoRepSyncInternalCommand<T extends GlusterVolumeGeoR
 
     @Override
     public CommandCallback getCallback() {
-        return Injector.injectMembers(new GlusterStorageGeoRepSyncCallback());
+        return callbackProvider.get();
     }
 }

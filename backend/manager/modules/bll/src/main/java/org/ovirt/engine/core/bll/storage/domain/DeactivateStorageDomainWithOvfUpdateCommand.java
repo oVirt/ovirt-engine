@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
@@ -32,6 +34,11 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
     private AuditLogDirector auditLogDirector;
     @Inject
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public DeactivateStorageDomainWithOvfUpdateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -39,17 +46,13 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
     }
 
     private boolean shouldUseCallback() {
-        CommandEntity commandEntity = CommandCoordinatorUtil.getCommandEntity(getCommandId());
+        CommandEntity commandEntity = commandCoordinatorUtil.getCommandEntity(getCommandId());
         return (commandEntity != null && commandEntity.isCallbackEnabled()) || shouldPerformOvfUpdate();
     }
 
     @Override
     public CommandCallback getCallback() {
-        if (shouldUseCallback()) {
-            return new ConcurrentChildCommandsExecutionCallback();
-        }
-
-        return null;
+        return shouldUseCallback() ? callbackProvider.get() : null;
     }
 
     /**
@@ -124,7 +127,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
 
     @Override
     protected void endWithFailure() {
-        if (CommandCoordinatorUtil.getCommandExecutionStatus(getCommandId()) != CommandExecutionStatus.EXECUTED) {
+        if (commandCoordinatorUtil.getCommandExecutionStatus(getCommandId()) != CommandExecutionStatus.EXECUTED) {
             changeStorageDomainStatusInTransaction(loadStoragePoolIsoMap(), StorageDomainStatus.Unknown);
             auditLogDirector.log(this, AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_OVF_UPDATE_INCOMPLETE);
         } else {

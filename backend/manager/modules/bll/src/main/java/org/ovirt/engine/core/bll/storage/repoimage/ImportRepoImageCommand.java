@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -78,6 +80,9 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     private ImageDao imageDao;
     @Inject
     private ProviderProxyFactory providerProxyFactory;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     @Inject
     private ImagesHandler imagesHandler;
@@ -124,7 +129,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
     @Override
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     protected AddDiskParameters createAddDiskParameters() {

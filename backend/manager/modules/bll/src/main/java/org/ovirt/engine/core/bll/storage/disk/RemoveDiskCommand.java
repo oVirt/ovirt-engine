@@ -107,6 +107,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private VmDao vmDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     public RemoveDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -386,7 +388,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             case CINDER:
                 RemoveCinderDiskParameters params = new RemoveCinderDiskParameters(getParameters().getDiskId());
                 params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-                Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+                Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                         ActionType.RemoveCinderDisk,
                         params,
                         cloneContextAndDetachFromParent());

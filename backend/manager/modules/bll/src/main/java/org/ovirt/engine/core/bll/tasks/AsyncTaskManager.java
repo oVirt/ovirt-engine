@@ -14,10 +14,16 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
@@ -31,6 +37,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
@@ -40,9 +47,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtil;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,18 +54,30 @@ import org.slf4j.LoggerFactory;
 /**
  * AsyncTaskManager: Singleton, manages all tasks in the system.
  */
-public final class AsyncTaskManager {
+@Singleton
+public final class AsyncTaskManager implements BackendService {
+
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService schedulerService;
+
+    @Inject
+    private AsyncTaskFactory asyncTaskFactory;
+
+    @Inject
+    private CommandCoordinator coco;
+
     private static final Logger log = LoggerFactory.getLogger(AsyncTaskManager.class);
     private final AuditLogDirector auditLogDirector = Injector.get(AuditLogDirector.class);
 
     /** Map which consist all tasks that currently are monitored **/
-    private ConcurrentMap<Guid, SPMTask> _tasks;
+    private ConcurrentMap<Guid, SPMTask> tasks;
 
-    /** Indication if _tasks has changed for logging process. **/
+    /** Indication if tasks has changed for logging process. **/
     private boolean logChangedMap = true;
 
     /** The period of time (in minutes) to hold the asynchronous tasks' statuses in the asynchronous tasks cache **/
-    private final int _cacheTimeInMinutes;
+    private int cacheTimeInMinutes;
 
     /**Map of tasks in DB per storage pool that exist after restart **/
     private ConcurrentMap<Guid, List<AsyncTask>> tasksInDbAfterRestart = null;
@@ -73,37 +89,21 @@ public final class AsyncTaskManager {
 
     private CountDownLatch irsBrokerLatch;
 
-    private static volatile AsyncTaskManager taskManager;
-    private CommandCoordinator coco;
+    @PostConstruct
+    private void init() {
+        cacheTimeInMinutes = Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
+        tasks = new ConcurrentHashMap<>();
 
-    public static AsyncTaskManager getInstance() {
-        return taskManager;
-    }
+        schedulerService.scheduleWithFixedDelay(this::timerElapsed,
+                Config.<Integer> getValue(ConfigValues.AsyncTaskPollingRate),
+                Config.<Integer> getValue(ConfigValues.AsyncTaskPollingRate),
+                TimeUnit.SECONDS);
 
-    public static AsyncTaskManager getInstance(CommandCoordinator coco) {
-        if (taskManager == null) {
-            synchronized(AsyncTaskManager.class) {
-                if (taskManager == null) {
-                    taskManager = new AsyncTaskManager(coco);
-                }
-            }
-        }
-        return taskManager;
-    }
-
-    private AsyncTaskManager(CommandCoordinator coco) {
-        this.coco = coco;
-        _tasks = new ConcurrentHashMap<>();
-
-        SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
-        scheduler.scheduleAFixedDelayJob(this, "timerElapsed", new Class[]{},
-                new Object[]{}, Config.<Integer>getValue(ConfigValues.AsyncTaskPollingRate),
-                Config.<Integer>getValue(ConfigValues.AsyncTaskPollingRate), TimeUnit.SECONDS);
-
-        scheduler.scheduleAFixedDelayJob(this, "cacheTimerElapsed", new Class[]{},
-                new Object[]{}, Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
-                Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds), TimeUnit.SECONDS);
-        _cacheTimeInMinutes = Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
+        schedulerService.scheduleWithFixedDelay(this::cacheTimerElapsed,
+                Config.<Integer> getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
+                Config.<Integer> getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
+                TimeUnit.SECONDS);
+        initAsyncTaskManager();
     }
 
     // NOTE - any change to the logic here and in the async tasks managed command requires inspection of
@@ -139,8 +139,16 @@ public final class AsyncTaskManager {
 
     }
 
-    @OnTimerMethodAnnotation("timerElapsed")
-    public synchronized void timerElapsed() {
+    private synchronized void timerElapsed() {
+        try {
+            timerElapsedImpl();
+        } catch (Throwable t) {
+            log.error("Exception in timerElapsed: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
+    }
+
+    private synchronized void timerElapsedImpl() {
         if (thereAreTasksToPoll()) {
             pollAndUpdateAsyncTasks();
 
@@ -154,22 +162,26 @@ public final class AsyncTaskManager {
             }
 
             // check for zombie tasks
-            if (_tasks.size() > 0) {
+            if (tasks.size() > 0) {
                 cleanZombieTasks();
             }
         }
     }
 
-    @OnTimerMethodAnnotation("cacheTimerElapsed")
-    public void cacheTimerElapsed() {
-        removeClearedAndOldTasks();
+    private void cacheTimerElapsed() {
+        try {
+            removeClearedAndOldTasks();
+        } catch (Throwable t) {
+            log.error("Exception in cacheTimerElapsed: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
     }
 
     /**
      * Check if task should be cached or not. Task should not be cached , only
      * if the task has been rolled back (Cleared) or failed to be rolled back
      * (ClearedFailed), and been in that status for several minutes
-     * (_cacheTimeInMinutes).
+     * (cacheTimeInMinutes).
      *
      * @param task - Asynchronous task we check to cache or not.
      * @return - true for uncached object , and false when the object should be
@@ -178,7 +190,7 @@ public final class AsyncTaskManager {
     public synchronized boolean cachingOver(SPMTask task) {
         // Get time in milliseconds that the task should be cached
         long SubtractMinutesAsMills = TimeUnit.MINUTES
-                .toMillis(_cacheTimeInMinutes);
+                .toMillis(cacheTimeInMinutes);
 
         // check if task has been rolled back (Cleared) or failed to be rolled
         // back (ClearedFailed)
@@ -190,8 +202,8 @@ public final class AsyncTaskManager {
 
     public synchronized boolean hasTasksByStoragePoolId(Guid storagePoolID) {
         boolean retVal = false;
-        if (_tasks != null) {
-            for (SPMTask task : _tasks.values()) {
+        if (tasks != null) {
+            for (SPMTask task : tasks.values()) {
                 if (task.getStoragePoolID().equals(storagePoolID)) {
                     retVal = true;
                     break;
@@ -202,8 +214,8 @@ public final class AsyncTaskManager {
     }
 
     public synchronized boolean hasTasksForEntityIdAndAction(Guid id, ActionType type) {
-        if (_tasks != null) {
-            for (SPMTask task : _tasks.values()) {
+        if (tasks != null) {
+            for (SPMTask task : tasks.values()) {
                 if (isCurrentTaskLookedFor(id, task)
                         && type.equals(task.getParameters().getDbAsyncTask().getActionType())) {
                     return true;
@@ -309,9 +321,9 @@ public final class AsyncTaskManager {
         spmTask.updateTask(failureStatus);
     }
 
-    public static void removeTaskFromDbByTaskId(Guid taskId) {
+    public void removeTaskFromDbByTaskId(Guid taskId) {
         try {
-            if (CommandCoordinatorUtil.callRemoveTaskFromDbByTaskId(taskId) != 0) {
+            if (coco.removeTaskFromDbByTaskId(taskId) != 0) {
                 log.info("Removed task '{}' from DataBase", taskId);
             }
         } catch (RuntimeException e) {
@@ -332,7 +344,7 @@ public final class AsyncTaskManager {
     private void cleanZombieTasks() {
         long maxTime = DateTime.getNow()
                 .addMinutes(-1 * Config.<Integer>getValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
-        for (SPMTask task : _tasks.values()) {
+        for (SPMTask task : tasks.values()) {
 
             if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {
                 AuditLogable logable = new AuditLogableImpl();
@@ -367,7 +379,7 @@ public final class AsyncTaskManager {
 
     private int numberOfTasksToPoll() {
         int retValue = 0;
-        for (SPMTask task : _tasks.values()) {
+        for (SPMTask task : tasks.values()) {
             if (task.getShouldPoll()) {
                 retValue++;
             }
@@ -377,7 +389,7 @@ public final class AsyncTaskManager {
     }
 
     private boolean thereAreTasksToPoll() {
-        for (SPMTask task : _tasks.values()) {
+        for (SPMTask task : tasks.values()) {
             if (task.getShouldPoll()) {
                 return true;
             }
@@ -386,13 +398,13 @@ public final class AsyncTaskManager {
     }
 
     /**
-     * Fetch all tasks statuses from each storagePoolId , and update the _tasks
+     * Fetch all tasks statuses from each storagePoolId , and update the tasks
      * map with the updated statuses.
      */
     private void pollAndUpdateAsyncTasks() {
         if (logChangedMap) {
             log.info("Polling and updating Async Tasks: {} tasks, {} tasks to poll now",
-                    _tasks.size(), numberOfTasksToPoll());
+                    tasks.size(), numberOfTasksToPoll());
         }
 
         // Fetch Set of pool id's
@@ -412,7 +424,7 @@ public final class AsyncTaskManager {
      */
     private void updateTaskStatuses(
             Map<Guid, Map<Guid, AsyncTaskStatus>> poolsAllTasksMap) {
-        for (SPMTask task : _tasks.values()) {
+        for (SPMTask task : tasks.values()) {
             if (task.getShouldPoll()) {
                 Map<Guid, AsyncTaskStatus> asyncTasksForPoolMap = poolsAllTasksMap
                         .get(task.getStoragePoolID());
@@ -445,7 +457,7 @@ public final class AsyncTaskManager {
      * Initialize a map with each storage pool Id task statuses.
      *
      * @param poolsOfActiveTasks - Set of all the active tasks fetched from
-     * _tasks.
+     * tasks.
      * @return poolsAsyncTaskMap - Map which contains tasks for each storage
      * pool id.
      */
@@ -486,7 +498,7 @@ public final class AsyncTaskManager {
     private Set<Guid> getPoolIdsTasks() {
         Set<Guid> poolsOfActiveTasks = new HashSet<>();
 
-        for (SPMTask task : _tasks.values()) {
+        for (SPMTask task : tasks.values()) {
             if (task.getShouldPoll()) {
                 poolsOfActiveTasks.add(task.getStoragePoolID());
             }
@@ -502,7 +514,7 @@ public final class AsyncTaskManager {
         Set<Guid> poolsOfActiveTasks = new HashSet<>();
         Set<Guid> poolsOfClearedAndOldTasks = new HashSet<>();
         ConcurrentMap<Guid, SPMTask> activeTaskMap = new ConcurrentHashMap<>();
-        for (SPMTask task : _tasks.values()) {
+        for (SPMTask task : tasks.values()) {
             if (!cachingOver(task)) {
                 activeTaskMap.put(task.getVdsmTaskId(), task);
                 poolsOfActiveTasks.add(task.getStoragePoolID());
@@ -511,7 +523,7 @@ public final class AsyncTaskManager {
             }
         }
 
-        // Check if _tasks need to be updated with less tasks (activated tasks).
+        // Check if tasks need to be updated with less tasks (activated tasks).
         if (poolsOfClearedAndOldTasks.size() > 0) {
             setNewMap(activeTaskMap);
             poolsOfClearedAndOldTasks.removeAll(poolsOfActiveTasks);
@@ -530,7 +542,7 @@ public final class AsyncTaskManager {
         if (task == null) {
             log.error("Cannot add a null task.");
         } else {
-            if (!_tasks.containsKey(task.getVdsmTaskId())) {
+            if (!tasks.containsKey(task.getVdsmTaskId())) {
                 log.info(
                         "Adding task '{}' (Parent Command '{}', Parameters Type '{}'), {}.",
                         task.getVdsmTaskId(),
@@ -539,11 +551,11 @@ public final class AsyncTaskManager {
                         task.getShouldPoll() ? "polling started."
                                 : "polling hasn't started yet.");
 
-                // Set the indication to true for logging _tasks status on next
+                // Set the indication to true for logging tasks status on next
                 // quartz execution.
                 addTaskToMap(task.getVdsmTaskId(), task);
             } else {
-                SPMTask existingTask = _tasks.get(task.getVdsmTaskId());
+                SPMTask existingTask = tasks.get(task.getVdsmTaskId());
                 if (existingTask.getParameters().getDbAsyncTask().getActionType() == ActionType.Unknown
                         && task.getParameters().getDbAsyncTask().getActionType() != ActionType.Unknown) {
                     log.info(
@@ -551,7 +563,7 @@ public final class AsyncTaskManager {
                             task.getVdsmTaskId(),
                             task.getParameters().getDbAsyncTask().getActionType());
 
-                    // Set the indication to true for logging _tasks status on
+                    // Set the indication to true for logging tasks status on
                     // next quartz execution.
                     addTaskToMap(task.getVdsmTaskId(), task);
                 }
@@ -560,32 +572,32 @@ public final class AsyncTaskManager {
     }
 
     /**
-     * Adds new task to _tasks map , and set the log status to true. We set the
-     * indication to true for logging _tasks status on next quartz execution.
+     * Adds new task to tasks map , and set the log status to true. We set the
+     * indication to true for logging tasks status on next quartz execution.
      *
      * @param guid - Key of the map.
      * @param asyncTask - Value of the map.
      */
     private void addTaskToMap(Guid guid, SPMTask asyncTask) {
-        _tasks.put(guid, asyncTask);
+        tasks.put(guid, asyncTask);
         logChangedMap = true;
     }
 
     /**
-     * We set the indication to true when _tasks map changes for logging _tasks
+     * We set the indication to true when tasks map changes for logging tasks
      * status on next quartz execution.
      *
-     * @param asyncTaskMap - Map to copy to _tasks map.
+     * @param asyncTaskMap - Map to copy to tasks map.
      */
     private void setNewMap(ConcurrentMap<Guid, SPMTask> asyncTaskMap) {
-        // If not the same set _tasks to be as asyncTaskMap.
-        _tasks = asyncTaskMap;
+        // If not the same set tasks to be as asyncTaskMap.
+        tasks = asyncTaskMap;
 
         // Set the indication to true for logging.
         logChangedMap = true;
 
         // Log tasks to poll now.
-        log.info("Setting new tasks map. The map contains now {} tasks", _tasks.size());
+        log.info("Setting new tasks map. The map contains now {} tasks", tasks.size());
     }
 
     public SPMTask createTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
@@ -593,8 +605,8 @@ public final class AsyncTaskManager {
     }
 
     public synchronized void startPollingTask(Guid vdsmTaskId) {
-        if (_tasks.containsKey(vdsmTaskId)) {
-            _tasks.get(vdsmTaskId).startPollingTask();
+        if (tasks.containsKey(vdsmTaskId)) {
+            tasks.get(vdsmTaskId).startPollingTask();
         }
     }
 
@@ -603,10 +615,10 @@ public final class AsyncTaskManager {
 
         if (vdsmTaskIdList != null && vdsmTaskIdList.size() > 0) {
             for (Guid vdsmTaskId : vdsmTaskIdList) {
-                if (_tasks.containsKey(vdsmTaskId)) {
+                if (tasks.containsKey(vdsmTaskId)) {
                     // task is still running or is still in the cache:
-                    _tasks.get(vdsmTaskId).setLastStatusAccessTime();
-                    returnValue.add(_tasks.get(vdsmTaskId).getLastTaskStatus());
+                    tasks.get(vdsmTaskId).setLastStatusAccessTime();
+                    returnValue.add(tasks.get(vdsmTaskId).getLastTaskStatus());
                 } else { // task doesn't exist in the manager (shouldn't happen) ->
                     // assume it has been ended successfully.
                     log.warn(
@@ -647,7 +659,7 @@ public final class AsyncTaskManager {
 
                 for (AsyncTaskCreationInfo creationInfo : currPoolTasks) {
                     creationInfo.setStoragePoolID(sp.getId());
-                    if (!_tasks.containsKey(creationInfo.getVdsmTaskId())) {
+                    if (!tasks.containsKey(creationInfo.getVdsmTaskId())) {
                         try {
                             SPMTask task;
                             if (partiallyCompletedCommandTasks.containsKey(creationInfo.getVdsmTaskId())) {
@@ -661,7 +673,7 @@ public final class AsyncTaskManager {
                                 // Will result in failure of the command
                                 task.setPartiallyCompletedCommandTask(true);
                             } else {
-                                task = coco.construct(creationInfo);
+                                task = asyncTaskFactory.construct(creationInfo);
                             }
                             addTaskToManager(task);
                             newlyAddedTasks.add(task);
@@ -676,7 +688,7 @@ public final class AsyncTaskManager {
 
                 TransactionSupport.executeInNewTransaction(() -> {
                     for (SPMTask task : newlyAddedTasks) {
-                        AsyncTaskUtils.addOrUpdateTaskInDB(task);
+                        AsyncTaskUtils.addOrUpdateTaskInDB(coco, task);
                     }
                     return null;
                 });
@@ -700,7 +712,7 @@ public final class AsyncTaskManager {
         List<AsyncTask> tasksInDForStoragePool = tasksInDbAfterRestart.get(sp.getId());
         if (tasksInDForStoragePool != null) {
             for (AsyncTask task : tasksInDForStoragePool) {
-                if (!_tasks.containsKey(task.getVdsmTaskId())) {
+                if (!tasks.containsKey(task.getVdsmTaskId())) {
                     coco.removeByVdsmTaskId(task.getVdsmTaskId());
                 }
             }
@@ -725,15 +737,15 @@ public final class AsyncTaskManager {
     }
 
     public synchronized void cancelTask(Guid vdsmTaskId) {
-        if (_tasks.containsKey(vdsmTaskId)) {
+        if (tasks.containsKey(vdsmTaskId)) {
             log.info("Attempting to cancel task '{}'.", vdsmTaskId);
-            _tasks.get(vdsmTaskId).stopTask();
-            _tasks.get(vdsmTaskId).concreteStartPollingTask();
+            tasks.get(vdsmTaskId).stopTask();
+            tasks.get(vdsmTaskId).concreteStartPollingTask();
         }
     }
 
     public synchronized boolean entityHasTasks(Guid id) {
-        for (SPMTask task : _tasks.values()) {
+        for (SPMTask task : tasks.values()) {
             if (isCurrentTaskLookedFor(id, task)) {
                 return true;
             }
@@ -744,15 +756,15 @@ public final class AsyncTaskManager {
     public Collection<Guid> getUserIdsForVdsmTaskIds(List<Guid> vdsmTaskIds) {
         Set<Guid> users = new TreeSet<>();
         for (Guid id : vdsmTaskIds) {
-            if (_tasks.containsKey(id)) {
-                users.add(_tasks.get(id).getParameters().getDbAsyncTask().getUserId());
+            if (tasks.containsKey(id)) {
+                users.add(tasks.get(id).getParameters().getDbAsyncTask().getUserId());
             }
         }
         return users;
     }
 
     public boolean doesCommandContainAsyncTask(Guid cmdId) {
-        for (SPMTask task : _tasks.values()) {
+        for (SPMTask task : tasks.values()) {
             if (task.getParameters().getDbAsyncTask().getCommandId().equals(cmdId)) {
                 return true;
             }

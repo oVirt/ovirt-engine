@@ -55,6 +55,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     private DiskDao diskDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -193,7 +195,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             return failValidation(EngineMessage.VM_CANNOT_SUSPEND_CLUSTER_UPGRADING);
         }
 
-        if (CommandCoordinatorUtil.entityHasTasks(getVmId())) {
+        if (commandCoordinatorUtil.entityHasTasks(getVmId())) {
             return failValidation(EngineMessage.VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS);
         }
 

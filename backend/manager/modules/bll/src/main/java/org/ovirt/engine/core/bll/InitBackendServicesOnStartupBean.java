@@ -17,8 +17,6 @@ import org.ovirt.engine.core.bll.scheduling.AffinityRulesEnforcementManager;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfDataUpdater;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
-import org.ovirt.engine.core.bll.tasks.CommandCallbacksPoller;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -61,8 +59,6 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             // This must be done before starting to sample the hosts status from VDSM since the sampling will turn such host from Reboot to NonResponsive
             serviceLoader.load(PmHealthCheckManager.class);
             serviceLoader.load(EngineBackupAwarenessManager.class);
-            CommandCoordinatorUtil.initAsyncTaskManager();
-            serviceLoader.load(CommandCallbacksPoller.class);
             serviceLoader.load(DataCenterCompatibilityChecker.class);
             serviceLoader.load(ResourceManager.class);
             serviceLoader.load(IrsProxyManager.class);

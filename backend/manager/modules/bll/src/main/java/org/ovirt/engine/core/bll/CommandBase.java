@@ -171,6 +171,9 @@ public abstract class CommandBase<T extends ActionParametersBase>
     @Inject
     private StepDao stepDao;
 
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
 
@@ -422,9 +425,9 @@ public abstract class CommandBase<T extends ActionParametersBase>
         if (!getReturnValue().getTaskPlaceHolderIdList().isEmpty()) {
             TransactionSupport.executeInNewTransaction(() -> {
                 for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
-                    AsyncTask task = CommandCoordinatorUtil.getAsyncTaskFromDb(asyncTaskId);
+                    AsyncTask task = commandCoordinatorUtil.getAsyncTaskFromDb(asyncTaskId);
                     if (task != null && Guid.isNullOrEmpty(task.getVdsmTaskId())) {
-                        CommandCoordinatorUtil.removeTaskFromDbByTaskId(task.getTaskId());
+                        commandCoordinatorUtil.removeTaskFromDbByTaskId(task.getTaskId());
                     }
 
                 }
@@ -652,10 +655,10 @@ public abstract class CommandBase<T extends ActionParametersBase>
 
     public void handleChildCommands() {
         if (getCallback() != null) {
-            List<Guid> childCommands = CommandCoordinatorUtil.getChildCommandIds(getCommandId());
+            List<Guid> childCommands = commandCoordinatorUtil.getChildCommandIds(getCommandId());
             List<ActionParametersBase> parameters = new LinkedList<>();
             for (Guid id : childCommands) {
-                CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(id);
+                CommandBase<?> command = commandCoordinatorUtil.retrieveCommand(id);
                 if (command.getParameters().getEndProcedure() == EndProcedure.PARENT_MANAGED
                         || command.getParameters().getEndProcedure() == EndProcedure.FLOW_MANAGED) {
                     command.getParameters().setEndProcedure(EndProcedure.FLOW_MANAGED);
@@ -1359,7 +1362,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
         if (isExecutedAsChildCommand()
                 && getParameters().getParentParameters() != null) {
             CommandEntity commandEntity =
-                    CommandCoordinatorUtil.getCommandEntity(getParameters().getParentParameters().getCommandId());
+                    commandCoordinatorUtil.getCommandEntity(getParameters().getParentParameters().getCommandId());
             return commandEntity != null && commandEntity.isCallbackEnabled();
         }
 
@@ -1390,7 +1393,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
 
         if (shouldPersistCommand()) {
             persistCommandIfNeeded();
-            CommandCoordinatorUtil.persistCommandAssociatedEntities(getCommandId(), getSubjectEntities());
+            commandCoordinatorUtil.persistCommandAssociatedEntities(getCommandId(), getSubjectEntities());
         }
 
         executionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
@@ -1547,7 +1550,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     private void saveTaskAndPutInMap(String taskKey, AsyncTask task) {
-        CommandCoordinatorUtil.saveAsyncTaskToDb(task);
+        commandCoordinatorUtil.saveAsyncTaskToDb(task);
         taskKeyToTaskIdMap.put(taskKey, task.getTaskId());
     }
 
@@ -1560,7 +1563,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     public void deleteAsyncTaskPlaceHolder(String taskKey) {
         Guid taskId = taskKeyToTaskIdMap.remove(taskKey);
         if (!Guid.isNullOrEmpty(taskId)) {
-            CommandCoordinatorUtil.removeTaskFromDbByTaskId(taskId);
+            commandCoordinatorUtil.removeTaskFromDbByTaskId(taskId);
         }
     }
 
@@ -1713,7 +1716,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
             ActionType parentCommand,
             String description,
             Map<Guid, VdcObjectType> entitiesMap) {
-        return CommandCoordinatorUtil.createTask(taskId,
+        return commandCoordinatorUtil.createTask(taskId,
                 this,
                 asyncTaskCreationInfo,
                 parentCommand,
@@ -1740,7 +1743,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     private AsyncTask createAsyncTask(
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             ActionType parentCommand) {
-        return CommandCoordinatorUtil.createAsyncTask(this, asyncTaskCreationInfo, parentCommand);
+        return commandCoordinatorUtil.createAsyncTask(this, asyncTaskCreationInfo, parentCommand);
     }
 
     /** @return The type of task that should be created for this command.
@@ -1758,7 +1761,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     public void startPollingAsyncTasks(Collection<Guid> taskIds) {
-        taskIds.forEach(CommandCoordinatorUtil::startPollingTask);
+        taskIds.forEach(commandCoordinatorUtil::startPollingTask);
     }
 
     protected boolean noAsyncOperations() {
@@ -1775,11 +1778,11 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     private void cancelTasks() {
-        CommandCoordinatorUtil.cancelTasks(this);
+        commandCoordinatorUtil.cancelTasks(this);
     }
 
     protected void revertTasks() {
-        CommandCoordinatorUtil.revertTasks(this);
+        commandCoordinatorUtil.revertTasks(this);
     }
 
     protected EngineLock getLock() {
@@ -2247,7 +2250,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     protected void updateCommandIfNeeded() {
-        if (shouldPersistCommand() && CommandCoordinatorUtil.getCommandEntity(getCommandId()) != null) {
+        if (shouldPersistCommand() && commandCoordinatorUtil.getCommandEntity(getCommandId()) != null) {
             persistCommand(getParameters().getParentCommand());
         }
     }
@@ -2261,7 +2264,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
             CommandEntity commandEntity =
                     buildCommandEntity(getParentParameters(parentCommand).getCommandId(), enableCallback);
             commandEntity.setWaitingForEvent(callbackWaitingForEvent);
-            CommandCoordinatorUtil.persistCommand(commandEntity, cmdContext);
+            commandCoordinatorUtil.persistCommand(commandEntity, cmdContext);
         } finally {
             if (transaction != null) {
                 TransactionSupport.resume(transaction);
@@ -2323,7 +2326,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
         if (updateDB) {
             Transaction transaction = TransactionSupport.suspend();
             try {
-                CommandCoordinatorUtil.updateCommandStatus(getCommandId(), commandStatus);
+                commandCoordinatorUtil.updateCommandStatus(getCommandId(), commandStatus);
             } finally {
                 if (transaction != null) {
                     TransactionSupport.resume(transaction);
@@ -2335,14 +2338,14 @@ public abstract class CommandBase<T extends ActionParametersBase>
     public void setCommandExecuted() {
         Transaction transaction = TransactionSupport.suspend();
         try {
-            CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(getCommandId());
+            CommandEntity cmdEntity = commandCoordinatorUtil.getCommandEntity(getCommandId());
             if (cmdEntity != null) {
                 CommandEntity executedCmdEntity = buildCommandEntity(cmdEntity.getRootCommandId(),
                         cmdEntity.isCallbackEnabled());
                 executedCmdEntity
                         .setWaitingForEvent(cmdEntity.isCallbackEnabled() ? callbackTriggeredByEvent() : false);
-                CommandCoordinatorUtil.persistCommand(executedCmdEntity, getContext());
-                CommandCoordinatorUtil.updateCommandExecuted(getCommandId());
+                commandCoordinatorUtil.persistCommand(executedCmdEntity, getContext());
+                commandCoordinatorUtil.updateCommandExecuted(getCommandId());
             }
         } finally {
             if (transaction != null) {

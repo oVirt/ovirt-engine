@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * maintenance mode, the callback will stop Gluster services on the host so that maintenance activities can be done on
  * the host.
  */
+@Typed(HostMaintenanceCallback.class)
 public class HostMaintenanceCallback implements CommandCallback {
     private String hostName;
 
@@ -48,21 +50,24 @@ public class HostMaintenanceCallback implements CommandCallback {
     @Inject
     private GlusterBrickDao glusterBrickDao;
 
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
         MaintenanceVdsCommand<MaintenanceVdsParameters> maintenanceCommand =
-                CommandCoordinatorUtil.retrieveCommand(cmdId);
+                commandCoordinatorUtil.retrieveCommand(cmdId);
         evaluateMaintenanceHostCommandProgress(maintenanceCommand);
     }
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     /**
@@ -104,7 +109,7 @@ public class HostMaintenanceCallback implements CommandCallback {
     }
 
     private boolean isMaintenanceCommandExecuted(MaintenanceVdsCommand<MaintenanceVdsParameters> maintenanceCommand) {
-        CommandEntity maintenanceCmd = CommandCoordinatorUtil.getCommandEntity(maintenanceCommand.getCommandId());
+        CommandEntity maintenanceCmd = commandCoordinatorUtil.getCommandEntity(maintenanceCommand.getCommandId());
         return maintenanceCmd != null && maintenanceCmd.isExecuted();
     }
 

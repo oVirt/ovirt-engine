@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
+
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import org.slf4j.LoggerFactory;
  * A callback for commands that are executing their child commands serially. Note that this callback supports execution
  * of child commands until a failure or until successful completion.
  */
+@Typed(SerialChildCommandsExecutionCallback.class)
 public class SerialChildCommandsExecutionCallback extends ChildCommandsCallbackBase {
 
     private static final Logger log = LoggerFactory.getLogger(SerialChildCommandsExecutionCallback.class);

@@ -80,6 +80,8 @@ implements QuotaStorageDependent {
     private StorageDomainDao storageDomainDao;
     @Inject
     private VmDeviceDao vmDeviceDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     public ImportVmFromExternalProviderCommand(Guid cmdId) {
         super(cmdId);
@@ -376,7 +378,7 @@ implements QuotaStorageDependent {
     }
 
     protected void convert() {
-        CommandCoordinatorUtil.executeAsyncCommand(
+        commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.ConvertVm,
                 buildConvertVmParameters(),
                 cloneContextAndDetachFromParent());

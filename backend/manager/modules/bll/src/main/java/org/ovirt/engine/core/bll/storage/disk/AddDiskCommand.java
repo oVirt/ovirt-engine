@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -106,6 +108,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private DiskVmElementDao diskVmElementDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     @Inject
     private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
@@ -570,12 +577,12 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     public CommandCallback getCallback() {
-        return useCallback() ? new ConcurrentChildCommandsExecutionCallback() :  null;
+        return useCallback() ? callbackProvider.get() :  null;
     }
 
     private void createDiskBasedOnCinder() {
         // ToDo: upon using CoCo infra in this commnad, move this logic.
-        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+        Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.AddCinderDisk,
                 buildAddCinderDiskParameters(),
                 cloneContextAndDetachFromParent());

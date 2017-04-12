@@ -2,12 +2,20 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.TransferImageParameters;
 import org.ovirt.engine.core.compat.Guid;
 
+@Typed(TransferImageCommandCallback.class)
 public class TransferImageCommandCallback implements CommandCallback {
+
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
         getCommand(cmdId).proceedCommandExecution(childCmdIds.isEmpty() ? null : childCmdIds.get(0));
@@ -17,18 +25,18 @@ public class TransferImageCommandCallback implements CommandCallback {
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
         getCommand(cmdId).onSucceeded();
         getCommand(cmdId).endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
         getCommand(cmdId).onFailed();
         getCommand(cmdId).endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     private TransferImageCommand<TransferImageParameters> getCommand(Guid cmdId) {
-        return CommandCoordinatorUtil.retrieveCommand(cmdId);
+        return commandCoordinatorUtil.retrieveCommand(cmdId);
     }
 
 }

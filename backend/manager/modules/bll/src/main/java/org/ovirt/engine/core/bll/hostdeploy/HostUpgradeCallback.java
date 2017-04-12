@@ -2,6 +2,9 @@ package org.ovirt.engine.core.bll.hostdeploy;
 
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -22,6 +25,7 @@ import org.slf4j.LoggerFactory;
  * maintenance mode, the callback invokes the {@code UpgradeHostInternalCommand} for upgrading the host in async way.
  * The {@code UpgradeHostInternalCommand} is being monitored by this callback to its completion.
  */
+@Typed(HostUpgradeCallback.class)
 public class HostUpgradeCallback implements CommandCallback {
 
     private static final Logger log = LoggerFactory.getLogger(HostUpgradeCallback.class);
@@ -29,13 +33,16 @@ public class HostUpgradeCallback implements CommandCallback {
     private Guid maintenanceCmdId;
     private Guid hostUpgradeInternalCmdId;
 
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+
     /**
      * The callback is being polling till the host move to maintenance or failed to do so.
      */
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
 
-        CommandBase<?> rootCommand = CommandCoordinatorUtil.retrieveCommand(cmdId);
+        CommandBase<?> rootCommand = commandCoordinatorUtil.retrieveCommand(cmdId);
 
         // If there are child commands and the host upgrade process was started, check the status of the host
         // upgrade command.
@@ -51,12 +58,12 @@ public class HostUpgradeCallback implements CommandCallback {
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     /**
@@ -135,11 +142,11 @@ public class HostUpgradeCallback implements CommandCallback {
 
     private CommandEntity getHostUpgradeInternalCommand(List<Guid> childCmdIds) {
         Guid upgradeCmdId = getHostUpgradeInternalCmdId(childCmdIds);
-        return CommandCoordinatorUtil.getCommandEntity(upgradeCmdId);
+        return commandCoordinatorUtil.getCommandEntity(upgradeCmdId);
     }
 
     private void invokeHostUpgrade(CommandBase<?> command, UpgradeHostParameters parameters) {
-        CommandCoordinatorUtil.executeAsyncCommand(ActionType.UpgradeHostInternal,
+        commandCoordinatorUtil.executeAsyncCommand(ActionType.UpgradeHostInternal,
                 createUpgradeParameters(parameters),
                 command.cloneContextAndDetachFromParent());
     }
@@ -157,7 +164,7 @@ public class HostUpgradeCallback implements CommandCallback {
 
     private boolean isMaintenanceCommandExecuted(List<Guid> childCmdIds) {
         Guid maintenanceCommandId = getMaintenanceCmdId(childCmdIds);
-        CommandEntity maintenanceCmd = CommandCoordinatorUtil.getCommandEntity(maintenanceCommandId);
+        CommandEntity maintenanceCmd = commandCoordinatorUtil.getCommandEntity(maintenanceCommandId);
         return maintenanceCmd != null && maintenanceCmd.isExecuted();
     }
 
@@ -189,7 +196,7 @@ public class HostUpgradeCallback implements CommandCallback {
 
     private Guid findChildCommandByActionType(ActionType commandType, List<Guid> childCmdIds) {
         for (Guid cmdId : childCmdIds) {
-            CommandEntity commandEntity = CommandCoordinatorUtil.getCommandEntity(cmdId);
+            CommandEntity commandEntity = commandCoordinatorUtil.getCommandEntity(cmdId);
             if (commandEntity.getCommandType() == commandType) {
                 return cmdId;
             }

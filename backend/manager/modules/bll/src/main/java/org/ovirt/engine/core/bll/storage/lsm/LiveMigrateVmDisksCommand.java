@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -79,6 +81,9 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     private StorageDomainDao storageDomainDao;
     @Inject
     private DiskVmElementDao diskVmElementDao;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     @Inject
     private ImagesHandler imagesHandler;
@@ -145,7 +150,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     private void updateStage(LiveMigrateStage stage) {

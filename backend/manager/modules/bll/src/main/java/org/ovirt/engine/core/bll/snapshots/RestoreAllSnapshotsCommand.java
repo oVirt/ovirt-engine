@@ -14,6 +14,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -92,7 +94,11 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private DiskImageDao diskImageDao;
     @Inject
     private ImageDao imageDao;
-
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     private final Set<Guid> snapshotsToRemove = new HashSet<>();
     private Snapshot snapshot;
@@ -189,7 +195,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                                             List<CinderDisk> cinderDisksToRemove,
                                             List<CinderDisk> cinderVolumesToRemove,
                                             Guid removedSnapshotId) {
-        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+        Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.RestoreAllCinderSnapshots,
                         buildCinderChildCommandParameters(cinderDisksToRestore,
                                 cinderDisksToRemove,
@@ -743,6 +749,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     @Override
     public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 }

@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandActionState;
@@ -71,6 +73,11 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     private DiskDao diskDao;
     @Inject
     private ImageDao imageDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(TransferImageCommandCallback.class)
+    private Instance<TransferImageCommandCallback> callbackProvider;
 
     // Container for context needed by state machine handlers
     class StateContext {
@@ -185,7 +192,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             return;
         }
 
-        switch (CommandCoordinatorUtil.getCommandStatus(context.childCmdId)) {
+        switch (commandCoordinatorUtil.getCommandStatus(context.childCmdId)) {
             case NOT_STARTED:
             case ACTIVE:
                 log.info("Waiting for {} to be added for image transfer command '{}'",
@@ -200,7 +207,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
                 return;
         }
 
-        ActionReturnValue addDiskRetVal = CommandCoordinatorUtil.getCommandReturnValue(context.childCmdId);
+        ActionReturnValue addDiskRetVal = commandCoordinatorUtil.getCommandReturnValue(context.childCmdId);
         if (addDiskRetVal == null || !addDiskRetVal.getSucceeded()) {
             log.error("Failed to add {} (command status was success, but return value was failed)"
                     + " for image transfer command '{}'", getImageType(), getCommandId());
@@ -767,7 +774,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
     @Override
     public CommandCallback getCallback() {
-        return new TransferImageCommandCallback();
+        return callbackProvider.get();
     }
 
     @Override

@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.MapUtils;
@@ -103,6 +105,9 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     private StorageDomainDao storageDomainDao;
     @Inject
     private DiskProfileDao diskProfileDao;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     @Inject
     private ImagesHandler imagesHandler;
@@ -623,7 +628,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
 
     @Override
     public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     /**

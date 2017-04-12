@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -24,6 +26,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class SealVmTemplateCommand<T extends SealVmTemplateParameters> extends VmTemplateCommand<T> implements HostJobCommand {
 
     private List<DiskImage> diskImages;
+
+    @Inject
+    @Typed(VirtJobCallback.class)
+    private Instance<VirtJobCallback> callbackProvider;
 
     @Inject
     private VdsCommandsHelper vdsCommandsHelper;
@@ -88,7 +94,7 @@ public class SealVmTemplateCommand<T extends SealVmTemplateParameters> extends V
 
     @Override
     public CommandCallback getCallback() {
-        return new VirtJobCallback();
+        return callbackProvider.get();
     }
 
     @Override

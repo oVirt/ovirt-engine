@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -14,11 +15,15 @@ import org.ovirt.engine.core.vdsbroker.monitoring.VmJobsMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Typed(MergeCommandCallback.class)
 public class MergeCommandCallback implements CommandCallback {
     private static final Logger log = LoggerFactory.getLogger(MergeCommandCallback.class);
 
     @Inject
     private VmJobsMonitoring vmJobsMonitoring;
+
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
@@ -42,6 +47,6 @@ public class MergeCommandCallback implements CommandCallback {
     }
 
     private MergeCommand<MergeParameters> getCommand(Guid cmdId) {
-        return CommandCoordinatorUtil.retrieveCommand(cmdId);
+        return commandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -35,6 +37,9 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
     private DiskImageDao diskImageDao;
     @Inject
     private ImageDao imageDao;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     @Inject
     private ImagesHandler imagesHandler;
@@ -74,7 +79,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
 
     @Override
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     @Override

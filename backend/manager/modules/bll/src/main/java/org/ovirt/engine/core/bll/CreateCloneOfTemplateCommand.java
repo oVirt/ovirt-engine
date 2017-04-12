@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -36,6 +38,9 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     private PostDeleteActionHandler postDeleteActionHandler;
     @Inject
     private StorageDomainDao storageDomainDao;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public CreateCloneOfTemplateCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -124,6 +129,6 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
 
     @Override
     public CommandCallback getCallback() {
-        return isDataOperationsByHSM() ? new ConcurrentChildCommandsExecutionCallback() : null;
+        return isDataOperationsByHSM() ? callbackProvider.get() : null;
     }
 }

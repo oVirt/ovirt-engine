@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -27,6 +29,11 @@ public class MergeExtendCommand<T extends MergeParameters>
 
     @Inject
     private ImageDao imageDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public MergeExtendCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -70,7 +77,7 @@ public class MergeExtendCommand<T extends MergeParameters>
         parameters.setParentCommand(ActionType.MergeExtend);
         parameters.setParentParameters(getParameters());
 
-        CommandCoordinatorUtil.executeAsyncCommand(
+        commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.ExtendImageSize,
                 parameters,
                 cloneContextAndDetachFromParent());
@@ -115,6 +122,6 @@ public class MergeExtendCommand<T extends MergeParameters>
 
     @Override
     public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 }

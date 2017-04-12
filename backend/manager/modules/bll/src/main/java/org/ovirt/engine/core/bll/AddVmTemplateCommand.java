@@ -18,6 +18,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -146,6 +148,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private DiskVmElementDao diskVmElementDao;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     @Inject
     protected ImagesHandler imagesHandler;
@@ -377,7 +384,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // means that there are no asynchronous tasks to execute and that we can
         // end the command synchronously
         pendingAsyncTasks = !getReturnValue().getVdsmTaskIdList().isEmpty() ||
-                !CommandCoordinatorUtil.getChildCommandIds(getCommandId()).isEmpty();
+                !commandCoordinatorUtil.getChildCommandIds(getCommandId()).isEmpty();
         if (!pendingAsyncTasks) {
             endSuccessfullySynchronous();
         }
@@ -1057,7 +1064,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // (a template without images doesn't exist in the 'vm_template_view').
         restoreCommandState();
 
-        if (CommandCoordinatorUtil.getCommandExecutionStatus(getParameters().getCommandId()) == CommandExecutionStatus.EXECUTED) {
+        if (commandCoordinatorUtil.getCommandExecutionStatus(getParameters().getCommandId()) == CommandExecutionStatus.EXECUTED) {
             // if template exist in db remove it
             if (getVmTemplate() != null) {
                 vmTemplateDao.remove(getVmTemplateId());
@@ -1292,7 +1299,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
 }

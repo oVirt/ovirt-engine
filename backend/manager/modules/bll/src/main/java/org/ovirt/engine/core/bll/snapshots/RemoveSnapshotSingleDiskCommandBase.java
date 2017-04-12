@@ -46,6 +46,8 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
     private BaseDiskDao baseDiskDao;
     @Inject
     private DiskImageDao diskImageDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     protected RemoveSnapshotSingleDiskCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -113,7 +115,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
      * the main proceedCommandExecution() loop has persisted the updated child list.
      */
     protected void syncChildCommandList(RemoveSnapshotSingleDiskParameters parameters) {
-        List<Guid> childCommandIds = CommandCoordinatorUtil.getChildCommandIds(getCommandId());
+        List<Guid> childCommandIds = commandCoordinatorUtil.getChildCommandIds(getCommandId());
         if (childCommandIds.size() != parameters.getChildCommands().size()) {
             for (Guid id : childCommandIds) {
                 if (!parameters.getChildCommands().containsValue(id)) {

@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -55,6 +57,9 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
     private CinderDisk cinderDisk;
     @Inject
     private DiskImageDao diskImageDao;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     public RemoveCinderDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -175,7 +180,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
 
     @Override
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     @Override

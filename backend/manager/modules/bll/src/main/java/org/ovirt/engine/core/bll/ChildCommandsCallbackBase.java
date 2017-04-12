@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -18,15 +20,18 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ChildCommandsCallbackBase implements CommandCallback {
 
+    @Inject
+    protected CommandCoordinatorUtil commandCoordinatorUtil;
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
-        CommandExecutionStatus status = CommandCoordinatorUtil.getCommandExecutionStatus(cmdId);
+        CommandExecutionStatus status = commandCoordinatorUtil.getCommandExecutionStatus(cmdId);
         // TODO: should be removed when doPolling will be moved to run only after execute finish - here for test purpose
         // only.
         if (status != CommandExecutionStatus.EXECUTED &&
-                CommandCoordinatorUtil.getCommandStatus(cmdId) == CommandStatus.ACTIVE) {
+                commandCoordinatorUtil.getCommandStatus(cmdId) == CommandStatus.ACTIVE) {
             return;
         }
 
@@ -35,7 +40,7 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
         CommandBase<?> command = getCommand(cmdId);
         for (Guid childCmdId : childCmdIds) {
             CommandBase<?> child = getCommand(childCmdId);
-            switch (CommandCoordinatorUtil.getCommandStatus(childCmdId)) {
+            switch (commandCoordinatorUtil.getCommandStatus(childCmdId)) {
             case NOT_STARTED:
             case ACTIVE:
             case EXECUTION_FAILED:
@@ -68,7 +73,7 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
     }
 
     private boolean shouldWaitForEndMethodsCompletion(CommandBase<?> childCommand, CommandBase<?> parentCommand) {
-        CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(childCommand.getCommandId());
+        CommandEntity cmdEntity = commandCoordinatorUtil.getCommandEntity(childCommand.getCommandId());
         boolean hasNotifiedCallback = cmdEntity.isCallbackEnabled() && cmdEntity.isCallbackNotified();
 
         if (shouldCommandEndOnAsyncOpEnd(childCommand) && !hasNotifiedCallback) {
@@ -131,7 +136,7 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
             }
 
             if (!commandBase.isExecutedAsChildCommand()) {
-                CommandCoordinatorUtil.removeAllCommandsInHierarchy(commandBase.getCommandId());
+                commandCoordinatorUtil.removeAllCommandsInHierarchy(commandBase.getCommandId());
             }
 
             ExecutionHandler.getInstance().endJob(commandBase.getExecutionContext(), succeeded);
@@ -152,7 +157,7 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
     }
 
     protected CommandBase<?> getCommand(Guid cmdId) {
-        return CommandCoordinatorUtil.retrieveCommand(cmdId);
+        return commandCoordinatorUtil.retrieveCommand(cmdId);
     }
 
     public void logEndWillBeExecutedByParent(CommandBase<?> command, CommandStatus status) {
@@ -170,7 +175,7 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
 
     @Override
     public boolean shouldRepeatEndMethodsOnFail(Guid cmdId) {
-        return shouldRepeatEndMethodsOnFail(CommandCoordinatorUtil.getCommandEntity(cmdId).getReturnValue());
+        return shouldRepeatEndMethodsOnFail(commandCoordinatorUtil.getCommandEntity(cmdId).getReturnValue());
     }
 
     private boolean shouldRepeatEndMethodsOnFail(ActionReturnValue returnValue) {

@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -42,6 +44,11 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     private ImageDao imageDao;
     @Inject
     private DiskImageDao diskImageDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(RemoveSnapshotSingleDiskLiveCommandCallback.class)
+    private Instance<RemoveSnapshotSingleDiskLiveCommandCallback> callbackProvider;
 
     public RemoveSnapshotSingleDiskLiveCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -93,7 +100,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         ActionReturnValue actionReturnValue = null;
 
         if (currentChildId != null) {
-            actionReturnValue = CommandCoordinatorUtil.getCommandReturnValue(currentChildId);
+            actionReturnValue = commandCoordinatorUtil.getCommandReturnValue(currentChildId);
             getParameters().setCommandStep(getParameters().getNextCommandStep());
         }
 
@@ -138,7 +145,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
         persistCommand(getParameters().getParentCommand(), true);
         if (nextCommand != null) {
-            CommandCoordinatorUtil.executeAsyncCommand(nextCommand.getFirst(), nextCommand.getSecond(), cloneContextAndDetachFromParent());
+            commandCoordinatorUtil.executeAsyncCommand(nextCommand.getFirst(), nextCommand.getSecond(), cloneContextAndDetachFromParent());
             // Add the child, but wait, it's a race!  child will start, task may spawn, get polled, and we won't have the child id
             return true;
         } else {
@@ -256,7 +263,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     @Override
     public CommandCallback getCallback() {
-        return new RemoveSnapshotSingleDiskLiveCommandCallback();
+        return callbackProvider.get();
     }
 
 }

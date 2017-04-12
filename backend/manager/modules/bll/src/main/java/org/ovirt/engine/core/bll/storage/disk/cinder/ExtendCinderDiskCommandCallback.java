@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -17,7 +18,11 @@ import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 
+@Typed(ExtendCinderDiskCommandCallback.class)
 public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExecutionCallback {
+
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     @Inject
     private DiskDao diskDao;
@@ -87,6 +92,6 @@ public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExec
 
     @Override
     protected ExtendCinderDiskCommand<VmDiskOperationParameterBase> getCommand(Guid cmdId) {
-        return CommandCoordinatorUtil.retrieveCommand(cmdId);
+        return commandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }

@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.di.Injector;
 
 @NonTransactiveCommandAttribute
 public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParameters> extends RemoveVmCommand<T>{
@@ -52,6 +53,8 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     private StorageDomainDao storageDomainDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     // this is needed since overriding getVmTemplate()
     private VM exportVm;
@@ -101,7 +104,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
         // not using getVm() since its overridden to get vm from export domain
         VM vm = vmDao.get(getVmId());
         if (vm != null && vm.getStatus() == VMStatus.ImageLocked) {
-            if (CommandCoordinatorUtil.hasTasksForEntityIdAndAction(vm.getId(), ActionType.ExportVm)) {
+            if (commandCoordinatorUtil.hasTasksForEntityIdAndAction(vm.getId(), ActionType.ExportVm)) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_DURING_EXPORT);
             }
         }
@@ -141,9 +144,9 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     }
 
     private void removeMemoryImages() {
-         new MemoryImageRemoverFromExportDomain(getVm(), this,
-                 getParameters().getStoragePoolId(), getParameters().getStorageDomainId())
-         .remove();
+        Injector.injectMembers(new MemoryImageRemoverFromExportDomain(getVm(), this,
+                getParameters().getStoragePoolId(), getParameters().getStorageDomainId()))
+                .remove();
     }
 
     @Override

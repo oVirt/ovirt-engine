@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -12,6 +14,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @NonTransactiveCommandAttribute
 public class HostEnrollCertificateCommand extends VdsCommand<VdsActionParameters> {
+
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     public HostEnrollCertificateCommand(VdsActionParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -26,7 +31,7 @@ public class HostEnrollCertificateCommand extends VdsCommand<VdsActionParameters
 
     @Override
     protected void executeCommand() {
-        CommandCoordinatorUtil.executeAsyncCommand(ActionType.HostEnrollCertificateInternal,
+        commandCoordinatorUtil.executeAsyncCommand(ActionType.HostEnrollCertificateInternal,
                 getParameters(),
                 cloneContextAndDetachFromParent());
         setSucceeded(true);

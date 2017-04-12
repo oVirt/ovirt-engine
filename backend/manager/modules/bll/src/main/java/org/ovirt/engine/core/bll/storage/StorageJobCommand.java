@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 
 public abstract class StorageJobCommand<T extends StorageJobCommandParameters> extends CommandBase<T>
         implements HostJobCommand {
@@ -40,7 +41,7 @@ public abstract class StorageJobCommand<T extends StorageJobCommandParameters> e
 
     @Override
     public CommandCallback getCallback() {
-        return new StorageJobCallback();
+        return Injector.injectMembers(new StorageJobCallback());
     }
 
     @Override

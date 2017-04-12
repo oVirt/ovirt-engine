@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -149,6 +151,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private StorageDomainDao storageDomainDao;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     @Inject
     private NetworkHelper networkHelper;
@@ -1323,6 +1328,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     public CommandCallback getCallback() {
-        return getFlow().isStateless() ? new ConcurrentChildCommandsExecutionCallback() : null;
+        return getFlow().isStateless() ? callbackProvider.get() : null;
     }
 }

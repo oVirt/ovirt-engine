@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -39,6 +41,9 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
     private DiskImageDao diskImageDao;
     @Inject
     private DiskDao diskDao;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     private DiskImage diskImage;
 
@@ -106,7 +111,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
 
     @Override
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     private void createVolume() {

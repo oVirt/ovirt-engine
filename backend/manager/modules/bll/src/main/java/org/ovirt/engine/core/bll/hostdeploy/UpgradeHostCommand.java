@@ -4,6 +4,10 @@ import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,6 +24,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @NonTransactiveCommandAttribute
 public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsCommand<T> {
+
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(HostUpgradeCallback.class)
+    private Instance<HostUpgradeCallback> callbackProvider;
 
     public UpgradeHostCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -55,7 +65,7 @@ public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsComm
         VDSStatus statusBeforeUpgrade = getVds().getStatus();
         if (statusBeforeUpgrade != VDSStatus.Maintenance) {
             Future<ActionReturnValue> maintenanceCmd =
-                    CommandCoordinatorUtil.executeAsyncCommand(ActionType.MaintenanceNumberOfVdss,
+                    commandCoordinatorUtil.executeAsyncCommand(ActionType.MaintenanceNumberOfVdss,
                             createMaintenanceParams(),
                             cloneContext());
 
@@ -88,6 +98,6 @@ public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsComm
 
     @Override
     public CommandCallback getCallback() {
-        return new HostUpgradeCallback();
+        return callbackProvider.get();
     }
 }

@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -22,6 +26,12 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 @NonTransactiveCommandAttribute
 public class RemoveAllCinderSnapshotDisksCommand<T extends RemoveAllVmCinderDisksParameters> extends VmCommand<T> {
 
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
+
     public RemoveAllCinderSnapshotDisksCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -30,7 +40,7 @@ public class RemoveAllCinderSnapshotDisksCommand<T extends RemoveAllVmCinderDisk
     protected void executeVmCommand() {
         List<CinderDisk> cinderDisks = getParameters().getCinderDisks();
         for (final CinderDisk cinderDisk : cinderDisks) {
-            Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+            Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                     ActionType.RemoveCinderSnapshotDisk,
                     getCinderDiskSnapshotParameter(cinderDisk),
                     cloneContextAndDetachFromParent());
@@ -59,6 +69,6 @@ public class RemoveAllCinderSnapshotDisksCommand<T extends RemoveAllVmCinderDisk
 
     @Override
     public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 }

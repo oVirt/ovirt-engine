@@ -3,6 +3,10 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import java.util.Collections;
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -23,6 +27,10 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 @NonTransactiveCommandAttribute
 public class CreateVolumeCommand<T extends CreateVolumeParameters> extends CommandBase<T> implements
         SerialChildExecutingCommand {
+
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     public CreateVolumeCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -51,7 +59,7 @@ public class CreateVolumeCommand<T extends CreateVolumeParameters> extends Comma
 
     @Override
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     @Override

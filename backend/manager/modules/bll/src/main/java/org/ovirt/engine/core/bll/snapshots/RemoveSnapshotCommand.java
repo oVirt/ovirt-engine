@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -87,6 +89,11 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     private VmTemplateDao vmTemplateDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public RemoveSnapshotCommand(T parameters, CommandContext context) {
         super(parameters, context);
@@ -190,7 +197,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     private void removeMemory(final Snapshot snapshot, boolean useTaskManager) {
         RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId());
         if (useTaskManager) {
-            CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveMemoryVolumes, parameters, cloneContextAndDetachFromParent());
+            commandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveMemoryVolumes, parameters, cloneContextAndDetachFromParent());
         } else {
             ActionReturnValue ret = runInternalAction(ActionType.RemoveMemoryVolumes, parameters);
             if (!ret.getSucceeded()) {
@@ -217,7 +224,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             }
 
             if (getSnapshotActionType() == ActionType.RemoveSnapshotSingleDiskLive) {
-                CommandCoordinatorUtil.executeAsyncCommand(
+                commandCoordinatorUtil.executeAsyncCommand(
                         getSnapshotActionType(),
                         buildRemoveSnapshotSingleDiskParameters(source, dest, getSnapshotActionType()),
                         cloneContextAndDetachFromParent());
@@ -553,7 +560,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
         if (vm.isQualifiedForLiveSnapshotMerge() || getParameters().isUseCinderCommandCallback() ||
                 isQemuimgCommitSupported()) {
-            return new ConcurrentChildCommandsExecutionCallback();
+            return callbackProvider.get();
         }
         return null;
     }

@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -29,6 +31,10 @@ import org.ovirt.engine.core.common.job.StepEnum;
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class RemoveDeviceFromSANStorageDomainCommand<T extends RemoveDeviceFromSANStorageDomainCommandParameters> extends CommandBase<T> implements SerialChildExecutingCommand {
+
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     @Inject
     private StorageHelperDirector storageHelperDirector;
@@ -73,7 +79,7 @@ public class RemoveDeviceFromSANStorageDomainCommand<T extends RemoveDeviceFromS
 
     @Override
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     @Override

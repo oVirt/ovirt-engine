@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -14,18 +18,24 @@ import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public final class AsyncTaskFactory {
+
+    @Inject
+    private Instance<CommandCoordinator> cocoInstance;
+    @Inject
+    private Instance<AsyncTaskManager> asyncTaskManagerInstance;
+
     private static final Logger log = LoggerFactory.getLogger(AsyncTaskFactory.class);
     /**
      * Constructs a task based on creation info (task type and task parameters
      * as retrieved from the vdsm). Use in order to construct tasks when service
      * is initializing.
-     * @param coco
-     *          Handle to command coordinator
      * @param creationInfo
      *          The Asyc Task Creation info
      */
-    public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskCreationInfo creationInfo) {
+    public SPMAsyncTask construct(AsyncTaskCreationInfo creationInfo) {
+        CommandCoordinator coco = cocoInstance.get();
         AsyncTask asyncTask = coco.getByVdsmTaskId(creationInfo.getVdsmTaskId());
         if (asyncTask == null || asyncTask.getActionParameters() == null) {
             asyncTask = new AsyncTask(AsyncTaskResultEnum.success,
@@ -40,10 +50,10 @@ public final class AsyncTaskFactory {
             creationInfo.setTaskType(AsyncTaskType.unknown);
         }
         AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);
-        return construct(coco, creationInfo.getTaskType(), asyncTaskParams, true);
+        return construct(creationInfo.getTaskType(), asyncTaskParams, true);
     }
 
-    private static CommandEntity getCommandEntity(CommandCoordinator coco, Guid cmdId) {
+    private CommandEntity getCommandEntity(CommandCoordinator coco, Guid cmdId) {
         CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
         if (cmdEntity == null) {
             cmdEntity = coco.createCommandEntity(cmdId, ActionType.Unknown, new ActionParametersBase());
@@ -51,16 +61,15 @@ public final class AsyncTaskFactory {
         return cmdEntity;
     }
 
-    public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskCreationInfo creationInfo, AsyncTask asyncTask) {
+    public SPMAsyncTask construct(AsyncTaskCreationInfo creationInfo,
+            AsyncTask asyncTask) {
         AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);
-        return construct(coco, creationInfo.getTaskType(), asyncTaskParams, true);
+        return construct(creationInfo.getTaskType(), asyncTaskParams, true);
     }
 
     /**
      * Constructs a task based on its type and the task type's parameters.
      *
-     * @param coco
-     *            handle to command coordinator
      * @param taskType
      *            the type of the task which we want to construct.
      * @param asyncTaskParams
@@ -68,14 +77,20 @@ public final class AsyncTaskFactory {
      * @param duringInit
      *            If this method is called during initialization
      */
-    public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit) {
+    public SPMAsyncTask construct(AsyncTaskType taskType,
+            AsyncTaskParameters asyncTaskParams,
+            boolean duringInit) {
         try {
             SPMAsyncTask result = null;
             if (taskType == AsyncTaskType.unknown ||
                     asyncTaskParams.getDbAsyncTask().getActionType() == ActionType.Unknown) {
-                result = new SPMAsyncTask(coco, asyncTaskParams);
+                result = new SPMAsyncTask(cocoInstance.get(), asyncTaskParams);
             } else {
-                result = new CommandAsyncTask(coco, asyncTaskParams, duringInit);
+                result =
+                        new CommandAsyncTask(asyncTaskManagerInstance.get(),
+                                cocoInstance.get(),
+                                asyncTaskParams,
+                                duringInit);
             }
             return result;
         }

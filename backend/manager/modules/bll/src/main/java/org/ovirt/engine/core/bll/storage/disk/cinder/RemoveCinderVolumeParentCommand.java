@@ -41,6 +41,8 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
     private SnapshotDao snapshotDao;
     @Inject
     private DiskImageDao diskImageDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     public RemoveCinderVolumeParentCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -56,7 +58,7 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
      */
     protected Future<ActionReturnValue> getFutureRemoveCinderDiskVolume(Guid storageId,
             int removedChildCommandParametersIndex) {
-        return CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveCinderDiskVolume,
+        return commandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveCinderDiskVolume,
                 getParameters().getChildCommandsParameters().get(removedChildCommandParametersIndex),
                 cloneContextAndDetachFromParent());
     }

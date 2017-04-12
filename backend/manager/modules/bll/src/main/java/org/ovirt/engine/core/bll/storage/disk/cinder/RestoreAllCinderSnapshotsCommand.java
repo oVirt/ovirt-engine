@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
@@ -41,6 +43,11 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
     private ImageDao imageDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public RestoreAllCinderSnapshotsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -71,7 +78,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             removeDiskParam.setParentParameters(getParameters());
             removeDiskParam.setEndProcedure(EndProcedure.COMMAND_MANAGED);
 
-            Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+            Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                     ActionType.RemoveCinderDisk,
                     removeDiskParam,
                     cloneContextAndDetachFromParent());
@@ -89,7 +96,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             removeDiskVolumeParam.setParentParameters(getParameters());
             removeDiskVolumeParam.setEndProcedure(EndProcedure.COMMAND_MANAGED);
 
-            Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+            Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                     ActionType.RemoveCinderDiskVolume,
                     removeDiskVolumeParam,
                     cloneContextAndDetachFromParent());
@@ -123,7 +130,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
     }
 
     private ActionReturnValue restoreCinderDisk(CinderDisk cinderDisk, ImagesContainterParametersBase params) {
-        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+        Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.RestoreFromCinderSnapshot,
                 params,
                 cloneContextAndDetachFromParent());
@@ -165,6 +172,6 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
 
     @Override
     public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 }

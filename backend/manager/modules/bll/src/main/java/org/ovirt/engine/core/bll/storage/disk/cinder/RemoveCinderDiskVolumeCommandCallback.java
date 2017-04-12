@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
+
 import org.apache.commons.httpclient.HttpStatus;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
@@ -13,6 +15,7 @@ import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 
 import com.woorea.openstack.base.client.OpenStackResponseException;
 
+@Typed(RemoveCinderDiskVolumeCommandCallback.class)
 public class RemoveCinderDiskVolumeCommandCallback extends ConcurrentChildCommandsExecutionCallback {
 
     @Override

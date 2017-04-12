@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.dr;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -16,14 +17,18 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
+@Typed(GlusterStorageGeoRepSyncCallback.class)
 public class GlusterStorageGeoRepSyncCallback implements CommandCallback {
 
     @Inject
     private GlusterGeoRepDao geoRepDao;
 
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
-        CommandBase<?> rootCommand = CommandCoordinatorUtil.retrieveCommand(cmdId);
+        CommandBase<?> rootCommand = commandCoordinatorUtil.retrieveCommand(cmdId);
         evaluateGeoRepSessionStatus(rootCommand);
     }
 
@@ -55,7 +60,7 @@ public class GlusterStorageGeoRepSyncCallback implements CommandCallback {
     }
 
     private void stopGeoRepSessionCommand(CommandBase<?> command, GlusterGeoRepSession session) {
-        CommandCoordinatorUtil.executeAsyncCommand(ActionType.StopGeoRepSession,
+        commandCoordinatorUtil.executeAsyncCommand(ActionType.StopGeoRepSession,
                 new GlusterVolumeGeoRepSessionParameters(session.getMasterVolumeId(), session.getId()),
                 command.cloneContextAndDetachFromParent());
     }

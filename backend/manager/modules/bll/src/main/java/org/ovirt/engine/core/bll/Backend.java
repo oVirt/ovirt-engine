@@ -42,6 +42,9 @@ import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
+import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
+import org.ovirt.engine.core.bll.tasks.CommandCallbacksPoller;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.EngineWorkingMode;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -271,11 +274,15 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         serviceLoader.load(CpuFlagsManagerHandler.class);
         serviceLoader.load(AuditLogCleanupManager.class);
-        serviceLoader.load(CommandEntityCleanupManager.class);
 
         serviceLoader.load(TagsDirector.class);
 
         serviceLoader.load(IsoDomainListSynchronizer.class);
+
+        serviceLoader.load(AsyncTaskManager.class);
+        serviceLoader.load(CommandCoordinatorUtil.class);
+        serviceLoader.load(CommandCallbacksPoller.class);
+        serviceLoader.load(CommandEntityCleanupManager.class);
 
         initSearchDependencies();
         initHandlers();

@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -41,6 +43,9 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
 
     @Inject
     protected VmHandler vmHandler;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     private final List<DiskImage> images = new ArrayList<>();
     private int targetDiskIdIndex;
@@ -198,7 +203,9 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
 
     @Override
     public CommandCallback getCallback() {
-        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+        return getParameters().isUseCinderCommandCallback() ?
+                callbackProvider.get() :
+                null;
     }
 
     @Override

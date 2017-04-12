@@ -137,6 +137,8 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private ImageStorageDomainMapDao imageStorageDomainMapDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     public UpdateVmDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -630,7 +632,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private void extendCinderDiskSize() {
         lockImageInDb();
         CinderDisk newCinderDisk = (CinderDisk) getNewDisk();
-        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+        Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.ExtendCinderDisk,
                 buildExtendCinderDiskParameters(newCinderDisk),
                 cloneContextAndDetachFromParent());

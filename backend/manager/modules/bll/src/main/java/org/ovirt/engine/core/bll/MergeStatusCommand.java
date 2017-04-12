@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -47,6 +49,9 @@ public class MergeStatusCommand<T extends MergeParameters>
     private DiskImageDao diskImageDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    @Typed(MergeStatusCommandCallback.class)
+    private Instance<MergeStatusCommandCallback> callbackProvider;
 
     public MergeStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -199,6 +204,6 @@ public class MergeStatusCommand<T extends MergeParameters>
 
     @Override
     public CommandCallback getCallback() {
-        return new MergeStatusCommandCallback();
+        return callbackProvider.get();
     }
 }

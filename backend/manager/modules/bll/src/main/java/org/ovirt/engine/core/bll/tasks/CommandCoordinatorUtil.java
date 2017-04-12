@@ -10,9 +10,13 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -29,16 +33,21 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 
-public class CommandCoordinatorUtil {
+@Singleton
+public class CommandCoordinatorUtil implements BackendService {
 
-    public static final CommandCoordinator coco = new CommandCoordinatorImpl();
+    @Inject
+    private CommandCoordinator coco;
+
+    @Inject
+    private AsyncTaskManager asyncTaskManager;
 
     /**
      * Start polling the task identified by the vdsm task id
      * @param taskID The vdsm task id
      */
-    public static void startPollingTask(Guid taskID) {
-        getAsyncTaskManager().startPollingTask(taskID);
+    public void startPollingTask(Guid taskID) {
+        asyncTaskManager.startPollingTask(taskID);
     }
 
     /**
@@ -47,8 +56,8 @@ public class CommandCoordinatorUtil {
      *
      * @param sp the storage pool to retrieve running tasks from
      */
-    public static void addStoragePoolExistingTasks(StoragePool sp) {
-        getAsyncTaskManager().addStoragePoolExistingTasks(sp);
+    public void addStoragePoolExistingTasks(StoragePool sp) {
+        asyncTaskManager.addStoragePoolExistingTasks(sp);
     }
 
     /**
@@ -56,31 +65,24 @@ public class CommandCoordinatorUtil {
      * @param id The entity id
      * @param type The action type
      */
-    public static boolean hasTasksForEntityIdAndAction(Guid id, ActionType type) {
-        return getAsyncTaskManager().hasTasksForEntityIdAndAction(id, type);
+    public boolean hasTasksForEntityIdAndAction(Guid id, ActionType type) {
+        return asyncTaskManager.hasTasksForEntityIdAndAction(id, type);
     }
 
     /**
      * Checks if there are tasks existing on the storage pool
      * @param storagePoolID Id of the storage pool
      */
-    public static boolean hasTasksByStoragePoolId(Guid storagePoolID) {
-        return getAsyncTaskManager().hasTasksByStoragePoolId(storagePoolID);
-    }
-
-    /**
-     * Initialize Async Task Manager.
-     */
-    public static void initAsyncTaskManager() {
-        getAsyncTaskManager().initAsyncTaskManager();
+    public boolean hasTasksByStoragePoolId(Guid storagePoolID) {
+        return asyncTaskManager.hasTasksByStoragePoolId(storagePoolID);
     }
 
     /**
      * Checks if there are tasks on the entity
      * @param id The entity id
      */
-    public static boolean entityHasTasks(Guid id) {
-        return getAsyncTaskManager().entityHasTasks(id);
+    public boolean entityHasTasks(Guid id) {
+        return asyncTaskManager.entityHasTasks(id);
     }
 
     /**
@@ -88,8 +90,8 @@ public class CommandCoordinatorUtil {
      * @param taskIdList The list of task ids
      * @return List of async task status
      */
-    public static ArrayList<AsyncTaskStatus> pollTasks(java.util.ArrayList<Guid> taskIdList) {
-        return getAsyncTaskManager().pollTasks(taskIdList);
+    public ArrayList<AsyncTaskStatus> pollTasks(java.util.ArrayList<Guid> taskIdList) {
+        return asyncTaskManager.pollTasks(taskIdList);
     }
 
     /**
@@ -101,7 +103,7 @@ public class CommandCoordinatorUtil {
      * @param description A message which describes the task
      * @param entitiesMap map of entities
      */
-    public static Guid createTask(
+    public Guid createTask(
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
@@ -123,7 +125,7 @@ public class CommandCoordinatorUtil {
      * @param asyncTaskCreationInfo Info on how to create the task
      * @param parentCommand The type of command issuing the task
      */
-    public static SPMAsyncTask concreteCreateTask(
+    public SPMAsyncTask concreteCreateTask(
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
@@ -138,7 +140,7 @@ public class CommandCoordinatorUtil {
      * Stops all tasks, and set them to polling state, for clearing them up later.
      * @param command The command whose vdsm tasks need to be cancelled
      */
-    public static void cancelTasks(final CommandBase<?> command) {
+    public void cancelTasks(final CommandBase<?> command) {
         coco.cancelTasks(command);
     }
 
@@ -146,7 +148,7 @@ public class CommandCoordinatorUtil {
      * Revert the vdsm tasks associated with the command
      * @param command The command whose vdsm tasks need to be reverted
      */
-    public static void revertTasks(final CommandBase<?> command) {
+    public void revertTasks(final CommandBase<?> command) {
         coco.revertTasks(command);
     }
 
@@ -157,7 +159,7 @@ public class CommandCoordinatorUtil {
      * @param asyncTaskCreationInfo Info on how to create the task if one does not exist
      * @param parentCommand The type of command issuing the task
      */
-    public static AsyncTask getAsyncTask(
+    public AsyncTask getAsyncTask(
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
@@ -171,7 +173,7 @@ public class CommandCoordinatorUtil {
      * @param asyncTaskCreationInfo Info on how to create the task
      * @param parentCommand The type of command issuing the task
      */
-    public static AsyncTask createAsyncTask(
+    public AsyncTask createAsyncTask(
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             ActionType parentCommand) {
@@ -184,8 +186,8 @@ public class CommandCoordinatorUtil {
      * @param taskId the id of the async task in the database
      * @param message the message to be logged for the failure
      */
-    public static void logAndFailTaskOfCommandWithEmptyVdsmId(Guid taskId, String message) {
-        getAsyncTaskManager().logAndFailTaskOfCommandWithEmptyVdsmId(taskId, message);
+    public void logAndFailTaskOfCommandWithEmptyVdsmId(Guid taskId, String message) {
+        asyncTaskManager.logAndFailTaskOfCommandWithEmptyVdsmId(taskId, message);
     }
 
     /**
@@ -193,23 +195,23 @@ public class CommandCoordinatorUtil {
      * @param tasksIDs The vdsm task ids being executed
      * @return The collection of user ids
      */
-    public static Collection<Guid> getUserIdsForVdsmTaskIds(ArrayList<Guid> tasksIDs) {
-        return getAsyncTaskManager().getUserIdsForVdsmTaskIds(tasksIDs);
+    public Collection<Guid> getUserIdsForVdsmTaskIds(ArrayList<Guid> tasksIDs) {
+        return asyncTaskManager.getUserIdsForVdsmTaskIds(tasksIDs);
     }
 
     /**
      * Remove the async task identified the task id from the database.
      * @param taskId The task id of the async task in the database
      */
-    public static void removeTaskFromDbByTaskId(Guid taskId) {
-        AsyncTaskManager.removeTaskFromDbByTaskId(taskId);
+    public void removeTaskFromDbByTaskId(Guid taskId) {
+        asyncTaskManager.removeTaskFromDbByTaskId(taskId);
     }
 
     /**
      * Get the async task from the database identified by the asyncTaskId
      * @return The async task to be saved
      */
-    public static AsyncTask getAsyncTaskFromDb(Guid asyncTaskId) {
+    public AsyncTask getAsyncTaskFromDb(Guid asyncTaskId) {
          return coco.getAsyncTaskFromDb(asyncTaskId);
     }
 
@@ -217,25 +219,8 @@ public class CommandCoordinatorUtil {
      * Save the async task in the database
      * @param asyncTask the async task to be saved in to the database
      */
-    public static void saveAsyncTaskToDb(AsyncTask asyncTask) {
+    public void saveAsyncTaskToDb(AsyncTask asyncTask) {
         coco.saveAsyncTaskToDb(asyncTask);
-    }
-
-    /**
-     * Remove the async task identified the task id from the database.
-     * @param taskId The task id of the async task in the database
-     * @return The number of rows updated in the database
-     */
-    public static int callRemoveTaskFromDbByTaskId(Guid taskId) {
-        return coco.removeTaskFromDbByTaskId(taskId);
-    }
-
-    /**
-     * Save or update the async task in the database.
-     * @param asyncTask The async task to be saved or updated
-     */
-    public static void addOrUpdateTaskInDB(AsyncTask asyncTask) {
-        coco.addOrUpdateTaskInDB(asyncTask);
     }
 
     /**
@@ -243,19 +228,19 @@ public class CommandCoordinatorUtil {
      * @param cmdEntity The command entity to be persisted
      * @param cmdContext The CommandContext object associated with the command being persisted
      */
-    public static void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
+    public void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
         coco.persistCommand(cmdEntity, cmdContext);
     }
 
     /**
      * Persist the command related entities in the database
      */
-    public static void persistCommandAssociatedEntities(Guid cmdId, Collection<SubjectEntity> subjectEntities) {
+    public void persistCommandAssociatedEntities(Guid cmdId, Collection<SubjectEntity> subjectEntities) {
         coco.persistCommandAssociatedEntities(buildCommandAssociatedEntities(cmdId, subjectEntities));
     }
 
-    private static Collection<CommandAssociatedEntity> buildCommandAssociatedEntities(Guid cmdId,
-                                                                               Collection<SubjectEntity> subjectEntities) {
+    private Collection<CommandAssociatedEntity> buildCommandAssociatedEntities(Guid cmdId,
+            Collection<SubjectEntity> subjectEntities) {
         if (subjectEntities.isEmpty()) {
             return Collections.emptySet();
         }
@@ -271,7 +256,7 @@ public class CommandCoordinatorUtil {
      * @param commandId The id of the parent command
      * @return The list of child command ids
      */
-    public static List<Guid> getChildCommandIds(Guid commandId) {
+    public List<Guid> getChildCommandIds(Guid commandId) {
         return coco.getChildCommandIds(commandId);
     }
 
@@ -282,7 +267,7 @@ public class CommandCoordinatorUtil {
      * @param childActionType The action type of the child command
      * @param status The status of the child command, can be null
      */
-    public static List<Guid> getChildCommandIds(Guid commandId, ActionType childActionType, CommandStatus status) {
+    public List<Guid> getChildCommandIds(Guid commandId, ActionType childActionType, CommandStatus status) {
         return coco.getChildCommandIds(commandId, childActionType, status);
     }
 
@@ -290,7 +275,7 @@ public class CommandCoordinatorUtil {
      * Return the command ids being executed by the user identified by engine session seq id.
      * @param engineSessionSeqId The id of the user's engine session
      */
-    public static List<Guid> getCommandIdsBySessionSeqId(long engineSessionSeqId) {
+    public List<Guid> getCommandIdsBySessionSeqId(long engineSessionSeqId) {
         return coco.getCommandIdsBySessionSeqId(engineSessionSeqId);
     }
 
@@ -299,7 +284,7 @@ public class CommandCoordinatorUtil {
      * @param commandId The id of the command
      * @return The command entity for the command id
      */
-    public static CommandEntity getCommandEntity(Guid commandId) {
+    public CommandEntity getCommandEntity(Guid commandId) {
         return coco.getCommandEntity(commandId);
     }
 
@@ -309,7 +294,7 @@ public class CommandCoordinatorUtil {
      * @return The command
      */
     @SuppressWarnings("unchecked")
-    public static <C extends CommandBase<?>> C retrieveCommand(Guid commandId) {
+    public <C extends CommandBase<?>> C retrieveCommand(Guid commandId) {
         return (C) coco.retrieveCommand(commandId);
     }
 
@@ -317,7 +302,7 @@ public class CommandCoordinatorUtil {
      * Remove the command entity for the command identified by command id
      * @param commandId The id of the command
      */
-    public static void removeCommand(Guid commandId) {
+    public void removeCommand(Guid commandId) {
         coco.removeCommand(commandId);
     }
 
@@ -325,7 +310,7 @@ public class CommandCoordinatorUtil {
      * Remove the command entities for the command and the command's child commands from the database
      * @param commandId The id of the command
      */
-    public static void removeAllCommandsInHierarchy(Guid commandId) {
+    public void removeAllCommandsInHierarchy(Guid commandId) {
         coco.removeAllCommandsInHierarchy(commandId);
     }
 
@@ -333,7 +318,7 @@ public class CommandCoordinatorUtil {
      * Remove all command entities whose creation date is before the cutoff
      * @param cutoff The cutoff date
      */
-    public static void removeAllCommandsBeforeDate(DateTime cutoff) {
+    public void removeAllCommandsBeforeDate(DateTime cutoff) {
         coco.removeAllCommandsBeforeDate(cutoff);
     }
 
@@ -342,7 +327,7 @@ public class CommandCoordinatorUtil {
      * @param commandId The id of the command
      * @return The status of the command
      */
-    public static CommandStatus getCommandStatus(Guid commandId) {
+    public CommandStatus getCommandStatus(Guid commandId) {
         return coco.getCommandStatus(commandId);
     }
 
@@ -351,7 +336,7 @@ public class CommandCoordinatorUtil {
      * @param commandId The id of the command
      * @param status The new status of the command
      */
-    public static void updateCommandStatus(Guid commandId, CommandStatus status) {
+    public void updateCommandStatus(Guid commandId, CommandStatus status) {
          coco.updateCommandStatus(commandId, status);
     }
 
@@ -360,7 +345,7 @@ public class CommandCoordinatorUtil {
      * @param commandId The id of the command
      * @return The async task command execution status
      */
-    public static CommandExecutionStatus getCommandExecutionStatus(Guid commandId) {
+    public CommandExecutionStatus getCommandExecutionStatus(Guid commandId) {
         CommandEntity cmdEntity = coco.getCommandEntity(commandId);
         return cmdEntity == null ? CommandExecutionStatus.UNKNOWN :
                 cmdEntity.isExecuted() ? CommandExecutionStatus.EXECUTED : CommandExecutionStatus.NOT_EXECUTED;
@@ -370,7 +355,7 @@ public class CommandCoordinatorUtil {
      * Returns the command entity's data for the command identified by the command id.
      * @param commandId The id of the command
      */
-    public static Map<String, Serializable> getCommandData(Guid commandId) {
+    public Map<String, Serializable> getCommandData(Guid commandId) {
         CommandEntity cmdEntity = coco.getCommandEntity(commandId);
         return cmdEntity == null ? new HashMap<>() : cmdEntity.getData();
     }
@@ -379,7 +364,7 @@ public class CommandCoordinatorUtil {
      * Set the command entity's data for the command identified by the command id.
      * @param commandId The id of the command
      */
-    public static void updateCommandData(Guid commandId, Map<String, Serializable> data) {
+    public void updateCommandData(Guid commandId, Map<String, Serializable> data) {
         coco.updateCommandData(commandId, data);
     }
 
@@ -387,7 +372,7 @@ public class CommandCoordinatorUtil {
      * Set the command entity's executed status for the command identified by the command id.
      * @param commandId The id of the command
      */
-    public static void updateCommandExecuted(Guid commandId) {
+    public void updateCommandExecuted(Guid commandId) {
         coco.updateCommandExecuted(commandId);
     }
 
@@ -398,9 +383,9 @@ public class CommandCoordinatorUtil {
      * @param cmdContext The command context for the command
      * @return The future object for the command submitted to the thread pool
      */
-    public static Future<ActionReturnValue> executeAsyncCommand(ActionType actionType,
-                                                                 ActionParametersBase parameters,
-                                                                 CommandContext cmdContext) {
+    public Future<ActionReturnValue> executeAsyncCommand(ActionType actionType,
+            ActionParametersBase parameters,
+            CommandContext cmdContext) {
         return coco.executeAsyncCommand(actionType, parameters, cmdContext);
     }
 
@@ -409,7 +394,7 @@ public class CommandCoordinatorUtil {
      * @param entityId The id of the entity
      * @return The list of command ids
      */
-    public static List<Guid> getCommandIdsByEntityId(Guid entityId) {
+    public List<Guid> getCommandIdsByEntityId(Guid entityId) {
         return coco.getCommandIdsByEntityId(entityId);
     }
 
@@ -418,7 +403,7 @@ public class CommandCoordinatorUtil {
      * @param cmdId The id of the entity
      * @return The list of associated entities
      */
-    public static List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
+    public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
         return coco.getCommandAssociatedEntities(cmdId);
     }
 
@@ -427,13 +412,9 @@ public class CommandCoordinatorUtil {
      * @param cmdId The id of the command
      * @return The return value for the command
      */
-    public static ActionReturnValue getCommandReturnValue(Guid cmdId) {
+    public ActionReturnValue getCommandReturnValue(Guid cmdId) {
         CommandEntity cmdEnity = coco.getCommandEntity(cmdId);
         return cmdEnity == null ? null : cmdEnity.getReturnValue();
-    }
-
-    private static AsyncTaskManager getAsyncTaskManager() {
-        return AsyncTaskManager.getInstance(coco);
     }
 
     /**
@@ -444,7 +425,7 @@ public class CommandCoordinatorUtil {
      * @param commandEntity
      *            the subscribed command, which its callback will be invoked upon event
      */
-    public static void subscribe(String eventKey, CommandEntity commandEntity) {
+    public void subscribe(String eventKey, CommandEntity commandEntity) {
         coco.subscribe(eventKey, commandEntity);
     }
 }

@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
@@ -15,6 +20,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -41,17 +47,28 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CommandCoordinatorImpl implements CommandCoordinator {
+@Singleton
+public class CommandCoordinatorImpl implements BackendService, CommandCoordinator {
 
     private static final Logger log = LoggerFactory.getLogger(CommandCoordinatorImpl.class);
-    private final CoCoAsyncTaskHelper coCoAsyncTaskHelper;
-    private final CommandExecutor cmdExecutor;
-    private final CommandsRepository commandsRepository;
+    private CommandExecutor cmdExecutor;
+    private CommandsRepository commandsRepository;
 
-    CommandCoordinatorImpl() {
-        coCoAsyncTaskHelper = new CoCoAsyncTaskHelper(this);
-        commandsRepository = Injector.get(CommandsRepository.class);
-        cmdExecutor = Injector.get(CommandExecutor.class);
+    @Inject
+    private AsyncTaskFactory asyncTaskFactory;
+    @Inject
+    private CoCoAsyncTaskHelper coCoAsyncTaskHelper;
+    @Inject
+    private Instance<AsyncTaskManager> asyncTaskManager;
+    @Inject
+    private Instance<CommandsRepository> commandsRepositoryInstance;
+    @Inject
+    private Instance<CommandExecutor> commandExecutorInstance;
+
+    @PostConstruct
+    private void init() {
+        commandsRepository = commandsRepositoryInstance.get();
+        cmdExecutor = commandExecutorInstance.get();
     }
 
     public <P extends ActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters) {
@@ -89,8 +106,8 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
      */
     @Override
     public Future<ActionReturnValue> executeAsyncCommand(ActionType actionType,
-                                                          ActionParametersBase parameters,
-                                                          CommandContext cmdContext) {
+            ActionParametersBase parameters,
+            CommandContext cmdContext) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
         CommandCallback callBack = command.getCallback();
         command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null, false);
@@ -268,12 +285,14 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
     }
 
     @Override
-    public SPMAsyncTask concreteCreateTask(
-            Guid taskId,
+    public SPMAsyncTask concreteCreateTask(Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             ActionType parentCommand) {
-        return coCoAsyncTaskHelper.concreteCreateTask(taskId, command, asyncTaskCreationInfo, parentCommand);
+        return coCoAsyncTaskHelper.concreteCreateTask(taskId,
+                command,
+                asyncTaskCreationInfo,
+                parentCommand);
     }
 
     @Override
@@ -312,7 +331,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
 
     @Override
     public boolean doesCommandContainAsyncTask(Guid cmdId) {
-        return AsyncTaskManager.getInstance().doesCommandContainAsyncTask(cmdId);
+        return asyncTaskManager.get().doesCommandContainAsyncTask(cmdId);
     }
 
     private VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
@@ -321,18 +340,19 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
 
     @Override
     public SPMTask construct(AsyncTaskCreationInfo creationInfo) {
-        return AsyncTaskFactory.construct(this, creationInfo);
+        return asyncTaskFactory.construct(creationInfo);
     }
 
     @Override
     public SPMTask construct(AsyncTaskCreationInfo creationInfo, AsyncTask asyncTask) {
-        return AsyncTaskFactory.construct(this,
-                creationInfo.getTaskType(), new AsyncTaskParameters(creationInfo, asyncTask), true);
+        return asyncTaskFactory.construct(creationInfo.getTaskType(),
+                new AsyncTaskParameters(creationInfo, asyncTask),
+                true);
     }
 
     @Override
     public SPMTask construct(AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit) {
-        return AsyncTaskFactory.construct(this, taskType, asyncTaskParams, duringInit);
+        return asyncTaskFactory.construct(taskType, asyncTaskParams, duringInit);
     }
 
     @Override

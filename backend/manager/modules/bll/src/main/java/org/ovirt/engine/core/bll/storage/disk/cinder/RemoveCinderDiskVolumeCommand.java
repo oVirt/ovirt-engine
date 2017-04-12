@@ -3,6 +3,10 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.RemoveImageCommand;
@@ -17,6 +21,9 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class RemoveCinderDiskVolumeCommand<T extends RemoveCinderDiskVolumeParameters> extends RemoveImageCommand<T> {
     private Guid storageDomainId;
+    @Inject
+    @Typed(RemoveCinderDiskVolumeCommandCallback.class)
+    private Instance<RemoveCinderDiskVolumeCommandCallback> callbackProvider;
 
     public RemoveCinderDiskVolumeCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -64,7 +71,7 @@ public class RemoveCinderDiskVolumeCommand<T extends RemoveCinderDiskVolumeParam
 
     @Override
     public CommandCallback getCallback() {
-        return new RemoveCinderDiskVolumeCommandCallback();
+        return callbackProvider.get();
     }
 
     @Override

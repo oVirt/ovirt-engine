@@ -3,6 +3,10 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -15,6 +19,12 @@ import org.ovirt.engine.core.common.action.RunAsyncActionParameters;
  */
 public class RunAsyncActionCommand<T extends RunAsyncActionParameters> extends CommandBase<T> {
 
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
+
     public RunAsyncActionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -26,7 +36,7 @@ public class RunAsyncActionCommand<T extends RunAsyncActionParameters> extends C
 
     @Override
     protected void executeCommand() {
-        CommandCoordinatorUtil.executeAsyncCommand(
+        commandCoordinatorUtil.executeAsyncCommand(
                 getParameters().getAction(),
                 getParameters().getActionParameters(),
                 cloneContextAndDetachFromParent());
@@ -50,6 +60,6 @@ public class RunAsyncActionCommand<T extends RunAsyncActionParameters> extends C
 
     @Override
     public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 }

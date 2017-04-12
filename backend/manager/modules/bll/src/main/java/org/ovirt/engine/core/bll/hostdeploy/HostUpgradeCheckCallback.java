@@ -2,6 +2,9 @@ package org.ovirt.engine.core.bll.hostdeploy;
 
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -15,9 +18,13 @@ import org.ovirt.engine.core.compat.Guid;
  * if there is an upgrade available for the host in async way.
  * The {@code CheckForHostUpgradeInternalCommand} is being monitored by this callback to its completion.
  */
+@Typed(HostUpgradeCheckCallback.class)
 public class HostUpgradeCheckCallback implements CommandCallback {
 
     private Guid checkForHostUpgradeInternalCmdId;
+
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     /**
      * The callback is being polling till the host move to maintenance or failed to do so.
@@ -25,7 +32,7 @@ public class HostUpgradeCheckCallback implements CommandCallback {
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
 
-        CommandBase<?> rootCommand = CommandCoordinatorUtil.retrieveCommand(cmdId);
+        CommandBase<?> rootCommand = commandCoordinatorUtil.retrieveCommand(cmdId);
 
         if (childCommandsExist(childCmdIds)) {
             evaluateHostUpgradeCheckInternalCommandProgress(childCmdIds, rootCommand);
@@ -35,12 +42,12 @@ public class HostUpgradeCheckCallback implements CommandCallback {
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     /**
@@ -83,7 +90,7 @@ public class HostUpgradeCheckCallback implements CommandCallback {
 
     private CommandEntity getHostUpgradeCheckInternalCommand(List<Guid> childCmdIds) {
         Guid upgradeCmdId = getHostUpgradeInternalCmdId(childCmdIds);
-        return CommandCoordinatorUtil.getCommandEntity(upgradeCmdId);
+        return commandCoordinatorUtil.getCommandEntity(upgradeCmdId);
     }
 
     private Guid getHostUpgradeInternalCmdId(List<Guid> childCmdIds) {
@@ -97,7 +104,7 @@ public class HostUpgradeCheckCallback implements CommandCallback {
 
     private Guid findChildCommandByActionType(ActionType commandType, List<Guid> childCmdIds) {
         return childCmdIds.stream()
-                .filter(cmdId -> CommandCoordinatorUtil.getCommandEntity(cmdId).getCommandType() == commandType)
+                .filter(cmdId -> commandCoordinatorUtil.getCommandEntity(cmdId).getCommandType() == commandType)
                 .findFirst().orElse(null);
     }
 

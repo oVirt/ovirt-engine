@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -49,6 +51,11 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     private VmPoolDao vmPoolDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(RemoveVmPoolCommandCallback.class)
+    private Instance<RemoveVmPoolCommandCallback> callbackProvider;
 
     private List<VM> cachedVmsInPool;
     private Set<Guid> vmsRemoved = new HashSet<>();
@@ -154,7 +161,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
 
         for (VM vm : getCachedVmsInPool()) {
             if (!vm.isDown()) {
-                CommandCoordinatorUtil.executeAsyncCommand(
+                commandCoordinatorUtil.executeAsyncCommand(
                         ActionType.StopVm,
                         withRootCommandInfo(new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL)),
                         cloneContextAndDetachFromParent());
@@ -264,7 +271,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
 
     @Override
     public CommandCallback getCallback() {
-        return new RemoveVmPoolCommandCallback();
+        return callbackProvider.get();
     }
 
     @Override

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -53,6 +55,9 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
     private LunDao lunDao;
     @Inject
     private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     public ReduceSANStorageDomainDevicesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -175,7 +180,7 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
 
     @Override
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     @Override

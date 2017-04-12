@@ -14,6 +14,8 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -75,6 +77,11 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     private VmIconDao vmIconDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     @Inject
     private ExternalNetworkManagerFactory externalNetworkManagerFactory;
@@ -259,7 +266,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
 
             // If it is force, we cannot remove if there are task
-            if (CommandCoordinatorUtil.hasTasksByStoragePoolId(getVm().getStoragePoolId())) {
+            if (commandCoordinatorUtil.hasTasksByStoragePoolId(getVm().getStoragePoolId())) {
                 return failValidation(EngineMessage.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS);
             }
         }
@@ -360,7 +367,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
             RemoveAllVmCinderDisksParameters param = new RemoveAllVmCinderDisksParameters(getVmId(), cinderDisks);
             param.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-            Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+            Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                     ActionType.RemoveAllVmCinderDisks,
                     withRootCommandInfo(param),
                     cloneContextAndDetachFromParent());
@@ -440,6 +447,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     public CommandCallback getCallback() {
-        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+        return getParameters().isUseCinderCommandCallback() ? callbackProvider.get() : null;
     }
 }

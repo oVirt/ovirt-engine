@@ -2,12 +2,15 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
+
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@Typed(RemoveVmPoolCommandCallback.class)
 public class RemoveVmPoolCommandCallback extends ConcurrentChildCommandsExecutionCallback {
 
     @Override

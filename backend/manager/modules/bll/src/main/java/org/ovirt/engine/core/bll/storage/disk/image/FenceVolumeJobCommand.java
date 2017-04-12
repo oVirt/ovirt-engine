@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.ovirt.engine.core.common.constants.StorageConstants.ENTITY_FENCING_GENERATION_DIFF;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -14,6 +16,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class FenceVolumeJobCommand<T extends FenceVolumeJobCommandParameters> extends StorageJobCommand<T> {
+
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     public FenceVolumeJobCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -58,6 +63,6 @@ public class FenceVolumeJobCommand<T extends FenceVolumeJobCommandParameters> ex
         // The engine uses the command record just for polling (to avoid executing another fence operation before the
         // previous one ended) and not for determining if the fencing succeeded (it polls the entity to verify that),
         // therefore we are fine with deleting the command entity after the execution ends.
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(getCommandId());
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(getCommandId());
     }
 }

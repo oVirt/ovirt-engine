@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -49,6 +51,9 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
     private DiskImageDao diskImageDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     private DiskImage diskImage;
 
@@ -124,7 +129,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
 
     @Override
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     @Override

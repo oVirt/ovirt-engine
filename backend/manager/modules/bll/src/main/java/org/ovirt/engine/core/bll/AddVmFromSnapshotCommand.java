@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,6 +61,9 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     private SnapshotDao snapshotDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     private Guid sourceSnapshotId;
     private Snapshot snapshot;
@@ -305,6 +310,6 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     public CommandCallback getCallback() {
-        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+        return getParameters().isUseCinderCommandCallback() ? callbackProvider.get() : null;
     }
 }

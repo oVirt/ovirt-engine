@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -54,6 +56,11 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
     private DbUserDao dbUserDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     protected AttachUserToVmFromPoolAndRunCommand(Guid commandId) {
         super(commandId);
@@ -244,7 +251,7 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
     private boolean isRunVmSucceeded() {
         RunVmParams runVmParams = getChildRunVmParameters();
         return runVmParams == null
-                || CommandCoordinatorUtil.getCommandEntity(runVmParams.getCommandId()).getReturnValue().getSucceeded();
+                || commandCoordinatorUtil.getCommandEntity(runVmParams.getCommandId()).getReturnValue().getSucceeded();
     }
 
     @Override
@@ -361,7 +368,7 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
 
     @Override
     public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
 }

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.exportimport;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -13,6 +15,9 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends ImportVmFromExternalProviderCommand<T> {
 
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+
     public ImportVmFromOvaCommand(Guid cmdId) {
         super(cmdId);
     }
@@ -23,7 +28,7 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
 
     @Override
     protected void convert() {
-        CommandCoordinatorUtil.executeAsyncCommand(
+        commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.ConvertOva,
                 buildConvertOvaParameters(),
                 cloneContextAndDetachFromParent());

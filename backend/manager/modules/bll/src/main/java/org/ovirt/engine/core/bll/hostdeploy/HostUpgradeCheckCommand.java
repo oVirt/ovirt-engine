@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -13,6 +17,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @NonTransactiveCommandAttribute
 public class HostUpgradeCheckCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(HostUpgradeCheckCallback.class)
+    private Instance<HostUpgradeCheckCallback> callbackProvider;
 
     public HostUpgradeCheckCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -34,7 +44,7 @@ public class HostUpgradeCheckCommand<T extends VdsActionParameters> extends VdsC
 
     @Override
     protected void executeCommand() {
-        CommandCoordinatorUtil.executeAsyncCommand(ActionType.HostUpgradeCheckInternal,
+        commandCoordinatorUtil.executeAsyncCommand(ActionType.HostUpgradeCheckInternal,
                 withRootCommandInfo(new VdsActionParameters(getVdsId())),
                 cloneContext());
 
@@ -48,6 +58,6 @@ public class HostUpgradeCheckCommand<T extends VdsActionParameters> extends VdsC
 
     @Override
     public CommandCallback getCallback() {
-        return new HostUpgradeCheckCallback();
+        return callbackProvider.get();
     }
 }

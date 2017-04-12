@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -29,6 +31,9 @@ public class RestoreFromCinderSnapshotCommand<T extends RemoveCinderDiskParamete
     private ImageDao imageDao;
     @Inject
     private DiskImageDao diskImageDao;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     public RestoreFromCinderSnapshotCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -86,7 +91,7 @@ public class RestoreFromCinderSnapshotCommand<T extends RemoveCinderDiskParamete
 
     @Override
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     @Override

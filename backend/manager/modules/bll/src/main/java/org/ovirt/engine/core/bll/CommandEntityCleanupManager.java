@@ -26,6 +26,9 @@ public class CommandEntityCleanupManager implements BackendService {
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
 
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+
     @PostConstruct
     private void init() {
         log.info("Start initializing {}", getClass().getSimpleName());
@@ -48,7 +51,7 @@ public class CommandEntityCleanupManager implements BackendService {
             DateTime latestTimeToKeep = DateTime.getNow().addDays(
                     Config.<Integer>getValue(ConfigValues.CommandEntityAgingThreshold)
                             * -1);
-            CommandCoordinatorUtil.removeAllCommandsBeforeDate(latestTimeToKeep);
+            commandCoordinatorUtil.removeAllCommandsBeforeDate(latestTimeToKeep);
             log.info("Finished deleteAgedOutCommandEntities");
         } catch (RuntimeException e) {
             log.error("deleteAgedOutCommandEntities failed with exception", e);

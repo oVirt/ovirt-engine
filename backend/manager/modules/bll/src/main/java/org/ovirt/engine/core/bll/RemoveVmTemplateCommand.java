@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -66,6 +68,11 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
     private VmIconDao vmIconDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     private List<DiskImage> imageTemplates;
     private final Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<>();
@@ -325,7 +332,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
     private void removeCinderDisks(List<CinderDisk> cinderDisks) {
         RemoveAllVmCinderDisksParameters removeParam = new RemoveAllVmCinderDisksParameters(getVmTemplateId(), cinderDisks);
         Future<ActionReturnValue> future =
-                CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveAllVmCinderDisks,
+                commandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveAllVmCinderDisks,
                         withRootCommandInfo(removeParam),
                         cloneContextAndDetachFromParent());
         try {
@@ -428,6 +435,6 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
 
     @Override
     public CommandCallback getCallback() {
-        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+        return getParameters().isUseCinderCommandCallback() ? callbackProvider.get() : null;
     }
 }

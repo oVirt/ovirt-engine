@@ -46,7 +46,6 @@ public class CommandsRepository {
     private final CommandContextsCache contextsCache;
     private final ConcurrentHashMap<Guid, List<Guid>> childHierarchy;
     private final ConcurrentMap<Guid, CoCoEventSubscriber> subscriptions;
-    private Integer pollingRate = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds);
     private final Object LOCK;
     private volatile boolean childHierarchyInitialized;
     @Inject
@@ -67,7 +66,8 @@ public class CommandsRepository {
         if (!callbacksTiming.containsKey(cmdEntity.getId())) {
             CommandBase<?> cmd = retrieveCommand(cmdEntity.getId());
             if (cmd != null && cmd.getCallback() != null) {
-                CallbackTiming callbackTiming = new CallbackTiming(cmd.getCallback(), pollingRate);
+                CallbackTiming callbackTiming = new CallbackTiming(cmd.getCallback(),
+                        Config.<Integer>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds));
                 if (cmdEntity.isWaitingForEvent()) {
                     long waitOnEventEndTime = System.currentTimeMillis()
                             + TimeUnit.MINUTES.toMillis(Config.<Integer>getValue(ConfigValues.CoCoWaitForEventInMinutes));

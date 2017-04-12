@@ -43,6 +43,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -63,6 +64,8 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     private VdsDao vdsDao;
     @Inject
     private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     private ConvertVmCallback cachedCallback;
 
@@ -87,7 +90,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     @Override
     public CommandCallback getCallback() {
         if (cachedCallback == null) {
-            cachedCallback = new ConvertVmCallback(getCommandId());
+            cachedCallback = Injector.injectMembers(new ConvertVmCallback(getCommandId()));
             // if the callback is created after the command was executed, it means that the engine restarted
             // so there is no v2v-job in vdsManager and thus we add a new job with unknown status there
             if (getCommandExecutionStatus() == CommandExecutionStatus.EXECUTED) {
@@ -308,6 +311,6 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     }
 
     private CommandExecutionStatus getCommandExecutionStatus() {
-        return CommandCoordinatorUtil.getCommandExecutionStatus(getCommandId());
+        return commandCoordinatorUtil.getCommandExecutionStatus(getCommandId());
     }
 }

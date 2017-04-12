@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dao.DiskImageDao;
 
+@Typed(RemoveCinderSnapshotCommandCallback.class)
 public class RemoveCinderSnapshotCommandCallback extends ConcurrentChildCommandsExecutionCallback {
 
     @Inject

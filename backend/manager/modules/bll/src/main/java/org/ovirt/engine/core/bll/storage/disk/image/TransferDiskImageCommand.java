@@ -58,6 +58,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private StorageDomainDao storageDomainDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     public TransferDiskImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -79,7 +81,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     @Override
     protected void createImage() {
-        CommandCoordinatorUtil.executeAsyncCommand(
+        commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.AddDisk, getAddDiskParameters(), cloneContextAndDetachFromParent());
     }
 

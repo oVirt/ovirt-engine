@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -28,6 +30,9 @@ public abstract class MemoryImageRemover {
 
     protected final CommandBase<?> enclosingCommand;
     private boolean startPollingTasks;
+
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     public MemoryImageRemover(CommandBase<?> enclosingCommand) {
         this.enclosingCommand = enclosingCommand;
@@ -96,11 +101,11 @@ public abstract class MemoryImageRemover {
 
         if (startPollingTasks) {
             if (!Guid.Empty.equals(memoryImageRemovalTaskId)) {
-                CommandCoordinatorUtil.startPollingTask(memoryImageRemovalTaskId);
+                commandCoordinatorUtil.startPollingTask(memoryImageRemovalTaskId);
             }
 
             if (confImageRemovalTaskId != null && !Guid.Empty.equals(confImageRemovalTaskId)) {
-                CommandCoordinatorUtil.startPollingTask(confImageRemovalTaskId);
+                commandCoordinatorUtil.startPollingTask(confImageRemovalTaskId);
             }
         }
 

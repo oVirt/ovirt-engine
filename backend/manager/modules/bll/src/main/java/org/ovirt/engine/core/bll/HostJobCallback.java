@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.HostJobCommandParameters;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
@@ -38,7 +37,7 @@ public abstract class HostJobCallback extends ChildCommandsCallbackBase {
                                                CommandExecutionStatus status,
                                                int completedChildren) {
         Guid cmdId = command.getCommandId();
-        CommandEntity commandEntity = CommandCoordinatorUtil.getCommandEntity(cmdId);
+        CommandEntity commandEntity = commandCoordinatorUtil.getCommandEntity(cmdId);
         ActionParametersBase cmdParams = commandEntity.getCommandParameters();
         Guid job = ((HostJobCommandParameters) cmdParams).getHostJobId();
         HostJobStatus jobStatus = null;
@@ -110,7 +109,7 @@ public abstract class HostJobCallback extends ChildCommandsCallbackBase {
     }
 
     protected CommandBase<? extends HostJobCommandParameters> getCommand(Guid cmdId) {
-        return CommandCoordinatorUtil.retrieveCommand(cmdId);
+        return commandCoordinatorUtil.retrieveCommand(cmdId);
     }
 
     private boolean isEntityPollingSupported(CommandBase<?> cmd) {

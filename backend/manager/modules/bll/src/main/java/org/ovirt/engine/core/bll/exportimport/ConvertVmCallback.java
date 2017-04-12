@@ -2,6 +2,9 @@ package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.List;
 
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -12,12 +15,16 @@ import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Typed(ConvertVmCallback.class)
 public class ConvertVmCallback implements CommandCallback {
     private static final Logger log = LoggerFactory.getLogger(ConvertVmCallback.class);
     private static final String JOB_DOES_NOT_EXIST_MSG = "Lost contact with the conversion process";
 
     private Guid cmdId;
     private ConvertVmCommand<? extends ConvertVmParameters> cachedCommand;
+
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     protected ConvertVmCallback(Guid cmdId) {
         this.cmdId = cmdId;
@@ -84,7 +91,7 @@ public class ConvertVmCallback implements CommandCallback {
 
     private ConvertVmCommand<? extends ConvertVmParameters> getCommand() {
         if (cachedCommand == null) {
-            cachedCommand = CommandCoordinatorUtil.retrieveCommand(cmdId);
+            cachedCommand = commandCoordinatorUtil.retrieveCommand(cmdId);
         }
         return cachedCommand;
     }

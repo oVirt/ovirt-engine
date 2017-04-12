@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandActionState;
@@ -77,6 +79,9 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     private VmDao vmDao;
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     public LiveMigrateDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -107,7 +112,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     public CommandCallback getCallback() {
-        return new SerialChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 
     @Override

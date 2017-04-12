@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -29,11 +29,11 @@ public class AsyncTaskUtils {
      * @param asyncTask
      *            task to be added or updated
      */
-    public static void addOrUpdateTaskInDB(final SPMTask asyncTask) {
+    public static void addOrUpdateTaskInDB(final CommandCoordinator coco, final SPMTask asyncTask) {
         try {
             if (asyncTask.getParameters().getDbAsyncTask() != null) {
                 TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                    addOrUpdateTaskInDB(asyncTask.getParameters().getDbAsyncTask());
+                    coco.addOrUpdateTaskInDB(asyncTask.getParameters().getDbAsyncTask());
                     Map<Guid, VdcObjectType> entitiesMap = asyncTask.getEntitiesMap();
                     List<AsyncTaskEntity> asyncTaskEntities =
                             buildAsyncTaskEntities(asyncTask.getParameters().getDbAsyncTask().getTaskId(),
@@ -60,10 +60,6 @@ public class AsyncTaskUtils {
 
         }
         return results;
-    }
-
-    private static void addOrUpdateTaskInDB(AsyncTask asyncTask) {
-        CommandCoordinatorUtil.addOrUpdateTaskInDB(asyncTask);
     }
 
     private static AsyncTaskDao getAsyncTaskDao() {

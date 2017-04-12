@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
@@ -32,6 +34,11 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
 
     @Inject
     private DiskDao diskDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public RemoveAllVmCinderDisksCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -63,7 +70,7 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
     }
 
     private ActionReturnValue removeCinderDisk(CinderDisk cinderDisk) {
-        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+        Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.RemoveCinderDisk,
                 buildChildCommandParameters(cinderDisk),
                 cloneContextAndDetachFromParent());
@@ -111,6 +118,6 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
 
     @Override
     public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 }

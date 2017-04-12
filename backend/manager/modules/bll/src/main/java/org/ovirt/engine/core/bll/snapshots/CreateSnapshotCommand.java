@@ -44,6 +44,8 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     private DiskImageDao diskImageDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     protected DiskImage newDiskImage;
 
@@ -128,7 +130,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             }
         } catch (Exception e) {
             log.error("Failed creating snapshot from image id '{}'", getImage().getImageId());
-            CommandCoordinatorUtil.logAndFailTaskOfCommandWithEmptyVdsmId(getAsyncTaskId(),
+            commandCoordinatorUtil.logAndFailTaskOfCommandWithEmptyVdsmId(getAsyncTaskId(),
                     "Create snapshot failed at VDSM. DB task ID is " + getAsyncTaskId());
             throw new EngineException(EngineError.VolumeCreationError);
         }

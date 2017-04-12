@@ -16,6 +16,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -117,6 +119,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private ImageDao imageDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public CreateAllSnapshotsFromVmCommand(Guid commandId) {
         super(commandId);
@@ -334,7 +341,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 CreateCinderSnapshotParameters params = buildChildCommandParameters(disk);
                 params.setQuotaId(disk.getQuotaId());
 
-                Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+                Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                         ActionType.CreateCinderSnapshot,
                         params,
                         cloneContext().withoutCompensationContext().withoutLock());
@@ -812,6 +819,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     public CommandCallback getCallback() {
-        return new ConcurrentChildCommandsExecutionCallback();
+        return callbackProvider.get();
     }
 }

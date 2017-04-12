@@ -6,22 +6,27 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CommandCallbacksPoller implements BackendService {
+
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     private static final Logger log = LoggerFactory.getLogger(CommandCallbacksPoller.class);
     private int pollingRate;
@@ -29,21 +34,12 @@ public class CommandCallbacksPoller implements BackendService {
     @Inject
     private CommandsRepository commandsRepository;
 
-    @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
-
-    CommandCallbacksPoller() {
-    }
-
     @PostConstruct
     private void init() {
         log.info("Start initializing {}", getClass().getSimpleName());
         pollingRate = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds);
         initCommandExecutor();
-        schedulerUtil.scheduleAFixedDelayJob(this,
-                "invokeCallbackMethods",
-                new Class[]{},
-                new Object[]{},
+        executor.scheduleWithFixedDelay(this::invokeCallbackMethods,
                 pollingRate,
                 pollingRate,
                 TimeUnit.SECONDS);
@@ -78,8 +74,16 @@ public class CommandCallbacksPoller implements BackendService {
         return commandsRepository.getChildCommandIds(cmdId);
     }
 
-    @OnTimerMethodAnnotation("invokeCallbackMethods")
-    public void invokeCallbackMethods() {
+    private void invokeCallbackMethods() {
+        try {
+            invokeCallbackMethodsImpl();
+        } catch (Throwable t) {
+            log.error("Exception in invokeCallbackMethods: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
+    }
+
+    private void invokeCallbackMethodsImpl() {
         Iterator<Entry<Guid, CallbackTiming>> iterator = commandsRepository.getCallbacksTiming().entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<Guid, CallbackTiming> entry = iterator.next();

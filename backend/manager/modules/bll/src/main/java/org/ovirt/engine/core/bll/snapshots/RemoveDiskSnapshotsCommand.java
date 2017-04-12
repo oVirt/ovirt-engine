@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -86,6 +88,14 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     private SnapshotsValidator snapshotsValidator;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> concurrentCallbackProvider;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> serialCallbackProvider;
 
     public RemoveDiskSnapshotsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -240,8 +250,8 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     @Override
     public CommandCallback getCallback() {
         return getParameters().isUseCinderCommandCallback() ?
-                new ConcurrentChildCommandsExecutionCallback() :
-                new SerialChildCommandsExecutionCallback();
+                concurrentCallbackProvider.get() :
+                serialCallbackProvider.get();
     }
 
     private boolean isLiveMerge() {
@@ -290,7 +300,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         updateParameters(completedChildren, parameters.getDestinationImageId());
         persistCommandIfNeeded();
 
-        CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveSnapshotSingleDiskLive,
+        commandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveSnapshotSingleDiskLive,
                 parameters,
                 cloneContextAndDetachFromParent());
 
@@ -311,7 +321,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
         ImagesContainterParametersBase parameters = buildRemoveSnapshotSingleDiskParameters(nextImageId);
 
-        CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveSnapshotSingleDisk,
+        commandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveSnapshotSingleDisk,
                 parameters,
                 cloneContextAndDetachFromParent());
 
@@ -386,7 +396,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         if (cinderDisks.isEmpty()) {
             return;
         }
-        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
+        Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.RemoveAllCinderSnapshotDisks,
                 buildRemoveCinderSnapshotDiskParameters(cinderDisks),
                 cloneContextAndDetachFromParent());
