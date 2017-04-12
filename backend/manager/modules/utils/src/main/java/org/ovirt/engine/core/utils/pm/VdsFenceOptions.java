@@ -105,7 +105,7 @@ public class VdsFenceOptions implements Serializable {
      * for example : secure=bool,port=int,slot=int
      */
     private void cacheFenceAgentsOptionTypes() {
-        String localfenceOptionTypes = Config.<String> getValue(ConfigValues.VdsFenceOptionTypes);
+        String localfenceOptionTypes = Config.getValue(ConfigValues.VdsFenceOptionTypes);
         String[] types = localfenceOptionTypes.split(Pattern.quote(COMMA), -1);
         for (String entry : types) {
             String[] optionKeyVal = entry.split(Pattern.quote(EQUAL), -1);
