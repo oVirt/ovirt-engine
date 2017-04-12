@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -350,8 +349,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
                     @Override
                     public ISingleAsyncOperation createSingleAsyncOperation() {
-                        return Injector.injectMembers(
-                                new ConntectVDSToPoolAndDomains((ArrayList<VDS>) vdsList, masterDomain, storagePool));
+
+                        return new ConntectVDSToPoolAndDomains((ArrayList<VDS>) vdsList, masterDomain, storagePool);
                     }
 
                     @Override

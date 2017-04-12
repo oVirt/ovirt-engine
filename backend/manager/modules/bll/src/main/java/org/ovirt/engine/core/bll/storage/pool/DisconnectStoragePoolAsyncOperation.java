@@ -2,12 +2,10 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.ArrayList;
 
-import javax.inject.Inject;
-
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.slf4j.Logger;
@@ -15,9 +13,6 @@ import org.slf4j.LoggerFactory;
 
 public class DisconnectStoragePoolAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
     private static final Logger log = LoggerFactory.getLogger(DisconnectStoragePoolAsyncOperation.class);
-
-    @Inject
-    private VDSBrokerFrontend resourceManager;
 
     public DisconnectStoragePoolAsyncOperation(ArrayList<VDS> vdss, StoragePool storagePool) {
         super(vdss, null, storagePool);
@@ -29,7 +24,8 @@ public class DisconnectStoragePoolAsyncOperation extends ActivateDeactivateSingl
             if (getVdss().get(iterationId).getSpmStatus() == VdsSpmStatus.None) {
                 log.info("Disconnect storage pool treatment vds '{}', pool '{}'", getVdss().get(iterationId)
                         .getName(), getStoragePool().getName());
-                resourceManager
+                Backend.getInstance()
+                        .getResourceManager()
                         .runVdsCommand(
                                 VDSCommandType.DisconnectStoragePool,
                                 new DisconnectStoragePoolVDSCommandParameters(getVdss().get(iterationId).getId(),

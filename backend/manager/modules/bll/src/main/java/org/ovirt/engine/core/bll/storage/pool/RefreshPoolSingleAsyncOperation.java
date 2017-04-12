@@ -3,9 +3,7 @@ package org.ovirt.engine.core.bll.storage.pool;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -14,9 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,25 +25,14 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
 
     private List<StoragePoolIsoMap> storagePoolIsoMap;
 
-    @Inject
-    private ResourceManager resourceManager;
-
-    @Inject
-    private StorageDomainDao storageDomainDao;
-
-    @Inject
-    private StoragePoolIsoMapDao storagePoolIsoMapDao;
-
     public RefreshPoolSingleAsyncOperation(ArrayList<VDS> vdss, StorageDomain domain,
             StoragePool storagePool, ArrayList<Guid> vdssIdsToSetNonoperational) {
         super(vdss, domain, storagePool);
         vdsIdsToSetNonOperational = vdssIdsToSetNonoperational;
-    }
-
-    @PostConstruct
-    private void init() {
-        masterStorageDomainId = storageDomainDao.getMasterStorageDomainIdForPool(getStoragePool().getId());
-        storagePoolIsoMap = storagePoolIsoMapDao.getAllForStoragePool(getStoragePool().getId());
+        masterStorageDomainId = DbFacade.getInstance().getStorageDomainDao()
+                .getMasterStorageDomainIdForPool(getStoragePool().getId());
+        storagePoolIsoMap = DbFacade.getInstance()
+                .getStoragePoolIsoMapDao().getAllForStoragePool(getStoragePool().getId());
     }
 
     @Override
@@ -56,7 +41,8 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
             if (getStorageDomain() != null &&
                         getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
                 try {
-                    resourceManager
+                    Backend.getInstance()
+                            .getResourceManager()
                             .runVdsCommand(
                                     VDSCommandType.ConnectStoragePool,
                                     new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId),
@@ -72,7 +58,7 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                     }
                 }
             } else {
-                resourceManager.runVdsCommand(
+                Backend.getInstance().getResourceManager().runVdsCommand(
                         VDSCommandType.ConnectStoragePool,
                         new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId), getStoragePool(),
                                 masterStorageDomainId, storagePoolIsoMap, true));

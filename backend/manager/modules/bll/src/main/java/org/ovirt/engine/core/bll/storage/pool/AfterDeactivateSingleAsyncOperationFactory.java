@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.pool;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 
 public class AfterDeactivateSingleAsyncOperationFactory extends ActivateDeactivateSingleAsyncOperationFactory {
@@ -12,12 +11,8 @@ public class AfterDeactivateSingleAsyncOperationFactory extends ActivateDeactiva
 
     @Override
     public ISingleAsyncOperation createSingleAsyncOperation() {
-        return Injector.injectMembers(
-                new AfterDeactivateSingleAsyncOperation(getVdss(),
-                        getStorageDomain(),
-                        getStoragePool(),
-                        isLastMaster,
-                        newMasterStorageDomainId));
+        return new AfterDeactivateSingleAsyncOperation(getVdss(), getStorageDomain(), getStoragePool(), isLastMaster,
+                newMasterStorageDomainId);
     }
 
     @Override
