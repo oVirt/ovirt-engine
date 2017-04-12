@@ -70,6 +70,9 @@ rm -f ./*tar.gz
 make clean \
     "EXTRA_BUILD_FLAGS=$EXTRA_BUILD_FLAGS"
 
+# run findbugs
+source automation/findbugs.sh
+
 # Get the tarball
 make dist
 
@@ -98,3 +101,12 @@ rpmbuild \
 # Store any relevant artifacts in exported-artifacts for the ci system to
 # archive
 [[ -d exported-artifacts ]] || mkdir -p exported-artifacts
+# Move find bugs to a dedicated directory under exported-artifacts
+mkdir -p exported-artifacts/find-bugs
+find * -name "*findbugs.xml" -o -name "*findbugsxml.xml" | \
+    while read source_file; do
+        destination_file=$(
+            sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
+        )
+        mv $source_file exported-artifacts/find-bugs/"$destination_file"
+    done
