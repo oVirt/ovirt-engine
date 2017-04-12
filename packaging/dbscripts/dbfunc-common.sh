@@ -441,7 +441,7 @@ _dbfunc_common_is_view_or_sp_changed() {
 
 	{
 		_dbfunc_common_get_files "upgrade" 3
-		find "${DBFUNC_COMMON_DBSCRIPTS_DIR}" -name 'create_*views.sql' -or -name '*_sp.sql'
+		find "${DBFUNC_COMMON_DBSCRIPTS_DIR}" -name 'create_functions.sql' -or -name 'create_*views.sql' -or -name '*_sp.sql'
 	} | sort | uniq | xargs -d '\n' md5sum > "${DBFUNC_COMMON_MD5FILE}.tmp"
 
 	diff -s -q "${DBFUNC_COMMON_MD5FILE}" "${DBFUNC_COMMON_MD5FILE}.tmp" > /dev/null 2>&1
