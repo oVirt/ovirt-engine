@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.HostSpmPriorityComparator;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -752,10 +753,19 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             return;
         }
 
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
-            VDS host = getSelectedItem();
+        VDS host = getSelectedItem();
+        EditHostModel hostModel = new EditHostModel();
+        AsyncDataProvider.getInstance().getAllFenceAgentsByHostId(new AsyncQuery<>(retValue -> {
+            ArrayList<FenceAgent> fenceAgents = new ArrayList<>();
+            for (FenceAgent fenceAgent : retValue) {
+                fenceAgents.add(fenceAgent);
+            }
+            host.setFenceAgents(fenceAgents);
+            hostModel.getFenceAgentListModel().setItems(hostModel.getFenceAgentModelList(host));
+        }), getSelectedItem().getId());
 
-            final EditHostModel hostModel = new EditHostModel();
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
+
             hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis);
             hostModel.setSelectedCluster(host);
             hostModel.onDataInitialized();

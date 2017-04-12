@@ -1764,16 +1764,7 @@ SELECT cluster.cluster_id AS cluster_id,
     vds_dynamic.auto_numa_balancing AS auto_numa_balancing,
     vds_dynamic.is_numa_supported AS is_numa_supported,
     vds_dynamic.online_cpus AS online_cpus,
-    fence_agents.id AS agent_id,
-    fence_agents.agent_order AS agent_order,
-    fence_agents.ip AS agent_ip,
-    fence_agents.type AS agent_type,
-    fence_agents.agent_user AS agent_user,
-    fence_agents.agent_password AS agent_password,
-    fence_agents.port AS agent_port,
-    fence_agents.options AS agent_options,
     vds_dynamic.maintenance_reason AS maintenance_reason,
-    fence_agents.encrypt_options AS agent_encrypt_options,
     vds_dynamic.is_update_available AS is_update_available,
     vds_dynamic.is_hostdev_enabled AS is_hostdev_enabled,
     -- optimization for following subquery
@@ -1801,8 +1792,6 @@ INNER JOIN vds_statistics
     ON vds_static.vds_id = vds_statistics.vds_id
 LEFT JOIN storage_pool
     ON cluster.storage_pool_id = storage_pool.id
-LEFT JOIN fence_agents
-    ON vds_static.vds_id = fence_agents.vds_id
 LEFT JOIN vds_spm_id_map
     ON vds_static.vds_id = vds_spm_id_map.vds_id
 LEFT JOIN gluster_server
@@ -1931,14 +1920,6 @@ SELECT cluster.cluster_id,
     vds_dynamic.is_numa_supported AS is_numa_supported,
     vds_dynamic.supported_rng_sources AS supported_rng_sources,
     vds_dynamic.online_cpus AS online_cpus,
-    fence_agents.id AS agent_id,
-    fence_agents.agent_order AS agent_order,
-    fence_agents.ip AS agent_ip,
-    fence_agents.type AS agent_type,
-    fence_agents.agent_user AS agent_user,
-    fence_agents.agent_password AS agent_password,
-    fence_agents.port AS agent_port,
-    fence_agents.options AS agent_options,
     vds_dynamic.maintenance_reason AS maintenance_reason,
     vds_dynamic.is_update_available AS is_update_available,
     vds_dynamic.is_hostdev_enabled AS is_hostdev_enabled,
@@ -1955,8 +1936,6 @@ LEFT JOIN storage_pool
     ON cluster.storage_pool_id = storage_pool.id
 LEFT JOIN tags_vds_map_view
     ON vds_static.vds_id = tags_vds_map_view.vds_id
-LEFT JOIN fence_agents
-    ON vds_static.vds_id = fence_agents.vds_id
 LEFT JOIN vds_spm_id_map
     ON vds_static.vds_id = vds_spm_id_map.vds_id
 LEFT JOIN storage_pool_iso_map

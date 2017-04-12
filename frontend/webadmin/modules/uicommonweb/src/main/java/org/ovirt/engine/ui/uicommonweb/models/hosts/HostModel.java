@@ -1116,40 +1116,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setAllowChangeHost(vds);
         if (vds.isFenceAgentsExist()) {
             orderAgents(vds.getFenceAgents());
-            List<FenceAgentModel> agents = new ArrayList<>();
-            //Keep a list of examined agents to prevent duplicate management IPs from showing up in the UI.
-            Set<Pair<String, String>> examinedAgents = new HashSet<>();
-            for (FenceAgent agent: vds.getFenceAgents()) {
-                FenceAgentModel model = new FenceAgentModel();
-                model.setHost(this);
-                // Set primary PM parameters.
-                model.getManagementIp().setEntity(agent.getIp());
-                model.getPmUserName().setEntity(agent.getUser());
-                model.getPmPassword().setEntity(agent.getPassword());
-                model.getPmType().setSelectedItem(agent.getType());
-                if (agent.getPort() != null) {
-                    model.getPmPort().setEntity(agent.getPort());
-                }
-                model.getPmEncryptOptions().setEntity(agent.getEncryptOptions());
-                model.setPmOptionsMap(PowerManagementUtils.pmOptionsStringToMap(agent.getOptions()));
-                model.setOrder(agent.getOrder());
-                if (!examinedAgents.contains(new Pair<>(model.getManagementIp().getEntity(),
-                        model.getPmType().getSelectedItem()))) {
-                    boolean added = false;
-                    for (FenceAgentModel concurrentModel: agents) {
-                        if (model.getOrder().getEntity() != null && model.getOrder().getEntity().equals(concurrentModel.getOrder().getEntity())) {
-                            concurrentModel.getConcurrentList().add(model);
-                            added = true;
-                            break;
-                        }
-                    }
-                    if (!added) {
-                        agents.add(model);
-                    }
-                }
-                examinedAgents.add(new Pair<>(model.getManagementIp().getEntity(),
-                        model.getPmType().getSelectedItem()));
-            }
+            List<FenceAgentModel> agents = getFenceAgentModelList(vds);
             getFenceAgentListModel().setItems(agents);
         }
         getDisableAutomaticPowerManagement().setEntity(vds.isDisablePowerManagementPolicy());
@@ -1177,6 +1144,44 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getKernelCmdlineKvmNested().setEntity(vds.isKernelCmdlineKvmNested());
         getKernelCmdlineUnsafeInterrupts().setEntity(vds.isKernelCmdlineUnsafeInterrupts());
         getKernelCmdlinePciRealloc().setEntity(vds.isKernelCmdlinePciRealloc());
+    }
+
+    public List<FenceAgentModel> getFenceAgentModelList(VDS vds) {
+        List<FenceAgentModel> agents = new ArrayList<>();
+        //Keep a list of examined agents to prevent duplicate management IPs from showing up in the UI.
+        Set<Pair<String, String>> examinedAgents = new HashSet<>();
+        for (FenceAgent agent: vds.getFenceAgents()) {
+            FenceAgentModel model = new FenceAgentModel();
+            model.setHost(this);
+            // Set primary PM parameters.
+            model.getManagementIp().setEntity(agent.getIp());
+            model.getPmUserName().setEntity(agent.getUser());
+            model.getPmPassword().setEntity(agent.getPassword());
+            model.getPmType().setSelectedItem(agent.getType());
+            if (agent.getPort() != null) {
+                model.getPmPort().setEntity(agent.getPort());
+            }
+            model.getPmEncryptOptions().setEntity(agent.getEncryptOptions());
+            model.setPmOptionsMap(PowerManagementUtils.pmOptionsStringToMap(agent.getOptions()));
+            model.setOrder(agent.getOrder());
+            if (!examinedAgents.contains(new Pair<>(model.getManagementIp().getEntity(),
+                    model.getPmType().getSelectedItem()))) {
+                boolean added = false;
+                for (FenceAgentModel concurrentModel: agents) {
+                    if (model.getOrder().getEntity() != null && model.getOrder().getEntity().equals(concurrentModel.getOrder().getEntity())) {
+                        concurrentModel.getConcurrentList().add(model);
+                        added = true;
+                        break;
+                    }
+                }
+                if (!added) {
+                    agents.add(model);
+                }
+            }
+            examinedAgents.add(new Pair<>(model.getManagementIp().getEntity(),
+                    model.getPmType().getSelectedItem()));
+        }
+        return agents;
     }
 
     public void cleanHostParametersFields() {

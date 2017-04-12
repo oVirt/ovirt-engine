@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.comparators.HostSpmPriorityComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
-import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -373,26 +372,6 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setCountThreadsAsCores(rs.getBoolean("count_threads_as_cores"));
         entity.setMaintenanceReason(rs.getString("maintenance_reason"));
         entity.getStaticData().setOpenstackNetworkProviderId(getGuid(rs, "openstack_network_provider_id"));
-        Guid agentGuid = getGuid(rs, "agent_id");
-        if (agentGuid != null) {
-            FenceAgent agent = new FenceAgent();
-            agent.setId(agentGuid);
-            agent.setHostId(getGuid(rs, "vds_id"));
-            agent.setOrder(rs.getInt("agent_order"));
-            agent.setType(rs.getString("agent_type"));
-            agent.setUser(rs.getString("agent_user"));
-            agent.setPassword(DbFacadeUtils.decryptPassword(rs.getString("agent_password")));
-            int port = rs.getInt("agent_port");
-            agent.setPort(port == 0 ? null : port);
-            agent.setEncryptOptions(rs.getBoolean("agent_encrypt_options"));
-            if (agent.getEncryptOptions()) {
-                agent.setOptions(DbFacadeUtils.decryptPassword(rs.getString("agent_options")));
-            } else {
-                agent.setOptions(rs.getString("agent_options"));
-            }
-            agent.setIp(rs.getString("agent_ip"));
-            entity.getFenceAgents().add(agent);
-        }
         entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
         entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
         entity.setHostedEngineHost(rs.getBoolean("is_hosted_engine_host"));

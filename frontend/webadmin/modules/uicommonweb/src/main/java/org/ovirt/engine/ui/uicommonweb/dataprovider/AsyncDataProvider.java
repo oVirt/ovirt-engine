@@ -92,6 +92,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -3202,5 +3203,10 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetGlusterVolumeGeoRepSessionById,
                 new IdQueryParameters(geoRepSessionId),
                 aQuery);
+    }
+
+    public void getAllFenceAgentsByHostId(AsyncQuery<List<FenceAgent>> aQuery, Guid hostId) {
+        aQuery.converterCallback = new ListConverter<>();
+        Frontend.getInstance().runQuery(QueryType.GetFenceAgentsByVdsId, new IdQueryParameters(hostId), aQuery);
     }
 }
