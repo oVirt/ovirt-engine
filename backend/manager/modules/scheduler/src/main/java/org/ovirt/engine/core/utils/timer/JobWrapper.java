@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
+import org.ovirt.engine.core.utils.log.LoggedUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -48,6 +50,8 @@ public class JobWrapper implements Job {
                 cachedMethods.putIfAbsent(methodKey, getMethodToRun(instance, methodName));
             }
             methodToRun = cachedMethods.get(methodKey);
+            String correlationId = LoggedUtils.getObjectId(this);
+            CorrelationIdTracker.setCorrelationId(correlationId);
             invokeMethod(instance, methodToRun, methodParams);
         } catch (Exception e) {
             log.error("Failed to invoke scheduled method {}: {}", methodName, e.getMessage());
@@ -55,6 +59,8 @@ public class JobWrapper implements Job {
             JobExecutionException jee = new JobExecutionException("failed to execute job");
             jee.setStackTrace(e.getStackTrace());
             throw jee;
+        } finally {
+            CorrelationIdTracker.setCorrelationId(null);
         }
     }
 
