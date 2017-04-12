@@ -72,7 +72,6 @@ public class VmDeviceUtils {
     private final VmTemplateDao vmTemplateDao;
     private final VmHandler vmHandler;
     private final MacPoolPerCluster macPoolPerCluster;
-    private final VideoDeviceSettings videoDeviceSettings;
 
     private OsRepository osRepository;
 
@@ -82,15 +81,13 @@ public class VmDeviceUtils {
             ClusterDao clusterDao,
             VmTemplateDao vmTemplateDao,
             VmHandler vmHandler,
-            MacPoolPerCluster macPoolPerCluster,
-            VideoDeviceSettings videoDeviceSettings) {
+            MacPoolPerCluster macPoolPerCluster) {
         this.vmDao = vmDao;
         this.vmDeviceDao = vmDeviceDao;
         this.clusterDao = clusterDao;
         this.vmTemplateDao = vmTemplateDao;
         this.vmHandler = vmHandler;
         this.macPoolPerCluster = macPoolPerCluster;
-        this.videoDeviceSettings = videoDeviceSettings;
         init();
     }
 
@@ -576,7 +573,7 @@ public class VmDeviceUtils {
      * @return a map of device parameters
      */
     private Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
-        return videoDeviceSettings.getVideoDeviceSpecParams(vmBase);
+        return VideoDeviceSettings.getVideoDeviceSpecParams(vmBase);
     }
 
     /**
