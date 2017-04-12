@@ -98,6 +98,9 @@ automation/packaging-setup-tests.sh
 # perform quick validations
 make validations
 
+# run findbugs
+source automation/findbugs.sh
+
 # Get the tarball
 make dist
 
@@ -135,4 +138,14 @@ rpmbuild \
 rm -rf exported-artifacts
 mkdir -p exported-artifacts
 find output -iname \*rpm -exec mv "{}" exported-artifacts/ \;
+
+# Collect any mvn findbugs artifacts
+mkdir -p exported-artifacts/find-bugs
+find * -name "*findbugs.xml" -o -name "*findbugsxml.xml" | \
+    while read source_file; do
+        destination_file=$(
+            sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
+        )
+        mv $source_file exported-artifacts/find-bugs/"$destination_file"
+    done
 mv ./*tar.gz exported-artifacts/
