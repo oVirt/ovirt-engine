@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
@@ -146,7 +147,8 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                                 connection.getStorageType(),
                                 new ArrayList<>(Collections.singletonList(connection))))
                 .getReturnValue();
-        return new Pair<>(storageHelperDirector.getItem(connection.getStorageType())
+        return new Pair<>(StorageHelperDirector.getInstance()
+                .getItem(connection.getStorageType())
                 .isConnectSucceeded(result, Collections.singletonList(connection)),
                  Integer.parseInt(result.values().iterator().next()));
 

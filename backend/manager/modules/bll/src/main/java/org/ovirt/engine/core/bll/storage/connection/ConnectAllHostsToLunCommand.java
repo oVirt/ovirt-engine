@@ -98,7 +98,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             for (Map.Entry<String, List<Guid>> entry : processed.entrySet()) {
                 for (Guid vdsId : entry.getValue()) {
                     LUNs lun = lunsMap.get(entry.getKey());
-                    storageHelperDirector.getItem(getStorageDomain().getStorageType())
+                    StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
                             .disconnectStorageFromLunByVdsId(getStorageDomain(), vdsId, lun);
                 }
             }
@@ -142,7 +142,8 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
 
     private boolean connectStorageToLunByVdsId(VDS vds, LUNs lun) {
         try {
-            return storageHelperDirector.getItem(getStorageDomain().getStorageType())
+            return StorageHelperDirector.getInstance()
+                    .getItem(getStorageDomain().getStorageType())
                     .connectStorageToLunByVdsId(getStorageDomain(), vds.getId(), lun, Guid.Empty);
         } catch (EngineException e) {
             handleFailure(vds, lun);

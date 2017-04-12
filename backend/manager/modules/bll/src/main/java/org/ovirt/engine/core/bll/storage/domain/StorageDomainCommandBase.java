@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
+import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.pool.RefreshStoragePoolAndDisconnectAsyncOperationFactory;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -238,12 +239,12 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected List<Pair<Guid, Boolean>> connectHostsInUpToDomainStorageServer() {
-        return performConnectionOpOnAllUpHosts(vds -> storageHelperDirector.getItem(getStorageDomain().getStorageType())
+        return performConnectionOpOnAllUpHosts(vds -> StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
                 .connectStorageToDomainByVdsId(getStorageDomain(), vds.getId()));
     }
 
     protected List<Pair<Guid, Boolean>> disconnectHostsInUpToDomainStorageServer() {
-        return performConnectionOpOnAllUpHosts(vds -> storageHelperDirector.getItem(getStorageDomain().getStorageType())
+        return performConnectionOpOnAllUpHosts(vds -> StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
                 .disconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId()));
     }
 
@@ -397,7 +398,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected IStorageHelper getStorageHelper(StorageDomain storageDomain) {
-        return storageHelperDirector.getItem(storageDomain.getStorageType());
+        return StorageHelperDirector.getInstance().getItem(storageDomain.getStorageType());
     }
 
     protected void executeInNewTransaction(TransactionMethod<?> method) {

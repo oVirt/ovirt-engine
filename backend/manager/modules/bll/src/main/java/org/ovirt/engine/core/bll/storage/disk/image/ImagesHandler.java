@@ -118,9 +118,6 @@ public class ImagesHandler {
     @Inject
     private StorageServerConnectionDao storageServerConnectionDao;
 
-    @Inject
-    private StorageHelperDirector storageHelperDirector;
-
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
      * diskInfoDestinationMap by imageId mapping on active storage id where image is located. The second map is
@@ -584,11 +581,11 @@ public class ImagesHandler {
         lun.setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLUNId())));
 
         if (!lun.getLunConnections().isEmpty()) {
-            storageHelperDirector.getItem(
+            StorageHelperDirector.getInstance().getItem(
                     lun.getLunConnections().get(0).getStorageType()).removeLun(lun);
         } else {
             // if there are no connections then the lun is fcp.
-            storageHelperDirector.getItem(StorageType.FCP).removeLun(lun);
+            StorageHelperDirector.getInstance().getItem(StorageType.FCP).removeLun(lun);
         }
 
     }

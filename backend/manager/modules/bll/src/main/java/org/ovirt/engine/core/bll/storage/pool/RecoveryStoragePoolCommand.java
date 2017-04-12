@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
@@ -95,7 +96,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
     protected void executeCommand() {
         StorageDomain newMasterDomain = loadTargetedMasterDomain();
 
-        if (storageHelperDirector.getItem(newMasterDomain.getStorageType())
+        if (StorageHelperDirector.getInstance().getItem(newMasterDomain.getStorageType())
                 .connectStorageToDomainByVdsId(newMasterDomain, getVds().getId())) {
 
             getEventQueue().submitEventSync(new Event(getParameters().getStoragePoolId(),

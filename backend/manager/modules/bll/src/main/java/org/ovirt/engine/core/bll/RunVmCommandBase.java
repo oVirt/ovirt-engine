@@ -77,9 +77,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     @Inject
     protected JobRepository jobRepository;
 
-    @Inject
-    private StorageHelperDirector storageHelperDirector;
-
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
     }
@@ -270,7 +267,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             lun.setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLUNId())));
 
             if (!lun.getLunConnections().isEmpty()
-                    && !storageHelperDirector.getItem(lun.getLunConnections().get(0).getStorageType())
+                    && !StorageHelperDirector.getInstance().getItem(lun.getLunConnections().get(0).getStorageType())
                             .connectStorageToLunByVdsId(null, hostId, lun, getVm().getStoragePoolId())) {
                 log.info("Failed to connect  a lun disk to vdsm '{}' skiping it", hostId);
                 return false;

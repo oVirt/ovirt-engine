@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
+import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.pool.RefreshPoolSingleAsyncOperationFactory;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -76,7 +77,8 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     private void syncStorageDomainInfo(List<Pair<Guid, Boolean>> hostConnectionInfo) {
         for (Pair<Guid, Boolean> pair : hostConnectionInfo) {
             if (Boolean.TRUE.equals(pair.getSecond())) {
-                if (storageHelperDirector.getItem(getStorageDomain().getStorageType())
+                if (StorageHelperDirector.getInstance()
+                        .getItem(getStorageDomain().getStorageType())
                         .syncDomainInfo(getStorageDomain(), pair.getFirst())) {
                     break;
                 }

@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.BlockStorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -60,14 +61,16 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
     }
 
     private void connectHostToDomain() {
-        if (!storageHelperDirector.getItem(getStorageDomain().getStorageType())
+        if (!StorageHelperDirector.getInstance()
+                .getItem(getStorageDomain().getStorageType())
                 .connectStorageToDomainByVdsId(getStorageDomain(), getVdsId())) {
             throw new EngineException(EngineError.StorageServerConnectionError);
         }
     }
 
     private void disconnectHostFromDomain() {
-        storageHelperDirector.getItem(getStorageDomain().getStorageType())
+        StorageHelperDirector.getInstance()
+                .getItem(getStorageDomain().getStorageType())
                 .disconnectStorageFromDomainByVdsId(getStorageDomain(), getVdsId());
     }
 

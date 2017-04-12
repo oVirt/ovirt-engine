@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.storage.disk.image.MetadataDiskDescriptionHandler;
 import org.ovirt.engine.core.bll.storage.pool.ActivateDeactivateSingleAsyncOperationFactory;
@@ -88,9 +87,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     @Inject
     protected SnapshotsValidator snapshotsValidator;
-
-    @Inject
-    protected StorageHelperDirector storageHelperDirector;
 
     protected StorageHandlingCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

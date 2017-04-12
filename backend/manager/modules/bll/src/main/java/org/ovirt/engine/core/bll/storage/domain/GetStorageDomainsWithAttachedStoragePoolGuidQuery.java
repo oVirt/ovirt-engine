@@ -37,9 +37,6 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
     @Inject
     private StorageDomainDao storageDomainDao;
 
-    @Inject
-    private StorageHelperDirector storageHelperDirector;
-
     public GetStorageDomainsWithAttachedStoragePoolGuidQuery(P parameters) {
         super(parameters);
     }
@@ -145,7 +142,8 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
 
     protected boolean connectStorageDomain(StorageDomain storageDomain) {
         try {
-            return storageHelperDirector.getItem(storageDomain.getStorageType())
+            return StorageHelperDirector.getInstance()
+                    .getItem(storageDomain.getStorageType())
                     .connectStorageToDomainByVdsId(storageDomain, getVdsId());
         } catch (RuntimeException e) {
             log.error("Exception while connecting a storage domain", e);
@@ -155,7 +153,8 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
 
     protected boolean disconnectStorageDomain(StorageDomain storageDomain) {
         try {
-            return storageHelperDirector.getItem(storageDomain.getStorageType())
+            return StorageHelperDirector.getInstance()
+                    .getItem(storageDomain.getStorageType())
                     .disconnectStorageFromDomainByVdsId(storageDomain, getVdsId());
         } catch (RuntimeException e) {
             log.error("Exception while disconnecting a storage domain", e);
