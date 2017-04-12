@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -195,6 +196,10 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         glusterHooksDao.removeAllInCluster(getClusterId());
     }
 
+    public ClusterUtils getClusterUtils() {
+        return ClusterUtils.getInstance();
+    }
+
     private void glusterHostRemove() {
         if (clusterHasMultipleHosts() && !hasVolumeBricksOnServer()) {
             try (EngineLock lock = glusterUtil.acquireGlusterLockWait(getClusterId())) {
@@ -229,7 +234,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                     }
                 }
                 // if last but one host in cluster, update the last host's known addresses
-                if (clusterUtils.getServerCount(getClusterId()) == 2) {
+                if (getClusterUtils().getServerCount(getClusterId()) == 2) {
                     removeOtherKnowAddressesForGlusterServer(upServer.getId());
                 }
             }
@@ -248,7 +253,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private boolean clusterHasMultipleHosts() {
-        return clusterUtils.hasMultipleServers(getClusterId());
+        return getClusterUtils().hasMultipleServers(getClusterId());
     }
 
     private void removeOtherKnowAddressesForGlusterServer(Guid lastServerId) {

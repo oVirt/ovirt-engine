@@ -23,12 +23,9 @@ public class VideoDeviceSettings {
     @Inject
     private LegacyVideoSettings legacyVideoSettings;
 
-    @Inject
-    private ClusterUtils clusterUtils;
-
     private Map<String, Integer> getVideoDeviceSettings(VmBase vmBase) {
         Version vmVersion = vmBase.getCustomCompatibilityVersion();
-        Supplier<Version> clusterVersionSupplier = () -> clusterUtils.getCompatibilityVersion(vmBase);
+        Supplier<Version> clusterVersionSupplier = () -> ClusterUtils.getCompatibilityVersion(vmBase);
         if (CompatibilityVersionUtils.getEffective(vmVersion, clusterVersionSupplier).greaterOrEquals(Version.v3_6)) {
             if (vmBase.getDefaultDisplayType() == DisplayType.qxl) {
                 return vgamemVideoSettings.getQxlVideoDeviceSettings(vmBase);

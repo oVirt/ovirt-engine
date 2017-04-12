@@ -20,7 +20,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -63,10 +62,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
     private OvfManager ovfManager = new OvfManager();
 
     @Spy
-    private ClusterUtils clusterUtils;
-
-    @Spy
-    @InjectMocks
     private ImagesHandler imagesHandler;
 
     /** The command to test */

@@ -58,9 +58,6 @@ public class OvfUpdateProcessHelper {
     @Inject
     private OvfManager ovfManager;
 
-    @Inject
-    private ClusterUtils clusterUtils;
-
     /**
      * Adds the given vm metadata to the given map
      */
@@ -76,7 +73,7 @@ public class OvfUpdateProcessHelper {
     }
 
     protected String generateVmTemplateMetadata(VmTemplate template, List<DiskImage> allTemplateImages) {
-        return ovfManager.exportTemplate(template, allTemplateImages, clusterUtils.getCompatibilityVersion(template));
+        return ovfManager.exportTemplate(template, allTemplateImages, ClusterUtils.getCompatibilityVersion(template));
     }
 
     /**
@@ -136,7 +133,7 @@ public class OvfUpdateProcessHelper {
     }
 
     protected String generateVmMetadata(VM vm, List<DiskImage> AllVmImages) {
-        return ovfManager.exportVm(vm, AllVmImages, clusterUtils.getCompatibilityVersion(vm));
+        return ovfManager.exportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
     }
 
     /**
