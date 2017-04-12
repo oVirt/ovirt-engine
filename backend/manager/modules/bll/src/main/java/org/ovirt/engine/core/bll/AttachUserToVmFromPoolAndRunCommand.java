@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -329,6 +330,16 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
             }
         }
         return true;
+    }
+
+    @Override
+    protected void freeCustomLocks() {
+        if (getCommandStatus() == CommandStatus.ENDED_WITH_FAILURE && !Guid.Empty.equals(getVmId())
+                && !getParameters().isVmPrestarted()) {
+            EngineLock runLock = vmPoolHandler.createLock(getVmId());
+            lockManager.releaseLock(runLock);
+            log.info("VM lock freed: {}", runLock);
+        }
     }
 
     @Override
