@@ -345,6 +345,10 @@
               name="engine"
               jndi-name="java:jboss/ee/concurrency/factory/engine"
               context-service="default"/>
+          <managed-thread-factory
+              name="engineScheduled"
+              jndi-name="java:jboss/ee/concurrency/factory/engineScheduled"
+              context-service="default"/>
         </managed-thread-factories>
         <managed-executor-services>
           <managed-executor-service
@@ -394,6 +398,15 @@
               hung-task-threshold="60000"
               core-threads="5"
               keepalive-time="3000"/>
+          <managed-scheduled-executor-service
+              name="engineScheduledThreadPool"
+              long-running-tasks="true"
+              jndi-name="java:jboss/ee/concurrency/scheduler/engineScheduledThreadPool"
+              context-service="default"
+              thread-factory="engineScheduled"
+              core-threads="{{ config.getinteger('ENGINE_SCHEDULED_THREAD_POOL_SIZE') }}"
+              keepalive-time="5000"
+              reject-policy="RETRY_ABORT" />
         </managed-scheduled-executor-services>
       </concurrent>
       <default-bindings
