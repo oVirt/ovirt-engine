@@ -1,27 +1,17 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import javax.annotation.PostConstruct;
-
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class VdsIdVDSCommandBase<P extends VdsIdVDSCommandParametersBase> extends VDSCommandBase<P> {
-
-    private final boolean newHost;
-
     protected VdsManager _vdsManager;
 
     public VdsIdVDSCommandBase(P parameters, boolean newHost) {
         super(parameters);
-        this.newHost = newHost;
-    }
-
-    @PostConstruct
-    private void init() {
         if (!newHost) {
-            _vdsManager = resourceManager.getVdsManager(getParameters().getVdsId());
+            _vdsManager = ResourceManager.getInstance().getVdsManager(parameters.getVdsId());
         }
     }
 

@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ public class VmsListFetcher {
     public VmsListFetcher(VdsManager vdsManager) {
         this.vdsManager = vdsManager;
         this.dbFacade = DbFacade.getInstance();
-        this.resourceManager = Injector.get(ResourceManager.class);
+        this.resourceManager = ResourceManager.getInstance();
     }
 
     public VmsListFetcher(VdsManager vdsManager, DbFacade dbFacade, ResourceManager resourceManager) {
