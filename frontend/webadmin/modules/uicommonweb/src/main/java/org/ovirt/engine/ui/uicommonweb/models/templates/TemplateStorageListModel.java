@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -99,10 +98,11 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
                         @Override
                         public void onSuccess(List<DiskImage> diskImages) {
 
-                            List<StorageDomain> storageDomains = Linq.cast(value);
+                            Collection<? extends Object> storageDomains = value;
                             List<StorageDomainModel> storageDomainModels = new ArrayList<>();
 
-                            for (StorageDomain storageDomain : storageDomains) {
+                            for (Object o : storageDomains) {
+                                StorageDomain storageDomain = (StorageDomain) o;
                                 StorageDomainModel storageDomainModel = new StorageDomainModel();
                                 storageDomainModel.setStorageDomain(storageDomain);
 
@@ -137,10 +137,10 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
         model.setHelpTag(HelpTag.remove_template_disks);
         model.setHashName("remove_template_disks"); //$NON-NLS-1$
 
-        List<DiskModel> disks =
-                getSelectedItems() != null ? Linq.<DiskModel> cast(getSelectedItems()) : new ArrayList<DiskModel>();
+        List<? extends Object> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<DiskModel>();
         List<String> items = new ArrayList<>();
-        for (DiskModel diskModel : disks) {
+        for (Object o : disks) {
+            DiskModel diskModel = (DiskModel) o;
             items.add(ConstantsManager.getInstance().getMessages().templateDiskDescription(
                     diskModel.getDisk().getDiskAlias(),
                     diskModel.getStorageDomain().getSelectedItem().getStorageName()));
@@ -156,14 +156,14 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
     private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
         List<VdcActionParametersBase> parameters = new ArrayList<>();
-        List<DiskModel> disks =
-                getSelectedItems() != null ? Linq.<DiskModel> cast(getSelectedItems()) : new ArrayList<DiskModel>();
+        List<? extends Object> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<DiskModel>();
 
-        for (DiskModel diskModel: disks) {
-                RemoveDiskParameters params =
+        for (Object o: disks) {
+            DiskModel diskModel = (DiskModel) o;
+            RemoveDiskParameters params =
                     new RemoveDiskParameters(diskModel.getDisk().getId(),
                                              diskModel.getStorageDomain().getSelectedItem().getId());
-                parameters.add(params);
+            parameters.add(params);
         }
 
         model.startProgress();
@@ -205,14 +205,14 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
     }
 
     private boolean isRemoveCommandAvailable() {
-        ArrayList<DiskModel> disks =
-                getSelectedItems() != null ? Linq.<DiskModel> cast(getSelectedItems()) : new ArrayList<DiskModel>();
+        List<? extends Object> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<DiskModel>();
 
         if (disks.isEmpty()) {
             return false;
         }
 
-        for (DiskModel disk : disks) {
+        for (Object o: disks) {
+            DiskModel disk = (DiskModel) o;
             if (((DiskImage) disk.getDisk()).getImageStatus() == ImageStatus.LOCKED
                     || ((DiskImage) disk.getDisk()).getStorageIds().size() == 1) {
                 return false;
