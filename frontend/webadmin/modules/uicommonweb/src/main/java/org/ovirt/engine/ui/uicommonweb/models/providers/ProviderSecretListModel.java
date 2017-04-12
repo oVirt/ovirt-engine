@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -114,7 +114,7 @@ public class ProviderSecretListModel extends SearchableListModel<Provider, Libvi
         model.setHelpTag(HelpTag.remove_secret);
         model.setHashName("remove_secret"); //$NON-NLS-1$
         ArrayList<String> secretsToRemove = new ArrayList<>();
-        for (LibvirtSecret libvirtSecret : Linq.<LibvirtSecret> cast(getSelectedItems())) {
+        for (LibvirtSecret libvirtSecret : getSelectedItems()) {
             secretsToRemove.add(libvirtSecret.getId().toString());
         }
         model.setItems(secretsToRemove);
@@ -167,8 +167,7 @@ public class ProviderSecretListModel extends SearchableListModel<Provider, Libvi
     }
 
     private void updateActionAvailability() {
-        ArrayList<LibvirtSecretModel> secrets = getSelectedItems() != null ?
-                Linq.<LibvirtSecretModel> cast(getSelectedItems()) : new ArrayList<LibvirtSecretModel>();
+        List<LibvirtSecret> secrets = getSelectedItems() != null ? getSelectedItems() : new ArrayList<>();
 
         getEditCommand().setIsExecutionAllowed(secrets.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(secrets.size() > 0);

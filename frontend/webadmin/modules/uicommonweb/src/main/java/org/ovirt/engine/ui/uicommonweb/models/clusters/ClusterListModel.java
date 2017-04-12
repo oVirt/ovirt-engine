@@ -474,7 +474,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         model.setHashName("remove_cluster"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (Cluster a : Linq.<Cluster> cast(getSelectedItems())) {
+        for (Cluster a : getSelectedItems()) {
             list.add(a.getName());
         }
         model.setItems(list);
@@ -498,7 +498,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         model.setHashName("reset_cluster_emulated_machine"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (Cluster cluster : Linq.<Cluster> cast(getSelectedItems())) {
+        for (Cluster cluster : getSelectedItems()) {
             list.add(cluster.getName());
         }
         model.setItems(list);
@@ -1002,8 +1002,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster) {
             Cluster cluster = (Cluster) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.firstOrNull(Linq.<Cluster> cast(getItems()),
-                    new Linq.IdPredicate<>(cluster.getId())));
+            setSelectedItem(Linq.firstOrNull(getItems(), new Linq.IdPredicate<>(cluster.getId())));
         }
     }
 

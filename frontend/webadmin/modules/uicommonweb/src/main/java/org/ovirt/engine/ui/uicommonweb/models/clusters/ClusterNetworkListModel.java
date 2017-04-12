@@ -22,7 +22,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -146,7 +145,7 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
 
     private ClusterNetworkManageModel createNetworkList(List<Network> dcNetworks) {
         final List<ClusterNetworkModel> networkList = new ArrayList<>();
-        final List<Network> clusterNetworks = Linq.cast(getItems());
+        final List<Network> clusterNetworks = new ArrayList<>(getItems());
         for (Network network : dcNetworks) {
             ClusterNetworkModel networkManageModel;
             int index = clusterNetworks.indexOf(network);

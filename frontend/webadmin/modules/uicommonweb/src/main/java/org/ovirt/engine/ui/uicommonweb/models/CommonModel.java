@@ -22,7 +22,6 @@ import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxObject;
 import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent.ApplySearchStringHandler;
@@ -245,9 +244,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
     }
 
     private void updateHasSelectedTags() {
-        ArrayList<TagModel> selectedTags =
-                getTagList().getSelectedItems() != null ? Linq.<TagModel> cast(getTagList().getSelectedItems())
-                        : new ArrayList<TagModel>();
+        List<TagModel> selectedTags =
+                getTagList().getSelectedItems() != null ? getTagList().getSelectedItems() : new ArrayList<TagModel>();
 
         setHasSelectedTags(getSelectedItem() != null && selectedTags.size() > 0);
     }

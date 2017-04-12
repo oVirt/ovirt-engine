@@ -590,7 +590,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
         }
 
         ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
-        for (Quota a : Linq.<Quota> cast(getSelectedItems())) {
+        for (Quota a : getSelectedItems()) {
             IdParameters idParameters = new IdParameters(a.getId());
             prms.add(idParameters);
         }
@@ -622,7 +622,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
         model.setHashName("remove_quota"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (Quota a : Linq.<Quota> cast(getSelectedItems())) {
+        for (Quota a : getSelectedItems()) {
             list.add(a.getQuotaName());
         }
         model.setItems(list);

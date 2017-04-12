@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -94,7 +93,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
         model.setTitle(ConstantsManager.getInstance().getConstants().removePermissionTitle());
         model.setHelpTag(HelpTag.remove_permission);
         model.setHashName("remove_permission"); //$NON-NLS-1$
-        model.setItems(Linq.<Permission> cast(getSelectedItems()));
+        model.setItems(new ArrayList<>(getSelectedItems()));
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);

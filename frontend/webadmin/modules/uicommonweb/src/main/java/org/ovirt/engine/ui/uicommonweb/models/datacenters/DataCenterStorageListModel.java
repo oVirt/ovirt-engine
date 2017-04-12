@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -178,7 +179,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
     public void onMaintenance() {
         ArrayList<VdcActionParametersBase> pb = new ArrayList<>();
-        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems())) {
+        for (StorageDomain a : getSelectedItems()) {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
 
@@ -216,7 +217,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
     public void activate() {
         ArrayList<VdcActionParametersBase> pb = new ArrayList<>();
-        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems())) {
+        for (StorageDomain a : getSelectedItems()) {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
 
@@ -262,9 +263,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                 public void onSuccess(List<StorageDomain> list) {
                     ArrayList<EntityModel> models;
                     models = new ArrayList<>();
-                    ArrayList<StorageDomain> items1 =
-                            getItems() != null ? new ArrayList<>(Linq.<StorageDomain>cast(getItems()))
-                                    : new ArrayList<StorageDomain>();
+                    Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<StorageDomain>();
                     for (StorageDomain a : list) {
                         if (items1.stream().noneMatch(new Linq.IdPredicate<>(a.getId()))) {
                             EntityModel tempVar = new EntityModel();
@@ -284,9 +283,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                 public void onSuccess(List<StorageDomain> list) {
                     ArrayList<EntityModel> models = new ArrayList<>();
                     boolean addToList;
-                    ArrayList<StorageDomain> items1 =
-                            getItems() != null ? new ArrayList<>(Linq.<StorageDomain>cast(getItems()))
-                                    : new ArrayList<StorageDomain>();
+                    Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<StorageDomain>();
                     for (StorageDomain a : list) {
                         addToList = false;
                         if (a.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached ||
@@ -353,7 +350,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void onAttach() {
-        ListModel model = (ListModel) getWindow();
+        ListModel<EntityModel<StorageDomain>> model = (ListModel<EntityModel<StorageDomain>>) getWindow();
         ArrayList<StorageDomain> selectedDataStorageDomains = new ArrayList<>();
 
         if (getEntity() == null) {
@@ -362,9 +359,9 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         }
 
         selectedStorageDomains = new ArrayList<>();
-        for (EntityModel a : Linq.<EntityModel> cast(model.getItems())) {
+        for (EntityModel<StorageDomain> a : model.getItems()) {
             if (a.getIsSelected()) {
-                StorageDomain storageDomain = (StorageDomain) a.getEntity();
+                StorageDomain storageDomain = a.getEntity();
                 selectedStorageDomains.add(storageDomain);
                 if (storageDomain.getStorageDomainType() == StorageDomainType.Data) {
                     selectedDataStorageDomains.add(storageDomain);
@@ -453,7 +450,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
         ArrayList<String> list = new ArrayList<>();
         boolean shouldAddressWarnning = false;
-        for (StorageDomain item : Linq.<StorageDomain> cast(getSelectedItems())) {
+        for (StorageDomain item : getSelectedItems()) {
             list.add(item.getStorageName());
             if (item.getStorageDomainType().isDataDomain()) {
                 shouldAddressWarnning = true;
@@ -482,7 +479,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
     private String getLocalStoragesFormattedString() {
         StringBuilder localStorages = new StringBuilder();
-        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems())) {
+        for (StorageDomain a : getSelectedItems()) {
             if (a.getStorageType() == StorageType.LOCALFS) {
                 localStorages.append(a.getStorageName()).append(", "); //$NON-NLS-1$
             }
@@ -491,7 +488,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     private boolean containsLocalStorage(ConfirmationModel model) {
-        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems())) {
+        for (StorageDomain a : getSelectedItems()) {
             if (a.getStorageType() == StorageType.LOCALFS) {
                 return true;
             }
@@ -515,7 +512,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         // A list of 'remove' action parameters
         setpb_remove(new ArrayList<VdcActionParametersBase>());
         String localStorgaeDC = null;
-        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems())) {
+        for (StorageDomain a : getSelectedItems()) {
             // For local storage - remove; otherwise - detach
             if (a.getStorageType() == StorageType.LOCALFS && a.getStorageDomainType() != StorageDomainType.ISO) {
                 getpb_remove().add(new RemoveStorageDomainParameters(a.getId()));
@@ -624,12 +621,9 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     private void updateActionAvailability() {
-        ArrayList<StorageDomain> items =
-                getItems() != null ? Linq.<StorageDomain> cast(getItems())
-                        : new ArrayList<StorageDomain>();
-        ArrayList<StorageDomain> selectedItems =
-                getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
-                        : new ArrayList<StorageDomain>();
+        Collection<StorageDomain> items = getItems() != null ? getItems() : new ArrayList<StorageDomain>();
+        List<StorageDomain> selectedItems =
+                getSelectedItems() != null ? getSelectedItems() : new ArrayList<StorageDomain>();
         getAttachStorageCommand().setIsExecutionAllowed(true);
 
         boolean isMasterPresent = false;

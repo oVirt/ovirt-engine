@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -18,7 +19,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -94,9 +94,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
 
         ArrayList<SelectionTreeNodeModel> list = new ArrayList<>();
 
-        ArrayList<EventSubscriber> items =
-                getItems() == null ? new ArrayList<EventSubscriber>()
-                        : Linq.<EventSubscriber> cast(getItems());
+        Collection<EventSubscriber> items = getItems() == null ? new ArrayList<EventSubscriber>() : getItems();
         for (EventNotificationEntity eventType : eventTypes) {
             SelectionTreeNodeModel stnm = new SelectionTreeNodeModel();
             stnm.setTitle(eventType.toString());
@@ -138,7 +136,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
             model.getEmail().setEntity(getEntity().getEmail());
         }
         else if (items.size() > 0) {
-            model.getEmail().setEntity(items.get(0).getMethodAddress());
+            model.getEmail().setEntity(items.iterator().next().getMethodAddress());
         }
 
         model.setOldEmail(model.getEmail().getEntity());
@@ -169,9 +167,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
             }
         }
 
-        ArrayList<EventSubscriber> existing =
-                getItems() != null ? Linq.<EventSubscriber> cast(getItems())
-                        : new ArrayList<EventSubscriber>();
+        Collection<EventSubscriber> existing = getItems() != null ? getItems() : new ArrayList<EventSubscriber>();
         ArrayList<SelectionTreeNodeModel> added = new ArrayList<>();
         ArrayList<EventSubscriber> removed = new ArrayList<>();
 

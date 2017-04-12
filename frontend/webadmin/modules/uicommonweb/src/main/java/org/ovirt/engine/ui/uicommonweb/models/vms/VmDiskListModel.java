@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -206,8 +205,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     @Override
     public void setItems(Collection value) {
-        ArrayList<Disk> disks =
-                value != null ? Linq.<Disk> cast(value) : new ArrayList<Disk>();
+        ArrayList<Disk> disks = value != null ? new ArrayList<>(value) : new ArrayList<Disk>();
 
         Collections.sort(disks, new DiskByDiskAliasComparator());
         super.setItems(disks);
@@ -541,8 +539,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     public boolean isPlugAvailableByDisks(boolean plug) {
-        ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
+        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
             boolean isLocked =
@@ -578,8 +575,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private boolean isMoveCommandAvailable() {
-        ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
+        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
             if (!isImageDiskOK(disk) || (!isVmDown() && disk.getPlugged()) || disk.isDiskSnapshot()) {
@@ -596,8 +592,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             return false;
         }
 
-        ArrayList<Disk> disks = getSelectedItems() != null ?
-                Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
+        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
             if (!isImageDiskOK(disk) || disk.isDiskSnapshot()) {
@@ -609,8 +604,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private boolean isRemoveCommandAvailable() {
-        ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
+        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
             if (isDiskLocked(disk) ||  (!isVmDown() && disk.getPlugged())) {
@@ -622,7 +616,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private boolean isSparsifyCommandAvailable() {
-        List<Disk> disks = getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
+        List<Disk> disks = getSelectedItems() != null ?getSelectedItems() : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
             if (!isImageDiskOK(disk) || isImageDiskPreallocated(disk) || (!isVmDown() && disk.getPlugged())) {
@@ -636,7 +630,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     private void updateScanAlignmentCommandAvailability() {
         boolean isExecutionAllowed = true;
         if (isVmDown() && getSelectedItems() != null && getEntity() != null) {
-            ArrayList<Disk> disks = Linq.<Disk> cast(getSelectedItems());
+            List<Disk> disks = getSelectedItems();
             for (Disk disk : disks) {
 
                 if (!(disk instanceof LunDisk) && !isDiskOnBlockDevice(disk)) {

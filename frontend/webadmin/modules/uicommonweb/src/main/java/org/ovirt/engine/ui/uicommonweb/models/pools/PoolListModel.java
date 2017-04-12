@@ -315,7 +315,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         model.setHashName("remove_pool"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (VmPool item : Linq.<VmPool> cast(getSelectedItems())) {
+        for (VmPool item : getSelectedItems()) {
             list.add(item.getName());
         }
         model.setItems(list);

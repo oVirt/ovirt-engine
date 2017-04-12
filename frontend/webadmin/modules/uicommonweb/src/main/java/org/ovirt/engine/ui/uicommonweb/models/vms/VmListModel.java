@@ -1253,7 +1253,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.setHashName("migrate_virtual_machine"); //$NON-NLS-1$
         model.setVmsOnSameCluster(true);
         model.setIsAutoSelect(true);
-        model.setVmList(Linq.<VM> cast(getSelectedItems()));
+        model.setVmList(new ArrayList<>(getSelectedItems()));
         model.setVm(vm);
         model.initializeModel();
     }

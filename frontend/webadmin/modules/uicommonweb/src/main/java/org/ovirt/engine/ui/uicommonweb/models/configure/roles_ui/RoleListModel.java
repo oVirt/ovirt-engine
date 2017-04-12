@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -219,7 +218,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         model.setHashName("remove_role"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (Role role : Linq.<Role> cast(getSelectedItems())) {
+        for (Role role : getSelectedItems()) {
             list.add(role.getName());
         }
         model.setItems(list);

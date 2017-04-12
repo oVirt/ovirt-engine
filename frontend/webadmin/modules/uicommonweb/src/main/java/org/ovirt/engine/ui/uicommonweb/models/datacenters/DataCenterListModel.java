@@ -135,7 +135,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         }
         else {
             ArrayList<Object> objL = new ArrayList<>();
-            for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems())) {
+            for (StoragePool a : getSelectedItems()) {
                 objL.add(a.getId());
             }
             return objL.toArray(new Object[] {});
@@ -338,7 +338,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         model.setHashName("remove_data_center"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems())) {
+        for (StoragePool a : getSelectedItems()) {
             list.add(a.getName());
 
             // If one of the Data Centers contain Storage Domain, show the warnning.
@@ -367,7 +367,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         model.getLatch().setIsChangeable(true);
 
         ArrayList<String> list = new ArrayList<>();
-        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems())) {
+        for (StoragePool a : getSelectedItems()) {
             list.add(a.getName());
         }
         model.setItems(list);
@@ -448,9 +448,10 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                     }
                 }
                 List<StorageDomain> items = new ArrayList<>();
-                for (EntityModel a : Linq.<EntityModel> cast(windowModel.getItems())) {
+                for (Object item : windowModel.getItems()) {
+                    EntityModel<StorageDomain> a = (EntityModel<StorageDomain>) item;
                     if (a.getIsSelected()) {
-                        items.add((StorageDomain) a.getEntity());
+                        items.add(a.getEntity());
                     }
                 }
                 if (items.size() > 0) {
@@ -492,7 +493,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         }
 
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems())) {
+        for (StoragePool a : getSelectedItems()) {
             parameters.add(new StoragePoolParametersBase(a.getId()));
         }
 
@@ -766,8 +767,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter) {
             StoragePool dataCenter = (StoragePool) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.firstOrNull(Linq.<StoragePool> cast(getItems()),
-                    new Linq.IdPredicate<>(dataCenter.getId())));
+            setSelectedItem(Linq.firstOrNull(getItems(), new Linq.IdPredicate<>(dataCenter.getId())));
         }
     }
 
@@ -793,8 +793,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
 
     private void updateActionAvailability() {
         ArrayList<StoragePool> items =
-                getSelectedItems() != null ? new ArrayList<>(Linq.<StoragePool> cast(getSelectedItems()))
-                        : new ArrayList<StoragePool>();
+                getSelectedItems() != null ? new ArrayList<>(getSelectedItems()) : new ArrayList<StoragePool>();
 
         boolean isAllDown = true;
         for (StoragePool item : items) {

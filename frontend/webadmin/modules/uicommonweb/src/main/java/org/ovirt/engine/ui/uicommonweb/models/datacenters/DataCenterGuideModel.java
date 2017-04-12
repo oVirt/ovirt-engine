@@ -1051,12 +1051,12 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
     }
 
     public void onAttachStorage() {
-        ListModel model = (ListModel) getWindow();
+        ListModel<EntityModel<StorageDomain>> model = (ListModel<EntityModel<StorageDomain>>) getWindow();
 
         ArrayList<StorageDomain> items = new ArrayList<>();
-        for (EntityModel a : Linq.<EntityModel> cast(model.getItems())) {
+        for (EntityModel<StorageDomain> a : model.getItems()) {
             if (a.getIsSelected()) {
-                items.add((StorageDomain) a.getEntity());
+                items.add(a.getEntity());
             }
         }
 
@@ -1264,9 +1264,9 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         }
 
         model.setSelectedHosts(new ArrayList<MoveHostData>());
-        for (EntityModel a : Linq.<EntityModel> cast(model.getItems())) {
+        for (MoveHostData a : model.getItems()) {
             if (a.getIsSelected()) {
-                model.getSelectedHosts().add((MoveHostData) a);
+                model.getSelectedHosts().add(a);
             }
         }
 

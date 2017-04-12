@@ -25,7 +25,6 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagAssigningModel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -342,7 +341,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         model.setHashName("remove_user"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (DbUser item : Linq.<DbUser> cast(getSelectedItems())) {
+        for (DbUser item : getSelectedItems()) {
             list.add(item.getFirstName());
         }
         model.setItems(list);
@@ -465,7 +464,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
     }
 
     public void onRemove() {
-        List<DbUser> selectedItems = Linq.cast(getSelectedItems());
+        List<DbUser> selectedItems = getSelectedItems();
 
         ArrayList<VdcActionParametersBase> userPrms = new ArrayList<>();
         ArrayList<VdcActionParametersBase> groupPrms = new ArrayList<>();

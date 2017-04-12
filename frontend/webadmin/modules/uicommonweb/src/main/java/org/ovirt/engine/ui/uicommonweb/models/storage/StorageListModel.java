@@ -846,8 +846,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.firstOrNull(Linq.<StorageDomain> cast(getItems()),
-                    new Linq.IdPredicate<>(storage.getId())));
+            setSelectedItem(Linq.firstOrNull(getItems(), new Linq.IdPredicate<>(storage.getId())));
         }
     }
 
@@ -910,9 +909,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     }
 
     private void updateActionAvailability() {
-        ArrayList<StorageDomain> items =
-                getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
-                        : new ArrayList<StorageDomain>();
+        List<StorageDomain> items = getSelectedItems() != null ? getSelectedItems() : new ArrayList<StorageDomain>();
 
         StorageDomain item = getSelectedItem();
 

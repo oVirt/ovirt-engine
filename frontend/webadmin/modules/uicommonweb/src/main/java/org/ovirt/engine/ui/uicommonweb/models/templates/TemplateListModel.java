@@ -32,7 +32,6 @@ import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.IconUtils;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.template.VersionNameUnitToVmBaseBuilder;
@@ -203,7 +202,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
     @Override
     protected boolean entitiesSelectedOnDifferentDataCenters() {
-        ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
+        List<VmTemplate> templates = getSelectedItems();
 
         Map<Guid, ArrayList<VmTemplate>> t = new HashMap<>();
         for (VmTemplate a : templates) {
@@ -506,7 +505,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         model.setHashName("remove_template"); //$NON-NLS-1$
 
         ArrayList<String> items = new ArrayList<>();
-        ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
+        List<VmTemplate> templates = getSelectedItems();
         for (VmTemplate template : templates) {
             if (!template.getId().equals(Guid.Empty)) {
                 items.add(template.getName() + getTemplateVersionNameAndNumber(template));
@@ -777,7 +776,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
     private boolean selectedItemsContainBlankTemplate() {
         if (getSelectedItems() != null) {
-            ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
+            List<VmTemplate> templates = getSelectedItems();
             for (VmTemplate template : templates) {
                 if (template != null && template.getId().equals(Guid.Empty)) {
                     return true;

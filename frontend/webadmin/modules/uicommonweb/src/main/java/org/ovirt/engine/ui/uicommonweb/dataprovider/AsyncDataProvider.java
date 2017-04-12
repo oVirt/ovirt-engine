@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -184,7 +183,6 @@ import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Converter;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.comparators.QuotaComparator;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -3094,7 +3092,7 @@ public class AsyncDataProvider {
             @Override
             public Set<String> convert(Object source) {
                 if (source != null) {
-                    ArrayList<VDS> vdsList = Linq.cast((List<IVdcQueryable>) source);
+                    List<VDS> vdsList = (List<VDS>) source;
                     Set<String> emulatedMachineList = new HashSet<>();
                     for (VDS host : vdsList) {
                         String hostSupportedMachines = host.getSupportedEmulatedMachines();

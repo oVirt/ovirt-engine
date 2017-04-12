@@ -104,16 +104,6 @@ public final class Linq {
         return source.stream().filter(predicate).collect(Collectors.toList());
     }
 
-    public static <TResult> ArrayList<TResult> cast(Collection<?> source) {
-        ArrayList<TResult> list = new ArrayList<>();
-        for (Object a : source) {
-            TResult item = (TResult) a;
-            list.add(item);
-        }
-
-        return list;
-    }
-
     public static List<StorageDomain> getStorageDomainsByIds(List<Guid> storageIds,
             List<StorageDomain> storageDomains) {
         return where(storageDomains, new IdsPredicate<>(storageIds));

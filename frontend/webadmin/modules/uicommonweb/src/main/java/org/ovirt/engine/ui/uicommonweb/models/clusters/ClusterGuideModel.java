@@ -357,7 +357,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
         }
 
         model.setSelectedHosts(new ArrayList<MoveHostData>());
-        for (EntityModel a : Linq.<EntityModel> cast(model.getItems())) {
+        for (EntityModel a : model.getItems()) {
             if (a.getIsSelected()) {
                 model.getSelectedHosts().add((MoveHostData) a);
             }

@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -580,13 +579,13 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         removeBrickModel.setStripeCount(volumeEntity.getStripeCount());
 
         ArrayList<String> list = new ArrayList<>();
-        for (GlusterBrickEntity item : Linq.<GlusterBrickEntity> cast(getSelectedItems())) {
+        for (GlusterBrickEntity item : getSelectedItems()) {
             list.add(item.getQualifiedName());
         }
         removeBrickModel.setItems(list);
 
         if (!validateRemoveBricks(volumeEntity.getVolumeType(),
-                Linq.<GlusterBrickEntity> cast(getSelectedItems()),
+                getSelectedItems(),
                 volumeEntity.getBricks(),
                 removeBrickModel)) {
             removeBrickModel.setMigrationSupported(false);

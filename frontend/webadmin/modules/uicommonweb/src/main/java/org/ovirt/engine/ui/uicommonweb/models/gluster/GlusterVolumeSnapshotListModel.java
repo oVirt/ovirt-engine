@@ -156,7 +156,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         if (getSelectedItems() == null || getSelectedItems().size() == 0) {
             allowDelete = false;
         } else {
-            List<GlusterVolumeSnapshotEntity> snapshots = Linq.<GlusterVolumeSnapshotEntity> cast(getSelectedItems());
+            List<GlusterVolumeSnapshotEntity> snapshots = getSelectedItems();
 
             if (snapshots.size() == 1) {
                 allowRestore = true;

@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -337,7 +336,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     private void onAttach() {
-        final ListModel model = (ListModel) getWindow();
+        final ListModel<EntityModel<StoragePool>> model = (ListModel<EntityModel<StoragePool>>) getWindow();
 
         if (model.getProgress() != null) {
             return;
@@ -349,9 +348,9 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         }
 
         ArrayList<StoragePool> items = new ArrayList<>();
-        for (EntityModel a : Linq.<EntityModel> cast(model.getItems())) {
+        for (EntityModel<StoragePool> a : model.getItems()) {
             if (a.getIsSelected()) {
-                items.add((StoragePool) a.getEntity());
+                items.add(a.getEntity());
             }
         }
 
@@ -476,7 +475,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
 
     private String getLocalStoragesFormattedString() {
         StringBuilder localStorages = new StringBuilder();
-        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems())) {
+        for (StorageDomain a : getSelectedItems()) {
             if (a.getStorageType() == StorageType.LOCALFS) {
                 localStorages.append(a.getStorageName()).append(", "); //$NON-NLS-1$
             }
@@ -485,7 +484,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     private boolean containsLocalStorage(ConfirmationModel model) {
-        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems())) {
+        for (StorageDomain a : getSelectedItems()) {
             if (a.getStorageType() == StorageType.LOCALFS) {
                 return true;
             }
@@ -640,9 +639,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     private void updateActionAvailability() {
-        ArrayList<StorageDomain> items =
-                getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
-                        : new ArrayList<StorageDomain>();
+        List<StorageDomain> items = getSelectedItems() != null ? getSelectedItems() : new ArrayList<StorageDomain>();
 
         getActivateCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.canExecute(items, StorageDomain.class, VdcActionType.ActivateStorageDomain));

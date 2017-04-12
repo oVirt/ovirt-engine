@@ -411,7 +411,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         model.setTitle(ConstantsManager.getInstance().getConstants().removeVolumesTitle());
         model.setHelpTag(HelpTag.remove_volume);
         model.setHashName("remove_volume"); //$NON-NLS-1$
-        if (isMetaVolumeInList(Linq.<GlusterVolumeEntity> cast(getSelectedItems()))) {
+        if (isMetaVolumeInList(getSelectedItems())) {
             model.setNote(ConstantsManager.getInstance().getConstants().removeMetaVolumeWarning());
         } else {
             model.setNote(ConstantsManager.getInstance().getConstants().removeVolumesWarning());
@@ -422,7 +422,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
 
         ArrayList<String> list = new ArrayList<>();
-        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems())) {
+        for (GlusterVolumeEntity item : getSelectedItems()) {
             list.add(item.getName());
         }
         model.setItems(list);
@@ -520,7 +520,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             allowOptimize = false;
         }
         else {
-            List<GlusterVolumeEntity> list = Linq.<GlusterVolumeEntity> cast(getSelectedItems());
+            List<GlusterVolumeEntity> list = getSelectedItems();
             allowStartProfiling = isStartProfileAvailable(list);
             allowStopProfiling = isStopProfileAvailable(list);
             for (GlusterVolumeEntity volume : list) {
@@ -747,7 +747,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         if (getSelectedItems() == null) {
             return;
         }
-        List<GlusterVolumeEntity> selectedVolumesList = Linq.<GlusterVolumeEntity> cast(getSelectedItems());
+        List<GlusterVolumeEntity> selectedVolumesList = getSelectedItems();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (GlusterVolumeEntity currentSelectedVolume : selectedVolumesList) {
             GlusterVolumeParameters parameter = new GlusterVolumeParameters(currentSelectedVolume.getId());
@@ -760,7 +760,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         if (getSelectedItems() == null) {
             return;
         }
-        List<GlusterVolumeEntity> selectedVolumesList = Linq.<GlusterVolumeEntity> cast(getSelectedItems());
+        List<GlusterVolumeEntity> selectedVolumesList = getSelectedItems();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (GlusterVolumeEntity currentSelectedVolume : selectedVolumesList) {
             GlusterVolumeParameters parameter = new GlusterVolumeParameters(currentSelectedVolume.getId());
@@ -1033,7 +1033,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         model.setHelpTag(HelpTag.volume_stop);
         model.setHashName("volume_stop"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().stopVolumeMessage());
-        if (isMetaVolumeInList(Linq.<GlusterVolumeEntity> cast(getSelectedItems()))) {
+        if (isMetaVolumeInList(getSelectedItems())) {
             model.setNote(ConstantsManager.getInstance().getConstants().stopMetaVolumeWarning());
         } else {
             model.setNote(ConstantsManager.getInstance().getConstants().stopVolumeWarning());
@@ -1044,7 +1044,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
 
         ArrayList<String> list = new ArrayList<>();
-        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems())) {
+        for (GlusterVolumeEntity item : getSelectedItems()) {
             list.add(item.getName());
         }
         model.setItems(list);

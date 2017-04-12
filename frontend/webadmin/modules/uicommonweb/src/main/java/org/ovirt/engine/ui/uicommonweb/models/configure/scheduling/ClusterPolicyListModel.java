@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParam
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -227,7 +226,7 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
         }
 
         ArrayList<String> list = new ArrayList<>();
-        for (ClusterPolicy item : Linq.<ClusterPolicy> cast(getSelectedItems())) {
+        for (ClusterPolicy item : getSelectedItems()) {
             list.add(item.getName());
         }
         model.setItems(list);

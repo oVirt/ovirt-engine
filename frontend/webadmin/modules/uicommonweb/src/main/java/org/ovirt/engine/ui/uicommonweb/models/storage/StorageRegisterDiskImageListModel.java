@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.UnregisteredDiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.queries.IdAndBooleanQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -99,8 +98,7 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
     }
 
     private void updateActionAvailability() {
-        ArrayList<DiskImage> disks = getSelectedItems() != null ?
-                Linq.<DiskImage> cast(getSelectedItems()) : new ArrayList<DiskImage>();
+        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
 
         getRegisterCommand().setIsExecutionAllowed(disks.size() > 0
                 && getEntity().getStatus() == StorageDomainStatus.Active);

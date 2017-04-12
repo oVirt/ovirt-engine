@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -10,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -174,8 +174,7 @@ public class PoolVmListModel extends VmListModel<VmPool> {
     }
 
     private void updateActionAvailability() {
-        ArrayList<VM> items =
-                getSelectedItems() != null ? Linq.<VM> cast(getSelectedItems()) : new ArrayList<VM>();
+        List<VM> items = getSelectedItems() != null ? getSelectedItems() : new ArrayList<VM>();
 
         boolean value = true;
         for (VM a : items) {

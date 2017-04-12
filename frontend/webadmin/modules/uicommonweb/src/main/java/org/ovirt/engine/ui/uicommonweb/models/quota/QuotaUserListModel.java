@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -174,7 +173,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
         model.setHashName("remove_quota_assignment_from_user"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (Permission item : Linq.<Permission> cast(getSelectedItems())) {
+        for (Permission item : getSelectedItems()) {
             list.add(item.getOwnerName());
         }
         model.setItems(list);

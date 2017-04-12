@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -192,9 +191,8 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
             return true;
         }
 
-        ArrayList<VmNetworkInterface> nics =
-                getSelectedItems() != null ? Linq.<VmNetworkInterface> cast(getSelectedItems())
-                        : new ArrayList<VmNetworkInterface>();
+        List<VmNetworkInterface> nics =
+                getSelectedItems() != null ? getSelectedItems() : new ArrayList<VmNetworkInterface>();
 
         for (VmNetworkInterface nic : nics) {
             if (nic.isPlugged()) {

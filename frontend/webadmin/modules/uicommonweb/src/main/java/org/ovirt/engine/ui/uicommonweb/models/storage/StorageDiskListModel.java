@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -135,8 +136,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
     }
 
     private void updateActionAvailability() {
-        ArrayList<DiskImage> disks = getSelectedItems() != null ?
-                Linq.<DiskImage> cast(getSelectedItems()) : new ArrayList<DiskImage>();
+        List<DiskImage> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<DiskImage>();
 
         getRemoveCommand().setIsExecutionAllowed(disks.size() > 0 && isRemoveCommandAvailable(disks));
         getUploadCommand().setIsExecutionAllowed(isUploadCommandAvailable());
@@ -145,7 +145,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
         getResumeUploadCommand().setIsExecutionAllowed(UploadImageModel.isResumeAllowed(disks));
     }
 
-    private boolean isRemoveCommandAvailable(ArrayList<DiskImage> disks) {
+    private boolean isRemoveCommandAvailable(List<DiskImage> disks) {
         for (DiskImage disk : disks) {
             boolean isImageLocked = disk.getImageStatus() == ImageStatus.LOCKED;
 
@@ -240,16 +240,11 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
     }
 
     private void cancelUpload() {
-        UploadImageModel.showCancelUploadDialog(
-                this,
-                HelpTag.cancel_upload_image_to_domain,
-                Linq.<DiskImage> cast(getSelectedItems()));
+        UploadImageModel.showCancelUploadDialog(this, HelpTag.cancel_upload_image_to_domain, getSelectedItems());
     }
 
     private void onCancelUpload() {
-        UploadImageModel.onCancelUpload(
-                (ConfirmationModel) getWindow(),
-                Linq.<DiskImage> cast(getSelectedItems()));
+        UploadImageModel.onCancelUpload((ConfirmationModel) getWindow(), getSelectedItems());
     }
 
     private void pauseUpload() {
@@ -257,7 +252,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
             return;
         }
 
-        UploadImageModel.pauseUploads(Linq.<DiskImage> cast(getSelectedItems()));
+        UploadImageModel.pauseUploads(getSelectedItems());
     }
 
 

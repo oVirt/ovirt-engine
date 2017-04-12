@@ -40,7 +40,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior {
 
         updateAvailabilityByDatacenter(dataCenter);
 
-        for (final IStorageModel item : Linq.<IStorageModel> cast(getModel().getStorageModels())) {
+        for (final IStorageModel item : getModel().getStorageModels()) {
             if (item.getRole() == StorageDomainType.ISO) {
                 AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery<>(
                         new AsyncCallback<StorageDomain>() {

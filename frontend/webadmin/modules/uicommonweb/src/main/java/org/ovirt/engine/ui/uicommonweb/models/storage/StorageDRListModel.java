@@ -148,8 +148,8 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
     }
 
     private void updateActionAvailability() {
-        ArrayList<StorageDomainDR> domainDRs = getSelectedItems() != null ?
-                Linq.<StorageDomainDR> cast(getSelectedItems()) : new ArrayList<StorageDomainDR>();
+        List<StorageDomainDR> domainDRs = getSelectedItems() != null ?
+                getSelectedItems() : new ArrayList<StorageDomainDR>();
 
         getEditCommand().setIsExecutionAllowed(domainDRs.size() == 1);
     }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.RegisterCinderDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -84,8 +84,7 @@ public class StorageRegisterDiskListModel extends SearchableListModel<StorageDom
     }
 
     private void updateActionAvailability() {
-        ArrayList<CinderDisk> disks = getSelectedItems() != null ?
-                Linq.<CinderDisk> cast(getSelectedItems()) : new ArrayList<CinderDisk>();
+        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
 
         getRegisterCommand().setIsExecutionAllowed(disks.size() > 0);
     }

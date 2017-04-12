@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -96,13 +95,12 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
     }
 
     private void updateActionAvailability() {
-        ArrayList<DiskImage> disks = getSelectedItems() != null ?
-                Linq.<DiskImage> cast(getSelectedItems()) : new ArrayList<DiskImage>();
+        List<DiskImage> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<DiskImage>();
 
         getRemoveCommand().setIsExecutionAllowed(disks.size() > 0 && isRemoveCommandAvailable(disks));
     }
 
-    private boolean isRemoveCommandAvailable(ArrayList<DiskImage> disks) {
+    private boolean isRemoveCommandAvailable(List<DiskImage> disks) {
         for (DiskImage disk : disks) {
             boolean isImageLocked = disk.getImageStatus() == ImageStatus.LOCKED;
             boolean isTemplateType = disk.getVmEntityType().isTemplateType();

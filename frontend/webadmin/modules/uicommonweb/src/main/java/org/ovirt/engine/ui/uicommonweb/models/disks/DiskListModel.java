@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -506,16 +505,11 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     }
 
     private void cancelUpload() {
-        UploadImageModel.showCancelUploadDialog(
-                this,
-                HelpTag.cancel_upload_image,
-                Linq.<DiskImage>cast(getSelectedItems()));
+        UploadImageModel.showCancelUploadDialog(this, HelpTag.cancel_upload_image, getSelectedItems());
     }
 
     private void onCancelUpload() {
-        UploadImageModel.onCancelUpload(
-                (ConfirmationModel) getWindow(),
-                Linq.<DiskImage>cast(getSelectedItems()));
+        UploadImageModel.onCancelUpload((ConfirmationModel) getWindow(), getSelectedItems());
     }
 
     private void pauseUpload() {
@@ -523,7 +517,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
             return;
         }
 
-        UploadImageModel.pauseUploads(Linq.<DiskImage>cast(getSelectedItems()));
+        UploadImageModel.pauseUploads(getSelectedItems());
     }
 
     private void updateActionAvailability() {
@@ -618,8 +612,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     }
 
     private boolean isRemoveCommandAvailable() {
-        ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
+        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
             // check if the disk is template disk
@@ -645,8 +638,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     }
 
     private boolean isScanAlignmentCommandAvailable() {
-        ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
+        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&

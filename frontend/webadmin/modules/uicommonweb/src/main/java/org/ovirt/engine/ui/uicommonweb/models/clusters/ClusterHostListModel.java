@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -13,7 +14,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
@@ -96,8 +96,7 @@ public class ClusterHostListModel extends HostListModel<Cluster> {
 
     private void updateActionAvailability() {
         getUpdateMomPolicyCommand().setIsAvailable(true);
-        ArrayList<VDS> items =
-                getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();
+        List<VDS> items = getSelectedItems() != null ? getSelectedItems() : new ArrayList<VDS>();
         boolean allHostRunning = !items.isEmpty();
 
         for (VDS vds : items) {

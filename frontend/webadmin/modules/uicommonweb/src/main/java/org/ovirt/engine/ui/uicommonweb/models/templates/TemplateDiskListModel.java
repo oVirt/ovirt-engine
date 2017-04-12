@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -140,8 +139,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
     }
 
     private void setDisks(Collection<DiskImage> value) {
-        ArrayList<DiskImage> disks =
-                value != null ? Linq.<DiskImage> cast(value) : new ArrayList<DiskImage>();
+        ArrayList<DiskImage> disks = value != null ? new ArrayList<>(value) : new ArrayList<DiskImage>();
 
         Collections.sort(disks, new DiskByDiskAliasComparator());
         super.setItems(disks);
@@ -179,8 +177,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
     }
 
     private boolean isCopyCommandAvailable() {
-        ArrayList<DiskImage> disks =
-                getSelectedItems() != null ? Linq.<DiskImage> cast(getSelectedItems()) : new ArrayList<DiskImage>();
+        List<DiskImage> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<DiskImage>();
 
         for (DiskImage disk : disks) {
             if (disk.getImageStatus() != ImageStatus.OK || disk.getDiskStorageType() != DiskStorageType.IMAGE) {

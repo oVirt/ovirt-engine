@@ -1122,7 +1122,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
     public static <T extends Model & ICommandTarget> void showCancelUploadDialog(
             T parent,
             HelpTag helptag,
-            List<DiskImage> images) {
+            List<? extends Disk> disks) {
         ConfirmationModel model = new ConfirmationModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().uploadImageCancelTitle());
         model.setHelpTag(helptag);
@@ -1131,8 +1131,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
         parent.setWindow(model);
 
         ArrayList<String> items = new ArrayList<>();
-        for (DiskImage image : images) {
-            items.add(image.getDiskAlias());
+        for (Disk disk : disks) {
+            items.add(disk.getDiskAlias());
         }
         model.setItems(items);
 
@@ -1145,7 +1145,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         model.getCommands().add(cancelCommand);
     }
 
-    public static void onCancelUpload(ConfirmationModel model, List<DiskImage> images) {
+    public static void onCancelUpload(ConfirmationModel model, List<? extends Disk> disks) {
         if (model.getProgress() != null) {
             return;
         }
@@ -1153,12 +1153,12 @@ public class UploadImageModel extends Model implements ICommandTarget {
         model.startProgress(null);
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<>();
-        for (DiskImage image : images) {
+        for (Disk disk : disks) {
             ImageTransfer updates = new ImageTransfer();
             updates.setPhase(ImageTransferPhase.CANCELLED);
             TransferImageStatusParameters parameters = new TransferImageStatusParameters();
             parameters.setUpdates(updates);
-            parameters.setDiskId(image.getId());
+            parameters.setDiskId(disk.getId());
             list.add(parameters);
         }
 
@@ -1173,14 +1173,14 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 }, model);
     }
 
-    public static void pauseUploads(List<DiskImage> images) {
+    public static void pauseUploads(List<? extends Disk> disks) {
                 ArrayList<VdcActionParametersBase> list = new ArrayList<>();
-        for (DiskImage image : images) {
+        for (Disk disk : disks) {
             ImageTransfer updates = new ImageTransfer();
             updates.setPhase(ImageTransferPhase.PAUSED_USER);
             TransferImageStatusParameters parameters = new TransferImageStatusParameters();
             parameters.setUpdates(updates);
-            parameters.setDiskId(image.getId());
+            parameters.setDiskId(disk.getId());
             list.add(parameters);
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.TransferImageStatus, list);

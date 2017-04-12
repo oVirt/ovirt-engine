@@ -1086,7 +1086,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         Set<Guid> clusters = new HashSet<>();
         ArrayList<String> list = new ArrayList<>();
         boolean heOnHosts = false;
-        for (VDS item : Linq.<VDS> cast(getSelectedItems())) {
+        for (VDS item : getSelectedItems()) {
             clusters.add(item.getClusterId());
             String name = item.getName();
             if (item.isHostedEngineDeployed()) {
@@ -1820,7 +1820,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
             VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.firstOrNull(Linq.<VDS> cast(getItems()), new Linq.IdPredicate<>(host.getId())));
+            setSelectedItem(Linq.firstOrNull(getItems(), new Linq.IdPredicate<>(host.getId())));
         }
     }
 
@@ -1834,8 +1834,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     private void updateActionAvailability() {
-        ArrayList<VDS> items =
-                getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();
+        List<VDS> items = getSelectedItems() != null ? getSelectedItems() : new ArrayList<VDS>();
 
         boolean isAllPMEnabled = items.stream().allMatch(VDS::isPmEnabled);
 
@@ -1983,7 +1982,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     private void updateConfigureLocalStorageCommandAvailability1() {
 
-        ArrayList<VDS> items = getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();
+        List<VDS> items = getSelectedItems() != null ? getSelectedItems() : new ArrayList<VDS>();
 
         getConfigureLocalStorageCommand().setIsExecutionAllowed(items.size() == 1
                 && items.get(0).getStatus() == VDSStatus.Maintenance);
