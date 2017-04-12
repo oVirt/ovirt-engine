@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
@@ -241,7 +242,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
 
             TransactionSupport.executeInNewTransaction(() -> {
                 Snapshot s = snapshotDao.get(snapshotId);
-                s = imagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage, ovfManager);
+                s = ImagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage, ovfManager);
                 snapshotDao.update(s);
                 return null;
             });
@@ -258,7 +259,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
 
             TransactionSupport.executeInNewTransaction(() -> {
                 Snapshot s = snapshotDao.get(snapshotId);
-                s = imagesHandler.prepareSnapshotConfigWithoutImageSingleImage(s, imageId, ovfManager);
+                s = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(s, imageId, ovfManager);
                 snapshotDao.update(s);
                 return null;
             });

@@ -53,7 +53,7 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
             return;
         }
         VdsmImageLocationInfo info = (VdsmImageLocationInfo) getParameters().getDstInfo();
-        DiskImage image = imagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
+        DiskImage image = ImagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
                 info.getStorageDomainId(), info.getImageGroupId(), info.getImageId());
         info.setGeneration(image.getImage().getGeneration());
         persistCommandIfNeeded();

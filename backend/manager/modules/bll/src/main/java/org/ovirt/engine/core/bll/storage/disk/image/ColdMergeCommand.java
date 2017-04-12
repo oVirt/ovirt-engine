@@ -87,7 +87,7 @@ public class ColdMergeCommand<T extends ColdMergeCommandParameters> extends Stor
 
     private void completeGenerationInfo() {
         SubchainInfo info = getParameters().getSubchainInfo();
-        DiskImage image = imagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
+        DiskImage image = ImagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
                 info.getStorageDomainId(), info.getImageGroupId(), info.getBaseImageId());
         info.setBaseImageGeneration(image.getImage().getGeneration());
         persistCommandIfNeeded();

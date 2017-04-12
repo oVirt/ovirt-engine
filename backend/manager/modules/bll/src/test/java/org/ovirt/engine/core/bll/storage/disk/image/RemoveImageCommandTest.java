@@ -61,9 +61,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
     @InjectMocks
     private OvfManager ovfManager = new OvfManager();
 
-    @Spy
-    private ImagesHandler imagesHandler;
-
     /** The command to test */
     @Spy
     private RemoveImageCommand<RemoveImageParameters> cmd =
@@ -112,7 +109,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         doReturn(disk2).when(cmd).getDiskImage();
         doReturn(disk2).when(cmd).getImage();
         doReturn(disk2.getId()).when(cmd).getImageId();
-        Snapshot actual = imagesHandler.prepareSnapshotConfigWithAlternateImage(snap, disk2.getImageId(), null, ovfManager);
+        Snapshot actual = ImagesHandler.prepareSnapshotConfigWithAlternateImage(snap, disk2.getImageId(), null, ovfManager);
         String actualOvf = actual.getVmConfiguration();
 
         ArrayList<DiskImage> actualImages = new ArrayList<>();

@@ -26,6 +26,7 @@ import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
@@ -367,7 +368,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         List<DiskImage> dummies = new ArrayList<>(disksList.size());
         for (DiskImage image : disksList) {
             Guid targetSdId = imageToDestinationDomainMap.get(image.getId());
-            DiskImage dummy = imagesHandler.createDiskImageWithExcessData(image, targetSdId);
+            DiskImage dummy = ImagesHandler.createDiskImageWithExcessData(image, targetSdId);
             dummies.add(dummy);
         }
         return dummies;

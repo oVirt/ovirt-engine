@@ -327,7 +327,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     protected void setImageStatus(ImageStatus imageStatus, DiskImage diskImage) {
         if (diskImage != null && diskImage.getImageStatus() != imageStatus) {
             diskImage.setImageStatus(imageStatus);
-            imagesHandler.updateImageStatus(diskImage.getImage().getId(), imageStatus);
+            ImagesHandler.updateImageStatus(diskImage.getImage().getId(), imageStatus);
         }
     }
 
@@ -429,7 +429,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             Guid hostIdForExecution) {
         diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
         if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
-            QemuImageInfo qemuImageInfo = imagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
+            QemuImageInfo qemuImageInfo = ImagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
                     newStorageDomainID,
                     newImageGroupId,
                     newImageId,

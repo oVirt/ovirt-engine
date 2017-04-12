@@ -26,7 +26,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.ValidationResultMatchers;
@@ -92,8 +91,6 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     private DiskVmElementDao diskVmElementDao;
     @Mock
     private DiskHandler diskHandler;
-    @Mock
-    private ImagesHandler imagesHandler;
 
     @Spy
     @InjectMocks

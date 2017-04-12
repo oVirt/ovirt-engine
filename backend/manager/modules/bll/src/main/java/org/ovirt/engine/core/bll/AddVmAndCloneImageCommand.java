@@ -78,7 +78,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
             Guid destStorageDomainId,
             Guid diskProfileId,
             VdcActionType parentCommandType) {
-        DiskImage newDiskImage = imagesHandler.cloneDiskImage(destStorageDomainId,
+        DiskImage newDiskImage = ImagesHandler.cloneDiskImage(destStorageDomainId,
                 Guid.newGuid(),
                 Guid.newGuid(),
                 diskImage,
@@ -107,7 +107,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         for (VdcActionParametersBase param : imageParams) {
             DiskImage diskImage = getDiskImageToRemoveByParam((MoveOrCopyImageGroupParameters) param);
             if (diskImage != null) {
-                imagesHandler.removeDiskImage(diskImage, getVmId());
+                ImagesHandler.removeDiskImage(diskImage, getVmId());
             }
         }
     }
@@ -206,7 +206,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         if (!result.getSucceeded()) {
             throw new EngineException(EngineError.VolumeCreationError);
         } else {
-            imagesHandler.addDiskImageWithNoVmDevice(copiedDiskImage);
+            ImagesHandler.addDiskImageWithNoVmDevice(copiedDiskImage);
             getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
             getSrcDiskIdToTargetDiskIdMapping().put(srcDiskImage.getId(), copiedDiskImage.getId());
         }
@@ -408,7 +408,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
             diskImage.setImageTemplateId(Guid.Empty);
 
             ImagesHandler.setDiskAlias(diskImage, getVm());
-            imagesHandler.addDiskImage(diskImage, getVmId());
+            ImagesHandler.addDiskImage(diskImage, getVmId());
             return null;
         });
     }

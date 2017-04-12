@@ -30,9 +30,6 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
     @Inject
     private CommandsWeightsUtils commandsWeightsUtils;
 
-    @Inject
-    private ImagesHandler imagesHandler;
-
     public CloneImageGroupVolumesStructureCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setStoragePoolId(getParameters().getStoragePoolId());
@@ -109,7 +106,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                 image.getVolumeFormat(),
                 getParameters().getDescription(),
                 image.getSize(),
-                imagesHandler.determineImageInitialSize(image.getImage(),
+                ImagesHandler.determineImageInitialSize(image.getImage(),
                         image.getVolumeFormat(),
                         getParameters().getStoragePoolId(),
                         getParameters().getSrcDomain(),

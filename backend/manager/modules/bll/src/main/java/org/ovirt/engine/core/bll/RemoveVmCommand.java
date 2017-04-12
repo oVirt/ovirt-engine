@@ -118,11 +118,11 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             if (getParameters().isRemoveDisks()) {
                 for (DiskImage image : diskImages) {
                     getCompensationContext().snapshotEntityStatus(image.getImage(), ImageStatus.ILLEGAL);
-                    imagesHandler.updateImageStatus(image.getImage().getId(), ImageStatus.LOCKED);
+                    ImagesHandler.updateImageStatus(image.getImage().getId(), ImageStatus.LOCKED);
                 }
 
                 for (LunDisk lunDisk : lunDisks) {
-                    imagesHandler.removeLunDisk(lunDisk);
+                    ImagesHandler.removeLunDisk(lunDisk);
                 }
 
                 getCompensationContext().stateChanged();
@@ -387,7 +387,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         if (getParameters().isRemoveDisks()) {
             List<QuotaConsumptionParameter> list = new ArrayList<>();
-            imagesHandler.fillImagesBySnapshots(getVm());
+            ImagesHandler.fillImagesBySnapshots(getVm());
             for (DiskImage disk : getVm().getDiskList()) {
                 for (DiskImage snapshot : disk.getSnapshots()) {
                     if (snapshot.getQuotaId() != null && !Guid.Empty.equals(snapshot.getQuotaId())) {

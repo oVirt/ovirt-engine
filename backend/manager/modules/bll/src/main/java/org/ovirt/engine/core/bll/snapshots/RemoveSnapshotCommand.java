@@ -287,7 +287,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 }
 
                 if (imagesParams.getTaskGroupSuccess()) {
-                    snapshot = imagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
+                    snapshot = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
                             snapshot, imagesParams.getImageId(), ovfManager);
                 } else {
                     log.error("Could not delete image '{}' from snapshot '{}'",
@@ -388,7 +388,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDiskLive) {
             return ImagesHandler.getDisksDummiesForStorageAllocations(getSourceImages());
         }
-        return imagesHandler.getSnapshotsDummiesForStorageAllocations(getSourceImages());
+        return ImagesHandler.getSnapshotsDummiesForStorageAllocations(getSourceImages());
     }
 
     protected Collection<Guid> getStorageDomainsIds() {

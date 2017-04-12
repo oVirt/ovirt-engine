@@ -3,13 +3,10 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.HostJobCommand;
 import org.ovirt.engine.core.bll.StorageJobCallback;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
@@ -19,9 +16,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class StorageJobCommand<T extends StorageJobCommandParameters> extends CommandBase<T>
         implements HostJobCommand {
-
-    @Inject
-    protected ImagesHandler imagesHandler;
 
     public StorageJobCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -59,9 +59,6 @@ public class VmTemplateHandler implements BackendService {
     @Inject
     private StorageDomainDao storageDomainDao;
 
-    @Inject
-    private ImagesHandler imagesHandler;
-
     private ObjectIdentityChecker updateVmTemplate;
 
     /**
@@ -184,7 +181,7 @@ public class VmTemplateHandler implements BackendService {
                                 ONLY_ACTIVE);
             }
             if (vmtImages.size() > 0
-                    && !imagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getStoragePoolId())) {
+                    && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getStoragePoolId())) {
                 return new ValidationResult(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
             }
         }

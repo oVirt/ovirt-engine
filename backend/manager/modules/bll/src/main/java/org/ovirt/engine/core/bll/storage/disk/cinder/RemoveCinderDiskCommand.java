@@ -127,7 +127,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
     }
 
     private void lockDisk() {
-        imagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(getDisk().getId(),
+        ImagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(getDisk().getId(),
                 ImageStatus.LOCKED,
                 ImageStatus.ILLEGAL,
                 getCompensationContext());

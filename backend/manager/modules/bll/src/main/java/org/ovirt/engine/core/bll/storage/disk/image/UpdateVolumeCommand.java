@@ -50,7 +50,7 @@ public class UpdateVolumeCommand<T extends UpdateVolumeCommandParameters> extend
 
     private void completeGenerationInfo() {
         VdsmImageLocationInfo info = getParameters().getVolInfo();
-        DiskImage image = imagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
+        DiskImage image = ImagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
                 info.getStorageDomainId(),
                 info.getImageGroupId(),
                 info.getImageId());

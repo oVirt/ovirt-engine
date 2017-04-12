@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.pool.RefreshStoragePoolAndDisconnectAsyncOperationFactory;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -66,9 +65,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     @Inject
     protected LunHelper lunHelper;
-
-    @Inject
-    protected ImagesHandler imagesHandler;
 
     protected StorageDomainCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

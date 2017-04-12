@@ -144,7 +144,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
             diskImage.setImageTemplateId(Guid.Empty);
 
             ImagesHandler.setDiskAlias(diskImage, getVm());
-            imagesHandler.addDiskImage(diskImage, getVmId());
+            ImagesHandler.addDiskImage(diskImage, getVmId());
             return null;
         });
     }

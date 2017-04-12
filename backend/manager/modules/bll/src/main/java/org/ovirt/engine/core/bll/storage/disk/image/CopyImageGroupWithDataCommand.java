@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -34,9 +32,6 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         extends CommandBase<T> implements SerialChildExecutingCommand {
 
     private DiskImage diskImage;
-
-    @Inject
-    private ImagesHandler imagesHandler;
 
     public CopyImageGroupWithDataCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -87,7 +82,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         getDiskImage().getSnapshots().clear();
         List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
         for (DiskImage image : images) {
-            getDiskImage().getSnapshots().add(imagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
+            getDiskImage().getSnapshots().add(ImagesHandler.getVolumeInfoFromVdsm(getParameters().getStoragePoolId(),
                     getParameters().getSrcDomain(), getParameters().getImageGroupID(), image.getImageId()));
         }
     }
@@ -114,7 +109,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                 getParameters().getDestinationFormat(),
                 getParameters().getDescription(),
                 getDiskImage().getSize(),
-                imagesHandler.determineTotalImageInitialSize(getDiskImage(),
+                ImagesHandler.determineTotalImageInitialSize(getDiskImage(),
                         getParameters().getDestinationFormat(),
                         getParameters().getSrcDomain(),
                         getParameters().getDestDomain()));

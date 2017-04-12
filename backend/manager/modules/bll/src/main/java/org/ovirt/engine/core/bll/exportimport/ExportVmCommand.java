@@ -130,7 +130,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         }
 
         // update vm snapshots for storage free space check
-        imagesHandler.fillImagesBySnapshots(getVm());
+        ImagesHandler.fillImagesBySnapshots(getVm());
 
         // check that the target and source domain are in the same storage_pool
         if (storagePoolIsoMapDao.get(new StoragePoolIsoMapId(getStorageDomain().getId(),
@@ -149,7 +149,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         }
 
         // check that the images requested format are valid (COW+Sparse)
-        if (!imagesHandler.checkImagesConfiguration(getParameters().getStorageDomainId(),
+        if (!ImagesHandler.checkImagesConfiguration(getParameters().getStorageDomainId(),
                 disksForExport,
                 getReturnValue().getValidationMessages())) {
             return false;
@@ -212,7 +212,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         List<DiskImage> dummies = new ArrayList<>(disksList.size());
         for (DiskImage image : disksList) {
             Guid targetSdId = imageToDestinationDomainMap.get(image.getId());
-            DiskImage dummy = imagesHandler.createDiskImageWithExcessData(image, targetSdId);
+            DiskImage dummy = ImagesHandler.createDiskImageWithExcessData(image, targetSdId);
             dummies.add(dummy);
         }
         return dummies;

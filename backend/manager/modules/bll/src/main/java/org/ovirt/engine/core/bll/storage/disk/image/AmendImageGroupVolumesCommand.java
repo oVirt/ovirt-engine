@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -46,9 +44,6 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
 
     private DiskImage diskImage;
     private List<Pair<VM, VmDevice>> vmsForDisk = new ArrayList<>();
-
-    @Inject
-    private ImagesHandler imagesHandler;
 
     public AmendImageGroupVolumesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -161,7 +156,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
 
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntityStatus(diskImage.getImage());
-            imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
+            ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
             getCompensationContext().stateChanged();
             return null;
         });
@@ -169,7 +164,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
 
     private void unlockImageInDb() {
         DiskImage diskImage = getDiskImage();
-        imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
+        ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
     }
 
     @Override

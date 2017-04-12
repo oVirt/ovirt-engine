@@ -45,9 +45,6 @@ public class SparsifyImageCommand<T extends StorageJobCommandParameters> extends
     @Inject
     private VmDao vmDao;
 
-    @Inject
-    private ImagesHandler imagesHandler;
-
     public SparsifyImageCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -155,7 +152,7 @@ public class SparsifyImageCommand<T extends StorageJobCommandParameters> extends
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntityStatus(diskImage.getImage());
             diskImage.setImageStatus(ImageStatus.LOCKED);
-            imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
+            ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
             getCompensationContext().stateChanged();
             return null;
         });
@@ -164,7 +161,7 @@ public class SparsifyImageCommand<T extends StorageJobCommandParameters> extends
     private void unlockImageInDb() {
         DiskImage diskImage = getDiskImage();
         diskImage.setImageStatus(ImageStatus.OK);
-        imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
+        ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
     }
 
     @Override

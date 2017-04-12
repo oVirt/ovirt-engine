@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfUpdateProcessHelper;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -153,7 +154,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         if (getTemplateDisks() != null && !getTemplateDisks().isEmpty()) {
             ensureDomainMap(getTemplateDisks(), getParameters().getStorageDomainId());
             // check that images are ok
-            imagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
+            ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
                     imageFromSourceDomainMap,
                     null);
             if (getVmTemplate().getDiskTemplateMap().values().size() != imageFromSourceDomainMap.size()) {
