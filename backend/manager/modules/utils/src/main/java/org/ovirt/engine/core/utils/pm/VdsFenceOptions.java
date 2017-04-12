@@ -126,8 +126,7 @@ public class VdsFenceOptions implements Serializable {
         if (StringUtils.isNotEmpty(agent) && StringUtils.isNotEmpty(displayedKey)) {
             if (fenceOptionMapping.containsKey(agent)) {
                 HashMap<String, String> agentOptions = fenceOptionMapping.get(agent);
-                result = agentOptions.containsKey(displayedKey) ? agentOptions.get(displayedKey)
-                        : displayedKey;
+                result = agentOptions.getOrDefault(displayedKey, displayedKey);
             } else {
                 log.error(AGENT_ERROR, agent);
             }
