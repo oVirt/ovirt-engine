@@ -36,41 +36,38 @@ public class OvirtAuthPlugIn extends AbstractPlugIn {
 
             @Override
             public ValidatePasswordCredential getCredential() {
-                return new ValidatePasswordCredential() {
-                    @Override
-                    public boolean validatePassword(char[] chars) {
-                        BackendLocal backend;
-                        try {
-                            backend = (BackendLocal) new InitialContext().lookup(
-                                            "java:global/engine/bll/Backend!" + BackendLocal.class.getName());
-                        } catch (NamingException e) {
-                            throw new RuntimeException("Can't communicate with the backend API");
-                        }
-                        String token = null;
-                        String engineSessionId = null;
-                        boolean loginSucceeded = true;
-                        try {
-                            Map<String, Object> jsonResponse = SsoOAuthServiceUtils.loginWithPassword(
-                                    username, new String(chars), scope);
-                            FiltersHelper.isStatusOk(jsonResponse);
-                            token = (String) jsonResponse.get("access_token");
-                            engineSessionId = SsoUtils.createUserSession(null,
-                                    FiltersHelper.getPayloadForToken(token),
-                                    false);
-                        } catch (Exception e) {
-                            loginSucceeded = false;
-                        }
-                        try {
-                            return loginSucceeded
-                                    && engineSessionId != null
-                                    && backend.runQuery(
-                                    VdcQueryType.IsUserApplicationContainerManager,
-                                    new VdcQueryParametersBase(engineSessionId)
-                            ).getSucceeded();
-                        } finally {
-                            if (token != null) {
-                                SsoOAuthServiceUtils.revoke(token, "");
-                            }
+                return chars -> {
+                    BackendLocal backend;
+                    try {
+                        backend = (BackendLocal) new InitialContext().lookup(
+                                        "java:global/engine/bll/Backend!" + BackendLocal.class.getName());
+                    } catch (NamingException e) {
+                        throw new RuntimeException("Can't communicate with the backend API");
+                    }
+                    String token = null;
+                    String engineSessionId = null;
+                    boolean loginSucceeded = true;
+                    try {
+                        Map<String, Object> jsonResponse = SsoOAuthServiceUtils.loginWithPassword(
+                                username, new String(chars), scope);
+                        FiltersHelper.isStatusOk(jsonResponse);
+                        token = (String) jsonResponse.get("access_token");
+                        engineSessionId = SsoUtils.createUserSession(null,
+                                FiltersHelper.getPayloadForToken(token),
+                                false);
+                    } catch (Exception e) {
+                        loginSucceeded = false;
+                    }
+                    try {
+                        return loginSucceeded
+                                && engineSessionId != null
+                                && backend.runQuery(
+                                VdcQueryType.IsUserApplicationContainerManager,
+                                new VdcQueryParametersBase(engineSessionId)
+                        ).getSucceeded();
+                    } finally {
+                        if (token != null) {
+                            SsoOAuthServiceUtils.revoke(token, "");
                         }
                     }
                 };

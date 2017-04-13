@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.jboss_auth_plugin;
 
-import java.io.IOException;
-
 import org.jboss.as.domain.management.plugin.AuthenticationPlugIn;
 import org.jboss.as.domain.management.plugin.AuthorizationPlugIn;
 import org.jboss.as.domain.management.plugin.Credential;
@@ -23,12 +21,7 @@ public class OvirtAuthPlugInProvider implements PlugInProvider {
      */
     @Override
     public AuthorizationPlugIn loadAuthorizationPlugIn(String s) {
-        return new AuthorizationPlugIn() {
-            @Override
-            public String[] loadRoles(String s, String s1) throws IOException {
-                return new String[0];
-            }
-        };
+        return (s12, s1) -> new String[0];
     }
 
 }
