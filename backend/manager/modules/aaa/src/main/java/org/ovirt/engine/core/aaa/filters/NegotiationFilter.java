@@ -8,8 +8,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -64,13 +62,7 @@ public class NegotiationFilter implements Filter {
             }
         }
 
-        AuthenticationProfileRepository.getInstance().addObserver(
-            new Observer() {
-                @Override
-                public void update(Observable o, Object arg) {
-                    cacheNegotiatingProfiles();
-                }
-            }
+        AuthenticationProfileRepository.getInstance().addObserver((o, arg) -> cacheNegotiatingProfiles()
         );
         cacheNegotiatingProfiles();
     }

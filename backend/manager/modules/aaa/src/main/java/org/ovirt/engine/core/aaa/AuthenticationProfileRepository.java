@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Properties;
 
 import org.ovirt.engine.api.extensions.Base;
@@ -58,14 +57,7 @@ public class AuthenticationProfileRepository extends Observable {
     }
 
     private AuthenticationProfileRepository() {
-        EngineExtensionsManager.getInstance().addObserver(
-            new Observer() {
-                @Override
-                public void update(Observable o, Object arg) {
-                    createProfiles();
-                }
-            }
-        );
+        EngineExtensionsManager.getInstance().addObserver((o, arg) -> createProfiles());
         createProfiles();
     }
 

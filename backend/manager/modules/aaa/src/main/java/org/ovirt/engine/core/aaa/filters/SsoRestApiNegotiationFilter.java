@@ -9,8 +9,6 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -54,13 +52,7 @@ public class SsoRestApiNegotiationFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         caps |= Authn.Capabilities.AUTHENTICATE_NEGOTIATE_INTERACTIVE | Authn.Capabilities.AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE;
 
-        AuthenticationProfileRepository.getInstance().addObserver(
-                new Observer() {
-                    @Override
-                    public void update(Observable o, Object arg) {
-                        cacheNegotiatingProfiles();
-                    }
-                }
+        AuthenticationProfileRepository.getInstance().addObserver((o, arg) -> cacheNegotiatingProfiles()
         );
         cacheNegotiatingProfiles();
     }
