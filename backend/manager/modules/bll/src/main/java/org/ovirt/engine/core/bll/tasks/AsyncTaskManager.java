@@ -213,22 +213,16 @@ public final class AsyncTaskManager {
     }
 
     public void handlePartiallyExecuteTasksOfCommand(final List<AsyncTask> tasks) {
-        ThreadPoolUtil.execute(new Runnable() {
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void run() {
-                TransactionSupport.executeInNewTransaction(() -> {
-                    try {
-                        for (AsyncTask task : tasks) {
-                            handlePartiallyExecutedTaskOfCommand(task);
-                        }
-                        return null;
-                    } finally {
-                        irsBrokerLatch.countDown();
-                    }
-                });
+        ThreadPoolUtil.execute(() -> TransactionSupport.executeInNewTransaction(() -> {
+            try {
+                for (AsyncTask task : tasks) {
+                    handlePartiallyExecutedTaskOfCommand(task);
+                }
+                return null;
+            } finally {
+                irsBrokerLatch.countDown();
             }
-        });
+        }));
     }
 
     private boolean isPartiallyExecutedCommand(List<AsyncTask> tasks) {
