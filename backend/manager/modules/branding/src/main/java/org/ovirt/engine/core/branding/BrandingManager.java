@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.branding;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -124,12 +123,8 @@ public class BrandingManager {
         if (themes == null && brandingRootPath.exists() && brandingRootPath.isDirectory()
                 && brandingRootPath.canRead()) {
             themes = new ArrayList<>();
-            File[] directories = brandingRootPath.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(final File file) {
-                    return file.isDirectory() && DIRECTORY_PATTERN.matcher(file.getName()).matches();
-                }
-            });
+            File[] directories = brandingRootPath.listFiles(
+                    file -> file.isDirectory() && DIRECTORY_PATTERN.matcher(file.getName()).matches());
             if (directories != null) {
                 Arrays.sort(directories);
                 for (File directory : directories) {
