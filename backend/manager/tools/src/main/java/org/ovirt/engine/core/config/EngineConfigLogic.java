@@ -258,13 +258,9 @@ public class EngineConfigLogic {
      * Prints all available configuration keys.
      */
     public void printAvailableKeys() {
-        iterateAllKeys(configKeyFactory, keysConfig, new ConfigKeyHandler() {
-
-            @Override
-            public boolean handle(ConfigKey key) {
-                printKeyInFormat(key);
-                return true;
-            }
+        iterateAllKeys(configKeyFactory, keysConfig, key -> {
+            printKeyInFormat(key);
+            return true;
         });
     }
 
@@ -420,16 +416,12 @@ public class EngineConfigLogic {
 
     private void printHelpForKey() throws Exception {
         final String keyName = parser.getKey();
-        boolean foundKey = iterateAllKeys(this.configKeyFactory, keysConfig, new ConfigKeyHandler() {
-
-            @Override
-            public boolean handle(ConfigKey key) {
-                if (key.getKey().equals(keyName)) {
-                    console.writeLine(key.getValueHelper().getHelpNote(key));
-                    return false;
-                }
-                return true;
+        boolean foundKey = iterateAllKeys(this.configKeyFactory, keysConfig, key -> {
+            if (key.getKey().equals(keyName)) {
+                console.writeLine(key.getValueHelper().getHelpNote(key));
+                return false;
             }
+            return true;
         });
 
         if (!foundKey) {

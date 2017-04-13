@@ -47,83 +47,70 @@ public class Main {
         }
     }
 
+    @FunctionalInterface
     private interface Logic {
         void execute(Map<String, Object> argMap) throws IOException, GeneralSecurityException;
     }
 
     private enum Action {
         PBE_ENCODE(
-            new Logic() {
-                @Override
-                public void execute(Map<String, Object> argMap) throws IOException, GeneralSecurityException {
-                    System.out.println(
-                        EnvelopePBE.encode(
-                            (String)argMap.get("algorithm"),
-                            (Integer)argMap.get("key-size"),
-                            (Integer)argMap.get("iterations"),
-                            null,
-                            getPassword("Password: ", (String)argMap.get("password"))
-                        )
-                    );
-                }
-            }
+            argMap -> System.out.println(
+                EnvelopePBE.encode(
+                    (String)argMap.get("algorithm"),
+                    (Integer)argMap.get("key-size"),
+                    (Integer)argMap.get("iterations"),
+                    null,
+                    getPassword("Password: ", (String)argMap.get("password"))
+                )
+            )
         ),
         PBE_CHECK(
-            new Logic() {
-                @Override
-                public void execute(Map<String, Object> argMap) throws IOException, GeneralSecurityException {
-                    if (
-                        !EnvelopePBE.check(
-                            new String(readStream(System.in), StandardCharsets.UTF_8),
-                            getPassword("Password: ", (String)argMap.get("password"))
-                        )
-                    ) {
-                        System.err.println("FAILED");
-                        throw new ExitException("Check failed", 1);
-                    }
+            argMap -> {
+                if (
+                    !EnvelopePBE.check(
+                        new String(readStream(System.in), StandardCharsets.UTF_8),
+                        getPassword("Password: ", (String)argMap.get("password"))
+                    )
+                ) {
+                    System.err.println("FAILED");
+                    throw new ExitException("Check failed", 1);
                 }
             }
         ),
         ENC_ENCODE(
-            new Logic() {
-                @Override
-                public void execute(Map<String, Object> argMap) throws IOException, GeneralSecurityException {
-                    try(InputStream in = new FileInputStream((String)argMap.get("certificate"))) {
-                        System.out.println(
-                            EnvelopeEncryptDecrypt.encrypt(
-                                (String)argMap.get("algorithm"),
-                                (Integer)argMap.get("key-size"),
-                                CertificateFactory.getInstance("X.509").generateCertificate(in),
-                                (Integer)argMap.get("block-size"),
-                                readStream(System.in)
-                            )
-                        );
-                    }
+            argMap -> {
+                try(InputStream in = new FileInputStream((String)argMap.get("certificate"))) {
+                    System.out.println(
+                        EnvelopeEncryptDecrypt.encrypt(
+                            (String)argMap.get("algorithm"),
+                            (Integer)argMap.get("key-size"),
+                            CertificateFactory.getInstance("X.509").generateCertificate(in),
+                            (Integer)argMap.get("block-size"),
+                            readStream(System.in)
+                        )
+                    );
                 }
             }
         ),
         ENC_DECODE(
-            new Logic() {
-                @Override
-                public void execute(Map<String, Object> argMap) throws IOException, GeneralSecurityException {
-                    String keystorePassword = getPassword("Key store password: ", (String)argMap.get("keystore-password"));
-                    System.out.write(
-                        EnvelopeEncryptDecrypt.decrypt(
-                            getPrivateKeyEntry(
-                                getKeyStore(
-                                    (String)argMap.get("keystore-type"),
-                                    (String)argMap.get("keystore"),
-                                    keystorePassword
-                                ),
-                                (String)argMap.get("keystore-alias"),
-                                    argMap.get("key-password") != null ?
-                                    getPassword("Key password: ", (String)argMap.get("key-password")) :
-                                    keystorePassword
+            argMap -> {
+                String keystorePassword = getPassword("Key store password: ", (String)argMap.get("keystore-password"));
+                System.out.write(
+                    EnvelopeEncryptDecrypt.decrypt(
+                        getPrivateKeyEntry(
+                            getKeyStore(
+                                (String)argMap.get("keystore-type"),
+                                (String)argMap.get("keystore"),
+                                keystorePassword
                             ),
-                            new String(readStream(System.in), StandardCharsets.UTF_8)
-                        )
-                    );
-                }
+                            (String)argMap.get("keystore-alias"),
+                                argMap.get("key-password") != null ?
+                                getPassword("Key password: ", (String)argMap.get("key-password")) :
+                                keystorePassword
+                        ),
+                        new String(readStream(System.in), StandardCharsets.UTF_8)
+                    )
+                );
             }
         );
 

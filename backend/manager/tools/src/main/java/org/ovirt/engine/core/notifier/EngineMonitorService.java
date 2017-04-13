@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -60,12 +59,7 @@ public class EngineMonitorService implements Runnable {
     private boolean sslIgnoreCertErrors;
     private SSLSocketFactory sslFactory = null;
     private boolean sslIgnoreHostVerification;
-    private static final HostnameVerifier IgnoredHostnameVerifier = new HostnameVerifier() {
-        @Override
-        public boolean verify(String hostname, SSLSession session) {
-            return true;
-        }
-    };
+    private static final HostnameVerifier IgnoredHostnameVerifier = (hostname, session) -> true;
 
     /**
      * Creates {@code EngineMonitorService} by configuration element containing required properties.
