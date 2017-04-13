@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.dao;
 
+import static org.hamcrest.Matchers.emptyCollectionOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-
 
 import java.util.Arrays;
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -196,12 +198,66 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         assertProgress(80, diskImage);
     }
 
+
+    private StepSubjectEntity prepareStartedStepsByStepSubjectEntityTest() {
+        Guid entityId = Guid.newGuid();
+        VdcObjectType entityType = VdcObjectType.EXECUTION_HOST;
+        StepSubjectEntity subjectEntity = new StepSubjectEntity(FixturesTool.STEP_ID, entityType, entityId);
+        getStepSubjectEntityDao().saveAll(Arrays.asList(subjectEntity));
+
+        Step s = dao.get(FixturesTool.STEP_ID);
+        s.setStatus(JobExecutionStatus.STARTED);
+        dao.update(s);
+
+        return subjectEntity;
+    }
+
+    @Test
+    public void startedStepsByStepSubjectEntityNoStepsHaveStep() {
+        StepSubjectEntity subjectEntity = prepareStartedStepsByStepSubjectEntityTest();
+        List<Step> steps = dao.getStartedStepsByStepSubjectEntity(subjectEntity);
+        assertEquals(1, steps.size());
+        assertEquals(subjectEntity.getStepId(), steps.get(0).getId());
+    }
+
+
+    @Test
+    public void startedStepsByStepSubjectEntityOtherStatuses() {
+        StepSubjectEntity subjectEntity = prepareStartedStepsByStepSubjectEntityTest();
+        Step step = dao.get(FixturesTool.STEP_ID);
+        Arrays.stream(JobExecutionStatus.values())
+                .filter(status -> status != JobExecutionStatus.STARTED)
+                .forEach(status -> {
+                    step.setStatus(status);
+                    dao.update(step);
+                    assertNoStartedStepsForSubjectEntity(subjectEntity);
+                });
+    }
+
+    @Test
+    public void startedStepsByStepSubjectEntityOtherId() {
+        StepSubjectEntity subjectEntity = prepareStartedStepsByStepSubjectEntityTest();
+        subjectEntity.setEntityId(Guid.Empty);
+        assertNoStartedStepsForSubjectEntity(subjectEntity);
+    }
+
+    @Test
+    public void startedStepsByStepSubjectEntityOtherEntityTYpe() {
+        StepSubjectEntity subjectEntity = prepareStartedStepsByStepSubjectEntityTest();
+        subjectEntity.setEntityType(VdcObjectType.AdElements);
+        assertNoStartedStepsForSubjectEntity(subjectEntity);
+    }
+
     private void updateStepProgress(Guid stepId, Integer progress) {
         dao.updateStepProgress(stepId, progress);
     }
 
     private void assertProgress(Integer expectedProgress, BaseDisk disk) {
         assertEquals("disk progress isn't as expected", expectedProgress, disk.getProgress());
+    }
+
+    private void assertNoStartedStepsForSubjectEntity(SubjectEntity subjectEntity) {
+        assertThat(dao.getStartedStepsByStepSubjectEntity(subjectEntity), emptyCollectionOf(Step.class));
     }
 
     private DiskDao getDiskDao() {

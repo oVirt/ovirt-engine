@@ -711,3 +711,23 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION GetStepsForEntityByStatus (
+    v_status VARCHAR(32),
+    v_entity_id UUID,
+    v_entity_type VARCHAR(32)
+    )
+RETURNS SETOF step STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+    SELECT s.*
+    FROM step_subject_entity sse
+    INNER JOIN step s
+    ON sse.step_id = s.step_id
+    WHERE sse.entity_id = v_entity_id
+        AND sse.entity_type = v_entity_type
+        AND s.status = v_status;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
+

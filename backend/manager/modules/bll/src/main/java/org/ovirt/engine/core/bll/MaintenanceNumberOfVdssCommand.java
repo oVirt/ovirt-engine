@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -35,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -269,6 +271,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                         } else if (vds.getSpmStatus() == VdsSpmStatus.SPM && vds.getStatus() == VDSStatus.Up &&
                                 asyncTaskDao.getAsyncTaskIdsByStoragePoolId(vds.getStoragePoolId()).size() > 0) {
                             result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
+                        } else if (!validateNoRunningJobs(vds)) {
+                            result = false;
                         } else if (!clusters.get(vds.getClusterId()).isInUpgradeMode()) {
                             result = handlePositiveEnforcingAffinityGroup(vdsId, vms);
                         }
@@ -343,6 +347,21 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         return result;
     }
 
+
+    private boolean validateNoRunningJobs(VDS vds) {
+        List<Step> steps =
+                stepDao.getStartedStepsByStepSubjectEntity(new SubjectEntity(VdcObjectType.EXECUTION_HOST,
+                        vds.getId()));
+        if (!steps.isEmpty()) {
+            List<String> replacements = new ArrayList<>(2);
+            replacements.add(ReplacementUtils.createSetVariableString("host", vds.getName()));
+            replacements.addAll(ReplacementUtils.replaceWith("jobs",
+                    steps.stream().map(s -> s.getDescription()).collect(Collectors.toList())));
+            return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_HOST_WITH_RUNNING_OPERATIONS, replacements);
+        }
+
+        return true;
+    }
     /*
      * Validates gluster specific properties before moving the host to maintenance. Following things will be checked as
      * part of this check 1. Ensure gluster quorum can be met for all the volumes 2. Ensure there is no unsynced entry

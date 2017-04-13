@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
@@ -121,4 +122,12 @@ public class StepDaoImpl extends DefaultGenericDao<Step, Guid> implements StepDa
         return getCallsHandler().executeReadList("GetExternalIdsFromSteps", createGuidMapper(), parameterSource);
     }
 
+    @Override
+    public List<Step> getStartedStepsByStepSubjectEntity(SubjectEntity subjectEntity) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource().addValue("entity_type", subjectEntity.getEntityType().name())
+                        .addValue("entity_id", subjectEntity.getEntityId())
+                        .addValue("status", JobExecutionStatus.STARTED.name());
+        return getCallsHandler().executeReadList("GetStepsForEntityByStatus", createEntityRowMapper(), parameterSource);
+    }
 }

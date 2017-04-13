@@ -2107,10 +2107,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * @see {@link #addValidationMessage(String)}
      */
     protected final boolean failValidation(EngineMessage message, String ... variableReplacements) {
+        return failValidation(message, Arrays.asList(variableReplacements));
+    }
+
+    protected final boolean failValidation(EngineMessage message, Collection<String> variableReplacements) {
         return failValidation(Collections.singletonList(message), variableReplacements);
     }
 
     protected final boolean failValidation(List<EngineMessage> messages, String ... variableReplacements) {
+        return failValidation(messages, Arrays.asList(variableReplacements));
+    }
+
+    protected final boolean failValidation(List<EngineMessage> messages, Collection<String> variableReplacements) {
         addValidationMessages(messages);
         for (String variableReplacement : variableReplacements) {
             addValidationMessage(variableReplacement);
