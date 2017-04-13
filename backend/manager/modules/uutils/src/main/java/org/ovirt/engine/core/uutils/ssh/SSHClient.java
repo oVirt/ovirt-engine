@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.DigestOutputStream;
@@ -29,7 +28,6 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
-import org.apache.sshd.client.ServerKeyVerifier;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
 import org.slf4j.Logger;
@@ -286,16 +284,10 @@ public class SSHClient implements Closeable {
             client = createSshClient();
 
             client.setServerKeyVerifier(
-                    new ServerKeyVerifier() {
-                        @Override
-                        public boolean verifyServerKey(
-                                ClientSession sshClientSession,
-                                SocketAddress remoteAddress,
-                                PublicKey serverKey) {
-                            hostKey = serverKey;
-                            return true;
-                        }
-                    });
+                (sshClientSession, remoteAddress, serverKey) -> {
+                    hostKey = serverKey;
+                    return true;
+                });
 
             client.start();
 

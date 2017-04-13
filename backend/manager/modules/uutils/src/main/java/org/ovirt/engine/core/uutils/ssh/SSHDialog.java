@@ -302,14 +302,11 @@ public class SSHDialog implements Closeable {
                 stdinList.add(pinStdin);
 
                 sink.setControl(
-                        new Control() {
-                            @Override
-                            public void close() throws IOException {
-                                if (client != null) {
-                                    client.close();
-                                }
-                            }
-                        });
+                    () -> {
+                        if (client != null) {
+                            client.close();
+                        }
+                    });
                 sink.setStreams(pinStdout, poutStdin);
                 sink.start();
 

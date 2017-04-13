@@ -3,7 +3,6 @@ package org.ovirt.engine.core.uutils.config;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -86,14 +85,7 @@ public class ShellLikeConfd {
 
             // Locate the override values directory and add the .conf files inside
             // to the list, sorted alphabetically:
-            File[] varsFiles = new File(varsPath + ".d").listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(File parent, String name) {
-                        return name.endsWith(".conf");
-                    }
-                }
-            );
+            File[] varsFiles = new File(varsPath + ".d").listFiles((parent, name) -> name.endsWith(".conf"));
             if (varsFiles != null) {
                 Arrays.sort(varsFiles, Comparator.comparing(File::getName));
                 for (File file : varsFiles) {
