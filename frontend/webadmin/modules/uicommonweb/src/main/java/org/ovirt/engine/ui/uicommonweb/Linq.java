@@ -1,8 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,15 +33,11 @@ import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
@@ -123,38 +117,6 @@ public final class Linq {
         }
 
         return where(items, EntityModel::getIsSelected);
-    }
-
-    public static DiskModel diskToModel(Disk disk) {
-        DiskModel diskModel = new DiskModel();
-        diskModel.getAlias().setEntity(disk.getDiskAlias());
-
-        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-            DiskImage diskImage = (DiskImage) disk;
-            EntityModel<Integer> sizeEntity = new EntityModel<>();
-            sizeEntity.setEntity((int) diskImage.getSizeInGigabytes());
-            diskModel.setSize(sizeEntity);
-            ListModel<VolumeType> volumeList = new ListModel<>();
-            volumeList.setItems(diskImage.getVolumeType() == VolumeType.Preallocated ?
-                    new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
-                    : AsyncDataProvider.getInstance().getVolumeTypeList());
-            volumeList.setSelectedItem(diskImage.getVolumeType());
-            diskModel.setVolumeType(volumeList);
-        }
-
-        diskModel.setDisk(disk);
-
-        return diskModel;
-    }
-
-    public static ArrayList<DiskModel> disksToDiskModelList(List<Disk> disks) {
-        ArrayList<DiskModel> diskModels = new ArrayList<>();
-
-        for (Disk disk : disks) {
-            diskModels.add(diskToModel(disk));
-        }
-
-        return diskModels;
     }
 
     public static Set<String> getDiskAliases(List<? extends Disk> disks) {

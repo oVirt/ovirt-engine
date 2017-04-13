@@ -110,7 +110,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     protected void onInitAllDisks(List<Disk> disks) {
         for (Disk disk : disks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                allDisks.add(Linq.diskToModel(disk));
+                allDisks.add(DiskModel.diskToModel(disk));
             }
         }
     }

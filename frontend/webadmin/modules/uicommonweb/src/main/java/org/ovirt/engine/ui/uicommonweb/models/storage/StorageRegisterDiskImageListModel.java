@@ -16,11 +16,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class StorageRegisterDiskImageListModel extends SearchableListModel<StorageDomain, Disk> {
@@ -125,7 +125,7 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
             @Override
             public void onSuccess(StoragePool dataCenter) {
                 registerDiskModel.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
-                registerDiskModel.setDisks(Linq.disksToDiskModelList(getSelectedItems()));
+                registerDiskModel.setDisks(DiskModel.disksToDiskModelList(getSelectedItems()));
                 registerDiskModel.updateStorageDomain(getEntity());
                 registerDiskModel.stopProgress();
             }

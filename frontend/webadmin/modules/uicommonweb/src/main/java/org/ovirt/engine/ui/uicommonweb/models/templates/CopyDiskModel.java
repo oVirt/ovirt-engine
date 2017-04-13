@@ -15,7 +15,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
@@ -50,7 +49,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
     protected void onInitDisks() {
         ArrayList<DiskModel> disks = new ArrayList<>();
         for (DiskImage disk : getDiskImages()) {
-            disks.add(Linq.diskToModel(disk));
+            disks.add(DiskModel.diskToModel(disk));
         }
         setDisks(disks);
         initStorageDomains();

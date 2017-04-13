@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -151,7 +150,7 @@ public class AttachDiskModel extends NewDiskModel {
         public void onSuccess(List<Disk> returnValue) {
             List<Disk> disks = adjustReturnValue(returnValue);
             Collections.sort(disks, new DiskByDiskAliasComparator());
-            final ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
+            final ArrayList<DiskModel> diskModels = DiskModel.disksToDiskModelList(disks);
 
             AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getVmOsId(), getVm().getClusterCompatibilityVersion(), new AsyncQuery<>(new AsyncCallback<List<DiskInterface>>() {
                 @Override

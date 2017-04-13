@@ -1,11 +1,17 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -199,5 +205,37 @@ public class DiskModel extends Model {
         setVolumeFormat(new ListModel<VolumeFormat>());
         getVolumeFormat().setItems(AsyncDataProvider.getInstance().getVolumeFormats());
         getVolumeFormat().setIsAvailable(false);
+    }
+
+    public static DiskModel diskToModel(Disk disk) {
+        DiskModel diskModel = new DiskModel();
+        diskModel.getAlias().setEntity(disk.getDiskAlias());
+
+        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            DiskImage diskImage = (DiskImage) disk;
+            EntityModel<Integer> sizeEntity = new EntityModel<>();
+            sizeEntity.setEntity((int) diskImage.getSizeInGigabytes());
+            diskModel.setSize(sizeEntity);
+            ListModel<VolumeType> volumeList = new ListModel<>();
+            volumeList.setItems(diskImage.getVolumeType() == VolumeType.Preallocated ?
+                    new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
+                    : AsyncDataProvider.getInstance().getVolumeTypeList());
+            volumeList.setSelectedItem(diskImage.getVolumeType());
+            diskModel.setVolumeType(volumeList);
+        }
+
+        diskModel.setDisk(disk);
+
+        return diskModel;
+    }
+
+    public static ArrayList<DiskModel> disksToDiskModelList(List<Disk> disks) {
+        ArrayList<DiskModel> diskModels = new ArrayList<>();
+
+        for (Disk disk : disks) {
+            diskModels.add(diskToModel(disk));
+        }
+
+        return diskModels;
     }
 }

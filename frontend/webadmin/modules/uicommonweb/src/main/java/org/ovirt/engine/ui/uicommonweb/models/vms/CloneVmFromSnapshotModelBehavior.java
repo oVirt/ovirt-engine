@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 
 @SuppressWarnings("unused")
 public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior {
@@ -45,7 +44,7 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior {
     public void initDisks() {
         ArrayList<DiskModel> disks = new ArrayList<>();
         for (DiskImage diskImage : vm.getDiskList()) {
-            disks.add(Linq.diskToModel(diskImage));
+            disks.add(DiskModel.diskToModel(diskImage));
         }
         getModel().setDisks(disks);
         getModel().getDisksAllocationModel().setIsVolumeTypeAvailable(true);

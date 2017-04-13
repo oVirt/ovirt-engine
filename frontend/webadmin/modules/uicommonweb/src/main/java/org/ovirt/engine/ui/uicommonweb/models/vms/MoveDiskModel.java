@@ -23,7 +23,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
@@ -65,7 +64,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
         List<VdcQueryParametersBase> params = new ArrayList<>();
 
         for (DiskImage disk : getDiskImages()) {
-            disks.add(Linq.diskToModel(disk));
+            disks.add(DiskModel.diskToModel(disk));
             queries.add(VdcQueryType.GetVmsByDiskGuid);
             params.add(new IdQueryParameters(disk.getId()));
         }
