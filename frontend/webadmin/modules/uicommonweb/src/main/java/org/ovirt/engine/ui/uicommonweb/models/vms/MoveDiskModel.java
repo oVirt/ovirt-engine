@@ -21,18 +21,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class MoveDiskModel extends MoveOrCopyDiskModel {
@@ -48,12 +40,9 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
     public void init(ArrayList<DiskImage> diskImages) {
         setDiskImages(diskImages);
 
-        AsyncDataProvider.getInstance().getDiskList(new AsyncQuery<>(new AsyncCallback<List<DiskImage>>() {
-            @Override
-            public void onSuccess(List diskImages) {
-                onInitAllDisks(diskImages);
-                onInitDisks();
-            }
+        AsyncDataProvider.getInstance().getDiskList(new AsyncQuery<>(list -> {
+            onInitAllDisks(list);
+            onInitDisks();
         }));
     }
 
@@ -69,18 +58,15 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
             params.add(new IdQueryParameters(disk.getId()));
         }
 
-        Frontend.getInstance().runMultipleQueries(queries, params, new IFrontendMultipleQueryAsyncCallback() {
-            @Override
-            public void executed(FrontendMultipleQueryAsyncResult result) {
-                for (int i = 0; i < result.getReturnValues().size(); i++) {
-                    Map<Boolean, List<VM>> resultValue = result.getReturnValues().get(i).getReturnValue();
-                    disks.get(i).setPluggedToRunningVm(!isAllVmsDown(resultValue));
-                }
-
-                setDisks(disks);
-                updateMoveWarning(disks);
-                initStorageDomains();
+        Frontend.getInstance().runMultipleQueries(queries, params, result -> {
+            for (int i = 0; i < result.getReturnValues().size(); i++) {
+                Map<Boolean, List<VM>> resultValue = result.getReturnValues().get(i).getReturnValue();
+                disks.get(i).setPluggedToRunningVm(!isAllVmsDown(resultValue));
             }
+
+            setDisks(disks);
+            updateMoveWarning(disks);
+            initStorageDomains();
         });
     }
 
@@ -103,12 +89,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
             return;
         }
 
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-            @Override
-            public void onSuccess(List<StorageDomain> storageDomains) {
-                onInitStorageDomains(storageDomains);
-            }
-        }), ((DiskImage) disk).getStoragePoolId());
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(storageDomains -> onInitStorageDomains(storageDomains)), ((DiskImage) disk).getStoragePoolId());
     }
 
     @Override
@@ -131,12 +112,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
                 continue;
             }
 
-            diskModel.getStorageDomain().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    updateProblematicDisk(diskModel);
-                }
-            });
+            diskModel.getStorageDomain().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateProblematicDisk(diskModel));
             updateProblematicDisk(diskModel);
         }
     }
@@ -209,12 +185,9 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
 
         MoveDisksParameters moveDisksParameters = new MoveDisksParameters((List) parameters);
         Frontend.getInstance().runAction(getActionType(), moveDisksParameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        MoveDiskModel localModel = (MoveDiskModel) result.getState();
-                        localModel.cancel();
-                    }
+                result -> {
+                    MoveDiskModel localModel = (MoveDiskModel) result.getState();
+                    localModel.cancel();
                 }, this);
     }
 

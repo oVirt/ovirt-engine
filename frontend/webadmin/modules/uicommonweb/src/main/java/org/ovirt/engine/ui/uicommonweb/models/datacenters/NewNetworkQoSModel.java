@@ -10,8 +10,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class NewNetworkQoSModel extends NetworkQoSModel {
     public NewNetworkQoSModel(Model sourceModel, StoragePool dataCenter) {
@@ -27,17 +25,14 @@ public class NewNetworkQoSModel extends NetworkQoSModel {
         // New network QoS
         final QosParametersBase<NetworkQoS> parameters = new QosParametersBase<>();
         parameters.setQos(networkQoS);
-        Frontend.getInstance().runAction(VdcActionType.AddNetworkQoS, parameters, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result1) {
-                VdcReturnValueBase retVal = result1.getReturnValue();
-                boolean succeeded = false;
-                if (retVal != null && retVal.getSucceeded()) {
-                    succeeded = true;
-                    networkQoS.setId((Guid) retVal.getActionReturnValue());
-                }
-                postSaveAction(succeeded);
+        Frontend.getInstance().runAction(VdcActionType.AddNetworkQoS, parameters, result -> {
+            VdcReturnValueBase retVal = result.getReturnValue();
+            boolean succeeded = false;
+            if (retVal != null && retVal.getSucceeded()) {
+                succeeded = true;
+                networkQoS.setId((Guid) retVal.getActionReturnValue());
             }
+            postSaveAction(succeeded);
         });
     }
 }

@@ -9,8 +9,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class EditNetworkQoSModel extends NetworkQoSModel {
 
@@ -27,16 +25,13 @@ public class EditNetworkQoSModel extends NetworkQoSModel {
     public void executeSave() {
         QosParametersBase<NetworkQoS> parameters = new QosParametersBase<>();
         parameters.setQos(networkQoS);
-        Frontend.getInstance().runAction(VdcActionType.UpdateNetworkQoS, parameters, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result1) {
-                VdcReturnValueBase retVal = result1.getReturnValue();
-                boolean succeeded = false;
-                if (retVal != null && retVal.getSucceeded()) {
-                    succeeded = true;
-                }
-                postSaveAction(succeeded);
+        Frontend.getInstance().runAction(VdcActionType.UpdateNetworkQoS, parameters, result -> {
+            VdcReturnValueBase retVal = result.getReturnValue();
+            boolean succeeded = false;
+            if (retVal != null && retVal.getSucceeded()) {
+                succeeded = true;
             }
+            postSaveAction(succeeded);
         });
     }
 }

@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,17 +20,14 @@ public class IconVmBaseToUnitBuilder implements Builder<VmBase, UnitVmModel> {
         final Guid iconId = source.getLargeIconId() != null
                 ? source.getLargeIconId()
                 : defaultIconId;
-        IconCache.getInstance().getOrFetchIcons(Arrays.asList(iconId, defaultIconId), new IconCache.IconsCallback() {
-            @Override
-            public void onSuccess(Map<Guid, String> idToIconMap) {
-                destination.getIcon().setEntity(new IconWithOsDefault(
-                        idToIconMap.get(iconId),
-                        idToIconMap.get(defaultIconId),
-                        source.getSmallIconId(),
-                        ValidationResult.ok()
-                ));
-                rest.head().build(source, destination, rest.tail());
-            }
+        IconCache.getInstance().getOrFetchIcons(Arrays.asList(iconId, defaultIconId), idToIconMap -> {
+            destination.getIcon().setEntity(new IconWithOsDefault(
+                    idToIconMap.get(iconId),
+                    idToIconMap.get(defaultIconId),
+                    source.getSmallIconId(),
+                    ValidationResult.ok()
+            ));
+            rest.head().build(source, destination, rest.tail());
         });
     }
 }

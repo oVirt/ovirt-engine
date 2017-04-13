@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -58,14 +57,11 @@ public class VmAppListModel<E> extends SearchableListModel<E, String> {
             if (pool != null) {
                 Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                         new IdQueryParameters(pool.getVmPoolId()),
-                        new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue result) {
-                                if (result != null) {
-                                    VM vm = result.getReturnValue();
-                                    if (vm != null) {
-                                        updateAppListFromVm(vm);
-                                    }
+                        new AsyncQuery<VdcQueryReturnValue>(result -> {
+                            if (result != null) {
+                                VM vm = result.getReturnValue();
+                                if (vm != null) {
+                                    updateAppListFromVm(vm);
                                 }
                             }
                         }));

@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -23,8 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS, StorageDevice> {
@@ -94,13 +91,9 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
             return;
         }
 
-        AsyncDataProvider.getInstance().getStorageDevices(new AsyncQuery<>(new AsyncCallback<List<StorageDevice>>() {
-
-            @Override
-            public void onSuccess(List<StorageDevice> devices) {
-                Collections.sort(devices, Linq.StorageDeviceComparer);
-                setItems(devices);
-            }
+        AsyncDataProvider.getInstance().getStorageDevices(new AsyncQuery<>(devices -> {
+            Collections.sort(devices, Linq.StorageDeviceComparer);
+            setItems(devices);
         }), getEntity().getId());
 
     }
@@ -131,13 +124,9 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
         lvModel.getStorageDevices().setItems(selectedDevices);
         lvModel.setSelectedDevices(selectedDevices);
 
-        AsyncQuery<String> asyncQueryForDefaultMountPoint = lvModel.asyncQuery(new AsyncCallback<String>() {
-
-            @Override
-            public void onSuccess(String defaultMountPoint) {
-                lvModel.stopProgress();
-                lvModel.getDefaultMountFolder().setEntity(defaultMountPoint);
-            }
+        AsyncQuery<String> asyncQueryForDefaultMountPoint = lvModel.asyncQuery(defaultMountPoint -> {
+            lvModel.stopProgress();
+            lvModel.getDefaultMountFolder().setEntity(defaultMountPoint);
         });
         AsyncDataProvider.getInstance()
                 .getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterDefaultBrickMountPoint,
@@ -230,12 +219,8 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
                         lvModel.getStripeSize().getEntity(),
                         selectedDevices);
 
-        Frontend.getInstance().runAction(VdcActionType.CreateBrick, parameters, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                postCreateBrick(result.getReturnValue());
-            }
-        }, this);
+        Frontend.getInstance().runAction(VdcActionType.CreateBrick, parameters,
+                result -> postCreateBrick(result.getReturnValue()), this);
 
     }
 

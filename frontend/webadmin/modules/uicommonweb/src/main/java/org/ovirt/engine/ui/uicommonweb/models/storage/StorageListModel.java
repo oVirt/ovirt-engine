@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -58,9 +57,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ITaskTarget;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -486,40 +483,34 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         String name = model.getName().getEntity();
         model.getName().setIsValid(true);
 
-        AsyncDataProvider.getInstance().isStorageDomainNameUnique(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean isNameUnique) {
+        AsyncDataProvider.getInstance().isStorageDomainNameUnique(new AsyncQuery<>(isNameUnique -> {
 
-                final StorageModel storageModel = (StorageModel) getWindow();
+            final StorageModel storageModel = (StorageModel) getWindow();
 
-                String name1 = storageModel.getName().getEntity();
-                String tempVar = storageModel.getOriginalName();
-                String originalName = (tempVar != null) ? tempVar : ""; //$NON-NLS-1$
+            String name1 = storageModel.getName().getEntity();
+            String tempVar = storageModel.getOriginalName();
+            String originalName = (tempVar != null) ? tempVar : ""; //$NON-NLS-1$
 
-                if (!isNameUnique && name1.compareToIgnoreCase(originalName) != 0) {
-                    storageModel.getName()
-                        .getInvalidityReasons()
-                        .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
-                    storageModel.getName().setIsValid(false);
+            if (!isNameUnique && name1.compareToIgnoreCase(originalName) != 0) {
+                storageModel.getName()
+                    .getInvalidityReasons()
+                    .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
+                storageModel.getName().setIsValid(false);
+                postStorageNameValidation();
+            } else {
+
+                AsyncDataProvider.getInstance().getStorageDomainMaxNameLength(new AsyncQuery<>(nameMaxLength -> {
+                    RegexValidation tempVar2 = new RegexValidation();
+                    tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$"); //$NON-NLS-1$ //$NON-NLS-2$
+                    tempVar2.setMessage(ConstantsManager.getInstance().getMessages()
+                                                .nameCanContainOnlyMsg(nameMaxLength));
+                    storageModel.getName().validateEntity(new IValidation[] {
+                            new NotEmptyValidation(), tempVar2});
                     postStorageNameValidation();
-                } else {
 
-                    AsyncDataProvider.getInstance().getStorageDomainMaxNameLength(new AsyncQuery<>(new AsyncCallback<Integer>() {
-                        @Override
-                        public void onSuccess(Integer nameMaxLength) {
-                            RegexValidation tempVar2 = new RegexValidation();
-                            tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$"); //$NON-NLS-1$ //$NON-NLS-2$
-                            tempVar2.setMessage(ConstantsManager.getInstance().getMessages()
-                                                        .nameCanContainOnlyMsg(nameMaxLength));
-                            storageModel.getName().validateEntity(new IValidation[] {
-                                    new NotEmptyValidation(), tempVar2});
-                            postStorageNameValidation();
-
-                        }
-                    }));
-                }
-
+                }));
             }
+
         }), name);
     }
 
@@ -553,28 +544,25 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         StorageDomain storage = getSelectedItem();
         boolean localFsOnly = storage.getStorageType() == StorageType.LOCALFS;
 
-        AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
-            @Override
-            public void onSuccess(List<VDS> hosts) {
+        AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery<>(hosts -> {
 
-                model.getHostList().setItems(hosts);
-                model.getHostList().setSelectedItem(Linq.firstOrNull(hosts));
+            model.getHostList().setItems(hosts);
+            model.getHostList().setSelectedItem(Linq.firstOrNull(hosts));
 
-                if (hosts.isEmpty()) {
-                    UICommand tempVar = createCancelCommand("Cancel"); //$NON-NLS-1$
-                    tempVar.setIsDefault(true);
-                    model.getCommands().add(tempVar);
-                } else {
+            if (hosts.isEmpty()) {
+                UICommand tempVar = createCancelCommand("Cancel"); //$NON-NLS-1$
+                tempVar.setIsDefault(true);
+                model.getCommands().add(tempVar);
+            } else {
 
-                    UICommand command;
-                    command = UICommand.createDefaultOkUiCommand("OnRemove", StorageListModel.this); //$NON-NLS-1$
-                    model.getCommands().add(command);
+                UICommand command;
+                command = UICommand.createDefaultOkUiCommand("OnRemove", StorageListModel.this); //$NON-NLS-1$
+                model.getCommands().add(command);
 
-                    command = createCancelCommand("Cancel"); //$NON-NLS-1$
-                    model.getCommands().add(command);
-                }
-
+                command = createCancelCommand("Cancel"); //$NON-NLS-1$
+                model.getCommands().add(command);
             }
+
         }), null, localFsOnly);
     }
 
@@ -649,15 +637,12 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ForceRemoveStorageDomain,
                 new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new StorageDomainParametersBase(storageDomain.getId())})),
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 },
                 model);
     }
@@ -745,18 +730,15 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                                 sanStorageModelBase.getType(),
                                 true,
                                 unkownStatusLuns),
-                        new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue response) {
-                                if (response.getSucceeded()) {
-                                    List<LUNs> checkedLuns = (ArrayList<LUNs>) response.getReturnValue();
-                                    postGetLunsMessages(sanStorageModelBase.getUsedLunsMessages(checkedLuns));
-                                } else {
-                                    sanStorageModelBase.setGetLUNsFailure(
-                                            ConstantsManager.getInstance()
-                                                    .getConstants()
-                                                    .couldNotRetrieveLUNsLunsFailure());
-                                }
+                        new AsyncQuery<VdcQueryReturnValue>(response -> {
+                            if (response.getSucceeded()) {
+                                List<LUNs> checkedLuns = (ArrayList<LUNs>) response.getReturnValue();
+                                postGetLunsMessages(sanStorageModelBase.getUsedLunsMessages(checkedLuns));
+                            } else {
+                                sanStorageModelBase.setGetLUNsFailure(
+                                        ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .couldNotRetrieveLUNsLunsFailure());
                             }
                         }, true));
     }
@@ -816,14 +798,11 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         if (fileConnection != null) {
             Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(fileConnection, hostId, false),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
+                    result -> {
                         StorageListModel storageListModel = (StorageListModel) result.getState();
                         cleanConnection(storageListModel.fileConnection, storageListModel.hostId);
                         storageListModel.fileConnection = null;
-                    }
-                },
+                    },
                 this);
         }
     }
@@ -1066,16 +1045,13 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
         if (isNew) {
-            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-                @Override
-                public void onSuccess(List<StorageDomain> storages) {
+            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(storages -> {
 
-                    if (storages != null && storages.size() > 0) {
-                        posixModel.getPath().setIsValid(false);
-                        handleDomainAlreadyExists(storages);
-                    } else {
-                        saveNewPosixStorage();
-                    }
+                if (storages != null && storages.size() > 0) {
+                    posixModel.getPath().setIsValid(false);
+                    handleDomainAlreadyExists(storages);
+                } else {
+                    saveNewPosixStorage();
                 }
             }), null, path);
         } else {
@@ -1088,13 +1064,11 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     }
 
     private void updateStorageDomain() {
-        Frontend.getInstance().runAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain), new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                StorageListModel storageListModel = (StorageListModel) result.getState();
-                storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
-            }
-        }, this);
+        Frontend.getInstance().runAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain),
+                result -> {
+                    StorageListModel storageListModel = (StorageListModel) result.getState();
+                    storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
+                }, this);
     }
 
     public void saveNewPosixStorage() {
@@ -1134,45 +1108,36 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         parameter.setStoragePoolId(dataCenter.getId());
         parameters.add(parameter);
 
-        IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
+        IFrontendActionAsyncCallback callback1 = result -> {
 
-                StorageListModel storageListModel = (StorageListModel) result.getState();
-                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
-                storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+            storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
+            storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
 
-            }
         };
 
-        IFrontendActionAsyncCallback callback2 = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
+        IFrontendActionAsyncCallback callback2 = result -> {
 
-                StorageListModel storageListModel = (StorageListModel) result.getState();
-                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageId = vdcReturnValueBase.getActionReturnValue();
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+            storageListModel.storageId = vdcReturnValueBase.getActionReturnValue();
 
-                // Attach storage to data center as necessary.
-                StorageModel storageModel = (StorageModel) storageListModel.getWindow();
-                StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
-                if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
-                }
-
-                storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
+            // Attach storage to data center as necessary.
+            StorageModel storageModel = (StorageModel) storageListModel.getWindow();
+            StoragePool dataCenter1 = storageModel.getDataCenter().getSelectedItem();
+            if (!dataCenter1.getId().equals(StorageModel.UnassignedDataCenterId)) {
+                storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter1.getId(), storageModel.getActivateDomain().getEntity());
             }
+
+            storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
         };
 
-        IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
+        IFrontendActionAsyncCallback failureCallback = result -> {
 
-                StorageListModel storageListModel = (StorageListModel) result.getState();
-                storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
-                storageListModel.onFinish(storageListModel.context, false, storageListModel.storageModel);
-            }
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+            storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
+            storageListModel.onFinish(storageListModel.context, false, storageListModel.storageModel);
         };
 
         Frontend.getInstance().runMultipleActions(actionTypes,
@@ -1200,16 +1165,13 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
         if (isNew) {
-            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-                @Override
-                public void onSuccess(List<StorageDomain> storages) {
+            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(storages -> {
 
-                    if (storages != null && storages.size() > 0) {
-                        nfsModel.getPath().setIsValid(false);
-                        handleDomainAlreadyExists(storages);
-                    } else {
-                        saveNewNfsStorage();
-                    }
+                if (storages != null && storages.size() > 0) {
+                    nfsModel.getPath().setIsValid(false);
+                    handleDomainAlreadyExists(storages);
+                } else {
+                    saveNewNfsStorage();
                 }
             }), null, path);
         }
@@ -1247,13 +1209,10 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         StorageServerConnectionParametersBase parameters =
                 new StorageServerConnectionParametersBase(connection, hostId, false);
         Frontend.getInstance().runAction(VdcActionType.UpdateStorageServerConnection, parameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        StorageListModel storageListModel = (StorageListModel) result.getState();
-                        storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
+                result -> {
+                    StorageListModel storageListModel = (StorageListModel) result.getState();
+                    storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
 
-                    }
                 }, this);
     }
 
@@ -1313,53 +1272,41 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         parameters.add(tempVar2);
         parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
 
-        IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
+        IFrontendActionAsyncCallback callback1 = result -> {
 
-                StorageListModel storageListModel = (StorageListModel) result.getState();
-                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
-                storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+            storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
+            storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
 
-            }
         };
-        IFrontendActionAsyncCallback callback2 = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
+        IFrontendActionAsyncCallback callback2 = result -> {
 
-                StorageListModel storageListModel = (StorageListModel) result.getState();
-                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageId = vdcReturnValueBase.getActionReturnValue();
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+            storageListModel.storageId = vdcReturnValueBase.getActionReturnValue();
 
-            }
         };
-        IFrontendActionAsyncCallback callback3 = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
+        IFrontendActionAsyncCallback callback3 = result -> {
 
-                StorageListModel storageListModel = (StorageListModel) result.getState();
-                StorageModel storageModel = (StorageModel) storageListModel.getWindow();
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+            StorageModel storageModel = (StorageModel) storageListModel.getWindow();
 
-                // Attach storage to data center as necessary.
-                StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
-                if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
-                }
-
-                storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
-
+            // Attach storage to data center as necessary.
+            StoragePool dataCenter1 = storageModel.getDataCenter().getSelectedItem();
+            if (!dataCenter1.getId().equals(StorageModel.UnassignedDataCenterId)) {
+                storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter1.getId(), storageModel.getActivateDomain().getEntity());
             }
+
+            storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
+
         };
-        IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
+        IFrontendActionAsyncCallback failureCallback = result -> {
 
-                StorageListModel storageListModel = (StorageListModel) result.getState();
-                storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
-                storageListModel.onFinish(storageListModel.context, false, storageListModel.storageModel);
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+            storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
+            storageListModel.onFinish(storageListModel.context, false, storageListModel.storageModel);
 
-            }
         };
         Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
@@ -1384,9 +1331,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         params.setLunIds(lunIds);
         params.setForce(force);
         Frontend.getInstance().runAction(VdcActionType.AddSANStorageDomain, params,
-            new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
+                result -> {
                         StorageListModel storageListModel = (StorageListModel) result.getState();
                         StorageModel storageModel = (StorageModel) storageListModel.getWindow();
                         storageListModel.storageModel = storageModel.getCurrentStorageItem();
@@ -1403,8 +1348,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                         }
 
                     storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
-                }
-            }, this);
+                }, this);
     }
 
     private void saveLocalStorage(TaskContext context) {
@@ -1425,17 +1369,14 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         saveBaseStorageProperties(model);
 
         if (isNew) {
-            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-                @Override
-                public void onSuccess(List<StorageDomain> storages) {
+            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(storages -> {
 
-                    if (storages != null && storages.size() > 0) {
-                        handleDomainAlreadyExists(storages);
-                    } else {
-                        saveNewLocalStorage();
-                    }
-
+                if (storages != null && storages.size() > 0) {
+                    handleDomainAlreadyExists(storages);
+                } else {
+                    saveNewLocalStorage();
                 }
+
             }), host.getStoragePoolId(), path);
         }
         else {
@@ -1479,44 +1420,35 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         tempVar2.setVdsId(host.getId());
         parameters.add(tempVar2);
 
-        IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
+        IFrontendActionAsyncCallback callback1 = result -> {
 
-                StorageListModel storageListModel = (StorageListModel) result.getState();
-                storageListModel.removeConnection = true;
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+            storageListModel.removeConnection = true;
 
-                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
-                storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
+            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+            storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
+            storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
 
-            }
         };
-        IFrontendActionAsyncCallback callback2 = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
+        IFrontendActionAsyncCallback callback2 = result -> {
 
-                StorageListModel storageListModel = (StorageListModel) result.getState();
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+            storageListModel.removeConnection = false;
+
+            storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
+
+        };
+        IFrontendActionAsyncCallback failureCallback = result -> {
+
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+
+            if (storageListModel.removeConnection) {
+                storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
                 storageListModel.removeConnection = false;
-
-                storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
-
             }
-        };
-        IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
 
-                StorageListModel storageListModel = (StorageListModel) result.getState();
+            storageListModel.onFinish(storageListModel.context, false, storageListModel.storageModel);
 
-                if (storageListModel.removeConnection) {
-                    storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
-                    storageListModel.removeConnection = false;
-                }
-
-                storageListModel.onFinish(storageListModel.context, false, storageListModel.storageModel);
-
-            }
         };
         Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
@@ -1650,27 +1582,24 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             parameters.setVdsId(hostId);
             parametersList.add(parameters);
 
-            callbacks.add(new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-                    VdcReturnValueBase returnValue = result.getReturnValue();
-                    boolean success = returnValue != null && returnValue.getSucceeded();
+            callbacks.add(result -> {
+                VdcReturnValueBase returnValue = result.getReturnValue();
+                boolean success = returnValue != null && returnValue.getSucceeded();
 
-                    if (success) {
-                        StorageModel model = (StorageModel) getWindow();
-                        StoragePool dataCenter = model.getDataCenter().getSelectedItem();
-                        if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                            attachStorageToDataCenter(storageDomain.getId(), dataCenter.getId(), model.getActivateDomain().getEntity());
-                        }
+                if (success) {
+                    StorageModel model = (StorageModel) getWindow();
+                    StoragePool dataCenter = model.getDataCenter().getSelectedItem();
+                    if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
+                        attachStorageToDataCenter(storageDomain.getId(), dataCenter.getId(), model.getActivateDomain().getEntity());
+                    }
 
-                        boolean isLastDomain = storageDomain == storageDomains.get(storageDomains.size() - 1);
-                        if (isLastDomain) {
-                            onFinish(context, true, storageModel);
-                        }
+                    boolean isLastDomain = storageDomain == storageDomains.get(storageDomains.size() - 1);
+                    if (isLastDomain) {
+                        onFinish(context, true, storageModel);
                     }
-                    else {
-                        onFinish(context, false, storageModel);
-                    }
+                }
+                else {
+                    onFinish(context, false, storageModel);
                 }
             });
         }
@@ -1683,9 +1612,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             // Clean nfs connection
             Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(fileConnection, hostId, false),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
+                    result -> {
 
                         StorageListModel storageListModel = (StorageListModel) result.getState();
                         VdcReturnValueBase returnVal = result.getReturnValue();
@@ -1695,8 +1622,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                         }
                         storageListModel.importFileStoragePostInit();
 
-                    }
-                },
+                    },
                 this);
         }
         else {
@@ -1712,46 +1638,41 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         }
 
         // Check storage domain existence
-        AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-            @Override
-            public void onSuccess(List<StorageDomain> storages) {
+        AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(storages -> {
 
-                if (storages != null && storages.size() > 0) {
+            if (storages != null && storages.size() > 0) {
 
-                    String storageName = storages.get(0).getStorageName();
-                    onFinish(context,
-                        false,
-                        storageModel,
-                        ConstantsManager.getInstance().getMessages().importFailedDomainAlreadyExistStorageMsg(storageName));
-                } else {
-                    StorageServerConnections tempVar = new StorageServerConnections();
-                    tempVar.setConnection(path);
-                    tempVar.setStorageType(storageType);
-                    if (storageModel instanceof NfsStorageModel) {
-                        NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
-                        if (isConnectionOverriden()) {
-                            tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
-                            tempVar.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
-                            tempVar.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
-                        }
+                String storageName = storages.get(0).getStorageName();
+                onFinish(context,
+                    false,
+                    storageModel,
+                    ConstantsManager.getInstance().getMessages().importFailedDomainAlreadyExistStorageMsg(storageName));
+            } else {
+                StorageServerConnections tempVar = new StorageServerConnections();
+                tempVar.setConnection(path);
+                tempVar.setStorageType(storageType);
+                if (storageModel instanceof NfsStorageModel) {
+                    NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
+                    if (isConnectionOverriden()) {
+                        tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
+                        tempVar.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
+                        tempVar.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
                     }
-                    if (storageModel instanceof PosixStorageModel) {
-                        PosixStorageModel posixModel = (PosixStorageModel) storageModel;
-                        tempVar.setVfsType(posixModel.getVfsType().getEntity());
-                        tempVar.setMountOptions(posixModel.getMountOptions().getEntity());
-                    }
-                    fileConnection = tempVar;
-                    importFileStorageConnect();
                 }
+                if (storageModel instanceof PosixStorageModel) {
+                    PosixStorageModel posixModel = (PosixStorageModel) storageModel;
+                    tempVar.setVfsType(posixModel.getVfsType().getEntity());
+                    tempVar.setMountOptions(posixModel.getMountOptions().getEntity());
+                }
+                fileConnection = tempVar;
+                importFileStorageConnect();
             }
         }), storagePoolId, path);
     }
 
     public void importFileStorageConnect() {
         Frontend.getInstance().runAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(fileConnection, hostId, false),
-            new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
+                result -> {
                     StorageListModel storageListModel = (StorageListModel) result.getState();
                     VdcReturnValueBase returnVal = result.getReturnValue();
                     boolean success = returnVal != null && returnVal.getSucceeded();
@@ -1771,36 +1692,32 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                                     .getConstants()
                                     .failedToRetrieveExistingStorageDomainInformationMsg());
                     }
-                }
-            },
+                },
             this);
     }
 
     private void getExistingStorageDomainList() {
         AsyncDataProvider.getInstance().getExistingStorageDomainList(new AsyncQuery<>(
-                new AsyncCallback<List<StorageDomain>>() {
-                    @Override
-                    public void onSuccess(List<StorageDomain> domains) {
-                        if (domains != null && !domains.isEmpty()) {
-                            storageDomainsToAdd = domains;
-                            addExistingFileStorageDomain();
-                        }
-                        else {
-                            String errorMessage = domains == null ?
-                                    ConstantsManager.getInstance().getConstants()
-                                            .failedToRetrieveExistingStorageDomainInformationMsg() :
-                                    ConstantsManager.getInstance().getConstants()
-                                            .thereIsNoStorageDomainUnderTheSpecifiedPathMsg();
+                        domains -> {
+                            if (domains != null && !domains.isEmpty()) {
+                                storageDomainsToAdd = domains;
+                                addExistingFileStorageDomain();
+                            }
+                            else {
+                                String errorMessage = domains == null ?
+                                        ConstantsManager.getInstance().getConstants()
+                                                .failedToRetrieveExistingStorageDomainInformationMsg() :
+                                        ConstantsManager.getInstance().getConstants()
+                                                .thereIsNoStorageDomainUnderTheSpecifiedPathMsg();
 
-                            postImportFileStorage(context,
-                                    false,
-                                    storageModel,
-                                    errorMessage);
+                                postImportFileStorage(context,
+                                        false,
+                                        storageModel,
+                                        errorMessage);
 
-                            cleanConnection(fileConnection, hostId);
-                        }
-                    }
-                }),
+                                cleanConnection(fileConnection, hostId);
+                            }
+                        }),
         hostId,
         domainType,
         storageType,
@@ -1815,31 +1732,28 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
         params.setVdsId(hostId);
-        Frontend.getInstance().runAction(VdcActionType.AddExistingFileStorageDomain, params, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
+        Frontend.getInstance().runAction(VdcActionType.AddExistingFileStorageDomain, params, result -> {
 
-                Object[] array = (Object[]) result.getState();
-                StorageListModel storageListModel = (StorageListModel) array[0];
-                StorageDomain sdToAdd1 = (StorageDomain) array[1];
-                VdcReturnValueBase returnVal = result.getReturnValue();
+            Object[] array = (Object[]) result.getState();
+            StorageListModel storageListModel = (StorageListModel) array[0];
+            StorageDomain sdToAdd1 = (StorageDomain) array[1];
+            VdcReturnValueBase returnVal = result.getReturnValue();
 
-                boolean success = returnVal != null && returnVal.getSucceeded();
-                if (success) {
+            boolean success = returnVal != null && returnVal.getSucceeded();
+            if (success) {
 
-                    StorageModel model = (StorageModel) storageListModel.getWindow();
-                    StoragePool dataCenter = model.getDataCenter().getSelectedItem();
-                    if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                        storageListModel.attachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId(), model.getActivateDomain().getEntity());
-                        onFinish(storageListModel.context, true, storageListModel.storageModel, null);
-                    } else {
-                        postImportFileStorage(storageListModel.context, true, storageListModel.storageModel, null);
-                    }
-
+                StorageModel model = (StorageModel) storageListModel.getWindow();
+                StoragePool dataCenter = model.getDataCenter().getSelectedItem();
+                if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
+                    storageListModel.attachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId(), model.getActivateDomain().getEntity());
+                    onFinish(storageListModel.context, true, storageListModel.storageModel, null);
                 } else {
-                    postImportFileStorage(storageListModel.context, false, storageListModel.storageModel, ""); //$NON-NLS-1$
-                    cleanConnection(fileConnection, hostId);
+                    postImportFileStorage(storageListModel.context, true, storageListModel.storageModel, null);
                 }
+
+            } else {
+                postImportFileStorage(storageListModel.context, false, storageListModel.storageModel, ""); //$NON-NLS-1$
+                cleanConnection(fileConnection, hostId);
             }
         }, new Object[] {this, sdToAdd});
     }
@@ -1847,9 +1761,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     public void postImportFileStorage(TaskContext context, boolean isSucceeded, IStorageModel model, String message) {
         Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
             new StorageServerConnectionParametersBase(fileConnection, hostId, false),
-            new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
+                result -> {
 
                     VdcReturnValueBase returnValue = result.getReturnValue();
                     boolean success = returnValue != null && returnValue.getSucceeded();
@@ -1862,8 +1774,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                         (IStorageModel) array[2],
                         (String) array[3]);
 
-                }
-            },
+                },
             new Object[] {context, isSucceeded, model, message});
     }
 
@@ -1890,30 +1801,27 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         VDS host = storageModel.getHost().getSelectedItem();
 
         AsyncDataProvider.getInstance().getStorageDomainsWithAttachedStoragePoolGuid(
-                new AsyncQuery<>(new AsyncCallback<List<StorageDomainStatic>>() {
-                    @Override
-                    public void onSuccess(List<StorageDomainStatic> attachedStorageDomains) {
-                        if (!attachedStorageDomains.isEmpty()) {
-                            ConfirmationModel model = new ConfirmationModel();
-                            setConfirmWindow(model);
+                new AsyncQuery<>(attachedStorageDomains -> {
+                    if (!attachedStorageDomains.isEmpty()) {
+                        ConfirmationModel model = new ConfirmationModel();
+                        setConfirmWindow(model);
 
-                            model.setTitle(ConstantsManager.getInstance().getConstants().storageDomainsAttachedToDataCenterWarningTitle());
-                            model.setMessage(ConstantsManager.getInstance().getConstants().storageDomainsAttachedToDataCenterWarningMessage());
-                            model.setHelpTag(HelpTag.import_storage_domain_confirmation);
-                            model.setHashName("import_storage_domain_confirmation"); //$NON-NLS-1$
+                        model.setTitle(ConstantsManager.getInstance().getConstants().storageDomainsAttachedToDataCenterWarningTitle());
+                        model.setMessage(ConstantsManager.getInstance().getConstants().storageDomainsAttachedToDataCenterWarningMessage());
+                        model.setHelpTag(HelpTag.import_storage_domain_confirmation);
+                        model.setHashName("import_storage_domain_confirmation"); //$NON-NLS-1$
 
-                            List<String> stoageDomainNames = new ArrayList<>();
-                            for (StorageDomainStatic domain : attachedStorageDomains) {
-                                stoageDomainNames.add(domain.getStorageName());
-                            }
-                            model.setItems(stoageDomainNames);
-
-                            UICommand cancelCommand = createCancelCommand("CancelImportConfirm"); //$NON-NLS-1$
-                            model.getCommands().add(okCommand);
-                            model.getCommands().add(cancelCommand);
-                        } else {
-                            okCommand.execute();
+                        List<String> stoageDomainNames = new ArrayList<>();
+                        for (StorageDomainStatic domain : attachedStorageDomains) {
+                            stoageDomainNames.add(domain.getStorageName());
                         }
+                        model.setItems(stoageDomainNames);
+
+                        UICommand cancelCommand = createCancelCommand("CancelImportConfirm"); //$NON-NLS-1$
+                        model.getCommands().add(okCommand);
+                        model.getCommands().add(cancelCommand);
+                    } else {
+                        okCommand.execute();
                     }
                 }), storagePool, storageDomains, storageServerConnections, host.getId());
     }

@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class ImportCloneModel extends ConfirmationModel {
 
@@ -76,42 +73,30 @@ public class ImportCloneModel extends ConfirmationModel {
         setSuffix(new EntityModel<String>());
         getSuffix().setIsChangeable(false);
         getSuffix().setEntity("_Copy"); //$NON-NLS-1$
-        getClone().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean value = getClone().getEntity();
-                if (value) {
-                    getNoClone().setEntity(false);
-                    if (getApplyToAll().getEntity()) {
-                        getSuffix().setIsChangeable(true);
-                    } else {
-                        getName().setIsChangeable(true);
-                    }
+        getClone().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            boolean value = getClone().getEntity();
+            if (value) {
+                getNoClone().setEntity(false);
+                if (getApplyToAll().getEntity()) {
+                    getSuffix().setIsChangeable(true);
+                } else {
+                    getName().setIsChangeable(true);
                 }
             }
         });
-        getNoClone().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean value = getNoClone().getEntity();
-                if (value) {
-                    getClone().setEntity(false);
-                    getName().setIsChangeable(false);
-                    getSuffix().setIsChangeable(false);
-                }
+        getNoClone().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            boolean value = getNoClone().getEntity();
+            if (value) {
+                getClone().setEntity(false);
+                getName().setIsChangeable(false);
+                getSuffix().setIsChangeable(false);
             }
         });
-        getApplyToAll().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (!getNoClone().getEntity()) {
-                    Boolean value = getApplyToAll().getEntity();
-                    getSuffix().setIsChangeable(value);
-                    getName().setIsChangeable(!value);
-                }
+        getApplyToAll().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (!getNoClone().getEntity()) {
+                Boolean value = getApplyToAll().getEntity();
+                getSuffix().setIsChangeable(value);
+                getName().setIsChangeable(!value);
             }
         });
     }

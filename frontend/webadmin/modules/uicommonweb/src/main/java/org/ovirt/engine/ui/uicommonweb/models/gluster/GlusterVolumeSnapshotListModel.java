@@ -33,10 +33,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel.EndDateOptions;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterVolumeEntity, GlusterVolumeSnapshotEntity> {
@@ -190,13 +186,9 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         }
 
         AsyncDataProvider.getInstance().getGlusterVolumeSnapshotsForVolume(new AsyncQuery<>(
-                new AsyncCallback<List<GlusterVolumeSnapshotEntity>>() {
-
-                    @Override
-                    public void onSuccess(List<GlusterVolumeSnapshotEntity> snapshots) {
-                        Collections.sort(snapshots, Comparator.comparing(GlusterVolumeSnapshotEntity::getSnapshotName));
-                        setItems(snapshots);
-                    }
+                snapshots -> {
+                    Collections.sort(snapshots, Comparator.comparing(GlusterVolumeSnapshotEntity::getSnapshotName));
+                    setItems(snapshots);
                 }), getEntity().getId());
     }
 
@@ -309,13 +301,9 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
         Frontend.getInstance().runMultipleAction(VdcActionType.DeleteGlusterVolumeSnapshot,
                 paramsList,
-                new IFrontendMultipleActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        model.stopProgress();
-                        setConfirmWindow(null);
-                    }
+                result -> {
+                    model.stopProgress();
+                    setConfirmWindow(null);
                 }, model);
     }
 
@@ -396,12 +384,9 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(action, param, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                model.stopProgress();
-                setConfirmWindow(null);
-            }
+        Frontend.getInstance().runAction(action, param, result -> {
+            model.stopProgress();
+            setConfirmWindow(null);
         });
     }
 
@@ -433,13 +418,11 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         snapshotModel.getClusterName().setEntity(volumeEntity.getClusterName());
         snapshotModel.getVolumeName().setEntity(volumeEntity.getName());
 
-        AsyncDataProvider.getInstance().getIsGlusterVolumeSnapshotCliScheduleEnabled(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean isCliScheduleEnabled) {
-                snapshotModel.getDisableCliSchedule().setEntity(isCliScheduleEnabled);
-                snapshotModel.stopProgress();
-            }
-        }), volumeEntity.getClusterId());
+        AsyncDataProvider.getInstance().getIsGlusterVolumeSnapshotCliScheduleEnabled(new AsyncQuery<>(
+                isCliScheduleEnabled -> {
+                    snapshotModel.getDisableCliSchedule().setEntity(isCliScheduleEnabled);
+                    snapshotModel.stopProgress();
+                }), volumeEntity.getClusterId());
 
         UICommand okCommand = UICommand.createDefaultOkUiCommand("onCreateSnapshot", this); //$NON-NLS-1$
         snapshotModel.getCommands().add(okCommand);
@@ -530,14 +513,11 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
         Frontend.getInstance().runAction(actionType,
                 params,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        GlusterVolumeSnapshotListModel localModel =
-                                (GlusterVolumeSnapshotListModel) result.getState();
-                        snapshotModel.stopProgress();
-                        localModel.postSnapshotAction(result.getReturnValue());
-                    }
+                result -> {
+                    GlusterVolumeSnapshotListModel localModel =
+                            (GlusterVolumeSnapshotListModel) result.getState();
+                    snapshotModel.stopProgress();
+                    localModel.postSnapshotAction(result.getReturnValue());
                 },
                 this, snapshotModel.getDisableCliSchedule().getEntity());
     }
@@ -557,14 +537,11 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         snapshotModel.startProgress();
         Frontend.getInstance().runAction(VdcActionType.CreateGlusterVolumeSnapshot,
                 parameter,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        GlusterVolumeSnapshotListModel localModel =
-                                (GlusterVolumeSnapshotListModel) result.getState();
-                        snapshotModel.stopProgress();
-                        localModel.postSnapshotAction(result.getReturnValue());
-                    }
+                result -> {
+                    GlusterVolumeSnapshotListModel localModel =
+                            (GlusterVolumeSnapshotListModel) result.getState();
+                    snapshotModel.stopProgress();
+                    localModel.postSnapshotAction(result.getReturnValue());
                 },
                 this);
     }

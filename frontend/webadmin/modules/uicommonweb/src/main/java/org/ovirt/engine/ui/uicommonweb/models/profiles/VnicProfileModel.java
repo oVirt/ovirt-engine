@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -35,11 +34,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class VnicProfileModel extends Model {
 
@@ -172,19 +166,16 @@ public abstract class VnicProfileModel extends Model {
         setPublicUse(publicUse);
         setDescription(new EntityModel<String>());
 
-        getNetwork().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                Network network = getNetwork().getSelectedItem();
-                boolean portMirroringAllowed = network == null || !network.isExternal();
-                if (!portMirroringAllowed) {
-                    getPortMirroring().setEntity(false);
-                    getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
-                            .getConstants()
-                            .portMirroringNotSupportedExternalNetworks());
-                }
-                getPortMirroring().setIsChangeable(portMirroringAllowed);
+        getNetwork().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            Network network = getNetwork().getSelectedItem();
+            boolean portMirroringAllowed = network == null || !network.isExternal();
+            if (!portMirroringAllowed) {
+                getPortMirroring().setEntity(false);
+                getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
+                        .getConstants()
+                        .portMirroringNotSupportedExternalNetworks());
             }
+            getPortMirroring().setIsChangeable(portMirroringAllowed);
         });
 
 
@@ -222,15 +213,12 @@ public abstract class VnicProfileModel extends Model {
 
         Frontend.getInstance().runAction(getVdcActionType(),
                 getActionParameters(),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        VdcReturnValueBase returnValue = result.getReturnValue();
-                        stopProgress();
+                result -> {
+                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    stopProgress();
 
-                        if (returnValue != null && returnValue.getSucceeded()) {
-                            cancel();
-                        }
+                    if (returnValue != null && returnValue.getSucceeded()) {
+                        cancel();
                     }
                 },
                 this);
@@ -293,20 +281,16 @@ public abstract class VnicProfileModel extends Model {
         startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetDeviceCustomProperties,
                 params,
-                new AsyncQuery<>(
-                        new AsyncCallback<VdcQueryReturnValue>() {
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue returnValue) {
-                                if (returnValue != null) {
-                                    Map<String, String> customPropertiesList = returnValue.getReturnValue();
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                            if (returnValue != null) {
+                                Map<String, String> customPropertiesList = returnValue.getReturnValue();
 
-                                    getCustomPropertySheet().setKeyValueMap(customPropertiesList);
-                                    getCustomPropertySheet().setIsChangeable(!customPropertiesList.isEmpty());
+                                getCustomPropertySheet().setKeyValueMap(customPropertiesList);
+                                getCustomPropertySheet().setIsChangeable(!customPropertiesList.isEmpty());
 
-                                    initCustomProperties();
-                                }
-                                stopProgress();
+                                initCustomProperties();
                             }
+                            stopProgress();
                         }));
     }
 
@@ -315,76 +299,66 @@ public abstract class VnicProfileModel extends Model {
             return;
         }
 
-        AsyncDataProvider.getInstance().getAllNetworkQos(dcId, new AsyncQuery<>(new AsyncCallback<List<NetworkQoS>>() {
-            @Override
-            public void onSuccess(List<NetworkQoS> networkQoSes) {
-                getNetworkQoS().setItems(networkQoSes);
-                defaultQos =
-                        networkQoSes.stream()
-                                .filter(new Linq.IdPredicate<>(defaultQosId))
-                                .findFirst()
-                                .orElse(NetworkQoSModel.EMPTY_QOS);
-                getNetworkQoS().setSelectedItem(defaultQos);
-            }
+        AsyncDataProvider.getInstance().getAllNetworkQos(dcId, new AsyncQuery<>(networkQoSes -> {
+            getNetworkQoS().setItems(networkQoSes);
+            defaultQos =
+                    networkQoSes.stream()
+                            .filter(new Linq.IdPredicate<>(defaultQosId))
+                            .findFirst()
+                            .orElse(NetworkQoSModel.EMPTY_QOS);
+            getNetworkQoS().setSelectedItem(defaultQos);
         }));
     }
 
     public void initNetworkFilterList(Version dcCompatibilityVersion) {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllSupportedNetworkFiltersByVersion,
                 new VersionQueryParameters(dcCompatibilityVersion),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        List<NetworkFilter> networkFilters =
-                                new ArrayList((Collection<NetworkFilter>) returnValue.getReturnValue());
-                        networkFilters.add(EMPTY_FILTER);
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    List<NetworkFilter> networkFilters =
+                            new ArrayList((Collection<NetworkFilter>) returnValue.getReturnValue());
+                    networkFilters.add(EMPTY_FILTER);
 
-                        getNetworkFilter().setItems(networkFilters);
+                    getNetworkFilter().setItems(networkFilters);
 
-                        initSelectedNetworkFilter();
-                    }
+                    initSelectedNetworkFilter();
                 }));
     }
 
     protected abstract void initSelectedNetworkFilter();
 
     private void initPassthroughChangeListener() {
-        getPassthrough().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+        getPassthrough().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getPassthrough().getEntity()) {
+                getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
+                        .getConstants()
+                        .portMirroringNotChangedIfPassthrough());
+                getPortMirroring().setIsChangeable(false);
+                getPortMirroring().setEntity(false);
 
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getPassthrough().getEntity()) {
-                    getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
-                            .getConstants()
-                            .portMirroringNotChangedIfPassthrough());
-                    getPortMirroring().setIsChangeable(false);
-                    getPortMirroring().setEntity(false);
+                getNetworkQoS().setChangeProhibitionReason(ConstantsManager.getInstance()
+                        .getConstants()
+                        .networkQosNotChangedIfPassthrough());
+                getNetworkQoS().setIsChangeable(false);
+                getNetworkQoS().setSelectedItem(NetworkQoSModel.EMPTY_QOS);
 
-                    getNetworkQoS().setChangeProhibitionReason(ConstantsManager.getInstance()
-                            .getConstants()
-                            .networkQosNotChangedIfPassthrough());
-                    getNetworkQoS().setIsChangeable(false);
-                    getNetworkQoS().setSelectedItem(NetworkQoSModel.EMPTY_QOS);
+                getNetworkFilter().setChangeProhibitionReason(ConstantsManager.getInstance()
+                        .getConstants()
+                        .networkFilterNotChangedIfPassthrough());
+                getNetworkFilter().setIsChangeable(false);
+                getNetworkFilter().setSelectedItem(EMPTY_FILTER);
+                getMigratable().setIsChangeable(true);
+            } else {
+                getPortMirroring().setIsChangeable(true);
+                getNetworkQoS().setIsChangeable(true);
+                getNetworkFilter().setIsChangeable(true);
+                getMigratable().setIsChangeable(false);
 
-                    getNetworkFilter().setChangeProhibitionReason(ConstantsManager.getInstance()
-                            .getConstants()
-                            .networkFilterNotChangedIfPassthrough());
-                    getNetworkFilter().setIsChangeable(false);
-                    getNetworkFilter().setSelectedItem(EMPTY_FILTER);
-                    getMigratable().setIsChangeable(true);
-                } else {
-                    getPortMirroring().setIsChangeable(true);
-                    getNetworkQoS().setIsChangeable(true);
-                    getNetworkFilter().setIsChangeable(true);
-                    getMigratable().setIsChangeable(false);
-
-                    /*
-                     * if passthrough is false, then all vnicprofiles are considered to be migratable. Migratable flag
-                     * then has no meaning and it's unmodifiable. We're setting it to true, to indicate user, that
-                     * !passthrough means that vnicprofile is always considered migratable.
-                     * */
-                    getMigratable().setEntity(true);
-                }
+                /*
+                 * if passthrough is false, then all vnicprofiles are considered to be migratable. Migratable flag
+                 * then has no meaning and it's unmodifiable. We're setting it to true, to indicate user, that
+                 * !passthrough means that vnicprofile is always considered migratable.
+                 * */
+                getMigratable().setEntity(true);
             }
         });
     }

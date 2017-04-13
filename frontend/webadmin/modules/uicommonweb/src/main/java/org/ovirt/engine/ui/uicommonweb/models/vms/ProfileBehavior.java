@@ -8,9 +8,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Converter;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -24,43 +22,36 @@ public abstract class ProfileBehavior {
             final Guid dcId,
             final AsyncQuery<List<VnicProfileView>> profilesQuery) {
 
-        AsyncQuery<List<Network>> networksQuery = new AsyncQuery<>(new AsyncCallback<List<Network>>() {
-            @Override
-            public void onSuccess(final List<Network> clusterNetworks) {
-                managementNetworkName = clusterNetworks.stream()
-                        .filter(n -> n.getCluster().isManagement())
-                        .map(Network::getName)
-                        .findFirst()
-                        .orElse(null);
+        AsyncQuery<List<Network>> networksQuery = new AsyncQuery<>(clusterNetworks -> {
+            managementNetworkName = clusterNetworks.stream()
+                    .filter(n -> n.getCluster().isManagement())
+                    .map(Network::getName)
+                    .findFirst()
+                    .orElse(null);
 
-                profilesQuery.converterCallback = new Converter<List<VnicProfileView>>() {
+            profilesQuery.converterCallback = returnValue -> {
+                ProfileBehavior.this.clusterNetworks = clusterNetworks;
 
-                    @Override
-                    public List<VnicProfileView> convert(Object returnValue) {
-                        ProfileBehavior.this.clusterNetworks = clusterNetworks;
+                List<VnicProfileView> vnicProfiles = new ArrayList<>();
+                vnicProfiles.add(VnicProfileView.EMPTY);
 
-                        List<VnicProfileView> vnicProfiles = new ArrayList<>();
-                        vnicProfiles.add(VnicProfileView.EMPTY);
+                if (returnValue == null) {
+                    return vnicProfiles;
+                }
 
-                        if (returnValue == null) {
-                            return vnicProfiles;
-                        }
-
-                        for (VnicProfileView vnicProfile : (List<VnicProfileView>) returnValue) {
-                            Network network = findNetworkById(vnicProfile.getNetworkId());
-                            if (network != null && network.isVmNetwork()) {
-                                vnicProfiles.add(vnicProfile);
-                            }
-
-                        }
-
-                        Collections.sort(vnicProfiles, Linq.VnicProfileViewComparator);
-
-                        return vnicProfiles;
+                for (VnicProfileView vnicProfile : (List<VnicProfileView>) returnValue) {
+                    Network network = findNetworkById(vnicProfile.getNetworkId());
+                    if (network != null && network.isVmNetwork()) {
+                        vnicProfiles.add(vnicProfile);
                     }
-                };
-                AsyncDataProvider.getInstance().getVnicProfilesByDcId(profilesQuery, dcId);
-            }
+
+                }
+
+                Collections.sort(vnicProfiles, Linq.VnicProfileViewComparator);
+
+                return vnicProfiles;
+            };
+            AsyncDataProvider.getInstance().getVnicProfilesByDcId(profilesQuery, dcId);
         });
         AsyncDataProvider.getInstance().getClusterNetworkList(networksQuery, clusterId);
     }

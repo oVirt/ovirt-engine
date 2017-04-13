@@ -12,9 +12,7 @@ import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
@@ -29,8 +27,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class SpiceConsoleModel extends ConsoleModel {
 
@@ -180,26 +176,23 @@ public class SpiceConsoleModel extends ConsoleModel {
         Frontend.getInstance().runQuery(
                 VdcQueryType.ConfigureConsoleOptions,
                 parameters,
-                new ShowErrorAsyncQuery(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        final ConsoleOptions configuredOptions = returnValue.getReturnValue();
-                        // overriding global server settings by frontend settings
-                        configuredOptions.setRemapCtrlAltDelete(options.isRemapCtrlAltDelete());
-                        configuredOptions.setTitle(getClientTitle());
-                        configuredOptions.setVmName(getEntity().getName());
-                        configuredOptions.setFullScreen(options.isFullScreen());
-                        configuredOptions.setSmartcardEnabledOverridden(options.isSmartcardEnabledOverridden());
-                        if (!configuredOptions.isSpiceProxyEnabled()) {
-                            configuredOptions.setSpiceProxy(null); // override spice proxy from backend
-                        }
+                new ShowErrorAsyncQuery(returnValue -> {
+                    final ConsoleOptions configuredOptions = returnValue.getReturnValue();
+                    // overriding global server settings by frontend settings
+                    configuredOptions.setRemapCtrlAltDelete(options.isRemapCtrlAltDelete());
+                    configuredOptions.setTitle(getClientTitle());
+                    configuredOptions.setVmName(getEntity().getName());
+                    configuredOptions.setFullScreen(options.isFullScreen());
+                    configuredOptions.setSmartcardEnabledOverridden(options.isSmartcardEnabledOverridden());
+                    if (!configuredOptions.isSpiceProxyEnabled()) {
+                        configuredOptions.setSpiceProxy(null); // override spice proxy from backend
+                    }
 
-                        try {
-                            getSpiceImpl().setOptions(configuredOptions);
-                            getSpiceImpl().invokeClient();
-                        } catch (RuntimeException ex) {
-                            getLogger().error("Exception on Spice connect", ex); //$NON-NLS-1$
-                        }
+                    try {
+                        getSpiceImpl().setOptions(configuredOptions);
+                        getSpiceImpl().invokeClient();
+                    } catch (RuntimeException ex) {
+                        getLogger().error("Exception on Spice connect", ex); //$NON-NLS-1$
                     }
                 }));
     }
@@ -213,43 +206,40 @@ public class SpiceConsoleModel extends ConsoleModel {
                     + getEntity().getName());
 
             Frontend.getInstance().runAction(VdcActionType.VmLogon, new VmOperationParameterBase(getEntity().getId()),
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
-                            final VdcReturnValueBase logonCommandReturnValue = result.getReturnValue();
-                            boolean isLogonSucceeded = logonCommandReturnValue != null && logonCommandReturnValue.getSucceeded();
-                            if (isLogonSucceeded) {
-                                invokeClient();
+                    result -> {
+                        final VdcReturnValueBase logonCommandReturnValue = result.getReturnValue();
+                        boolean isLogonSucceeded = logonCommandReturnValue != null && logonCommandReturnValue.getSucceeded();
+                        if (isLogonSucceeded) {
+                            invokeClient();
+                        }
+                        else {
+                            if (logonCommandReturnValue != null && logonCommandReturnValue.getFault().getError() == EngineError.nonresp) {
+                                UICommand okCommand =
+                                        new UICommand("SpiceWithoutAgentOK", new BaseCommandTarget() { //$NON-NLS-1$
+                                                    @Override
+                                                    public void executeCommand(UICommand uiCommand) {
+                                                        logSsoOnDesktopFailedAgentNonResp(getLogger(),
+                                                                logonCommandReturnValue != null ?
+                                                                        logonCommandReturnValue.getDescription()
+                                                                        : ""); //$NON-NLS-1$
+                                                        invokeClient();
+                                                        getParentModel().setWindow(null);
+                                                    }
+                                                });
+
+                                UICommand cancelCommand = new UICommand("SpiceWithoutAgentCancel", new BaseCommandTarget() { //$NON-NLS-1$
+                                    @Override
+                                    public void executeCommand(UICommand uiCommand) {
+                                        getParentModel().setWindow(null);
+                                    }
+                                });
+
+                                createConnectWithoutAgentConfirmationPopup(okCommand, cancelCommand);
                             }
                             else {
-                                if (logonCommandReturnValue != null && logonCommandReturnValue.getFault().getError() == EngineError.nonresp) {
-                                    UICommand okCommand =
-                                            new UICommand("SpiceWithoutAgentOK", new BaseCommandTarget() { //$NON-NLS-1$
-                                                        @Override
-                                                        public void executeCommand(UICommand uiCommand) {
-                                                            logSsoOnDesktopFailedAgentNonResp(getLogger(),
-                                                                    logonCommandReturnValue != null ?
-                                                                            logonCommandReturnValue.getDescription()
-                                                                            : ""); //$NON-NLS-1$
-                                                            invokeClient();
-                                                            getParentModel().setWindow(null);
-                                                        }
-                                                    });
-
-                                    UICommand cancelCommand = new UICommand("SpiceWithoutAgentCancel", new BaseCommandTarget() { //$NON-NLS-1$
-                                        @Override
-                                        public void executeCommand(UICommand uiCommand) {
-                                            getParentModel().setWindow(null);
-                                        }
-                                    });
-
-                                    createConnectWithoutAgentConfirmationPopup(okCommand, cancelCommand);
-                                }
-                                else {
-                                    logSsoOnDesktopFailed(getLogger(),
-                                            logonCommandReturnValue != null ? logonCommandReturnValue.getDescription()
-                                                    : ""); //$NON-NLS-1$
-                                }
+                                logSsoOnDesktopFailed(getLogger(),
+                                        logonCommandReturnValue != null ? logonCommandReturnValue.getDescription()
+                                                : ""); //$NON-NLS-1$
                             }
                         }
                     },

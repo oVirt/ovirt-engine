@@ -11,8 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class SharedMacPoolModel extends MacPoolModel {
 
@@ -77,14 +75,10 @@ public class SharedMacPoolModel extends MacPoolModel {
 
         startProgress();
         MacPool macPool = flush();
-        Frontend.getInstance().runAction(actionType, new MacPoolParameters(macPool), new IFrontendActionAsyncCallback() {
-
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                stopProgress();
-                if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
-                    onActionSucceeded((Guid) result.getReturnValue().getActionReturnValue());
-                }
+        Frontend.getInstance().runAction(actionType, new MacPoolParameters(macPool), result -> {
+            stopProgress();
+            if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
+                onActionSucceeded((Guid) result.getReturnValue().getActionReturnValue());
             }
         });
     }

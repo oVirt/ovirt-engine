@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.pm.PowerManagementUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -711,12 +710,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getOverrideIpTables().setEntity(false);
         setFenceAgents(new FenceAgentListModel());
 
-        IEventListener<EventArgs> pmListener = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updatePmModels();
-            }
-        };
+        IEventListener<EventArgs> pmListener = (ev, sender, args) -> updatePmModels();
 
         setExternalHostName(new ListModel<VDS>());
         getExternalHostName().setIsAvailable(false);
@@ -742,12 +736,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getPmKdumpDetection().setEntity(true);
 
         setPmProxyPreferencesList(new ListModel<FenceProxyModel>());
-        getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-               updatePmModels();
-            }
-        });
+        getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updatePmModels());
 
         setConsoleAddress(new EntityModel<String>());
         getConsoleAddress().setEntity(null);
@@ -797,12 +786,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     public void fetchEngineSshPublicKey() {
-        AsyncDataProvider.getInstance().getEngineSshPublicKey(new AsyncQuery<>(new AsyncCallback<String>() {
-            @Override
-            public void onSuccess(String pk) {
-                if (pk != null && pk.length() > 0) {
-                    getPublicKey().setEntity(pk);
-                }
+        AsyncDataProvider.getInstance().getEngineSshPublicKey(new AsyncQuery<>(pk -> {
+            if (pk != null && pk.length() > 0) {
+                getPublicKey().setEntity(pk);
             }
         }));
     }
@@ -812,16 +798,13 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getFetchSshFingerprint().setEntity(""); //$NON-NLS-1$
         getFetchResult().setEntity(""); //$NON-NLS-1$
 
-        AsyncQuery<String> aQuery = new AsyncQuery<>(new AsyncCallback<String>() {
-            @Override
-            public void onSuccess(String fingerprint) {
-                if (fingerprint != null && fingerprint.length() > 0) {
-                    getFetchSshFingerprint().setEntity(fingerprint);
-                    getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().successLoadingFingerprint());
-                }
-                else {
-                    getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().errorLoadingFingerprint());
-                }
+        AsyncQuery<String> aQuery = new AsyncQuery<>(fingerprint -> {
+            if (fingerprint != null && fingerprint.length() > 0) {
+                getFetchSshFingerprint().setEntity(fingerprint);
+                getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().successLoadingFingerprint());
+            }
+            else {
+                getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().errorLoadingFingerprint());
             }
         });
 
@@ -848,30 +831,24 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private void initSpmPriorities() {
 
-        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
-            @Override
-            public void onSuccess(Integer returnValue) {
+        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery<>(returnValue -> {
 
-                maxSpmPriority = returnValue;
-                initSpmPriorities1();
-            }
+            maxSpmPriority = returnValue;
+            initSpmPriorities1();
         }));
     }
 
     private void initSpmPriorities1() {
 
-        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
-            @Override
-            public void onSuccess(Integer returnValue) {
+        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery<>(returnValue -> {
 
-                defaultSpmPriority = returnValue;
+            defaultSpmPriority = returnValue;
 
-                if (postponedSpmPriority != null) {
-                    updateSpmPriority(postponedSpmPriority);
-                }
-
-                spmInitialized = true;
+            if (postponedSpmPriority != null) {
+                updateSpmPriority(postponedSpmPriority);
             }
+
+            spmInitialized = true;
         }));
     }
 
@@ -949,32 +926,26 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     private void dataCenter_SelectedItemChanged() {
         StoragePool dataCenter = getDataCenter().getSelectedItem();
         if (dataCenter != null) {
-            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-                @Override
-                public void onSuccess(final List<Cluster> clusters) {
-                    if (getIsNew()) {
-                        updateClusterList(HostModel.this, clusters);
-                    } else {
-                        AsyncDataProvider.getInstance().getHostArchitecture(new AsyncQuery<>(new AsyncCallback<ArchitectureType>() {
-                            @Override
-                            public void onSuccess(ArchitectureType architecture) {
-                                ArrayList<Cluster> filteredClusters = new ArrayList<>();
+            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(clusters -> {
+                if (getIsNew()) {
+                    updateClusterList(HostModel.this, clusters);
+                } else {
+                    AsyncDataProvider.getInstance().getHostArchitecture(new AsyncQuery<>(architecture -> {
+                        ArrayList<Cluster> filteredClusters = new ArrayList<>();
 
-                                for (Cluster cluster : clusters) {
-                                    if (architecture == ArchitectureType.undefined
-                                            || cluster.getArchitecture() == ArchitectureType.undefined
-                                            || cluster.getArchitecture() == architecture) {
-                                        filteredClusters.add(cluster);
-                                    }
-                                }
-
-                                updateClusterList(HostModel.this, filteredClusters);
+                        for (Cluster cluster : clusters) {
+                            if (architecture == ArchitectureType.undefined
+                                    || cluster.getArchitecture() == ArchitectureType.undefined
+                                    || cluster.getArchitecture() == architecture) {
+                                filteredClusters.add(cluster);
                             }
-                        }), getHostId());
+                        }
 
-                    }
-                    updatePmModels();
+                        updateClusterList(HostModel.this, filteredClusters);
+                    }), getHostId());
+
                 }
+                updatePmModels();
             }));
         }
     }
@@ -1020,12 +991,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         getFencingEnabled().setEntity(cluster.getFencingPolicy().isFencingEnabled());
 
-        AsyncDataProvider.getInstance().getPmTypeList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
-            @Override
-            public void onSuccess(List<String> pmTypes) {
-                updatePmTypeList(pmTypes);
-            }
-        }), cluster.getCompatibilityVersion());
+        AsyncDataProvider.getInstance().getPmTypeList(new AsyncQuery<>(pmTypes -> updatePmTypeList(pmTypes)), cluster.getCompatibilityVersion());
 
         //Match the appropriate selected data center to the selected cluster, don't fire update events.
         if (getDataCenter() != null && getDataCenter().getItems() != null) {
@@ -1254,29 +1220,25 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     private void updateExternalHostModels(final Guid selected) {
-        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(List<Provider<?>> result) {
-                List<Provider<OpenstackNetworkProviderProperties>> providers = (List) result;
-                ListModel<Provider<OpenstackNetworkProviderProperties>> providersListModel = getProviders();
-                if (selected != null) {
-                    for (Provider<OpenstackNetworkProviderProperties> provider: providers) {
-                        if (provider.getId().equals(selected)) {
-                            providersListModel.setItems(providers, provider);
-                            getExternalHostProviderEnabled().setEntity(true);
-                            break;
-                        }
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(result -> {
+            List<Provider<OpenstackNetworkProviderProperties>> providers = (List) result;
+            ListModel<Provider<OpenstackNetworkProviderProperties>> providersListModel = getProviders();
+            if (selected != null) {
+                for (Provider<OpenstackNetworkProviderProperties> provider: providers) {
+                    if (provider.getId().equals(selected)) {
+                        providersListModel.setItems(providers, provider);
+                        getExternalHostProviderEnabled().setEntity(true);
+                        break;
                     }
                 }
-                if (providersListModel.getItems() == null || providersListModel.getItems().isEmpty()
-                        || providersListModel.getSelectedItem() == null) {
-                    providersListModel.setItems(providers, Linq.firstOrNull(providers));
-                }
-                providersListModel.setIsChangeable(true);
-                if (!externalProvisionEnabled()) {
-                    getIsDiscoveredHosts().setEntity(null);
-                }
+            }
+            if (providersListModel.getItems() == null || providersListModel.getItems().isEmpty()
+                    || providersListModel.getSelectedItem() == null) {
+                providersListModel.setItems(providers, Linq.firstOrNull(providers));
+            }
+            providersListModel.setIsChangeable(true);
+            if (!externalProvisionEnabled()) {
+                getIsDiscoveredHosts().setEntity(null);
             }
         }), ProviderType.FOREMAN);
     }
@@ -1292,12 +1254,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     private void addKernelCmdlineListener() {
-        kernelCmdlineListener = new EnableableEventListener<>(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                setKernelCmdlineParsable(false);
-                resetKernelCmdlineCheckboxes();
-            }
+        kernelCmdlineListener = new EnableableEventListener<>((ev, sender, args) -> {
+            setKernelCmdlineParsable(false);
+            resetKernelCmdlineCheckboxes();
         });
         getKernelCmdline().getEntityChangedEvent().addListener(kernelCmdlineListener);
     }
@@ -1396,47 +1355,31 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 getKernelCmdlineKvmNested().getEntity(),
                 getKernelCmdlineUnsafeInterrupts().getEntity(),
                 getKernelCmdlinePciRealloc().getEntity());
-        kernelCmdlineListener.whilePaused(new Runnable() {
-            @Override
-            public void run() {
-                getKernelCmdline().setEntity(kernelCmdline);
-            }
-        });
+        kernelCmdlineListener.whilePaused(() -> getKernelCmdline().setEntity(kernelCmdline));
     }
 
     public void resetKernelCmdline() {
         setKernelCmdlineParsable(true);
-        kernelCmdlineListener.whilePaused(new Runnable() {
-            @Override
-            public void run() {
-                getKernelCmdline().setEntity("");
-            }
-        });
+        kernelCmdlineListener.whilePaused(() -> getKernelCmdline().setEntity(""));
         resetKernelCmdlineCheckboxes();
     }
 
     private void updateLabelList() {
-        AsyncDataProvider.getInstance().getLabelList(new AsyncQuery<>(new AsyncCallback<List<Label>>() {
-            @Override
-            public void onSuccess(final List<Label> allLabels) {
-                if (getIsNew()) {
+        AsyncDataProvider.getInstance().getLabelList(new AsyncQuery<>(allLabels -> {
+            if (getIsNew()) {
+                labelList.setItems(allLabels);
+                labelList.setSelectedItems(new ArrayList<Label>());
+            } else {
+                AsyncDataProvider.getInstance().getLabelListByEntityId(new AsyncQuery<>(hostLabelsList -> {
                     labelList.setItems(allLabels);
-                    labelList.setSelectedItems(new ArrayList<Label>());
-                } else {
-                    AsyncDataProvider.getInstance().getLabelListByEntityId(new AsyncQuery<>(new AsyncCallback<List<Label>>() {
-                        @Override
-                        public void onSuccess(List<Label> hostLabelsList) {
-                            labelList.setItems(allLabels);
-                            labelList.setSelectedItems(hostLabelsList);
-                        }
-                    }), getHostId());
-                }
-
-                // This is phase 1 of this feature. Phase 2 will introduce the ability to make
-                // changes to the selected labels via the UI. Until then, labels can be set through
-                // the REST API.
-                labelList.setIsChangeable(false);
+                    labelList.setSelectedItems(hostLabelsList);
+                }), getHostId());
             }
+
+            // This is phase 1 of this feature. Phase 2 will introduce the ability to make
+            // changes to the selected labels via the UI. Until then, labels can be set through
+            // the REST API.
+            labelList.setIsChangeable(false);
         }));
     }
 

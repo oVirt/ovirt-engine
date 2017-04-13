@@ -6,9 +6,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LongValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class EditQuotaClusterModel extends EntityModel<QuotaCluster> {
     EntityModel<Boolean> unlimitedMem;
@@ -74,50 +71,34 @@ public class EditQuotaClusterModel extends EntityModel<QuotaCluster> {
         setUnlimitedMem(new EntityModel<Boolean>());
         getUnlimitedMem().setEntity(false);
         setSpecificMemValue(new EntityModel<Long>());
-        getUnlimitedMem().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getUnlimitedMem().getEntity()) {
-                    getSpecificMem().setEntity(false);
-                    getSpecificMemValue().setIsChangeable(false);
-                }
+        getUnlimitedMem().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getUnlimitedMem().getEntity()) {
+                getSpecificMem().setEntity(false);
+                getSpecificMemValue().setIsChangeable(false);
             }
         });
 
-        getSpecificMem().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getSpecificMem().getEntity()) {
-                    getUnlimitedMem().setEntity(false);
-                    getSpecificMemValue().setIsChangeable(true);
-                }
+        getSpecificMem().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getSpecificMem().getEntity()) {
+                getUnlimitedMem().setEntity(false);
+                getSpecificMemValue().setIsChangeable(true);
             }
         });
 
         setSpecificCpu(new EntityModel<Boolean>());
         setUnlimitedCpu(new EntityModel<Boolean>());
         setSpecificCpuValue(new EntityModel<Integer>());
-        getUnlimitedCpu().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getUnlimitedCpu().getEntity()) {
-                    getSpecificCpu().setEntity(false);
-                    getSpecificCpuValue().setIsChangeable(false);
-                }
+        getUnlimitedCpu().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getUnlimitedCpu().getEntity()) {
+                getSpecificCpu().setEntity(false);
+                getSpecificCpuValue().setIsChangeable(false);
             }
         });
 
-        getSpecificCpu().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getSpecificCpu().getEntity()) {
-                    getUnlimitedCpu().setEntity(false);
-                    getSpecificCpuValue().setIsChangeable(true);
-                }
+        getSpecificCpu().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getSpecificCpu().getEntity()) {
+                getUnlimitedCpu().setEntity(false);
+                getSpecificCpuValue().setIsChangeable(true);
             }
         });
     }

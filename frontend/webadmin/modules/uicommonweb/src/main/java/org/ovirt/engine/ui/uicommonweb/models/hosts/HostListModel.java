@@ -58,7 +58,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -88,11 +87,6 @@ import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ReversibleFlow;
@@ -468,12 +462,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
 
-        getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateAvailableOvirtNodeUpgrades();
-            }
-        });
+        getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateAvailableOvirtNodeUpgrades());
 
     }
 
@@ -545,18 +534,15 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         for (Guid hostId : hostIds) {
             AsyncDataProvider.getInstance().getAttachedTagsToHost(new AsyncQuery<>(
-                    new AsyncCallback<List<Tags>>() {
-                        @Override
-                        public void onSuccess(List<Tags> returnValue) {
+                            returnValue -> {
 
-                            allAttachedTags.addAll(returnValue);
-                            selectedItemsCounter++;
-                            if (selectedItemsCounter == getSelectedItems().size()) {
-                                postGetAttachedTags(model);
-                            }
+                                allAttachedTags.addAll(returnValue);
+                                selectedItemsCounter++;
+                                if (selectedItemsCounter == getSelectedItems().size()) {
+                                    postGetAttachedTags(model);
+                                }
 
-                        }
-                    }),
+                            }),
                     hostId);
         }
     }
@@ -644,15 +630,12 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.FenceVdsManualy, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
     }
 
@@ -679,98 +662,84 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         hostModel.getConsoleAddressEnabled().setEntity(false);
         hostModel.getConsoleAddress().setIsChangeable(false);
 
-        AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery<>(new AsyncCallback<String>() {
-            @Override
-            public void onSuccess(String returnValue) {
-                hostModel.setPmProxyPreferences(returnValue);
-            }
-        }));
+        AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery<>(returnValue -> hostModel.setPmProxyPreferences(returnValue)));
 
         // Make sure not to set override IP tables flag back true when it was set false once.
-        hostModel.getOverrideIpTables().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+        hostModel.getOverrideIpTables().getEntityChangedEvent().addListener((ev, sender, args) -> {
 
-                if (!clusterChanging) {
-                    updateOverrideIpTables = hostModel.getOverrideIpTables().getEntity();
-                }
+            if (!clusterChanging) {
+                updateOverrideIpTables = hostModel.getOverrideIpTables().getEntity();
             }
         });
 
-        hostModel.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+        hostModel.getCluster().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
 
-                clusterChanging = true;
-                ListModel<Cluster> clusterModel = hostModel.getCluster();
+            clusterChanging = true;
+            ListModel<Cluster> clusterModel = hostModel.getCluster();
 
-                if (clusterModel.getSelectedItem() != null) {
-                    hostModel.getOverrideIpTables().setIsAvailable(true);
-                    hostModel.getOverrideIpTables().setEntity(updateOverrideIpTables);
-                }
-
-                clusterChanging = false;
+            if (clusterModel.getSelectedItem() != null) {
+                hostModel.getOverrideIpTables().setIsAvailable(true);
+                hostModel.getOverrideIpTables().setEntity(updateOverrideIpTables);
             }
+
+            clusterChanging = false;
         });
 
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-            @Override
-            public void onSuccess(List<StoragePool> dataCenters) {
-                HostModel innerHostModel = (HostModel) getWindow();
-                final UIConstants constants = ConstantsManager.getInstance().getConstants();
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
+            HostModel innerHostModel = (HostModel) getWindow();
+            final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-                if (getSystemTreeSelectedItem() != null) {
-                    switch (getSystemTreeSelectedItem().getType()) {
-                        case Host:
-                            innerHostModel.getName().setIsChangeable(false);
-                            innerHostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
-                            break;
-                        case Hosts:
-                        case Cluster:
-                        case Cluster_Gluster:
-                            Cluster cluster = (Cluster) getSystemTreeSelectedItem().getEntity();
-                            for (StoragePool dc : dataCenters) {
-                                if (dc.getId().equals(cluster.getStoragePoolId())) {
-                                    innerHostModel.getDataCenter()
-                                            .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
-                                    innerHostModel.getDataCenter().setSelectedItem(dc);
-                                    break;
-                                }
+            if (getSystemTreeSelectedItem() != null) {
+                switch (getSystemTreeSelectedItem().getType()) {
+                    case Host:
+                        innerHostModel.getName().setIsChangeable(false);
+                        innerHostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
+                        break;
+                    case Hosts:
+                    case Cluster:
+                    case Cluster_Gluster:
+                        Cluster cluster = (Cluster) getSystemTreeSelectedItem().getEntity();
+                        for (StoragePool dc : dataCenters) {
+                            if (dc.getId().equals(cluster.getStoragePoolId())) {
+                                innerHostModel.getDataCenter()
+                                        .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
+                                innerHostModel.getDataCenter().setSelectedItem(dc);
+                                break;
                             }
-                            innerHostModel.getDataCenter().setIsChangeable(false);
-                            innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
-                            innerHostModel.getCluster().setItems(Arrays.asList(cluster));
-                            innerHostModel.getCluster().setSelectedItem(cluster);
-                            innerHostModel.getCluster().setIsChangeable(false);
-                            innerHostModel.getCluster().setChangeProhibitionReason(constants.cannotChangeClusterInTreeContext());
-                            break;
-                        case DataCenter:
-                            StoragePool selectDataCenter =
-                                    (StoragePool) getSystemTreeSelectedItem().getEntity();
-                            innerHostModel.getDataCenter()
-                                    .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
-                            innerHostModel.getDataCenter().setSelectedItem(selectDataCenter);
-                            innerHostModel.getDataCenter().setIsChangeable(false);
-                            innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
-                            break;
-                        default:
-                            innerHostModel.getDataCenter().setItems(dataCenters);
-                            innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
-                            break;
-                    }
-                } else {
-                    innerHostModel.getDataCenter().setItems(dataCenters);
-                    innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
+                        }
+                        innerHostModel.getDataCenter().setIsChangeable(false);
+                        innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
+                        innerHostModel.getCluster().setItems(Arrays.asList(cluster));
+                        innerHostModel.getCluster().setSelectedItem(cluster);
+                        innerHostModel.getCluster().setIsChangeable(false);
+                        innerHostModel.getCluster().setChangeProhibitionReason(constants.cannotChangeClusterInTreeContext());
+                        break;
+                    case DataCenter:
+                        StoragePool selectDataCenter =
+                                (StoragePool) getSystemTreeSelectedItem().getEntity();
+                        innerHostModel.getDataCenter()
+                                .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
+                        innerHostModel.getDataCenter().setSelectedItem(selectDataCenter);
+                        innerHostModel.getDataCenter().setIsChangeable(false);
+                        innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
+                        break;
+                    default:
+                        innerHostModel.getDataCenter().setItems(dataCenters);
+                        innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
+                        break;
                 }
-
-                innerHostModel.onDataInitialized();
-
-                UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", HostListModel.this); //$NON-NLS-1$
-                innerHostModel.getCommands().add(onSaveFalseCommand);
-
-                UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", HostListModel.this); //$NON-NLS-1$
-                innerHostModel.getCommands().add(cancelCommand);
+            } else {
+                innerHostModel.getDataCenter().setItems(dataCenters);
+                innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
             }
+
+            innerHostModel.onDataInitialized();
+
+            UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", HostListModel.this); //$NON-NLS-1$
+            innerHostModel.getCommands().add(onSaveFalseCommand);
+
+            UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", HostListModel.this); //$NON-NLS-1$
+            innerHostModel.getCommands().add(cancelCommand);
         }));
     }
 
@@ -784,48 +753,40 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
 
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-            @Override
-            public void onSuccess(List<StoragePool> dataCenters) {
-                VDS host = getSelectedItem();
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
+            VDS host = getSelectedItem();
 
-                final EditHostModel hostModel = new EditHostModel();
-                hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis, getSystemTreeSelectedItem());
-                hostModel.setSelectedCluster(host);
-                hostModel.onDataInitialized();
-                hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
-                hostModel.setHelpTag(HelpTag.edit_host);
-                hostModel.setHashName("edit_host"); //$NON-NLS-1$
-                hostModel.setIsHeSystem(isHeSystem());
-                hostModel.setHostsWithHeDeployed(getHostsWithHeDeployed());
-                hostModel.setHostedEngineHostModel(new HostedEngineHostModel());
+            final EditHostModel hostModel = new EditHostModel();
+            hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis, getSystemTreeSelectedItem());
+            hostModel.setSelectedCluster(host);
+            hostModel.onDataInitialized();
+            hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
+            hostModel.setHelpTag(HelpTag.edit_host);
+            hostModel.setHashName("edit_host"); //$NON-NLS-1$
+            hostModel.setIsHeSystem(isHeSystem());
+            hostModel.setHostsWithHeDeployed(getHostsWithHeDeployed());
+            hostModel.setHostedEngineHostModel(new HostedEngineHostModel());
 
-                setWindow(hostModel);
+            setWindow(hostModel);
 
-                if (host.getFenceProxySources() != null && !host.getFenceProxySources().isEmpty()) {
-                    hostModel.setPmProxyPreferences(
-                            FenceProxySourceTypeHelper.saveAsString(host.getFenceProxySources()));
-                } else {
-                    AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery<>(new AsyncCallback<String>() {
-                        @Override
-                        public void onSuccess(String returnValue) {
-                            hostModel.setPmProxyPreferences(returnValue);
-                        }
-                    }));
-                }
-
-                UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", HostListModel.this); //$NON-NLS-1$
-                hostModel.getCommands().add(onSaveFalseCommand);
-
-                UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", HostListModel.this); //$NON-NLS-1$
-                hostModel.getCommands().add(cancelCommand);
-
-                if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
-                    hostModel.getName().setIsChangeable(false);
-                    hostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
-                }
-
+            if (host.getFenceProxySources() != null && !host.getFenceProxySources().isEmpty()) {
+                hostModel.setPmProxyPreferences(
+                        FenceProxySourceTypeHelper.saveAsString(host.getFenceProxySources()));
+            } else {
+                AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery<>(returnValue -> hostModel.setPmProxyPreferences(returnValue)));
             }
+
+            UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", HostListModel.this); //$NON-NLS-1$
+            hostModel.getCommands().add(onSaveFalseCommand);
+
+            UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", HostListModel.this); //$NON-NLS-1$
+            hostModel.getCommands().add(cancelCommand);
+
+            if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
+                hostModel.getName().setIsChangeable(false);
+                hostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
+            }
+
         }));
 
 
@@ -972,16 +933,13 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                     new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
 
             Frontend.getInstance().runAction(VdcActionType.AddVds, parameters,
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
+                    result -> {
 
-                            Object[] array = (Object[]) result.getState();
-                            HostListModel<Void> localModel = (HostListModel<Void>) array[0];
-                            boolean localApproveInitiated = (Boolean) array[1];
-                            localModel.postOnSaveInternal(result.getReturnValue(), localApproveInitiated);
+                        Object[] array = (Object[]) result.getState();
+                        HostListModel<Void> localModel = (HostListModel<Void>) array[0];
+                        boolean localApproveInitiated = (Boolean) array[1];
+                        localModel.postOnSaveInternal(result.getReturnValue(), localApproveInitiated);
 
-                        }
                     }, new Object[] { this, approveInitiated });
         }
         else { // Update VDS -> consists of changing VDS cluster first and then updating rest of VDS properties:
@@ -999,23 +957,20 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             if (!oldClusterId.equals(newClusterId)) {
                 Frontend.getInstance().runAction(VdcActionType.ChangeVDSCluster,
                         new ChangeVDSClusterParameters(newClusterId, host.getId()),
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
+                        result -> {
 
-                                Object[] array = (Object[]) result.getState();
-                                HostListModel<Void> localModel = (HostListModel<Void>) array[0];
-                                UpdateVdsActionParameters localParameters = (UpdateVdsActionParameters) array[1];
-                                boolean localApproveInitiated = (Boolean) array[2];
-                                VdcReturnValueBase localReturnValue = result.getReturnValue();
-                                if (localReturnValue != null && localReturnValue.getSucceeded()) {
-                                    localModel.postOnSaveInternalChangeCluster(localParameters, localApproveInitiated);
-                                }
-                                else {
-                                    localModel.getWindow().stopProgress();
-                                }
-
+                            Object[] array = (Object[]) result.getState();
+                            HostListModel<Void> localModel = (HostListModel<Void>) array[0];
+                            UpdateVdsActionParameters localParameters = (UpdateVdsActionParameters) array[1];
+                            boolean localApproveInitiated = (Boolean) array[2];
+                            VdcReturnValueBase localReturnValue = result.getReturnValue();
+                            if (localReturnValue != null && localReturnValue.getSucceeded()) {
+                                localModel.postOnSaveInternalChangeCluster(localParameters, localApproveInitiated);
                             }
+                            else {
+                                localModel.getWindow().stopProgress();
+                            }
+
                         },
                         new Object[] { this, parameters, approveInitiated });
             }
@@ -1027,15 +982,12 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     public void postOnSaveInternalChangeCluster(UpdateVdsActionParameters parameters, boolean approveInitiated) {
         Frontend.getInstance().runAction(VdcActionType.UpdateVds, parameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        Object[] array = (Object[]) result.getState();
-                        HostListModel<Void> localModel = (HostListModel<Void>) array[0];
-                        boolean localApproveInitiated = (Boolean) array[1];
-                        localModel.postOnSaveInternal(result.getReturnValue(), localApproveInitiated);
+                result -> {
+                    Object[] array = (Object[]) result.getState();
+                    HostListModel<Void> localModel = (HostListModel<Void>) array[0];
+                    boolean localApproveInitiated = (Boolean) array[1];
+                    localModel.postOnSaveInternal(result.getReturnValue(), localApproveInitiated);
 
-                    }
                 }, new Object[] { this, approveInitiated });
     }
 
@@ -1063,11 +1015,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ApproveVds,
                 new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{params})),
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                    }
                 },
                 null);
     }
@@ -1106,14 +1055,11 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         // - the cluster should have  gluster service enabled
         if (clusters.size() == 1) {
             model.startProgress();
-            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
-                @Override
-                public void onSuccess(Cluster cluster) {
-                    if (cluster != null && cluster.supportsGlusterService()) {
-                        model.getForce().setIsAvailable(true);
-                    }
-                    model.stopProgress();
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(cluster -> {
+                if (cluster != null && cluster.supportsGlusterService()) {
+                    model.getForce().setIsAvailable(true);
                 }
+                model.stopProgress();
             }), clusters.iterator().next());
         }
 
@@ -1140,15 +1086,12 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVds, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
     }
 
@@ -1162,11 +1105,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ActivateVds, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                    }
                 }, null);
     }
 
@@ -1190,12 +1130,9 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             maintenance(false, false);
         } else {
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
-                    new AsyncCallback<Cluster>() {
-                        @Override
-                        public void onSuccess(Cluster cluster) {
-                            if (cluster != null) {
-                                maintenance(cluster.isMaintenanceReasonRequired(), cluster.supportsGlusterService());
-                            }
+                    cluster -> {
+                        if (cluster != null) {
+                            maintenance(cluster.isMaintenanceReasonRequired(), cluster.supportsGlusterService());
                         }
                     }), clusterId);
         }
@@ -1260,14 +1197,11 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         Frontend.getInstance().runAction(VdcActionType.MaintenanceNumberOfVdss,
                 params,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
-                            cancelConfirm();
-                        }
+                result -> {
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
+                        cancelConfirm();
                     }
                 }, model);
     }
@@ -1275,21 +1209,18 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     public void approve() {
         HostModel hostModel = new EditHostModel();
         setWindow(hostModel);
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-            @Override
-            public void onSuccess(List<StoragePool> dataCenters) {
-                HostModel innerHostModel = (HostModel) getWindow();
-                VDS host = getSelectedItem();
-                innerHostModel.updateModelFromVds(host, dataCenters, false, getSystemTreeSelectedItem());
-                innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
-                innerHostModel.setHelpTag(HelpTag.edit_and_approve_host);
-                innerHostModel.setHashName("edit_and_approve_host"); //$NON-NLS-1$
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
+            HostModel innerHostModel = (HostModel) getWindow();
+            VDS host = getSelectedItem();
+            innerHostModel.updateModelFromVds(host, dataCenters, false, getSystemTreeSelectedItem());
+            innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
+            innerHostModel.setHelpTag(HelpTag.edit_and_approve_host);
+            innerHostModel.setHashName("edit_and_approve_host"); //$NON-NLS-1$
 
-                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnApprove", HostListModel.this); //$NON-NLS-1$
-                innerHostModel.getCommands().add(tempVar);
-                UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", HostListModel.this); //$NON-NLS-1$
-                innerHostModel.getCommands().add(tempVar2);
-            }
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnApprove", HostListModel.this); //$NON-NLS-1$
+            innerHostModel.getCommands().add(tempVar);
+            UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", HostListModel.this); //$NON-NLS-1$
+            innerHostModel.getCommands().add(tempVar2);
         }));
     }
 
@@ -1366,25 +1297,16 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
         }
 
-        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
-
-            @Override
-            public void onSuccess(Cluster returnValue) {
-                Frontend.getInstance().runAction(
-                        VdcActionType.InstallVds,
-                        param,
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
-                                VdcReturnValueBase returnValue = result.getReturnValue();
-                                if (returnValue != null && returnValue.getSucceeded()) {
-                                    cancel();
-                                }
-                            }
-                        }
-                );
-            }
-        }), host.getClusterId());
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(returnValue -> Frontend.getInstance().runAction(
+                VdcActionType.InstallVds,
+                param,
+                result -> {
+                    VdcReturnValueBase returnValue1 = result.getReturnValue();
+                    if (returnValue1 != null && returnValue1.getSucceeded()) {
+                        cancel();
+                    }
+                }
+        )), host.getClusterId());
 
 
     }
@@ -1470,14 +1392,11 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         Frontend.getInstance().runMultipleAction(
             VdcActionType.VdsPowerDown, list,
-            new IFrontendMultipleActionAsyncCallback() {
-                @Override
-                public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
                     cancelConfirm();
-                }
-            },
+                },
             model
         );
     }
@@ -1499,13 +1418,10 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         Frontend.getInstance().runMultipleAction(
             VdcActionType.SshHostReboot, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancelConfirm();
-                    }
+                result -> {
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancelConfirm();
                 },
                 model
         );
@@ -1527,15 +1443,12 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RestartVds, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancelConfirm();
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancelConfirm();
 
-                    }
                 }, model);
     }
 
@@ -1547,11 +1460,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.StartVds, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                    }
                 }, null);
     }
 
@@ -1592,15 +1502,12 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.StopVds, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancelConfirm();
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancelConfirm();
 
-                    }
                 }, model);
     }
 
@@ -1663,15 +1570,12 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         ReversibleFlow flow = new ReversibleFlow();
         flow.getCompleteEvent().addListener(
-                new IEventListener<EventArgs>() {
-                    @Override
-                    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                (ev, sender, args) -> {
 
-                        ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) ev.getContext();
+                    ConfigureLocalStorageModel model1 = (ConfigureLocalStorageModel) ev.getContext();
 
-                        model.stopProgress();
-                        cancel();
-                    }
+                    model1.stopProgress();
+                    cancel();
                 },
                 model);
 
@@ -1692,11 +1596,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RefreshHost, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                    }
                 }, null);
     }
 
@@ -1951,29 +1852,25 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
             Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId,
                     new IdQueryParameters(dbUser.getId()),
-                    new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    new AsyncQuery<VdcQueryReturnValue>(response -> {
+                        if (response == null || !response.getSucceeded()) {
+                            hasAdminSystemPermission = false;
+                            updateConfigureLocalStorageCommandAvailability1();
+                        } else {
+                            ArrayList<Permission> permissions =
+                                    response.getReturnValue();
+                            for (Permission permission : permissions) {
 
-                        @Override
-                        public void onSuccess(VdcQueryReturnValue response) {
-                            if (response == null || !response.getSucceeded()) {
-                                hasAdminSystemPermission = false;
-                                updateConfigureLocalStorageCommandAvailability1();
-                            } else {
-                                ArrayList<Permission> permissions =
-                                        response.getReturnValue();
-                                for (Permission permission : permissions) {
-
-                                    if (permission.getObjectType() == VdcObjectType.System
-                                            && permission.getRoleType() == RoleType.ADMIN) {
-                                        hasAdminSystemPermission = true;
-                                        break;
-                                    }
+                                if (permission.getObjectType() == VdcObjectType.System
+                                        && permission.getRoleType() == RoleType.ADMIN) {
+                                    hasAdminSystemPermission = true;
+                                    break;
                                 }
-
-                                updateConfigureLocalStorageCommandAvailability1();
                             }
 
+                            updateConfigureLocalStorageCommandAvailability1();
                         }
+
                     }, true));
         } else {
             updateConfigureLocalStorageCommandAvailability1();

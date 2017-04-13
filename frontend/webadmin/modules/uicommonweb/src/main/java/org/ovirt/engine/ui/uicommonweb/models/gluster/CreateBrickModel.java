@@ -18,9 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.i18n.client.NumberFormat;
@@ -49,41 +46,27 @@ public class CreateBrickModel extends Model {
         getNoOfPhysicalDisksInRaidVolume().setIsAvailable(false);
         getStripeSize().setIsAvailable(false);
         initSize();
-        getStorageDevices().getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
+        getStorageDevices().getSelectedItemsChangedEvent().addListener((ev, sender, args) -> updateBrickSize());
 
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateBrickSize();
-            }
-
+        getLvName().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            String mountPoint = getDefaultMountFolder().getEntity() + "/" + getLvName().getEntity(); //$NON-NLS-1$
+            getMountPoint().setEntity(mountPoint);
         });
 
-        getLvName().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                String mountPoint = getDefaultMountFolder().getEntity() + "/" + getLvName().getEntity(); //$NON-NLS-1$
-                getMountPoint().setEntity(mountPoint);
+        getRaidTypeList().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            if (getRaidTypeList().getSelectedItem() == RaidType.RAID6) {
+                getNoOfPhysicalDisksInRaidVolume().setIsAvailable(true);
+                getStripeSize().setIsAvailable(true);
+                getStripeSize().setEntity(128);
+            } else if (getRaidTypeList().getSelectedItem() == RaidType.RAID10) {
+                getNoOfPhysicalDisksInRaidVolume().setIsAvailable(true);
+                getStripeSize().setIsAvailable(true);
+                getStripeSize().setEntity(256);
+            } else {
+                getNoOfPhysicalDisksInRaidVolume().setIsAvailable(false);
+                getStripeSize().setIsAvailable(false);
             }
-        });
-
-        getRaidTypeList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getRaidTypeList().getSelectedItem() == RaidType.RAID6) {
-                    getNoOfPhysicalDisksInRaidVolume().setIsAvailable(true);
-                    getStripeSize().setIsAvailable(true);
-                    getStripeSize().setEntity(128);
-                } else if (getRaidTypeList().getSelectedItem() == RaidType.RAID10) {
-                    getNoOfPhysicalDisksInRaidVolume().setIsAvailable(true);
-                    getStripeSize().setIsAvailable(true);
-                    getStripeSize().setEntity(256);
-                } else {
-                    getNoOfPhysicalDisksInRaidVolume().setIsAvailable(false);
-                    getStripeSize().setIsAvailable(false);
-                }
-                onPropertyChanged(new PropertyChangedEventArgs("raidTypeChanged")); //$NON-NLS-1$
-            }
+            onPropertyChanged(new PropertyChangedEventArgs("raidTypeChanged")); //$NON-NLS-1$
         });
 
     }

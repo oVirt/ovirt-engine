@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -87,13 +86,10 @@ public class DataCenterNetworkListModel extends SearchableListModel<StoragePool,
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                ArrayList<Network> newItems = returnValue.getReturnValue();
-                Collections.sort(newItems, new NameableComparator());
-                setItems(newItems);
-            }
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, tempVar, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            ArrayList<Network> newItems = returnValue.getReturnValue();
+            Collections.sort(newItems, new NameableComparator());
+            setItems(newItems);
         }));
     }
 

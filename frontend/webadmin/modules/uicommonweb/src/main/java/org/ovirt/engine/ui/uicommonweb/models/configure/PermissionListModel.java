@@ -39,8 +39,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel.AdSearchType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
@@ -167,15 +165,12 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
             model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
+                    result -> {
 
-                            ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                            localModel.stopProgress();
-                            cancel();
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
 
-                        }
                     }, model);
         }
 
@@ -237,15 +232,12 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.AddPermission, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        AdElementListModel localModel = (AdElementListModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    AdElementListModel localModel = (AdElementListModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
     }
 

@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.TagAssigningModel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -38,13 +37,10 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel.AdSearchType;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.inject.Inject;
 
 public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> implements TagAssigningModel<DbUser> {
@@ -187,34 +183,28 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         }
 
         for (Guid userId : userIds) {
-            AsyncDataProvider.getInstance().getAttachedTagsToUser(new AsyncQuery<>(new AsyncCallback<List<Tags>>() {
-                        @Override
-                        public void onSuccess(List<Tags> returnValue) {
+            AsyncDataProvider.getInstance().getAttachedTagsToUser(new AsyncQuery<>(returnValue -> {
 
-                            allAttachedTags.addAll(returnValue);
-                            selectedItemsCounter++;
-                            if (selectedItemsCounter == getSelectedItems().size()) {
-                                postGetAttachedTags(model);
-                            }
+                allAttachedTags.addAll(returnValue);
+                selectedItemsCounter++;
+                if (selectedItemsCounter == getSelectedItems().size()) {
+                    postGetAttachedTags(model);
+                }
 
-                        }
-                    }),
+            }),
                     userId);
         }
         for (Guid grpId : grpIds) {
             AsyncDataProvider.getInstance().getAttachedTagsToUserGroup(new AsyncQuery<>(
-                    new AsyncCallback<List<Tags>>() {
-                        @Override
-                        public void onSuccess(List<Tags> returnValue) {
+                            returnValue -> {
 
-                            allAttachedTags.addAll(returnValue);
-                            selectedItemsCounter++;
-                            if (selectedItemsCounter == getSelectedItems().size()) {
-                                postGetAttachedTags(model);
-                            }
+                                allAttachedTags.addAll(returnValue);
+                                selectedItemsCounter++;
+                                if (selectedItemsCounter == getSelectedItems().size()) {
+                                    postGetAttachedTags(model);
+                                }
 
-                        }
-                    }),
+                            }),
                     grpId);
         }
     }
@@ -373,11 +363,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
     private final UserGroupListModel userGroupListModel;
     private final UserEventNotifierListModel userEventNotifierListModel;
 
-    private IFrontendActionAsyncCallback nopCallback = new IFrontendActionAsyncCallback() {
-        @Override
-        public void executed(FrontendActionAsyncResult result) {
-            // Nothing.
-        }
+    private IFrontendActionAsyncCallback nopCallback = result -> {
+        // Nothing.
     };
 
     @Override
@@ -435,16 +422,13 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
 
         model.startProgress();
 
-        IFrontendActionAsyncCallback lastCallback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                AdElementListModel localModel = (AdElementListModel) result.getState();
-                localModel.stopProgress();
-                //Refresh user list.
-                syncSearch();
-                if (closeWindow) {
-                    cancel();
-                }
+        IFrontendActionAsyncCallback lastCallback = result -> {
+            AdElementListModel localModel = (AdElementListModel) result.getState();
+            localModel.stopProgress();
+            //Refresh user list.
+            syncSearch();
+            if (closeWindow) {
+                cancel();
             }
         };
 
@@ -477,20 +461,11 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             }
         }
 
-        IFrontendMultipleActionAsyncCallback lastCallback = new IFrontendMultipleActionAsyncCallback() {
-            @Override
-            public void executed(FrontendMultipleActionAsyncResult result) {
-                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                    @Override
-                    public void execute() {
-                        //Refresh user list.
-                        syncSearch();
-                        cancel();
-                    }
-                });
-            }
-        };
+        IFrontendMultipleActionAsyncCallback lastCallback = result -> Scheduler.get().scheduleDeferred(() -> {
+            //Refresh user list.
+            syncSearch();
+            cancel();
+        });
         if (getUserOrGroup() == UserOrGroup.User) {
             if (userPrms.size() > 0) {
                 Frontend.getInstance().runMultipleAction(VdcActionType.RemoveUser, userPrms, lastCallback);

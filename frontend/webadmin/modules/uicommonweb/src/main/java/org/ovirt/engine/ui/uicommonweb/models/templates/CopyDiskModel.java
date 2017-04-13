@@ -13,13 +13,10 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class CopyDiskModel extends MoveOrCopyDiskModel {
     public CopyDiskModel() {
@@ -36,12 +33,9 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
 
         setDiskImages(disksImages);
 
-        AsyncDataProvider.getInstance().getDiskList(new AsyncQuery<>(new AsyncCallback<List<DiskImage>>() {
-            @Override
-            public void onSuccess(List<DiskImage> disks) {
-                onInitAllDisks((List) disks);
-                onInitDisks();
-            }
+        AsyncDataProvider.getInstance().getDiskList(new AsyncQuery<>(disks -> {
+            onInitAllDisks((List) disks);
+            onInitDisks();
         }));
     }
 
@@ -62,12 +56,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
             return;
         }
 
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-            @Override
-            public void onSuccess(List<StorageDomain> storageDomains) {
-                onInitStorageDomains(storageDomains);
-            }
-        }), ((DiskImage) disk).getStoragePoolId());
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(storageDomains -> onInitStorageDomains(storageDomains)), ((DiskImage) disk).getStoragePoolId());
     }
 
     @Override
@@ -113,12 +102,9 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
         }
 
         Frontend.getInstance().runMultipleAction(getActionType(), parameters,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        CopyDiskModel localModel = (CopyDiskModel) result.getState();
-                        localModel.cancel();
-                    }
+                result -> {
+                    CopyDiskModel localModel = (CopyDiskModel) result.getState();
+                    localModel.cancel();
                 }, this);
     }
 

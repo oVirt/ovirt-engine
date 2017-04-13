@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedSet;
 
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -19,7 +18,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -103,21 +101,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         setDescription(new EntityModel<String>());
         setComment(new EntityModel<String>());
         setDataCenters(new ListModel<StoragePool>());
-        getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                syncWithBackend();
-            }
-        });
+        getDataCenters().getSelectedItemChangedEvent().addListener((ev, sender, args) -> syncWithBackend());
         setExport(new EntityModel<>(false));
-        getExport().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                onExportChanged();
-            }
-        });
+        getExport().getEntityChangedEvent().addListener((ev, sender, args) -> onExportChanged());
         setNeutronPhysicalNetwork(new EntityModel<String>());
 
         setNetworkLabel(new ListModel<String>());
@@ -132,35 +118,19 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         EntityModel<Boolean> hasVlanTag = new EntityModel<>();
         hasVlanTag.setEntity(false);
         setHasVLanTag(hasVlanTag);
-        getHasVLanTag().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateVlanTagChangeability();
-            }
-        });
+        getHasVLanTag().getEntityChangedEvent().addListener((ev, sender, args) -> updateVlanTagChangeability());
 
         ListModel<MtuSelector> mtuSelector = new ListModel<>();
         mtuSelector.setItems(Arrays.asList(MtuSelector.values()));
         setMtuSelector(mtuSelector);
-        mtuSelector.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateMtuSelectorsChangeability();
-            }
-        });
+        mtuSelector.getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateMtuSelectorsChangeability());
 
         setMtu(new EntityModel<Integer>());
 
         EntityModel<Boolean> isVmNetwork = new EntityModel<>();
         isVmNetwork.setEntity(true);
         setIsVmNetwork(isVmNetwork);
-        isVmNetwork.getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                toggleProfilesAvailability();
-            }
-        });
+        isVmNetwork.getEntityChangedEvent().addListener((ev, sender, args) -> toggleProfilesAvailability());
 
         EntityModel<Boolean> publicUse = new EntityModel<>();
         publicUse.setEntity(true);
@@ -174,12 +144,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
         EntityModel<Boolean> createSubnet = new EntityModel<>(false);
         setCreateSubnet(createSubnet);
-        createSubnet.getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateSubnetChangeability();
-            }
-        });
+        createSubnet.getEntityChangedEvent().addListener((ev, sender, args) -> updateSubnetChangeability());
 
         setSubnetModel(new ExternalSubnetModel());
 
@@ -208,13 +173,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
         // make sure default profile's name is in sync with network's name
         defaultProfile.getName().setEntity(getName().getEntity());
-        final IEventListener<EventArgs> networkNameListener = new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                defaultProfile.getName().setEntity(getName().getEntity());
-            }
-        };
+        final IEventListener<EventArgs> networkNameListener =
+                (ev, sender, args) -> defaultProfile.getName().setEntity(getName().getEntity());
         getName().getEntityChangedEvent().addListener(networkNameListener);
 
         // if user overrides default name, stop tracking network's name
@@ -233,13 +193,10 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     }
 
     private void initExternalProviderList() {
-        AsyncQuery getProvidersQuery = new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
-            @Override
-            public void onSuccess(List<Provider<?>> result) {
-                List<Provider<?>> providers = getNonReadOnlyExternalNetworkProviders(result);
-                getExternalProviders().setItems(providers);
-                selectExternalProvider();
-            }
+        AsyncQuery<List<Provider<?>>> getProvidersQuery = new AsyncQuery<>(result -> {
+            List<Provider<?>> providers = getNonReadOnlyExternalNetworkProviders(result);
+            getExternalProviders().setItems(providers);
+            selectExternalProvider();
         });
         AsyncDataProvider.getInstance().getAllNetworkProviders(getProvidersQuery);
     }
@@ -543,15 +500,12 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         setSupportBridgesReportByVDSM();
         setMTUOverrideSupported();
 
-        AsyncDataProvider.getInstance().getAllHostNetworkQos(dc.getId(), new AsyncQuery<>(new AsyncCallback<List<HostNetworkQos>>() {
-            @Override
-            public void onSuccess(List<HostNetworkQos> qos) {
-                getQos().setItems(qos);
-                getQos().setSelectedItem(qos.stream()
-                                .filter(new Linq.IdPredicate<>(getNetwork().getQosId()))
-                                .findFirst()
-                                .orElse(EMPTY_HOST_NETWORK_QOS));
-            }
+        AsyncDataProvider.getInstance().getAllHostNetworkQos(dc.getId(), new AsyncQuery<>(qos -> {
+            getQos().setItems(qos);
+            getQos().setSelectedItem(qos.stream()
+                            .filter(new Linq.IdPredicate<>(getNetwork().getQosId()))
+                            .findFirst()
+                            .orElse(EMPTY_HOST_NETWORK_QOS));
         }));
 
         updateDcLabels();
@@ -739,15 +693,11 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
     private void updateDcLabels() {
         AsyncDataProvider.getInstance().getNetworkLabelsByDataCenterId(getSelectedDc().getId(),
-                new AsyncQuery<>(new AsyncCallback<SortedSet<String>>() {
-
-                    @Override
-                    public void onSuccess(SortedSet<String> returnValue) {
-                        String label = getNetworkLabel().getSelectedItem();
-                        getNetworkLabel().setItems(returnValue);
-                        getNetworkLabel().setSelectedItem(label);
-                        onExportChanged();
-                    }
+                new AsyncQuery<>(returnValue -> {
+                    String label = getNetworkLabel().getSelectedItem();
+                    getNetworkLabel().setItems(returnValue);
+                    getNetworkLabel().setSelectedItem(label);
+                    onExportChanged();
                 }));
     }
 

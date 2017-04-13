@@ -9,10 +9,6 @@ import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MacRange;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class MacPoolModel extends EntityModel<MacPool> {
 
@@ -28,22 +24,12 @@ public class MacPoolModel extends EntityModel<MacPool> {
     }
 
     public MacPoolModel() {
-        getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                init();
-            }
-        });
-        getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
-                    boolean value = getIsChangable();
-                    allowDuplicates.setIsChangeable(value);
-                    macRanges.setIsChangeable(value);
-                }
+        getEntityChangedEvent().addListener((ev, sender, args) -> init());
+        getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
+                boolean value = getIsChangable();
+                allowDuplicates.setIsChangeable(value);
+                macRanges.setIsChangeable(value);
             }
         });
     }

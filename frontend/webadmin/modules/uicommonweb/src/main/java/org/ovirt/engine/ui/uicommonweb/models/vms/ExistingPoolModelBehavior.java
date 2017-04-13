@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -129,44 +128,41 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
         ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
         StoragePool dataCenter = getModel().getSelectedDataCenter();
-        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(asyncQuery(new AsyncCallback<List<StorageDomain>>() {
-            @Override
-            public void onSuccess(List<StorageDomain> storageDomains) {
-                ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getModel().getDisks();
-                ArrayList<StorageDomain> activeStorageDomains = filterStorageDomains(storageDomains);
+        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(asyncQuery(storageDomains -> {
+            ArrayList<DiskModel> disks1 = (ArrayList<DiskModel>) getModel().getDisks();
+            ArrayList<StorageDomain> activeStorageDomains = filterStorageDomains(storageDomains);
 
-                DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
-                disksAllocationModel.setActiveStorageDomains(activeStorageDomains);
-                getModel().getStorageDomain().setItems(activeStorageDomains);
+            DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
+            disksAllocationModel.setActiveStorageDomains(activeStorageDomains);
+            getModel().getStorageDomain().setItems(activeStorageDomains);
 
-                for (DiskModel diskModel : disks) {
-                    // Setting Quota
-                    diskModel.getQuota().setItems(getModel().getQuota().getItems());
-                    diskModel.getQuota().setIsChangeable(false);
+            for (DiskModel diskModel : disks1) {
+                // Setting Quota
+                diskModel.getQuota().setItems(getModel().getQuota().getItems());
+                diskModel.getQuota().setIsChangeable(false);
 
-                    ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
-                    for (DiskImage disk : pool.getDiskList()) {
-                        if (diskModel.getDisk() instanceof DiskImage &&
-                                ((DiskImage) diskModel.getDisk()).getImageId().equals(disk.getImageTemplateId())) {
-                            storageIds = new ArrayList<>(disk.getStorageIds());
-                            break;
-                        }
+                ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
+                for (DiskImage disk : pool.getDiskList()) {
+                    if (diskModel.getDisk() instanceof DiskImage &&
+                            ((DiskImage) diskModel.getDisk()).getImageId().equals(disk.getImageTemplateId())) {
+                        storageIds = new ArrayList<>(disk.getStorageIds());
+                        break;
                     }
-                    if (storageIds == null || storageIds.size() == 0) {
-                        continue;
-                    }
-
-                    Guid storageId = storageIds.get(0);
-                    StorageDomain storageDomain =
-                            activeStorageDomains.stream()
-                                    .filter(new Linq.IdPredicate<>(storageId))
-                                    .findFirst()
-                                    .orElse(null);
-                    List<StorageDomain> diskStorageDomains = new ArrayList<>();
-                    diskStorageDomains.add(storageDomain);
-                    diskModel.getStorageDomain().setItems(diskStorageDomains);
-                    diskModel.getStorageDomain().setIsChangeable(false);
                 }
+                if (storageIds == null || storageIds.size() == 0) {
+                    continue;
+                }
+
+                Guid storageId = storageIds.get(0);
+                StorageDomain storageDomain =
+                        activeStorageDomains.stream()
+                                .filter(new Linq.IdPredicate<>(storageId))
+                                .findFirst()
+                                .orElse(null);
+                List<StorageDomain> diskStorageDomains = new ArrayList<>();
+                diskStorageDomains.add(storageDomain);
+                diskModel.getStorageDomain().setItems(diskStorageDomains);
+                diskModel.getStorageDomain().setIsChangeable(false);
             }
         }), dataCenter.getId(), actionGroup);
 

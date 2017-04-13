@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -27,8 +26,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
@@ -149,12 +146,9 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                List<VdsNetworkInterface> items = returnValue.getReturnValue();
-                updateItems(items);
-            }
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, tempVar, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            List<VdsNetworkInterface> items = returnValue.getReturnValue();
+            updateItems(items);
         }));
     }
 
@@ -378,12 +372,9 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         getWindow().startProgress();
         Frontend.getInstance().runAction(VdcActionType.SyncAllHostNetworks,
                 new VdsActionParameters(getEntity().getId()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        getWindow().stopProgress();
-                        cancel();
-                    }
+                result -> {
+                    getWindow().stopProgress();
+                    cancel();
                 },
                 null);
     }

@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -65,19 +64,16 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
     protected void loadDataCenters() {
         if (!selectedTemplate.getId().equals(Guid.Empty)) {
             AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(
-                            new AsyncCallback<StoragePool>() {
-                                @Override
-                                public void onSuccess(StoragePool dataCenter) {
+                            dataCenter -> {
 
-                                    if (dataCenter != null) {
-                                        List<StoragePool> dataCenters =
-                                                new ArrayList<>(Arrays.asList(new StoragePool[] { dataCenter }));
-                                        initClusters(dataCenters);
-                                    } else {
-                                        getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
-                                    }
-
+                                if (dataCenter != null) {
+                                    List<StoragePool> dataCenters =
+                                            new ArrayList<>(Arrays.asList(new StoragePool[] { dataCenter }));
+                                    initClusters(dataCenters);
+                                } else {
+                                    getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
                                 }
+
                             }),
                     selectedTemplate.getStoragePoolId());
         } else {
@@ -89,19 +85,15 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
 
     protected void initClusters(final List<StoragePool> dataCenters) {
         AsyncDataProvider.getInstance().getClusterListByService(
-                new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
+                new AsyncQuery<>(clusters -> {
+                    List<Cluster> filteredClusters =
+                            AsyncDataProvider.getInstance().filterByArchitecture(clusters,
+                                    selectedTemplate.getClusterArch());
 
-                    @Override
-                    public void onSuccess(List<Cluster> clusters) {
-                        List<Cluster> filteredClusters =
-                                AsyncDataProvider.getInstance().filterByArchitecture(clusters,
-                                        selectedTemplate.getClusterArch());
-
-                        getModel().setDataCentersAndClusters(getModel(),
-                                dataCenters,
-                                filteredClusters, selectedTemplate.getClusterId());
-                        initCdImage();
-                    }
+                    getModel().setDataCentersAndClusters(getModel(),
+                            dataCenters,
+                            filteredClusters, selectedTemplate.getClusterId());
+                    initCdImage();
                 }),
                 true,
                 false);

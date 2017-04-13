@@ -6,14 +6,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
@@ -52,21 +50,12 @@ public class UserPortalTemplateListModel extends TemplateListModel {
 
     @Override
     protected void syncSearch() {
-        AsyncDataProvider.getInstance().getAllVmTemplates(new AsyncQuery<>(new AsyncCallback<List<VmTemplate>>() {
-            @Override
-            public void onSuccess(List<VmTemplate> vmTemplates) {
-                prefetchIcons(vmTemplates);
-            }
-        }), getIsQueryFirstTime());
+        AsyncDataProvider.getInstance().getAllVmTemplates(new AsyncQuery<>(vmTemplates -> prefetchIcons(vmTemplates)), getIsQueryFirstTime());
     }
 
     private void prefetchIcons(final Collection<VmTemplate> vmTemplates) {
         final List<Guid> iconIds = extractSmallIconIds(vmTemplates);
-        IconCache.getInstance().getOrFetchIcons(iconIds, new IconCache.IconsCallback() {
-            @Override public void onSuccess(Map<Guid, String> idToIconMap) {
-                setItems(vmTemplates);
-            }
-        });
+        IconCache.getInstance().getOrFetchIcons(iconIds, idToIconMap -> setItems(vmTemplates));
     }
 
     private List<Guid> extractSmallIconIds(Collection<VmTemplate> vmTemplates) {

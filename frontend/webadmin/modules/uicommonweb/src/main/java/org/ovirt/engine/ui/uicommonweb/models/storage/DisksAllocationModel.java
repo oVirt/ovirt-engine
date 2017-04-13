@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -32,7 +31,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -47,12 +45,7 @@ public class DisksAllocationModel extends EntityModel {
     private static final String VOLUME_FORMAT = "VOLUME_FORMAT";  //$NON-NLS-1$
     private static final String THIN_PROVISIONING = "THIN_PROVISIONING";  //$NON-NLS-1$
 
-    private final IEventListener<EventArgs> storageDomainEventListener = new IEventListener<EventArgs>() {
-        @Override
-        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            updateDisks(sender);
-        }
-    };
+    private final IEventListener<EventArgs> storageDomainEventListener = (ev, sender, args) -> updateDisks(sender);
 
     private List<DiskModel> disks;
 
@@ -93,17 +86,14 @@ public class DisksAllocationModel extends EntityModel {
         for (final DiskModel diskModel : disks) {
             diskModel.getStorageDomain().getSelectedItemChangedEvent().removeListener(storageDomainEventListener);
             diskModel.getStorageDomain().getSelectedItemChangedEvent().addListener(storageDomainEventListener);
-            diskModel.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    DiskImage disk = (DiskImage) diskModel.getDisk();
-                    if (diskModel.getStorageDomain().getItems() != null && disk.getStorageIds() != null
-                            && !disk.getStorageIds().isEmpty() && !diskModel.getStorageDomain().getItems().isEmpty()) {
-                        diskModel.getStorageDomain().setSelectedItem(Linq.firstOrDefault(
-                                diskModel.getStorageDomain().getItems(),
-                                new Linq.IdsPredicate<>(disk.getStorageIds()),
-                                diskModel.getStorageDomain().getItems().iterator().next()));
-                    }
+            diskModel.getStorageDomain().getItemsChangedEvent().addListener((ev, sender, args) -> {
+                DiskImage disk = (DiskImage) diskModel.getDisk();
+                if (diskModel.getStorageDomain().getItems() != null && disk.getStorageIds() != null
+                        && !disk.getStorageIds().isEmpty() && !diskModel.getStorageDomain().getItems().isEmpty()) {
+                    diskModel.getStorageDomain().setSelectedItem(Linq.firstOrDefault(
+                            diskModel.getStorageDomain().getItems(),
+                            new Linq.IdsPredicate<>(disk.getStorageIds()),
+                            diskModel.getStorageDomain().getItems().iterator().next()));
                 }
             });
         }
@@ -115,15 +105,12 @@ public class DisksAllocationModel extends EntityModel {
             diskModelsMap.put(((DiskImage) diskModel.getDisk()).getImageId(), diskModel);
         }
 
-        AsyncDataProvider.getInstance().getAncestorImagesByImagesIds(new AsyncQuery<>(new AsyncCallback<Map<Guid, DiskImage>>() {
-            @Override
-            public void onSuccess(Map<Guid, DiskImage> imagesAncestors) {
-                for (Map.Entry<Guid, DiskImage> entry : imagesAncestors.entrySet()) {
-                    DiskModel diskModel = diskModelsMap.get(entry.getKey());
-                    diskModel.getVolumeType().setSelectedItem(entry.getValue().getVolumeType());
-                    diskModel.getVolumeFormat().setSelectedItem(entry.getValue().getVolumeFormat());
-                    updateStorageDomainsAvailability();
-                }
+        AsyncDataProvider.getInstance().getAncestorImagesByImagesIds(new AsyncQuery<>(imagesAncestors -> {
+            for (Map.Entry<Guid, DiskImage> entry : imagesAncestors.entrySet()) {
+                DiskModel diskModel = diskModelsMap.get(entry.getKey());
+                diskModel.getVolumeType().setSelectedItem(entry.getValue().getVolumeType());
+                diskModel.getVolumeFormat().setSelectedItem(entry.getValue().getVolumeFormat());
+                updateStorageDomainsAvailability();
             }
         }), new ArrayList<>(diskModelsMap.keySet()));
     }
@@ -190,37 +177,34 @@ public class DisksAllocationModel extends EntityModel {
     private void updateQuota(Guid storageDomainId, final ListModel<Quota> isItem, final Guid diskQuotaId) {
         if (getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED && storageDomainId != null) {
             AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery<>(
-                    new AsyncCallback<List<Quota>>() {
-                        @Override
-                        public void onSuccess(List<Quota> list) {
-                            if (list == null) {
-                                return;
-                            }
-                            if (isItem == null) {
-                                for (DiskModel diskModel : getDisks()) {
-                                    diskModel.getQuota().setItems(list);
-                                    if (diskModel.getDisk() instanceof DiskImage) {
-                                        DiskImage diskImage = (DiskImage) diskModel.getDisk();
-                                        for (Quota quota : list) {
-                                            if (quota.getId().equals(diskImage.getQuotaId())) {
-                                                diskModel.getQuota().setSelectedItem(quota);
-                                                break;
-                                            }
+                    list -> {
+                        if (list == null) {
+                            return;
+                        }
+                        if (isItem == null) {
+                            for (DiskModel diskModel : getDisks()) {
+                                diskModel.getQuota().setItems(list);
+                                if (diskModel.getDisk() instanceof DiskImage) {
+                                    DiskImage diskImage = (DiskImage) diskModel.getDisk();
+                                    for (Quota quota : list) {
+                                        if (quota.getId().equals(diskImage.getQuotaId())) {
+                                            diskModel.getQuota().setSelectedItem(quota);
+                                            break;
                                         }
                                     }
                                 }
-                            } else {
-                                Guid selectedQuota = isItem.getSelectedItem() != null ?
-                                        isItem.getSelectedItem().getId() : null;
-                                selectedQuota = selectedQuota != null ? selectedQuota : diskQuotaId;
+                            }
+                        } else {
+                            Guid selectedQuota = isItem.getSelectedItem() != null ?
+                                    isItem.getSelectedItem().getId() : null;
+                            selectedQuota = selectedQuota != null ? selectedQuota : diskQuotaId;
 
-                                isItem.setItems(list);
-                                if (selectedQuota != null && list.size() > 1) {
-                                    for (Quota quota : list) {
-                                        if (quota.getId().equals(selectedQuota)) {
-                                            isItem.setSelectedItem(quota);
-                                            break;
-                                        }
+                            isItem.setItems(list);
+                            if (selectedQuota != null && list.size() > 1) {
+                                for (Quota quota : list) {
+                                    if (quota.getId().equals(selectedQuota)) {
+                                        isItem.setSelectedItem(quota);
+                                        break;
                                     }
                                 }
                             }
@@ -232,14 +216,9 @@ public class DisksAllocationModel extends EntityModel {
     private void updateDiskProfile(Guid storageDomainId, final ListModel<DiskProfile> diskProfiles) {
         Frontend.getInstance().runQuery(VdcQueryType.GetDiskProfilesByStorageDomainId,
                 new IdQueryParameters(storageDomainId),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        List<DiskProfile> fetchedDiskProfiles = returnValue.getReturnValue();
-                        DisksAllocationModel.this.setDiskProfilesList(diskProfiles, fetchedDiskProfiles);
-
-                    }
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    List<DiskProfile> fetchedDiskProfiles = returnValue.getReturnValue();
+                    DisksAllocationModel.this.setDiskProfilesList(diskProfiles, fetchedDiskProfiles);
 
                 }));
     }
@@ -485,12 +464,7 @@ public class DisksAllocationModel extends EntityModel {
         getDiskAllocationTargetEnabled().setIsChangeable(changeable);
         getDiskAllocationTargetEnabled().setEntity(value);
         updateTargetChangeable(changeable);
-        getDiskAllocationTargetEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateTargetChangeable(!getDiskAllocationTargetEnabled().getEntity());
-            }
-        });
+        getDiskAllocationTargetEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> updateTargetChangeable(!getDiskAllocationTargetEnabled().getEntity()));
     }
 
     @Override

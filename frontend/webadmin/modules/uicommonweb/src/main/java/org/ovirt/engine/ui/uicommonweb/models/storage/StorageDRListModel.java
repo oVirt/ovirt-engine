@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -24,8 +23,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class StorageDRListModel extends SearchableListModel<StorageDomain, StorageDomainDR> {
@@ -117,13 +114,10 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainDR, parameters, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                List<StorageDomainDR> resultList = returnValue.getReturnValue();
-                setItems(resultList);
-                populateSessionsMap(resultList);
-            }
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainDR, parameters, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            List<StorageDomainDR> resultList = returnValue.getReturnValue();
+            setItems(resultList);
+            populateSessionsMap(resultList);
         }));
     }
 
@@ -131,12 +125,9 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
         for (final StorageDomainDR storageDR : storageDRs) {
             if (!geoRepSessionsMap.containsKey(storageDR.getGeoRepSessionId())) {
                 AsyncDataProvider.getInstance()
-                        .getGlusterVolumeGeoRepSessionById(new AsyncQuery<>(new AsyncCallback<GlusterGeoRepSession>() {
-                            @Override
-                            public void onSuccess(GlusterGeoRepSession geoRepSession) {
-                                if (geoRepSession != null) {
-                                    geoRepSessionsMap.put(storageDR.getGeoRepSessionId(), geoRepSession);
-                                }
+                        .getGlusterVolumeGeoRepSessionById(new AsyncQuery<>(geoRepSession -> {
+                            if (geoRepSession != null) {
+                                geoRepSessionsMap.put(storageDR.getGeoRepSessionId(), geoRepSession);
                             }
                         }), storageDR.getGeoRepSessionId());
             }
@@ -179,16 +170,13 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
         model.getStorageDomain().setEntity(storageDomain);
 
         model.startProgress();
-        AsyncDataProvider.getInstance().getGlusterGeoRepSessionsForStorageDomain(new AsyncQuery<>(new AsyncCallback<List<GlusterGeoRepSession>>() {
-            @Override
-            public void onSuccess(List<GlusterGeoRepSession> geoRepSessions) {
-                model.getGeoRepSession().setItems(geoRepSessions);
-                //show error if there are no associated geoRepSessions
-                if (geoRepSessions.isEmpty()) {
-                    model.setMessage(ConstantsManager.getInstance().getConstants().noGeoRepSessionForGlusterVolume());
-                }
-                model.stopProgress();
+        AsyncDataProvider.getInstance().getGlusterGeoRepSessionsForStorageDomain(new AsyncQuery<>(geoRepSessions -> {
+            model.getGeoRepSession().setItems(geoRepSessions);
+            //show error if there are no associated geoRepSessions
+            if (geoRepSessions.isEmpty()) {
+                model.setMessage(ConstantsManager.getInstance().getConstants().noGeoRepSessionForGlusterVolume());
             }
+            model.stopProgress();
         }), storageDomain.getId());
 
         UICommand okCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
@@ -219,14 +207,11 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
         model.startProgress();
         Frontend.getInstance().runAction(VdcActionType.ScheduleGlusterStorageSync,
                 parameter,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        StorageDRListModel localModel =
-                                (StorageDRListModel) result.getState();
-                        model.stopProgress();
-                        localModel.postSaveAction(result.getReturnValue());
-                    }
+                result -> {
+                    StorageDRListModel localModel =
+                            (StorageDRListModel) result.getState();
+                    model.stopProgress();
+                    localModel.postSaveAction(result.getReturnValue());
                 },
                 this);
     }
@@ -254,14 +239,11 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
         model.getHour().setSelectedItem(schedule.getHour());
         model.getMins().setSelectedItem(schedule.getMins());
 
-        AsyncDataProvider.getInstance().getGlusterGeoRepSessionsForStorageDomain(new AsyncQuery<>(new AsyncCallback<List<GlusterGeoRepSession>>() {
-            @Override
-            public void onSuccess(List<GlusterGeoRepSession> geoRepSessions) {
-                model.getGeoRepSession().setItems(geoRepSessions);
-                model.getGeoRepSession().setSelectedItem(Linq.firstOrNull(geoRepSessions,
-                        new Linq.IdPredicate<>(selectedDR.getGeoRepSessionId())));
-                model.stopProgress();
-            }
+        AsyncDataProvider.getInstance().getGlusterGeoRepSessionsForStorageDomain(new AsyncQuery<>(geoRepSessions -> {
+            model.getGeoRepSession().setItems(geoRepSessions);
+            model.getGeoRepSession().setSelectedItem(Linq.firstOrNull(geoRepSessions,
+                    new Linq.IdPredicate<>(selectedDR.getGeoRepSessionId())));
+            model.stopProgress();
         }), storageDomain.getId());
 
         UICommand okCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$

@@ -22,8 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class StorageSnapshotListModel extends SearchableListModel<StorageDomain, DiskImage> {
     private UICommand removeCommand;
@@ -153,13 +151,10 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDiskSnapshots, paramerterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        StorageSnapshotListModel localModel = (StorageSnapshotListModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-                    }
+                result -> {
+                    StorageSnapshotListModel localModel = (StorageSnapshotListModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
                 },
                 this);
     }

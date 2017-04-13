@@ -10,11 +10,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
 
@@ -35,20 +30,16 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
         okCommand = UICommand.createDefaultOkUiCommand("OnManage", this); //$NON-NLS-1$
         getCommands().add(0, okCommand);
 
-        getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                for (ClusterNetworkModel model : getItems()) {
-                    if (model.isManagement()) {
-                        managementNetwork = model;
-                    }
-                    if (model.isGlusterNetwork()) {
-                        glusterNetwork = model;
-                    }
-                    if (model.isDefaultRouteNetwork()) {
-                        defaultRouteNetwork = model;
-                    }
+        getItemsChangedEvent().addListener((ev, sender, args) -> {
+            for (ClusterNetworkModel model : getItems()) {
+                if (model.isManagement()) {
+                    managementNetwork = model;
+                }
+                if (model.isGlusterNetwork()) {
+                    glusterNetwork = model;
+                }
+                if (model.isDefaultRouteNetwork()) {
+                    defaultRouteNetwork = model;
                 }
             }
         });
@@ -209,12 +200,9 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
             Frontend.getInstance()
                     .runAction(VdcActionType.ManageNetworkClusters,
                             new ManageNetworkClustersParameters(toAttach, toDetach, toUpdate),
-                            new IFrontendActionAsyncCallback() {
-                                @Override
-                                public void executed(FrontendActionAsyncResult result) {
-                                    needsAnyChange = false;
-                                    doFinish();
-                                }
+                            result -> {
+                                needsAnyChange = false;
+                                doFinish();
                             });
         }
         doFinish();

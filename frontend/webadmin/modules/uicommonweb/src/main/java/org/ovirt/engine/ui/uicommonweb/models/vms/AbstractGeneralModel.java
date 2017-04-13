@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -39,23 +38,19 @@ public class AbstractGeneralModel<E> extends EntityModel<E> {
         }
 
         Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices,
-                new IdQueryParameters(entityId).withoutRefresh(), new AsyncQuery<>(
-            new AsyncCallback<VdcQueryReturnValue>() {
-                @Override
-                public void onSuccess(VdcQueryReturnValue returnValue) {
-                    List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
-                    Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
+                new IdQueryParameters(entityId).withoutRefresh(), new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                            List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
+                            Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
 
-                    for (GraphicsDevice graphicsDevice : graphicsDevices) {
-                        graphicsTypesCollection.add(graphicsDevice.getGraphicsType());
-                    }
+                            for (GraphicsDevice graphicsDevice : graphicsDevices) {
+                                graphicsTypesCollection.add(graphicsDevice.getGraphicsType());
+                            }
 
-                    UnitVmModel.GraphicsTypes graphicsTypes = UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypesCollection);
-                    Translator translator = EnumTranslator.getInstance();
-                    setGraphicsType(translator.translate(graphicsTypes));
-                }
-            }
-        ));
+                            UnitVmModel.GraphicsTypes graphicsTypes = UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypesCollection);
+                            Translator translator = EnumTranslator.getInstance();
+                            setGraphicsType(translator.translate(graphicsTypes));
+                        }
+                ));
     }
 
 }

@@ -15,8 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePool, IscsiBond> {
 
@@ -161,14 +159,11 @@ public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePoo
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveIscsiBond, params,
-            new IFrontendMultipleActionAsyncCallback() {
-                @Override
-                public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
                     DataCenterIscsiBondListModel localModel = (DataCenterIscsiBondListModel) result.getState();
                     localModel.stopProgress();
                     cancel();
-                }
-            }, this);
+                }, this);
     }
 
     @Override

@@ -1,10 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -21,12 +17,7 @@ public class VmGuideModel extends GuideModel<VM> {
 
         if (getEntity() != null) {
             startProgress();
-            AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(new AsyncCallback<List<Disk>>() {
-                    @Override
-                    public void onSuccess(List<Disk> disks) {
-                        updateOptions(!disks.isEmpty());
-                    }
-                }), getEntity().getId());
+            AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(disks -> updateOptions(!disks.isEmpty())), getEntity().getId());
         }
     }
 

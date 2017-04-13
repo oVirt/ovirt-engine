@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -31,7 +30,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -107,12 +105,7 @@ public class NewDiskModel extends AbstractDiskModel {
     }
 
     public void updateSuggestedDiskAliasFromServer() {
-        AsyncDataProvider.getInstance().getNextAvailableDiskAliasNameByVMId(new AsyncQuery<>(new AsyncCallback<String>() {
-            @Override
-            public void onSuccess(String suggestedDiskAlias) {
-                getAlias().setEntity(suggestedDiskAlias);
-            }
-        }), getVm().getId());
+        AsyncDataProvider.getInstance().getNextAvailableDiskAliasNameByVMId(new AsyncQuery<>(suggestedDiskAlias -> getAlias().setEntity(suggestedDiskAlias)), getVm().getId());
     }
 
     @Override
@@ -199,14 +192,11 @@ public class NewDiskModel extends AbstractDiskModel {
             parameters.setStorageDomainId(storageDomain.getId());
         }
 
-        IFrontendActionAsyncCallback onFinished = callback != null ? callback : new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                NewDiskModel diskModel = (NewDiskModel) result.getState();
-                diskModel.stopProgress();
-                diskModel.cancel();
-                postSave();
-            }
+        IFrontendActionAsyncCallback onFinished = callback != null ? callback : result -> {
+            NewDiskModel diskModel = (NewDiskModel) result.getState();
+            diskModel.stopProgress();
+            diskModel.cancel();
+            postSave();
         };
 
         Frontend.getInstance().runAction(VdcActionType.AddDisk, parameters, onFinished, this);

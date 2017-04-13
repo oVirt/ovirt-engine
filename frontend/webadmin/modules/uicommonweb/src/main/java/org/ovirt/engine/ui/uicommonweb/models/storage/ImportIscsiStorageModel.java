@@ -13,9 +13,6 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComp
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class ImportIscsiStorageModel extends ImportSanStorageModel {
 
@@ -32,13 +29,8 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
     }
 
     private void addListeners() {
-        getTargets().getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getLoginCommand().setIsExecutionAllowed(getTargets().getSelectedItems() != null &&
-                        !getTargets().getSelectedItems().isEmpty());
-            }
-        });
+        getTargets().getSelectedItemsChangedEvent().addListener((ev, sender, args) -> getLoginCommand().setIsExecutionAllowed(getTargets().getSelectedItems() != null &&
+                !getTargets().getSelectedItems().isEmpty()));
     }
 
     @Override

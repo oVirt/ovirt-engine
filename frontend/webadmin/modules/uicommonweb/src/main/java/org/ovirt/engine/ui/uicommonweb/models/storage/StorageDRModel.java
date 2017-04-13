@@ -14,9 +14,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 /*
  * Disaster Recovery configuration for Storage Domain that setups up
@@ -118,15 +115,12 @@ public class StorageDRModel extends Model {
         }
         mins.setItems(minutes);
 
-        getFrequency().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean weekly = getFrequency().getSelectedItem() == StorageSyncSchedule.Frequency.WEEKLY;
-                boolean daily = getFrequency().getSelectedItem() == StorageSyncSchedule.Frequency.DAILY;
-                getDays().setIsAvailable(weekly);
-                getHour().setIsAvailable(weekly || daily);
-                getMins().setIsAvailable(weekly || daily);
-            }
+        getFrequency().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            boolean weekly = getFrequency().getSelectedItem() == Frequency.WEEKLY;
+            boolean daily = getFrequency().getSelectedItem() == Frequency.DAILY;
+            getDays().setIsAvailable(weekly);
+            getHour().setIsAvailable(weekly || daily);
+            getMins().setIsAvailable(weekly || daily);
         });
 
     }

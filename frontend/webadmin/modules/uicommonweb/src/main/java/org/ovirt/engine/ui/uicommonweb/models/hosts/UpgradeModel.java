@@ -1,24 +1,18 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.utils.RpmVersionUtils;
-import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class UpgradeModel extends InstallModel {
@@ -40,35 +34,26 @@ public class UpgradeModel extends InstallModel {
         getHostVersion().setEntity(getVds().getHostOs());
         getHostVersion().setIsAvailable(false);
 
-        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery<>(
-                new AsyncCallback<List<RpmVersion>>() {
-                    @Override
-                    public void onSuccess(List<RpmVersion> isos) {
+        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery<>(isos -> {
+            Collections.sort(isos,
+                    (rpmV1, rpmV2) -> RpmVersionUtils.compareRpmParts(rpmV2.getRpmName(), rpmV1.getRpmName()));
+            getOVirtISO().setItems(isos);
+            getOVirtISO().setSelectedItem(Linq.firstOrNull(isos));
+            getOVirtISO().setIsAvailable(true);
+            getOVirtISO().setIsChangeable(!isos.isEmpty());
+            getHostVersion().setIsAvailable(true);
 
-                        Collections.sort(isos, new Comparator<RpmVersion>() {
-                            @Override
-                            public int compare(RpmVersion rpmV1, RpmVersion rpmV2) {
-                                return RpmVersionUtils.compareRpmParts(rpmV2.getRpmName(), rpmV1.getRpmName());
-                            }
-                        });
-                        getOVirtISO().setItems(isos);
-                        getOVirtISO().setSelectedItem(Linq.firstOrNull(isos));
-                        getOVirtISO().setIsAvailable(true);
-                        getOVirtISO().setIsChangeable(!isos.isEmpty());
-                        getHostVersion().setIsAvailable(true);
+            if (isos.isEmpty()) {
+                setMessage(constants.thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
+            }
 
-                        if (isos.isEmpty()) {
-                            setMessage(constants.thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
-                        }
+            if (getVds().getHostOs() == null) {
+                setMessage(constants.hostMustBeInstalledBeforeUpgrade());
+            }
 
-                        if (getVds().getHostOs() == null) {
-                            setMessage(constants.hostMustBeInstalledBeforeUpgrade());
-                        }
-
-                        addUpgradeCommands(getVds(), isos.isEmpty());
-                    }
-                }),
-                getVds().getId());
+            addUpgradeCommands(getVds(), isos.isEmpty());
+        }),
+        getVds().getId());
     }
 
     private void addUpgradeCommands(VDS host, boolean isOnlyClose) {
@@ -101,13 +86,10 @@ public class UpgradeModel extends InstallModel {
     }
 
     private void invokeHostUpgrade(UpgradeHostParameters params) {
-        Frontend.getInstance().runAction(VdcActionType.UpgradeHost, params, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                VdcReturnValueBase returnValue = result.getReturnValue();
-                if (returnValue != null && returnValue.getSucceeded()) {
-                    getCancelCommand().execute();
-                }
+        Frontend.getInstance().runAction(VdcActionType.UpgradeHost, params, result -> {
+            VdcReturnValueBase returnValue = result.getReturnValue();
+            if (returnValue != null && returnValue.getSucceeded()) {
+                getCancelCommand().execute();
             }
         });
     }

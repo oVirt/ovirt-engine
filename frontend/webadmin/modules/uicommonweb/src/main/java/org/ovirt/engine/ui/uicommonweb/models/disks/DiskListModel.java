@@ -43,8 +43,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
@@ -348,10 +346,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.GetDiskAlignment, parameterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                    }
+                result -> {
                 },
                 this);
     }
@@ -417,13 +412,10 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        DiskListModel localModel = (DiskListModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-                    }
+                result -> {
+                    DiskListModel localModel = (DiskListModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
                 },
                 this);
     }
@@ -469,13 +461,10 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDisk, paramerterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        DiskListModel localModel = (DiskListModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-                    }
+                result -> {
+                    DiskListModel localModel = (DiskListModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
                 },
                 this);
     }

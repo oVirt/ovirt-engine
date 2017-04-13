@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
@@ -67,30 +66,27 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
             return;
         }
 
-        AsyncDataProvider.getInstance().getTemplateListByDataCenter(asyncQuery(new AsyncCallback<List<VmTemplate>>() {
-            @Override
-            public void onSuccess(List<VmTemplate> templatesByDataCenter) {
-                List<VmTemplate> properArchitectureTemplates =
-                        AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByDataCenter,
-                                dataCenterWithCluster.getCluster().getArchitecture());
-                List<VmTemplate> templatesWithoutBlank = new ArrayList<>();
-                for (VmTemplate template : properArchitectureTemplates) {
-                    final boolean isBlankOrVersionOfBlank = template.getId().equals(Guid.Empty)
-                            || template.getBaseTemplateId().equals(Guid.Empty);
-                    if (!isBlankOrVersionOfBlank) {
-                        templatesWithoutBlank.add(template);
-                    }
+        AsyncDataProvider.getInstance().getTemplateListByDataCenter(asyncQuery(templatesByDataCenter -> {
+            List<VmTemplate> properArchitectureTemplates =
+                    AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByDataCenter,
+                            dataCenterWithCluster.getCluster().getArchitecture());
+            List<VmTemplate> templatesWithoutBlank = new ArrayList<>();
+            for (VmTemplate template : properArchitectureTemplates) {
+                final boolean isBlankOrVersionOfBlank = template.getId().equals(Guid.Empty)
+                        || template.getBaseTemplateId().equals(Guid.Empty);
+                if (!isBlankOrVersionOfBlank) {
+                    templatesWithoutBlank.add(template);
                 }
-
-                // A workaround - mark the process of CustomCompatibilityVersionChange as finished in case of an empty templates list for the
-                // new pool.
-                // The reason is that in case of an empty templates list, the getTemplateWithVersion event won't be raised and therefore
-                // CustomCompatibilityVersion won't be reset by a selected template.
-                if (templatesWithoutBlank.isEmpty()) {
-                    setCustomCompatibilityVersionChangeInProgress(false);
-                }
-                initTemplateWithVersion(templatesWithoutBlank, null, false);
             }
+
+            // A workaround - mark the process of CustomCompatibilityVersionChange as finished in case of an empty templates list for the
+            // new pool.
+            // The reason is that in case of an empty templates list, the getTemplateWithVersion event won't be raised and therefore
+            // CustomCompatibilityVersion won't be reset by a selected template.
+            if (templatesWithoutBlank.isEmpty()) {
+                setCustomCompatibilityVersionChangeInProgress(false);
+            }
+            initTemplateWithVersion(templatesWithoutBlank, null, false);
         }), dataCenter.getId());
 
         instanceTypeManager.updateAll();
@@ -132,12 +128,9 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     private void templateValidate() {
-        AsyncDataProvider.getInstance().countAllTemplates(asyncQuery(new AsyncCallback<Integer>() {
-            @Override
-            public void onSuccess(Integer count) {
-                if (count <= 1) {
-                    getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoTemplates());
-                }
+        AsyncDataProvider.getInstance().countAllTemplates(asyncQuery(count -> {
+            if (count <= 1) {
+                getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoTemplates());
             }
         }));
     }

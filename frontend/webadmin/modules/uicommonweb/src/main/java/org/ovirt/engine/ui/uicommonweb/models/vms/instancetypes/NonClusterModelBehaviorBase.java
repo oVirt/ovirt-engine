@@ -14,9 +14,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel> {
 
@@ -38,12 +35,7 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
     }
 
     protected void initDisplayTypes(DisplayType selected, UnitVmModel.GraphicsTypes selectedGrahicsTypes) {
-        getModel().getDisplayType().getSelectedItemChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                enableSinglePCI(getModel().getDisplayType().getSelectedItem() == DisplayType.qxl);
-            }
-        });
+        getModel().getDisplayType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> enableSinglePCI(getModel().getDisplayType().getSelectedItem() == DisplayType.qxl));
 
         List<Pair<GraphicsType, DisplayType>> allGraphicsAndDisplays = new ArrayList<>();
         for (GraphicsType graphicsType : GraphicsType.values()) {

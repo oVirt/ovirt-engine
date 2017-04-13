@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -112,14 +111,11 @@ public class VmMonitorModel extends EntityModel {
         }
 
         VM vm = (VM) getEntity();
-        AsyncDataProvider.getInstance().getVmById(new AsyncQuery<>(new AsyncCallback<VM>() {
-            @Override
-            public void onSuccess(VM vm1) {
-                setCpuUsage(vm1.getUsageCpuPercent() == null ? 0 : vm1.getUsageCpuPercent());
-                setMemoryUsage(vm1.getUsageMemPercent() == null ? 0 : vm1.getUsageMemPercent());
-                setNetworkUsage(vm1.getUsageNetworkPercent() == null ? 0
-                        : vm1.getUsageNetworkPercent());
-            }
+        AsyncDataProvider.getInstance().getVmById(new AsyncQuery<>(vm1 -> {
+            setCpuUsage(vm1.getUsageCpuPercent() == null ? 0 : vm1.getUsageCpuPercent());
+            setMemoryUsage(vm1.getUsageMemPercent() == null ? 0 : vm1.getUsageMemPercent());
+            setNetworkUsage(vm1.getUsageNetworkPercent() == null ? 0
+                    : vm1.getUsageNetworkPercent());
         }), vm.getId());
     }
 }

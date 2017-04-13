@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -101,20 +100,17 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
 
     public void runQuery(Guid guid) {
         startProgress("getCount"); //$NON-NLS-1$
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                stopProgress();
-                ErrataCounts resultEntity = returnValue.getReturnValue();
-                //Set message to null to make sure the actual setMessage creates an event.
-                setMessage(null);
-                if (resultEntity != null && returnValue.getSucceeded()) {
-                    setErrataCounts(resultEntity);
-                }
-                else {
-                    setMessage(
-                            constants.katelloProblemRetrievingErrata()  + " " + returnValue.getExceptionMessage()); //$NON-NLS-1$
-                }
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+            stopProgress();
+            ErrataCounts resultEntity = returnValue.getReturnValue();
+            //Set message to null to make sure the actual setMessage creates an event.
+            setMessage(null);
+            if (resultEntity != null && returnValue.getSucceeded()) {
+                setErrataCounts(resultEntity);
+            }
+            else {
+                setMessage(
+                        constants.katelloProblemRetrievingErrata()  + " " + returnValue.getExceptionMessage()); //$NON-NLS-1$
             }
         });
         asyncQuery.setHandleFailure(true);

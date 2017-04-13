@@ -15,8 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class RolePermissionListModel extends SearchableListModel<Role, Permission> {
@@ -114,15 +112,12 @@ public class RolePermissionListModel extends SearchableListModel<Role, Permissio
             model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
+                    result -> {
 
-                            ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                            localModel.stopProgress();
-                            cancel();
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
 
-                        }
                     }, model);
         }
     }

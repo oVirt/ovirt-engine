@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -17,7 +16,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.PairFirstComparator;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.IconUtils;
@@ -28,12 +26,9 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
-import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.ICancelable;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<Void, /* VmOrPool */ Object, UserPortalItemModel> implements ICancelable {
     private UICommand editConsoleCommand;
@@ -159,12 +154,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
                 vms.stream().map(v -> new Pair<Object, VM>(v, null)).collect(Collectors.toList());
 
         if (filteredPools.isEmpty()) {
-            IconUtils.prefetchIcons(vms, true, fetchLargeIcons(), new IconCache.IconsCallback() {
-                @Override
-                public void onSuccess(Map<Guid, String> idToIconMap) {
-                    finishSearch(vmPairs);
-                }
-            });
+            IconUtils.prefetchIcons(vms, true, fetchLargeIcons(), idToIconMap -> finishSearch(vmPairs));
         } else { // if we have pools we have to update their console cache and THEN finish search
             List<VdcQueryType> poolQueryList = new ArrayList<>();
             List<VdcQueryParametersBase> poolParamList = new ArrayList<>();
@@ -176,28 +166,20 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
 
             Frontend.getInstance().runMultipleQueries(
                     poolQueryList, poolParamList,
-                    new IFrontendMultipleQueryAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleQueryAsyncResult result) {
-                            final List<Pair<Object, VM>> all =
-                                    Stream.concat(vmPairs.stream(),
-                                            IntStream.range(0, filteredPools.size())
-                                                    .filter(i -> result.getReturnValues().get(i).getReturnValue() != null)
-                                                    .mapToObj(i -> new Pair<Object, VM>(
-                                                            filteredPools.get(i),
-                                                            result.getReturnValues().get(i).getReturnValue())
-                                                    )
-                                    ).collect(Collectors.toList());
+                    result -> {
+                        final List<Pair<Object, VM>> all =
+                                Stream.concat(vmPairs.stream(),
+                                        IntStream.range(0, filteredPools.size())
+                                                .filter(i -> result.getReturnValues().get(i).getReturnValue() != null)
+                                                .mapToObj(i -> new Pair<Object, VM>(
+                                                        filteredPools.get(i),
+                                                        result.getReturnValues().get(i).getReturnValue())
+                                                )
+                                ).collect(Collectors.toList());
 
-                            final List<VM> vmsAndPoolRepresentants = extractVms(all);
-                            IconUtils.prefetchIcons(vmsAndPoolRepresentants, true, fetchLargeIcons(),
-                                    new IconCache.IconsCallback() {
-                                        @Override
-                                        public void onSuccess(Map<Guid, String> idToIconMap) {
-                                            finishSearch(all);
-                                        }
-                                    });
-                        }
+                        final List<VM> vmsAndPoolRepresentants = extractVms(all);
+                        IconUtils.prefetchIcons(vmsAndPoolRepresentants, true, fetchLargeIcons(),
+                                idToIconMap -> finishSearch(all));
                     });
         }
     }

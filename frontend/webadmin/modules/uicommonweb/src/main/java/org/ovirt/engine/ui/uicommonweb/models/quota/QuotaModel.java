@@ -15,9 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class QuotaModel extends EntityModel<Quota> {
 
@@ -216,22 +213,14 @@ public class QuotaModel extends EntityModel<Quota> {
         setSpecificClusterQuota(new EntityModel<Boolean>());
         getGlobalClusterQuota().setEntity(true);
         getSpecificClusterQuota().setEntity(false);
-        getGlobalClusterQuota().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getGlobalClusterQuota().getEntity()) {
-                    getSpecificClusterQuota().setEntity(false);
-                }
+        getGlobalClusterQuota().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getGlobalClusterQuota().getEntity()) {
+                getSpecificClusterQuota().setEntity(false);
             }
         });
-        getSpecificClusterQuota().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getSpecificClusterQuota().getEntity()) {
-                    getGlobalClusterQuota().setEntity(false);
-                }
+        getSpecificClusterQuota().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getSpecificClusterQuota().getEntity()) {
+                getGlobalClusterQuota().setEntity(false);
             }
         });
 
@@ -239,22 +228,14 @@ public class QuotaModel extends EntityModel<Quota> {
         setSpecificStorageQuota(new EntityModel<Boolean>());
         getGlobalStorageQuota().setEntity(true);
         getSpecificStorageQuota().setEntity(false);
-        getGlobalStorageQuota().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getGlobalStorageQuota().getEntity()) {
-                    getSpecificStorageQuota().setEntity(false);
-                }
+        getGlobalStorageQuota().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getGlobalStorageQuota().getEntity()) {
+                getSpecificStorageQuota().setEntity(false);
             }
         });
-        getSpecificStorageQuota().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getSpecificStorageQuota().getEntity()) {
-                    getGlobalStorageQuota().setEntity(false);
-                }
+        getSpecificStorageQuota().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getSpecificStorageQuota().getEntity()) {
+                getGlobalStorageQuota().setEntity(false);
             }
         });
 
@@ -399,18 +380,14 @@ public class QuotaModel extends EntityModel<Quota> {
         return getName().getIsValid() & graceThreshold & validateNotEmpty();
     }
 
-    static final IValidation quotaEmptyValidation = new IValidation() {
-
-        @Override
-        public ValidationResult validate(Object value) {
-            ValidationResult result = new ValidationResult();
-            result.setSuccess(false);
-            result.getReasons().clear();
-            result.getReasons().add(ConstantsManager.getInstance()
-                    .getConstants()
-                    .quotaIsEmptyValidation());
-            return result;
-        }
+    static final IValidation quotaEmptyValidation = value -> {
+        ValidationResult result = new ValidationResult();
+        result.setSuccess(false);
+        result.getReasons().clear();
+        result.getReasons().add(ConstantsManager.getInstance()
+                .getConstants()
+                .quotaIsEmptyValidation());
+        return result;
     };
 
     private boolean validateNotEmpty() {

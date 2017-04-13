@@ -114,18 +114,15 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         setupExportModel(model);
 
         AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
-                new AsyncCallback<List<StorageDomain>>() {
-                    @Override
-                    public void onSuccess(List<StorageDomain> storageDomains) {
-                        List<StorageDomain> filteredStorageDomains = new ArrayList<>();
-                        for (StorageDomain a : storageDomains) {
-                            if (a.getStorageDomainType() == StorageDomainType.ImportExport) {
-                                filteredStorageDomains.add(a);
-                            }
+                storageDomains -> {
+                    List<StorageDomain> filteredStorageDomains = new ArrayList<>();
+                    for (StorageDomain a : storageDomains) {
+                        if (a.getStorageDomainType() == StorageDomainType.ImportExport) {
+                            filteredStorageDomains.add(a);
                         }
-
-                        postExportGetStorageDomainList(filteredStorageDomains);
                     }
+
+                    postExportGetStorageDomainList(filteredStorageDomains);
                 }), extractStoragePoolIdNullSafe(selectedEntity));
 
         // check, if the VM has a disk which doesn't allow snapshot
@@ -199,12 +196,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
     protected void showWarningOnExistingEntities(final ExportVmModel model, final VdcQueryType getVmOrTemplateQuery) {
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
         AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(
-                new AsyncCallback<List<StoragePool>>() {
-                    @Override
-                    public void onSuccess(List<StoragePool> storagePools) {
-                        postShowWarningOnExistingVms(model, storagePools, getVmOrTemplateQuery);
-                    }
-                }), storageDomainId);
+                storagePools -> postShowWarningOnExistingVms(model, storagePools, getVmOrTemplateQuery)), storageDomainId);
     }
 
     private void postShowWarningOnExistingVms(final ExportVmModel exportModel,
@@ -217,31 +209,28 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
             Guid storageDomainId = exportModel.getStorage().getSelectedItem().getId();
             GetAllFromExportDomainQueryParameters tempVar =
                     new GetAllFromExportDomainQueryParameters(storagePool.getId(), storageDomainId);
-            Frontend.getInstance().runQuery(getVmOrTemplateQuery, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                @Override
-                public void onSuccess(VdcQueryReturnValue returnValue) {
-                    ExportVmModel windowModel = (ExportVmModel) getWindow();
-                    List<T> foundVms = new ArrayList<>();
+            Frontend.getInstance().runQuery(getVmOrTemplateQuery, tempVar, new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+                ExportVmModel windowModel = (ExportVmModel) getWindow();
+                List<T> foundVms = new ArrayList<>();
 
-                    if (returnValue != null) {
-                        Iterable<T> iterableReturnValue = asIterableReturnValue(returnValue.getReturnValue());
+                if (returnValue != null) {
+                    Iterable<T> iterableReturnValue = asIterableReturnValue(returnValue.getReturnValue());
 
-                        for (T selectedItem1 : getSelectedItems()) {
-                            for (T returnValueItem : iterableReturnValue) {
-                                if (entititesEqualsNullSafe(returnValueItem, selectedItem1)) {
-                                    foundVms.add(selectedItem1);
-                                    break;
-                                }
+                    for (T selectedItem1 : getSelectedItems()) {
+                        for (T returnValueItem : iterableReturnValue) {
+                            if (entititesEqualsNullSafe(returnValueItem, selectedItem1)) {
+                                foundVms.add(selectedItem1);
+                                break;
                             }
                         }
                     }
-
-                    if (foundVms.size() != 0) {
-                        windowModel.setMessage(composeEntityOnStorage(composeExistingVmsWarningMessage(foundVms)));
-                    }
-
-                    exportModel.stopProgress();
                 }
+
+                if (foundVms.size() != 0) {
+                    windowModel.setMessage(composeEntityOnStorage(composeExistingVmsWarningMessage(foundVms)));
+                }
+
+                exportModel.stopProgress();
             }));
         } else {
             exportModel.stopProgress();
@@ -295,26 +284,22 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         }
 
         AsyncDataProvider.getInstance().
-                isVmNameUnique(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-
-                            @Override
-                            public void onSuccess(Boolean returnValue) {
-                                if (!returnValue && vmName.compareToIgnoreCase(getcurrentVm().getName()) != 0) {
-                                    model.getName()
-                                            .getInvalidityReasons()
-                                            .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
-                                    model.getName().setIsValid(false);
-                                    model.setValidTab(TabName.GENERAL_TAB, false);
-                                    model.fireValidationCompleteEvent();
-                                } else {
-                                    model.getName()
-                                            .getInvalidityReasons().clear();
-                                    model.getName().setIsValid(true);
-                                    model.setValidTab(TabName.GENERAL_TAB, true);
-                                    onSaveVM(model);
-                                }
-                            }
-                        }
+                isVmNameUnique(new AsyncQuery<>(returnValue -> {
+                    if (!returnValue && vmName.compareToIgnoreCase(getcurrentVm().getName()) != 0) {
+                        model.getName()
+                                .getInvalidityReasons()
+                                .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
+                        model.getName().setIsValid(false);
+                        model.setValidTab(TabName.GENERAL_TAB, false);
+                        model.fireValidationCompleteEvent();
+                    } else {
+                        model.getName()
+                                .getInvalidityReasons().clear();
+                        model.getName().setIsValid(true);
+                        model.setValidTab(TabName.GENERAL_TAB, true);
+                        onSaveVM(model);
+                    }
+                }
 
                         ),
                         vmName,

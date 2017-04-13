@@ -18,11 +18,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -34,8 +32,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -186,12 +182,9 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
         confirmationModel.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomainWithOvfUpdate, pb, new IFrontendMultipleActionAsyncCallback() {
-            @Override
-            public void executed(FrontendMultipleActionAsyncResult result) {
-                confirmationModel.stopProgress();
-                setWindow(null);
-            }
+        Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomainWithOvfUpdate, pb, result -> {
+            confirmationModel.stopProgress();
+            setWindow(null);
         });
     }
 
@@ -258,69 +251,63 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         setWindow(listModel);
 
         if (storageType == StorageDomainType.ISO) {
-            AsyncDataProvider.getInstance().getISOStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-                @Override
-                public void onSuccess(List<StorageDomain> list) {
-                    ArrayList<EntityModel> models;
-                    models = new ArrayList<>();
-                    Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<StorageDomain>();
-                    for (StorageDomain a : list) {
-                        if (items1.stream().noneMatch(new Linq.IdPredicate<>(a.getId()))) {
-                            EntityModel tempVar = new EntityModel();
-                            tempVar.setEntity(a);
-                            models.add(tempVar);
-                        }
+            AsyncDataProvider.getInstance().getISOStorageDomainList(new AsyncQuery<>(list -> {
+                ArrayList<EntityModel> models;
+                models = new ArrayList<>();
+                Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<StorageDomain>();
+                for (StorageDomain a : list) {
+                    if (items1.stream().noneMatch(new Linq.IdPredicate<>(a.getId()))) {
+                        EntityModel tempVar = new EntityModel();
+                        tempVar.setEntity(a);
+                        models.add(tempVar);
                     }
-                    postAttachInternal(models);
-
                 }
+                postAttachInternal(models);
+
             }));
         }
         else {
 
-            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-                @Override
-                public void onSuccess(List<StorageDomain> list) {
-                    ArrayList<EntityModel> models = new ArrayList<>();
-                    boolean addToList;
-                    Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<StorageDomain>();
-                    for (StorageDomain a : list) {
-                        addToList = false;
-                        if (a.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached ||
-                                items1.stream().anyMatch(new Linq.IdPredicate<>(a.getId()))) {
-                            continue;
-                        }
-                        if (a.getStorageDomainType() == StorageDomainType.Volume) {
-                            addToList = true;
-                        }
-                        else if (a.getStorageDomainType() == getStorageDomainType()) {
-                            if (getStorageDomainType() == StorageDomainType.Data) {
-                                if (getEntity().getStoragePoolFormatType() == null) {
-                                    addToList = true;
-                                }
-                                else if (getEntity().getStoragePoolFormatType().compareTo(a.getStorageStaticData()
-                                        .getStorageFormat()) >= 0) {
-                                    addToList = true;
-                                }
-                                else {
-                                    if (a.getStorageStaticData().getStorageFormat() == StorageFormatType.V1
-                                            || a.getStorageStaticData().getStorageFormat() == StorageFormatType.V2) {
-                                        addToList = true;
-                                    }
-                                }
-                            }
-                            else if (getStorageDomainType() == StorageDomainType.ImportExport) {
+            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(list -> {
+                ArrayList<EntityModel> models = new ArrayList<>();
+                boolean addToList;
+                Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<StorageDomain>();
+                for (StorageDomain a : list) {
+                    addToList = false;
+                    if (a.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached ||
+                            items1.stream().anyMatch(new Linq.IdPredicate<>(a.getId()))) {
+                        continue;
+                    }
+                    if (a.getStorageDomainType() == StorageDomainType.Volume) {
+                        addToList = true;
+                    }
+                    else if (a.getStorageDomainType() == getStorageDomainType()) {
+                        if (getStorageDomainType() == StorageDomainType.Data) {
+                            if (getEntity().getStoragePoolFormatType() == null) {
                                 addToList = true;
                             }
+                            else if (getEntity().getStoragePoolFormatType().compareTo(a.getStorageStaticData()
+                                    .getStorageFormat()) >= 0) {
+                                addToList = true;
+                            }
+                            else {
+                                if (a.getStorageStaticData().getStorageFormat() == StorageFormatType.V1
+                                        || a.getStorageStaticData().getStorageFormat() == StorageFormatType.V2) {
+                                    addToList = true;
+                                }
+                            }
                         }
-                        if (addToList) {
-                            EntityModel tempVar2 = new EntityModel();
-                            tempVar2.setEntity(a);
-                            models.add(tempVar2);
+                        else if (getStorageDomainType() == StorageDomainType.ImportExport) {
+                            addToList = true;
                         }
                     }
-                    postAttachInternal(models);
+                    if (addToList) {
+                        EntityModel tempVar2 = new EntityModel();
+                        tempVar2.setEntity(a);
+                        models.add(tempVar2);
+                    }
                 }
+                postAttachInternal(models);
             }));
         }
 
@@ -375,45 +362,42 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         }
 
         AsyncDataProvider.getInstance().getStorageDomainsWithAttachedStoragePoolGuid(
-                new AsyncQuery<>(new AsyncCallback<List<StorageDomainStatic>>() {
-                    @Override
-                    public void onSuccess(List<StorageDomainStatic> attachedStorageDomains) {
-                        if (!attachedStorageDomains.isEmpty()) {
-                            ConfirmationModel model = new ConfirmationModel();
-                            setWindow(null);
-                            setWindow(model);
+                new AsyncQuery<>(attachedStorageDomains -> {
+                    if (!attachedStorageDomains.isEmpty()) {
+                        ConfirmationModel confirmationModel = new ConfirmationModel();
+                        setWindow(null);
+                        setWindow(confirmationModel);
 
-                            List<String> stoageDomainNames = new ArrayList<>();
-                            for (StorageDomainStatic domain : attachedStorageDomains) {
-                                stoageDomainNames.add(domain.getStorageName());
-                            }
-                            model.setItems(stoageDomainNames);
-
-                            model.setTitle(ConstantsManager.getInstance()
-                                    .getConstants()
-                                    .storageDomainsAttachedToDataCenterWarningTitle());
-                            model.setMessage(ConstantsManager.getInstance()
-                                    .getConstants()
-                                    .storageDomainsAttachedToDataCenterWarningMessage());
-
-                            model.setHelpTag(HelpTag.attach_storage_domain_confirmation);
-                            model.setHashName("attach_storage_domain_confirmation"); //$NON-NLS-1$
-
-                            model.getLatch().setIsAvailable(true);
-                            model.getLatch().setIsChangeable(true);
-
-                            UICommand onApprove = new UICommand("OnAttachApprove", DataCenterStorageListModel.this); //$NON-NLS-1$
-                            onApprove.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                            onApprove.setIsDefault(true);
-                            model.getCommands().add(onApprove);
-
-                            UICommand cancel = new UICommand("Cancel", DataCenterStorageListModel.this); //$NON-NLS-1$
-                            cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                            cancel.setIsCancel(true);
-                            model.getCommands().add(cancel);
-                        } else {
-                            executeAttachStorageDomains();
+                        List<String> stoageDomainNames = new ArrayList<>();
+                        for (StorageDomainStatic domain : attachedStorageDomains) {
+                            stoageDomainNames.add(domain.getStorageName());
                         }
+                        confirmationModel.setItems(stoageDomainNames);
+
+                        confirmationModel.setTitle(ConstantsManager.getInstance()
+                                .getConstants()
+                                .storageDomainsAttachedToDataCenterWarningTitle());
+                        confirmationModel.setMessage(ConstantsManager.getInstance()
+                                .getConstants()
+                                .storageDomainsAttachedToDataCenterWarningMessage());
+
+                        confirmationModel.setHelpTag(HelpTag.attach_storage_domain_confirmation);
+                        confirmationModel.setHashName("attach_storage_domain_confirmation"); //$NON-NLS-1$
+
+                        confirmationModel.getLatch().setIsAvailable(true);
+                        confirmationModel.getLatch().setIsChangeable(true);
+
+                        UICommand onApprove = new UICommand("OnAttachApprove", DataCenterStorageListModel.this); //$NON-NLS-1$
+                        onApprove.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                        onApprove.setIsDefault(true);
+                        confirmationModel.getCommands().add(onApprove);
+
+                        UICommand cancel = new UICommand("Cancel", DataCenterStorageListModel.this); //$NON-NLS-1$
+                        cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                        cancel.setIsCancel(true);
+                        confirmationModel.getCommands().add(cancel);
+                    } else {
+                        executeAttachStorageDomains();
                     }
                 }), getEntity(), selectedDataStorageDomains);
     }
@@ -526,16 +510,13 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         confirmModel.startProgress();
 
         if (getpb_remove().size() > 0) {
-            AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery<>(new AsyncCallback<VDS>() {
-                @Override
-                public void onSuccess(VDS locaVds) {
-                    for (VdcActionParametersBase item : getpb_remove()) {
-                        ((RemoveStorageDomainParameters) item).setVdsId(locaVds != null ? locaVds.getId() : null);
-                        ((RemoveStorageDomainParameters) item).setDoFormat(confirmModel.getForce().getEntity());
-                    }
-
-                    postDetach(getWindow());
+            AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery<>(locaVds -> {
+                for (VdcActionParametersBase item : getpb_remove()) {
+                    ((RemoveStorageDomainParameters) item).setVdsId(locaVds != null ? locaVds.getId() : null);
+                    ((RemoveStorageDomainParameters) item).setDoFormat(confirmModel.getForce().getEntity());
                 }
+
+                postDetach(getWindow());
             }), localStorgaeDC);
         }
         else {
@@ -545,27 +526,20 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
     public void postDetach(Model model) {
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveStorageDomain, getpb_remove(),
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result1) {
+                outerResult -> {
 
-                        Object[] array = (Object[]) result1.getState();
-                        ConfirmationModel localModel1 = (ConfirmationModel) array[0];
-                        ArrayList<VdcActionParametersBase> parameters =
-                                (ArrayList<VdcActionParametersBase>) array[1];
-                        Frontend.getInstance().runMultipleAction(VdcActionType.DetachStorageDomainFromPool, parameters,
-                                new IFrontendMultipleActionAsyncCallback() {
-                                    @Override
-                                    public void executed(FrontendMultipleActionAsyncResult result2) {
+                    Object[] array = (Object[]) outerResult.getState();
+                    ConfirmationModel localModel1 = (ConfirmationModel) array[0];
+                    ArrayList<VdcActionParametersBase> parameters =
+                            (ArrayList<VdcActionParametersBase>) array[1];
+                    Frontend.getInstance().runMultipleAction(VdcActionType.DetachStorageDomainFromPool, parameters,
+                            innerResult -> {
+                                ConfirmationModel localModel2 = (ConfirmationModel) innerResult.getState();
+                                localModel2.stopProgress();
+                                cancel();
 
-                                        ConfirmationModel localModel2 = (ConfirmationModel) result2.getState();
-                                        localModel2.stopProgress();
-                                        cancel();
+                            }, localModel1);
 
-                                    }
-                                }, localModel1);
-
-                    }
                 }, new Object[] { model, getpb_detach() });
     }
 

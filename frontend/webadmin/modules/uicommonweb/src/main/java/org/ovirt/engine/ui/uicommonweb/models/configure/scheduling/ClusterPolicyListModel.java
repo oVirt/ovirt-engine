@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -25,9 +24,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel.CommandType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.inject.Inject;
 
@@ -108,17 +104,13 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
     protected void syncSearch() {
         super.syncSearch();
         if (getIsQueryFirstTime()) {
-            Frontend.getInstance().runQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(), new AsyncQuery<>(
-                    new AsyncCallback<VdcQueryReturnValue>() {
-
-                        @Override
-                        public void onSuccess(VdcQueryReturnValue returnValue) {
-                            ArrayList<PolicyUnit> list = returnValue.getReturnValue();
-                            setPolicyUnits(list);
-                            fetchClusterPolicies();
-                            if (policyUnitModel != null) {
-                                policyUnitModel.getPolicyUnits().setItems(sort(policyUnits));
-                            }
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(),
+                    new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                        ArrayList<PolicyUnit> list = returnValue.getReturnValue();
+                        setPolicyUnits(list);
+                        fetchClusterPolicies();
+                        if (policyUnitModel != null) {
+                            policyUnitModel.getPolicyUnits().setItems(sort(policyUnits));
                         }
                     }));
 
@@ -128,16 +120,12 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
     }
 
     private void fetchClusterPolicies() {
-        AsyncQuery asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                ArrayList<ClusterPolicy> list = returnValue.getReturnValue();
-                Collections.sort(list,
-                        Comparator.comparing(ClusterPolicy::isLocked).reversed()
-                                .thenComparing(ClusterPolicy::getName, new LexoNumericComparator()));
-                setItems(list);
-            }
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+            ArrayList<ClusterPolicy> list = returnValue.getReturnValue();
+            Collections.sort(list,
+                    Comparator.comparing(ClusterPolicy::isLocked).reversed()
+                            .thenComparing(ClusterPolicy::getName, new LexoNumericComparator()));
+            setItems(list);
         });
 
         VdcQueryParametersBase parametersBase = new VdcQueryParametersBase();
@@ -262,13 +250,9 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
 
         policyUnitModel.setPolicyUnits(new ListModel());
         policyUnitModel.getPolicyUnits().setItems(sort(policyUnits));
-        policyUnitModel.getRefreshPolicyUnitsEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                setIsQueryFirstTime(true);
-                syncSearch();
-            }
+        policyUnitModel.getRefreshPolicyUnitsEvent().addListener((ev, sender, args) -> {
+            setIsQueryFirstTime(true);
+            syncSearch();
         });
 
         UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$

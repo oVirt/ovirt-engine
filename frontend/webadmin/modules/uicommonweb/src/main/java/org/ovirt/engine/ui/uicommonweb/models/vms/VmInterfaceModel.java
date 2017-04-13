@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -15,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -31,8 +29,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.VnicProfileValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public abstract class VmInterfaceModel extends Model {
@@ -381,16 +377,13 @@ public abstract class VmInterfaceModel extends Model {
 
         Frontend.getInstance().runAction(getVdcActionType(),
                 createVdcActionParameters(nic),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        VdcReturnValueBase returnValue = result.getReturnValue();
-                        stopProgress();
+                result -> {
+                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    stopProgress();
 
-                        if (returnValue != null && returnValue.getSucceeded()) {
-                            cancel();
-                            postOnSave();
-                        }
+                    if (returnValue != null && returnValue.getSucceeded()) {
+                        cancel();
+                        postOnSave();
                     }
                 },
                 this);
@@ -409,18 +402,15 @@ public abstract class VmInterfaceModel extends Model {
     protected abstract VdcActionType getVdcActionType();
 
     protected void initProfiles() {
-        profileBehavior.initProfiles(getVm().getClusterId(), dcId, new AsyncQuery<>(new AsyncCallback<List<VnicProfileView>>() {
-            @Override
-            public void onSuccess(List<VnicProfileView> result) {
-                getProfile().setItems(result);
-                profileBehavior.initSelectedProfile(getProfile(), getNic());
-                updateProfileChangability();
+        profileBehavior.initProfiles(getVm().getClusterId(), dcId, new AsyncQuery<>(result -> {
+            getProfile().setItems(result);
+            profileBehavior.initSelectedProfile(getProfile(), getNic());
+            updateProfileChangability();
 
-                // fetch completed
-                okCommand.setIsExecutionAllowed(true);
+            // fetch completed
+            okCommand.setIsExecutionAllowed(true);
 
-                initSelectedType();
-            }
+            initSelectedType();
         }));
     }
 

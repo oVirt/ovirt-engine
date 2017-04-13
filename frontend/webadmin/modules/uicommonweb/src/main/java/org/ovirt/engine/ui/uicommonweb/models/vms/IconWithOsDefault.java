@@ -57,28 +57,22 @@ public class IconWithOsDefault {
     public static void create(final Guid largeOsDefaultIconId,
                               final Guid smallOsDefaultIconId,
                               final IconWithOsDefaultCallback callback) {
-        IconCache.getInstance().getOrFetchIcon(largeOsDefaultIconId, new IconCache.IconCallback() {
-            @Override
-            public void onSuccess(String resolvedIcon) {
-                final IconWithOsDefault instance =
-                        new IconWithOsDefault(resolvedIcon, resolvedIcon, smallOsDefaultIconId, ValidationResult.ok());
-                callback.onCreated(instance);
-            }
+        IconCache.getInstance().getOrFetchIcon(largeOsDefaultIconId, resolvedIcon -> {
+            final IconWithOsDefault instance =
+                    new IconWithOsDefault(resolvedIcon, resolvedIcon, smallOsDefaultIconId, ValidationResult.ok());
+            callback.onCreated(instance);
         });
     }
 
     public void withDifferentOsIcon(final Guid osDefaultLargeIconId,
                                     final Guid osDefaultSmallIconId,
                                     final IconWithOsDefaultCallback callback) {
-        IconCache.getInstance().getOrFetchIcon(osDefaultLargeIconId, new IconCache.IconCallback() {
-            @Override
-            public void onSuccess(String currentOsDefaultIcon) {
-                final IconWithOsDefault newInstance = isCustom()
-                        ? new IconWithOsDefault(icon, currentOsDefaultIcon, smallIconId, validationResult)
-                        : new IconWithOsDefault(currentOsDefaultIcon, currentOsDefaultIcon, osDefaultSmallIconId,
-                                ValidationResult.ok());
-                callback.onCreated(newInstance);
-            }
+        IconCache.getInstance().getOrFetchIcon(osDefaultLargeIconId, currentOsDefaultIcon -> {
+            final IconWithOsDefault newInstance = isCustom()
+                    ? new IconWithOsDefault(icon, currentOsDefaultIcon, smallIconId, validationResult)
+                    : new IconWithOsDefault(currentOsDefaultIcon, currentOsDefaultIcon, osDefaultSmallIconId,
+                            ValidationResult.ok());
+            callback.onCreated(newInstance);
         });
     }
 

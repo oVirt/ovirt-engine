@@ -17,9 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class GlusterClusterSnapshotConfigModel extends Model {
     private EntityModel<String> dataCenter;
@@ -62,12 +59,7 @@ public class GlusterClusterSnapshotConfigModel extends Model {
     private void init() {
         setDataCenter(new EntityModel<String>());
         setClusters(new ListModel<Cluster>());
-        getClusters().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                clusterSelectedItemChanged();
-            }
-        });
+        getClusters().getSelectedItemChangedEvent().addListener((ev, sender, args) -> clusterSelectedItemChanged());
         setClusterConfigOptions(new ListModel<EntityModel<GlusterVolumeSnapshotConfig>>());
     }
 

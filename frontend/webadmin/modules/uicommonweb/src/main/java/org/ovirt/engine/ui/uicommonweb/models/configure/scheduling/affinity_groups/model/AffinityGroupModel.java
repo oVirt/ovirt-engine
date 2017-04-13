@@ -5,12 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -23,11 +21,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class AffinityGroupModel extends Model {
     private final AffinityGroup affinityGroup;
@@ -59,12 +52,7 @@ public abstract class AffinityGroupModel extends Model {
         setEnforcing(new EntityModel<>(true));
         enforcing.setIsChangeable(false);
 
-        vmAffinityRule.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                enforcing.setIsChangeable(vmAffinityRule.getSelectedItem() != EntityAffinityRule.DISABLED);
-            }
-        });
+        vmAffinityRule.getSelectedItemChangedEvent().addListener((ev, sender, args) -> enforcing.setIsChangeable(vmAffinityRule.getSelectedItem() != EntityAffinityRule.DISABLED));
 
         setVmsSelectionModel(new VmsSelectionModel());
 
@@ -74,14 +62,10 @@ public abstract class AffinityGroupModel extends Model {
     public void init() {
         startProgress();
         //TODO: should be by cluster id and remove clusterName method from resolver.
-        AsyncDataProvider.getInstance().getVmListByClusterName(new AsyncQuery<>(new AsyncCallback<List<VM>>() {
-
-            @Override
-            public void onSuccess(List<VM> vmList) {
-                List<Guid> vmIds = getAffinityGroup().getVmIds();
-                getVmsSelectionModel().init(vmList, vmIds != null ? vmIds : new ArrayList<Guid>());
-                stopProgress();
-            }
+        AsyncDataProvider.getInstance().getVmListByClusterName(new AsyncQuery<>(vmList -> {
+            List<Guid> vmIds = getAffinityGroup().getVmIds();
+            getVmsSelectionModel().init(vmList, vmIds != null ? vmIds : new ArrayList<Guid>());
+            stopProgress();
         }), clusterName);
     }
 
@@ -160,13 +144,10 @@ public abstract class AffinityGroupModel extends Model {
 
         Frontend.getInstance().runAction(saveActionType,
                 new AffinityGroupCRUDParameters(group.getId(), group),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        stopProgress();
-                        if (result != null && result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
-                            cancel();
-                        }
+                result -> {
+                    stopProgress();
+                    if (result != null && result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
+                        cancel();
                     }
                 },
                 this);

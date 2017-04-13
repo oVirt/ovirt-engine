@@ -3,9 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -151,25 +149,22 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
             setIsPosix(storageDomain.getStorageType() == StorageType.POSIXFS);
 
             if (getIsNfs() || getIsLocalS() || getIsPosix()) {
-                AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery<>(new AsyncCallback<StorageServerConnections>() {
-                    @Override
-                    public void onSuccess(StorageServerConnections connection) {
-                        if (connection != null) {
-                            setPath(connection.getConnection());
-                            if (isNfs) {
-                                EnumTranslator translator = EnumTranslator.getInstance();
-                                setNfsVersion(translator.translate(connection.getNfsVersion()));
-                                setRetransmissions(connection.getNfsRetrans());
-                                setTimeout(connection.getNfsTimeo());
-                            }
-
-                            if (isPosix) {
-                                setVfsType(connection.getVfsType());
-                                setMountOptions(connection.getMountOptions());
-                            }
-                        } else {
-                            setPath(null);
+                AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery<>(connection -> {
+                    if (connection != null) {
+                        setPath(connection.getConnection());
+                        if (isNfs) {
+                            EnumTranslator translator = EnumTranslator.getInstance();
+                            setNfsVersion(translator.translate(connection.getNfsVersion()));
+                            setRetransmissions(connection.getNfsRetrans());
+                            setTimeout(connection.getNfsTimeo());
                         }
+
+                        if (isPosix) {
+                            setVfsType(connection.getVfsType());
+                            setMountOptions(connection.getMountOptions());
+                        }
+                    } else {
+                        setPath(null);
                     }
                 }), storageDomain.getStorage(), true);
             }

@@ -19,8 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_grou
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.model.EditAffinityGroupModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.model.NewAffinityGroupModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public abstract class AffinityGroupListModel<E extends BusinessEntity<Guid>> extends SearchableListModel<E, AffinityGroup> {
     private UICommand newCommand;
@@ -162,14 +160,11 @@ public abstract class AffinityGroupListModel<E extends BusinessEntity<Guid>> ext
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveAffinityGroup, parameters,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-                    }
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
                 }, model);
     }
 

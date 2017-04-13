@@ -8,9 +8,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class VolumeParameterModel extends EntityModel {
 
@@ -27,13 +24,7 @@ public class VolumeParameterModel extends EntityModel {
         setDescription(new EntityModel<String>());
         setIsNew(true);
 
-        getKeyList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                selectedKeyChanged();
-            }
-        });
+        getKeyList().getSelectedItemChangedEvent().addListener((ev, sender, args) -> selectedKeyChanged());
     }
 
     public ListModel<String> getKeyList() {

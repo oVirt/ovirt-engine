@@ -26,8 +26,6 @@ import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public class UserPortalLoginModel extends LoginModel {
 
@@ -98,18 +96,15 @@ public class UserPortalLoginModel extends LoginModel {
         this.setLoggedUser(LoggedUser);
 
         AsyncDataProvider.getInstance().getRoleActionGroupsByRoleId(new AsyncQuery<>(
-                new AsyncCallback<List<ActionGroup>>() {
-                    @Override
-                    public void onSuccess(List<ActionGroup> returnValue) {
+                returnValue -> {
 
-                        setEngineUserActionGroupList(returnValue);
-                        // a user 'stays' a user if he has consume quota action group.
-                        // so we need to apply the same logic to this ActionGroup as for
-                        // engine user role's action group.
-                        getEngineUserActionGroupList().add(ConsumeQuotaActionGroup);
-                        getUserRoles();
+                    setEngineUserActionGroupList(returnValue);
+                    // a user 'stays' a user if he has consume quota action group.
+                    // so we need to apply the same logic to this ActionGroup as for
+                    // engine user role's action group.
+                    getEngineUserActionGroupList().add(ConsumeQuotaActionGroup);
+                    getUserRoles();
 
-                    }
                 }), engineUser.asGuid());
     }
 
@@ -170,22 +165,18 @@ public class UserPortalLoginModel extends LoginModel {
             queryTypeList.add(VdcQueryType.GetRoleActionGroupsByRoleId);
             queryParamsList.add(new IdQueryParameters(roleId));
         }
-        Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
-
-            @Override
-            public void executed(FrontendMultipleQueryAsyncResult result) {
-                for (int i = 0; i < result.getReturnValues().size(); i++) {
-                    VdcQueryReturnValue retVal = result.getReturnValues().get(i);
-                    ArrayList<ActionGroup> roleActionGroupList = retVal.getReturnValue();
-                    for (ActionGroup actionGroup : roleActionGroupList) {
-                        if (!UserPortalLoginModel.this.getLoggedUserActionGroupList().contains(actionGroup)) {
-                            UserPortalLoginModel.this.getLoggedUserActionGroupList().add(actionGroup);
-                        }
+        Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, result -> {
+            for (int i = 0; i < result.getReturnValues().size(); i++) {
+                VdcQueryReturnValue retVal = result.getReturnValues().get(i);
+                ArrayList<ActionGroup> roleActionGroupList = retVal.getReturnValue();
+                for (ActionGroup actionGroup : roleActionGroupList) {
+                    if (!UserPortalLoginModel.this.getLoggedUserActionGroupList().contains(actionGroup)) {
+                        UserPortalLoginModel.this.getLoggedUserActionGroupList().add(actionGroup);
                     }
-                    UserPortalLoginModel.this.setRolesCounter(UserPortalLoginModel.this.getRolesCounter() - 1);
-                    if (UserPortalLoginModel.this.getRolesCounter() == 0) {
-                        checkIsENGINEUser();
-                    }
+                }
+                UserPortalLoginModel.this.setRolesCounter(UserPortalLoginModel.this.getRolesCounter() - 1);
+                if (UserPortalLoginModel.this.getRolesCounter() == 0) {
+                    checkIsENGINEUser();
                 }
             }
         });

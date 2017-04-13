@@ -21,8 +21,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class LibvirtSecretModel extends EntityModel<LibvirtSecret> {
@@ -63,13 +61,10 @@ public class LibvirtSecretModel extends EntityModel<LibvirtSecret> {
                 VdcActionType.AddLibvirtSecret : VdcActionType.UpdateLibvirtSecret;
         flush();
         Frontend.getInstance().runAction(actionType, new LibvirtSecretParameters(getEntity()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        VdcReturnValueBase res = result.getReturnValue();
-                        if (res.getSucceeded()) {
-                            getCancelCommand().execute();
-                        }
+                result -> {
+                    VdcReturnValueBase res = result.getReturnValue();
+                    if (res.getSucceeded()) {
+                        getCancelCommand().execute();
                     }
                 }, this);
     }

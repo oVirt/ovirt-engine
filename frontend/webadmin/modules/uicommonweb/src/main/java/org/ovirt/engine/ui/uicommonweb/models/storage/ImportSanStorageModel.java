@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsPa
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -54,23 +53,20 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase {
 
         Frontend.getInstance().runQuery(VdcQueryType.GetUnregisteredBlockStorageDomains,
                 new GetUnregisteredBlockStorageDomainsParameters(vds.getId(), getType(), connections),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        Pair<List<StorageDomain>, List<StorageServerConnections>> returnValuePair =
-                                returnValue.getReturnValue();
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    Pair<List<StorageDomain>, List<StorageServerConnections>> returnValuePair =
+                            returnValue.getReturnValue();
 
-                        ArrayList<StorageDomain> storageDomains =
-                                (ArrayList<StorageDomain>) returnValuePair.getFirst();
-                        ArrayList<StorageServerConnections> connections =
-                                (ArrayList<StorageServerConnections>) returnValuePair.getSecond();
+                    ArrayList<StorageDomain> storageDomains =
+                            (ArrayList<StorageDomain>) returnValuePair.getFirst();
+                    ArrayList<StorageServerConnections> connections1 =
+                            (ArrayList<StorageServerConnections>) returnValuePair.getSecond();
 
-                        if (storageDomains != null) {
-                            addStorageDomains(storageDomains);
-                        }
-
-                        postGetUnregisteredStorageDomains(storageDomains, connections);
+                    if (storageDomains != null) {
+                        addStorageDomains(storageDomains);
                     }
+
+                    postGetUnregisteredStorageDomains(storageDomains, connections1);
                 }));
     }
 

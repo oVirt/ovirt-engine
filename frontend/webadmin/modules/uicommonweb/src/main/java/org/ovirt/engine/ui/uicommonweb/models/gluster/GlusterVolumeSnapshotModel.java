@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -87,12 +86,7 @@ public class GlusterVolumeSnapshotModel extends Model {
     }
 
     private void initValueChangeListeners() {
-        IEventListener<EventArgs> onPropertyChangeValidate = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                validate(true);
-            }
-        };
+        IEventListener<EventArgs> onPropertyChangeValidate = (ev, sender, args) -> validate(true);
         getSnapshotName().getEntityChangedEvent().addListener(onPropertyChangeValidate);
 
         getDaysOfTheWeek().getSelectedItemChangedEvent().addListener(onPropertyChangeValidate);

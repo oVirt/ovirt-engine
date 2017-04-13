@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -70,7 +69,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VmNumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
-import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.GuidValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
@@ -87,7 +85,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -1577,13 +1574,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getBaseTemplate().getSelectedItemChangedEvent().addListener(this);
 
         setCdAttached(new NotChangableForVmInPoolEntityModel<Boolean>());
-        getCdAttached().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-
-                getCdImage().setIsChangeable(getCdAttached().getEntity());
-            }
-        });
+        getCdAttached().getEntityChangedEvent().addListener((ev, sender, args) -> getCdImage().setIsChangeable(getCdAttached().getEntity()));
         getCdAttached().setEntity(false);
 
         setLease(new NotChangableForVmInPoolListModel<StorageDomain>());
@@ -1853,28 +1844,22 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void updateLabelList() {
-        AsyncDataProvider.getInstance().getLabelList(new AsyncQuery<>(new AsyncCallback<List<Label>>() {
-            @Override
-            public void onSuccess(final List<Label> allLabels) {
-                boolean isExistingVmBehavior = getBehavior() instanceof ExistingVmModelBehavior;
+        AsyncDataProvider.getInstance().getLabelList(new AsyncQuery<>(allLabels -> {
+            boolean isExistingVmBehavior = getBehavior() instanceof ExistingVmModelBehavior;
 
-                if (isExistingVmBehavior) {
-                    Guid vmId = ((ExistingVmModelBehavior) getBehavior()).getVm().getId();
+            if (isExistingVmBehavior) {
+                Guid vmId = ((ExistingVmModelBehavior) getBehavior()).getVm().getId();
 
-                    AsyncDataProvider.getInstance().getLabelListByEntityId(new AsyncQuery<>(new AsyncCallback<List<Label>>() {
-                        @Override
-                        public void onSuccess(List<Label> vmLabelsList) {
-                            labelList.setItems(allLabels);
-                            labelList.setSelectedItems(vmLabelsList);
-                        }
-                    }), vmId);
-                } else {
+                AsyncDataProvider.getInstance().getLabelListByEntityId(new AsyncQuery<>(vmLabelsList -> {
                     labelList.setItems(allLabels);
-                    labelList.setSelectedItems(new ArrayList<Label>());
-                }
-
-                labelList.setIsChangeable(false);
+                    labelList.setSelectedItems(vmLabelsList);
+                }), vmId);
+            } else {
+                labelList.setItems(allLabels);
+                labelList.setSelectedItems(new ArrayList<Label>());
             }
+
+            labelList.setIsChangeable(false);
         }));
     }
 
@@ -1935,12 +1920,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 timeZone_SelectedItemChanged(sender, args);
             }
             else if (sender == getOSType()) {
-                getBehavior().deactivateInstanceTypeManager(new InstanceTypeManager.ActivatedListener() {
-                    @Override
-                    public void activated() {
-                        if (getBehavior().getInstanceTypeManager() != null && !getBehavior().basedOnCustomInstanceType()) {
-                            getBehavior().getInstanceTypeManager().updateFildsAfterOsChanged();
-                        }
+                getBehavior().deactivateInstanceTypeManager(() -> {
+                    if (getBehavior().getInstanceTypeManager() != null && !getBehavior().basedOnCustomInstanceType()) {
+                        getBehavior().getInstanceTypeManager().updateFildsAfterOsChanged();
                     }
                 });
 
@@ -2112,20 +2094,17 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     protected void initNumOfMonitors() {
         AsyncDataProvider.getInstance().getNumOfMonitorList(new AsyncQuery<>(
-                new AsyncCallback<List<Integer>>() {
-                    @Override
-                    public void onSuccess(List<Integer> numOfMonitors) {
+                numOfMonitors -> {
 
-                        Integer oldNumOfMonitors = null;
-                        if (getNumOfMonitors().getSelectedItem() != null) {
-                            oldNumOfMonitors = getNumOfMonitors().getSelectedItem();
-                        }
-                        getNumOfMonitors().setItems(numOfMonitors);
-                        if (oldNumOfMonitors != null) {
-                            getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
-                        }
-
+                    Integer oldNumOfMonitors = null;
+                    if (getNumOfMonitors().getSelectedItem() != null) {
+                        oldNumOfMonitors = getNumOfMonitors().getSelectedItem();
                     }
+                    getNumOfMonitors().setItems(numOfMonitors);
+                    if (oldNumOfMonitors != null) {
+                        getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
+                    }
+
                 }));
 
     }
@@ -2387,20 +2366,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         final Guid largeOsIconId = AsyncDataProvider.getInstance().getOsDefaultIconId(osId, false);
         final Guid smallOsIconId = AsyncDataProvider.getInstance().getSmallByLargeOsDefaultIconId(largeOsIconId);
         if (getIcon().getEntity() == null) {
-            IconWithOsDefault.create(largeOsIconId, smallOsIconId, new IconWithOsDefault.IconWithOsDefaultCallback() {
-                @Override
-                public void onCreated(IconWithOsDefault instance) {
-                    getIcon().setEntity(instance);
-                }
-            });
+            IconWithOsDefault.create(largeOsIconId, smallOsIconId, instance -> getIcon().setEntity(instance));
         } else {
             getIcon().getEntity().withDifferentOsIcon(largeOsIconId, smallOsIconId,
-                    new IconWithOsDefault.IconWithOsDefaultCallback() {
-                        @Override
-                        public void onCreated(IconWithOsDefault instance) {
-                            getIcon().setEntity(instance);
-                        }
-                    });
+                    instance -> getIcon().setEntity(instance));
         }
     }
 
@@ -2411,17 +2380,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void updateWatchdogModels(Integer osType) {
         Cluster cluster = getSelectedCluster();
         if (osType != null && cluster != null && getWatchdogModel() != null) {
-            AsyncDataProvider.getInstance().getVmWatchdogTypes(osType, getCompatibilityVersion(), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                @Override
-                public void onSuccess(VdcQueryReturnValue returnValue) {
-                    getBehavior().deactivateInstanceTypeManager();
+            AsyncDataProvider.getInstance().getVmWatchdogTypes(osType, getCompatibilityVersion(), new AsyncQuery<>(
+                    returnValue -> {
+                        getBehavior().deactivateInstanceTypeManager();
 
-                    updateWatchdogItems((HashSet<VmWatchdogType>) returnValue.getReturnValue());
+                        updateWatchdogItems((HashSet<VmWatchdogType>) returnValue.getReturnValue());
 
-                    getBehavior().activateInstanceTypeManager();
+                        getBehavior().activateInstanceTypeManager();
 
-                }
-            }));
+                    }));
         }
     }
 
@@ -2932,23 +2899,21 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
      * consequently a frontend NPE.
      */
     private IValidation createEachDiskAHasStorageDomainValidation() {
-        return new IValidation() {
-            @Override public ValidationResult validate(Object value) {
-                if (getDisksAllocationModel() == null
-                    || getDisksAllocationModel().getDisks() == null) {
-                    return ValidationResult.ok();
-                }
-                for (DiskModel diskModel : getDisksAllocationModel().getDisks()) {
-                    final StorageDomain storageDomain = diskModel.getStorageDomain().getSelectedItem();
-                    if (storageDomain == null) {
-                        final String diskName = diskModel.getDisk().getDiskAlias();
-                        final String errorMessage = ConstantsManager.getInstance().getMessages()
-                                .storageDomainOfDiskCannotBeAccessed(diskName);
-                        return ValidationResult.fail(errorMessage);
-                    }
-                }
+        return value -> {
+            if (getDisksAllocationModel() == null
+                || getDisksAllocationModel().getDisks() == null) {
                 return ValidationResult.ok();
             }
+            for (DiskModel diskModel : getDisksAllocationModel().getDisks()) {
+                final StorageDomain storageDomain = diskModel.getStorageDomain().getSelectedItem();
+                if (storageDomain == null) {
+                    final String diskName = diskModel.getDisk().getDiskAlias();
+                    final String errorMessage = ConstantsManager.getInstance().getMessages()
+                            .storageDomainOfDiskCannotBeAccessed(diskName);
+                    return ValidationResult.fail(errorMessage);
+                }
+            }
+            return ValidationResult.ok();
         };
     }
 

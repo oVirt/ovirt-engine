@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class BaseNetworkQosModel extends Model {
 
@@ -32,15 +29,11 @@ public class BaseNetworkQosModel extends Model {
     public BaseNetworkQosModel() {
         setInbound(new NetworkQosParametersModel());
         setOutbound(new NetworkQosParametersModel());
-        getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
-                    boolean value = getIsChangable();
-                    getInbound().setIsChangeable(value);
-                    getOutbound().setIsChangeable(value);
-                }
+        getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
+                boolean value = getIsChangable();
+                getInbound().setIsChangeable(value);
+                getOutbound().setIsChangeable(value);
             }
         });
     }

@@ -8,7 +8,6 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.IFrontendEventsHandler.MessageFormatter;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -186,15 +185,9 @@ public abstract class UiAction {
     private void handleErrors() {
         if (!getActionFlowState().getFailedActionsMap().isEmpty()) {
             Frontend.getInstance().runMultipleActionsFailed(getActionFlowState().getFailedActionsMap(),
-                    new MessageFormatter() {
-
-                        @Override
-                        public String format(String innerMessage) {
-                            return ConstantsManager.getInstance()
-                                    .getMessages()
-                                    .uiCommonRunActionPartitialyFailed(innerMessage);
-                        }
-                    });
+                    innerMessage -> ConstantsManager.getInstance()
+                            .getMessages()
+                            .uiCommonRunActionPartitialyFailed(innerMessage));
         }
     }
 

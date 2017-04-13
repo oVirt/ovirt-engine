@@ -21,7 +21,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationModel {
 
@@ -62,13 +61,7 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
             parameters.add(parameter);
             queryTypes.add(getUsingEntitiesByQosIdQueryType());
         }
-        Frontend.getInstance().runMultipleQueries(queryTypes, parameters, new IFrontendMultipleQueryAsyncCallback() {
-
-            @Override
-            public void executed(FrontendMultipleQueryAsyncResult result) {
-                handleSetMessageQueryResult(result);
-            }
-        });
+        Frontend.getInstance().runMultipleQueries(queryTypes, parameters, result -> handleSetMessageQueryResult(result));
     }
 
     protected void handleSetMessageQueryResult(FrontendMultipleQueryAsyncResult result) {

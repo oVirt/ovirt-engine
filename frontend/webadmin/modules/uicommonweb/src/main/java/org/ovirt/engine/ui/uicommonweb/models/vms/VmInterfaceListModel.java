@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -106,12 +105,9 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         final VM vm = getEntity();
 
         // Initialize guest agent data
-        AsyncDataProvider.getInstance().getVmGuestAgentInterfacesByVmId(new AsyncQuery<>(new AsyncCallback<List<VmGuestAgentInterface>>() {
-            @Override
-            public void onSuccess(List<VmGuestAgentInterface> result) {
-                setGuestAgentData(result);
-                VmInterfaceListModel.super.syncSearch(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));
-            }
+        AsyncDataProvider.getInstance().getVmGuestAgentInterfacesByVmId(new AsyncQuery<>(result -> {
+            setGuestAgentData(result);
+            VmInterfaceListModel.super.syncSearch(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));
         }), vm.getId());
     }
 

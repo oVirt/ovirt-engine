@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -149,12 +148,9 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
 
         model.startProgress();
         if (getEntity().getDedicatedVmForVdsList().isEmpty() || !getEntity().getDedicatedVmForVdsList().contains(model.getPinnedHost().getSelectedItem().getId())) {
-            pinVmToHost(model.getPinnedHost().getSelectedItem().getId(), new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-                    if (result.getReturnValue().getSucceeded()) {
-                        doAttachDevices(model.getSelectedHostDevices().getItems());
-                    }
+            pinVmToHost(model.getPinnedHost().getSelectedItem().getId(), result -> {
+                if (result.getReturnValue().getSucceeded()) {
+                    doAttachDevices(model.getSelectedHostDevices().getItems());
                 }
             });
         } else {
@@ -167,14 +163,12 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
         for (EntityModel<HostDeviceView> model : items) {
             deviceNamesToAttach.add(model.getEntity().getDeviceName());
         }
-        Frontend.getInstance().runAction(VdcActionType.AddVmHostDevices, new VmHostDevicesParameters(getEntity().getId(), deviceNamesToAttach), new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                syncSearch();
-                getWindow().stopProgress();
-                setWindow(null);
-            }
-        });
+        Frontend.getInstance().runAction(VdcActionType.AddVmHostDevices, new VmHostDevicesParameters(getEntity().getId(), deviceNamesToAttach),
+                result -> {
+                    syncSearch();
+                    getWindow().stopProgress();
+                    setWindow(null);
+                });
     }
 
     private void pinVmToHost(Guid hostId, IFrontendActionAsyncCallback callback) {
@@ -191,13 +185,11 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
 
         model.startProgress();
         ArrayList<String> deviceNames = getSelectedPrimaryDeviceNames();
-        Frontend.getInstance().runAction(VdcActionType.RemoveVmHostDevices, new VmHostDevicesParameters(getEntity().getId(), deviceNames), new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                model.stopProgress();
-                setConfirmWindow(null);
-            }
-        });
+        Frontend.getInstance().runAction(VdcActionType.RemoveVmHostDevices, new VmHostDevicesParameters(getEntity().getId(), deviceNames),
+                result -> {
+                    model.stopProgress();
+                    setConfirmWindow(null);
+                });
     }
 
     /**
@@ -221,12 +213,9 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
         final RepinHostModel model = (RepinHostModel) getWindow();
 
         model.startProgress();
-        pinVmToHost(model.getPinnedHost().getSelectedItem().getId(), new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                model.stopProgress();
-                setWindow(null);
-            }
+        pinVmToHost(model.getPinnedHost().getSelectedItem().getId(), result -> {
+            model.stopProgress();
+            setWindow(null);
         });
     }
 

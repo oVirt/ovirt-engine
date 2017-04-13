@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
@@ -11,16 +10,13 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicompat.Enlistment;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEnlistmentNotification;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
 
 @SuppressWarnings("unused")
@@ -51,14 +47,11 @@ public class AddClusterRM extends IEnlistmentNotification {
         if (!StringHelper.isNullOrEmpty(clusterName)) {
 
             AsyncDataProvider.getInstance().getClusterListByName(new AsyncQuery<>(
-                    new AsyncCallback<List<Cluster>>() {
-                        @Override
-                        public void onSuccess(List<Cluster> returnValue) {
+                            returnValue -> {
 
-                            context.clusterFoundByName = Linq.firstOrNull(returnValue);
-                            prepare2();
-                        }
-                    }),
+                                context.clusterFoundByName = Linq.firstOrNull(returnValue);
+                                prepare2();
+                            }),
                     clusterName);
         } else {
             prepare2();
@@ -105,15 +98,12 @@ public class AddClusterRM extends IEnlistmentNotification {
                 ClusterOperationParameters parameters = new ManagementNetworkOnClusterOperationParameters(cluster);
                 parameters.setCorrelationId(getCorrelationId());
                 Frontend.getInstance().runAction(VdcActionType.AddCluster, parameters,
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
+                        result -> {
 
-                                VdcReturnValueBase returnValue = result.getReturnValue();
+                            VdcReturnValueBase returnValue = result.getReturnValue();
 
-                                context.addClusterReturnValue = returnValue;
-                                prepare3();
-                            }
+                            context.addClusterReturnValue = returnValue;
+                            prepare3();
                         });
             }
 

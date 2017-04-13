@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
@@ -215,24 +214,14 @@ public abstract class Configurator {
     }
 
     private void updateSpiceUsbAutoShare(final ConsoleClient spice) {
-        AsyncDataProvider.getInstance().getSpiceUsbAutoShare(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean returnValue) {
-                spice.getOptions().setUsbAutoShare(returnValue);
-            }
-        }));
+        AsyncDataProvider.getInstance().getSpiceUsbAutoShare(new AsyncQuery<>(returnValue -> spice.getOptions().setUsbAutoShare(returnValue)));
     }
 
     protected abstract ConfigurationValues spiceFullScreenConfigKey();
 
     private void updateSpiceFullScreenDefault(final ConsoleClient spice) {
         AsyncDataProvider.getInstance().getConfigurationValueBoolean(new AsyncQuery<>(
-                new AsyncCallback<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean returnValue) {
-                        spice.getOptions().setFullScreen(returnValue);
-                    }
-                }), spiceFullScreenConfigKey());
+                returnValue -> spice.getOptions().setFullScreen(returnValue)), spiceFullScreenConfigKey());
     }
 
     public void updateSpice32Version() {

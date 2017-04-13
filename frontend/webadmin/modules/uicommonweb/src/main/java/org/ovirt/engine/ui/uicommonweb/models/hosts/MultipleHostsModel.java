@@ -8,9 +8,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class MultipleHostsModel extends Model {
 
@@ -31,12 +28,9 @@ public class MultipleHostsModel extends Model {
         setApplyPasswordCommand(new UICommand("ApplyPassword", this)); //$NON-NLS-1$
         setConfigureFirewall(true);
 
-        getUseCommonPassword().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getCommonPassword().setIsChangeable(getUseCommonPassword().getEntity());
-                getApplyPasswordCommand().setIsExecutionAllowed(getUseCommonPassword().getEntity());
-            }
+        getUseCommonPassword().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            getCommonPassword().setIsChangeable(getUseCommonPassword().getEntity());
+            getApplyPasswordCommand().setIsExecutionAllowed(getUseCommonPassword().getEntity());
         });
         getUseCommonPassword().setEntity(false);
     }

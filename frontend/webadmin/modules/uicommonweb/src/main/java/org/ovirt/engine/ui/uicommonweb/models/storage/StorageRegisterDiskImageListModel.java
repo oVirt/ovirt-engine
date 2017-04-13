@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.UnregisteredDiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
@@ -14,7 +13,6 @@ import org.ovirt.engine.core.common.queries.IdAndBooleanQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -83,17 +81,14 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
         IdQueryParameters parameters = new IdAndBooleanQueryParameters(getEntity().getId(), true);
         parameters.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetUnregisteredDisksFromDB, parameters,
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        List<UnregisteredDisk> unregisteredDisks = returnValue.getReturnValue();
-                        Collections.sort(unregisteredDisks, new UnregisteredDiskByDiskAliasComparator());
-                        ArrayList<Disk> diskItems = new ArrayList<>();
-                        for (UnregisteredDisk unregisteredDisk : unregisteredDisks) {
-                            diskItems.add(unregisteredDisk.getDiskImage());
-                        }
-                        setItems(diskItems);
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    List<UnregisteredDisk> unregisteredDisks = returnValue.getReturnValue();
+                    Collections.sort(unregisteredDisks, new UnregisteredDiskByDiskAliasComparator());
+                    ArrayList<Disk> diskItems = new ArrayList<>();
+                    for (UnregisteredDisk unregisteredDisk : unregisteredDisks) {
+                        diskItems.add(unregisteredDisk.getDiskImage());
                     }
+                    setItems(diskItems);
                 }));
     }
 
@@ -121,14 +116,11 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
         registerDiskModel.setHashName("import_disks"); //$NON-NLS-1$
 
         registerDiskModel.startProgress();
-        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(new AsyncCallback<StoragePool>() {
-            @Override
-            public void onSuccess(StoragePool dataCenter) {
-                registerDiskModel.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
-                registerDiskModel.setDisks(DiskModel.disksToDiskModelList(getSelectedItems()));
-                registerDiskModel.updateStorageDomain(getEntity());
-                registerDiskModel.stopProgress();
-            }
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(dataCenter -> {
+            registerDiskModel.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
+            registerDiskModel.setDisks(DiskModel.disksToDiskModelList(getSelectedItems()));
+            registerDiskModel.updateStorageDomain(getEntity());
+            registerDiskModel.stopProgress();
         }), getEntity().getStoragePoolId());
     }
 

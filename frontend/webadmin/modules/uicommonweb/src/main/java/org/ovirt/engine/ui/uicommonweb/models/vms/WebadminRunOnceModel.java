@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -39,24 +38,21 @@ public class WebadminRunOnceModel extends RunOnceModel {
     private void loadHosts() {
         // append just active hosts
         AsyncDataProvider.getInstance().getHostListByCluster(new AsyncQuery<>(
-                new AsyncCallback<List<VDS>>() {
-            @Override
-            public void onSuccess(List<VDS> hosts) {
-                final List<VDS> activeHosts = new ArrayList<>();
-                for (VDS host : hosts) {
-                    if (VDSStatus.Up.equals(host.getStatus())) {
-                        activeHosts.add(host);
+                hosts -> {
+                    final List<VDS> activeHosts = new ArrayList<>();
+                    for (VDS host : hosts) {
+                        if (VDSStatus.Up.equals(host.getStatus())) {
+                            activeHosts.add(host);
+                        }
                     }
-                }
 
-                getDefaultHost().setItems(activeHosts);
+                    getDefaultHost().setItems(activeHosts);
 
-                // hide host tab when no active host is available
-                if (activeHosts.isEmpty()) {
-                    setIsHostTabVisible(false);
-                }
-            }
-        }), vm.getClusterName());
+                    // hide host tab when no active host is available
+                    if (activeHosts.isEmpty()) {
+                        setIsHostTabVisible(false);
+                    }
+                }), vm.getClusterName());
     }
 
     @Override

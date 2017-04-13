@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -28,9 +27,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class VolumeModel extends Model {
@@ -94,23 +90,11 @@ public class VolumeModel extends Model {
         getAddBricksCommand().setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
 
         setDataCenter(new ListModel<StoragePool>());
-        getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                dataCenter_SelectedItemChanged();
-            }
-        });
+        getDataCenter().getSelectedItemChangedEvent().addListener((ev, sender, args) -> dataCenter_SelectedItemChanged());
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
 
         setCluster(new ListModel<Cluster>());
-        getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                clusterSelectedItemChanged();
-            }
-        });
+        getCluster().getSelectedItemChangedEvent().addListener((ev, sender, args) -> clusterSelectedItemChanged());
 
         setName(new EntityModel<String>());
 
@@ -144,21 +128,17 @@ public class VolumeModel extends Model {
 
         setBricks(new ListModel<EntityModel<GlusterBrickEntity>>());
 
-        getTypeList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+        getTypeList().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
 
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+            getReplicaCount().setIsAvailable(getTypeList().getSelectedItem().isReplicatedType());
+            getStripeCount().setIsAvailable(getTypeList().getSelectedItem().isStripedType());
 
-                getReplicaCount().setIsAvailable(getTypeList().getSelectedItem().isReplicatedType());
-                getStripeCount().setIsAvailable(getTypeList().getSelectedItem().isStripedType());
-
-                if (getBricks().getItems() != null && ((List) getBricks().getItems()).size() > 0
-                        && !validateBrickCount()
-                        && getAddBricksCommand().getIsExecutionAllowed()) {
-                    getAddBricksCommand().execute();
-                }
-                updateArbiterAvailability();
+            if (getBricks().getItems() != null && ((List) getBricks().getItems()).size() > 0
+                    && !validateBrickCount()
+                    && getAddBricksCommand().getIsExecutionAllowed()) {
+                getAddBricksCommand().execute();
             }
+            updateArbiterAvailability();
         });
         setGluster_accecssProtocol(new EntityModel<Boolean>());
         getGluster_accecssProtocol().setEntity(true);
@@ -344,17 +324,14 @@ public class VolumeModel extends Model {
         volumeBrickModel.setHelpTag(HelpTag.add_bricks);
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
 
-        AsyncDataProvider.getInstance().getHostListByCluster(volumeBrickModel.asyncQuery(new AsyncCallback<List<VDS>>() {
-            @Override
-            public void onSuccess(List<VDS> hostList) {
-                Iterator<VDS> iterator = hostList.iterator();
-                while (iterator.hasNext()) {
-                    if (iterator.next().getStatus() != VDSStatus.Up) {
-                        iterator.remove();
-                    }
+        AsyncDataProvider.getInstance().getHostListByCluster(volumeBrickModel.asyncQuery(hostList -> {
+            Iterator<VDS> iterator = hostList.iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().getStatus() != VDSStatus.Up) {
+                    iterator.remove();
                 }
-                volumeBrickModel.setHostList(hostList);
             }
+            volumeBrickModel.setHostList(hostList);
         }), getCluster().getSelectedItem().getName());
 
         // TODO: fetch the mount points to display
@@ -498,25 +475,22 @@ public class VolumeModel extends Model {
             final Cluster cluster = getCluster().getSelectedItem();
             updateArbiterAvailability();
             updateDefaults();
-            AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean returnValue) {
+            AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery<>(returnValue -> {
 
-                    // In case the result of previous call is returned after selecting some other cluster
-                    if (!getCluster().getSelectedItem().getId().equals(cluster.getId())) {
-                        return;
-                    }
-
-                    if (returnValue) {
-                        getAddBricksCommand().setIsExecutionAllowed(true);
-                        setMessage(null);
-                    }
-                    else {
-                        getAddBricksCommand().setIsExecutionAllowed(false);
-                        setMessage(ConstantsManager.getInstance().getConstants().volumeEmptyClusterValidationMsg());
-                    }
-
+                // In case the result of previous call is returned after selecting some other cluster
+                if (!getCluster().getSelectedItem().getId().equals(cluster.getId())) {
+                    return;
                 }
+
+                if (returnValue) {
+                    getAddBricksCommand().setIsExecutionAllowed(true);
+                    setMessage(null);
+                }
+                else {
+                    getAddBricksCommand().setIsExecutionAllowed(false);
+                    setMessage(ConstantsManager.getInstance().getConstants().volumeEmptyClusterValidationMsg());
+                }
+
             }), cluster.getName());
         }
         else {
@@ -530,39 +504,36 @@ public class VolumeModel extends Model {
         if (dataCenter != null) {
 
             // load clusters of Gluster type
-            AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-                @Override
-                public void onSuccess(List<Cluster> clusters) {
-                    Cluster oldCluster = getCluster().getSelectedItem();
-                    StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
+            AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(clusters -> {
+                Cluster oldCluster = getCluster().getSelectedItem();
+                StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
 
-                    Iterator<Cluster> iterator = clusters.iterator();
-                    while(iterator.hasNext()) {
-                        if (!iterator.next().supportsGlusterService()) {
-                            iterator.remove();
+                Iterator<Cluster> iterator = clusters.iterator();
+                while(iterator.hasNext()) {
+                    if (!iterator.next().supportsGlusterService()) {
+                        iterator.remove();
+                    }
+                }
+
+                // Update selected cluster only if the returned cluster list is indeed the selected datacenter's
+                // clusters
+                if (clusters.isEmpty()
+                        || clusters.size() > 0
+                        && clusters.get(0)
+                        .getStoragePoolId()
+                        .equals(selectedDataCenter.getId())) {
+                    getCluster().setItems(clusters);
+
+                    if (oldCluster != null) {
+                        Cluster newSelectedItem =
+                                Linq.firstOrNull(clusters, new Linq.IdPredicate<>(oldCluster.getId()));
+                        if (newSelectedItem != null) {
+                            getCluster().setSelectedItem(newSelectedItem);
                         }
                     }
 
-                    // Update selected cluster only if the returned cluster list is indeed the selected datacenter's
-                    // clusters
-                    if (clusters.isEmpty()
-                            || clusters.size() > 0
-                            && clusters.get(0)
-                            .getStoragePoolId()
-                            .equals(selectedDataCenter.getId())) {
-                        getCluster().setItems(clusters);
-
-                        if (oldCluster != null) {
-                            Cluster newSelectedItem =
-                                    Linq.firstOrNull(clusters, new Linq.IdPredicate<>(oldCluster.getId()));
-                            if (newSelectedItem != null) {
-                                getCluster().setSelectedItem(newSelectedItem);
-                            }
-                        }
-
-                        if (getCluster().getSelectedItem() == null) {
-                            getCluster().setSelectedItem(Linq.firstOrNull(clusters));
-                        }
+                    if (getCluster().getSelectedItem() == null) {
+                        getCluster().setSelectedItem(Linq.firstOrNull(clusters));
                     }
                 }
             }), dataCenter.getId(), false, true);

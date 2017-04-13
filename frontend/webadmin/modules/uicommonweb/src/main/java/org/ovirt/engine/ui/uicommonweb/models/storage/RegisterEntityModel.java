@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -24,8 +23,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> extends Model {
 
@@ -64,32 +61,26 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
     }
 
     private void updateClusters() {
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-            @Override
-            public void onSuccess(List<StoragePool> storagePools) {
-                storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
-                if (storagePool == null) {
-                    return;
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(storagePools -> {
+            storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
+            if (storagePool == null) {
+                return;
+            }
+
+            AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(clusters -> {
+                for (ImportEntityData<T> entityData : entities.getItems()) {
+                    List<Cluster> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, entityData.getArchType());
+                    entityData.getCluster().setItems(filteredClusters);
+                    entityData.getCluster().setSelectedItem(Linq.firstOrNull(filteredClusters));
                 }
 
-                AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-                    @Override
-                    public void onSuccess(List<Cluster> clusters) {
-                        for (ImportEntityData<T> entityData : entities.getItems()) {
-                            List<Cluster> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, entityData.getArchType());
-                            entityData.getCluster().setItems(filteredClusters);
-                            entityData.getCluster().setSelectedItem(Linq.firstOrNull(filteredClusters));
-                        }
+                getCluster().setItems(clusters);
+                getCluster().setSelectedItem(Linq.firstOrNull(clusters));
 
-                        getCluster().setItems(clusters);
-                        getCluster().setSelectedItem(Linq.firstOrNull(clusters));
+                updateClusterQuota(clusters);
+                updateStorageQuota();
+            }), storagePool.getId(), true, false);
 
-                        updateClusterQuota(clusters);
-                        updateStorageQuota();
-                    }
-                }), storagePool.getId(), true, false);
-
-            }
         }), storageDomainId);
     }
 
@@ -99,14 +90,11 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
         }
 
         AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery<>(
-                new AsyncCallback<List<Quota>>() {
-                    @Override
-                    public void onSuccess(List<Quota> quotas) {
-                        quotas = (quotas != null) ? quotas : new ArrayList<Quota>();
+                quotas -> {
+                    quotas = (quotas != null) ? quotas : new ArrayList<Quota>();
 
-                        getStorageQuota().setItems(quotas);
-                        getStorageQuota().setSelectedItem(Linq.firstOrNull(quotas));
-                    }
+                    getStorageQuota().setItems(quotas);
+                    getStorageQuota().setSelectedItem(Linq.firstOrNull(quotas));
                 }), storageDomainId, null);
     }
 
@@ -122,18 +110,15 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
             params.add(new IdQueryParameters(cluster.getId()));
         }
 
-        Frontend.getInstance().runMultipleQueries(queries, params, new IFrontendMultipleQueryAsyncCallback() {
-            @Override
-            public void executed(FrontendMultipleQueryAsyncResult result) {
-                Map<Guid, List<Quota>> clusterQuotasMap = new HashMap<>();
-                for (int i = 0; i < result.getReturnValues().size(); i++) {
-                    List<Quota> quotas = result.getReturnValues().get(i).getReturnValue();
-                    Guid clusterId = ((IdQueryParameters) result.getParameters().get(i)).getId();
+        Frontend.getInstance().runMultipleQueries(queries, params, result -> {
+            Map<Guid, List<Quota>> clusterQuotasMap = new HashMap<>();
+            for (int i = 0; i < result.getReturnValues().size(); i++) {
+                List<Quota> quotas = result.getReturnValues().get(i).getReturnValue();
+                Guid clusterId = ((IdQueryParameters) result.getParameters().get(i)).getId();
 
-                    clusterQuotasMap.put(clusterId, quotas);
-                }
-                getClusterQuotasMap().setEntity(clusterQuotasMap);
+                clusterQuotasMap.put(clusterId, quotas);
             }
+            getClusterQuotasMap().setEntity(clusterQuotasMap);
         });
     }
 

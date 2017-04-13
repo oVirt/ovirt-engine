@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -80,20 +79,16 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
     }
 
     private void runQuery(Guid guid) {
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                if (returnValue.getSucceeded()) {
-                    ErrataData errataData = returnValue.getReturnValue();
-                    unfilteredResultList = errataData.getErrata();
-                    // manual client-side filter
-                    // TODO: Use filtering and pagination options by GetErrataCountsParameters.setErrataFilter(filter)
-                    setItems(filter(unfilteredResultList));
-                }
-                else {
-                    setMessage(constants.katelloProblemRetrievingErrata() + " " + returnValue.getExceptionMessage()); //$NON-NLS-1$
-                }
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+            if (returnValue.getSucceeded()) {
+                ErrataData errataData = returnValue.getReturnValue();
+                unfilteredResultList = errataData.getErrata();
+                // manual client-side filter
+                // TODO: Use filtering and pagination options by GetErrataCountsParameters.setErrataFilter(filter)
+                setItems(filter(unfilteredResultList));
+            }
+            else {
+                setMessage(constants.katelloProblemRetrievingErrata() + " " + returnValue.getExceptionMessage()); //$NON-NLS-1$
             }
         });
         asyncQuery.setHandleFailure(true);

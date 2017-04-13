@@ -41,9 +41,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class ProviderModel extends Model {
 
@@ -224,15 +222,12 @@ public class ProviderModel extends Model {
         this.action = action;
         this.provider = provider;
 
-        getRequiresAuthentication().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean authenticationRequired = requiresAuthentication.getEntity();
-                getUsername().setIsChangeable(authenticationRequired);
-                getPassword().setIsChangeable(authenticationRequired);
-                getTenantName().setIsChangeable(authenticationRequired);
-                getAuthUrl().setIsChangeable(authenticationRequired);
-            }
+        getRequiresAuthentication().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            boolean authenticationRequired = requiresAuthentication.getEntity();
+            getUsername().setIsChangeable(authenticationRequired);
+            getPassword().setIsChangeable(authenticationRequired);
+            getTenantName().setIsChangeable(authenticationRequired);
+            getAuthUrl().setIsChangeable(authenticationRequired);
         });
         setType(new ListModel<ProviderType>() {
             @Override
@@ -248,53 +243,50 @@ public class ProviderModel extends Model {
                 }
             }
         });
-        getType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean isTenantAware = getType().getSelectedItem().isTenantAware();
-                boolean isAuthUrlAware = getType().getSelectedItem().isAuthUrlAware();
-                boolean isReadOnlyAware = getType().getSelectedItem().isReadOnlyAware();
+        getType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            boolean isTenantAware = getType().getSelectedItem().isTenantAware();
+            boolean isAuthUrlAware = getType().getSelectedItem().isAuthUrlAware();
+            boolean isReadOnlyAware = getType().getSelectedItem().isReadOnlyAware();
 
-                getTenantName().setIsAvailable(isTenantAware);
-                getAuthUrl().setIsAvailable(isAuthUrlAware);
-                if (isTenantAware) {
-                    TenantProviderProperties properties = (TenantProviderProperties) provider.getAdditionalProperties();
-                    getTenantName().setEntity(properties == null ? null : properties.getTenantName());
-                }
+            getTenantName().setIsAvailable(isTenantAware);
+            getAuthUrl().setIsAvailable(isAuthUrlAware);
+            if (isTenantAware) {
+                TenantProviderProperties properties = (TenantProviderProperties) provider.getAdditionalProperties();
+                getTenantName().setEntity(properties == null ? null : properties.getTenantName());
+            }
 
-                boolean isNeutron = isTypeOpenStackNetwork();
-                getNeutronAgentModel().setIsAvailable(isNeutron);
+            boolean isNeutron = isTypeOpenStackNetwork();
+            getNeutronAgentModel().setIsAvailable(isNeutron);
 
-                getReadOnly().setIsAvailable(isReadOnlyAware);
-                if (isReadOnlyAware){
-                    OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
-                        getReadOnly().setEntity(properties != null ? properties.getReadOnly() : true);
-                }
+            getReadOnly().setIsAvailable(isReadOnlyAware);
+            if (isReadOnlyAware){
+                OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
+                    getReadOnly().setEntity(properties != null ? properties.getReadOnly() : true);
+            }
 
-                boolean isVmware = isTypeVmware();
-                boolean isKvm = isTypeKVM();
-                boolean isXen = isTypeXEN();
-                boolean requiresAuth = isTypeRequiresAuthentication();
-                getRequiresAuthentication().setEntity(isVmware || Boolean.valueOf(requiresAuth));
-                getRequiresAuthentication().setIsChangeable(!requiresAuth);
+            boolean isVmware = isTypeVmware();
+            boolean isKvm = isTypeKVM();
+            boolean isXen = isTypeXEN();
+            boolean requiresAuth = isTypeRequiresAuthentication();
+            getRequiresAuthentication().setEntity(isVmware || Boolean.valueOf(requiresAuth));
+            getRequiresAuthentication().setIsChangeable(!requiresAuth);
 
-                boolean isCinder = isTypeOpenStackVolume();
-                getDataCenter().setIsAvailable(isCinder || isVmware || isKvm || isXen);
-                if (isCinder) {
-                    updateDatacentersForVolumeProvider();
-                }
+            boolean isCinder = isTypeOpenStackVolume();
+            getDataCenter().setIsAvailable(isCinder || isVmware || isKvm || isXen);
+            if (isCinder) {
+                updateDatacentersForVolumeProvider();
+            }
 
-                getVmwarePropertiesModel().setIsAvailable(isVmware);
-                getKvmPropertiesModel().setIsAvailable(isKvm);
-                getXenPropertiesModel().setIsAvailable(isXen);
+            getVmwarePropertiesModel().setIsAvailable(isVmware);
+            getKvmPropertiesModel().setIsAvailable(isKvm);
+            getXenPropertiesModel().setIsAvailable(isXen);
 
-                getRequiresAuthentication().setIsAvailable(!isVmware && !isXen);
-                getUsername().setIsAvailable(!isXen);
-                getPassword().setIsAvailable(!isXen);
-                getUrl().setIsAvailable(!isVmware && !isKvm && !isXen);
-                if (isVmware || isKvm || isXen) {
-                    updateDatacentersForExternalProvider();
-                }
+            getRequiresAuthentication().setIsAvailable(!isVmware && !isXen);
+            getUsername().setIsAvailable(!isXen);
+            getPassword().setIsAvailable(!isXen);
+            getUrl().setIsAvailable(!isVmware && !isKvm && !isXen);
+            if (isVmware || isKvm || isXen) {
+                updateDatacentersForExternalProvider();
             }
         });
 
@@ -326,14 +318,11 @@ public class ProviderModel extends Model {
                     proxyHostPropertiesModel.disableProxyHost();
                 } else {
                     proxyHostPropertiesModel.getProxyHost().setIsChangeable(true);
-                    AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
-                        @Override
-                        public void onSuccess(List<VDS> hosts) {
-                            VDS prevHost = getPreviousHost(hosts);
-                            hosts.add(0, null); // Any host in the cluster
-                            proxyHostPropertiesModel.getProxyHost().setItems(hosts);
-                            proxyHostPropertiesModel.getProxyHost().setSelectedItem(prevHost);
-                        }
+                    AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery<>(hosts -> {
+                        VDS prevHost = getPreviousHost(hosts);
+                        hosts.add(0, null); // Any host in the cluster
+                        proxyHostPropertiesModel.getProxyHost().setItems(hosts);
+                        proxyHostPropertiesModel.getProxyHost().setSelectedItem(prevHost);
                     }),
                     getDataCenter().getSelectedItem().getId());
                 }
@@ -497,16 +486,12 @@ public class ProviderModel extends Model {
 
     protected void actualSave() {
         flush();
-        Frontend.getInstance().runAction(action, new ProviderParameters(provider), new IFrontendActionAsyncCallback() {
-
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                if (result.getReturnValue() == null || !result.getReturnValue().getSucceeded()) {
-                    return;
-                }
-                sourceListModel.getSearchCommand().execute();
-                cancel();
+        Frontend.getInstance().runAction(action, new ProviderParameters(provider), result -> {
+            if (result.getReturnValue() == null || !result.getReturnValue().getSucceeded()) {
+                return;
             }
+            sourceListModel.getSearchCommand().execute();
+            cancel();
         }, this);
     }
 
@@ -526,29 +511,24 @@ public class ProviderModel extends Model {
         flush();
         startProgress();
         if (provider.getUrl().startsWith(Uri.SCHEME_HTTPS)) {
-            AsyncDataProvider.getInstance().getProviderCertificateChain(new AsyncQuery<>(new AsyncCallback<List<CertificateInfo>>() {
-
-                @Override
-                public void onSuccess(List<CertificateInfo> certs) {
-                    boolean ok = false;
-                    certificate = null;
-                    if (certs != null) {
-                        if (!certs.isEmpty()) {
-                            certificate = certs.get(certs.size() - 1).getPayload();
-                            ConfirmationModel confirmationModel =
-                                    getImportCertificateConfirmationModel(certs.get(certs.size() - 1));
-                            sourceListModel.setConfirmWindow(confirmationModel);
-                            ok = true;
-                        }
-                    }
-                    if (!ok) {
-                        stopProgress();
-                        getTestResult().setEntity(ConstantsManager.getInstance()
-                                .getConstants()
-                                .testFailedUnknownErrorMsg());
+            AsyncDataProvider.getInstance().getProviderCertificateChain(new AsyncQuery<>(certs -> {
+                boolean ok = false;
+                certificate = null;
+                if (certs != null) {
+                    if (!certs.isEmpty()) {
+                        certificate = certs.get(certs.size() - 1).getPayload();
+                        ConfirmationModel confirmationModel =
+                                getImportCertificateConfirmationModel(certs.get(certs.size() - 1));
+                        sourceListModel.setConfirmWindow(confirmationModel);
+                        ok = true;
                     }
                 }
-
+                if (!ok) {
+                    stopProgress();
+                    getTestResult().setEntity(ConstantsManager.getInstance()
+                            .getConstants()
+                            .testFailedUnknownErrorMsg());
+                }
             }),
                     provider);
         } else {
@@ -559,16 +539,12 @@ public class ProviderModel extends Model {
     private void testProviderConnectivity() {
         Frontend.getInstance().runAction(VdcActionType.TestProviderConnectivity,
                 new ProviderParameters(provider),
-                new IFrontendActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        VdcReturnValueBase res = result.getReturnValue();
-                        // If the connection failed on SSL issues, we try to fetch the provider
-                        // certificate chain, and import it to the engine
-                        stopProgress();
-                        setTestResultValue(res);
-                    }
+                result -> {
+                    VdcReturnValueBase res = result.getReturnValue();
+                    // If the connection failed on SSL issues, we try to fetch the provider
+                    // certificate chain, and import it to the engine
+                    stopProgress();
+                    setTestResultValue(res);
                 }, null, false);
     }
 
@@ -605,13 +581,7 @@ public class ProviderModel extends Model {
     private void importCertificate() {
         Frontend.getInstance().runAction(VdcActionType.ImportProviderCertificate,
                 importCertificateParams(),
-                new IFrontendActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        testProviderConnectivity();
-                    }
-                }, null, false);
+                result -> testProviderConnectivity(), null, false);
         sourceListModel.setConfirmWindow(null);
     }
 

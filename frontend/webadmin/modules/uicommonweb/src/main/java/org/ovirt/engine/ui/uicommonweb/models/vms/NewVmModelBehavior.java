@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -72,37 +71,30 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     protected void loadDataCenters() {
         AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(new AsyncQuery<>(
-                new AsyncCallback<List<StoragePool>>() {
-                    @Override
-                    public void onSuccess(List<StoragePool> returnValue) {
+                        returnValue -> {
 
-                        final ArrayList<StoragePool> dataCenters = new ArrayList<>();
-                        for (StoragePool a : returnValue) {
-                            if (a.getStatus() == StoragePoolStatus.Up) {
-                                dataCenters.add(a);
+                            final ArrayList<StoragePool> dataCenters = new ArrayList<>();
+                            for (StoragePool a : returnValue) {
+                                if (a.getStatus() == StoragePoolStatus.Up) {
+                                    dataCenters.add(a);
+                                }
                             }
-                        }
 
-                        if (!dataCenters.isEmpty()) {
-                            AsyncDataProvider.getInstance().getClusterListByService(
-                                    new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-
-                                        @Override
-                                        public void onSuccess(List<Cluster> clusterList) {
+                            if (!dataCenters.isEmpty()) {
+                                AsyncDataProvider.getInstance().getClusterListByService(
+                                        new AsyncQuery<>(clusterList -> {
                                             List<Cluster> filteredClusterList = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusterList);
                                             getModel().setDataCentersAndClusters(getModel(),
                                                     dataCenters,
                                                     filteredClusterList, null);
                                             initCdImage();
 
-                                        }
-                                    }),
-                                    true, false);
-                        } else {
-                            getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
-                        }
-                    }
-                }),
+                                        }),
+                                        true, false);
+                            } else {
+                                getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
+                            }
+                        }),
                 true,
                 false);
     }
@@ -118,79 +110,76 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     private void selectedTemplateChanged(final VmTemplate template) {
         // Copy VM parameters from template.
-        buildModel(template, new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
-            @Override
-            public void finished(VmBase source, UnitVmModel destination) {
-                setSelectedOSType(template, getModel().getSelectedCluster().getArchitecture());
+        buildModel(template, (source, destination) -> {
+            setSelectedOSType(template, getModel().getSelectedCluster().getArchitecture());
 
-                doChangeDefaultHost(template.getDedicatedVmForVdsList());
+            doChangeDefaultHost(template.getDedicatedVmForVdsList());
 
-                if (updateStatelessFlag) {
-                    getModel().getIsStateless().setEntity(template.isStateless());
-                }
-
-                updateStatelessFlag = true;
-
-                getModel().getIsRunAndPause().setEntity(template.isRunAndPause());
-
-                boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
-
-                getModel().getCdImage().setIsChangeable(hasCd);
-                getModel().getCdAttached().setEntity(hasCd);
-                if (hasCd) {
-                    getModel().getCdImage().setSelectedItem(template.getIsoPath());
-                }
-
-                updateTimeZone(template.getTimeZone());
-
-                if (!template.getId().equals(Guid.Empty)) {
-                    getModel().getStorageDomain().setIsChangeable(true);
-                    getModel().getProvisioning().setIsChangeable(true);
-
-                    getModel().getCopyPermissions().setIsAvailable(true);
-                    initDisks();
-                } else {
-                    getModel().getStorageDomain().setIsChangeable(false);
-                    getModel().getProvisioning().setIsChangeable(false);
-
-                    getModel().getCopyPermissions().setIsAvailable(false);
-                    getModel().setDisks(null);
-                    getModel().setIsDisksAvailable(false);
-                    getModel().getInstanceImages().setIsChangeable(true);
-                }
-
-                getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
-                getModel().getVmType().setSelectedItem(template.getVmType());
-                updateRngDevice(template.getId());
-
-                initStorageDomains();
-
-                InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
-                int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
-
-                // do not update if specified on template or instance type
-                if (template.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
-                    updateMinAllocatedMemory();
-                }
-
-                updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
-                getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
-
-                getModel().getVmInitModel().init(template);
-                getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
-
-                if (getModel().getSelectedCluster() != null) {
-                    updateCpuProfile(getModel().getSelectedCluster().getId(), template.getCpuProfileId());
-                }
-                provisioning_SelectedItemChanged();
-                updateMigrationForLocalSD();
-
-                // A workaround for setting the current saved CustomCompatibilityVersion value after
-                // it was reset by getTemplateWithVersion event
-                getModel().getCustomCompatibilityVersion().setSelectedItem(getSavedCurrentCustomCompatibilityVersion());
-                setCustomCompatibilityVersionChangeInProgress(false);
-                updateLeaseStorageDomains(template.getLeaseStorageDomainId());
+            if (updateStatelessFlag) {
+                getModel().getIsStateless().setEntity(template.isStateless());
             }
+
+            updateStatelessFlag = true;
+
+            getModel().getIsRunAndPause().setEntity(template.isRunAndPause());
+
+            boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
+
+            getModel().getCdImage().setIsChangeable(hasCd);
+            getModel().getCdAttached().setEntity(hasCd);
+            if (hasCd) {
+                getModel().getCdImage().setSelectedItem(template.getIsoPath());
+            }
+
+            updateTimeZone(template.getTimeZone());
+
+            if (!template.getId().equals(Guid.Empty)) {
+                getModel().getStorageDomain().setIsChangeable(true);
+                getModel().getProvisioning().setIsChangeable(true);
+
+                getModel().getCopyPermissions().setIsAvailable(true);
+                initDisks();
+            } else {
+                getModel().getStorageDomain().setIsChangeable(false);
+                getModel().getProvisioning().setIsChangeable(false);
+
+                getModel().getCopyPermissions().setIsAvailable(false);
+                getModel().setDisks(null);
+                getModel().setIsDisksAvailable(false);
+                getModel().getInstanceImages().setIsChangeable(true);
+            }
+
+            getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
+            getModel().getVmType().setSelectedItem(template.getVmType());
+            updateRngDevice(template.getId());
+
+            initStorageDomains();
+
+            InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
+            int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
+
+            // do not update if specified on template or instance type
+            if (template.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
+                updateMinAllocatedMemory();
+            }
+
+            updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
+            getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
+
+            getModel().getVmInitModel().init(template);
+            getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
+
+            if (getModel().getSelectedCluster() != null) {
+                updateCpuProfile(getModel().getSelectedCluster().getId(), template.getCpuProfileId());
+            }
+            provisioning_SelectedItemChanged();
+            updateMigrationForLocalSD();
+
+            // A workaround for setting the current saved CustomCompatibilityVersion value after
+            // it was reset by getTemplateWithVersion event
+            getModel().getCustomCompatibilityVersion().setSelectedItem(getSavedCurrentCustomCompatibilityVersion());
+            setCustomCompatibilityVersionChangeInProgress(false);
+            updateLeaseStorageDomains(template.getLeaseStorageDomainId());
         });
     }
 
@@ -203,12 +192,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     @Override
     public void postDataCenterWithClusterSelectedItemChanged() {
-        deactivateInstanceTypeManager(new InstanceTypeManager.ActivatedListener() {
-            @Override
-            public void activated() {
-                getInstanceTypeManager().updateAll();
-            }
-        });
+        deactivateInstanceTypeManager(() -> getInstanceTypeManager().updateAll());
 
         updateDefaultHost();
         updateCustomPropertySheet();
@@ -291,43 +275,28 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             final StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
             AsyncDataProvider.getInstance().getTemplateListByDataCenter(asyncQuery(
-                    new AsyncCallback<List<VmTemplate>>() {
-                        @Override
-                        public void onSuccess(final List<VmTemplate> templatesByDataCenter ) {
-                            AsyncDataProvider.getInstance().getTemplateListByStorage(asyncQuery(
-                                    new AsyncCallback<List<VmTemplate>>() {
-                                        @Override
-                                        public void onSuccess(List<VmTemplate> templatesByStorage) {
-                                            VmTemplate blankTemplate =
-                                                    Linq.firstOrNull(templatesByDataCenter,
-                                                            new Linq.IdPredicate<>(Guid.Empty));
-                                            if (blankTemplate != null) {
-                                                templatesByStorage.add(0, blankTemplate);
-                                            }
+                    templatesByDataCenter -> AsyncDataProvider.getInstance().getTemplateListByStorage(asyncQuery(
+                            templatesByStorage -> {
+                                VmTemplate blankTemplate =
+                                        Linq.firstOrNull(templatesByDataCenter,
+                                                new Linq.IdPredicate<>(Guid.Empty));
+                                if (blankTemplate != null) {
+                                    templatesByStorage.add(0, blankTemplate);
+                                }
 
-                                            List<VmTemplate> templateList = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByStorage,
-                                                            dataCenterWithCluster.getCluster().getArchitecture());
+                                List<VmTemplate> templateList = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByStorage,
+                                                dataCenterWithCluster.getCluster().getArchitecture());
 
-                                            postInitTemplate(templateList);
+                                postInitTemplate(templateList);
 
-                                        }
-                                    }),
-                                    storage.getId());
-
-                        }
-                    }),
+                            }),
+                            storage.getId())),
                     dataCenter.getId());
         }
         else {
             AsyncDataProvider.getInstance().getTemplateListByDataCenter(asyncQuery(
-                    new AsyncCallback<List<VmTemplate>>() {
-                        @Override
-                        public void onSuccess(List<VmTemplate> templates) {
-                            postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
-                                    dataCenterWithCluster.getCluster().getArchitecture()));
-
-                        }
-                    }), dataCenter.getId());
+                    templates -> postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
+                            dataCenterWithCluster.getCluster().getArchitecture()))), dataCenter.getId());
         }
     }
 

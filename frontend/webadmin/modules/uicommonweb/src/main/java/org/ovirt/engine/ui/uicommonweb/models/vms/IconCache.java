@@ -54,14 +54,11 @@ public class IconCache {
             callback.onSuccess(localResult);
         } else {
             Frontend.getInstance().runQuery(VdcQueryType.GetVmIcons, GetVmIconsParameters.create(iconIds),
-                    new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                        @Override
-                        public void onSuccess(VdcQueryReturnValue returnValue) {
-                            Map<Guid, String> idToIconMap = returnValue.getReturnValue();
-                            IconCache.this.cache.putAll(idToIconMap);
-                            final Map<Guid, String> result = IconCache.this.getIcons(iconIds);
-                            callback.onSuccess(result);
-                        }
+                    new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                        Map<Guid, String> idToIconMap = returnValue.getReturnValue();
+                        IconCache.this.cache.putAll(idToIconMap);
+                        final Map<Guid, String> result = IconCache.this.getIcons(iconIds);
+                        callback.onSuccess(result);
                     })
             );
         }
@@ -79,12 +76,9 @@ public class IconCache {
      * Sugar for {@link #getOrFetchIcons(List, IconCache.IconsCallback)}
      */
     public void getOrFetchIcon(final Guid iconId, final IconCallback callback) {
-        getOrFetchIcons(Collections.singletonList(iconId), new IconsCallback() {
-            @Override
-            public void onSuccess(Map<Guid, String> idToIconMap) {
-                final String icon = idToIconMap.get(iconId);
-                callback.onSuccess(icon);
-            }
+        getOrFetchIcons(Collections.singletonList(iconId), idToIconMap -> {
+            final String icon = idToIconMap.get(iconId);
+            callback.onSuccess(icon);
         });
     }
 

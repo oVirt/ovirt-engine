@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -189,63 +188,60 @@ public class ResourcesModel extends SearchableListModel {
     protected void syncSearch() {
         super.syncSearch();
 
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                final ArrayList<VM> list = returnValue.getReturnValue();
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+            final ArrayList<VM> list = returnValue.getReturnValue();
 
-                // Update calculated properties.
-                int runningVMs = 0;
-                int definedCPUs = 0;
-                int usedCPUs = 0;
-                int definedMemory = 0;
-                int usedMemory = 0;
-                long totalDisksSize = 0;
-                long totalSnapshotsSize = 0;
-                int numOfSnapshots = 0;
+            // Update calculated properties.
+            int runningVMs = 0;
+            int definedCPUs = 0;
+            int usedCPUs = 0;
+            int definedMemory = 0;
+            int usedMemory = 0;
+            long totalDisksSize = 0;
+            long totalSnapshotsSize = 0;
+            int numOfSnapshots = 0;
 
-                for (VM vm : list) {
-                    definedCPUs += vm.getNumOfCpus();
-                    definedMemory += vm.getVmMemSizeMb();
+            for (VM vm : list) {
+                definedCPUs += vm.getNumOfCpus();
+                definedMemory += vm.getVmMemSizeMb();
 
-                    if (vm.isRunning()) {
-                        runningVMs++;
-                        usedCPUs += vm.getNumOfCpus();
-                        usedMemory += vm.getVmMemSizeMb();
-                    }
-
-                    if (vm.getDiskList() != null) {
-                        for (DiskImage disk : vm.getDiskList()) {
-                            totalDisksSize += disk.getSizeInGigabytes();
-                            totalSnapshotsSize += (long) disk.getActualDiskWithSnapshotsSize();
-                            numOfSnapshots += disk.getSnapshots().size();
-                        }
-                    }
+                if (vm.isRunning()) {
+                    runningVMs++;
+                    usedCPUs += vm.getNumOfCpus();
+                    usedMemory += vm.getVmMemSizeMb();
                 }
 
-                getDefinedVMs().setEntity(list.size());
-                getRunningVMs().setEntity(runningVMs);
-                getRunningVMsPercentage().setEntity(list.isEmpty() ? 0 : runningVMs * 100 / list.size());
-                getDefinedCPUs().setEntity(definedCPUs);
-                getUsedCPUs().setEntity(usedCPUs);
-                getUsedCPUsPercentage().setEntity(definedCPUs == 0 ? 0 : usedCPUs * 100 / definedCPUs);
-                getDefinedMemory().setEntity(sizeParser(definedMemory));
-                getUsedMemory().setEntity(sizeParser(usedMemory));
-                getUsedMemoryPercentage().setEntity(definedMemory == 0 ? 0 : usedMemory * 100 / definedMemory);
-                getTotalDisksSize().setEntity(totalDisksSize >= 1 ? totalDisksSize + "GB" : "<1GB"); //$NON-NLS-1$ //$NON-NLS-2$
-                getTotalSnapshotsSize().setEntity(totalSnapshotsSize >= 1 ? totalSnapshotsSize + "GB" : "<1GB"); //$NON-NLS-1$ //$NON-NLS-2$
-                getNumOfSnapshots().setEntity(numOfSnapshots);
+                if (vm.getDiskList() != null) {
+                    for (DiskImage disk : vm.getDiskList()) {
+                        totalDisksSize += disk.getSizeInGigabytes();
+                        totalSnapshotsSize += (long) disk.getActualDiskWithSnapshotsSize();
+                        numOfSnapshots += disk.getSnapshots().size();
+                    }
+                }
+            }
 
-                Collections.sort(list, COMPARATOR);
-                setItems(list);
+            getDefinedVMs().setEntity(list.size());
+            getRunningVMs().setEntity(runningVMs);
+            getRunningVMsPercentage().setEntity(list.isEmpty() ? 0 : runningVMs * 100 / list.size());
+            getDefinedCPUs().setEntity(definedCPUs);
+            getUsedCPUs().setEntity(usedCPUs);
+            getUsedCPUsPercentage().setEntity(definedCPUs == 0 ? 0 : usedCPUs * 100 / definedCPUs);
+            getDefinedMemory().setEntity(sizeParser(definedMemory));
+            getUsedMemory().setEntity(sizeParser(usedMemory));
+            getUsedMemoryPercentage().setEntity(definedMemory == 0 ? 0 : usedMemory * 100 / definedMemory);
+            getTotalDisksSize().setEntity(totalDisksSize >= 1 ? totalDisksSize + "GB" : "<1GB"); //$NON-NLS-1$ //$NON-NLS-2$
+            getTotalSnapshotsSize().setEntity(totalSnapshotsSize >= 1 ? totalSnapshotsSize + "GB" : "<1GB"); //$NON-NLS-1$ //$NON-NLS-2$
+            getNumOfSnapshots().setEntity(numOfSnapshots);
 
-                VdcQueryParametersBase parameters =
-                        new VdcQueryParametersBase();
-                parameters.setRefresh(getIsQueryFirstTime());
-                Frontend.getInstance().runQuery(VdcQueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue ReturnValue) {
-                        Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap = (HashMap<Guid, QuotaUsagePerUser>) ReturnValue.getReturnValue();
+            Collections.sort(list, COMPARATOR);
+            setItems(list);
+
+            VdcQueryParametersBase parameters =
+                    new VdcQueryParametersBase();
+            parameters.setRefresh(getIsQueryFirstTime());
+            Frontend.getInstance().runQuery(VdcQueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery<VdcQueryReturnValue>(
+                    retVal -> {
+                        Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap = (HashMap<Guid, QuotaUsagePerUser>) retVal.getReturnValue();
 
                         //calculate personal consumption
                         for (VM vm : list) {
@@ -281,9 +277,7 @@ public class ResourcesModel extends SearchableListModel {
                             }
                         }
                         getUsedQuotaPercentage().setEntity(new ArrayList<>(quotaPerUserUsageEntityMap.values()));
-                    }
-                }));
-            }
+                    }));
         });
 
         // Items property will contain list of VMs.

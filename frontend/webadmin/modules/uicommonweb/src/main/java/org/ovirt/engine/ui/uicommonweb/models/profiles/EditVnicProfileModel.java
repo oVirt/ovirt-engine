@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -66,23 +65,20 @@ public class EditVnicProfileModel extends VnicProfileModel {
                 new IdQueryParameters(getProfile().getId());
         startProgress();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsByVnicProfileId, params,
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        Collection<VM> vms = returnValue.getReturnValue();
-                        if (vms != null && !vms.isEmpty()) {
-                            getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                    .getConstants()
-                                    .portMirroringNotChangedIfUsedByVms());
-                            getPortMirroring().setIsChangeable(false);
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    Collection<VM> vms = returnValue.getReturnValue();
+                    if (vms != null && !vms.isEmpty()) {
+                        getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
+                                .getConstants()
+                                .portMirroringNotChangedIfUsedByVms());
+                        getPortMirroring().setIsChangeable(false);
 
-                            getPassthrough().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                    .getConstants()
-                                    .passthroughNotChangedIfUsedByVms());
-                            getPassthrough().setIsChangeable(false);
-                        }
-                        stopProgress();
+                        getPassthrough().setChangeProhibitionReason(ConstantsManager.getInstance()
+                                .getConstants()
+                                .passthroughNotChangedIfUsedByVms());
+                        getPassthrough().setIsChangeable(false);
                     }
+                    stopProgress();
                 }));
     }
 

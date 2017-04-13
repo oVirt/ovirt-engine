@@ -11,15 +11,11 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class VnicProfileMappingModel extends Model {
 
@@ -55,12 +51,7 @@ public class VnicProfileMappingModel extends Model {
     }
 
     private void initTargetClusters() {
-        targetCluster.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateMappingRows();
-            }
-        });
+        targetCluster.getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateMappingRows());
         targetCluster.setItems(externalVnicProfiles.keySet(), Linq.firstOrNull(targetCluster.getItems()));
     }
 
@@ -115,18 +106,15 @@ public class VnicProfileMappingModel extends Model {
         startProgress();
 
         AsyncDataProvider.getInstance().getVnicProfilesByClusterId(
-                new AsyncQuery<>(new AsyncCallback<List<VnicProfileView>>() {
-                    @Override
-                    public void onSuccess(List<VnicProfileView> returnValue) {
-                        final List<VnicProfileView> vnicProfiles = new ArrayList<>();
-                        vnicProfiles.add(VnicProfileView.EMPTY);
-                        vnicProfiles.addAll(returnValue);
-                        Collections.sort(vnicProfiles, Linq.VnicProfileViewComparator);
+                new AsyncQuery<>(returnValue -> {
+                    final List<VnicProfileView> vnicProfiles = new ArrayList<>();
+                    vnicProfiles.add(VnicProfileView.EMPTY);
+                    vnicProfiles.addAll(returnValue);
+                    Collections.sort(vnicProfiles, Linq.VnicProfileViewComparator);
 
-                        populateMappingRows(vnicProfiles);
+                    populateMappingRows(vnicProfiles);
 
-                        stopProgress();
-                    }
+                    stopProgress();
                 }),
                 targetCluster.getSelectedItem().getId());
     }

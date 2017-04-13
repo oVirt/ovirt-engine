@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -138,18 +137,15 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         } else {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllQosByStoragePoolIdAndType,
                 new QosQueryParameterBase(dcId, getQosType()),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                            List<Q> qosList = (ArrayList<Q>) returnValue.getReturnValue();
-                            qosMap = new HashMap<>();
-                        if (qosList != null) {
-                                for (Q qos : qosList) {
-                                    qosMap.put(qos.getId(), qos);
-                            }
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                        List<Q> qosList = (ArrayList<Q>) returnValue.getReturnValue();
+                        qosMap = new HashMap<>();
+                    if (qosList != null) {
+                            for (Q qos : qosList) {
+                                qosMap.put(qos.getId(), qos);
                         }
-                            fetchProfiles();
                     }
+                        fetchProfiles();
                 }));
         }
     }
@@ -160,12 +156,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         }
         Frontend.getInstance().runQuery(getQueryType(),
                 new IdQueryParameters(getEntity().getId()),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        setItems((List<P>) returnValue.getReturnValue());
-                    }
-                }));
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> setItems((List<P>) returnValue.getReturnValue())));
     }
 
     @Override

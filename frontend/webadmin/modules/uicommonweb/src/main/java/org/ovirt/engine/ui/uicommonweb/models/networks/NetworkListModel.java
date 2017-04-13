@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -156,20 +155,16 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
         }
 
         // Get all data centers
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
 
-            @Override
-            public void onSuccess(List<StoragePool> dataCenters) {
+            networkModel.getDataCenters().setItems(dataCenters);
 
-                networkModel.getDataCenters().setItems(dataCenters);
-
-                if (networkModel instanceof EditNetworkModel) {
-                    StoragePool currentDc =
-                            findDc(networkModel.getNetwork().getDataCenterId(), dataCenters);
-                    networkModel.getDataCenters().setSelectedItem(currentDc);
-                } else {
-                    networkModel.getDataCenters().setSelectedItem(Linq.firstOrNull(dataCenters));
-                }
+            if (networkModel instanceof EditNetworkModel) {
+                StoragePool currentDc =
+                        findDc(networkModel.getNetwork().getDataCenterId(), dataCenters);
+                networkModel.getDataCenters().setSelectedItem(currentDc);
+            } else {
+                networkModel.getDataCenters().setSelectedItem(Linq.firstOrNull(dataCenters));
             }
         }));
     }

@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -45,20 +44,18 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
 
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(entity.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
-                        Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(entity.getId()),
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
+                    Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
 
-                        for (GraphicsDevice graphicsDevice : graphicsDevices) {
-                            graphicsTypesCollection.add(graphicsDevice.getGraphicsType());
-                        }
-
-                        initDisplayTypes(entity.getDefaultDisplayType(), UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypesCollection));
-
-                        doBuild();
+                    for (GraphicsDevice graphicsDevice : graphicsDevices) {
+                        graphicsTypesCollection.add(graphicsDevice.getGraphicsType());
                     }
+
+                    initDisplayTypes(entity.getDefaultDisplayType(), UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypesCollection));
+
+                    doBuild();
                 }
         ));
 
@@ -66,43 +63,29 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
         updateConsoleDevice(entity.getId());
         initPriority(entity.getPriority());
 
-        Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue());
-                    }
-                }
+        Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()),
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue())
         ));
 
-        getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean returnValue) {
-                getModel().getIsVirtioScsiEnabled().setEntity(returnValue);
+        getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(returnValue -> getModel().getIsVirtioScsiEnabled().setEntity(returnValue)), entity.getId());
+
+
+        getInstance().getWatchdogByVmId(new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            @SuppressWarnings("unchecked")
+            Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
+            for (VmWatchdog watchdog : watchdogs) {
+                getModel().getWatchdogAction().setSelectedItem(watchdog.getAction());
+                getModel().getWatchdogModel().setSelectedItem(watchdog.getModel());
             }
         }), entity.getId());
 
-
-        getInstance().getWatchdogByVmId(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                @SuppressWarnings("unchecked")
-                Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
-                for (VmWatchdog watchdog : watchdogs) {
-                    getModel().getWatchdogAction().setSelectedItem(watchdog.getAction());
-                    getModel().getWatchdogModel().setSelectedItem(watchdog.getModel());
-                }
-            }
-        }), entity.getId());
-
-       Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(entity.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                   @Override
-                   public void onSuccess(VdcQueryReturnValue returnValue) {
-                       List<VmDevice> rngDevices = returnValue.getReturnValue();
-                       getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
-                       if (!rngDevices.isEmpty()) {
-                           VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
-                           getModel().setRngDevice(rngDevice);
-                       }
+       Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(entity.getId()),
+               new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                   List<VmDevice> rngDevices = returnValue.getReturnValue();
+                   getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
+                   if (!rngDevices.isEmpty()) {
+                       VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
+                       getModel().setRngDevice(rngDevice);
                    }
                }
        ));
@@ -115,55 +98,38 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
     }
 
     public void doBuild() {
-        buildModel(entity, new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
-            @Override
-            public void finished(VmBase source, UnitVmModel destination) {
-                Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue returnValue) {
-                                getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue());
-                            }
-                        }
-                ));
+        buildModel(entity, (source, destination) -> {
+            Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()), new AsyncQuery<>(
+                    (VdcQueryReturnValue returnValue) -> getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue())
+            ));
 
-                getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean returnValue) {
-                        getModel().getIsVirtioScsiEnabled().setEntity(returnValue);
-                    }
-                }), entity.getId());
+            getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(returnValue -> getModel().getIsVirtioScsiEnabled().setEntity(returnValue)), entity.getId());
 
 
-                getInstance().getWatchdogByVmId(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        @SuppressWarnings("unchecked")
-                        Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
-                        for (VmWatchdog watchdog : watchdogs) {
-                            getModel().getWatchdogAction().setSelectedItem(watchdog.getAction());
-                            getModel().getWatchdogModel().setSelectedItem(watchdog.getModel());
+            getInstance().getWatchdogByVmId(new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                @SuppressWarnings("unchecked")
+                Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
+                for (VmWatchdog watchdog : watchdogs) {
+                    getModel().getWatchdogAction().setSelectedItem(watchdog.getAction());
+                    getModel().getWatchdogModel().setSelectedItem(watchdog.getModel());
+                }
+            }), entity.getId());
+
+            Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(entity.getId()),
+                    new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                        List<VmDevice> rngDevices = returnValue.getReturnValue();
+                        getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
+                        if (!rngDevices.isEmpty()) {
+                            VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
+                            getModel().setRngDevice(rngDevice);
                         }
                     }
-                }), entity.getId());
+            ));
+            getModel().getEmulatedMachine().setSelectedItem(entity.getCustomEmulatedMachine());
+            getModel().getCustomCpu().setSelectedItem(entity.getCustomCpuName());
+            getModel().getMigrationMode().setSelectedItem(entity.getMigrationSupport());
 
-                Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(entity.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue returnValue) {
-                                List<VmDevice> rngDevices = returnValue.getReturnValue();
-                                getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
-                                if (!rngDevices.isEmpty()) {
-                                    VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
-                                    getModel().setRngDevice(rngDevice);
-                                }
-                            }
-                        }
-                ));
-                getModel().getEmulatedMachine().setSelectedItem(entity.getCustomEmulatedMachine());
-                getModel().getCustomCpu().setSelectedItem(entity.getCustomCpuName());
-                getModel().getMigrationMode().setSelectedItem(entity.getMigrationSupport());
-
-                postBuild();
-            }
+            postBuild();
         });
     }
 
@@ -180,12 +146,6 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
     }
 
     protected void initSoundCard(Guid id) {
-        getInstance().isSoundcardEnabled(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-
-            @Override
-            public void onSuccess(Boolean returnValue) {
-                getModel().getIsSoundcardEnabled().setEntity(returnValue);
-            }
-        }), id);
+        getInstance().isSoundcardEnabled(new AsyncQuery<>(returnValue -> getModel().getIsSoundcardEnabled().setEntity(returnValue)), id);
     }
 }

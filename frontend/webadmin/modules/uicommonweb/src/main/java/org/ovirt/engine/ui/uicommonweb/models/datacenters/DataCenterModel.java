@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
@@ -152,12 +151,7 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
         getQuotaEnforceTypeListModel().setSelectedItem(list.get(0));
 
         setMaxNameLength(1);
-        AsyncDataProvider.getInstance().getDataCenterMaxNameLength(new AsyncQuery<>(new AsyncCallback<Integer>() {
-            @Override
-            public void onSuccess(Integer result) {
-                setMaxNameLength(result);
-            }
-        }));
+        AsyncDataProvider.getInstance().getDataCenterMaxNameLength(new AsyncQuery<>(result -> setMaxNameLength(result)));
 
     }
 
@@ -171,38 +165,35 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
     }
 
     private void storagePoolType_SelectedItemChanged() {
-        AsyncDataProvider.getInstance().getDataCenterVersions(new AsyncQuery<>(new AsyncCallback<List<Version>>() {
-            @Override
-            public void onSuccess(List<Version> versions) {
-                Version selectedVersion = null;
-                if (getVersion().getSelectedItem() != null) {
-                    selectedVersion = getVersion().getSelectedItem();
-                    boolean hasSelectedVersion = false;
-                    for (Version version : versions) {
-                        if (selectedVersion.equals(version)) {
-                            selectedVersion = version;
-                            hasSelectedVersion = true;
-                            break;
-                        }
-                    }
-                    if (!hasSelectedVersion) {
-                        selectedVersion = null;
+        AsyncDataProvider.getInstance().getDataCenterVersions(new AsyncQuery<>(versions -> {
+            Version selectedVersion = null;
+            if (getVersion().getSelectedItem() != null) {
+                selectedVersion = getVersion().getSelectedItem();
+                boolean hasSelectedVersion = false;
+                for (Version version : versions) {
+                    if (selectedVersion.equals(version)) {
+                        selectedVersion = version;
+                        hasSelectedVersion = true;
+                        break;
                     }
                 }
-
-                getVersion().setItems(versions);
-
-                if (selectedVersion == null) {
-                    getVersion().setSelectedItem(versions.stream().max(Comparator.naturalOrder()).orElse(null));
-                    if (getEntity() != null) {
-                        initVersion();
-                    }
+                if (!hasSelectedVersion) {
+                    selectedVersion = null;
                 }
-                else {
-                    getVersion().setSelectedItem(selectedVersion);
-                }
-
             }
+
+            getVersion().setItems(versions);
+
+            if (selectedVersion == null) {
+                getVersion().setSelectedItem(versions.stream().max(Comparator.naturalOrder()).orElse(null));
+                if (getEntity() != null) {
+                    initVersion();
+                }
+            }
+            else {
+                getVersion().setSelectedItem(selectedVersion);
+            }
+
         }), getDataCenterId());
     }
 

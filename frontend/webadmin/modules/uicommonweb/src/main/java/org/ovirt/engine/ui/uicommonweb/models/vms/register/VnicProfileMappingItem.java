@@ -9,9 +9,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class VnicProfileMappingItem extends EntityModel<VnicProfileMappingEntity> {
 
@@ -27,12 +24,7 @@ public class VnicProfileMappingItem extends EntityModel<VnicProfileMappingEntity
     public void initialize() {
         super.initialize();
 
-        this.targetVnicProfile.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getEntity().setVnicProfileId(getTargetVnicProfileId());
-            }
-        });
+        this.targetVnicProfile.getSelectedItemChangedEvent().addListener((ev, sender, args) -> getEntity().setVnicProfileId(getTargetVnicProfileId()));
         selectInitialTargetVnicProfile();
     }
 

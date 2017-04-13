@@ -18,10 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.InterfaceMappingsValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class NeutronAgentModel extends EntityModel {
 
@@ -78,43 +74,36 @@ public class NeutronAgentModel extends EntityModel {
     }
 
     public NeutronAgentModel() {
-        getPluginType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                String displayString = getPluginType().getSelectedItem();
-                isPluginConfigurationAvailable().setEntity(!NeutronPluginTranslator.isDisplayStringCustom(displayString));
-                if (!NeutronPluginTranslator.isDisplayStringCustom(displayString)) {
-                    switch(NeutronPluginTranslator.getPluginTypeForDisplayString(displayString)) {
-                        case OPEN_VSWITCH:
-                        getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance()
-                                .getConstants()
-                                .bridgeMappings());
-                        getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
-                                .getConstants()
-                                .bridgeMappingsExplanation());
-                            break;
-                        case LINUX_BRIDGE:
-                        default:
-                        getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance()
-                                .getConstants()
-                                .interfaceMappings());
-                        getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
-                                .getConstants()
-                                .interfaceMappingsExplanation());
-                    }
+        getPluginType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            String displayString = getPluginType().getSelectedItem();
+            isPluginConfigurationAvailable().setEntity(!NeutronPluginTranslator.isDisplayStringCustom(displayString));
+            if (!NeutronPluginTranslator.isDisplayStringCustom(displayString)) {
+                switch(NeutronPluginTranslator.getPluginTypeForDisplayString(displayString)) {
+                    case OPEN_VSWITCH:
+                    getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance()
+                            .getConstants()
+                            .bridgeMappings());
+                    getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
+                            .getConstants()
+                            .bridgeMappingsExplanation());
+                        break;
+                    case LINUX_BRIDGE:
+                    default:
+                    getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance()
+                            .getConstants()
+                            .interfaceMappings());
+                    getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
+                            .getConstants()
+                            .interfaceMappingsExplanation());
                 }
             }
         });
-        getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    boolean value = getIsAvailable();
-                    getPluginType().setIsAvailable(value);
-                    isPluginConfigurationAvailable().setEntity(value
-                            && !NeutronPluginTranslator.isDisplayStringCustom(getPluginType().getSelectedItem()));
-                }
+        getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                boolean value = getIsAvailable();
+                getPluginType().setIsAvailable(value);
+                isPluginConfigurationAvailable().setEntity(value
+                        && !NeutronPluginTranslator.isDisplayStringCustom(getPluginType().getSelectedItem()));
             }
         });
 

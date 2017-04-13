@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -28,8 +27,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
@@ -125,13 +122,10 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
         }
         else {
             AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
-                    new AsyncCallback<List<StorageDomain>>() {
-                        @Override
-                        public void onSuccess(List<StorageDomain> storageDomains) {
-                            Collections.sort(storageDomains, new NameableComparator());
-                            setStorageDomains(storageDomains);
-                            setDisks(value);
-                        }
+                    storageDomains -> {
+                        Collections.sort(storageDomains, new NameableComparator());
+                        setStorageDomains(storageDomains);
+                        setDisks(value);
                     }));
         }
 
@@ -271,12 +265,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        cancel();
-                    }
-                },
+                result -> cancel(),
                 this);
     }
 

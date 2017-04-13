@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -32,9 +31,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
@@ -113,12 +109,7 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
                 executeCommand(uiCommand);
             }
         }));
-        getPmType().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateFormStatus();
-            }
-        });
+        getPmType().getPropertyChangedEvent().addListener((ev, sender, args) -> updateFormStatus());
     }
 
     /**
@@ -167,20 +158,17 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
             if (getHost().getCluster().getSelectedItem() != null) {
                 version = getHost().getCluster().getSelectedItem().getCompatibilityVersion().toString();
             }
-            AsyncDataProvider.getInstance().getPmOptions(new AsyncQuery<>(new AsyncCallback<List<String>>() {
-                @Override
-                public void onSuccess(List<String> pmOptions) {
+            AsyncDataProvider.getInstance().getPmOptions(new AsyncQuery<>(pmOptions -> {
 
-                    if (pmOptions != null) {
-                        getPmPort().setIsAvailable(pmOptions.contains(PM_PORT_KEY));
-                        getPmSlot().setIsAvailable(pmOptions.contains(PM_SLOT_KEY));
-                        getPmSecure().setIsAvailable(pmOptions.contains(PM_SECURE_KEY));
-                        getPmEncryptOptions().setIsAvailable(pmOptions.contains(PM_ENCRYPT_OPTIONS_KEY));
-                    } else {
-                        getPmPort().setIsAvailable(false);
-                        getPmSlot().setIsAvailable(false);
-                        getPmSecure().setIsAvailable(false);
-                    }
+                if (pmOptions != null) {
+                    getPmPort().setIsAvailable(pmOptions.contains(PM_PORT_KEY));
+                    getPmSlot().setIsAvailable(pmOptions.contains(PM_SLOT_KEY));
+                    getPmSecure().setIsAvailable(pmOptions.contains(PM_SECURE_KEY));
+                    getPmEncryptOptions().setIsAvailable(pmOptions.contains(PM_ENCRYPT_OPTIONS_KEY));
+                } else {
+                    getPmPort().setIsAvailable(false);
+                    getPmSlot().setIsAvailable(false);
+                    getPmSecure().setIsAvailable(false);
                 }
             }), pmType, version);
             setCiscoUcsPrimaryPmTypeSelected(pmType.equals(CISCO_USC));
@@ -314,29 +302,25 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
 
         param.setClusterId(cluster.getId());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetFenceAgentStatus, param, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        String msg;
-                        if (returnValue == null) {
-                            msg = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
-                        } else {
-                            FenceOperationResult result = returnValue.getReturnValue();
-                            if (result.getStatus() == FenceOperationResult.Status.SUCCESS) {
-                                msg = ConstantsManager.getInstance().getMessages().testSuccessfulWithPowerStatus(
-                                        result.getPowerStatus() == PowerStatus.ON
-                                                ? ConstantsManager.getInstance().getConstants().powerOn()
-                                                : ConstantsManager.getInstance().getConstants().powerOff());
-                            } else {
-                                msg = ConstantsManager.getInstance().getMessages().testFailedWithErrorMsg(
-                                        result.getMessage());
-                            }
-                        }
-                        setMessage(msg);
-                        getTestCommand().setIsExecutionAllowed(true);
-                    }
-                }, true)
+        Frontend.getInstance().runQuery(VdcQueryType.GetFenceAgentStatus, param, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            String msg;
+            if (returnValue == null) {
+                msg = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
+            } else {
+                FenceOperationResult result = returnValue.getReturnValue();
+                if (result.getStatus() == FenceOperationResult.Status.SUCCESS) {
+                    msg = ConstantsManager.getInstance().getMessages().testSuccessfulWithPowerStatus(
+                            result.getPowerStatus() == PowerStatus.ON
+                                    ? ConstantsManager.getInstance().getConstants().powerOn()
+                                    : ConstantsManager.getInstance().getConstants().powerOff());
+                } else {
+                    msg = ConstantsManager.getInstance().getMessages().testFailedWithErrorMsg(
+                            result.getMessage());
+                }
+            }
+            setMessage(msg);
+            getTestCommand().setIsExecutionAllowed(true);
+        }, true)
         );
     }
 

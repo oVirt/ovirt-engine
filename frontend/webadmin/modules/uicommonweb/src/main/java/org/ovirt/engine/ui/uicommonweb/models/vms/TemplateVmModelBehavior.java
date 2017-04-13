@@ -48,77 +48,54 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
         if (template.getStoragePoolId() != null && !template.getStoragePoolId().equals(Guid.Empty)) {
             AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(
-                    new AsyncCallback<StoragePool>() {
-                        @Override
-                        public void onSuccess(final StoragePool dataCenter) {
-                            AsyncDataProvider.getInstance().getClusterListByService(
-                                    new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-
-                                        @Override
-                                        public void onSuccess(List<Cluster> clusters) {
-                                            ArrayList<Cluster> clustersSupportingVirt = new ArrayList<>();
-                                            // filter clusters supporting virt service only
-                                            for (Cluster cluster : clusters) {
-                                                if (cluster.supportsVirtService()) {
-                                                    clustersSupportingVirt.add(cluster);
-                                                }
+                            dataCenter -> AsyncDataProvider.getInstance().getClusterListByService(
+                                    new AsyncQuery<>(clusters -> {
+                                        ArrayList<Cluster> clustersSupportingVirt = new ArrayList<>();
+                                        // filter clusters supporting virt service only
+                                        for (Cluster cluster : clusters) {
+                                            if (cluster.supportsVirtService()) {
+                                                clustersSupportingVirt.add(cluster);
                                             }
-
-                                            List<Cluster> filteredClusters =
-                                                    AsyncDataProvider.getInstance().filterByArchitecture(clustersSupportingVirt,
-                                                            template.getClusterArch());
-
-                                            getModel().setDataCentersAndClusters(getModel(),
-                                                    new ArrayList<>(Arrays.asList(new StoragePool[]{dataCenter})),
-                                                    filteredClusters,
-                                                    template.getClusterId());
-
-                                            updateRngDevice(template.getId());
-
-                                            AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery<>(
-                                                    new AsyncCallback<Boolean>() {
-                                                        @Override
-                                                        public void onSuccess(Boolean returnValue) {
-                                                            getModel().getIsSoundcardEnabled().setEntity(returnValue);
-                                                            initTemplate();
-                                                            initCdImage();
-                                                        }
-                                                    }), template.getId());
-
-                                            Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(template.getId()), new AsyncQuery<>(
-                                                    new AsyncCallback<VdcQueryReturnValue>() {
-                                                        @Override
-                                                        public void onSuccess(VdcQueryReturnValue returnValue) {
-                                                            getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue());
-                                                        }
-                                                    }
-                                            ));
-
-                                            AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-                                                @Override
-                                                public void onSuccess(Boolean returnValue) {
-                                                    getModel().getIsVirtioScsiEnabled().setEntity(returnValue);
-                                                }
-                                            }), template.getId());
                                         }
+
+                                        List<Cluster> filteredClusters =
+                                                AsyncDataProvider.getInstance().filterByArchitecture(clustersSupportingVirt,
+                                                        template.getClusterArch());
+
+                                        getModel().setDataCentersAndClusters(getModel(),
+                                                new ArrayList<>(Arrays.asList(new StoragePool[]{dataCenter})),
+                                                filteredClusters,
+                                                template.getClusterId());
+
+                                        updateRngDevice(template.getId());
+
+                                        AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery<>(
+                                                returnValue -> {
+                                                    getModel().getIsSoundcardEnabled().setEntity(returnValue);
+                                                    initTemplate();
+                                                    initCdImage();
+                                                }), template.getId());
+
+                                        Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(template.getId()), new AsyncQuery<>(
+                                                (VdcQueryReturnValue returnValue) ->
+                                                        getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue())
+                                        ));
+
+                                        AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(
+                                                returnValue -> getModel().getIsVirtioScsiEnabled().setEntity(returnValue)), template.getId());
                                     }),
                                     true,
-                                    false);
-                        }
-                    }),
+                                    false)),
                     template.getStoragePoolId());
         }
 
-        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                UnitVmModel model = getModel();
-                @SuppressWarnings("unchecked")
-                Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
-                for (VmWatchdog watchdog : watchdogs) {
-                    model.getWatchdogAction().setSelectedItem(watchdog.getAction());
-                    model.getWatchdogModel().setSelectedItem(watchdog.getModel());
-                }
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+            UnitVmModel model = getModel();
+            @SuppressWarnings("unchecked")
+            Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
+            for (VmWatchdog watchdog : watchdogs) {
+                model.getWatchdogAction().setSelectedItem(watchdog.getAction());
+                model.getWatchdogModel().setSelectedItem(watchdog.getModel());
             }
         }), template.getId());
 
@@ -130,15 +107,12 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     protected void setupBaseTemplate(Guid baseTemplateId) {
         AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(
-                        new AsyncCallback<VmTemplate>() {
-                            @Override
-                            public void onSuccess(VmTemplate template) {
-                                UnitVmModel model = getModel();
+                        template -> {
+                            UnitVmModel model = getModel();
 
-                                model.getBaseTemplate().setItems(Collections.singletonList(template));
-                                model.getBaseTemplate().setSelectedItem(template);
-                                model.getBaseTemplate().setIsChangeable(false);
-                            }
+                            model.getBaseTemplate().setItems(Collections.singletonList(template));
+                            model.getBaseTemplate().setSelectedItem(template);
+                            model.getBaseTemplate().setIsChangeable(false);
                         }),
                 baseTemplateId);
     }
@@ -189,35 +163,32 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     private void initTemplate() {
         // Update model state according to VM properties.
-        buildModel(template, new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
-            @Override
-            public void finished(VmBase source, UnitVmModel destination) {
-                updateTimeZone(template.getTimeZone());
+        buildModel(template, (source, destination) -> {
+            updateTimeZone(template.getTimeZone());
 
-                // Storage domain and provisioning are not available for an existing VM.
-                getModel().getStorageDomain().setIsChangeable(false);
-                getModel().getProvisioning().setIsAvailable(false);
+            // Storage domain and provisioning are not available for an existing VM.
+            getModel().getStorageDomain().setIsChangeable(false);
+            getModel().getProvisioning().setIsAvailable(false);
 
-                // Select display protocol.
-                DisplayType displayType = template.getDefaultDisplayType();
-                if (getModel().getDisplayType().getItems().contains(displayType)) {
-                    getModel().getDisplayType().setSelectedItem(displayType);
-                }
-
-                updateConsoleDevice(template.getId());
-
-                toggleAutoSetVmHostname();
-                getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
-                getModel().getVmInitModel().init(template);
-                getModel().getTemplateVersionName().setEntity(template.getTemplateVersionName());
-
-                getModel().getBootMenuEnabled().setEntity(template.isBootMenuEnabled());
-
-                getModel().getSpiceFileTransferEnabled().setEntity(template.isSpiceFileTransferEnabled());
-                getModel().getSpiceCopyPasteEnabled().setEntity(template.isSpiceCopyPasteEnabled());
-
-                initPriority(template.getPriority());
+            // Select display protocol.
+            DisplayType displayType = template.getDefaultDisplayType();
+            if (getModel().getDisplayType().getItems().contains(displayType)) {
+                getModel().getDisplayType().setSelectedItem(displayType);
             }
+
+            updateConsoleDevice(template.getId());
+
+            toggleAutoSetVmHostname();
+            getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
+            getModel().getVmInitModel().init(template);
+            getModel().getTemplateVersionName().setEntity(template.getTemplateVersionName());
+
+            getModel().getBootMenuEnabled().setEntity(template.isBootMenuEnabled());
+
+            getModel().getSpiceFileTransferEnabled().setEntity(template.isSpiceFileTransferEnabled());
+            getModel().getSpiceCopyPasteEnabled().setEntity(template.isSpiceCopyPasteEnabled());
+
+            initPriority(template.getPriority());
         });
     }
 

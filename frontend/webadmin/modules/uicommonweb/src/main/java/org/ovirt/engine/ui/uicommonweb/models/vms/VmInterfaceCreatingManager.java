@@ -8,15 +8,11 @@ import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
 
@@ -38,14 +34,11 @@ public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
     protected void getNics(final AsyncQuery<List<VmNetworkInterface>> getNicsQuery, final Guid vmId, final UnitVmModel unitVmModel) {
         AsyncDataProvider.getInstance().getNicTypeList(unitVmModel.getOSType().getSelectedItem(),
                        unitVmModel.getDataCenterWithClustersList().getSelectedItem().getCluster().getCompatibilityVersion(),
-                new AsyncQuery<>(new AsyncCallback<List<VmInterfaceType>>() {
-                       @Override
-                       public void onSuccess(List<VmInterfaceType> returnValue) {
-                           defaultType = AsyncDataProvider.getInstance().getDefaultNicType(returnValue);
-                           supportedInterfaceTypes = returnValue;
-                           AsyncDataProvider.getInstance().getVmNicList(getNicsQuery, vmId);
-                       }
-                   }));
+                new AsyncQuery<>(returnValue -> {
+                    defaultType = AsyncDataProvider.getInstance().getDefaultNicType(returnValue);
+                    supportedInterfaceTypes = returnValue;
+                    AsyncDataProvider.getInstance().getVmNicList(getNicsQuery, vmId);
+                }));
     }
 
     @Override
@@ -58,38 +51,23 @@ public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
             final UnitVmModel unitVmModel) {
         Frontend.getInstance().runMultipleActions(VdcActionType.AddVmInterface,
                 createVnicParameters,
-                new IFrontendActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
+                addInterfaceResult ->
                         Frontend.getInstance().runMultipleActions(VdcActionType.UpdateVmInterface,
-                                updateVnicParameters,
-                                new IFrontendActionAsyncCallback() {
-
-                                    @Override
-                                    public void executed(FrontendActionAsyncResult result) {
-                                        Frontend.getInstance().runMultipleActions(VdcActionType.RemoveVmInterface,
-                                                removeVnicParameters,
-                                                new IFrontendActionAsyncCallback() {
-
-                                                    @Override
-                                                    public void executed(FrontendActionAsyncResult result) {
-                                                        if (isAddingNewVm) {
-                                                            VmOperationParameterBase reorderParams = new VmOperationParameterBase(id);
-                                                            Frontend.getInstance().runAction(VdcActionType.ReorderVmNics, reorderParams, new IFrontendActionAsyncCallback() {
-                                                                public void executed(FrontendActionAsyncResult result) {
-                                                                    getCallback().vnicCreated(id, unitVmModel);
-                                                                }
-                                                            });
-                                                        } else {
-                                                            getCallback().vnicCreated(id, unitVmModel);
-                                                        }
-                                                    }
-                                                }, this);
+                        updateVnicParameters,
+                        updateInterfaceResult-> Frontend.getInstance().runMultipleActions(VdcActionType.RemoveVmInterface,
+                                removeVnicParameters,
+                                removeInterfaceResult -> {
+                                    if (isAddingNewVm) {
+                                        VmOperationParameterBase reorderParams = new VmOperationParameterBase(id);
+                                        Frontend.getInstance().runAction(VdcActionType.ReorderVmNics, reorderParams,
+                                                reorderResult -> getCallback().vnicCreated(id, unitVmModel));
+                                    } else {
+                                        getCallback().vnicCreated(id, unitVmModel);
                                     }
-                                }, this);
-                    }
-                }, this);
+                                },
+                                this),
+                        this),
+                this);
     }
 
 }

@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -49,13 +48,8 @@ public class VnicProfileTemplateListModel extends SearchableListModel<VnicProfil
 
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesByVnicProfileId, params,
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        setItems((Collection<VmTemplate>) returnValue.getReturnValue());
-                    }
-                }));
+        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesByVnicProfileId, params, new AsyncQuery<VdcQueryReturnValue>(
+                returnValue -> setItems((Collection<VmTemplate>) returnValue.getReturnValue())));
     }
 
     @Override

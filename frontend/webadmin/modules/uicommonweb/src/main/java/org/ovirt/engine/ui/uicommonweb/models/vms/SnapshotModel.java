@@ -34,8 +34,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class SnapshotModel extends EntityModel<Snapshot> {
@@ -232,33 +230,27 @@ public class SnapshotModel extends EntityModel<Snapshot> {
     }
 
     private void initVmSnapshots() {
-        AsyncDataProvider.getInstance().getVmSnapshotList(new AsyncQuery<>(new AsyncCallback<List<Snapshot>>() {
-            @Override
-            public void onSuccess(List<Snapshot> snapshots) {
-                if (showWarningForByVmSnapshotsValidation(snapshots)) {
-                    UICommand closeCommand = getCancelCommand()
-                            .setTitle(ConstantsManager.getInstance().getConstants().close());
-                    getCommands().add(closeCommand);
-                    stopProgress();
-                }
-                else {
-                    initVmDisks();
-                }
+        AsyncDataProvider.getInstance().getVmSnapshotList(new AsyncQuery<>(snapshots -> {
+            if (showWarningForByVmSnapshotsValidation(snapshots)) {
+                UICommand closeCommand = getCancelCommand()
+                        .setTitle(ConstantsManager.getInstance().getConstants().close());
+                getCommands().add(closeCommand);
+                stopProgress();
+            }
+            else {
+                initVmDisks();
             }
         }), vm.getId());
     }
 
     private void initVmDisks() {
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(new AsyncCallback<List<Disk>>() {
-            @Override
-            public void onSuccess(List<Disk> disks) {
-                updateSnapshotDisks(disks);
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(disks -> {
+            updateSnapshotDisks(disks);
 
-                VmModelHelper.sendWarningForNonExportableDisks(SnapshotModel.this, disks, VmModelHelper.WarningType.VM_SNAPSHOT);
-                getCommands().add(getOnSaveCommand());
-                getCommands().add(getCancelCommand());
-                stopProgress();
-            }
+            VmModelHelper.sendWarningForNonExportableDisks(SnapshotModel.this, disks, VmModelHelper.WarningType.VM_SNAPSHOT);
+            getCommands().add(getOnSaveCommand());
+            getCommands().add(getCancelCommand());
+            stopProgress();
         }), vm.getId());
     }
 
@@ -279,24 +271,21 @@ public class SnapshotModel extends EntityModel<Snapshot> {
             return;
         }
 
-        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery<>(new AsyncCallback<VM>() {
-            @Override
-            public void onSuccess(VM vm) {
-                Snapshot snapshot = getEntity();
+        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery<>(vm -> {
+            Snapshot snapshot1 = getEntity();
 
-                if (vm != null && snapshot != null) {
-                    setVm(vm);
-                    setDisks(vm.getDiskList());
-                    setNics(vm.getInterfaces());
-                    setApps(Arrays.asList(snapshot.getAppList() != null ?
-                            snapshot.getAppList().split(",") : new String[]{})); //$NON-NLS-1$
+            if (vm != null && snapshot1 != null) {
+                setVm(vm);
+                setDisks(vm.getDiskList());
+                setNics(vm.getInterfaces());
+                setApps(Arrays.asList(snapshot1.getAppList() != null ?
+                        snapshot1.getAppList().split(",") : new String[]{})); //$NON-NLS-1$
 
-                    Collections.sort(getDisks(), new DiskByDiskAliasComparator());
-                    Collections.sort(getNics(), new LexoNumericNameableComparator<>());
-                }
-
-                onUpdateAsyncCallback.onSuccess(null);
+                Collections.sort(getDisks(), new DiskByDiskAliasComparator());
+                Collections.sort(getNics(), new LexoNumericNameableComparator<>());
             }
+
+            onUpdateAsyncCallback.onSuccess(null);
         }), snapshot.getId());
     }
 
@@ -385,13 +374,10 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         params.add(param);
 
         Frontend.getInstance().runMultipleAction(VdcActionType.CreateAllSnapshotsFromVm, params,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        SnapshotModel localModel = (SnapshotModel) result.getState();
-                        localModel.stopProgress();
-                        getCancelCommand().execute();
-                    }
+                result -> {
+                    SnapshotModel localModel = (SnapshotModel) result.getState();
+                    localModel.stopProgress();
+                    getCancelCommand().execute();
                 }, this);
     }
 

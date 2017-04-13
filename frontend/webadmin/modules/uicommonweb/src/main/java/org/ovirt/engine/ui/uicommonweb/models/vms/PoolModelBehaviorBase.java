@@ -28,7 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.PoolNameValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolModel> {
 
@@ -52,36 +51,28 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         getModel().getProvisioning().setIsAvailable(false);
         getModel().getProvisioning().setEntity(false);
 
-        AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(asyncQuery(new AsyncCallback<List<StoragePool>>() {
-            @Override
-            public void onSuccess(List<StoragePool> returnValue) {
+        AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(asyncQuery(returnValue -> {
 
-                final List<StoragePool> dataCenters = new ArrayList<>();
-                for (StoragePool a : returnValue) {
-                    if (a.getStatus() == StoragePoolStatus.Up) {
-                        dataCenters.add(a);
-                    }
+            final List<StoragePool> dataCenters = new ArrayList<>();
+            for (StoragePool a : returnValue) {
+                if (a.getStatus() == StoragePoolStatus.Up) {
+                    dataCenters.add(a);
                 }
-
-                if (!dataCenters.isEmpty()) {
-                    postDataCentersLoaded(dataCenters);
-                } else {
-                    getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
-                }
-
-
             }
+
+            if (!dataCenters.isEmpty()) {
+                postDataCentersLoaded(dataCenters);
+            } else {
+                getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
+            }
+
+
         }), true, false);
 
         getModel().getSpiceProxyEnabled().setEntity(false);
         getModel().getSpiceProxy().setIsChangeable(false);
 
-        getModel().getSpiceProxyEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getModel().getSpiceProxy().setIsChangeable(getModel().getSpiceProxyEnabled().getEntity());
-            }
-        });
+        getModel().getSpiceProxyEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> getModel().getSpiceProxy().setIsChangeable(getModel().getSpiceProxyEnabled().getEntity()));
     }
 
     protected void postDataCentersLoaded(final List<StoragePool> dataCenters) {
@@ -108,65 +99,62 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             updateQuotaByCluster(vmBase.getQuotaId(), vmBase.getQuotaName());
 
             // Copy VM parameters from template.
-            buildModel(vmBase, new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
-                @Override
-                public void finished(VmBase source, UnitVmModel destination) {
-                    setSelectedOSType(vmBase, getModel().getSelectedCluster().getArchitecture());
-                    getModel().getVmType().setSelectedItem(vmBase.getVmType());
-                    getModel().getIsRunAndPause().setEntity(false);
+            buildModel(vmBase, (source, destination) -> {
+                setSelectedOSType(vmBase, getModel().getSelectedCluster().getArchitecture());
+                getModel().getVmType().setSelectedItem(vmBase.getVmType());
+                getModel().getIsRunAndPause().setEntity(false);
 
-                    boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
+                boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
 
-                    getModel().getCdImage().setIsChangeable(hasCd);
-                    getModel().getCdAttached().setEntity(hasCd);
-                    if (hasCd) {
-                        getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
-                    }
-
-                    updateTimeZone(vmBase.getTimeZone());
-
-                    if (!vmBase.getId().equals(Guid.Empty)) {
-                        getModel().getStorageDomain().setIsChangeable(true);
-
-                        initDisks();
-                    }
-                    else {
-                        getModel().getStorageDomain().setIsChangeable(false);
-
-                        getModel().setIsDisksAvailable(false);
-                        getModel().setDisks(null);
-                    }
-
-                    getModel().getProvisioning().setEntity(false);
-
-                    initStorageDomains();
-
-                    InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
-                    int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
-
-                    // do not update if specified on template or instance type
-                    if (vmBase.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
-                        updateMinAllocatedMemory();
-                    }
-
-                    getModel().getAllowConsoleReconnect().setEntity(vmBase.isAllowConsoleReconnect());
-
-                    toggleAutoSetVmHostname();
-                    getModel().getVmInitModel().init(vmBase);
-                    getModel().getVmInitEnabled().setEntity(vmBase.getVmInit() != null);
-
-                    if (getModel().getSelectedCluster() != null) {
-                        updateCpuProfile(getModel().getSelectedCluster().getId(), vmBase.getCpuProfileId());
-                    }
-
-                    getModel().getCpuSharesAmount().setEntity(vmBase.getCpuShares());
-                    updateCpuSharesSelection();
-
-                    // A workaround for setting the current saved CustomCompatibilityVersion value after
-                    // it was reset by getTemplateWithVersion event
-                    getModel().getCustomCompatibilityVersion().setSelectedItem(getSavedCurrentCustomCompatibilityVersion());
-                    setCustomCompatibilityVersionChangeInProgress(false);
+                getModel().getCdImage().setIsChangeable(hasCd);
+                getModel().getCdAttached().setEntity(hasCd);
+                if (hasCd) {
+                    getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
                 }
+
+                updateTimeZone(vmBase.getTimeZone());
+
+                if (!vmBase.getId().equals(Guid.Empty)) {
+                    getModel().getStorageDomain().setIsChangeable(true);
+
+                    initDisks();
+                }
+                else {
+                    getModel().getStorageDomain().setIsChangeable(false);
+
+                    getModel().setIsDisksAvailable(false);
+                    getModel().setDisks(null);
+                }
+
+                getModel().getProvisioning().setEntity(false);
+
+                initStorageDomains();
+
+                InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
+                int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
+
+                // do not update if specified on template or instance type
+                if (vmBase.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
+                    updateMinAllocatedMemory();
+                }
+
+                getModel().getAllowConsoleReconnect().setEntity(vmBase.isAllowConsoleReconnect());
+
+                toggleAutoSetVmHostname();
+                getModel().getVmInitModel().init(vmBase);
+                getModel().getVmInitEnabled().setEntity(vmBase.getVmInit() != null);
+
+                if (getModel().getSelectedCluster() != null) {
+                    updateCpuProfile(getModel().getSelectedCluster().getId(), vmBase.getCpuProfileId());
+                }
+
+                getModel().getCpuSharesAmount().setEntity(vmBase.getCpuShares());
+                updateCpuSharesSelection();
+
+                // A workaround for setting the current saved CustomCompatibilityVersion value after
+                // it was reset by getTemplateWithVersion event
+                getModel().getCustomCompatibilityVersion().setSelectedItem(getSavedCurrentCustomCompatibilityVersion());
+                setCustomCompatibilityVersionChangeInProgress(false);
             });
         }
     }

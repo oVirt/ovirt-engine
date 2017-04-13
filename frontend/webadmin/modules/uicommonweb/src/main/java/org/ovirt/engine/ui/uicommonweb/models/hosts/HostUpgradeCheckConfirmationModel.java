@@ -9,8 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class HostUpgradeCheckConfirmationModel extends ConfirmationModel {
@@ -53,13 +51,10 @@ public class HostUpgradeCheckConfirmationModel extends ConfirmationModel {
     }
 
     private void invokeCheckForHostUpgrade(VdsActionParameters params) {
-        Frontend.getInstance().runAction(VdcActionType.HostUpgradeCheck, params, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                VdcReturnValueBase returnValue = result.getReturnValue();
-                if (returnValue != null && returnValue.getSucceeded()) {
-                    getCancelCommand().execute();
-                }
+        Frontend.getInstance().runAction(VdcActionType.HostUpgradeCheck, params, result -> {
+            VdcReturnValueBase returnValue = result.getReturnValue();
+            if (returnValue != null && returnValue.getSucceeded()) {
+                getCancelCommand().execute();
             }
         });
     }

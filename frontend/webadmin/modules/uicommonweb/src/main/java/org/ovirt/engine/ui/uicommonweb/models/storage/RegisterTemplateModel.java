@@ -11,8 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class RegisterTemplateModel extends RegisterEntityModel<VmTemplate, ImportTemplateData> {
 
@@ -39,13 +37,11 @@ public class RegisterTemplateModel extends RegisterEntityModel<VmTemplate, Impor
         }
 
         startProgress();
-        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVmTemplateFromConfiguration, parameters, new IFrontendMultipleActionAsyncCallback() {
-            @Override
-            public void executed(FrontendMultipleActionAsyncResult result) {
-                stopProgress();
-                cancel();
-            }
-        }, this);
+        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVmTemplateFromConfiguration, parameters,
+                result -> {
+                    stopProgress();
+                    cancel();
+                }, this);
     }
 
 }

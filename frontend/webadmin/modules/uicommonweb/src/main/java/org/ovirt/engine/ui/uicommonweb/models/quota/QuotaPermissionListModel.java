@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -38,18 +37,15 @@ public class QuotaPermissionListModel extends PermissionListModel<Quota> {
 
         tempVar.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsForObject, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                ArrayList<Permission> list = returnValue.getReturnValue();
-                ArrayList<Permission> newList = new ArrayList<>();
-                for (Permission permission : list) {
-                    if (!permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
-                        newList.add(permission);
-                    }
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsForObject, tempVar, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            ArrayList<Permission> list = returnValue.getReturnValue();
+            ArrayList<Permission> newList = new ArrayList<>();
+            for (Permission permission : list) {
+                if (!permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
+                    newList.add(permission);
                 }
-                setItems(newList);
             }
+            setItems(newList);
         }));
 
         setIsQueryFirstTime(false);

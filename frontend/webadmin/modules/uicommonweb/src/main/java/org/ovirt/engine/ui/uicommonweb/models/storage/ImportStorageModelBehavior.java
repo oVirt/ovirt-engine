@@ -2,11 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -43,26 +41,20 @@ public class ImportStorageModelBehavior extends StorageModelBehavior {
         for (final IStorageModel item : getModel().getStorageModels()) {
             if (item.getRole() == StorageDomainType.ISO) {
                 AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery<>(
-                        new AsyncCallback<StorageDomain>() {
-                            @Override
-                            public void onSuccess(StorageDomain returnValue) {
+                        returnValue -> {
 
-                                IStorageModel storageModelItem = item;
-                                postUpdateItemsAvailability(storageModelItem, returnValue == null);
+                            IStorageModel storageModelItem = item;
+                            postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
-                            }
                         }), dataCenter.getId());
             }
             else if (item.getRole() == StorageDomainType.ImportExport) {
                 AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery<>(
-                        new AsyncCallback<StorageDomain>() {
-                            @Override
-                            public void onSuccess(StorageDomain returnValue) {
+                        returnValue -> {
 
-                                IStorageModel storageModelItem = item;
-                                postUpdateItemsAvailability(storageModelItem, returnValue == null);
+                            IStorageModel storageModelItem = item;
+                            postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
-                            }
                         }), dataCenter.getId());
             }
             else {

@@ -21,14 +21,12 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.IconUtils;
@@ -54,10 +52,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
@@ -257,13 +251,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
         AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(
-                new AsyncCallback<List<StoragePool>>() {
-                    @Override
-                    public void onSuccess(List<StoragePool> storagePools) {
-                        StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
+                storagePools -> {
+                    StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
-                        postGetTemplatesNotPresentOnExportDomain(storagePool);
-                    }
+                    postGetTemplatesNotPresentOnExportDomain(storagePool);
                 }), storageDomainId);
     }
 
@@ -273,33 +264,30 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         if (storagePool != null) {
             AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery<>(
-                    new AsyncCallback<Map<VmTemplate, ArrayList<DiskImage>>>() {
-                        @Override
-                        public void onSuccess(Map<VmTemplate, ArrayList<DiskImage>> templatesDiskSet) {
-                            ArrayList<String> verTempMissingBase = new ArrayList<>();
+                            templatesDiskSet -> {
+                                ArrayList<String> verTempMissingBase = new ArrayList<>();
 
-                            // check if relevant templates are already there
-                            for (Object selectedItem : getSelectedItems()) {
-                                VmTemplate template = (VmTemplate) selectedItem;
-                                // only relevant for template versions
-                                if (!template.isBaseTemplate()) {
-                                    boolean hasMatch = false;
-                                    for (VmTemplate a : templatesDiskSet.keySet()) {
-                                        if (template.getBaseTemplateId().equals(a.getId())) {
-                                            hasMatch = true;
-                                            break;
+                                // check if relevant templates are already there
+                                for (Object selectedItem : getSelectedItems()) {
+                                    VmTemplate template = (VmTemplate) selectedItem;
+                                    // only relevant for template versions
+                                    if (!template.isBaseTemplate()) {
+                                        boolean hasMatch = false;
+                                        for (VmTemplate a : templatesDiskSet.keySet()) {
+                                            if (template.getBaseTemplateId().equals(a.getId())) {
+                                                hasMatch = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (!template.getBaseTemplateId().equals(Guid.Empty) && !hasMatch) {
+                                            verTempMissingBase.add(template.getName());
                                         }
                                     }
-
-                                    if (!template.getBaseTemplateId().equals(Guid.Empty) && !hasMatch) {
-                                        verTempMissingBase.add(template.getName());
-                                    }
                                 }
-                            }
 
-                            postExportGetMissingTemplates(verTempMissingBase);
-                        }
-                    }),
+                                postExportGetMissingTemplates(verTempMissingBase);
+                            }),
                     storagePool.getId(),
                     storageDomainId);
         }
@@ -353,15 +341,12 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ExportVmTemplate, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ExportVmModel localModel = (ExportVmModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    ExportVmModel localModel = (ExportVmModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
     }
 
@@ -434,12 +419,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         }
 
         // populating VMInit
-        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(new AsyncCallback<VmTemplate>() {
-            @Override
-            public void onSuccess(VmTemplate result) {
-                vmInitLoaded(result);
-            }
-        }), template.getId());
+        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(result -> vmInitLoaded(result)), template.getId());
 
     }
 
@@ -536,15 +516,12 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmTemplate, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
     }
 
@@ -580,49 +557,46 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         if (isBaseTemplate) {
             AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery<>(
-                    new AsyncCallback<Boolean>() {
-                        @Override
-                        public void onSuccess(Boolean isNameUnique) {
+                    isNameUnique -> {
 
-                            if (model.getBehavior().isExistingTemplateBehavior()) {
-                                selectedItem = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate();
-                            } else {
-                                selectedItem = ((ExistingBlankTemplateModelBehavior) model.getBehavior()).getVmTemplate();
-                            }
-
-                            if (!isNameUnique && name.compareToIgnoreCase(selectedItem.getName()) != 0) {
-                                model.getName()
-                                        .getInvalidityReasons()
-                                        .add(ConstantsManager.getInstance()
-                                                .getConstants()
-                                                .nameMustBeUniqueInvalidReason());
-                                model.getName().setIsValid(false);
-                                model.setValidTab(TabName.GENERAL_TAB, false);
-                                model.fireValidationCompleteEvent();
-                                return;
-                            }
-
-                            String selectedCpu = model.getCustomCpu().getSelectedItem();
-                            if (selectedCpu != null && !selectedCpu.isEmpty()  && !model.getCustomCpu().getItems().contains(selectedCpu)) {
-                                ConfirmationModel confirmModel = new ConfirmationModel();
-                                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuTitle());
-                                confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuMessage());
-                                confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
-                                confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
-
-                                confirmModel.getCommands().add(new UICommand("postNameUniqueCheck", TemplateListModel.this) //$NON-NLS-1$
-                                        .setTitle(ConstantsManager.getInstance().getConstants().ok())
-                                        .setIsDefault(true));
-
-                                confirmModel.getCommands()
-                                        .add(UICommand.createCancelUiCommand("CancelConfirmation", TemplateListModel.this)); //$NON-NLS-1$
-
-                                setConfirmWindow(confirmModel);
-                            } else {
-                                postNameUniqueCheck();
-                            }
-
+                        if (model.getBehavior().isExistingTemplateBehavior()) {
+                            selectedItem = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate();
+                        } else {
+                            selectedItem = ((ExistingBlankTemplateModelBehavior) model.getBehavior()).getVmTemplate();
                         }
+
+                        if (!isNameUnique && name.compareToIgnoreCase(selectedItem.getName()) != 0) {
+                            model.getName()
+                                    .getInvalidityReasons()
+                                    .add(ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .nameMustBeUniqueInvalidReason());
+                            model.getName().setIsValid(false);
+                            model.setValidTab(TabName.GENERAL_TAB, false);
+                            model.fireValidationCompleteEvent();
+                            return;
+                        }
+
+                        String selectedCpu = model.getCustomCpu().getSelectedItem();
+                        if (selectedCpu != null && !selectedCpu.isEmpty()  && !model.getCustomCpu().getItems().contains(selectedCpu)) {
+                            ConfirmationModel confirmModel = new ConfirmationModel();
+                            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuTitle());
+                            confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuMessage());
+                            confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
+                            confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
+
+                            confirmModel.getCommands().add(new UICommand("postNameUniqueCheck", TemplateListModel.this) //$NON-NLS-1$
+                                    .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                                    .setIsDefault(true));
+
+                            confirmModel.getCommands()
+                                    .add(UICommand.createCancelUiCommand("CancelConfirmation", TemplateListModel.this)); //$NON-NLS-1$
+
+                            setConfirmWindow(confirmModel);
+                        } else {
+                            postNameUniqueCheck();
+                        }
+
                     }), name, model.getSelectedDataCenter() == null ? null : model.getSelectedDataCenter().getId());
         } else {
             postNameUniqueCheck();
@@ -636,13 +610,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         commands.add(UICommand.createDefaultOkUiCommand("OnSaveVm", this)); //$NON-NLS-1$
         commands.add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
-        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(new AsyncCallback<VmTemplate>() {
-            @Override
-            public void onSuccess(VmTemplate withVmInit) {
-                setupNewVmModel(new UnitVmModel(new NewVmFromTemplateModelBehavior(withVmInit), TemplateListModel.this),
-                        withVmInit.getVmType(), getSystemTreeSelectedItem(), commands);
-            }
-        }), template.getId());
+        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(withVmInit -> setupNewVmModel(new UnitVmModel(new NewVmFromTemplateModelBehavior(withVmInit), TemplateListModel.this),
+                withVmInit.getVmType(), getSystemTreeSelectedItem(), commands)), template.getId());
     }
 
     private void onSaveVm() {
@@ -697,13 +666,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         }
 
         Frontend.getInstance().runAction(VdcActionType.UpdateVmTemplate, parameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        TemplateListModel localModel = (TemplateListModel) result.getState();
-                        localModel.postUpdateVmTemplate(result.getReturnValue());
+                result -> {
+                    TemplateListModel localModel = (TemplateListModel) result.getState();
+                    localModel.postUpdateVmTemplate(result.getReturnValue());
 
-                    }
                 }, this);
     }
 

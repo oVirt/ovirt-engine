@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -26,7 +24,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -706,15 +703,12 @@ public abstract class RunOnceModel extends Model {
         getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
         getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
 
-        AsyncDataProvider.isFloppySupported(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean isFloppySupported) {
-                if (!isFloppySupported) {
-                    getAttachFloppy().setIsAvailable(false);
-                    getFloppyImage().setIsAvailable(false);
-                }
-
+        AsyncDataProvider.isFloppySupported(new AsyncQuery<>(isFloppySupported -> {
+            if (!isFloppySupported) {
+                getAttachFloppy().setIsAvailable(false);
+                getFloppyImage().setIsAvailable(false);
             }
+
         }), vm.getOs(), vm.getCompatibilityVersion());
     }
 
@@ -813,56 +807,49 @@ public abstract class RunOnceModel extends Model {
 
     protected void updateFloppyImages() {
         AsyncDataProvider.getInstance().getFloppyImageList(new AsyncQuery<>(
-                new AsyncCallback<List<String>>() {
-                    @Override
-                    public void onSuccess(List<String> images) {
-                        VM selectedVM = vm;
+                        images -> {
+                            VM selectedVM = vm;
 
-                        if (AsyncDataProvider.getInstance().isWindowsOsType(selectedVM.getVmOsId())) {
-                            // Add a pseudo floppy disk image used for Windows' sysprep.
-                            if (!selectedVM.isInitialized() && vm.getVmInit() != null) {
-                                images.add(0, "[sysprep]"); //$NON-NLS-1$
-                                getAttachFloppy().setEntity(true);
-                            } else {
-                                images.add("[sysprep]"); //$NON-NLS-1$
+                            if (AsyncDataProvider.getInstance().isWindowsOsType(selectedVM.getVmOsId())) {
+                                // Add a pseudo floppy disk image used for Windows' sysprep.
+                                if (!selectedVM.isInitialized() && vm.getVmInit() != null) {
+                                    images.add(0, "[sysprep]"); //$NON-NLS-1$
+                                    getAttachFloppy().setEntity(true);
+                                } else {
+                                    images.add("[sysprep]"); //$NON-NLS-1$
+                                }
                             }
-                        }
-                        getFloppyImage().setItems(images);
+                            getFloppyImage().setItems(images);
 
-                        if (getFloppyImage().getIsChangable()
-                                && getFloppyImage().getSelectedItem() == null) {
-                            getFloppyImage().setSelectedItem(Linq.firstOrNull(images));
-                        }
-                    }
-                }),
+                            if (getFloppyImage().getIsChangable()
+                                    && getFloppyImage().getSelectedItem() == null) {
+                                getFloppyImage().setSelectedItem(Linq.firstOrNull(images));
+                            }
+                        }),
                 vm.getStoragePoolId());
     }
 
     private void setIsBootFromHardDiskAllowedForVm() {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(vm.getId()),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    ArrayList<Disk> vmDisks = returnValue.getReturnValue();
 
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        ArrayList<Disk> vmDisks = returnValue.getReturnValue();
+                    if (vmDisks.isEmpty()) {
+                        getRunAsStateless().setIsChangeable(false);
+                        getRunAsStateless()
+                                .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                        .getMessages()
+                                        .disklessVmCannotRunAsStateless());
+                        getRunAsStateless().setEntity(false);
+                    }
 
-                        if (vmDisks.isEmpty()) {
-                            getRunAsStateless().setIsChangeable(false);
-                            getRunAsStateless()
-                                    .setChangeProhibitionReason(ConstantsManager.getInstance()
-                                            .getMessages()
-                                            .disklessVmCannotRunAsStateless());
-                            getRunAsStateless().setEntity(false);
-                        }
-
-                        if (!isDisksContainBootableDisk(vmDisks)) {
-                            BootSequenceModel bootSequenceModel = getBootSequence();
-                            bootSequenceModel.getHardDiskOption().setIsChangeable(false);
-                            bootSequenceModel.getHardDiskOption()
-                                    .setChangeProhibitionReason(ConstantsManager.getInstance()
-                                            .getMessages()
-                                            .bootableDiskIsRequiredToBootFromDisk());
-                        }
+                    if (!isDisksContainBootableDisk(vmDisks)) {
+                        BootSequenceModel bootSequenceModel = getBootSequence();
+                        bootSequenceModel.getHardDiskOption().setIsChangeable(false);
+                        bootSequenceModel.getHardDiskOption()
+                                .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                        .getMessages()
+                                        .bootableDiskIsRequiredToBootFromDisk());
                     }
                 }));
     }
@@ -878,40 +865,34 @@ public abstract class RunOnceModel extends Model {
 
     private void setIsBootFromNetworkAllowedForVm() {
         Frontend.getInstance().runQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    Collection<VmNetworkInterface> nics = returnValue.getReturnValue();
+                    boolean hasPluggedNics = nics.stream().anyMatch(VmNetworkInterface::isPlugged);
 
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        Collection<VmNetworkInterface> nics = returnValue.getReturnValue();
-                        boolean hasPluggedNics = nics.stream().anyMatch(VmNetworkInterface::isPlugged);
-
-                        if (!hasPluggedNics) {
-                            BootSequenceModel bootSequenceModel = getBootSequence();
-                            bootSequenceModel.getNetworkOption().setIsChangeable(false);
-                            bootSequenceModel.getNetworkOption()
-                                    .setChangeProhibitionReason(ConstantsManager.getInstance()
-                                            .getMessages()
-                                            .interfaceIsRequiredToBootFromNetwork());
-                        }
+                    if (!hasPluggedNics) {
+                        BootSequenceModel bootSequenceModel = getBootSequence();
+                        bootSequenceModel.getNetworkOption().setIsChangeable(false);
+                        bootSequenceModel.getNetworkOption()
+                                .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                        .getMessages()
+                                        .interfaceIsRequiredToBootFromNetwork());
                     }
                 }));
     }
 
     private void updateDisplayProtocols() {
-        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vm.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                boolean selectVnc = false;
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vm.getId()),
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    boolean selectVnc = false;
 
-                List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
-                if (graphicsDevices.size() == 1 && graphicsDevices.get(0).getGraphicsType() == GraphicsType.VNC) {
-                    selectVnc = true;
-                }
+                    List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
+                    if (graphicsDevices.size() == 1 && graphicsDevices.get(0).getGraphicsType() == GraphicsType.VNC) {
+                        selectVnc = true;
+                    }
 
-                getDisplayConsole_Vnc_IsSelected().setEntity(selectVnc);
-                getDisplayConsole_Spice_IsSelected().setEntity(!selectVnc);
-            }
-        }));
+                    getDisplayConsole_Vnc_IsSelected().setEntity(selectVnc);
+                    getDisplayConsole_Spice_IsSelected().setEntity(!selectVnc);
+                }));
     }
 
     public void updateIsoList() {
@@ -923,54 +904,45 @@ public abstract class RunOnceModel extends Model {
     }
 
     public void updateUnknownTypeImagesList(boolean forceRefresh) {
-        AsyncDataProvider.getInstance().getUnknownImageList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
-            @Override
-            public void onSuccess(List<String> images) {
-                getKernelImage().setItems(images);
-                getInitrdImage().setItems(images);
+        AsyncDataProvider.getInstance().getUnknownImageList(new AsyncQuery<>(images -> {
+            getKernelImage().setItems(images);
+            getInitrdImage().setItems(images);
 
-                getKernelImage().setSelectedItem(null);
-                getInitrdImage().setSelectedItem(null);
-            }
+            getKernelImage().setSelectedItem(null);
+            getInitrdImage().setSelectedItem(null);
         }), vm.getStoragePoolId(), forceRefresh);
     }
 
     public void updateIsoList(boolean forceRefresh) {
         AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(
-                new AsyncCallback<List<String>>() {
-                    @Override
-                    public void onSuccess(List<String> images) {
-                        final String lastSelectedIso = getIsoImage().getSelectedItem();
+                        images -> {
+                            final String lastSelectedIso = getIsoImage().getSelectedItem();
 
-                        getIsoImage().setItems(images);
+                            getIsoImage().setItems(images);
 
-                        if (getIsoImage().getIsChangable()) {
-                            // try to preselect last image
-                            if (lastSelectedIso != null && images.contains(lastSelectedIso)) {
-                                getIsoImage().setSelectedItem(lastSelectedIso);
-                            } else {
-                                getIsoImage().setSelectedItem(Linq.firstOrNull(images));
+                            if (getIsoImage().getIsChangable()) {
+                                // try to preselect last image
+                                if (lastSelectedIso != null && images.contains(lastSelectedIso)) {
+                                    getIsoImage().setSelectedItem(lastSelectedIso);
+                                } else {
+                                    getIsoImage().setSelectedItem(Linq.firstOrNull(images));
+                                }
                             }
-                        }
-                    }
-                }),
+                        }),
                 vm.getStoragePoolId(), forceRefresh);
     }
 
     private void updateDomainList() {
         // Update Domain list
-        AsyncDataProvider.getInstance().getAuthzExtensionsNames(new AsyncQuery<>(new AsyncCallback<List<String>>() {
-            @Override
-            public void onSuccess(List<String> domains) {
-                String oldDomain = getSysPrepDomainName().getSelectedItem();
-                if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) { //$NON-NLS-1$
-                    domains.add(0, oldDomain);
-                }
-                getSysPrepDomainName().setItems(domains);
-                String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrNull(domains);
-                if (!StringHelper.isNullOrEmpty(selectedDomain)) {
-                    getSysPrepDomainName().setSelectedItem(selectedDomain);
-                }
+        AsyncDataProvider.getInstance().getAuthzExtensionsNames(new AsyncQuery<>(domains -> {
+            String oldDomain = getSysPrepDomainName().getSelectedItem();
+            if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) { //$NON-NLS-1$
+                domains.add(0, oldDomain);
+            }
+            getSysPrepDomainName().setItems(domains);
+            String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrNull(domains);
+            if (!StringHelper.isNullOrEmpty(selectedDomain)) {
+                getSysPrepDomainName().setSelectedItem(selectedDomain);
             }
         }));
     }
@@ -982,49 +954,40 @@ public abstract class RunOnceModel extends Model {
 
             // update emulated machine list
             AsyncDataProvider.getInstance().getEmulatedMachinesByClusterID(new AsyncQuery<>(
-                    new AsyncCallback<Set<String>>() {
-                        @Override
-                        public void onSuccess(Set<String> emulatedSet) {
-                            if (emulatedSet != null) {
-                                String oldVal = getEmulatedMachine().getSelectedItem();
-                                getEmulatedMachine().setItems(new TreeSet<>(emulatedSet));
-                                getEmulatedMachine().setSelectedItem(oldVal);// even if converted - needed as fallback
-                                convertEmulatedMachineField();
-                            }
+                    emulatedSet -> {
+                        if (emulatedSet != null) {
+                            String oldVal = getEmulatedMachine().getSelectedItem();
+                            getEmulatedMachine().setItems(new TreeSet<>(emulatedSet));
+                            getEmulatedMachine().setSelectedItem(oldVal);// even if converted - needed as fallback
+                            convertEmulatedMachineField();
                         }
                     }), clusterId);
 
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
-                    new AsyncCallback<Cluster>() {
-                        @Override
-                        public void onSuccess(Cluster cluster) {
-                            if (cluster != null) {
-                                // update cpu names list
-                                if (cluster.getCpuName() != null) {
-                                    AsyncDataProvider.getInstance().getSupportedCpuList(new AsyncQuery<>(
-                                            new AsyncCallback<List<ServerCpu>>() {
-                                                @Override
-                                                public void onSuccess(List<ServerCpu> returnValue) {
-                                                    if (returnValue != null) {
-                                                        List<String> cpuList = new ArrayList<>();
-                                                        for (ServerCpu cpu : returnValue) {
-                                                            cpuList.add(cpu.getVdsVerbData());
-                                                        }
-                                                        String oldVal = getCustomCpu().getSelectedItem();
-                                                        getCustomCpu().setItems(cpuList);
-
-                                                        // replace 'cluster cpu' with the explicit run-time value
-                                                        if (StringHelper.isNullOrEmpty(oldVal)
-                                                                && !cpuList.isEmpty()) {
-                                                            getCustomCpu().setSelectedItem(cpuList.get(
-                                                                    cpuList.size() - 1));
-                                                        } else {
-                                                            getCustomCpu().setSelectedItem(oldVal);
-                                                        }
-                                                    }
+                    cluster -> {
+                        if (cluster != null) {
+                            // update cpu names list
+                            if (cluster.getCpuName() != null) {
+                                AsyncDataProvider.getInstance().getSupportedCpuList(new AsyncQuery<>(
+                                        returnValue -> {
+                                            if (returnValue != null) {
+                                                List<String> cpuList = new ArrayList<>();
+                                                for (ServerCpu cpu : returnValue) {
+                                                    cpuList.add(cpu.getVdsVerbData());
                                                 }
-                                            }), cluster.getCpuName());
-                                }
+                                                String oldVal = getCustomCpu().getSelectedItem();
+                                                getCustomCpu().setItems(cpuList);
+
+                                                // replace 'cluster cpu' with the explicit run-time value
+                                                if (StringHelper.isNullOrEmpty(oldVal)
+                                                        && !cpuList.isEmpty()) {
+                                                    getCustomCpu().setSelectedItem(cpuList.get(
+                                                            cpuList.size() - 1));
+                                                } else {
+                                                    getCustomCpu().setSelectedItem(oldVal);
+                                                }
+                                            }
+                                        }), cluster.getCpuName());
                             }
                         }
                     }), clusterId);
@@ -1037,15 +1000,12 @@ public abstract class RunOnceModel extends Model {
             Guid clusterId = vm.getClusterId();
             if (clusterId != null) {
                 AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
-                        new AsyncCallback<Cluster>() {
-                            @Override
-                            public void onSuccess(Cluster cluster) {
-                                if (cluster != null) {
-                                    if (cluster.getEmulatedMachine() != null) {
-                                        getEmulatedMachine().setSelectedItem(cluster.getEmulatedMachine());
-                                    }
-
+                        cluster -> {
+                            if (cluster != null) {
+                                if (cluster.getEmulatedMachine() != null) {
+                                    getEmulatedMachine().setSelectedItem(cluster.getEmulatedMachine());
                                 }
+
                             }
                         }), clusterId);
             }

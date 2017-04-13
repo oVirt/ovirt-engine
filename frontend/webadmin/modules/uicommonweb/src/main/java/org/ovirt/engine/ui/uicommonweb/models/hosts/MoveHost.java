@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -54,12 +53,7 @@ public class MoveHost extends ListModel<MoveHostData> {
 
     private void cluster_SelectedItemChanged() {
         if (getCluster().getSelectedItem() != null) {
-            AsyncDataProvider.getInstance().getHostList(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
-                @Override
-                public void onSuccess(List<VDS> hosts) {
-                    postGetHostList(hosts);
-                }
-            }));
+            AsyncDataProvider.getInstance().getHostList(new AsyncQuery<>(hosts -> postGetHostList(hosts)));
         }
     }
 

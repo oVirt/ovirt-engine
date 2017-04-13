@@ -17,8 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class RemoveDiskModel extends ConfirmationModel {
@@ -84,12 +82,9 @@ public class RemoveDiskModel extends ConfirmationModel {
         startProgress();
 
         Frontend.getInstance().runMultipleAction(actionType, paramerterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        stopProgress();
-                        target.executeCommand(cancelCommand);
-                    }
+                result -> {
+                    stopProgress();
+                    target.executeCommand(cancelCommand);
                 },
                 this);
     }

@@ -1,13 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.List;
-
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -17,8 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class CloneVmModel extends Model {
@@ -38,12 +32,9 @@ public class CloneVmModel extends Model {
 
     @Override
     public void initialize() {
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(new AsyncCallback<List<Disk>>() {
-            @Override
-            public void onSuccess(List<Disk> disks) {
-                if (disks.stream().anyMatch(d -> d.getDiskStorageType() == DiskStorageType.LUN)) {
-                    setMessage(ConstantsManager.getInstance().getConstants().cloneVmLunsWontBeCloned());
-                }
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(disks -> {
+            if (disks.stream().anyMatch(d -> d.getDiskStorageType() == DiskStorageType.LUN)) {
+                setMessage(ConstantsManager.getInstance().getConstants().cloneVmLunsWontBeCloned());
             }
         }), vm.getId());
     }
@@ -67,19 +58,15 @@ public class CloneVmModel extends Model {
 
         startProgress();
 
-        AsyncDataProvider.getInstance().isVmNameUnique(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-
-            @Override
-            public void onSuccess(Boolean returnValue) {
-                if (returnValue) {
-                    postCloneVmNameUnique(targetModel, makeCreatorExplicitOwner);
-                } else {
-                    stopProgress();
-                    getCloneName()
-                            .getInvalidityReasons()
-                            .add(uiConstants.nameMustBeUniqueInvalidReason());
-                    getCloneName().setIsValid(false);
-                }
+        AsyncDataProvider.getInstance().isVmNameUnique(new AsyncQuery<>(returnValue -> {
+            if (returnValue) {
+                postCloneVmNameUnique(targetModel, makeCreatorExplicitOwner);
+            } else {
+                stopProgress();
+                getCloneName()
+                        .getInvalidityReasons()
+                        .add(uiConstants.nameMustBeUniqueInvalidReason());
+                getCloneName().setIsValid(false);
             }
         }), getCloneName().getEntity(), getVm() == null ? null : getVm().getStoragePoolId());
 
@@ -93,12 +80,9 @@ public class CloneVmModel extends Model {
         params.setMakeCreatorExplicitOwner(makeCreatorExplicitOwner);
 
         Frontend.getInstance().runAction(VdcActionType.CloneVm, params,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        stopProgress();
-                        targetModel.setWindow(null);
-                    }
+                result -> {
+                    stopProgress();
+                    targetModel.setWindow(null);
                 }, this);
     }
 

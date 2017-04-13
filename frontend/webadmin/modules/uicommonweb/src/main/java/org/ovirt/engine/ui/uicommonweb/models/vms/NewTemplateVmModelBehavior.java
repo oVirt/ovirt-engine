@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -76,21 +75,16 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         disksAllocationModel.setIsThinProvisioning(false);
 
         AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(
-                new AsyncCallback<StoragePool>() {
-                    @Override
-                    public void onSuccess(final StoragePool dataCenter) {
-                        if (dataCenter == null) {
-                            disableNewTemplateModel(ConstantsManager.getInstance()
-                                    .getConstants()
-                                    .dataCenterIsNotAccessibleMsg());
-                        }
-                        else {
+                        dataCenter -> {
+                            if (dataCenter == null) {
+                                disableNewTemplateModel(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .dataCenterIsNotAccessibleMsg());
+                            }
+                            else {
 
-                            AsyncDataProvider.getInstance().getClusterListByService(
-                                    new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-
-                                        @Override
-                                        public void onSuccess(List<Cluster> clusters) {
+                                AsyncDataProvider.getInstance().getClusterListByService(
+                                        new AsyncQuery<>(clusters -> {
                                             List<Cluster> filteredClusters =
                                                     AsyncDataProvider.getInstance().filterByArchitecture(clusters,
                                                             vm.getClusterArch());
@@ -102,23 +96,16 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
                                             initTemplate();
 
-                                        }
-                                    }),
-                                    true,
-                                    false);
+                                        }),
+                                        true,
+                                        false);
 
-                            AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery<>(
-                                    new AsyncCallback<Boolean>() {
-                                        @Override
-                                        public void onSuccess(Boolean returnValue) {
-                                            getModel().getIsSoundcardEnabled().setEntity(returnValue);
-                                        }
-                                    }), vm.getId());
+                                AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery<>(
+                                        returnValue -> getModel().getIsSoundcardEnabled().setEntity(returnValue)), vm.getId());
 
-                        }
+                            }
 
-                    }
-                }),
+                        }),
                 vm.getStoragePoolId());
     }
 
@@ -135,43 +122,27 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             final StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
             AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery<>(
-                    new AsyncCallback<List<VmTemplate>>() {
-                        @Override
-                        public void onSuccess(final List<VmTemplate> templatesByDataCenter) {
+                            templatesByDataCenter -> AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery<>(
+                                            templatesByStorage -> {
 
-                            AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery<>(
-                                    new AsyncCallback<List<VmTemplate>>() {
-                                        @Override
-                                        public void onSuccess(List<VmTemplate> templatesByStorage) {
+                                                VmTemplate blankTemplate = Linq.firstOrNull(templatesByDataCenter, new Linq.IdPredicate<>(Guid.Empty));
+                                                if (blankTemplate != null) {
+                                                    templatesByStorage.add(0, blankTemplate);
+                                                }
 
-                                            VmTemplate blankTemplate = Linq.firstOrNull(templatesByDataCenter, new Linq.IdPredicate<>(Guid.Empty));
-                                            if (blankTemplate != null) {
-                                                templatesByStorage.add(0, blankTemplate);
-                                            }
+                                                ArrayList<VmTemplate> templateList = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByStorage,
+                                                                dataCenterWithCluster.getCluster().getArchitecture());
 
-                                            ArrayList<VmTemplate> templateList = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByStorage,
-                                                            dataCenterWithCluster.getCluster().getArchitecture());
+                                                postInitTemplate(templateList);
 
-                                            postInitTemplate(templateList);
-
-                                        }
-                                    }),
-                                    storage.getId());
-
-                        }
-                    }),
+                                            }),
+                                    storage.getId())),
                     dataCenter.getId());
         }
         else {
             AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery<>(
-                    new AsyncCallback<List<VmTemplate>>() {
-                        @Override
-                        public void onSuccess(List<VmTemplate> templates) {
-                            postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
-                                    dataCenterWithCluster.getCluster().getArchitecture()));
-
-                        }
-                    }), dataCenter.getId());
+                    templates -> postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
+                            dataCenterWithCluster.getCluster().getArchitecture()))), dataCenter.getId());
         }
     }
 
@@ -213,28 +184,25 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
         // If a VM has at least one disk, present its storage domain.
         AsyncDataProvider.getInstance().getVmDiskList(asyncQuery(
-                new AsyncCallback<List<Disk>>() {
-                    @Override
-                    public void onSuccess(List<Disk> vmDisks) {
-                        ArrayList<Disk> imageDisks = new ArrayList<>();
+                vmDisks -> {
+                    ArrayList<Disk> imageDisks = new ArrayList<>();
 
-                        for (Disk disk : vmDisks) {
-                            if (disk.isShareable() || disk.isDiskSnapshot()) {
-                                continue;
-                            }
-                            if (disk.getDiskStorageType() == DiskStorageType.IMAGE ||
-                                    disk.getDiskStorageType() == DiskStorageType.CINDER) {
-                                imageDisks.add(disk);
-                            }
+                    for (Disk disk : vmDisks) {
+                        if (disk.isShareable() || disk.isDiskSnapshot()) {
+                            continue;
                         }
-
-                        initStorageDomains();
-                        initDisks(imageDisks);
-
-                        VmModelHelper.sendWarningForNonExportableDisks(getModel(),
-                                vmDisks,
-                                VmModelHelper.WarningType.VM_TEMPLATE);
+                        if (disk.getDiskStorageType() == DiskStorageType.IMAGE ||
+                                disk.getDiskStorageType() == DiskStorageType.CINDER) {
+                            imageDisks.add(disk);
+                        }
                     }
+
+                    initStorageDomains();
+                    initDisks(imageDisks);
+
+                    VmModelHelper.sendWarningForNonExportableDisks(getModel(),
+                            vmDisks,
+                            VmModelHelper.WarningType.VM_TEMPLATE);
                 }),
                 vm.getId(),
                 true);
@@ -310,24 +278,21 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
     private void initTemplate() {
         // Update model state according to VM properties.
-        buildModel(this.vm.getStaticData(), new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
-            @Override
-            public void finished(VmBase source, UnitVmModel destination) {
-                updateSelectedCdImage(vm.getStaticData());
-                updateTimeZone(vm.getTimeZone());
-                updateConsoleDevice(vm.getId());
+        buildModel(this.vm.getStaticData(), (source, destination) -> {
+            updateSelectedCdImage(vm.getStaticData());
+            updateTimeZone(vm.getTimeZone());
+            updateConsoleDevice(vm.getId());
 
-                getModel().getStorageDomain().setIsChangeable(true);
-                getModel().getProvisioning().setIsAvailable(false);
+            getModel().getStorageDomain().setIsChangeable(true);
+            getModel().getProvisioning().setIsAvailable(false);
 
-                // Select display protocol.
-                DisplayType displayType = vm.getDefaultDisplayType();
-                if (getModel().getDisplayType().getItems().contains(displayType)) {
-                    getModel().getDisplayType().setSelectedItem(displayType);
-                }
-
-                initPriority(vm.getPriority());
+            // Select display protocol.
+            DisplayType displayType = vm.getDefaultDisplayType();
+            if (getModel().getDisplayType().getItems().contains(displayType)) {
+                getModel().getDisplayType().setSelectedItem(displayType);
             }
+
+            initPriority(vm.getPriority());
         });
     }
 
@@ -342,75 +307,72 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     @Override
     public void initStorageDomains() {
         AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(asyncQuery(
-                new AsyncCallback<List<StorageDomain>>() {
-                    @Override
-                    public void onSuccess(List<StorageDomain> storageDomains) {
-                        ArrayList<StorageDomain> activeStorageDomainList = new ArrayList<>();
+                storageDomains -> {
+                    ArrayList<StorageDomain> activeStorageDomainList = new ArrayList<>();
 
-                        for (StorageDomain storageDomain : storageDomains) {
-                            if (storageDomain.getStatus() == StorageDomainStatus.Active
-                                    && storageDomain.getStorageDomainType().isDataDomain()) {
-                                activeStorageDomainList.add(storageDomain);
+                    for (StorageDomain storageDomain : storageDomains) {
+                        if (storageDomain.getStatus() == StorageDomainStatus.Active
+                                && storageDomain.getStorageDomainType().isDataDomain()) {
+                            activeStorageDomainList.add(storageDomain);
+                        }
+                    }
+
+                    for (DiskModel diskModel : getModel().getDisks()) {
+                        if (diskModel.getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+                            DiskImage diskImage = (DiskImage) diskModel.getDisk();
+                            List<StorageDomain> activeDiskStorages =
+                                    Linq.getStorageDomainsByIds(diskImage.getStorageIds(), activeStorageDomainList);
+
+                            if (activeDiskStorages.isEmpty()) {
+                                disableNewTemplateModel(
+                                        ConstantsManager.getInstance()
+                                                .getMessages()
+                                                .vmStorageDomainIsNotAccessible());
+
+                                return;
                             }
                         }
+                    }
 
-                        for (DiskModel diskModel : getModel().getDisks()) {
-                            if (diskModel.getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-                                DiskImage diskImage = (DiskImage) diskModel.getDisk();
-                                List<StorageDomain> activeDiskStorages =
-                                        Linq.getStorageDomainsByIds(diskImage.getStorageIds(), activeStorageDomainList);
+                    if (activeStorageDomainList.size() > 0) {
+                        if (getSystemTreeSelectedItem() != null
+                                && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
+                            StorageDomain selectStorage =
+                                    (StorageDomain) getSystemTreeSelectedItem().getEntity();
+                            StorageDomain s =
+                                    Linq.firstOrNull(activeStorageDomainList,
+                                            new Linq.IdPredicate<>(selectStorage.getId()));
+                            activeStorageDomainList =
+                                    new ArrayList<>(Arrays.asList(new StorageDomain[]{s}));
 
-                                if (activeDiskStorages.isEmpty()) {
-                                    disableNewTemplateModel(
-                                            ConstantsManager.getInstance()
-                                                    .getMessages()
-                                                    .vmStorageDomainIsNotAccessible());
-
-                                    return;
-                                }
-                            }
-                        }
-
-                        if (activeStorageDomainList.size() > 0) {
-                            if (getSystemTreeSelectedItem() != null
-                                    && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
-                                StorageDomain selectStorage =
-                                        (StorageDomain) getSystemTreeSelectedItem().getEntity();
-                                StorageDomain s =
-                                        Linq.firstOrNull(activeStorageDomainList,
-                                                new Linq.IdPredicate<>(selectStorage.getId()));
-                                activeStorageDomainList =
-                                        new ArrayList<>(Arrays.asList(new StorageDomain[]{s}));
-
-                                getModel().getStorageDomain().setItems(activeStorageDomainList);
-                                getModel().getStorageDomain().setIsChangeable(false);
-                                getModel().getStorageDomain().setSelectedItem(s);
-                            }
-                            else {
-                                getModel().getStorageDomain().setItems(activeStorageDomainList);
-                                getModel().getStorageDomain().setIsChangeable(true);
-                            }
+                            getModel().getStorageDomain().setItems(activeStorageDomainList);
+                            getModel().getStorageDomain().setIsChangeable(false);
+                            getModel().getStorageDomain().setSelectedItem(s);
                         }
                         else {
-                            disableNewTemplateModel(ConstantsManager.getInstance()
-                                    .getMessages()
-                                    .noActiveStorageDomain());
+                            getModel().getStorageDomain().setItems(activeStorageDomainList);
+                            getModel().getStorageDomain().setIsChangeable(true);
                         }
+                    }
+                    else {
+                        disableNewTemplateModel(ConstantsManager.getInstance()
+                                .getMessages()
+                                .noActiveStorageDomain());
+                    }
 
-                        ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getModel().getDisksAllocationModel().getDisks();
+                    ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getModel().getDisksAllocationModel().getDisks();
 
-                        Collections.sort(activeStorageDomainList, new NameableComparator());
-                        if (disks != null) {
-                            List<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
-                            for (DiskModel diskModel : diskImages) {
-                                diskModel.getStorageDomain().setItems(activeStorageDomainList);
-                            }
-                            List<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
-                            if (!cinderDisks.isEmpty()) {
-                                Collection<StorageDomain> cinderStorageDomains =
-                                        Linq.filterStorageDomainsByStorageType(storageDomains, StorageType.CINDER);
-                                initStorageDomainsForCinderDisks(cinderDisks, cinderStorageDomains);
-                            }
+                    Collections.sort(activeStorageDomainList, new NameableComparator());
+                    if (disks != null) {
+                        List<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
+                        for (DiskModel diskModel : diskImages) {
+                            diskModel.getStorageDomain().setItems(activeStorageDomainList);
+                        }
+                        List<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
+                        if (!cinderDisks.isEmpty()) {
+                            Collection<StorageDomain> cinderStorageDomains =
+                                    Linq.filterStorageDomainsByStorageType(storageDomains, StorageType.CINDER);
+                            initStorageDomainsForCinderDisks(cinderDisks, cinderStorageDomains);
                         }
                     }
                 }),

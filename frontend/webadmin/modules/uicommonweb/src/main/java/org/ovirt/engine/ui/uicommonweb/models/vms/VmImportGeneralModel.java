@@ -12,16 +12,12 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -68,26 +64,13 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         name = new EntityModel<>();
         operatingSystems = new ListModel<>();
 
-        getName().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getEntity().getVm().setName(getName().getEntity());
+        getName().getEntityChangedEvent().addListener((ev, sender, args) -> getEntity().getVm().setName(getName().getEntity()));
+        getOperatingSystems().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            if (getOperatingSystems().getSelectedItem() != null) {
+                getEntity().getVm().setVmOs(getOperatingSystems().getSelectedItem());
             }
         });
-        getOperatingSystems().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getOperatingSystems().getSelectedItem() != null) {
-                    getEntity().getVm().setVmOs(getOperatingSystems().getSelectedItem());
-                }
-            }
-        });
-        getOperatingSystems().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getOperatingSystems().setSelectedItem(getEntity().getVm().getOs());
-            }
-        });
+        getOperatingSystems().getItemsChangedEvent().addListener((ev, sender, args) -> getOperatingSystems().setSelectedItem(getEntity().getVm().getOs()));
     }
 
     public void setSource(ImportSource source) {
@@ -189,23 +172,19 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         setHasDefaultHost(!vm.getDedicatedVmForVdsList().isEmpty());
         if (getHasDefaultHost()) {
             Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getClusterName() //$NON-NLS-1$
-                    + " sortby name", SearchType.VDS), new AsyncQuery<>(//$NON-NLS-1$
-                            new AsyncCallback<VdcQueryReturnValue>() {
-                        @Override
-                        public void onSuccess(VdcQueryReturnValue returnValue) {
-                            VM localVm = getEntity() != null ? getEntity().getVm() : null;
-                            if (localVm == null) {
-                                return;
-                            }
-                            ArrayList<VDS> hosts = returnValue.getReturnValue();
-                            for (VDS host : hosts) {
-                                if (localVm.getDedicatedVmForVdsList().contains(host.getId())) {
-                                    setDefaultHost(host.getName());
-                                    break;
-                                }
-                            }
-
+                    + " sortby name", SearchType.VDS), new AsyncQuery<VdcQueryReturnValue>(returnValue -> { //$NON-NLS-1$
+                        VM localVm = getEntity() != null ? getEntity().getVm() : null;
+                        if (localVm == null) {
+                            return;
                         }
+                        ArrayList<VDS> hosts = returnValue.getReturnValue();
+                        for (VDS host : hosts) {
+                            if (localVm.getDedicatedVmForVdsList().contains(host.getId())) {
+                                setDefaultHost(host.getName());
+                                break;
+                            }
+                        }
+
                     }));
         }
         else {

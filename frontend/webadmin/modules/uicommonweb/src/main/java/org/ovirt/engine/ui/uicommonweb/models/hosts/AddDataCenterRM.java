@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
@@ -15,16 +14,13 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
 import org.ovirt.engine.ui.uicompat.Enlistment;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEnlistmentNotification;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
 
 @SuppressWarnings("unused")
@@ -55,14 +51,11 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         if (!StringHelper.isNullOrEmpty(dataCenterName)) {
 
             AsyncDataProvider.getInstance().getDataCenterListByName(new AsyncQuery<>(
-                    new AsyncCallback<List<StoragePool>>() {
-                        @Override
-                        public void onSuccess(List<StoragePool> returnValue) {
+                            returnValue -> {
 
-                            context.dataCenterFoundByName = Linq.firstOrNull(returnValue);
-                            prepare2();
-                        }
-                    }),
+                                context.dataCenterFoundByName = Linq.firstOrNull(returnValue);
+                                prepare2();
+                            }),
                     dataCenterName);
         } else {
             prepare2();
@@ -103,13 +96,10 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                 StoragePoolManagementParameter parameters = new StoragePoolManagementParameter(dataCenter);
                 parameters.setCorrelationId(getCorrelationId());
                 Frontend.getInstance().runAction(VdcActionType.AddEmptyStoragePool, parameters,
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
+                        result -> {
 
-                                context.addDataCenterReturnValue = result.getReturnValue();
-                                prepare3();
-                            }
+                            context.addDataCenterReturnValue = result.getReturnValue();
+                            prepare3();
                         });
             }
         } else {
@@ -159,14 +149,11 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         if (enlistmentContext.getDataCenterId() != null) {
 
             AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(
-                    new AsyncCallback<StoragePool>() {
-                        @Override
-                        public void onSuccess(StoragePool returnValue) {
+                            returnValue -> {
 
-                            context.dataCenterFoundById = returnValue;
-                            rollback2();
-                        }
-                    }),
+                                context.dataCenterFoundById = returnValue;
+                                rollback2();
+                            }),
                     enlistmentContext.getDataCenterId());
         } else {
             rollback3();
@@ -183,14 +170,11 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         // Retrieve host to make sure we have an updated status etc.
         AsyncDataProvider.getInstance().getHostById(new AsyncQuery<>(
-                new AsyncCallback<VDS>() {
-                    @Override
-                    public void onSuccess(VDS returnValue) {
+                        returnValue -> {
 
-                        context.hostFoundById = returnValue;
-                        rollback3();
-                    }
-                }),
+                            context.hostFoundById = returnValue;
+                            rollback3();
+                        }),
                 host.getId());
     }
 
@@ -235,15 +219,12 @@ public class AddDataCenterRM extends IEnlistmentNotification {
             // Switch host back to previous cluster.
             Frontend.getInstance().runAction(VdcActionType.ChangeVDSCluster,
                     new ChangeVDSClusterParameters(enlistmentContext.getOldClusterId(), host.getId()),
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
+                    result -> {
 
-                            VdcReturnValueBase returnValue = result.getReturnValue();
+                        VdcReturnValueBase returnValue = result.getReturnValue();
 
-                            context.changeVDSClusterReturnValue = returnValue;
-                            rollback4();
-                        }
+                        context.changeVDSClusterReturnValue = returnValue;
+                        rollback4();
                     });
 
         } else {
@@ -265,12 +246,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
                 Frontend.getInstance().runAction(VdcActionType.RemoveCluster,
                         new ClusterParametersBase(enlistmentContext.getClusterId()),
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
-                                rollback5();
-                            }
-                        });
+                        result -> rollback5());
             }
         } else {
             context.enlistment = null;

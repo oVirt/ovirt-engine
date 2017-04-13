@@ -12,10 +12,8 @@ import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -164,13 +162,10 @@ public class VmItemBehavior extends ItemBehavior {
         // Check whether a VM is from the manual pool.
         if (entity.getVmPoolId() != null) {
             AsyncDataProvider.getInstance().getPoolById(new AsyncQuery<>(
-                    new AsyncCallback<VmPool>() {
-                        @Override
-                        public void onSuccess(VmPool pool) {
-                            boolean isManualPool = pool.getVmPoolType() == VmPoolType.MANUAL;
-                            updateCommandsAccordingToPoolType(isManualPool);
+                    pool -> {
+                        boolean isManualPool = pool.getVmPoolType() == VmPoolType.MANUAL;
+                        updateCommandsAccordingToPoolType(isManualPool);
 
-                        }
                     }), entity.getVmPoolId());
         }
         else {

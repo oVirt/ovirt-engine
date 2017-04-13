@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -92,21 +91,18 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
 
         startProgress();
 
-        AsyncQuery asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                stopProgress();
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+            stopProgress();
 
-                ArrayList<RepoImage> repoImageList = new ArrayList<>();
-                if (returnValue != null && returnValue.getReturnValue() != null && returnValue.getSucceeded()) {
-                    repoImageList = returnValue.getReturnValue();
+            ArrayList<RepoImage> repoImageList = new ArrayList<>();
+            if (returnValue != null && returnValue.getReturnValue() != null && returnValue.getSucceeded()) {
+                repoImageList = returnValue.getReturnValue();
 
-                    Collections.sort(repoImageList, Comparator.comparing(RepoImage::getRepoImageId));
-                }
-
-                setItems(repoImageList);
-                setIsEmpty(repoImageList.isEmpty());
+                Collections.sort(repoImageList, Comparator.comparing(RepoImage::getRepoImageId));
             }
+
+            setItems(repoImageList);
+            setIsEmpty(repoImageList.isEmpty());
         });
         asyncQuery.setHandleFailure(true);
 

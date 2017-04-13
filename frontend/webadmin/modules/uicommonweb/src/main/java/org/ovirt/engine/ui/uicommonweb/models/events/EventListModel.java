@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -23,8 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> implements HasDismissCommand {
@@ -153,26 +150,23 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
     }
 
     protected void refreshModel() {
-        AsyncQuery query = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                List<AuditLog> newEvents = returnValue.getReturnValue();
-                List<AuditLog> currentEvents = (List<AuditLog>) getItems();
-                if (isDisplayEventsOnly()) {
-                    newEvents =
-                            newEvents.stream()
-                                    .filter(e -> e.getSeverity() != AuditLogSeverity.ALERT)
-                                    .collect(Collectors.toList());
-                }
-                if (!newEvents.isEmpty() &&
-                        currentEvents != null &&
-                        (currentEvents.isEmpty() || !currentEvents.get(0).equals(newEvents.get(0)))) {
-                    //We received some new events, tell the active models to update.
-                    RefreshActiveModelEvent.fire(EventListModel.this, false);
-                }
-                EventListModel.this.setItems(newEvents);
-                EventListModel.this.setLastEvent(Linq.firstOrNull(newEvents));
+        AsyncQuery<VdcQueryReturnValue> query = new AsyncQuery<>(returnValue -> {
+            List<AuditLog> newEvents = returnValue.getReturnValue();
+            List<AuditLog> currentEvents = (List<AuditLog>) getItems();
+            if (isDisplayEventsOnly()) {
+                newEvents =
+                        newEvents.stream()
+                                .filter(e -> e.getSeverity() != AuditLogSeverity.ALERT)
+                                .collect(Collectors.toList());
             }
+            if (!newEvents.isEmpty() &&
+                    currentEvents != null &&
+                    (currentEvents.isEmpty() || !currentEvents.get(0).equals(newEvents.get(0)))) {
+                //We received some new events, tell the active models to update.
+                RefreshActiveModelEvent.fire(EventListModel.this, false);
+            }
+            EventListModel.this.setItems(newEvents);
+            EventListModel.this.setLastEvent(Linq.firstOrNull(newEvents));
         });
 
         SearchParameters params = new SearchParameters(applySortOptions(getSearchString()), SearchType.AuditLog,
@@ -236,29 +230,18 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
             return;
         }
         RemoveAuditLogByIdParameters params = new RemoveAuditLogByIdParameters(auditLog.getAuditLogId());
-        Frontend.getInstance().runAction(VdcActionType.RemoveAuditLogById, params, new IFrontendActionAsyncCallback() {
-            @Override public void executed(FrontendActionAsyncResult result) {
-                EventListModel.this.refresh();
-            }
-        });
+        Frontend.getInstance().runAction(VdcActionType.RemoveAuditLogById, params,
+                result -> EventListModel.this.refresh());
     }
 
     public void clearAllDismissedEvents() {
         Frontend.getInstance().runAction(VdcActionType.ClearAllAuditLogEvents, new VdcActionParametersBase(),
-                new IFrontendActionAsyncCallback() {
-            @Override public void executed(FrontendActionAsyncResult result) {
-                EventListModel.this.refresh();
-            }
-        });
+                result -> EventListModel.this.refresh());
     }
 
     public void displayAllDismissedEvents() {
         Frontend.getInstance().runAction(VdcActionType.DisplayAllAuditLogEvents, new VdcActionParametersBase(),
-                new IFrontendActionAsyncCallback() {
-                    @Override public void executed(FrontendActionAsyncResult result) {
-                        EventListModel.this.refresh();
-                    }
-                });
+                result -> EventListModel.this.refresh());
     }
 
     @Override

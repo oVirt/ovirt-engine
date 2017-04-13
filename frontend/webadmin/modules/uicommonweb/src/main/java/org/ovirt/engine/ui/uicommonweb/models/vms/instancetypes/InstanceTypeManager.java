@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -92,49 +91,47 @@ public abstract class InstanceTypeManager {
     public void updateAll() {
         final Guid selectedInstanceTypeId = getSelectedInstanceTypeId();
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllInstanceTypes, new VdcQueryParametersBase(), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                if (returnValue == null || !returnValue.getSucceeded()) {
-                    return;
-                }
-
-                List<InstanceType> instanceTypes = new ArrayList<>();
-
-                // add this only if the user is allowed to
-                if (!getModel().isCreateInstanceOnly()) {
-                    instanceTypes.add(CustomInstanceType.INSTANCE);
-                }
-
-                for (InstanceType instanceType : (Iterable<InstanceType>) returnValue.getReturnValue()) {
-                    instanceTypes.add(instanceType);
-                }
-
-                getModel().getInstanceTypes().setItems(instanceTypes);
-                for (InstanceType instanceType : instanceTypes) {
-                    if ((instanceType instanceof CustomInstanceType) && selectedInstanceTypeId == null) {
-                        getModel().getInstanceTypes().setSelectedItem(CustomInstanceType.INSTANCE);
-                        break;
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllInstanceTypes, new VdcQueryParametersBase(),
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    if (returnValue == null || !returnValue.getSucceeded()) {
+                        return;
                     }
 
-                    if (instanceType.getId() == null || selectedInstanceTypeId == null) {
-                        continue;
+                    List<InstanceType> instanceTypes = new ArrayList<>();
+
+                    // add this only if the user is allowed to
+                    if (!getModel().isCreateInstanceOnly()) {
+                        instanceTypes.add(CustomInstanceType.INSTANCE);
                     }
 
-                    if (instanceType.getId().equals(selectedInstanceTypeId)) {
-                        getModel().getInstanceTypes().setSelectedItem(instanceType);
-                        break;
+                    for (InstanceType instanceType : (Iterable<InstanceType>) returnValue.getReturnValue()) {
+                        instanceTypes.add(instanceType);
                     }
-                }
 
-                if (getModel().getInstanceTypes().getSelectedItem() instanceof CustomInstanceType) {
-                    // detach if the instance type is "custom"
-                    getModel().getAttachedToInstanceType().setEntity(false);
-                }
+                    getModel().getInstanceTypes().setItems(instanceTypes);
+                    for (InstanceType instanceType : instanceTypes) {
+                        if ((instanceType instanceof CustomInstanceType) && selectedInstanceTypeId == null) {
+                            getModel().getInstanceTypes().setSelectedItem(CustomInstanceType.INSTANCE);
+                            break;
+                        }
 
-                updateFields();
-            }
-        }));
+                        if (instanceType.getId() == null || selectedInstanceTypeId == null) {
+                            continue;
+                        }
+
+                        if (instanceType.getId().equals(selectedInstanceTypeId)) {
+                            getModel().getInstanceTypes().setSelectedItem(instanceType);
+                            break;
+                        }
+                    }
+
+                    if (getModel().getInstanceTypes().getSelectedItem() instanceof CustomInstanceType) {
+                        // detach if the instance type is "custom"
+                        getModel().getAttachedToInstanceType().setEntity(false);
+                    }
+
+                    updateFields();
+                }));
     }
 
     /**
@@ -169,12 +166,7 @@ public abstract class InstanceTypeManager {
      */
     public void deactivateAndStartProgress() {
         model.startProgress();
-        deactivate(new ActivatedListener() {
-            @Override
-            public void activated() {
-                model.stopProgress();
-            }
-        });
+        deactivate(() -> model.stopProgress());
     }
 
     private void registerListeners(UnitVmModel model) {
@@ -298,24 +290,19 @@ public abstract class InstanceTypeManager {
 
         activate();
 
-        AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean returnValue) {
-                deactivate();
-                getModel().getIsSoundcardEnabled().setEntity(returnValue);
-                activate();
+        AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery<>(returnValue -> {
+            deactivate();
+            getModel().getIsSoundcardEnabled().setEntity(returnValue);
+            activate();
 
-                Frontend.getInstance().runQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmBase.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
+            Frontend.getInstance().runQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmBase.getId()),
+                    new AsyncQuery<VdcQueryReturnValue>(r -> {
                         deactivate();
-                        List<String> consoleDevices = returnValue.getReturnValue();
+                        List<String> consoleDevices = r.getReturnValue();
                         getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
                         activate();
                         postDoUpdateManagedFieldsFrom(vmBase);
-                    }
-                }));
-            }
+                    }));
         }), vmBase.getId());
     }
 
@@ -343,48 +330,42 @@ public abstract class InstanceTypeManager {
     }
 
     private void updateWatchdog(final VmBase vmBase, final boolean continueWithNext) {
-        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                deactivate();
-                @SuppressWarnings("unchecked")
-                Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            deactivate();
+            @SuppressWarnings("unchecked")
+            Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
 
-                if (watchdogs.size() == 0) {
-                    model.getWatchdogAction().setSelectedItem(model.getWatchdogAction().getItems().iterator().next());
-                    model.getWatchdogModel().setSelectedItem(model.getWatchdogModel().getItems().iterator().next());
-                }
-
-                for (VmWatchdog watchdog : watchdogs) {
-                    if (watchdogAvailable(watchdog.getModel())) {
-                        model.getWatchdogAction().setSelectedItem(watchdog.getAction() == null ? null
-                                : watchdog.getAction());
-                        model.getWatchdogModel().setSelectedItem(watchdog.getModel() == null ? null //$NON-NLS-1$
-                                : watchdog.getModel());
-                    }
-                }
-                activate();
-
-                if (continueWithNext) {
-                    updateBalloon(vmBase, true);
-                }
-
+            if (watchdogs.size() == 0) {
+                model.getWatchdogAction().setSelectedItem(model.getWatchdogAction().getItems().iterator().next());
+                model.getWatchdogModel().setSelectedItem(model.getWatchdogModel().getItems().iterator().next());
             }
+
+            for (VmWatchdog watchdog : watchdogs) {
+                if (watchdogAvailable(watchdog.getModel())) {
+                    model.getWatchdogAction().setSelectedItem(watchdog.getAction() == null ? null
+                            : watchdog.getAction());
+                    model.getWatchdogModel().setSelectedItem(watchdog.getModel() == null ? null //$NON-NLS-1$
+                            : watchdog.getModel());
+                }
+            }
+            activate();
+
+            if (continueWithNext) {
+                updateBalloon(vmBase, true);
+            }
+
         }), vmBase.getId());
     }
 
     protected void updateBalloon(final VmBase vmBase, final boolean continueWithNext) {
         if (model.getMemoryBalloonDeviceEnabled().getIsChangable() && model.getMemoryBalloonDeviceEnabled().getIsAvailable()) {
-            Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(vmBase.getId()), new AsyncQuery<>(
-                    new AsyncCallback<VdcQueryReturnValue>() {
-                        @Override
-                        public void onSuccess(VdcQueryReturnValue returnValue) {
-                            deactivate();
-                            getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue());
-                            activate();
-                            if (continueWithNext) {
-                                updateRngDevice(vmBase);
-                            }
+            Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(vmBase.getId()),
+                    new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                        deactivate();
+                        getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue());
+                        activate();
+                        if (continueWithNext) {
+                            updateRngDevice(vmBase);
                         }
                     }
             ));
@@ -397,21 +378,18 @@ public abstract class InstanceTypeManager {
     protected void updateRngDevice(final VmBase vmBase) {
         if (model.getIsRngEnabled().getIsChangable() && model.getIsRngEnabled().getIsAvailable()) {
             if (!isNextRunConfigurationExists()) {
-                Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(vmBase.getId()), new AsyncQuery<>(
-                        new AsyncCallback<VdcQueryReturnValue>() {
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue returnValue) {
-                                deactivate();
-                                List<VmDevice> rngDevices = returnValue.getReturnValue();
-                                getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
-                                if (!rngDevices.isEmpty()) {
-                                    VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
-                                    rngDevice.updateSourceByVersion(getModel().getCompatibilityVersion());
-                                    getModel().setRngDevice(rngDevice);
-                                }
-                                activate();
-                                updateVirtioScsi(vmBase);
+                Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(vmBase.getId()),
+                        new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                            deactivate();
+                            List<VmDevice> rngDevices = returnValue.getReturnValue();
+                            getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
+                            if (!rngDevices.isEmpty()) {
+                                VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
+                                rngDevice.updateSourceByVersion(getModel().getCompatibilityVersion());
+                                getModel().setRngDevice(rngDevice);
                             }
+                            activate();
+                            updateVirtioScsi(vmBase);
                         }
                 ));
             } else {
@@ -476,37 +454,35 @@ public abstract class InstanceTypeManager {
         }
 
         // graphics
-        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                deactivate();
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()),
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    deactivate();
 
-                List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
-                model.getIsHeadlessModeEnabled().setEntity(vmBase.getDefaultDisplayType() == DisplayType.none);
-                // select display protocol
-                DisplayType displayProtocol = displayTypes.iterator().next(); // first by default
-                if (displayTypes.contains(vmBase.getDefaultDisplayType())) {
-                    displayProtocol = vmBase.getDefaultDisplayType(); // if display types contain DT of a vm, pick this one
-                }
-                maybeSetSelectedItem(model.getDisplayType(), displayProtocol);
+                    List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
+                    model.getIsHeadlessModeEnabled().setEntity(vmBase.getDefaultDisplayType() == DisplayType.none);
+                    // select display protocol
+                    DisplayType displayProtocol = displayTypes.iterator().next(); // first by default
+                    if (displayTypes.contains(vmBase.getDefaultDisplayType())) {
+                        displayProtocol = vmBase.getDefaultDisplayType(); // if display types contain DT of a vm, pick this one
+                    }
+                    maybeSetSelectedItem(model.getDisplayType(), displayProtocol);
 
-                Set<GraphicsType> graphicsTypes = new HashSet<>();
-                for (GraphicsDevice graphicsDevice : graphicsDevices) {
-                    graphicsTypes.add(graphicsDevice.getGraphicsType());
-                }
-                UnitVmModel.GraphicsTypes selected = UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypes);
-                if (selected != null && getModel().getGraphicsType().getItems().contains(selected)) {
-                    maybeSetSelectedItem(getModel().getGraphicsType(), selected);
-                }
+                    Set<GraphicsType> graphicsTypes = new HashSet<>();
+                    for (GraphicsDevice graphicsDevice : graphicsDevices) {
+                        graphicsTypes.add(graphicsDevice.getGraphicsType());
+                    }
+                    UnitVmModel.GraphicsTypes selected = UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypes);
+                    if (selected != null && getModel().getGraphicsType().getItems().contains(selected)) {
+                        maybeSetSelectedItem(getModel().getGraphicsType(), selected);
+                    }
 
-                maybeSetSelectedItem(model.getNumOfMonitors(), vmBase.getNumOfMonitors());
-                maybeSetSelectedItem(model.getUsbPolicy(), vmBase.getUsbPolicy());
-                maybeSetEntity(model.getIsSmartcardEnabled(), vmBase.isSmartcardEnabled());
-                maybeSetSingleQxlPci(vmBase);
+                    maybeSetSelectedItem(model.getNumOfMonitors(), vmBase.getNumOfMonitors());
+                    maybeSetSelectedItem(model.getUsbPolicy(), vmBase.getUsbPolicy());
+                    maybeSetEntity(model.getIsSmartcardEnabled(), vmBase.isSmartcardEnabled());
+                    maybeSetSingleQxlPci(vmBase);
 
-                activate();
-            }
-        }));
+                    activate();
+                }));
     }
 
     protected void maybeSetSingleQxlPci(VmBase vmBase) {

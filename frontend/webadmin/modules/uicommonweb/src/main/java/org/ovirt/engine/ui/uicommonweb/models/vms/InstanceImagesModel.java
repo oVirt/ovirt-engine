@@ -13,15 +13,12 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
 
@@ -159,12 +156,9 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
             return;
         }
 
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(new AsyncCallback<List<Disk>>() {
-            @Override
-            public void onSuccess(List<Disk> disks) {
-                Iterator<InstanceImageLineModel> lineModelIterator = orderedDisksIterator(disks, vm);
-                storeNextDisk(lineModelIterator, vm);
-            }
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(disks -> {
+            Iterator<InstanceImageLineModel> lineModelIterator = orderedDisksIterator(disks, vm);
+            storeNextDisk(lineModelIterator, vm);
         }), vm.getId());
     }
 
@@ -247,12 +241,9 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
         } else {
             diskModel.setVm(vm);
             diskModel.getDiskVmElement().getId().setVmId(vm.getId());
-            diskModel.store(new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-                    // have to wait until the previous returned because the operation needs a lock on the VM
-                    storeNextDisk(lineModelIterator, vm);
-                }
+            diskModel.store(result -> {
+                // have to wait until the previous returned because the operation needs a lock on the VM
+                storeNextDisk(lineModelIterator, vm);
             });
         }
 

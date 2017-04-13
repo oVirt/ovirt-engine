@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerServic
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -84,12 +83,9 @@ public class HostGlusterSwiftListModel extends SearchableListModel<VDS, GlusterS
             return;
         }
 
-        AsyncDataProvider.getInstance().getGlusterSwiftServices(new AsyncQuery<>(new AsyncCallback<List<GlusterServerService>>() {
-            @Override
-            public void onSuccess(List<GlusterServerService> returnValue) {
-                setItems(returnValue);
-                updateActionAvailability();
-            }
+        AsyncDataProvider.getInstance().getGlusterSwiftServices(new AsyncQuery<>(returnValue -> {
+            setItems(returnValue);
+            updateActionAvailability();
         }), getEntity().getId());
     }
 

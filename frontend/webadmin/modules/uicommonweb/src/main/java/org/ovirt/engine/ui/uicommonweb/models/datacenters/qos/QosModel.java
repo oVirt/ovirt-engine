@@ -16,8 +16,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T>> extends Model {
     private T qos;
@@ -82,17 +80,14 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
     protected void executeSave() {
         final QosParametersBase<T> parameters = getParameters();
         parameters.setQos(getQos());
-        Frontend.getInstance().runAction(getVdcAction(), parameters, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result1) {
-                VdcReturnValueBase retVal = result1.getReturnValue();
-                boolean succeeded = false;
-                if (retVal != null && retVal.getSucceeded()) {
-                    succeeded = true;
-                    getQos().setId((Guid) retVal.getActionReturnValue());
-                }
-                postSaveAction(succeeded);
+        Frontend.getInstance().runAction(getVdcAction(), parameters, result -> {
+            VdcReturnValueBase retVal = result.getReturnValue();
+            boolean succeeded = false;
+            if (retVal != null && retVal.getSucceeded()) {
+                succeeded = true;
+                getQos().setId((Guid) retVal.getActionReturnValue());
             }
+            postSaveAction(succeeded);
         });
     }
 

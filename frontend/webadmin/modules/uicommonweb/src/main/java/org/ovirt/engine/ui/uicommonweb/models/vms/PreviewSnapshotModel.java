@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -35,43 +34,41 @@ public class PreviewSnapshotModel extends Model {
     @Override
     public void initialize() {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllVmSnapshotsFromConfigurationByVmId,
-                new IdQueryParameters(vmId), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue response) {
-                if (response != null && response.getSucceeded()) {
-                    ArrayList<SnapshotModel> snapshotModels = new ArrayList<>();
-                    ArrayList<Snapshot> snapshots = response.getReturnValue();
-                    sortSnapshots(snapshots);
+                new IdQueryParameters(vmId), new AsyncQuery<VdcQueryReturnValue>(response -> {
+                    if (response != null && response.getSucceeded()) {
+                        ArrayList<SnapshotModel> snapshotModels = new ArrayList<>();
+                        ArrayList<Snapshot> snapshots = response.getReturnValue();
+                        sortSnapshots(snapshots);
 
-                    Guid userSelectedSnapshotId = getSnapshotModel().getEntity().getId();
+                        Guid userSelectedSnapshotId = getSnapshotModel().getEntity().getId();
 
-                    for (Snapshot snapshot : snapshots) {
-                        SnapshotModel snapshotModel = new SnapshotModel();
-                        snapshotModel.setEntity(snapshot);
-                        snapshotModel.getMemory().setEntity(false);
-                        snapshotModel.setDisks((ArrayList<DiskImage>) snapshot.getDiskImages());
-                        snapshotModels.add(snapshotModel);
+                        for (Snapshot snapshot : snapshots) {
+                            SnapshotModel snapshotModel = new SnapshotModel();
+                            snapshotModel.setEntity(snapshot);
+                            snapshotModel.getMemory().setEntity(false);
+                            snapshotModel.setDisks((ArrayList<DiskImage>) snapshot.getDiskImages());
+                            snapshotModels.add(snapshotModel);
 
-                        if (snapshot.getType() == Snapshot.SnapshotType.ACTIVE) {
-                            activeSnapshotId = snapshot.getId();
+                            if (snapshot.getType() == Snapshot.SnapshotType.ACTIVE) {
+                                activeSnapshotId = snapshot.getId();
+                            }
                         }
+
+                        getSnapshots().setItems(snapshotModels);
+                        updateDiskSnapshotsMap();
+
+                        // Update disk-snapshots map
+                        updateDiskSnapshotsMap();
+
+                        // First selecting the active snapshot for ensuring default disks selection
+                        // (i.e. when some disks are missing from the selected snapshot,
+                        // the corresponding disks from the active snapshot should be selected).
+                        selectSnapshot(activeSnapshotId);
+
+                        // Selecting the snapshot the was selected by the user
+                        selectSnapshot(userSelectedSnapshotId);
                     }
-
-                    getSnapshots().setItems(snapshotModels);
-                    updateDiskSnapshotsMap();
-
-                    // Update disk-snapshots map
-                    updateDiskSnapshotsMap();
-
-                    // First selecting the active snapshot for ensuring default disks selection
-                    // (i.e. when some disks are missing from the selected snapshot,
-                    // the corresponding disks from the active snapshot should be selected).
-                    selectSnapshot(activeSnapshotId);
-
-                    // Selecting the snapshot the was selected by the user
-                    selectSnapshot(userSelectedSnapshotId);
-                }
-            }}));
+                }));
     }
 
     // Sort snapshots by creation date (keep active snapshot on top)

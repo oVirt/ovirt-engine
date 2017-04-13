@@ -12,14 +12,11 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
@@ -68,12 +65,9 @@ public class PoolItemBehavior extends ItemBehavior {
                 false);
 
         Frontend.getInstance().runAction(VdcActionType.AttachUserToVmFromPoolAndRun, params,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        if (!result.getReturnValue().getSucceeded()) {
-                            return;
-                        }
+                result -> {
+                    if (!result.getReturnValue().getSucceeded()) {
+                        return;
                     }
                 }, this);
     }
@@ -98,17 +92,14 @@ public class PoolItemBehavior extends ItemBehavior {
         } else {
             Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                     new IdQueryParameters(entity.getVmPoolId()),
-                    new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                        @Override
-                        public void onSuccess(VdcQueryReturnValue returnValue) {
+                    new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
 
-                            if (returnValue != null) {
-                                VM vm = returnValue.getReturnValue();
-                                if (vm == null) {
-                                    return;
-                                }
-                                updatePropertiesFromPoolRepresentant(vm);
+                        if (returnValue != null) {
+                            VM vm = returnValue.getReturnValue();
+                            if (vm == null) {
+                                return;
                             }
+                            updatePropertiesFromPoolRepresentant(vm);
                         }
                     }));
         }

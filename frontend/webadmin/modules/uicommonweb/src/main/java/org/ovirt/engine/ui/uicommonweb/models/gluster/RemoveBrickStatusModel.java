@@ -6,8 +6,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
@@ -73,13 +71,10 @@ public class RemoveBrickStatusModel extends VolumeRebalanceStatusModel {
 
     @Override
     public void refreshDetails(GlusterVolumeEntity volumeEntity) {
-        AsyncDataProvider.getInstance().getGlusterRemoveBricksStatus(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                GlusterVolumeTaskStatusEntity statusEntity = returnValue.getReturnValue();
-                if (statusEntity != null) {
-                    showStatus(statusEntity);
-                }
+        AsyncDataProvider.getInstance().getGlusterRemoveBricksStatus(new AsyncQuery<>(returnValue -> {
+            GlusterVolumeTaskStatusEntity statusEntity = returnValue.getReturnValue();
+            if (statusEntity != null) {
+                showStatus(statusEntity);
             }
         }), volumeEntity.getClusterId(), volumeEntity.getId(), getBricks());
     }

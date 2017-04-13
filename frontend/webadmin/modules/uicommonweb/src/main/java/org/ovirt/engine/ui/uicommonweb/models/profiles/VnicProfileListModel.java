@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -149,24 +148,21 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
             StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
 
             IdQueryParameters queryParams = new IdQueryParameters(dc.getId());
-            Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, queryParams, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                @Override
-                public void onSuccess(VdcQueryReturnValue returnValue) {
-                    Collection<Network> networks = returnValue.getReturnValue();
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, queryParams, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                Collection<Network> networks = returnValue.getReturnValue();
 
-                    profileModel.getNetwork().setItems(networks);
+                profileModel.getNetwork().setItems(networks);
 
-                    if (profileModel instanceof EditVnicProfileModel) {
-                        Network currentNetwork =
-                                findNetwork(profileModel.getProfile().getNetworkId(), networks);
-                        profileModel.getNetwork().setSelectedItem(currentNetwork);
-                        profileModel.getNetwork().setIsChangeable(false);
-                    } else {
-                        profileModel.getNetwork().setSelectedItem(Linq.firstOrNull(networks));
-                    }
-
-                    profileModel.stopProgress();
+                if (profileModel instanceof EditVnicProfileModel) {
+                    Network currentNetwork =
+                            findNetwork(profileModel.getProfile().getNetworkId(), networks);
+                    profileModel.getNetwork().setSelectedItem(currentNetwork);
+                    profileModel.getNetwork().setIsChangeable(false);
+                } else {
+                    profileModel.getNetwork().setSelectedItem(Linq.firstOrNull(networks));
                 }
+
+                profileModel.stopProgress();
             }));
         }
     }

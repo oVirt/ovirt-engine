@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -48,8 +47,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingNonClust
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewInstanceTypeModelBehavior;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 import com.google.inject.Inject;
 
@@ -140,33 +137,30 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
 
         final Guid instanceTypeId = getSelectedItem().getId();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsByInstanceTypeId,
-                new IdQueryParameters(instanceTypeId), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                List<VM> vmsAttachedToInstanceType = returnValue.getReturnValue();
-                if (vmsAttachedToInstanceType == null || vmsAttachedToInstanceType.size() == 0) {
-                    window.setTitle(ConstantsManager.getInstance().getConstants().removeInstanceTypeTitle());
-                    window.setItems(Arrays.asList(getSelectedItem().getName()));
-                } else {
-                    List<String> attachedVmsNames = new ArrayList<>();
-                    for (VM vm : vmsAttachedToInstanceType) {
-                        attachedVmsNames.add(vm.getName());
+                new IdQueryParameters(instanceTypeId), new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    List<VM> vmsAttachedToInstanceType = returnValue.getReturnValue();
+                    if (vmsAttachedToInstanceType == null || vmsAttachedToInstanceType.size() == 0) {
+                        window.setTitle(ConstantsManager.getInstance().getConstants().removeInstanceTypeTitle());
+                        window.setItems(Arrays.asList(getSelectedItem().getName()));
+                    } else {
+                        List<String> attachedVmsNames = new ArrayList<>();
+                        for (VM vm : vmsAttachedToInstanceType) {
+                            attachedVmsNames.add(vm.getName());
+                        }
+
+                        Collections.sort(attachedVmsNames);
+
+                        window.setItems(attachedVmsNames);
+
+                        window.getLatch().setIsAvailable(true);
+                        window.getLatch().setIsChangeable(true);
+                        window.setNote(ConstantsManager.getInstance().getConstants().vmsAttachedToInstanceTypeNote());
+
+                        window.setMessage(ConstantsManager.getInstance().getConstants().vmsAttachedToInstanceTypeWarningMessage());
                     }
 
-                    Collections.sort(attachedVmsNames);
-
-                    window.setItems(attachedVmsNames);
-
-                    window.getLatch().setIsAvailable(true);
-                    window.getLatch().setIsChangeable(true);
-                    window.setNote(ConstantsManager.getInstance().getConstants().vmsAttachedToInstanceTypeNote());
-
-                    window.setMessage(ConstantsManager.getInstance().getConstants().vmsAttachedToInstanceTypeWarningMessage());
-                }
-
-                window.stopProgress();
-            }
-        }));
+                    window.stopProgress();
+                }));
 
 
 
@@ -182,22 +176,19 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         }
 
         AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery<>(
-                new AsyncCallback<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean isNameUnique) {
-                        if (isNameUnique) {
-                            postInstanceTypeNameUniqueCheck();
-                        } else {
-                            UnitVmModel VmModel = (UnitVmModel) getWindow();
-                            VmModel.getInvalidityReasons().clear();
-                            VmModel.getName()
-                                    .getInvalidityReasons()
-                                    .add(ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .nameMustBeUniqueInvalidReason());
-                            VmModel.getName().setIsValid(false);
-                            VmModel.setIsValid(false);
-                        }
+                isNameUnique -> {
+                    if (isNameUnique) {
+                        postInstanceTypeNameUniqueCheck();
+                    } else {
+                        UnitVmModel VmModel = (UnitVmModel) getWindow();
+                        VmModel.getInvalidityReasons().clear();
+                        VmModel.getName()
+                                .getInvalidityReasons()
+                                .add(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .nameMustBeUniqueInvalidReason());
+                        VmModel.getName().setIsValid(false);
+                        VmModel.setIsValid(false);
                     }
                 }), ((UnitVmModel) getWindow()).getName().getEntity(), null);
     }
@@ -302,12 +293,9 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
 
         Frontend.getInstance().runAction(VdcActionType.RemoveVmTemplate,
                 new VmTemplateManagementParameters(instanceTypeId),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        model.stopProgress();
-                        cancel();
-                    }
+                result -> {
+                    model.stopProgress();
+                    cancel();
                 },
                 this);
     }

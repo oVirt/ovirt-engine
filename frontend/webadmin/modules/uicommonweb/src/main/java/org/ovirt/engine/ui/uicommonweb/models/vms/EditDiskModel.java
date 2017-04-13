@@ -5,7 +5,6 @@ import java.util.Arrays;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -15,13 +14,11 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NonNegativeLongNumberValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class EditDiskModel extends AbstractDiskModel {
@@ -84,12 +81,7 @@ public class EditDiskModel extends AbstractDiskModel {
         // this needs to be executed after the data center is loaded because the update quota needs both values
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             Guid storageDomainId = ((DiskImage) getDisk()).getStorageIds().get(0);
-            AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery<>(new AsyncCallback<StorageDomain>() {
-                @Override
-                public void onSuccess(StorageDomain storageDomain) {
-                    getStorageDomain().setSelectedItem(storageDomain);
-                }
-            }), storageDomainId);
+            AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery<>(storageDomain -> getStorageDomain().setSelectedItem(storageDomain)), storageDomainId);
         } else if (getDisk().getDiskStorageType() == DiskStorageType.LUN) {
             LunDisk lunDisk = (LunDisk) getDisk();
             getDiskStorageType().setEntity(DiskStorageType.LUN);
@@ -132,13 +124,10 @@ public class EditDiskModel extends AbstractDiskModel {
         startProgress();
 
         VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(getDiskVmElement(), getDisk());
-        IFrontendActionAsyncCallback onFinished = callback != null ? callback : new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                EditDiskModel diskModel = (EditDiskModel) result.getState();
-                diskModel.stopProgress();
-                diskModel.cancel();
-            }
+        IFrontendActionAsyncCallback onFinished = callback != null ? callback : result -> {
+            EditDiskModel diskModel = (EditDiskModel) result.getState();
+            diskModel.stopProgress();
+            diskModel.cancel();
         };
         Frontend.getInstance().runAction(VdcActionType.UpdateVmDisk, parameters, onFinished, this);
     }
@@ -173,12 +162,7 @@ public class EditDiskModel extends AbstractDiskModel {
 
     @Override
     protected void updateStorageDomains(final StoragePool datacenter) {
-        AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery<>(new AsyncCallback<StorageDomain>() {
-            @Override
-            public void onSuccess(StorageDomain storageDomain) {
-                getStorageDomain().setSelectedItem(storageDomain);
-            }
-        }), getStorageDomainId());
+        AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery<>(storageDomain -> getStorageDomain().setSelectedItem(storageDomain)), getStorageDomainId());
     }
 
     @Override

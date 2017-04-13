@@ -20,8 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class StorageDiskListModel extends SearchableListModel<StorageDomain, DiskImage> {
     private UICommand removeCommand;
@@ -204,13 +202,10 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDisk, paramerterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        StorageDiskListModel localModel = (StorageDiskListModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-                    }
+                result -> {
+                    StorageDiskListModel localModel = (StorageDiskListModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
                 },
                 this);
     }

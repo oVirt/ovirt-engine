@@ -19,8 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class SystemPermissionListModel extends SearchableListModel {
@@ -151,15 +149,12 @@ public class SystemPermissionListModel extends SearchableListModel {
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.AddSystemPermission, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        AdElementListModel localModel = (AdElementListModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    AdElementListModel localModel = (AdElementListModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
     }
 
@@ -206,15 +201,12 @@ public class SystemPermissionListModel extends SearchableListModel {
             model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.RemoveSystemPermission, list,
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
+                    result -> {
 
-                            ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                            localModel.stopProgress();
-                            cancel();
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
 
-                        }
                     }, model);
         }
     }

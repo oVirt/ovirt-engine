@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -185,12 +184,9 @@ public class InstallModel extends Model {
     }
 
     public void fetchEngineSshPublicKey() {
-        AsyncDataProvider.getInstance().getEngineSshPublicKey(new AsyncQuery<>(new AsyncCallback<String>() {
-            @Override
-            public void onSuccess(String pk) {
-                if (pk != null && pk.length() > 0) {
-                    getPublicKey().setEntity(pk);
-                }
+        AsyncDataProvider.getInstance().getEngineSshPublicKey(new AsyncQuery<>(pk -> {
+            if (pk != null && pk.length() > 0) {
+                getPublicKey().setEntity(pk);
             }
         }));
     }

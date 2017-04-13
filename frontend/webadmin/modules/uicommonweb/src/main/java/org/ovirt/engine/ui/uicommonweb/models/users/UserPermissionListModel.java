@@ -18,8 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class UserPermissionListModel extends SearchableListModel<DbUser, Permission> {
@@ -65,18 +63,15 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
         IdQueryParameters mlaParams = new IdQueryParameters(getEntity().getId());
         mlaParams.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId, mlaParams, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                ArrayList<Permission> list = returnValue.getReturnValue();
-                ArrayList<Permission> newList = new ArrayList<>();
-                for (Permission permission : list) {
-                    if (!permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
-                        newList.add(permission);
-                    }
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId, mlaParams, new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+            ArrayList<Permission> list = returnValue.getReturnValue();
+            ArrayList<Permission> newList = new ArrayList<>();
+            for (Permission permission : list) {
+                if (!permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
+                    newList.add(permission);
                 }
-                setItems(newList);
             }
+            setItems(newList);
         }));
 
         setIsQueryFirstTime(false);
@@ -119,15 +114,12 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
             model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
+                    result -> {
 
-                            ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                            localModel.stopProgress();
-                            cancel();
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
 
-                        }
                     }, model);
         }
         else {

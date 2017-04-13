@@ -152,18 +152,15 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     }
 
     protected void updateDataCenters() {
-        AsyncCallback<List<StoragePool>> callback = new AsyncCallback<List<StoragePool>>() {
-            @Override
-            public void onSuccess(List<StoragePool> dataCenters) {
-                // Sorting by name
-                Collections.sort(dataCenters, new NameableComparator());
+        AsyncCallback<List<StoragePool>> callback = dataCenters -> {
+            // Sorting by name
+            Collections.sort(dataCenters, new NameableComparator());
 
-                getDataCenter().setItems(dataCenters);
-                getDataCenter().setIsEmpty(dataCenters.isEmpty());
-                updateControlsAvailability();
+            getDataCenter().setItems(dataCenters);
+            getDataCenter().setIsEmpty(dataCenters.isEmpty());
+            updateControlsAvailability();
 
-                stopProgress();
-            }
+            stopProgress();
         };
 
         startProgress();
@@ -186,15 +183,12 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     protected abstract List<StorageDomain> filterStorageDomains(List<StorageDomain> storageDomains);
 
     protected void updateStorageDomains(Guid storagePoolId) {
-        AsyncCallback<List<StorageDomain>> callback = new AsyncCallback<List<StorageDomain>>() {
-            @Override
-            public void onSuccess(List<StorageDomain> returnValue) {
-                List<StorageDomain> storageDomains = filterStorageDomains(returnValue);
-                getStorageDomain().setItems(storageDomains);
-                getStorageDomain().setIsEmpty(storageDomains.isEmpty());
-                updateControlsAvailability();
-                stopProgress();
-            }
+        AsyncCallback<List<StorageDomain>> callback = returnValue -> {
+            List<StorageDomain> storageDomains = filterStorageDomains(returnValue);
+            getStorageDomain().setItems(storageDomains);
+            getStorageDomain().setIsEmpty(storageDomains.isEmpty());
+            updateControlsAvailability();
+            stopProgress();
         };
 
         startProgress();
@@ -207,15 +201,12 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     }
 
     protected void updateClusters(Guid storagePoolId) {
-        AsyncCallback<List<Cluster>> callback = new AsyncCallback<List<Cluster>>() {
-            @Override
-            public void onSuccess(List<Cluster> returnValue) {
-                List<Cluster> clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(returnValue);
-                getCluster().setItems(clusters);
-                getCluster().setIsEmpty(clusters.isEmpty());
-                updateControlsAvailability();
-                stopProgress();
-            }
+        AsyncCallback<List<Cluster>> callback = returnValue -> {
+            List<Cluster> clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(returnValue);
+            getCluster().setItems(clusters);
+            getCluster().setIsEmpty(clusters.isEmpty());
+            updateControlsAvailability();
+            stopProgress();
         };
 
         startProgress();
@@ -244,16 +235,13 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
 
         startProgress();
         AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery<>(
-                new AsyncCallback<List<Quota>>() {
-                    @Override
-                    public void onSuccess(List<Quota> quotas) {
-                        quotas = (quotas != null) ? quotas : new ArrayList<Quota>();
+                quotas -> {
+                    quotas = (quotas != null) ? quotas : new ArrayList<Quota>();
 
-                        getQuota().setItems(quotas);
-                        getQuota().setIsEmpty(quotas.isEmpty());
-                        updateControlsAvailability();
-                        stopProgress();
-                    }
+                    getQuota().setItems(quotas);
+                    getQuota().setIsEmpty(quotas.isEmpty());
+                    updateControlsAvailability();
+                    stopProgress();
                 }), storageDomain.getId(), null);
     }
 

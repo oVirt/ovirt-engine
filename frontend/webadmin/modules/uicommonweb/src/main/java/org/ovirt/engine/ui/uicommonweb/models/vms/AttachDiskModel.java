@@ -22,12 +22,9 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class AttachDiskModel extends NewDiskModel {
@@ -102,18 +99,15 @@ public class AttachDiskModel extends NewDiskModel {
 
     private void addBootChangeListener() {
         // Whenever the changeability of isBootable changes propagate it to all child DiskModels to reflect it in the view
-        getIsBootable().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
-                    for (ListModel<EntityModel<DiskModel>> disks : getAttachableDisksMap().values()) {
-                        if (disks.getItems() != null) {
-                            for (EntityModel<DiskModel> disk : disks.getItems()) {
-                                boolean isChangeBootAllowed = ((EntityModel) sender).getIsChangable();
-                                disk.getEntity().getIsBootable().setIsChangeable(isChangeBootAllowed);
-                            }
-                            disks.getItemsChangedEvent().raise(disks, EventArgs.EMPTY);
+        getIsBootable().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
+                for (ListModel<EntityModel<DiskModel>> disks : getAttachableDisksMap().values()) {
+                    if (disks.getItems() != null) {
+                        for (EntityModel<DiskModel> disk : disks.getItems()) {
+                            boolean isChangeBootAllowed = ((EntityModel) sender).getIsChangable();
+                            disk.getEntity().getIsBootable().setIsChangeable(isChangeBootAllowed);
                         }
+                        disks.getItemsChangedEvent().raise(disks, EventArgs.EMPTY);
                     }
                 }
             }
@@ -152,44 +146,35 @@ public class AttachDiskModel extends NewDiskModel {
             Collections.sort(disks, new DiskByDiskAliasComparator());
             final List<DiskModel> diskModels = DiskModel.disksToDiskModelList(disks);
 
-            AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getVmOsId(), getVm().getClusterCompatibilityVersion(), new AsyncQuery<>(new AsyncCallback<List<DiskInterface>>() {
-                @Override
-                public void onSuccess(final List<DiskInterface> diskInterfaces) {
-                    AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-                        @Override
-                        public void onSuccess(Boolean virtioScsiEnabledReturnValue) {
-                            boolean virtioScsiEnabled = Boolean.TRUE.equals(virtioScsiEnabledReturnValue);
-                            if (!virtioScsiEnabled) {
-                                diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
-                            }
-                            for (DiskModel diskModel : diskModels) {
-                                diskModel.getDiskInterface().setItems(diskInterfaces);
-                                diskModel.getDiskInterface().setSelectedItem(virtioScsiEnabled ? DiskInterface.VirtIO_SCSI : DiskInterface.VirtIO);
-                                if (getIsBootable().getIsChangable()) { // no point in adding a listener if the value cam't be changed
-                                    diskModel.getIsBootable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-                                        @Override
-                                        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+            AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getVmOsId(), getVm().getClusterCompatibilityVersion(), new AsyncQuery<>(
+                    diskInterfaces -> AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(
+                            virtioScsiEnabledReturnValue -> {
+                                boolean virtioScsiEnabled = Boolean.TRUE.equals(virtioScsiEnabledReturnValue);
+                                if (!virtioScsiEnabled) {
+                                    diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
+                                }
+                                for (DiskModel diskModel : diskModels) {
+                                    diskModel.getDiskInterface().setItems(diskInterfaces);
+                                    diskModel.getDiskInterface().setSelectedItem(virtioScsiEnabled ? DiskInterface.VirtIO_SCSI : DiskInterface.VirtIO);
+                                    if (getIsBootable().getIsChangable()) { // no point in adding a listener if the value cam't be changed
+                                        diskModel.getIsBootable().getEntityChangedEvent().addListener((ev, sender, args) -> {
                                             boolean isBootableMarked = (Boolean) ((EntityModel) sender).getEntity();
                                             getIsBootable().setIsChangeable(!isBootableMarked);
-                                        }
-                                    });
+                                        });
+                                    }
+                                    else {
+                                        diskModel.getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
+                                        diskModel.getIsBootable().setIsChangeable(false);
+                                    }
                                 }
-                                else {
-                                    diskModel.getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
-                                    diskModel.getIsBootable().setIsChangeable(false);
-                                }
-                            }
-                            List<EntityModel<DiskModel>> entities =
-                                    diskModels.stream()
-                                        .filter(m -> m.getDisk().getDiskStorageType() == diskStorageType)
-                                        .map(EntityModel::new)
-                                        .collect(Collectors.toList());
+                                List<EntityModel<DiskModel>> entities =
+                                        diskModels.stream()
+                                            .filter(m -> m.getDisk().getDiskStorageType() == diskStorageType)
+                                            .map(EntityModel::new)
+                                            .collect(Collectors.toList());
 
-                            initAttachableDisks(entities);
-                        }
-                    }), getVmId());
-                }
-            }));
+                                initAttachableDisks(entities);
+                            }), getVmId())));
 
 
         }
@@ -223,13 +208,10 @@ public class AttachDiskModel extends NewDiskModel {
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
 
-        IFrontendActionAsyncCallback onFinishCallback = callback != null ? callback : new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                NewDiskModel diskModel = (NewDiskModel) result.getState();
-                diskModel.stopProgress();
-                diskModel.cancel();
-            }
+        IFrontendActionAsyncCallback onFinishCallback = callback != null ? callback : result -> {
+            NewDiskModel diskModel = (NewDiskModel) result.getState();
+            diskModel.stopProgress();
+            diskModel.cancel();
         };
 
         List<EntityModel<DiskModel>> disksToAttach = getSelectedDisks();
@@ -333,12 +315,7 @@ public class AttachDiskModel extends NewDiskModel {
     }
 
     private void addSelectedItemsChangedListener() {
-        IEventListener<EventArgs> selectionChangedListener = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateWarningLabel();
-            }
-        };
+        IEventListener<EventArgs> selectionChangedListener = (ev, sender, args) -> updateWarningLabel();
         attachableDisksMap.get(DiskStorageType.IMAGE).
                 getSelectedItemsChangedEvent().addListener(selectionChangedListener);
         attachableDisksMap.get(DiskStorageType.CINDER).
@@ -348,12 +325,7 @@ public class AttachDiskModel extends NewDiskModel {
     }
 
     private void addIsPluggedEntityChangedListener() {
-        IEventListener<EventArgs> entityChangedListener = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateWarningLabel();
-            }
-        };
+        IEventListener<EventArgs> entityChangedListener = (ev, sender, args) -> updateWarningLabel();
         getIsPlugged().getEntityChangedEvent().addListener(entityChangedListener);
     }
 }

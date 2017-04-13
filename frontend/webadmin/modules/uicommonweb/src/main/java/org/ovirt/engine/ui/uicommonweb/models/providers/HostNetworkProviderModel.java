@@ -5,13 +5,9 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class HostNetworkProviderModel extends EntityModel {
 
@@ -40,17 +36,13 @@ public class HostNetworkProviderModel extends EntityModel {
     }
 
     public HostNetworkProviderModel() {
-        getNetworkProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                Provider<OpenstackNetworkProviderProperties> provider = getNetworkProviders().getSelectedItem();
-                getNetworkProviderType().setIsAvailable(provider != null);
-                getNetworkProviderType().setSelectedItem(provider == null ? null : provider.getType());
-                boolean isNeutron = getNetworkProviderType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
-                getNeutronAgentModel().init(isNeutron ? provider : new Provider<OpenstackNetworkProviderProperties>());
-                getNeutronAgentModel().setIsAvailable(isNeutron);
-            }
+        getNetworkProviders().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            Provider<OpenstackNetworkProviderProperties> provider = getNetworkProviders().getSelectedItem();
+            getNetworkProviderType().setIsAvailable(provider != null);
+            getNetworkProviderType().setSelectedItem(provider == null ? null : provider.getType());
+            boolean isNeutron = getNetworkProviderType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
+            getNeutronAgentModel().init(isNeutron ? provider : new Provider<OpenstackNetworkProviderProperties>());
+            getNeutronAgentModel().setIsAvailable(isNeutron);
         });
 
         getNetworkProviderType().setIsChangeable(false);
@@ -62,15 +54,12 @@ public class HostNetworkProviderModel extends EntityModel {
 
     private void initNetworkProvidersList() {
         startProgress();
-        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
-            @Override
-            public void onSuccess(List<Provider<?>> result) {
-                stopProgress();
-                List<Provider<OpenstackNetworkProviderProperties>> providers = (List) result;
-                providers.add(0, null);
-                getNetworkProviders().setItems(providers);
-                getNetworkProviders().setSelectedItem(null);
-            }
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(result -> {
+            stopProgress();
+            List<Provider<OpenstackNetworkProviderProperties>> providers = (List) result;
+            providers.add(0, null);
+            getNetworkProviders().setItems(providers);
+            getNetworkProviders().setSelectedItem(null);
         }), ProviderType.OPENSTACK_NETWORK);
     }
 

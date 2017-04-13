@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -370,62 +369,56 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     protected void updateStorageDomains(final StoragePool datacenter) {
-        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-            @Override
-            public void onSuccess(List<StorageDomain> storageDomains) {
-                Predicate<StorageDomain> domainByDiskType;
+        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery<>(storageDomains -> {
+            Predicate<StorageDomain> domainByDiskType;
+            switch (getDiskStorageType().getEntity()) {
+                case IMAGE:
+                    domainByDiskType = d -> d.getStorageDomainType().isDataDomain();
+                    break;
+                case CINDER:
+                    domainByDiskType = d -> d.getStorageType() == StorageType.CINDER;
+                    break;
+                default:
+                    domainByDiskType = s -> true;
+            }
+
+            List<StorageDomain> filteredStorageDomains =
+                    storageDomains.stream()
+                            .filter(domainByDiskType)
+                            .filter(d -> d.getStatus() == StorageDomainStatus.Active)
+                            .sorted(new NameableComparator())
+                            .collect(Collectors.toList());
+
+
+            StorageDomain storage = Linq.firstOrNull(filteredStorageDomains);
+            getStorageDomain().setItems(filteredStorageDomains, storage);
+            if (storage == null) {
                 switch (getDiskStorageType().getEntity()) {
                     case IMAGE:
-                        domainByDiskType = d -> d.getStorageDomainType().isDataDomain();
+                        setMessage(constants.noActiveStorageDomainsInDC());
+                        getIsModelDisabled().setEntity(true);
                         break;
                     case CINDER:
-                        domainByDiskType = d -> d.getStorageType() == StorageType.CINDER;
+                        setMessage(constants.noCinderStorageDomainsInDC());
+                        getIsModelDisabled().setEntity(true);
                         break;
-                    default:
-                        domainByDiskType = s -> true;
                 }
-
-                List<StorageDomain> filteredStorageDomains =
-                        storageDomains.stream()
-                                .filter(domainByDiskType)
-                                .filter(d -> d.getStatus() == StorageDomainStatus.Active)
-                                .sorted(new NameableComparator())
-                                .collect(Collectors.toList());
-
-
-                StorageDomain storage = Linq.firstOrNull(filteredStorageDomains);
-                getStorageDomain().setItems(filteredStorageDomains, storage);
-                if (storage == null) {
-                    switch (getDiskStorageType().getEntity()) {
-                        case IMAGE:
-                            setMessage(constants.noActiveStorageDomainsInDC());
-                            getIsModelDisabled().setEntity(true);
-                            break;
-                        case CINDER:
-                            setMessage(constants.noCinderStorageDomainsInDC());
-                            getIsModelDisabled().setEntity(true);
-                            break;
-                    }
-                }
-                updatePassDiscardAvailability();
             }
+            updatePassDiscardAvailability();
         }), datacenter.getId(), ActionGroup.CREATE_DISK);
     }
 
     private void updateHosts(StoragePool datacenter) {
-        AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
-            @Override
-            public void onSuccess(List<VDS> hosts) {
-                ArrayList<VDS> filteredHosts = new ArrayList<>();
+        AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery<>(hosts -> {
+            ArrayList<VDS> filteredHosts = new ArrayList<>();
 
-                for (VDS host : hosts) {
-                    if (isHostAvailable(host)) {
-                        filteredHosts.add(host);
-                    }
+            for (VDS host : hosts) {
+                if (isHostAvailable(host)) {
+                    filteredHosts.add(host);
                 }
-                Collections.sort(filteredHosts, new NameableComparator());
-                getHost().setItems(filteredHosts);
             }
+            Collections.sort(filteredHosts, new NameableComparator());
+            getHost().setItems(filteredHosts);
         }), datacenter.getId());
     }
 
@@ -436,55 +429,44 @@ public abstract class AbstractDiskModel extends DiskModel {
         getIsModelDisabled().setEntity(false);
 
         if (isInVm) {
-            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(new AsyncCallback<StoragePool>() {
-                @Override
-                public void onSuccess(StoragePool dataCenter) {
-                    ArrayList<StoragePool> dataCenters = new ArrayList<>();
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(dataCenter -> {
+                ArrayList<StoragePool> dataCenters = new ArrayList<>();
 
-                    if (isDatacenterAvailable(dataCenter)) {
-                        dataCenters.add(dataCenter);
-                    }
+                if (isDatacenterAvailable(dataCenter)) {
+                    dataCenters.add(dataCenter);
+                }
 
-                    getDataCenter().setItems(dataCenters, Linq.firstOrNull(dataCenters));
+                getDataCenter().setItems(dataCenters, Linq.firstOrNull(dataCenters));
 
-                    if (dataCenters.isEmpty()) {
-                        setMessage(constants.relevantDCnotActive());
-                        getIsModelDisabled().setEntity(true);
-                    }
+                if (dataCenters.isEmpty()) {
+                    setMessage(constants.relevantDCnotActive());
+                    getIsModelDisabled().setEntity(true);
                 }
             }), getVm().getStoragePoolId());
             updateBootableDiskAvailable();
         }
         else {
-            AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-                @Override
-                public void onSuccess(List<StoragePool> dataCenters) {
-                    ArrayList<StoragePool> filteredDataCenters = new ArrayList<>();
+            AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
+                ArrayList<StoragePool> filteredDataCenters = new ArrayList<>();
 
-                    for (StoragePool dataCenter : dataCenters) {
-                        if (isDatacenterAvailable(dataCenter)) {
-                            filteredDataCenters.add(dataCenter);
-                        }
+                for (StoragePool dataCenter : dataCenters) {
+                    if (isDatacenterAvailable(dataCenter)) {
+                        filteredDataCenters.add(dataCenter);
                     }
+                }
 
-                    getDataCenter().setItems(filteredDataCenters);
+                getDataCenter().setItems(filteredDataCenters);
 
-                    if (filteredDataCenters.isEmpty()) {
-                        setMessage(constants.noActiveDataCenters());
-                        getIsModelDisabled().setEntity(true);
-                    }
+                if (filteredDataCenters.isEmpty()) {
+                    setMessage(constants.noActiveDataCenters());
+                    getIsModelDisabled().setEntity(true);
                 }
             }));
         }
     }
 
     protected void updateBootableDiskAvailable() {
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(new AsyncCallback<List<Disk>>() {
-            @Override
-            public void onSuccess(List<Disk> disks) {
-                updateCanSetBoot(disks);
-            }
-        }), getVm().getId());
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(disks -> updateCanSetBoot(disks)), getVm().getId());
     }
 
     public void updateCanSetBoot(List<Disk> vmDisks) {
@@ -547,14 +529,11 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     public void updateInterface(final Version clusterVersion) {
         if (getVm() != null) {
-            AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean returnValue1) {
-                    getIsVirtioScsiEnabled().setEntity(Boolean.TRUE.equals(returnValue1));
+            AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(r -> {
+                getIsVirtioScsiEnabled().setEntity(Boolean.TRUE.equals(r));
 
-                    updateInterfaceList(clusterVersion);
+                updateInterfaceList(clusterVersion);
 
-                }
             }), getVm().getId());
         } else {
             setInterfaces(AsyncDataProvider.getInstance().getDiskInterfaceList());
@@ -562,16 +541,14 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     public void updateInterfaceList(final Version clusterVersion) {
-        AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getOs(), clusterVersion, new AsyncQuery<>(new AsyncCallback<List<DiskInterface>>() {
-            @Override
-            public void onSuccess(List<DiskInterface> diskInterfaces) {
-                if (Boolean.FALSE.equals(getIsVirtioScsiEnabled().getEntity())) {
-                    diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
-                }
+        AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getOs(), clusterVersion, new AsyncQuery<>(
+                diskInterfaces -> {
+                    if (Boolean.FALSE.equals(getIsVirtioScsiEnabled().getEntity())) {
+                        diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
+                    }
 
-                setInterfaces(diskInterfaces);
-            }
-        }));
+                    setInterfaces(diskInterfaces);
+                }));
     }
 
     private void setInterfaces(List<DiskInterface> diskInterfaces) {
@@ -585,15 +562,12 @@ public abstract class AbstractDiskModel extends DiskModel {
             return;
         }
 
-        AsyncDataProvider.getInstance().getCinderVolumeTypesList(new AsyncQuery<>(new AsyncCallback<List<CinderVolumeType>>() {
-            @Override
-            public void onSuccess(List<CinderVolumeType> cinderVolumeTypes) {
-                List<String> volumeTypesNames = new ArrayList<>();
-                for (CinderVolumeType cinderVolumeType : cinderVolumeTypes) {
-                    volumeTypesNames.add(cinderVolumeType.getName());
-                }
-                getCinderVolumeType().setItems(volumeTypesNames);
+        AsyncDataProvider.getInstance().getCinderVolumeTypesList(new AsyncQuery<>(cinderVolumeTypes -> {
+            List<String> volumeTypesNames = new ArrayList<>();
+            for (CinderVolumeType cinderVolumeType : cinderVolumeTypes) {
+                volumeTypesNames.add(cinderVolumeType.getName());
             }
+            getCinderVolumeType().setItems(volumeTypesNames);
         }), storageDomain.getId());
     }
 
@@ -605,13 +579,7 @@ public abstract class AbstractDiskModel extends DiskModel {
 
         Frontend.getInstance().runQuery(VdcQueryType.GetDiskProfilesByStorageDomainId,
                 new IdQueryParameters(storageDomain.getId()),
-                new AsyncQuery<>(
-                        new AsyncCallback<VdcQueryReturnValue>() {
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue value) {
-                                setDiskProfilesList((List<DiskProfile>) value.getReturnValue());
-                            }
-                        }));
+                new AsyncQuery<VdcQueryReturnValue>(value -> setDiskProfilesList((List<DiskProfile>) value.getReturnValue())));
     }
 
     private void setDiskProfilesList(List<DiskProfile> diskProfiles) {
@@ -660,31 +628,28 @@ public abstract class AbstractDiskModel extends DiskModel {
         final Guid defaultQuota = diskQuota != null ? diskQuota : vmQuota;
 
         AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery<>(
-                new AsyncCallback<List<Quota>>() {
-                    @Override
-                    public void onSuccess(List<Quota> quotaList) {
-                        if (quotaList != null && !quotaList.isEmpty()) {
-                            getQuota().setItems(quotaList);
+                quotaList -> {
+                    if (quotaList != null && !quotaList.isEmpty()) {
+                        getQuota().setItems(quotaList);
 
-                            // If list contains default quota, return
-                            if (quotaList.get(0).getId().equals(defaultQuota)) {
-                                return;
-                            }
+                        // If list contains default quota, return
+                        if (quotaList.get(0).getId().equals(defaultQuota)) {
+                            return;
+                        }
+                    }
+
+                    if (diskQuota != null) {
+                        Quota quota = new Quota();
+                        quota.setId(diskQuota);
+                        quota.setQuotaName(getDiskImage().getQuotaName());
+
+                        if (quotaList == null) {
+                            quotaList = new ArrayList<>();
                         }
 
-                        if (diskQuota != null) {
-                            Quota quota = new Quota();
-                            quota.setId(diskQuota);
-                            quota.setQuotaName(getDiskImage().getQuotaName());
-
-                            if (quotaList == null) {
-                                quotaList = new ArrayList<>();
-                            }
-
-                            quotaList.add(quota);
-                            getQuota().setItems(quotaList);
-                            getQuota().setSelectedItem(quota);
-                        }
+                        quotaList.add(quota);
+                        getQuota().setItems(quotaList);
+                        getQuota().setSelectedItem(quota);
                     }
                 }), storageDomain.getId(), defaultQuota);
     }

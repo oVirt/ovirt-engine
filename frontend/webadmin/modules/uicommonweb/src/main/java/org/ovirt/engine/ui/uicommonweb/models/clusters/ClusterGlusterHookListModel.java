@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -24,10 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, GlusterHookEntity> {
 
@@ -163,14 +159,11 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.DisableGlusterHook, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancelConfirmation();
-                    }
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancelConfirmation();
                 }, model);
     }
 
@@ -201,24 +194,21 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
 
         contentModel.startProgress();
 
-        AsyncDataProvider.getInstance().getGlusterHookContent(new AsyncQuery<>(new AsyncCallback<String>() {
-            @Override
-            public void onSuccess(String content) {
-                contentModel.getContent().setEntity(content);
-                if (content == null) {
-                    contentModel.getContent().setIsAvailable(false);
-                    contentModel.setMessage(ConstantsManager.getInstance()
-                            .getConstants()
-                            .viewContentErrorGlusterHook());
-                }
-                else if (content.length() == 0) {
-                    contentModel.getContent().setIsAvailable(false);
-                    contentModel.setMessage(ConstantsManager.getInstance()
-                            .getConstants()
-                            .viewContentEmptyGlusterHook());
-                }
-                contentModel.stopProgress();
+        AsyncDataProvider.getInstance().getGlusterHookContent(new AsyncQuery<>(content -> {
+            contentModel.getContent().setEntity(content);
+            if (content == null) {
+                contentModel.getContent().setIsAvailable(false);
+                contentModel.setMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .viewContentErrorGlusterHook());
             }
+            else if (content.length() == 0) {
+                contentModel.getContent().setIsAvailable(false);
+                contentModel.setMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .viewContentEmptyGlusterHook());
+            }
+            contentModel.stopProgress();
         }), hookEntity.getId(), null);
 
         UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
@@ -247,45 +237,42 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
         setWindow(conflictsModel);
         conflictsModel.startProgress();
 
-        AsyncDataProvider.getInstance().getGlusterHook(new AsyncQuery<>(new AsyncCallback<GlusterHookEntity>() {
-            @Override
-            public void onSuccess(GlusterHookEntity returnValue) {
+        AsyncDataProvider.getInstance().getGlusterHook(new AsyncQuery<>(returnValue -> {
 
-                List<GlusterServerHook> serverHooks = returnValue.getServerHooks();
-                hookEntity.setServerHooks(serverHooks);
+            List<GlusterServerHook> serverHooks = returnValue.getServerHooks();
+            hookEntity.setServerHooks(serverHooks);
 
-                ArrayList<EntityModel<GlusterServerHook>> serverHookModels = new ArrayList<>();
-                GlusterServerHook engineCopy = new GlusterServerHook();
-                engineCopy.setHookId(hookEntity.getId());
-                engineCopy.setServerName("Engine (Master)"); //$NON-NLS-1$
-                engineCopy.setStatus(hookEntity.getStatus());
-                engineCopy.setContentType(hookEntity.getContentType());
-                engineCopy.setChecksum(hookEntity.getChecksum());
-                EntityModel<GlusterServerHook> engineCopyModel = new EntityModel<>(engineCopy);
-                serverHookModels.add(engineCopyModel);
+            ArrayList<EntityModel<GlusterServerHook>> serverHookModels = new ArrayList<>();
+            GlusterServerHook engineCopy = new GlusterServerHook();
+            engineCopy.setHookId(hookEntity.getId());
+            engineCopy.setServerName("Engine (Master)"); //$NON-NLS-1$
+            engineCopy.setStatus(hookEntity.getStatus());
+            engineCopy.setContentType(hookEntity.getContentType());
+            engineCopy.setChecksum(hookEntity.getChecksum());
+            EntityModel<GlusterServerHook> engineCopyModel = new EntityModel<>(engineCopy);
+            serverHookModels.add(engineCopyModel);
 
-                for (GlusterServerHook serverHook : serverHooks) {
-                    serverHookModels.add(new EntityModel<>(serverHook));
-                }
-
-                conflictsModel.getHookSources().setItems(serverHookModels);
-                conflictsModel.getHookSources().setSelectedItem(engineCopyModel);
-
-                ArrayList<GlusterServerHook> serverHooksWithEngine = new ArrayList<>(serverHooks);
-                serverHooksWithEngine.add(0, engineCopy);
-                conflictsModel.getServerHooksList().setItems(serverHooksWithEngine);
-                conflictsModel.getServerHooksList().setSelectedItem(engineCopy);
-
-                conflictsModel.stopProgress();
-
-                UICommand command = UICommand.createDefaultOkUiCommand("OnResolveConflicts", ClusterGlusterHookListModel.this); //$NON-NLS-1$
-                conflictsModel.getCommands().add(command);
-
-                command = new UICommand("Cancel", ClusterGlusterHookListModel.this); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().close());
-                command.setIsCancel(true);
-                conflictsModel.getCommands().add(command);
+            for (GlusterServerHook serverHook : serverHooks) {
+                serverHookModels.add(new EntityModel<>(serverHook));
             }
+
+            conflictsModel.getHookSources().setItems(serverHookModels);
+            conflictsModel.getHookSources().setSelectedItem(engineCopyModel);
+
+            ArrayList<GlusterServerHook> serverHooksWithEngine = new ArrayList<>(serverHooks);
+            serverHooksWithEngine.add(0, engineCopy);
+            conflictsModel.getServerHooksList().setItems(serverHooksWithEngine);
+            conflictsModel.getServerHooksList().setSelectedItem(engineCopy);
+
+            conflictsModel.stopProgress();
+
+            UICommand command = UICommand.createDefaultOkUiCommand("OnResolveConflicts", ClusterGlusterHookListModel.this); //$NON-NLS-1$
+            conflictsModel.getCommands().add(command);
+
+            command = new UICommand("Cancel", ClusterGlusterHookListModel.this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().close());
+            command.setIsCancel(true);
+            conflictsModel.getCommands().add(command);
         }), hookEntity.getId(), true);
     }
 
@@ -325,13 +312,10 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
                     resolveConflictsModel.getServerHooksList().getSelectedItem();
             Guid serverId = (serverHook == null) ? null : serverHook.getServerId();
             parameters.add(new GlusterHookManageParameters(hookEntity.getId(), serverId));
-            IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-                    if (result.getReturnValue().getSucceeded()) {
-                        resolveConflictsModel.getResolveContentConflict().setEntity(Boolean.FALSE);
-                        resolveConflictsModel.getResolveContentConflict().setIsChangeable(Boolean.FALSE);
-                    }
+            IFrontendActionAsyncCallback callback = result -> {
+                if (result.getReturnValue().getSucceeded()) {
+                    resolveConflictsModel.getResolveContentConflict().setEntity(Boolean.FALSE);
+                    resolveConflictsModel.getResolveContentConflict().setIsChangeable(Boolean.FALSE);
                 }
             };
             callbacks.add(callback);
@@ -341,13 +325,10 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
             boolean isEnable = resolveConflictsModel.getResolveStatusConflictEnable().getEntity();
             actionTypes.add(isEnable ? VdcActionType.EnableGlusterHook : VdcActionType.DisableGlusterHook);
             parameters.add(new GlusterHookParameters(hookEntity.getId()));
-            IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-                    if (result.getReturnValue().getSucceeded()) {
-                        resolveConflictsModel.getResolveStatusConflict().setEntity(Boolean.FALSE);
-                        resolveConflictsModel.getResolveStatusConflict().setIsChangeable(Boolean.FALSE);
-                    }
+            IFrontendActionAsyncCallback callback = result -> {
+                if (result.getReturnValue().getSucceeded()) {
+                    resolveConflictsModel.getResolveStatusConflict().setEntity(Boolean.FALSE);
+                    resolveConflictsModel.getResolveStatusConflict().setIsChangeable(Boolean.FALSE);
                 }
             };
             callbacks.add(callback);
@@ -357,35 +338,24 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
             boolean isAdd = resolveConflictsModel.getResolveMissingConflictCopy().getEntity();
             actionTypes.add(isAdd ? VdcActionType.AddGlusterHook : VdcActionType.RemoveGlusterHook);
             parameters.add(new GlusterHookManageParameters(hookEntity.getId()));
-            IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-                    if (result.getReturnValue().getSucceeded()) {
-                        resolveConflictsModel.getResolveMissingConflict().setEntity(Boolean.FALSE);
-                        resolveConflictsModel.getResolveMissingConflict().setIsChangeable(Boolean.FALSE);
-                    }
+            IFrontendActionAsyncCallback callback = result -> {
+                if (result.getReturnValue().getSucceeded()) {
+                    resolveConflictsModel.getResolveMissingConflict().setEntity(Boolean.FALSE);
+                    resolveConflictsModel.getResolveMissingConflict().setIsChangeable(Boolean.FALSE);
                 }
             };
             callbacks.add(callback);
         }
 
-        IFrontendActionAsyncCallback onFinishCallback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                if (result.getReturnValue().getSucceeded()) {
-                    resolveConflictsModel.stopProgress();
-                    cancel();
-                    syncSearch();
-                }
+        IFrontendActionAsyncCallback onFinishCallback = result -> {
+            if (result.getReturnValue().getSucceeded()) {
+                resolveConflictsModel.stopProgress();
+                cancel();
+                syncSearch();
             }
         };
 
-        IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                    resolveConflictsModel.stopProgress();
-            }
-        };
+        IFrontendActionAsyncCallback failureCallback = result -> resolveConflictsModel.stopProgress();
 
         // Replacing the last callback with onFinishCallback, as we just want to close the dialog and execute the search
         if (callbacks.size() > 0) {
@@ -465,12 +435,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
             return;
         }
 
-        AsyncDataProvider.getInstance().getGlusterHooks(new AsyncQuery<>(new AsyncCallback<List<GlusterHookEntity>>() {
-            @Override
-            public void onSuccess(List<GlusterHookEntity> glusterHooks) {
-                setItems(glusterHooks);
-            }
-        }), getEntity().getId());
+        AsyncDataProvider.getInstance().getGlusterHooks(new AsyncQuery<>(glusterHooks -> setItems(glusterHooks)), getEntity().getId());
     }
 
     @Override

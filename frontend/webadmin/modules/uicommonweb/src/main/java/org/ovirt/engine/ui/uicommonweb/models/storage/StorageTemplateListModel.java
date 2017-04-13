@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericName
 import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -52,14 +51,11 @@ public class StorageTemplateListModel extends SearchableListModel<StorageDomain,
         GetVmTemplatesFromStorageDomainParameters tempVar =
                 new GetVmTemplatesFromStorageDomainParameters(getEntity().getId(), true);
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesFromStorageDomain, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                ArrayList<VmTemplate> templates = returnValue.getReturnValue();
-                Collections.sort(templates, new LexoNumericNameableComparator<>());
-                setItems(templates);
-                setIsEmpty(templates.size() == 0);
-            }
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesFromStorageDomain, tempVar, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            ArrayList<VmTemplate> templates = returnValue.getReturnValue();
+            Collections.sort(templates, new LexoNumericNameableComparator<>());
+            setItems(templates);
+            setIsEmpty(templates.size() == 0);
         }));
     }
 

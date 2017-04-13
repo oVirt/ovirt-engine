@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -29,8 +28,6 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
@@ -280,23 +277,17 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     private void retrieveMaxSpmPriority() {
-        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
-            @Override
-            public void onSuccess(Integer returnValue) {
-                spmMaxPriorityValue = returnValue;
-                retrieveDefaultSpmPriority();
-            }
+        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery<>(returnValue -> {
+            spmMaxPriorityValue = returnValue;
+            retrieveDefaultSpmPriority();
         }));
     }
 
     private void retrieveDefaultSpmPriority() {
-        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
-            @Override
-            public void onSuccess(Integer returnValue) {
-                spmDefaultPriorityValue = returnValue;
-                updateSpmPriorityValues();
-                updateSpmPriority();
-            }
+        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery<>(returnValue -> {
+            spmDefaultPriorityValue = returnValue;
+            updateSpmPriorityValues();
+            updateSpmPriority();
         }));
     }
 
@@ -799,11 +790,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
     public void saveNICsConfig() {
         Frontend.getInstance().runMultipleAction(VdcActionType.CommitNetworkChanges,
                 new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new VdsActionParameters(getEntity().getId())})),
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                    }
                 },
                 null);
     }

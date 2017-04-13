@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -22,34 +21,28 @@ public class PriorityUtil {
 
     public void initPriority(final int priority, final PriorityUpdatingCallbacks callbacks) {
         AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery<>(
-                new AsyncCallback<Integer>() {
-                    @Override
-                    public void onSuccess(Integer returnValue) {
+                returnValue -> {
 
-                        cachedMaxPriority = returnValue;
+                    cachedMaxPriority = returnValue;
 
-                        int value = AsyncDataProvider.getInstance().getRoundedPriority(priority, cachedMaxPriority);
-                        EntityModel tempVar = new EntityModel();
-                        tempVar.setEntity(value);
-                        before(callbacks);
-                        model.getPriority().setSelectedItem(tempVar);
-                        after(callbacks);
-                        updatePriority(callbacks);
+                    int value = AsyncDataProvider.getInstance().getRoundedPriority(priority, cachedMaxPriority);
+                    EntityModel tempVar = new EntityModel();
+                    tempVar.setEntity(value);
+                    before(callbacks);
+                    model.getPriority().setSelectedItem(tempVar);
+                    after(callbacks);
+                    updatePriority(callbacks);
 
-                    }
                 }));
     }
 
     private void updatePriority(final PriorityUpdatingCallbacks callbacks) {
         if (cachedMaxPriority == null) {
             AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery<>(
-                    new AsyncCallback<Integer>() {
-                        @Override
-                        public void onSuccess(Integer returnValue) {
-                            cachedMaxPriority = returnValue;
-                            postUpdatePriority(callbacks);
+                    returnValue -> {
+                        cachedMaxPriority = returnValue;
+                        postUpdatePriority(callbacks);
 
-                        }
                     }));
         }
         else {

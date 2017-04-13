@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
@@ -27,8 +26,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel.AdSearchType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
 
@@ -71,33 +68,30 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
 
         param.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsToConsumeQuotaByQuotaId, param, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                ArrayList<Permission> list = returnValue.getReturnValue();
-                Map<Guid, Permission> map = new HashMap<>();
-                for (Permission permission : list) {
-                    //filter out sys-admin and dc admin from consumers sub-tab
-                    if (permission.getRoleId().equals(ApplicationGuids.superUser.asGuid())
-                            || permission.getRoleId().equals(ApplicationGuids.dataCenterAdmin.asGuid())) {
-                        continue;
-                    }
-                    if (!map.containsKey(permission.getAdElementId())) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsToConsumeQuotaByQuotaId, param, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            ArrayList<Permission> list = returnValue.getReturnValue();
+            Map<Guid, Permission> map = new HashMap<>();
+            for (Permission permission : list) {
+                //filter out sys-admin and dc admin from consumers sub-tab
+                if (permission.getRoleId().equals(ApplicationGuids.superUser.asGuid())
+                        || permission.getRoleId().equals(ApplicationGuids.dataCenterAdmin.asGuid())) {
+                    continue;
+                }
+                if (!map.containsKey(permission.getAdElementId())) {
+                    map.put(permission.getAdElementId(), permission);
+                } else {
+                    if (map.get(permission.getAdElementId())
+                            .getRoleId()
+                            .equals(ApplicationGuids.quotaConsumer.asGuid())) {
                         map.put(permission.getAdElementId(), permission);
-                    } else {
-                        if (map.get(permission.getAdElementId())
-                                .getRoleId()
-                                .equals(ApplicationGuids.quotaConsumer.asGuid())) {
-                            map.put(permission.getAdElementId(), permission);
-                        }
                     }
                 }
-                list.clear();
-                for (Permission permission : map.values()) {
-                    list.add(permission);
-                }
-                setItems(list);
             }
+            list.clear();
+            for (Permission permission : map.values()) {
+                list.add(permission);
+            }
+            setItems(list);
         }));
 
         setIsQueryFirstTime(false);
@@ -242,15 +236,12 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.AddPermission, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        QuotaUserListModel localModel = (QuotaUserListModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    QuotaUserListModel localModel = (QuotaUserListModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
         cancel();
     }
@@ -273,15 +264,12 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
             model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
+                    result -> {
 
-                            ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                            localModel.stopProgress();
-                            cancel();
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
 
-                        }
                     }, model);
         }
 

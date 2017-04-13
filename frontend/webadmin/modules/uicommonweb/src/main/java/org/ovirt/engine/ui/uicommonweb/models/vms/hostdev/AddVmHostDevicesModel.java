@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -20,9 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class AddVmHostDevicesModel extends ModelWithPinnedHost {
 
@@ -47,26 +43,11 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
         setHelpTag(HelpTag.add_host_device);
         setHashName("add_host_device"); //$NON-NLS-1$
 
-        getPinnedHost().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateAvailableHostDevices();
-            }
-        });
+        getPinnedHost().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateAvailableHostDevices());
 
-        getCapability().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateSelectedCapability();
-            }
-        });
+        getCapability().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateSelectedCapability());
 
-        getAllAvailableHostDevices().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateSelectedCapability();
-            }
-        });
+        getAllAvailableHostDevices().getItemsChangedEvent().addListener((ev, sender, args) -> updateSelectedCapability());
     }
 
     @Override
@@ -79,17 +60,14 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
 
     private void fetchExistingDevices() {
         startProgress();
-        AsyncDataProvider.getInstance().getConfiguredVmHostDevices(new AsyncQuery<>(new AsyncCallback<List<VmHostDevice>>() {
-            @Override
-            public void onSuccess(List<VmHostDevice> devices) {
-                for (VmHostDevice device : devices) {
-                    if (!device.isIommuPlaceholder()) {
-                        alreadyAttachedDevices.add(device.getDevice());
-                    }
+        AsyncDataProvider.getInstance().getConfiguredVmHostDevices(new AsyncQuery<>(devices -> {
+            for (VmHostDevice device : devices) {
+                if (!device.isIommuPlaceholder()) {
+                    alreadyAttachedDevices.add(device.getDevice());
                 }
-                // initHosts must be called after alreadyAttachedDevices are initialized
-                initHosts();
             }
+            // initHosts must be called after alreadyAttachedDevices are initialized
+            initHosts();
         }), getVm().getId());
     }
 
@@ -109,19 +87,16 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
         selectedHostDevices.setItems(new ArrayList<EntityModel<HostDeviceView>>());
 
         startProgress();
-        AsyncDataProvider.getInstance().getHostDevicesByHostId(new AsyncQuery<>(new AsyncCallback<List<HostDeviceView>>() {
-            @Override
-            public void onSuccess(List<HostDeviceView> fetchedDevices) {
-                stopProgress();
-                List<EntityModel<HostDeviceView>> models = new ArrayList<>();
-                for (HostDeviceView hostDevice : fetchedDevices) {
-                    // show only devices that support assignment and are not yet attached
-                    if (hostDevice.isAssignable() && !alreadyAttachedDevices.contains(hostDevice.getDeviceName())) {
-                        models.add(new EntityModel<>(hostDevice));
-                    }
+        AsyncDataProvider.getInstance().getHostDevicesByHostId(new AsyncQuery<>(fetchedDevices -> {
+            stopProgress();
+            List<EntityModel<HostDeviceView>> models = new ArrayList<>();
+            for (HostDeviceView hostDevice : fetchedDevices) {
+                // show only devices that support assignment and are not yet attached
+                if (hostDevice.isAssignable() && !alreadyAttachedDevices.contains(hostDevice.getDeviceName())) {
+                    models.add(new EntityModel<>(hostDevice));
                 }
-                allAvailableHostDevices.setItems(models);
             }
+            allAvailableHostDevices.setItems(models);
         }), getPinnedHost().getSelectedItem().getId());
     }
 

@@ -4,9 +4,6 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class ImportVmData extends ImportEntityData<VM> {
 
@@ -22,20 +19,17 @@ public class ImportVmData extends ImportEntityData<VM> {
 
         setEntity(vm);
         vmName = vm.getName();
-        getClone().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (templateExistsInSetup) {
-                    if (((EntityModel<Boolean>) sender).getEntity()) {
-                        getCollapseSnapshots().setEntity(true);
-                        getCollapseSnapshots().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                .getConstants()
-                                .importCloneVMMustCollapseSnapshots());
-                        getCollapseSnapshots().setIsChangeable(false);
-                    }
-                    else {
-                        getCollapseSnapshots().setIsChangeable(true);
-                    }
+        getClone().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (templateExistsInSetup) {
+                if (((EntityModel<Boolean>) sender).getEntity()) {
+                    getCollapseSnapshots().setEntity(true);
+                    getCollapseSnapshots().setChangeProhibitionReason(ConstantsManager.getInstance()
+                            .getConstants()
+                            .importCloneVMMustCollapseSnapshots());
+                    getCollapseSnapshots().setIsChangeable(false);
+                }
+                else {
+                    getCollapseSnapshots().setIsChangeable(true);
                 }
             }
         });

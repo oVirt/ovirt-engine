@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -39,7 +38,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
@@ -313,12 +311,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
 
         final SanStorageModelBase sanStorageModel = this;
-        IFrontendActionAsyncCallback loginCallback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                sanStorageModel.postLogin(result.getReturnValue(), sanStorageModel);
-            }
-        };
+        IFrontendActionAsyncCallback loginCallback =
+                result -> sanStorageModel.postLogin(result.getReturnValue(), sanStorageModel);
 
         for (int i = 0; i < targetsToConnect.size(); i++) {
             SanTargetModel model = targetsToConnect.get(i);
@@ -384,13 +378,10 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         setMessage(null);
 
         final SanStorageModelBase model = this;
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                Object result = returnValue.getReturnValue();
-                model.postDiscoverTargetsInternal(result != null ? (ArrayList<StorageServerConnections>) result
-                        : new ArrayList<StorageServerConnections>());
-            }
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+            Object result = returnValue.getReturnValue();
+            model.postDiscoverTargetsInternal(result != null ? (ArrayList<StorageServerConnections>) result
+                    : new ArrayList<StorageServerConnections>());
         }, true);
         Frontend.getInstance().runQuery(VdcQueryType.DiscoverSendTargets, parameters, asyncQuery);
     }
@@ -497,17 +488,14 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         initializeItems(null, null);
 
         final SanStorageModelBase model = this;
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue response) {
-                if (response.getSucceeded()) {
-                    model.applyData((ArrayList<LUNs>) response.getReturnValue(), false, prevSelected);
-                    model.setGetLUNsFailure(""); //$NON-NLS-1$
-                }
-                else {
-                    model.setGetLUNsFailure(
-                            ConstantsManager.getInstance().getConstants().couldNotRetrieveLUNsLunsFailure());
-                }
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(response -> {
+            if (response.getSucceeded()) {
+                model.applyData((ArrayList<LUNs>) response.getReturnValue(), false, prevSelected);
+                model.setGetLUNsFailure(""); //$NON-NLS-1$
+            }
+            else {
+                model.setGetLUNsFailure(
+                        ConstantsManager.getInstance().getConstants().couldNotRetrieveLUNsLunsFailure());
             }
         }, true);
         Frontend.getInstance().runQuery(VdcQueryType.GetDeviceList,
@@ -1077,12 +1065,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     public void prepareForEdit(final StorageDomain storage) {
         if (isEditable(storage)) {
             final SanStorageModelBase thisModel = this;
-            getContainer().getHost().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    postPrepareSanStorageForEdit(thisModel, true, storage);
-                }
-            });
+            getContainer().getHost().getSelectedItemChangedEvent().addListener((ev, sender, args) -> postPrepareSanStorageForEdit(thisModel, true, storage));
         }
         else {
             postPrepareSanStorageForEdit(this, false, storage);
@@ -1100,11 +1083,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         Guid hostId = host != null && isStorageActive ? host.getId() : null;
 
-        AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery<>(new AsyncCallback<List<LUNs>>() {
-            @Override
-            public void onSuccess(List<LUNs> lunList) {
-                model.applyData(lunList, true, Linq.findSelectedItems((Collection<EntityModel<?>>) getSelectedItem()));
-            }
-        }), storage.getStorage(), hostId);
+        AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery<>(lunList -> model.applyData(lunList, true, Linq.findSelectedItems((Collection<EntityModel<?>>) getSelectedItem()))), storage.getStorage(), hostId);
     }
 }

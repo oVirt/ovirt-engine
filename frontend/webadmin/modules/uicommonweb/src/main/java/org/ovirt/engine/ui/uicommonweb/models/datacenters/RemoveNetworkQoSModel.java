@@ -18,8 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public class RemoveNetworkQoSModel extends ConfirmationModel {
 
@@ -45,34 +43,30 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
             parameters.add(parameter);
             queryTypes.add(VdcQueryType.GetVnicProfilesByNetworkQosId);
         }
-        Frontend.getInstance().runMultipleQueries(queryTypes, parameters, new IFrontendMultipleQueryAsyncCallback() {
+        Frontend.getInstance().runMultipleQueries(queryTypes, parameters, result -> {
+            ArrayList<VnicProfileView> vnicProfiles = new ArrayList<>();
 
-            @Override
-            public void executed(FrontendMultipleQueryAsyncResult result) {
-                ArrayList<VnicProfileView> vnicProfiles = new ArrayList<>();
+            setHelpTag(HelpTag.remove_network_qos);
+            setHashName("remove_network_qos"); //$NON-NLS-1$
 
-                setHelpTag(HelpTag.remove_network_qos);
-                setHashName("remove_network_qos"); //$NON-NLS-1$
-
-                for (VdcQueryReturnValue returnValue : result.getReturnValues()) {
-                    vnicProfiles.addAll((ArrayList<VnicProfileView>) returnValue.getReturnValue());
+            for (VdcQueryReturnValue returnValue : result.getReturnValues()) {
+                vnicProfiles.addAll((ArrayList<VnicProfileView>) returnValue.getReturnValue());
+            }
+            if (vnicProfiles.isEmpty()) {
+                ArrayList<String> list = new ArrayList<>();
+                for (Object item : sourceListModel.getSelectedItems()) {
+                    NetworkQoS i = (NetworkQoS) item;
+                    list.add(i.getName());
                 }
-                if (vnicProfiles.isEmpty()) {
-                    ArrayList<String> list = new ArrayList<>();
-                    for (Object item : sourceListModel.getSelectedItems()) {
-                        NetworkQoS i = (NetworkQoS) item;
-                        list.add(i.getName());
-                    }
-                    setItems(list);
-                } else {
-                    setMessage(ConstantsManager.getInstance().getMessages().removeNetworkQoSMessage(vnicProfiles.size()));
+                setItems(list);
+            } else {
+                setMessage(ConstantsManager.getInstance().getMessages().removeNetworkQoSMessage(vnicProfiles.size()));
 
-                    ArrayList<String> list = new ArrayList<>();
-                    for (VnicProfileView item : vnicProfiles) {
-                        list.add(item.getName());
-                    }
-                    setItems(list);
+                ArrayList<String> list = new ArrayList<>();
+                for (VnicProfileView item : vnicProfiles) {
+                    list.add(item.getName());
                 }
+                setItems(list);
             }
         });
     }

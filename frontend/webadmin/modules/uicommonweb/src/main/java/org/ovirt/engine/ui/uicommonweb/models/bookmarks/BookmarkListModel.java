@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("unused")
@@ -139,19 +138,16 @@ public class BookmarkListModel extends SearchableListModel {
     protected void syncSearch() {
         super.syncSearch();
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase(), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                List<Bookmark> resultList = returnValue.getReturnValue();
-                if (resultList != null) {
-                    Collections.sort(resultList, COMPARATOR);
-                }
-
-                // Prevent bookmark list updates from clearing selected bookmark
-                setIsBookmarkInitiated(true);
-                setItems(resultList);
-                setIsBookmarkInitiated(false);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase(), new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+            List<Bookmark> resultList = returnValue.getReturnValue();
+            if (resultList != null) {
+                Collections.sort(resultList, COMPARATOR);
             }
+
+            // Prevent bookmark list updates from clearing selected bookmark
+            setIsBookmarkInitiated(true);
+            setItems(resultList);
+            setIsBookmarkInitiated(false);
         }));
     }
 
@@ -185,12 +181,7 @@ public class BookmarkListModel extends SearchableListModel {
         Bookmark selectedBookmark = (Bookmark) getSelectedItem();
         BookmarksParametersBase parameters = new BookmarksParametersBase(selectedBookmark.getId());
 
-        IFrontendActionAsyncCallback async = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                postOnSave(result.getReturnValue());
-            }
-        };
+        IFrontendActionAsyncCallback async = result -> postOnSave(result.getReturnValue());
 
         getWindow().startProgress();
 
@@ -262,14 +253,11 @@ public class BookmarkListModel extends SearchableListModel {
 
         Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddBookmark : VdcActionType.UpdateBookmark,
                 new BookmarksOperationParameters(bookmark),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
+                result -> {
 
-                        BookmarkListModel localModel = (BookmarkListModel) result.getState();
-                        localModel.postOnSave(result.getReturnValue());
+                    BookmarkListModel localModel = (BookmarkListModel) result.getState();
+                    localModel.postOnSave(result.getReturnValue());
 
-                    }
                 },
                 this);
     }

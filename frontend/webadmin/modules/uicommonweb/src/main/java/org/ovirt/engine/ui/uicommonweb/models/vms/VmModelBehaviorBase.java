@@ -138,14 +138,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         virtioScsiUtil = new VirtioScsiUtil(getModel());
         getModel().getVmId().setIsAvailable(false);
         getModel().getLease().setIsChangeable(false);
-        getModel().getIsHighlyAvailable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean ha = getModel().getIsHighlyAvailable().getEntity();
-                getModel().getLease().setIsChangeable(ha);
-                if (!ha) {
-                    getModel().getLease().setSelectedItem(null);
-                }
+        getModel().getIsHighlyAvailable().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            boolean ha = getModel().getIsHighlyAvailable().getEntity();
+            getModel().getLease().setIsChangeable(ha);
+            if (!ha) {
+                getModel().getLease().setSelectedItem(null);
             }
         });
         getModel().getMigrationPolicies()
@@ -404,12 +401,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateUserCdImage(Guid storagePoolId) {
-        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
-                    @Override
-                    public void onSuccess(List<String> images) {
-                        setImagesToModel(getModel(), images);
-                    }
-                }),
+        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(images -> setImagesToModel(getModel(), images)),
                 storagePoolId
         );
     }
@@ -436,13 +428,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         AsyncDataProvider.getInstance().getIrsImageList(asyncQuery(
-                        new AsyncCallback<List<String>>() {
-                            @Override
-                            public void onSuccess(List<String> images) {
-                                setImagesToModel(getModel(), images);
-
-                            }
-                        }),
+                images -> setImagesToModel(getModel(), images)),
                 dataCenter.getId(),
                 forceRefresh);
 
@@ -525,56 +511,51 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        getHostListByCluster(cluster, asyncQuery(
-                new AsyncCallback() {
-                    @Override
-                    public void onSuccess(Object returnValue) {
-
-                        List<VDS> hosts = null;
-                        if (returnValue instanceof List) {
-                            hosts = (List<VDS>) returnValue;
-                        } else if (returnValue instanceof VdcQueryReturnValue
-                                && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof List) {
-                            hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        } else {
-                            throw new IllegalArgumentException("The return value should be List<VDS> or VdcQueryReturnValue with return value List<VDS>"); //$NON-NLS-1$
-                        }
-
-                        List<VDS> oldDefaultHosts = getModel().getDefaultHost().getSelectedItems();
-                        if (getModel().getBehavior().getSystemTreeSelectedItem() != null
-                                && getModel().getBehavior().getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
-                            VDS host = (VDS) getModel().getBehavior().getSystemTreeSelectedItem().getEntity();
-                            for (VDS vds : hosts) {
-                                if (host.getId().equals(vds.getId())) {
-                                    getModel().getDefaultHost()
-                                            .setItems(new ArrayList<>(Collections.singletonList(vds)));
-                                    getModel().getDefaultHost().setSelectedItems(Collections.singletonList(vds));
-                                    getModel().getDefaultHost().setIsChangeable(false);
-                                    getModel().getDefaultHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
-                                    break;
-                                }
-                            }
-                        }
-                        else {
-                            getModel().getDefaultHost().setItems(hosts);
-
-                            // attempt to preserve selection as much as possible
-                            if (oldDefaultHosts != null && !oldDefaultHosts.isEmpty()) {
-                                Set<VDS> oldSelectedIntersectionNewHosts = new HashSet<>(oldDefaultHosts);
-                                oldSelectedIntersectionNewHosts.retainAll(hosts);
-                                oldDefaultHosts = new ArrayList<>(oldSelectedIntersectionNewHosts);
-                            }
-
-                            List<VDS> hostsToSelect = oldDefaultHosts != null && !oldDefaultHosts.isEmpty()
-                                              ? oldDefaultHosts
-                                              : !hosts.isEmpty()
-                                                      ? Collections.singletonList(hosts.get(0))
-                                                      : Collections.<VDS>emptyList();
-                            getModel().getDefaultHost().setSelectedItems(hostsToSelect);
-                        }
-                        changeDefaultHost();
-
+        getHostListByCluster(cluster, asyncQuery(returnValue -> {
+                    List<VDS> hosts = null;
+                    if (returnValue instanceof List) {
+                        hosts = (List<VDS>) returnValue;
+                    } else if (returnValue instanceof VdcQueryReturnValue
+                            && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof List) {
+                        hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    } else {
+                        throw new IllegalArgumentException("The return value should be List<VDS> or VdcQueryReturnValue with return value List<VDS>"); //$NON-NLS-1$
                     }
+
+                    List<VDS> oldDefaultHosts = getModel().getDefaultHost().getSelectedItems();
+                    if (getModel().getBehavior().getSystemTreeSelectedItem() != null
+                            && getModel().getBehavior().getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
+                        VDS host = (VDS) getModel().getBehavior().getSystemTreeSelectedItem().getEntity();
+                        for (VDS vds : hosts) {
+                            if (host.getId().equals(vds.getId())) {
+                                getModel().getDefaultHost()
+                                        .setItems(new ArrayList<>(Collections.singletonList(vds)));
+                                getModel().getDefaultHost().setSelectedItems(Collections.singletonList(vds));
+                                getModel().getDefaultHost().setIsChangeable(false);
+                                getModel().getDefaultHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        getModel().getDefaultHost().setItems(hosts);
+
+                        // attempt to preserve selection as much as possible
+                        if (oldDefaultHosts != null && !oldDefaultHosts.isEmpty()) {
+                            Set<VDS> oldSelectedIntersectionNewHosts = new HashSet<>(oldDefaultHosts);
+                            oldSelectedIntersectionNewHosts.retainAll(hosts);
+                            oldDefaultHosts = new ArrayList<>(oldSelectedIntersectionNewHosts);
+                        }
+
+                        List<VDS> hostsToSelect = oldDefaultHosts != null && !oldDefaultHosts.isEmpty()
+                                          ? oldDefaultHosts
+                                          : !hosts.isEmpty()
+                                                  ? Collections.singletonList(hosts.get(0))
+                                                  : Collections.<VDS>emptyList();
+                        getModel().getDefaultHost().setSelectedItems(hostsToSelect);
+                    }
+                    changeDefaultHost();
+
                 }));
     }
 
@@ -599,12 +580,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public void updataMaxVmsInPool() {
         AsyncDataProvider.getInstance().getMaxVmsInPool(asyncQuery(
-                new AsyncCallback<Integer>() {
-                    @Override
-                    public void onSuccess(Integer returnValue) {
-                        setMaxVmsInPool(returnValue);
-                        updateMaxNumOfVmCpus();
-                    }
+                returnValue -> {
+                    setMaxVmsInPool(returnValue);
+                    updateMaxNumOfVmCpus();
                 }
         ));
     }
@@ -613,12 +591,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         String version = getCompatibilityVersion().toString();
 
         AsyncDataProvider.getInstance().getMaxNumOfVmCpus(asyncQuery(
-                new AsyncCallback<Integer>() {
-                    @Override
-                    public void onSuccess(Integer returnValue) {
-                        maxCpus = returnValue;
-                        postUpdateNumOfSockets2();
-                    }
+                returnValue -> {
+                    maxCpus = returnValue;
+                    postUpdateNumOfSockets2();
                 }), version);
     }
 
@@ -626,12 +601,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         String version = getCompatibilityVersion().toString();
 
         AsyncDataProvider.getInstance().getMaxNumOfCPUsPerSocket(asyncQuery(
-                new AsyncCallback<Integer>() {
-                    @Override
-                    public void onSuccess(Integer returnValue) {
-                        maxCpusPerSocket = returnValue;
-                        postUpdateNumOfSockets3();
-                    }
+                returnValue -> {
+                    maxCpusPerSocket = returnValue;
+                    postUpdateNumOfSockets3();
                 }), version);
     }
 
@@ -639,12 +611,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         String version = getCompatibilityVersion().toString();
 
         AsyncDataProvider.getInstance().getMaxNumOfThreadsPerCpu(asyncQuery(
-                new AsyncCallback<Integer>() {
-                    @Override
-                    public void onSuccess(Integer returnValue) {
-                        maxThreadsPerCore = returnValue;
-                        totalCpuCoresChanged();
-                    }
+                returnValue -> {
+                    maxThreadsPerCore = returnValue;
+                    totalCpuCoresChanged();
                 }), version);
     }
 
@@ -652,12 +621,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
 
         AsyncDataProvider.getInstance().getTemplateDiskList(asyncQuery(
-                        new AsyncCallback<List<DiskImage>>() {
-                            @Override
-                            public void onSuccess(List<DiskImage> returnValue) {
-                                initTemplateDisks(returnValue);
-                            }
-                        }),
+                returnValue -> initTemplateDisks(returnValue)),
                 template.getId());
     }
 
@@ -727,39 +691,36 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
         StoragePool dataCenter = getModel().getSelectedDataCenter();
-        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-            @Override
-            public void onSuccess(List<StorageDomain> storageDomains) {
-                ArrayList<StorageDomain> activeStorageDomains = filterStorageDomains(storageDomains);
+        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery<>(storageDomains -> {
+            ArrayList<StorageDomain> activeStorageDomains = filterStorageDomains(storageDomains);
 
-                boolean provisioning = getModel().getProvisioning().getEntity();
-                ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getModel().getDisks();
-                Collections.sort(activeStorageDomains, new NameableComparator());
+            boolean provisioning = getModel().getProvisioning().getEntity();
+            ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getModel().getDisks();
+            Collections.sort(activeStorageDomains, new NameableComparator());
 
-                List<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
-                for (DiskModel diskModel : diskImages) {
-                    List<StorageDomain> availableDiskStorageDomains;
-                    diskModel.getQuota().setItems(getModel().getQuota().getItems());
-                    ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
+            List<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
+            for (DiskModel diskModel : diskImages) {
+                List<StorageDomain> availableDiskStorageDomains;
+                diskModel.getQuota().setItems(getModel().getQuota().getItems());
+                ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
 
-                    // Active storage domains that the disk resides on
-                    List<StorageDomain> activeDiskStorageDomains =
-                            Linq.getStorageDomainsByIds(storageIds, activeStorageDomains);
+                // Active storage domains that the disk resides on
+                List<StorageDomain> activeDiskStorageDomains =
+                        Linq.getStorageDomainsByIds(storageIds, activeStorageDomains);
 
-                    // Set target storage domains
-                    availableDiskStorageDomains = provisioning ? activeStorageDomains : activeDiskStorageDomains;
-                    Collections.sort(availableDiskStorageDomains, new NameableComparator());
-                    diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
+                // Set target storage domains
+                availableDiskStorageDomains = provisioning ? activeStorageDomains : activeDiskStorageDomains;
+                Collections.sort(availableDiskStorageDomains, new NameableComparator());
+                diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
 
-                    diskModel.getStorageDomain().setChangeProhibitionReason(
-                            constants.noActiveTargetStorageDomainAvailableMsg());
-                    diskModel.getStorageDomain().setIsChangeable(!availableDiskStorageDomains.isEmpty());
-                }
-                List<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
-                Collection<StorageDomain> cinderStorageDomains =
-                        Linq.filterStorageDomainsByStorageType(storageDomains, StorageType.CINDER);
-                initStorageDomainsForCinderDisks(cinderDisks, cinderStorageDomains);
+                diskModel.getStorageDomain().setChangeProhibitionReason(
+                        constants.noActiveTargetStorageDomainAvailableMsg());
+                diskModel.getStorageDomain().setIsChangeable(!availableDiskStorageDomains.isEmpty());
             }
+            List<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
+            Collection<StorageDomain> cinderStorageDomains =
+                    Linq.filterStorageDomainsByStorageType(storageDomains, StorageType.CINDER);
+            initStorageDomainsForCinderDisks(cinderDisks, cinderStorageDomains);
         }), dataCenter.getId(), actionGroup);
     }
 
@@ -801,32 +762,29 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 return;
             }
             AsyncDataProvider.getInstance().getAllRelevantQuotasForClusterSorted(new AsyncQuery<>(
-                    new AsyncCallback<List<Quota>>() {
-                        @Override
-                        public void onSuccess(List<Quota> quotaList) {
-                            UnitVmModel vmModel = getModel();
-                            if (quotaList == null) {
-                                return;
-                            }
+                    quotaList -> {
+                        UnitVmModel vmModel = getModel();
+                        if (quotaList == null) {
+                            return;
+                        }
 
+                        if (!quotaList.isEmpty()) {
+                            vmModel.getQuota().setItems(quotaList);
+                        }
+                        if (defaultQuota != null && !Guid.Empty.equals(defaultQuota)) {
+                            boolean hasQuotaInList = false;
                             if (!quotaList.isEmpty()) {
-                                vmModel.getQuota().setItems(quotaList);
+                                hasQuotaInList = defaultQuota.equals(quotaList.get(0).getId());
                             }
-                            if (defaultQuota != null && !Guid.Empty.equals(defaultQuota)) {
-                                boolean hasQuotaInList = false;
-                                if (!quotaList.isEmpty()) {
-                                    hasQuotaInList = defaultQuota.equals(quotaList.get(0).getId());
-                                }
 
-                                // Add the quota to the list only in edit mode
-                                if (!hasQuotaInList && !getModel().getIsNew()) {
-                                    Quota quota = new Quota();
-                                    quota.setId(defaultQuota);
-                                    quota.setQuotaName(quotaName);
-                                    quotaList.add(0, quota);
-                                    vmModel.getQuota().setItems(quotaList);
-                                    vmModel.getQuota().setSelectedItem(quota);
-                                }
+                            // Add the quota to the list only in edit mode
+                            if (!hasQuotaInList && !getModel().getIsNew()) {
+                                Quota quota = new Quota();
+                                quota.setId(defaultQuota);
+                                quota.setQuotaName(quotaName);
+                                quotaList.add(0, quota);
+                                vmModel.getQuota().setItems(quotaList);
+                                vmModel.getQuota().setSelectedItem(quota);
                             }
                         }
                     }), cluster.getId(), defaultQuota);
@@ -868,38 +826,27 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             final boolean useLatest,
             final boolean isVersionChangeable) {
         AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(
-                        new AsyncCallback<VmTemplate>() {
-                            @Override
-                            public void onSuccess(VmTemplate rawTemplate) {
-                                if (isVersionChangeable) {
-                                    // only used by pools therefore query is limited to admin-portal permissions.
-                                    AsyncDataProvider.getInstance().getVmTemplatesByBaseTemplateId(
-                                            new AsyncQuery<>(new AsyncCallback<List<VmTemplate>>() {
-                                                @Override
-                                                public void onSuccess(List<VmTemplate> templatesChain) {
-                                                    initTemplateWithVersion(templatesChain, templateId, useLatest);
-                                                }
-                                            }), rawTemplate.getBaseTemplateId());
+                        rawTemplate -> {
+                            if (isVersionChangeable) {
+                                // only used by pools therefore query is limited to admin-portal permissions.
+                                AsyncDataProvider.getInstance().getVmTemplatesByBaseTemplateId(
+                                        new AsyncQuery<>(templatesChain -> initTemplateWithVersion(templatesChain, templateId, useLatest)), rawTemplate.getBaseTemplateId());
+                            } else {
+                                final VmTemplate template = useLatest
+                                        ? new LatestVmTemplate(rawTemplate)
+                                        : rawTemplate;
+                                if (template.isBaseTemplate()) {
+                                    TemplateWithVersion templateCouple =
+                                            new TemplateWithVersion(template, template);
+                                    setReadOnlyTemplateWithVersion(templateCouple);
                                 } else {
-                                    final VmTemplate template = useLatest
-                                            ? new LatestVmTemplate(rawTemplate)
-                                            : rawTemplate;
-                                    if (template.isBaseTemplate()) {
-                                        TemplateWithVersion templateCouple =
-                                                new TemplateWithVersion(template, template);
-                                        setReadOnlyTemplateWithVersion(templateCouple);
-                                    } else {
-                                        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(
-                                                        new AsyncCallback<VmTemplate>() {
-                                                            @Override
-                                                            public void onSuccess(VmTemplate baseTemplate) {
-                                                                TemplateWithVersion templateCouple =
-                                                                        new TemplateWithVersion(baseTemplate, template);
-                                                                setReadOnlyTemplateWithVersion(templateCouple);
-                                                            }
-                                                        }),
-                                                template.getBaseTemplateId());
-                                    }
+                                    AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(
+                                                    baseTemplate -> {
+                                                        TemplateWithVersion templateCouple =
+                                                                new TemplateWithVersion(baseTemplate, template);
+                                                        setReadOnlyTemplateWithVersion(templateCouple);
+                                                    }),
+                                            template.getBaseTemplateId());
                                 }
                             }
                         }),
@@ -1219,12 +1166,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         AsyncDataProvider.getInstance().getMaxNumOfVmSockets(asyncQuery(
-                new AsyncCallback<Integer>() {
-                    @Override
-                    public void onSuccess(Integer returnValue) {
-                        maxNumOfSockets = returnValue;
-                        updataMaxVmsInPool();
-                    }
+                returnValue -> {
+                    maxNumOfSockets = returnValue;
+                    updataMaxVmsInPool();
                 }), version.toString());
     }
 
@@ -1290,27 +1234,24 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateLeaseStorageDomains(final Guid selectedStorageDomainId) {
         setVmLeasesAvailability();
         AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
-                new AsyncCallback<List<StorageDomain>>() {
-                    @Override
-                    public void onSuccess(List<StorageDomain> returnValue) {
-                        List<StorageDomain> domains = new ArrayList<>();
-                        domains.add(null);
-                        for (StorageDomain domain : returnValue) {
-                            if (domain.getStorageDomainType().isDataDomain()
-                                    && domain.getStatus() == StorageDomainStatus.Active) {
-                                domains.add(domain);
-                            }
+                returnValue -> {
+                    List<StorageDomain> domains = new ArrayList<>();
+                    domains.add(null);
+                    for (StorageDomain domain : returnValue) {
+                        if (domain.getStorageDomainType().isDataDomain()
+                                && domain.getStatus() == StorageDomainStatus.Active) {
+                            domains.add(domain);
                         }
-                        getModel().getLease().setItems(domains);
-                        if (!getModel().getLease().getIsChangable() || selectedStorageDomainId == null) {
-                            getModel().getLease().setSelectedItem(null);
-                        }
-                        else {
-                            for (StorageDomain domain : domains) {
-                                if (domain != null && selectedStorageDomainId.equals(domain.getId())) {
-                                    getModel().getLease().setSelectedItem(domain);
-                                    break;
-                                }
+                    }
+                    getModel().getLease().setItems(domains);
+                    if (!getModel().getLease().getIsChangable() || selectedStorageDomainId == null) {
+                        getModel().getLease().setSelectedItem(null);
+                    }
+                    else {
+                        for (StorageDomain domain : domains) {
+                            if (domain != null && selectedStorageDomainId.equals(domain.getId())) {
+                                getModel().getLease().setSelectedItem(domain);
+                                break;
                             }
                         }
                     }
@@ -1328,16 +1269,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         AsyncDataProvider.getInstance().getEmulatedMachinesByClusterID(new AsyncQuery<>(
-                new AsyncCallback<Set<String>>() {
-                    @Override
-                    public void onSuccess(Set<String> returnValue) {
-                        if (returnValue != null) {
-                            Set<String> emulatedSet = new TreeSet<>(returnValue);
-                            emulatedSet.add(""); //$NON-NLS-1$
-                            String oldVal = getModel().getEmulatedMachine().getSelectedItem();
-                            getModel().getEmulatedMachine().setItems(emulatedSet);
-                            getModel().getEmulatedMachine().setSelectedItem(oldVal);
-                        }
+                returnValue -> {
+                    if (returnValue != null) {
+                        Set<String> emulatedSet = new TreeSet<>(returnValue);
+                        emulatedSet.add(""); //$NON-NLS-1$
+                        String oldVal = getModel().getEmulatedMachine().getSelectedItem();
+                        getModel().getEmulatedMachine().setItems(emulatedSet);
+                        getModel().getEmulatedMachine().setSelectedItem(oldVal);
                     }
                 }), cluster.getId());
     }
@@ -1354,19 +1292,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         AsyncDataProvider.getInstance().getSupportedCpuList(new AsyncQuery<>(
-                new AsyncCallback<List<ServerCpu>>() {
-                    @Override
-                    public void onSuccess(List<ServerCpu> returnValue) {
-                        if (returnValue != null) {
-                            List<String> cpuList = new ArrayList<>();
-                            cpuList.add(""); //$NON-NLS-1$
-                            for (ServerCpu cpu : returnValue) {
-                                cpuList.add(cpu.getVdsVerbData());
-                            }
-                            String oldVal = getModel().getCustomCpu().getSelectedItem();
-                            getModel().getCustomCpu().setItems(cpuList);
-                            getModel().getCustomCpu().setSelectedItem(oldVal);
+                returnValue -> {
+                    if (returnValue != null) {
+                        List<String> cpuList = new ArrayList<>();
+                        cpuList.add(""); //$NON-NLS-1$
+                        for (ServerCpu cpu : returnValue) {
+                            cpuList.add(cpu.getVdsVerbData());
                         }
+                        String oldVal = getModel().getCustomCpu().getSelectedItem();
+                        getModel().getCustomCpu().setItems(cpuList);
+                        getModel().getCustomCpu().setSelectedItem(oldVal);
                     }
                 }), cluster.getCpuName());
     }
@@ -1382,12 +1317,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Frontend.getInstance().runQuery(
                 VdcQueryType.GetConsoleDevices,
                 new IdQueryParameters(vmId),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        List<String> consoleDevices = returnValue.getReturnValue();
-                        getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
-                    }
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    List<String> consoleDevices = returnValue.getReturnValue();
+                    getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
                 }));
     }
 
@@ -1430,18 +1362,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Frontend.getInstance().runQuery(
                 VdcQueryType.GetRngDevice,
                 new IdQueryParameters(templateId),
-                new AsyncQuery<>(
-                        new AsyncCallback<VdcQueryReturnValue>() {
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue returnValue) {
-                                List<VmRngDevice> devs = returnValue.getReturnValue();
-                                getModel().getIsRngEnabled().setEntity(!devs.isEmpty());
-                                final VmRngDevice rngDevice = devs.isEmpty()
-                                        ? new VmRngDevice()
-                                        : devs.get(0);
-                                rngDevice.updateSourceByVersion(getModel().getCompatibilityVersion());
-                                getModel().setRngDevice(rngDevice);
-                            }
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                            List<VmRngDevice> devs = returnValue.getReturnValue();
+                            getModel().getIsRngEnabled().setEntity(!devs.isEmpty());
+                            final VmRngDevice rngDevice = devs.isEmpty()
+                                    ? new VmRngDevice()
+                                    : devs.get(0);
+                            rngDevice.updateSourceByVersion(getModel().getCompatibilityVersion());
+                            getModel().setRngDevice(rngDevice);
                         }
                 ));
     }
@@ -1459,17 +1387,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncDataProvider.getInstance().getDataCenterVersions(new AsyncQuery<>(new AsyncCallback<List<Version>>() {
-            @Override
-            public void onSuccess(List<Version> versions) {
-                versions.add(0, null);
-                Version selectedVersion;
-                selectedVersion = getModel().getCustomCompatibilityVersion().getSelectedItem();
-                if (selectedVersion != null && versions.contains(selectedVersion)) {
-                    getModel().getCustomCompatibilityVersion().setItems(versions, selectedVersion);
-                } else {
-                    getModel().getCustomCompatibilityVersion().setItems(versions);
-                }
+        AsyncDataProvider.getInstance().getDataCenterVersions(new AsyncQuery<>(versions -> {
+            versions.add(0, null);
+            Version selectedVersion;
+            selectedVersion = getModel().getCustomCompatibilityVersion().getSelectedItem();
+            if (selectedVersion != null && versions.contains(selectedVersion)) {
+                getModel().getCustomCompatibilityVersion().setItems(versions, selectedVersion);
+            } else {
+                getModel().getCustomCompatibilityVersion().setItems(versions);
             }
         }), dataCenter.getId());
     }
@@ -1534,18 +1459,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
         Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
                 new IdQueryParameters(clusterId),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        List<CpuProfile> cpuProfiles = returnValue.getReturnValue();
-                        getModel().getCpuProfiles().setItems(cpuProfiles);
-                        if (cpuProfiles != null) {
-                            for (CpuProfile cpuProfile : cpuProfiles) {
-                                if (cpuProfile.getId().equals(cpuProfileId)) {
-                                    getModel().getCpuProfiles().setSelectedItem(cpuProfile);
-                                    break;
-                                }
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    List<CpuProfile> cpuProfiles = returnValue.getReturnValue();
+                    getModel().getCpuProfiles().setItems(cpuProfiles);
+                    if (cpuProfiles != null) {
+                        for (CpuProfile cpuProfile : cpuProfiles) {
+                            if (cpuProfile.getId().equals(cpuProfileId)) {
+                                getModel().getCpuProfiles().setSelectedItem(cpuProfile);
+                                break;
                             }
                         }
                     }
@@ -1581,26 +1502,23 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateGraphics(Guid id) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(id), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                List<VmDevice> graphicsVmDevs = returnValue.getReturnValue();
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(id), new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            List<VmDevice> graphicsVmDevs = returnValue.getReturnValue();
 
-                List<GraphicsType> graphicsTypes = new ArrayList<>();
-                for (VmDevice graphicsVmDev : graphicsVmDevs) {
-                    graphicsTypes.add(GraphicsType.fromString(graphicsVmDev.getDevice()));
-                }
+            List<GraphicsType> graphicsTypes = new ArrayList<>();
+            for (VmDevice graphicsVmDev : graphicsVmDevs) {
+                graphicsTypes.add(GraphicsType.fromString(graphicsVmDev.getDevice()));
+            }
 
-                boolean hasSpiceAndVnc = graphicsTypes.size() == 2
-                        && graphicsTypes.containsAll(Arrays.asList(GraphicsType.SPICE, GraphicsType.VNC));
-                boolean canBeSelected = getModel().getGraphicsType().getItems().contains(UnitVmModel.GraphicsTypes.SPICE_AND_VNC);
+            boolean hasSpiceAndVnc = graphicsTypes.size() == 2
+                    && graphicsTypes.containsAll(Arrays.asList(GraphicsType.SPICE, GraphicsType.VNC));
+            boolean canBeSelected = getModel().getGraphicsType().getItems().contains(UnitVmModel.GraphicsTypes.SPICE_AND_VNC);
 
-                if (hasSpiceAndVnc && canBeSelected) {
-                    getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.SPICE_AND_VNC);
-                } else if (graphicsVmDevs.size() == 1) {
-                    GraphicsType type = GraphicsType.fromString(graphicsVmDevs.get(0).getDevice());
-                    getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.fromGraphicsType(type));
-                }
+            if (hasSpiceAndVnc && canBeSelected) {
+                getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.SPICE_AND_VNC);
+            } else if (graphicsVmDevs.size() == 1) {
+                GraphicsType type = GraphicsType.fromString(graphicsVmDevs.get(0).getDevice());
+                getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.fromGraphicsType(type));
             }
         }));
     }

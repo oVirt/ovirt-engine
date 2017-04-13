@@ -8,9 +8,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -124,12 +122,9 @@ public class ClusterServiceModel extends EntityModel<Cluster> {
 
         updateServiceTypeList();
 
-        AsyncDataProvider.getInstance().getHostListByCluster(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
-            @Override
-            public void onSuccess(List<VDS> hostList) {
-                hostList.add(0, null);
-                getHostList().setItems(hostList);
-            }
+        AsyncDataProvider.getInstance().getHostListByCluster(new AsyncQuery<>(hosts -> {
+            hosts.add(0, null);
+            getHostList().setItems(hosts);
         }), getEntity().getName());
     }
 
@@ -142,17 +137,14 @@ public class ClusterServiceModel extends EntityModel<Cluster> {
     }
 
     private void updateServiceList() {
-        AsyncDataProvider.getInstance().getClusterGlusterServices(new AsyncQuery<>(new AsyncCallback<GlusterVolumeAdvancedDetails>() {
-            @Override
-            public void onSuccess(GlusterVolumeAdvancedDetails details) {
-                if (details.getServiceInfo() != null) {
-                    setActualServiceList(details.getServiceInfo());
-                }
-                else {
-                    setActualServiceList(new ArrayList<GlusterServerService>());
-                }
-                filterServices();
+        AsyncDataProvider.getInstance().getClusterGlusterServices(new AsyncQuery<>(details -> {
+            if (details.getServiceInfo() != null) {
+                setActualServiceList(details.getServiceInfo());
             }
+            else {
+                setActualServiceList(new ArrayList<GlusterServerService>());
+            }
+            filterServices();
         }), getEntity().getId());
     }
 

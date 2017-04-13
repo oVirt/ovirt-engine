@@ -20,9 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -44,17 +41,14 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
             QuotaListModel clusterQuota) {
         super(vmImportGeneralModel, importDiskListModel, vmImportInterfaceListModel, cluster, clusterQuota);
 
-        getStorage().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                @SuppressWarnings("unchecked")
-                ListModel<StorageDomain> list = (ListModel<StorageDomain>) sender;
-                if (list.getSelectedItem() != null && list.getSelectedItem().getStorageType().isBlockDomain() &&
-                        containsKvmOrigin()) {
-                    setMessage(constants.kvmBlockDomainWraning());
-                } else {
-                    setMessage(""); //$NON-NLS-1$
-                }
+        getStorage().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            @SuppressWarnings("unchecked")
+            ListModel<StorageDomain> list = (ListModel<StorageDomain>) sender;
+            if (list.getSelectedItem() != null && list.getSelectedItem().getStorageType().isBlockDomain() &&
+                    containsKvmOrigin()) {
+                setMessage(constants.kvmBlockDomainWraning());
+            } else {
+                setMessage(""); //$NON-NLS-1$
             }
         });
     }

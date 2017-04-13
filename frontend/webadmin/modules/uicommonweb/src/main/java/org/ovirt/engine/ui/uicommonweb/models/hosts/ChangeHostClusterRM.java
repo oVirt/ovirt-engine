@@ -6,9 +6,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicompat.Enlistment;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEnlistmentNotification;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
 
 @SuppressWarnings("unused")
@@ -42,15 +40,12 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
             parameters.setCorrelationId(getCorrelationId());
             Frontend.getInstance().runAction(VdcActionType.ChangeVDSCluster,
                     parameters,
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
+                    result -> {
 
-                            VdcReturnValueBase returnValue = result.getReturnValue();
+                        VdcReturnValueBase returnValue = result.getReturnValue();
 
-                            context.changeVDSClusterReturnValue = returnValue;
-                            prepare2();
-                        }
+                        context.changeVDSClusterReturnValue = returnValue;
+                        prepare2();
                     });
         } else {
             context.enlistment = null;

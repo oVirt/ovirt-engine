@@ -11,14 +11,11 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.Enlistment;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEnlistmentNotification;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
 
 import com.google.gwt.user.client.Timer;
@@ -53,13 +50,10 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         VdsActionParameters parameters = new VdsActionParameters(host.getId());
         parameters.setCorrelationId(getCorrelationId());
         Frontend.getInstance().runAction(VdcActionType.ActivateVds, parameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        VdcReturnValueBase returnValue = result.getReturnValue();
-                        context.activateVdsReturnValue = returnValue;
-                        prepare2();
-                    }
+                result -> {
+                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    context.activateVdsReturnValue = returnValue;
+                    prepare2();
                 });
     }
 
@@ -90,21 +84,18 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             context.waitTries++;
 
             AsyncDataProvider.getInstance().getHostById(new AsyncQuery<>(
-                    new AsyncCallback<VDS>() {
-                        @Override
-                        public void onSuccess(VDS returnValue) {
+                            returnValue -> {
 
-                            context.host = returnValue;
+                                context.host = returnValue;
 
-                            timer = new Timer() {
-                                @Override
-                                public void run() {
-                                    prepare4();
-                                }
-                            };
-                            timer.scheduleRepeating(WaitInterval);
-                        }
-                    }),
+                                timer = new Timer() {
+                                    @Override
+                                    public void run() {
+                                        prepare4();
+                                    }
+                                };
+                                timer.scheduleRepeating(WaitInterval);
+                            }),
                     host.getId());
         } else {
 
@@ -139,15 +130,12 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             parameters.setCorrelationId(getCorrelationId());
             Frontend.getInstance().runAction(VdcActionType.AddStorageServerConnection,
                     parameters,
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
+                    result -> {
 
-                            VdcReturnValueBase returnValue = result.getReturnValue();
+                        VdcReturnValueBase returnValue = result.getReturnValue();
 
-                            context.addStorageServerConnectionReturnValue = returnValue;
-                            prepare5();
-                        }
+                        context.addStorageServerConnectionReturnValue = returnValue;
+                        prepare5();
                     });
         }
     }
@@ -178,15 +166,12 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             parameters.setCorrelationId(getCorrelationId());
 
             Frontend.getInstance().runAction(VdcActionType.AddLocalStorageDomain, parameters,
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
+                    result -> {
 
-                            VdcReturnValueBase returnValue = result.getReturnValue();
+                        VdcReturnValueBase returnValue1 = result.getReturnValue();
 
-                            context.addLocalStorageDomainReturnValue = returnValue;
-                            prepare6();
-                        }
+                        context.addLocalStorageDomainReturnValue = returnValue1;
+                        prepare6();
                     });
         }
     }
@@ -201,15 +186,12 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             parameter.setCorrelationId(getCorrelationId());
             Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
                     parameter,
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
+                    result -> {
 
-                            VdcReturnValueBase returnValue = result.getReturnValue();
+                        VdcReturnValueBase returnValue1 = result.getReturnValue();
 
-                            context.removeStorageServerConnectionReturnValue = returnValue;
-                            prepare7();
-                        }
+                        context.removeStorageServerConnectionReturnValue = returnValue1;
+                        prepare7();
                     });
         } else {
             prepare7();

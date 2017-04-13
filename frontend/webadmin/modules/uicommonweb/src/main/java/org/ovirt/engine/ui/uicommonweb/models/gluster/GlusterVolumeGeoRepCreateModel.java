@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -29,7 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -59,60 +57,48 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
     }
 
     private void initValueChangeListeners() {
-        getShowEligibleVolumes().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (!getShowEligibleVolumes().getEntity()) {
-                    getVolumesForForceSessionCreate();
-                } else {
-                    getEligibleVolumes();
-                    setRecommendationViolations(null);
-                }
+        getShowEligibleVolumes().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (!getShowEligibleVolumes().getEntity()) {
+                getVolumesForForceSessionCreate();
+            } else {
+                getEligibleVolumes();
+                setRecommendationViolations(null);
             }
         });
 
-        IEventListener<EventArgs> clusterEventListener = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                String selectedCluster = getSlaveClusters().getSelectedItem();
-                List<GlusterVolumeEntity> volumesInCurrentCluster = new ArrayList<>();
-                if (selectedCluster != null) {
-                    volumesInCurrentCluster = getVolumesInCluster(selectedCluster, getVolumeList());
-                }
-                if (volumesInCurrentCluster.size() > 0) {
-                    getSlaveVolumes().setItems(volumesInCurrentCluster, volumesInCurrentCluster.get(0));
-                } else {
-                    getSlaveVolumes().setItems(volumesInCurrentCluster);
-                }
+        IEventListener<EventArgs> clusterEventListener = (ev, sender, args) -> {
+            String selectedCluster = getSlaveClusters().getSelectedItem();
+            List<GlusterVolumeEntity> volumesInCurrentCluster = new ArrayList<>();
+            if (selectedCluster != null) {
+                volumesInCurrentCluster = getVolumesInCluster(selectedCluster, getVolumeList());
+            }
+            if (volumesInCurrentCluster.size() > 0) {
+                getSlaveVolumes().setItems(volumesInCurrentCluster, volumesInCurrentCluster.get(0));
+            } else {
+                getSlaveVolumes().setItems(volumesInCurrentCluster);
             }
         };
         getSlaveClusters().getSelectedItemChangedEvent().addListener(clusterEventListener);
 
-        IEventListener<EventArgs> slaveVolumeEventListener = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                GlusterVolumeEntity selectedSlaveVolume = getSlaveVolumes().getSelectedItem();
-                Set<Pair<String, Guid>> hostsInCurrentVolume = new HashSet<>();
-                if (!getShowEligibleVolumes().getEntity() && selectedSlaveVolume != null) {
-                    updateRecommendatonViolations();
-                }
-                if (selectedSlaveVolume != null) {
-                    hostsInCurrentVolume = getHostNamesForVolume(selectedSlaveVolume);
-                }
-                getSlaveHosts().setItems(hostsInCurrentVolume);
+        IEventListener<EventArgs> slaveVolumeEventListener = (ev, sender, args) -> {
+            GlusterVolumeEntity selectedSlaveVolume = getSlaveVolumes().getSelectedItem();
+            Set<Pair<String, Guid>> hostsInCurrentVolume = new HashSet<>();
+            if (!getShowEligibleVolumes().getEntity() && selectedSlaveVolume != null) {
+                updateRecommendatonViolations();
             }
+            if (selectedSlaveVolume != null) {
+                hostsInCurrentVolume = getHostNamesForVolume(selectedSlaveVolume);
+            }
+            getSlaveHosts().setItems(hostsInCurrentVolume);
         };
         getSlaveVolumes().getSelectedItemChangedEvent().addListener(slaveVolumeEventListener);
 
-        getSlaveUserName().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                String slaveUser = getSlaveUserName().getEntity();
-                getSlaveUserGroupName().setIsChangeable(
-                        slaveUser != null && !slaveUser.equalsIgnoreCase(ConstantsManager.getInstance()
-                                .getConstants()
-                                .rootUser()));
-            }
+        getSlaveUserName().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            String slaveUser = getSlaveUserName().getEntity();
+            getSlaveUserGroupName().setIsChangeable(
+                    slaveUser != null && !slaveUser.equalsIgnoreCase(ConstantsManager.getInstance()
+                            .getConstants()
+                            .rootUser()));
         });
     }
 
@@ -121,12 +107,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
         SearchParameters volumesSearchParameters = new SearchParameters("Volumes:", SearchType.GlusterVolume, false);//$NON-NLS-1$
         volumesSearchParameters.setRefresh(true);
 
-        Frontend.getInstance().runQuery(VdcQueryType.Search, volumesSearchParameters, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                showAvailableVolumes(returnValue);
-            }
-        }));
+        Frontend.getInstance().runQuery(VdcQueryType.Search, volumesSearchParameters, new AsyncQuery<VdcQueryReturnValue>(returnValue -> showAvailableVolumes(returnValue)));
     }
 
     private void showAvailableVolumes(VdcQueryReturnValue returnValue) {
@@ -144,12 +125,8 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
     public void getEligibleVolumes() {
         this.startProgress(constants.fetchingDataMessage());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterGeoReplicationEligibleVolumes, new IdQueryParameters(masterVolume.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                showAvailableVolumes(returnValue);
-            }
-        }));
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterGeoReplicationEligibleVolumes, new IdQueryParameters(masterVolume.getId()),
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> showAvailableVolumes(returnValue)));
     }
 
     protected Set<String> getClusterForVolumes(Collection<GlusterVolumeEntity> eligibleVolumes) {
@@ -269,22 +246,20 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     public void updateRecommendatonViolations() {
         startProgress(constants.fetchingDataMessage());
-        AsyncDataProvider.getInstance().getGlusterVolumeGeoRepRecommendationViolations(new AsyncQuery<>(new AsyncCallback<List<GlusterGeoRepNonEligibilityReason>>() {
-            @Override
-            public void onSuccess(List<GlusterGeoRepNonEligibilityReason> eligibilityViolators) {
-                stopProgress();
-                if(eligibilityViolators.size() > 0) {
-                    StringBuilder configViolations = new StringBuilder(constants.geoReplicationRecommendedConfigViolation());
-                    for(GlusterGeoRepNonEligibilityReason currentViolator : eligibilityViolators) {
-                        configViolations.append("\n* ");//$NON-NLS-1$
-                        configViolations.append(EnumTranslator.getInstance().translate(currentViolator));
+        AsyncDataProvider.getInstance().getGlusterVolumeGeoRepRecommendationViolations(new AsyncQuery<>(
+                eligibilityViolators -> {
+                    stopProgress();
+                    if(eligibilityViolators.size() > 0) {
+                        StringBuilder configViolations = new StringBuilder(constants.geoReplicationRecommendedConfigViolation());
+                        for(GlusterGeoRepNonEligibilityReason currentViolator : eligibilityViolators) {
+                            configViolations.append("\n* ");//$NON-NLS-1$
+                            configViolations.append(EnumTranslator.getInstance().translate(currentViolator));
+                        }
+                        setRecommendationViolations(configViolations.toString());
+                    } else {
+                        setRecommendationViolations(null);
                     }
-                    setRecommendationViolations(configViolations.toString());
-                } else {
-                    setRecommendationViolations(null);
-                }
-            }
-        }), masterVolume.getId(), getSlaveVolumes().getSelectedItem().getId());
+                }), masterVolume.getId(), getSlaveVolumes().getSelectedItem().getId());
     }
 
     public boolean validate() {

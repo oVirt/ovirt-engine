@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -39,17 +38,13 @@ public abstract class VmInstanceTypeManager extends InstanceTypeManager {
 
         VdcQueryType queryType = (vmBase instanceof VmTemplate) ? VdcQueryType.GetTemplateInterfacesByTemplateId : VdcQueryType.GetVmInterfacesByVmId;
 
-        AsyncQuery query = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                if (returnValue == null) {
-                    return;
-                }
-
-                List<VmNetworkInterface> nics = returnValue.getReturnValue();
-                updateNetworkInterfaces(getNetworkProfileBehavior(), nics);
+        AsyncQuery<VdcQueryReturnValue> query = new AsyncQuery<>(returnValue -> {
+            if (returnValue == null) {
+                return;
             }
+
+            List<VmNetworkInterface> nics = returnValue.getReturnValue();
+            updateNetworkInterfaces(getNetworkProfileBehavior(), nics);
         });
 
         Frontend.getInstance().runQuery(queryType,
@@ -58,24 +53,20 @@ public abstract class VmInstanceTypeManager extends InstanceTypeManager {
     }
 
     private void updateNetworkInterfaces(final ProfileBehavior behavior, final List<VmNetworkInterface> argNics) {
-        AsyncQuery<List<VnicProfileView>> query = new AsyncQuery<>(new AsyncCallback<List<VnicProfileView>>() {
+        AsyncQuery<List<VnicProfileView>> query = new AsyncQuery<>(profiles -> {
+            List<VnicInstanceType> vnicInstanceTypes = new ArrayList<>();
+            List<VmNetworkInterface> nics = (argNics == null) ? new ArrayList<VmNetworkInterface>() : argNics;
 
-            @Override
-            public void onSuccess(List<VnicProfileView> profiles) {
-                List<VnicInstanceType> vnicInstanceTypes = new ArrayList<>();
-                List<VmNetworkInterface> nics = (argNics == null) ? new ArrayList<VmNetworkInterface>() : argNics;
-
-                for (VmNetworkInterface nic : nics) {
-                    final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);
-                    vnicInstanceType.setItems(profiles);
-                    behavior.initSelectedProfile(vnicInstanceType, vnicInstanceType.getNetworkInterface());
-                    vnicInstanceTypes.add(vnicInstanceType);
-                }
-
-                getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(profiles);
-                getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
-                getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrNull(vnicInstanceTypes));
+            for (VmNetworkInterface nic : nics) {
+                final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);
+                vnicInstanceType.setItems(profiles);
+                behavior.initSelectedProfile(vnicInstanceType, vnicInstanceType.getNetworkInterface());
+                vnicInstanceTypes.add(vnicInstanceType);
             }
+
+            getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(profiles);
+            getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
+            getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrNull(vnicInstanceTypes));
         });
 
         behavior.initProfiles(getModel().getSelectedCluster().getId(), getModel().getSelectedDataCenter().getId(), query);

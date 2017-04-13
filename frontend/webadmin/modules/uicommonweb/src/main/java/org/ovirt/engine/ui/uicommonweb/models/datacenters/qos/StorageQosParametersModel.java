@@ -2,10 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
 
 public class StorageQosParametersModel extends QosParametersModel<StorageQos> {
     private StorageQosMetricParametersModel throughput;
@@ -19,15 +15,11 @@ public class StorageQosParametersModel extends QosParametersModel<StorageQos> {
                 ConfigurationValues.MaxReadIopsUpperBoundQosValue,
                 ConfigurationValues.MaxWriteIopsUpperBoundQosValue));
 
-        getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
-                    boolean value = getIsChangable();
-                    getThroughput().setIsChangeable(value);
-                    getIops().setIsChangeable(value);
-                }
+        getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
+                boolean value = getIsChangable();
+                getThroughput().setIsChangeable(value);
+                getIops().setIsChangeable(value);
             }
         });
     }

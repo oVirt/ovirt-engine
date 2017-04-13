@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -53,11 +52,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.NewPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -209,83 +203,76 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
 
         Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                 new IdQueryParameters(pool.getVmPoolId()),
+                new AsyncQuery<VdcQueryReturnValue>(result -> {
+                    final VM vm = result.getReturnValue();
 
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue result) {
-                        final VM vm = result.getReturnValue();
+                    final ExistingPoolModelBehavior behavior = new ExistingPoolModelBehavior(vm, pool);
+                    behavior.getPoolModelBehaviorInitializedEvent().addListener((ev, sender, args) -> {
+                        final PoolModel model = behavior.getModel();
 
-                        final ExistingPoolModelBehavior behavior = new ExistingPoolModelBehavior(vm, pool);
-                        behavior.getPoolModelBehaviorInitializedEvent().addListener(new IEventListener<EventArgs>() {
-                            @Override
-                            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                                final PoolModel model = behavior.getModel();
-
-                                for (EntityModel<VmPoolType> item : model.getPoolType().getItems()) {
-                                    if (item.getEntity() == pool.getVmPoolType()) {
-                                        model.getPoolType().setSelectedItem(item);
-                                        break;
-                                    }
-                                }
-                                String cdImage = null;
-
-                                if (vm != null) {
-                                    model.getDataCenterWithClustersList().setSelectedItem(null);
-                                    model.getDataCenterWithClustersList().setSelectedItem(Linq.firstOrNull(model.getDataCenterWithClustersList()
-                                            .getItems(),
-                                            new Linq.DataCenterWithClusterPredicate(vm.getStoragePoolId(), vm.getClusterId())));
-
-                                    model.getTemplateWithVersion().setIsChangeable(false);
-                                    cdImage = vm.getIsoPath();
-                                    model.getVmType().setSelectedItem(vm.getVmType());
-                                }
-                                else {
-                                    model.getDataCenterWithClustersList()
-                                            .setSelectedItem(Linq.firstOrNull(model.getDataCenterWithClustersList().getItems()));
-                                }
-
-                                model.getDataCenterWithClustersList().setIsChangeable(vm == null);
-
-                                boolean hasCd = !StringHelper.isNullOrEmpty(cdImage);
-                                model.getCdImage().setIsChangeable(hasCd);
-                                model.getCdAttached().setEntity(hasCd);
-                                if (hasCd) {
-                                    model.getCdImage().setSelectedItem(cdImage);
-                                }
-
-                                model.getProvisioning().setIsChangeable(false);
-                                model.getStorageDomain().setIsChangeable(false);
+                        for (EntityModel<VmPoolType> item : model.getPoolType().getItems()) {
+                            if (item.getEntity() == pool.getVmPoolType()) {
+                                model.getPoolType().setSelectedItem(item);
+                                break;
                             }
-                        });
+                        }
+                        String cdImage = null;
 
-                        PoolModel model = new PoolModel(behavior);
-                        model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
-                        model.setIsAdvancedModeLocalStorageKey("wa_pool_dialog");  //$NON-NLS-1$
-                        setWindow(model);
+                        if (vm != null) {
+                            model.getDataCenterWithClustersList().setSelectedItem(null);
+                            model.getDataCenterWithClustersList().setSelectedItem(Linq.firstOrNull(model.getDataCenterWithClustersList()
+                                    .getItems(),
+                                    new Linq.DataCenterWithClusterPredicate(vm.getStoragePoolId(), vm.getClusterId())));
 
-                        VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
-                        switchModeCommand.init(model);
-                        model.getCommands().add(switchModeCommand);
+                            model.getTemplateWithVersion().setIsChangeable(false);
+                            cdImage = vm.getIsoPath();
+                            model.getVmType().setSelectedItem(vm.getVmType());
+                        }
+                        else {
+                            model.getDataCenterWithClustersList()
+                                    .setSelectedItem(Linq.firstOrNull(model.getDataCenterWithClustersList().getItems()));
+                        }
 
-                        UICommand command = UICommand.createDefaultOkUiCommand("OnSave", poolListModel); //$NON-NLS-1$
-                        model.getCommands().add(command);
+                        model.getDataCenterWithClustersList().setIsChangeable(vm == null);
 
-                        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", poolListModel)); //$NON-NLS-1$
+                        boolean hasCd = !StringHelper.isNullOrEmpty(cdImage);
+                        model.getCdImage().setIsChangeable(hasCd);
+                        model.getCdAttached().setEntity(hasCd);
+                        if (hasCd) {
+                            model.getCdImage().setSelectedItem(cdImage);
+                        }
 
-                        model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
-                        model.setHelpTag(HelpTag.edit_pool);
-                        model.setHashName("edit_pool"); //$NON-NLS-1$
-                        model.initialize(getSystemTreeSelectedItem());
-                        model.getName().setEntity(pool.getName());
-                        model.getDescription().setEntity(pool.getVmPoolDescription());
-                        model.getComment().setEntity(pool.getComment());
-                        model.getPoolStateful().setEntity(pool.isStateful());
-                        model.getAssignedVms().setEntity(pool.getAssignedVmsCount());
-                        model.getPrestartedVms().setEntity(pool.getPrestartedVms());
-                        model.setPrestartedVmsHint("0-" + pool.getAssignedVmsCount()); //$NON-NLS-1$
-                        model.getMaxAssignedVmsPerUser().setEntity(pool.getMaxAssignedVmsPerUser());
+                        model.getProvisioning().setIsChangeable(false);
+                        model.getStorageDomain().setIsChangeable(false);
+                    });
 
-                    }
+                    PoolModel model = new PoolModel(behavior);
+                    model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
+                    model.setIsAdvancedModeLocalStorageKey("wa_pool_dialog");  //$NON-NLS-1$
+                    setWindow(model);
+
+                    VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+                    switchModeCommand.init(model);
+                    model.getCommands().add(switchModeCommand);
+
+                    UICommand command = UICommand.createDefaultOkUiCommand("OnSave", poolListModel); //$NON-NLS-1$
+                    model.getCommands().add(command);
+
+                    model.getCommands().add(UICommand.createCancelUiCommand("Cancel", poolListModel)); //$NON-NLS-1$
+
+                    model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
+                    model.setHelpTag(HelpTag.edit_pool);
+                    model.setHashName("edit_pool"); //$NON-NLS-1$
+                    model.initialize(getSystemTreeSelectedItem());
+                    model.getName().setEntity(pool.getName());
+                    model.getDescription().setEntity(pool.getVmPoolDescription());
+                    model.getComment().setEntity(pool.getComment());
+                    model.getPoolStateful().setEntity(pool.isStateful());
+                    model.getAssignedVms().setEntity(pool.getAssignedVmsCount());
+                    model.getPrestartedVms().setEntity(pool.getPrestartedVms());
+                    model.setPrestartedVmsHint("0-" + pool.getAssignedVmsCount()); //$NON-NLS-1$
+                    model.getMaxAssignedVmsPerUser().setEntity(pool.getMaxAssignedVmsPerUser());
+
                 }));
     }
 
@@ -342,15 +329,12 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmPool, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
     }
 
@@ -375,51 +359,48 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
 
         // Check name unicitate.
         AsyncDataProvider.getInstance().isPoolNameUnique(new AsyncQuery<>(
-                        new AsyncCallback<Boolean>() {
-                            @Override
-                            public void onSuccess(Boolean isUnique) {
-                                if ((model.getIsNew() && !isUnique)
-                                        || (!model.getIsNew() && !isUnique
-                                        && name.compareToIgnoreCase(getCurrentPool().getName()) != 0)) {
-                                    model.getName()
-                                            .getInvalidityReasons()
-                                            .add(ConstantsManager.getInstance()
-                                                    .getConstants()
-                                                    .nameMustBeUniqueInvalidReason());
-                                    model.getName().setIsValid(false);
-                                    model.setValidTab(TabName.GENERAL_TAB, false);
-                                    model.fireValidationCompleteEvent();
-                                    return;
-                                }
-                                String selectedCpu = model.getCustomCpu().getSelectedItem();
-                                if (selectedCpu != null && !selectedCpu.isEmpty() && !model.getCustomCpu()
-                                        .getItems()
-                                        .contains(selectedCpu)) {
-                                    ConfirmationModel confirmModel = new ConfirmationModel();
-                                    confirmModel.setTitle(ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .vmUnsupportedCpuTitle());
-                                    confirmModel.setMessage(ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .vmUnsupportedCpuMessage());
-                                    confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
-                                    confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
-
-                                    confirmModel.getCommands()
-                                            .add(new UICommand("OnSave_Phase2", PoolListModel.this) //$NON-NLS-1$
-                                                    .setTitle(ConstantsManager.getInstance().getConstants().ok())
-                                                    .setIsDefault(true));
-
-                                    confirmModel.getCommands()
-                                            .add(UICommand.createCancelUiCommand("CancelConfirmation", //$NON-NLS-1$
-                                                    PoolListModel.this));
-
-                                    setConfirmWindow(confirmModel);
-                                } else {
-                                    savePoolPostValidation();
-                                }
-
+                        isUnique -> {
+                            if ((model.getIsNew() && !isUnique)
+                                    || (!model.getIsNew() && !isUnique
+                                    && name.compareToIgnoreCase(getCurrentPool().getName()) != 0)) {
+                                model.getName()
+                                        .getInvalidityReasons()
+                                        .add(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .nameMustBeUniqueInvalidReason());
+                                model.getName().setIsValid(false);
+                                model.setValidTab(TabName.GENERAL_TAB, false);
+                                model.fireValidationCompleteEvent();
+                                return;
                             }
+                            String selectedCpu = model.getCustomCpu().getSelectedItem();
+                            if (selectedCpu != null && !selectedCpu.isEmpty() && !model.getCustomCpu()
+                                    .getItems()
+                                    .contains(selectedCpu)) {
+                                ConfirmationModel confirmModel = new ConfirmationModel();
+                                confirmModel.setTitle(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .vmUnsupportedCpuTitle());
+                                confirmModel.setMessage(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .vmUnsupportedCpuMessage());
+                                confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
+                                confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
+
+                                confirmModel.getCommands()
+                                        .add(new UICommand("OnSave_Phase2", PoolListModel.this) //$NON-NLS-1$
+                                                .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                                                .setIsDefault(true));
+
+                                confirmModel.getCommands()
+                                        .add(UICommand.createCancelUiCommand("CancelConfirmation", //$NON-NLS-1$
+                                                PoolListModel.this));
+
+                                setConfirmWindow(confirmModel);
+                            } else {
+                                savePoolPostValidation();
+                            }
+
                         }),
                 name);
     }
@@ -486,24 +467,18 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
             }
             Frontend.getInstance().runMultipleAction(VdcActionType.AddVmPool,
                     new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{param})),
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
-                            cancel();
-                            stopProgress();
-                        }
+                    result -> {
+                        cancel();
+                        stopProgress();
                     },
                     this);
         }
         else {
             Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmPool,
                     new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{param})),
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
-                            cancel();
-                            stopProgress();
-                        }
+                    result -> {
+                        cancel();
+                        stopProgress();
                     },
                     this);
         }

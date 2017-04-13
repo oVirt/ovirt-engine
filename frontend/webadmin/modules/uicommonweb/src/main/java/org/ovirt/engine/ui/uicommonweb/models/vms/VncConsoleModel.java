@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
@@ -105,17 +104,14 @@ public class VncConsoleModel extends ConsoleModel {
         Frontend.getInstance().runQuery(
                 VdcQueryType.ConfigureConsoleOptions,
                 parameters,
-                new ShowErrorAsyncQuery(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        ConsoleOptions configuredOptions = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        // overriding global server settings by frontend settings
-                        configuredOptions.setRemapCtrlAltDelete(vncImpl.getOptions().isRemapCtrlAltDelete());
-                        vncImpl.setOptions(configuredOptions);
-                        vncImpl.getOptions().setTitle(getClientTitle());
-                        vncImpl.getOptions().setVmName(getEntity().getName());
-                        vncImpl.invokeClient();
-                    }
+                new ShowErrorAsyncQuery(returnValue -> {
+                    ConsoleOptions configuredOptions = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    // overriding global server settings by frontend settings
+                    configuredOptions.setRemapCtrlAltDelete(vncImpl.getOptions().isRemapCtrlAltDelete());
+                    vncImpl.setOptions(configuredOptions);
+                    vncImpl.getOptions().setTitle(getClientTitle());
+                    vncImpl.getOptions().setVmName(getEntity().getName());
+                    vncImpl.invokeClient();
                 }));
     }
 

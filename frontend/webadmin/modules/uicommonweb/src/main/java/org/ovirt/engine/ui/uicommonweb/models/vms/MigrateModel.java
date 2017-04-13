@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -172,24 +171,20 @@ public class MigrateModel extends Model {
         }
 
         AsyncDataProvider.getInstance().getClusterList(
-                new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-
-                    @Override
-                    public void onSuccess(List<Cluster> clusterList) {
-                        List<Cluster> onlyWithArchitecture = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusterList);
-                        List<Cluster> onlyVirt = AsyncDataProvider.getInstance().getClusterByServiceList(onlyWithArchitecture, true, false);
+                new AsyncQuery<>(clusterList -> {
+                    List<Cluster> onlyWithArchitecture = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusterList);
+                    List<Cluster> onlyVirt = AsyncDataProvider.getInstance().getClusterByServiceList(onlyWithArchitecture, true, false);
 
 
-                        Cluster selected = null;
-                        for (Cluster cluster : onlyVirt) {
-                            if (cluster.getId().equals(vm.getClusterId())) {
-                                selected = cluster;
-                                break;
-                            }
+                    Cluster selected = null;
+                    for (Cluster cluster : onlyVirt) {
+                        if (cluster.getId().equals(vm.getClusterId())) {
+                            selected = cluster;
+                            break;
                         }
-
-                        clusters.setItems(onlyVirt, selected != null ? selected : Linq.firstOrNull(onlyVirt));
                     }
+
+                    clusters.setItems(onlyVirt, selected != null ? selected : Linq.firstOrNull(onlyVirt));
                 }),
                 vm.getStoragePoolId());
     }
@@ -201,13 +196,7 @@ public class MigrateModel extends Model {
         }
 
         AsyncDataProvider.getInstance().getUpHostListByCluster(new AsyncQuery<>(
-                new AsyncCallback<List<VDS>>() {
-                    @SuppressWarnings("unchecked")
-                    @Override
-                    public void onSuccess(List<VDS> returnValue) {
-                        postMigrateGetUpHosts(privateVmList, returnValue);
-                    }
-                }), selectedCluster.getName());
+                returnValue -> postMigrateGetUpHosts(privateVmList, returnValue)), selectedCluster.getName());
     }
 
     private void postMigrateGetUpHosts(List<VM> selectedVms, List<VDS> hosts) {

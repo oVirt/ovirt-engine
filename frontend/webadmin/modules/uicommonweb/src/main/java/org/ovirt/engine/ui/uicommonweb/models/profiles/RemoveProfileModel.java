@@ -10,8 +10,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public abstract class RemoveProfileModel<P extends ProfileBase> extends ConfirmationModel {
 
@@ -51,14 +49,10 @@ public abstract class RemoveProfileModel<P extends ProfileBase> extends Confirma
         startProgress();
 
         Frontend.getInstance().runMultipleAction(getRemoveActionType(), vdcActionParametersBaseList,
-                new IFrontendMultipleActionAsyncCallback() {
+                result -> {
+                    stopProgress();
+                    cancel();
 
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        stopProgress();
-                        cancel();
-
-                    }
                 }, null);
     }
 

@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class NfsStorageModel extends FileStorageModel {
@@ -221,13 +220,7 @@ public class NfsStorageModel extends FileStorageModel {
         }
 
         ListModel<StoragePool> dataCenter = getContainer().getDataCenter();
-        dataCenter.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-
-                containerDataCenterChanged();
-            }
-        });
+        dataCenter.getSelectedItemChangedEvent().addListener((ev, sender, args) -> containerDataCenterChanged());
 
         // Call handler if there some data center is already selected.
         if (dataCenter.getSelectedItem() != null) {

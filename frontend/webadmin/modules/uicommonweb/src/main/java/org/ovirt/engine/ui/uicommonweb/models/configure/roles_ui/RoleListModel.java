@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
@@ -31,8 +30,6 @@ import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 import com.google.inject.Inject;
 
@@ -171,23 +168,20 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
 
         VdcQueryParametersBase tempVar = new VdcQueryParametersBase ();
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllRoles, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                ArrayList<Role> filteredList = new ArrayList<>();
-                for (Role item : (ArrayList<Role>) returnValue.getReturnValue()) {
-                    // ignore CONSUME_QUOTA_ROLE in UI
-                    if (item.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
-                        continue;
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllRoles, tempVar, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    ArrayList<Role> filteredList = new ArrayList<>();
+                    for (Role item : (ArrayList<Role>) returnValue.getReturnValue()) {
+                        // ignore CONSUME_QUOTA_ROLE in UI
+                        if (item.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
+                            continue;
+                        }
+                        if (getItemsFilter() == null || getItemsFilter() == item.getType()) {
+                            filteredList.add(item);
+                        }
                     }
-                    if (getItemsFilter() == null || getItemsFilter() == item.getType()) {
-                        filteredList.add(item);
-                    }
-                }
-                Collections.sort(filteredList, new NameableComparator());
-                setItems(filteredList);
-            }
-        }));
+                    Collections.sort(filteredList, new NameableComparator());
+                    setItems(filteredList);
+                }));
         setIsQueryFirstTime(false);
     }
 
@@ -275,12 +269,9 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
                 Frontend.getInstance().runQuery(
                         VdcQueryType.GetRoleActionGroupsByRoleId,
                         new IdQueryParameters(role.getId()),
-                        new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue returnValue) {
-                                publicAttachedActions = returnValue.getReturnValue();
-                                setAttachedActionGroups(publicAttachedActions);
-                            }
+                        new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                            publicAttachedActions = returnValue.getReturnValue();
+                            setAttachedActionGroups(publicAttachedActions);
                         }));
             }
 
@@ -435,14 +426,11 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
             tempVar.setRole(role);
             tempVar.setActionGroups(actions);
             Frontend.getInstance().runAction(VdcActionType.AddRoleWithActionGroups, tempVar,
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
+                    result -> {
 
-                            RoleListModel localModel = (RoleListModel) result.getState();
-                            localModel.postOnSaveNew(result.getReturnValue());
+                        RoleListModel localModel = (RoleListModel) result.getState();
+                        localModel.postOnSaveNew(result.getReturnValue());
 
-                        }
                     }, this);
         }
         else {
@@ -454,33 +442,30 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
             attachActionGroup.removeAll(publicAttachedActions);
 
             Frontend.getInstance().runAction(VdcActionType.UpdateRole, new RolesOperationsParameters(role),
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
+                    result -> {
 
-                            RoleListModel roleListModel = (RoleListModel) result.getState();
-                            VdcReturnValueBase retVal = result.getReturnValue();
-                            if (retVal != null && retVal.getSucceeded()) {
-                                if (roleListModel.detachActionGroup.size() > 0) {
-                                    ActionGroupsToRoleParameter tempVar2 = new ActionGroupsToRoleParameter();
-                                    tempVar2.setActionGroups(roleListModel.detachActionGroup);
-                                    tempVar2.setRoleId(roleListModel.role.getId());
-                                    Frontend.getInstance().runAction(VdcActionType.DetachActionGroupsFromRole, tempVar2);
-                                }
-                                if (roleListModel.attachActionGroup.size() > 0) {
-                                    ActionGroupsToRoleParameter tempVar3 = new ActionGroupsToRoleParameter();
-                                    tempVar3.setActionGroups(roleListModel.attachActionGroup);
-                                    tempVar3.setRoleId(roleListModel.role.getId());
-                                    Frontend.getInstance().runAction(VdcActionType.AttachActionGroupsToRole, tempVar3);
-                                }
-                                roleListModel.getWindow().stopProgress();
-                                roleListModel.cancel();
+                        RoleListModel roleListModel = (RoleListModel) result.getState();
+                        VdcReturnValueBase retVal = result.getReturnValue();
+                        if (retVal != null && retVal.getSucceeded()) {
+                            if (roleListModel.detachActionGroup.size() > 0) {
+                                ActionGroupsToRoleParameter tempVar2 = new ActionGroupsToRoleParameter();
+                                tempVar2.setActionGroups(roleListModel.detachActionGroup);
+                                tempVar2.setRoleId(roleListModel.role.getId());
+                                Frontend.getInstance().runAction(VdcActionType.DetachActionGroupsFromRole, tempVar2);
                             }
-                            else {
-                                roleListModel.getWindow().stopProgress();
+                            if (roleListModel.attachActionGroup.size() > 0) {
+                                ActionGroupsToRoleParameter tempVar3 = new ActionGroupsToRoleParameter();
+                                tempVar3.setActionGroups(roleListModel.attachActionGroup);
+                                tempVar3.setRoleId(roleListModel.role.getId());
+                                Frontend.getInstance().runAction(VdcActionType.AttachActionGroupsToRole, tempVar3);
                             }
-
+                            roleListModel.getWindow().stopProgress();
+                            roleListModel.cancel();
                         }
+                        else {
+                            roleListModel.getWindow().stopProgress();
+                        }
+
                     }, this);
         }
     }

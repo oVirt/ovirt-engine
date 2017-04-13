@@ -7,9 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -112,34 +110,30 @@ public class GlusterVolumeSnapshotConfigModel extends Model {
     private void populateConfigOptions() {
         startProgress();
 
-        AsyncDataProvider.getInstance().getGlusterSnapshotConfig(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                Pair<List<GlusterVolumeSnapshotConfig>, List<GlusterVolumeSnapshotConfig>> configs =
-                        returnValue.getReturnValue();
-                Map<String, String> clusterConfigOptions = new HashMap<>();
-                Map<String, String> volumeConfigOptions = new HashMap<>();
-                for (GlusterVolumeSnapshotConfig config : configs.getFirst()) {
-                    clusterConfigOptions.put(config.getParamName(), config.getParamValue());
-                }
-                for (GlusterVolumeSnapshotConfig config : configs.getSecond()) {
-                    volumeConfigOptions.put(config.getParamName(), config.getParamValue());
-                }
-                List<EntityModel<VolumeSnapshotOptionModel>> coll = new ArrayList<>();
-                for (Map.Entry<String, String> entry : volumeConfigOptions.entrySet()) {
-                    EntityModel<VolumeSnapshotOptionModel> cfgModel = new EntityModel<>();
-                    VolumeSnapshotOptionModel option = new VolumeSnapshotOptionModel();
-                    option.setOptionName(entry.getKey());
-                    option.setOptionValue(entry.getValue());
-                    option.setCorrespodingClusterValue(clusterConfigOptions.get(entry.getKey()));
-                    cfgModel.setEntity(option);
-                    existingVolumeConfigs.put(entry.getKey(), entry.getValue());
-                    coll.add(cfgModel);
-                }
-
-                getConfigOptions().setItems(coll);
+        AsyncDataProvider.getInstance().getGlusterSnapshotConfig(new AsyncQuery<>(returnValue -> {
+            Pair<List<GlusterVolumeSnapshotConfig>, List<GlusterVolumeSnapshotConfig>> configs =
+                    returnValue.getReturnValue();
+            Map<String, String> clusterConfigOptions = new HashMap<>();
+            Map<String, String> volumeConfigOptions = new HashMap<>();
+            for (GlusterVolumeSnapshotConfig config : configs.getFirst()) {
+                clusterConfigOptions.put(config.getParamName(), config.getParamValue());
             }
+            for (GlusterVolumeSnapshotConfig config : configs.getSecond()) {
+                volumeConfigOptions.put(config.getParamName(), config.getParamValue());
+            }
+            List<EntityModel<VolumeSnapshotOptionModel>> coll = new ArrayList<>();
+            for (Map.Entry<String, String> entry : volumeConfigOptions.entrySet()) {
+                EntityModel<VolumeSnapshotOptionModel> cfgModel = new EntityModel<>();
+                VolumeSnapshotOptionModel option = new VolumeSnapshotOptionModel();
+                option.setOptionName(entry.getKey());
+                option.setOptionValue(entry.getValue());
+                option.setCorrespodingClusterValue(clusterConfigOptions.get(entry.getKey()));
+                cfgModel.setEntity(option);
+                existingVolumeConfigs.put(entry.getKey(), entry.getValue());
+                coll.add(cfgModel);
+            }
+
+            getConfigOptions().setItems(coll);
         }),
                 selectedVolumeEntity.getClusterId(),
                 selectedVolumeEntity.getId());

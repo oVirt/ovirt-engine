@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -18,7 +16,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -26,8 +23,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 @SuppressWarnings("deprecation")
 public class EditProviderModel extends ProviderModel {
@@ -87,18 +82,13 @@ public class EditProviderModel extends ProviderModel {
 
             if (!queryTypes.isEmpty()) {
                 startProgress();
-                Frontend.getInstance().runMultipleQueries(queryTypes, queryParams, new IFrontendMultipleQueryAsyncCallback() {
-
-                    @SuppressWarnings("unchecked")
-                    @Override
-                    public void executed(FrontendMultipleQueryAsyncResult result) {
-                        stopProgress();
-                        Iterator<VdcQueryReturnValue> i = result.getReturnValues().iterator();
-                        if (providedTypes.contains(VdcObjectType.Network)) {
-                            providedNetworks = i.next().getReturnValue();
-                        }
-                        showConfirmation();
+                Frontend.getInstance().runMultipleQueries(queryTypes, queryParams, result -> {
+                    stopProgress();
+                    Iterator<VdcQueryReturnValue> i = result.getReturnValues().iterator();
+                    if (providedTypes.contains(VdcObjectType.Network)) {
+                        providedNetworks = i.next().getReturnValue();
                     }
+                    showConfirmation();
                 });
                 return;
             }
@@ -147,23 +137,15 @@ public class EditProviderModel extends ProviderModel {
     @Override
     protected void updateDatacentersForVolumeProvider() {
         getDataCenter().setIsChangeable(false);
-        AsyncDataProvider.getInstance().getStorageDomainByName(new AsyncQuery<>(new AsyncCallback<StorageDomainStatic>() {
-            @Override
-            public void onSuccess(StorageDomainStatic storageDomainStatic) {
-                AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-                    @Override
-                    public void onSuccess(List<StoragePool> dataCenters) {
-                        if (dataCenters != null && !dataCenters.isEmpty()) {
-                            getDataCenter().setSelectedItem(dataCenters.get(0));
-                        } else {
-                            StoragePool noneStoragePool = new StoragePool();
-                            noneStoragePool.setId(Guid.Empty);
-                            noneStoragePool.setName("(none)"); //$NON-NLS-1$
-                            getDataCenter().setSelectedItem(noneStoragePool);
-                        }
-                    }
-                }), storageDomainStatic.getId());
+        AsyncDataProvider.getInstance().getStorageDomainByName(new AsyncQuery<>(storageDomainStatic -> AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(dataCenters -> {
+            if (dataCenters != null && !dataCenters.isEmpty()) {
+                getDataCenter().setSelectedItem(dataCenters.get(0));
+            } else {
+                StoragePool noneStoragePool = new StoragePool();
+                noneStoragePool.setId(Guid.Empty);
+                noneStoragePool.setName("(none)"); //$NON-NLS-1$
+                getDataCenter().setSelectedItem(noneStoragePool);
             }
-        }), provider.getName());
+        }), storageDomainStatic.getId())), provider.getName());
     }
 }

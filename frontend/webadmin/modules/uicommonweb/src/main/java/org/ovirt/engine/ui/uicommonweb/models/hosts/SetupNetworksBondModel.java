@@ -16,9 +16,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.KeyValueFormatValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 @SuppressWarnings("unused")
 public class SetupNetworksBondModel extends Model {
@@ -71,23 +68,15 @@ public class SetupNetworksBondModel extends Model {
         getBondingOptions().setItems(list);
         getBondingOptions().setSelectedItem(defaultItem);
         setCustomBondEditor(new EntityModel<String>());
-        getCustomBondEditor().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                final String customBondValue = ((EntityModel<String>) sender).getEntity();
-                Map.Entry<String, EntityModel<String>> selectedItem = getBondingOptions().getSelectedItem();
-                if (selectedItem.getKey().equals(CUSTOM_BONDING_MODE)) {
-                    selectedItem.getValue().setEntity(customBondValue);
-                }
+        getCustomBondEditor().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            final String customBondValue = ((EntityModel<String>) sender).getEntity();
+            Map.Entry<String, EntityModel<String>> selectedItem = getBondingOptions().getSelectedItem();
+            if (selectedItem.getKey().equals(CUSTOM_BONDING_MODE)) {
+                selectedItem.getValue().setEntity(customBondValue);
             }
         });
         onBondingOptionsSelectionChange();
-        getBondingOptions().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                onBondingOptionsSelectionChange();
-            }
-        });
+        getBondingOptions().getSelectedItemChangedEvent().addListener((ev, sender, args) -> onBondingOptionsSelectionChange());
     }
 
     public boolean validate() {

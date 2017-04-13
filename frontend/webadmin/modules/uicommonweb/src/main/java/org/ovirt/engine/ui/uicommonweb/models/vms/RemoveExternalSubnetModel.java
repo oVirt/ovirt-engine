@@ -12,8 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class RemoveExternalSubnetModel extends ConfirmationModel {
 
@@ -52,13 +50,10 @@ public class RemoveExternalSubnetModel extends ConfirmationModel {
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveSubnetFromProvider,
                 list,
                 false,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        stopProgress();
-                        sourceListModel.getSearchCommand().execute();
-                        cancel();
-                    }
+                result -> {
+                    stopProgress();
+                    sourceListModel.getSearchCommand().execute();
+                    cancel();
                 },
                 null);
     }

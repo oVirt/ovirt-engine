@@ -7,7 +7,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -24,23 +23,20 @@ public class ExistingInstanceTypeModelBehavior extends ExistingNonClusterModelBe
 
     @Override
     protected void postBuild() {
-        AsyncDataProvider.getInstance().getTemplateNicList(new AsyncQuery<>(new AsyncCallback<List<VmNetworkInterface>>() {
-            @Override
-            public void onSuccess(List<VmNetworkInterface> result) {
-                List<VnicProfileView> profiles = new ArrayList<>(Arrays.asList(VnicProfileView.EMPTY));
-                List<VnicInstanceType> vnicInstanceTypes = new ArrayList<>();
+        AsyncDataProvider.getInstance().getTemplateNicList(new AsyncQuery<>(result -> {
+            List<VnicProfileView> profiles = new ArrayList<>(Arrays.asList(VnicProfileView.EMPTY));
+            List<VnicInstanceType> vnicInstanceTypes = new ArrayList<>();
 
-                for (VmNetworkInterface nic : result) {
-                    final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);
-                    vnicInstanceType.setItems(profiles);
-                    vnicInstanceType.setSelectedItem(VnicProfileView.EMPTY);
-                    vnicInstanceTypes.add(vnicInstanceType);
-                }
-
-                getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(profiles);
-                getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
-                getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrNull(vnicInstanceTypes));
+            for (VmNetworkInterface nic : result) {
+                final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);
+                vnicInstanceType.setItems(profiles);
+                vnicInstanceType.setSelectedItem(VnicProfileView.EMPTY);
+                vnicInstanceTypes.add(vnicInstanceType);
             }
+
+            getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(profiles);
+            getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
+            getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrNull(vnicInstanceTypes));
         }), instanceType.getId());
     }
 }

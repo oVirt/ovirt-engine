@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -17,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericName
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -27,8 +25,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
@@ -105,33 +101,25 @@ public class VmBackupModel extends ManageBackupModel<VM> {
 
         model.startProgress();
 
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-
-            @Override
-            public void onSuccess(List<StoragePool> pools) {
-                if (pools != null && pools.size() > 0) {
-                    StoragePool pool = pools.get(0);
-                    ArrayList<VdcActionParametersBase> list = new ArrayList<>();
-                    for (VM vm : getSelectedItems()) {
-                        list.add(new RemoveVmFromImportExportParameters(vm.getId(),
-                                getEntity().getId(), pool.getId()));
-                    }
-
-                    Frontend.getInstance().runMultipleAction(
-                            VdcActionType.RemoveVmFromImportExport, list,
-                            new IFrontendMultipleActionAsyncCallback() {
-                                @Override
-                                public void executed(
-                                        FrontendMultipleActionAsyncResult result) {
-
-                                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                                    localModel.stopProgress();
-                                    cancel();
-                                    onEntityChanged();
-
-                                }
-                            }, getWindow());
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(pools -> {
+            if (pools != null && pools.size() > 0) {
+                StoragePool pool = pools.get(0);
+                ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+                for (VM vm : getSelectedItems()) {
+                    list.add(new RemoveVmFromImportExportParameters(vm.getId(),
+                            getEntity().getId(), pool.getId()));
                 }
+
+                Frontend.getInstance().runMultipleAction(
+                        VdcActionType.RemoveVmFromImportExport, list,
+                        result -> {
+
+                            ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                            localModel.stopProgress();
+                            cancel();
+                            onEntityChanged();
+
+                        }, getWindow());
             }
         }), getEntity().getId());
     }
@@ -192,52 +180,48 @@ public class VmBackupModel extends ManageBackupModel<VM> {
 
     protected void executeImport() {
         importModel.importVms(
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(
-                            FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        getWindow().stopProgress();
-                        cancel();
-                        ArrayList<VdcReturnValueBase> retVals =
-                                (ArrayList<VdcReturnValueBase>) result
-                                        .getReturnValue();
-                        if (retVals != null
-                                && getSelectedItems().size() == retVals
-                                        .size()) {
-                            StringBuilder importedVms = new StringBuilder();
-                            int counter = 0;
-                            boolean toShowConfirmWindow = false;
-                            for (VM vm : getSelectedItems()) {
-                                if (retVals.get(counter) != null
-                                        && retVals.get(counter).isValid()) {
-                                    importedVms.append(vm.getName()).append(", "); //$NON-NLS-1$
-                                    toShowConfirmWindow = true;
-                                }
-                                counter++;
+                    getWindow().stopProgress();
+                    cancel();
+                    ArrayList<VdcReturnValueBase> retVals =
+                            (ArrayList<VdcReturnValueBase>) result
+                                    .getReturnValue();
+                    if (retVals != null
+                            && getSelectedItems().size() == retVals
+                                    .size()) {
+                        StringBuilder importedVms = new StringBuilder();
+                        int counter = 0;
+                        boolean toShowConfirmWindow = false;
+                        for (VM vm : getSelectedItems()) {
+                            if (retVals.get(counter) != null
+                                    && retVals.get(counter).isValid()) {
+                                importedVms.append(vm.getName()).append(", "); //$NON-NLS-1$
+                                toShowConfirmWindow = true;
                             }
-                            // show the confirm window only if the import has been successfully started for at least one
-                            // VM
-                            if (toShowConfirmWindow) {
-                                ConfirmationModel confirmModel = new ConfirmationModel();
-                                setConfirmWindow(confirmModel);
-                                confirmModel.setTitle(ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .importVirtualMachinesTitle());
-                                confirmModel.setHelpTag(HelpTag.import_virtual_machine);
-                                confirmModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
-                                confirmModel.setMessage(ConstantsManager.getInstance()
-                                        .getMessages()
-                                        .importProcessHasBegunForVms(StringHelper.trimEnd(importedVms.toString().trim(), ',')));
-                                confirmModel.getCommands().add(new UICommand(CANCEL_CONFIRMATION_COMMAND, VmBackupModel.this)
-                                .setTitle(ConstantsManager.getInstance().getConstants().close())
-                                .setIsDefault(true)
-                                .setIsCancel(true)
-                                );
-                            }
+                            counter++;
                         }
-
+                        // show the confirm window only if the import has been successfully started for at least one
+                        // VM
+                        if (toShowConfirmWindow) {
+                            ConfirmationModel confirmModel = new ConfirmationModel();
+                            setConfirmWindow(confirmModel);
+                            confirmModel.setTitle(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .importVirtualMachinesTitle());
+                            confirmModel.setHelpTag(HelpTag.import_virtual_machine);
+                            confirmModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
+                            confirmModel.setMessage(ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .importProcessHasBegunForVms(StringHelper.trimEnd(importedVms.toString().trim(), ',')));
+                            confirmModel.getCommands().add(new UICommand(CANCEL_CONFIRMATION_COMMAND, VmBackupModel.this)
+                            .setTitle(ConstantsManager.getInstance().getConstants().close())
+                            .setIsDefault(true)
+                            .setIsCancel(true)
+                            );
+                        }
                     }
+
                 });
     }
 
@@ -260,15 +244,12 @@ public class VmBackupModel extends ManageBackupModel<VM> {
                 || getEntity().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Active) {
             setItems(Collections.<VM>emptyList());
         } else {
-            AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-                @Override
-                public void onSuccess(List<StoragePool> list) {
-                    if (list != null && list.size() > 0) {
-                        StoragePool dataCenter = list.get(0);
-                        Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
-                                new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
-                                        getEntity().getId()), new SetSortedItemsAsyncQuery(new LexoNumericNameableComparator<>()));
-                    }
+            AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(list -> {
+                if (list != null && list.size() > 0) {
+                    StoragePool dataCenter = list.get(0);
+                    Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
+                            new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
+                                    getEntity().getId()), new SetSortedItemsAsyncQuery(new LexoNumericNameableComparator<>()));
                 }
             }), getEntity().getId());
         }

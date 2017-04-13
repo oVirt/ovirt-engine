@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.HasAdElementReconnectPermissionParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
@@ -25,8 +24,6 @@ import com.google.gwt.dom.client.FormElement;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 
@@ -148,27 +145,21 @@ public abstract class ConsoleModel extends EntityModel<VM> {
                 new HasAdElementReconnectPermissionParameters(Frontend.getInstance().getLoggedInUser().getId(),
                         vm.getId());
 
-        final AsyncQuery<VdcQueryReturnValue> portalUserReconnectPermissionQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue result) {
-                boolean returnValue = result.getReturnValue();
-                if (returnValue) {
-                    displayConsoleConnectConfirmPopup(command);
-                } else {
-                    displayUserCantReconnectDialog();
-                }
+        final AsyncQuery<VdcQueryReturnValue> portalUserReconnectPermissionQuery = new AsyncQuery<>(result -> {
+            boolean returnValue = result.getReturnValue();
+            if (returnValue) {
+                displayConsoleConnectConfirmPopup(command);
+            } else {
+                displayUserCantReconnectDialog();
             }
         });
 
-        final AsyncQuery<VdcQueryReturnValue> consoleUserReconnectPermissionQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue result) {
-                boolean returnValue = result.getReturnValue();
-                if (returnValue) {
-                    command.execute();
-                } else {
-                    Frontend.getInstance().runQuery(VdcQueryType.HasAdElementReconnectPermission, portalUserReconnectPermParams, portalUserReconnectPermissionQuery);
-                }
+        final AsyncQuery<VdcQueryReturnValue> consoleUserReconnectPermissionQuery = new AsyncQuery<>(result -> {
+            boolean returnValue = result.getReturnValue();
+            if (returnValue) {
+                command.execute();
+            } else {
+                Frontend.getInstance().runQuery(VdcQueryType.HasAdElementReconnectPermission, portalUserReconnectPermParams, portalUserReconnectPermissionQuery);
             }
         });
 
@@ -226,12 +217,7 @@ public abstract class ConsoleModel extends EntityModel<VM> {
         formPanel.setVisible(false);
 
         // clean-up after form submit
-        formPanel.addSubmitCompleteHandler(new SubmitCompleteHandler() {
-            @Override
-            public void onSubmitComplete(SubmitCompleteEvent event) {
-                RootPanel.get().remove(formPanel);
-            }
-        });
+        formPanel.addSubmitCompleteHandler(event -> RootPanel.get().remove(formPanel));
 
         RootPanel.get().add(formPanel);
         FormElement.as(formPanel.getElement()).submit();

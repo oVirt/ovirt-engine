@@ -22,11 +22,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
@@ -43,12 +40,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
         this.sourceStorageDomain = sourceStorageDomain;
         setRepoImages(repoImages);
         updateDataCenters();
-        IEventListener<EventArgs> importAsTemplateListener = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateClusterEnabled();
-            }
-        };
+        IEventListener<EventArgs> importAsTemplateListener = (ev, sender, args) -> updateClusterEnabled();
         getImportAsTemplate().getEntityChangedEvent().addListener(importAsTemplateListener);
     }
 
@@ -137,27 +129,24 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ImportRepoImage, actionParameters,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) result.getState();
-                        model.stopProgress();
-                        model.cancel();
+                result -> {
+                    ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) result.getState();
+                    model.stopProgress();
+                    model.cancel();
 
-                        ConfirmationModel confirmModel = new ConfirmationModel();
-                        storageIsoListModel.setConfirmWindow(confirmModel);
-                        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().importImagesTitle());
-                        confirmModel.setHelpTag(HelpTag.import_images);
-                        confirmModel.setHashName("import_images"); //$NON-NLS-1$
-                        confirmModel.setMessage(ConstantsManager.getInstance()
-                                .getMessages()
-                                .importProcessHasBegunForImages(imageNames.toString()));
-                        confirmModel.getCommands().add(new UICommand("CancelConfirm", storageIsoListModel) //$NON-NLS-1$
-                                .setTitle(ConstantsManager.getInstance().getConstants().close())
-                                .setIsDefault(true)
-                                .setIsCancel(true)
-                        );
-                    }
+                    ConfirmationModel confirmModel = new ConfirmationModel();
+                    storageIsoListModel.setConfirmWindow(confirmModel);
+                    confirmModel.setTitle(ConstantsManager.getInstance().getConstants().importImagesTitle());
+                    confirmModel.setHelpTag(HelpTag.import_images);
+                    confirmModel.setHashName("import_images"); //$NON-NLS-1$
+                    confirmModel.setMessage(ConstantsManager.getInstance()
+                            .getMessages()
+                            .importProcessHasBegunForImages(imageNames.toString()));
+                    confirmModel.getCommands().add(new UICommand("CancelConfirm", storageIsoListModel) //$NON-NLS-1$
+                            .setTitle(ConstantsManager.getInstance().getConstants().close())
+                            .setIsDefault(true)
+                            .setIsCancel(true)
+                    );
                 }, this);
     }
 

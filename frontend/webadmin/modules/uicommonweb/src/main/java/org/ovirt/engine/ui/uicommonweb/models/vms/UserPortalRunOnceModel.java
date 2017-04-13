@@ -4,8 +4,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class UserPortalRunOnceModel extends RunOnceModel {
 
@@ -28,12 +26,9 @@ public class UserPortalRunOnceModel extends RunOnceModel {
        startProgress();
 
        Frontend.getInstance().runAction(VdcActionType.RunVmOnce, createRunVmOnceParams(),
-               new IFrontendActionAsyncCallback() {
-                   @Override
-                   public void executed(FrontendActionAsyncResult result) {
-                       stopProgress();
-                       commandTarget.executeCommand(runOnceCommand);
-                   }
+               result -> {
+                   stopProgress();
+                   commandTarget.executeCommand(runOnceCommand);
                }, this);
    }
 }

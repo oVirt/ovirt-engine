@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
@@ -22,8 +21,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHostData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -108,44 +105,37 @@ public class GuideModel<T> extends EntityModel<T> {
         }
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(searchStr, SearchType.VDS),
-                new AsyncQuery<>(
-                        new AsyncCallback<VdcQueryReturnValue>() {
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue returnValue) {
-                                List<VDS> hosts = returnValue.getReturnValue();
-                                boolean succeeded = true;
-                                for (VDS host : hosts) {
-                                    if (!host.getClusterId().equals(hostClusterIdMap.get(host.getId()))) {
-                                        succeeded = false;
-                                    }
-                                }
-                                if (!succeeded) {
-                                    getWindow().stopProgress();
-                                    cancel();
-                                    errorPopupManager.show(ConstantsManager.getInstance().getConstants().hostChangeClusterTimeOut());
-                                } else {
-                                    activateHostsAfterClusterChange(searchStr, activateVdsParameterList);
-                                }
-                            }
-                        }));
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    List<VDS> hosts = returnValue.getReturnValue();
+                    boolean succeeded = true;
+                    for (VDS host : hosts) {
+                        if (!host.getClusterId().equals(hostClusterIdMap.get(host.getId()))) {
+                            succeeded = false;
+                        }
+                    }
+                    if (!succeeded) {
+                        getWindow().stopProgress();
+                        cancel();
+                        errorPopupManager.show(ConstantsManager.getInstance().getConstants().hostChangeClusterTimeOut());
+                    } else {
+                        activateHostsAfterClusterChange(searchStr, activateVdsParameterList);
+                    }
+                }));
     }
 
     protected void activateHostsAfterClusterChange(
             final String searchStr,
             final List<VdcActionParametersBase> activateVdsParameterList) {
         Frontend.getInstance().runMultipleAction(VdcActionType.ActivateVds, activateVdsParameterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        Timer timer = new Timer() {
-                            public void run() {
-                                checkVdsActivateSucceeded(searchStr);
-                            }
-                        };
+                result -> {
+                    Timer timer = new Timer() {
+                        public void run() {
+                            checkVdsActivateSucceeded(searchStr);
+                        }
+                    };
 
-                        // Execute the timer to expire 5 seconds in the future
-                        timer.schedule(5000);
-                    }
+                    // Execute the timer to expire 5 seconds in the future
+                    timer.schedule(5000);
                 },
                 this);
     }
@@ -153,25 +143,21 @@ public class GuideModel<T> extends EntityModel<T> {
     protected void checkVdsActivateSucceeded(final String searchStr) {
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(searchStr, SearchType.VDS),
-                new AsyncQuery<>(
-                        new AsyncCallback<VdcQueryReturnValue>() {
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue returnValue) {
-                                List<VDS> hosts = returnValue.getReturnValue();
-                                boolean succeeded = true;
-                                for (VDS host : hosts) {
-                                    if (host.getStatus() != VDSStatus.Up) {
-                                        succeeded = false;
-                                    }
-                                }
-                                getWindow().stopProgress();
-                                cancel();
-                                if (succeeded) {
-                                    postAction();
-                                } else {
-                                    errorPopupManager.show(ConstantsManager.getInstance().getConstants().hostActivationTimeOut());
-                                }
-                            }
-                        }));
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    List<VDS> hosts = returnValue.getReturnValue();
+                    boolean succeeded = true;
+                    for (VDS host : hosts) {
+                        if (host.getStatus() != VDSStatus.Up) {
+                            succeeded = false;
+                        }
+                    }
+                    getWindow().stopProgress();
+                    cancel();
+                    if (succeeded) {
+                        postAction();
+                    } else {
+                        errorPopupManager.show(ConstantsManager.getInstance().getConstants().hostActivationTimeOut());
+                    }
+                }));
     }
 }

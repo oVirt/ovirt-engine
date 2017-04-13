@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -32,7 +31,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -330,29 +328,27 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     }
 
     private void fetchConfigForSession(GlusterGeoRepSession selectedSession) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeGeoRepConfigList, new IdQueryParameters(selectedSession.getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel =
-                        (GlusterVolumeGeoReplicationSessionConfigModel) getWindow();
-                geoRepConfigModel.stopProgress();
-                boolean queryExecutionStatus = returnValue.getSucceeded();
-                geoRepConfigModel.updateCommandExecutabilities(queryExecutionStatus);
-                if (!queryExecutionStatus) {
-                    geoRepConfigModel.setMessage(ConstantsManager.getInstance().getConstants().errorInFetchingVolumeOptionList());
-                } else {
-                    List<GlusterGeoRepSessionConfiguration> sessionConfigs = returnValue.getReturnValue();
-                    List<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>> sessionConfigEntities =
-                            new ArrayList<>();
-                            for (GlusterGeoRepSessionConfiguration currentSession : sessionConfigs) {
-                                sessionConfigEntities.add(new EntityModel<>(new Pair<>(false,
-                                        currentSession)));
-                            }
-                            geoRepConfigModel.getConfigsModel().setItems(sessionConfigEntities);
-                            geoRepConfigModel.copyConfigsToMap(sessionConfigs);
-                }
-            }
-        }));
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeGeoRepConfigList, new IdQueryParameters(selectedSession.getId()),
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel =
+                            (GlusterVolumeGeoReplicationSessionConfigModel) getWindow();
+                    geoRepConfigModel.stopProgress();
+                    boolean queryExecutionStatus = returnValue.getSucceeded();
+                    geoRepConfigModel.updateCommandExecutabilities(queryExecutionStatus);
+                    if (!queryExecutionStatus) {
+                        geoRepConfigModel.setMessage(ConstantsManager.getInstance().getConstants().errorInFetchingVolumeOptionList());
+                    } else {
+                        List<GlusterGeoRepSessionConfiguration> sessionConfigs = returnValue.getReturnValue();
+                        List<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>> sessionConfigEntities =
+                                new ArrayList<>();
+                                for (GlusterGeoRepSessionConfiguration currentSession : sessionConfigs) {
+                                    sessionConfigEntities.add(new EntityModel<>(new Pair<>(false,
+                                            currentSession)));
+                                }
+                                geoRepConfigModel.getConfigsModel().setItems(sessionConfigEntities);
+                                geoRepConfigModel.copyConfigsToMap(sessionConfigs);
+                    }
+                }));
     }
 
     private void updateConfig() {
@@ -390,24 +386,16 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
             return;
         }
         callbacks = new ArrayList<>(Collections.nCopies(numberOfConfigUpdates, (IFrontendActionAsyncCallback) null));
-        callbacks.set(numberOfConfigUpdates - 1, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                geoRepConfigModel.stopProgress();
-                closeWindow();
-            }
+        callbacks.set(numberOfConfigUpdates - 1, result -> {
+            geoRepConfigModel.stopProgress();
+            closeWindow();
         });
+        // Failure call back. Update the config list just to reflect any new changes and default error msg
+        // dialog is thrown.
         Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
                 callbacks,
-                new IFrontendActionAsyncCallback() {
-            // Failure call back. Update the config list just to reflect any new changes and default error msg
-            // dialog is thrown.
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                fetchConfigForSession(geoRepConfigModel.getGeoRepSession());
-            }
-        },
+                result -> fetchConfigForSession(geoRepConfigModel.getGeoRepSession()),
         this);
     }
 
@@ -438,34 +426,28 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
                         remoteUserName,
                         remoteUserGroup,
                         !createModel.getShowEligibleVolumes().getEntity()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        createModel.stopProgress();
-                        if (result.getReturnValue().getSucceeded()) {
-                            closeWindow();
-                            if (createModel.getStartSession().getEntity()) {
-                                initializeGeoRepActionConfirmation(constants.geoReplicationStartTitle(), HelpTag.volume_geo_rep_start_confirmation, "volume_geo_rep_start_confirmation", constants.geoRepForceHelp(), messages.geoRepForceTitle(constants.startGeoRep()), "onStartGeoRepSession", getEntity().getName(), remoteVolumeName, remoteHostName, null);//$NON-NLS-1$//$NON-NLS-2$
-                                final GlusterVolumeGeoRepActionConfirmationModel cModel = (GlusterVolumeGeoRepActionConfirmationModel) getWindow();
-                                cModel.startProgress();
-                                Frontend.getInstance().runAction(VdcActionType.StartGlusterVolumeGeoRep,
-                                        new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
-                                                remoteVolumeName,
-                                                remoteHostId),
-                                        new IFrontendActionAsyncCallback() {
-                                            @Override
-                                            public void executed(FrontendActionAsyncResult result) {
-                                                cModel.stopProgress();
-                                                if (!result.getReturnValue().getSucceeded()) {
-                                                    cModel.setMessage(result.getReturnValue().getFault().getMessage());
-                                                } else {
-                                                    closeWindow();
-                                                }
-                                            }
-                                        },
-                                        VolumeGeoRepListModel.this,
-                                        false);
-                            }
+                result -> {
+                    createModel.stopProgress();
+                    if (result.getReturnValue().getSucceeded()) {
+                        closeWindow();
+                        if (createModel.getStartSession().getEntity()) {
+                            initializeGeoRepActionConfirmation(constants.geoReplicationStartTitle(), HelpTag.volume_geo_rep_start_confirmation, "volume_geo_rep_start_confirmation", constants.geoRepForceHelp(), messages.geoRepForceTitle(constants.startGeoRep()), "onStartGeoRepSession", getEntity().getName(), remoteVolumeName, remoteHostName, null);//$NON-NLS-1$//$NON-NLS-2$
+                            final GlusterVolumeGeoRepActionConfirmationModel cModel = (GlusterVolumeGeoRepActionConfirmationModel) getWindow();
+                            cModel.startProgress();
+                            Frontend.getInstance().runAction(VdcActionType.StartGlusterVolumeGeoRep,
+                                    new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
+                                            remoteVolumeName,
+                                            remoteHostId),
+                                    result1 -> {
+                                        cModel.stopProgress();
+                                        if (!result1.getReturnValue().getSucceeded()) {
+                                            cModel.setMessage(result1.getReturnValue().getFault().getMessage());
+                                        } else {
+                                            closeWindow();
+                                        }
+                                    },
+                                    VolumeGeoRepListModel.this,
+                                    false);
                         }
                     }
                 },
@@ -598,20 +580,17 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         GlusterGeoRepSession selectedSession = getSelectedItem();
         GlusterVolumeGeoRepSessionParameters sessionParamters = new GlusterVolumeGeoRepSessionParameters(selectedSession.getMasterVolumeId(), selectedSession.getId());
         sessionParamters.setForce(force);
-        Frontend.getInstance().runAction(actionType, sessionParamters, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                if (cModel == null) {
-                    return;
-                }
-                else {
-                    cModel.stopProgress();
-                    if (!result.getReturnValue().getSucceeded()) {
-                        //cModel.setActionConfirmationMessage(result.getReturnValue().getFault().getMessage());
-                        setErrorMessage(result.getReturnValue(), cModel);
-                    } else {
-                        setWindow(null);
-                    }
+        Frontend.getInstance().runAction(actionType, sessionParamters, result -> {
+            if (cModel == null) {
+                return;
+            }
+            else {
+                cModel.stopProgress();
+                if (!result.getReturnValue().getSucceeded()) {
+                    //cModel.setActionConfirmationMessage(result.getReturnValue().getFault().getMessage());
+                    setErrorMessage(result.getReturnValue(), cModel);
+                } else {
+                    setWindow(null);
                 }
             }
         },

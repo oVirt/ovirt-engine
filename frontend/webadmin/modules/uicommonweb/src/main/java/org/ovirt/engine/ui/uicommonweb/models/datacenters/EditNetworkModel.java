@@ -4,15 +4,12 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class EditNetworkModel extends NetworkModel {
 
@@ -53,12 +50,7 @@ public class EditNetworkModel extends NetworkModel {
     }
 
     private void initManagement() {
-        AsyncDataProvider.getInstance().isManagementNetwork(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean returnValue) {
-                management = returnValue;
-            }
-        }), getNetwork().getId());
+        AsyncDataProvider.getInstance().isManagementNetwork(new AsyncQuery<>(returnValue -> management = returnValue), getNetwork().getId());
     }
 
     @Override
@@ -96,14 +88,11 @@ public class EditNetworkModel extends NetworkModel {
     public void executeSave() {
         Frontend.getInstance().runAction(VdcActionType.UpdateNetwork,
                 new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        VdcReturnValueBase retVal = result.getReturnValue();
-                        postSaveAction(null,
-                                retVal != null && retVal.getSucceeded());
+                result -> {
+                    VdcReturnValueBase retVal = result.getReturnValue();
+                    postSaveAction(null,
+                            retVal != null && retVal.getSucceeded());
 
-                    }
                 },
                 null);
     }

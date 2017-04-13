@@ -603,31 +603,27 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setHasDefaultHost(vm.getDedicatedVmForVdsList().size() > 0);
         if (getHasDefaultHost()) {
             Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getClusterName() //$NON-NLS-1$
-                    + " sortby name", SearchType.VDS).withoutRefresh(), new AsyncQuery<>(//$NON-NLS-1$
-                    new AsyncCallback<VdcQueryReturnValue>() {
-                        @Override
-                        public void onSuccess(VdcQueryReturnValue returnValue) {
+                    + " sortby name", SearchType.VDS).withoutRefresh(), new AsyncQuery<VdcQueryReturnValue>(returnValue -> { //$NON-NLS-1$
 
-                            VM localVm = getEntity();
-                            if (localVm == null) {
-                                return;
-                            }
-                            ArrayList<VDS> hosts = returnValue.getReturnValue();
-                            if (localVm.getDedicatedVmForVdsList().size() > 0) {
-                                String defaultHost = "";
-                                for (VDS host : hosts) {
-                                    if (localVm.getDedicatedVmForVdsList().contains(host.getId())) {
-                                        if (defaultHost.isEmpty()) {
-                                            defaultHost = host.getName();
-                                        } else {
-                                            defaultHost += ", " + host.getName(); //$NON-NLS-1$
-                                        }
+                        VM localVm = getEntity();
+                        if (localVm == null) {
+                            return;
+                        }
+                        ArrayList<VDS> hosts = returnValue.getReturnValue();
+                        if (localVm.getDedicatedVmForVdsList().size() > 0) {
+                            String defaultHost = "";
+                            for (VDS host : hosts) {
+                                if (localVm.getDedicatedVmForVdsList().contains(host.getId())) {
+                                    if (defaultHost.isEmpty()) {
+                                        defaultHost = host.getName();
+                                    } else {
+                                        defaultHost += ", " + host.getName(); //$NON-NLS-1$
                                     }
                                 }
-                                setDefaultHost(defaultHost);
                             }
-
+                            setDefaultHost(defaultHost);
                         }
+
                     }));
         }
         else {

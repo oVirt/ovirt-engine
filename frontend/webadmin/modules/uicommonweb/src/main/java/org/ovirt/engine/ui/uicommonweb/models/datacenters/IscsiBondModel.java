@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -29,8 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class IscsiBondModel extends Model {
@@ -66,42 +63,36 @@ public class IscsiBondModel extends Model {
     }
 
     private void initializeNetworkList() {
-        AsyncDataProvider.getInstance().getAllDataCenterNetworks(new AsyncQuery<>(new AsyncCallback<List<Network>>() {
-            @Override
-            public void onSuccess(List<Network> networks) {
-                List<Network> selected = new ArrayList<>();
-                Set<Guid> iscsiBonded = isBondExist() ?
-                        new HashSet<>(getIscsiBond().getNetworkIds()) : Collections.<Guid>emptySet();
+        AsyncDataProvider.getInstance().getAllDataCenterNetworks(new AsyncQuery<>(networks -> {
+            List<Network> selected = new ArrayList<>();
+            Set<Guid> iscsiBonded = isBondExist() ?
+                    new HashSet<>(getIscsiBond().getNetworkIds()) : Collections.<Guid>emptySet();
 
-                for (Network network : networks) {
-                    if (iscsiBonded.contains(network.getId())) {
-                        selected.add(network);
-                    }
+            for (Network network : networks) {
+                if (iscsiBonded.contains(network.getId())) {
+                    selected.add(network);
                 }
-
-                getNetworks().setItems(networks);
-                getNetworks().setSelectedItems(selected);
             }
+
+            getNetworks().setItems(networks);
+            getNetworks().setSelectedItems(selected);
         }), getStoragePool().getId());
     }
 
     private void initializeStorageTargetsList() {
-        AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery<>(new AsyncCallback<List<StorageServerConnections>>() {
-            @Override
-            public void onSuccess(List<StorageServerConnections> conns) {
-                ArrayList<StorageServerConnections> selected = new ArrayList<>();
-                Set<String> iscsiBonded = isBondExist() ?
-                        new HashSet<>(getIscsiBond().getStorageConnectionIds()) : Collections.<String>emptySet();
+        AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery<>(conns -> {
+            ArrayList<StorageServerConnections> selected = new ArrayList<>();
+            Set<String> iscsiBonded = isBondExist() ?
+                    new HashSet<>(getIscsiBond().getStorageConnectionIds()) : Collections.<String>emptySet();
 
-                for (StorageServerConnections conn : conns) {
-                    if (iscsiBonded.contains(conn.getId())) {
-                        selected.add(conn);
-                    }
+            for (StorageServerConnections conn : conns) {
+                if (iscsiBonded.contains(conn.getId())) {
+                    selected.add(conn);
                 }
-
-                getStorageTargets().setItems(conns);
-                getStorageTargets().setSelectedItems(selected);
             }
+
+            getStorageTargets().setItems(conns);
+            getStorageTargets().setSelectedItems(selected);
         }), getStoragePool().getId(), StorageType.ISCSI);
     }
 
@@ -141,13 +132,10 @@ public class IscsiBondModel extends Model {
         AddIscsiBondParameters params = new AddIscsiBondParameters(createIscsiBond());
 
         startProgress();
-        Frontend.getInstance().runAction(VdcActionType.AddIscsiBond, params, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                IscsiBondModel model = (IscsiBondModel) result.getState();
-                model.stopProgress();
-                model.cancel();
-            }
+        Frontend.getInstance().runAction(VdcActionType.AddIscsiBond, params, result -> {
+            IscsiBondModel model = (IscsiBondModel) result.getState();
+            model.stopProgress();
+            model.cancel();
         }, this);
     }
 
@@ -158,13 +146,10 @@ public class IscsiBondModel extends Model {
         EditIscsiBondParameters params = new EditIscsiBondParameters(newIscsiBond);
 
         startProgress();
-        Frontend.getInstance().runAction(VdcActionType.EditIscsiBond, params, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                IscsiBondModel model = (IscsiBondModel) result.getState();
-                model.stopProgress();
-                model.cancel();
-            }
+        Frontend.getInstance().runAction(VdcActionType.EditIscsiBond, params, result -> {
+            IscsiBondModel model = (IscsiBondModel) result.getState();
+            model.stopProgress();
+            model.cancel();
         }, this);
     }
 

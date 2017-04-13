@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -21,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -39,9 +37,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
@@ -345,12 +340,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
                     if (limitToStorageDomainId == null) {
                         super.updateStorageDomains(datacenter);
                     } else {
-                        AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery<>(new AsyncCallback<StorageDomain>() {
-                            @Override
-                            public void onSuccess(StorageDomain storageDomain) {
-                                getStorageDomain().setSelectedItem(storageDomain);
-                            }
-                        }), limitToStorageDomainId);
+                        AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery<>(storageDomain -> getStorageDomain().setSelectedItem(storageDomain)), limitToStorageDomainId);
                     }
                 }
 
@@ -453,40 +443,34 @@ public class UploadImageModel extends Model implements ICommandTarget {
         getImageInfoModel().getInvalidityReasons().clear();
 
         if (getImageSourceLocalEnabled().getEntity()) {
-            getImagePath().validateEntity(new IValidation[] { new IValidation() {
-                @Override
-                public ValidationResult validate(Object value) {
-                    ValidationResult result = new ValidationResult();
-                    if (value == null || StringHelper.isNullOrEmpty((String) value)) {
-                        result.setSuccess(false);
-                        result.getReasons().add(constants.emptyImagePath());
-                    }
-                    return result;
+            getImagePath().validateEntity(new IValidation[] { value -> {
+                ValidationResult result = new ValidationResult();
+                if (value == null || StringHelper.isNullOrEmpty((String) value)) {
+                    result.setSuccess(false);
+                    result.getReasons().add(constants.emptyImagePath());
                 }
+                return result;
             } });
 
             if (getImagePath().getIsValid()) {
                 getImageInfoModel().validateEntity(new IValidation[]{
-                        new IValidation() {
-                            @Override
-                            public ValidationResult validate(Object value) {
-                                ValidationResult result = new ValidationResult();
+                        value -> {
+                            ValidationResult result = new ValidationResult();
 
-                                ImageInfoModel.QemuCompat qcowCompat = getImageInfoModel().getQcowCompat();
-                                if (qcowCompat != null && qcowCompat != ImageInfoModel.QemuCompat.V2) {
-                                    StorageFormatType storageFormatType = getDiskModel().getStorageDomain().getSelectedItem().getStorageFormat();
-                                    switch (storageFormatType) {
-                                        case V1:
-                                        case V2:
-                                        case V3:
-                                            result.setSuccess(false);
-                                            result.getReasons().add(messages.uploadImageQemuCompatUnsupported(
-                                                    qcowCompat.getValue(), storageFormatType.name()));
-                                            break;
-                                    }
+                            ImageInfoModel.QemuCompat qcowCompat = getImageInfoModel().getQcowCompat();
+                            if (qcowCompat != null && qcowCompat != ImageInfoModel.QemuCompat.V2) {
+                                StorageFormatType storageFormatType = getDiskModel().getStorageDomain().getSelectedItem().getStorageFormat();
+                                switch (storageFormatType) {
+                                    case V1:
+                                    case V2:
+                                    case V3:
+                                        result.setSuccess(false);
+                                        result.getReasons().add(messages.uploadImageQemuCompatUnsupported(
+                                                qcowCompat.getValue(), storageFormatType.name()));
+                                        break;
                                 }
-                                return result;
                             }
+                            return result;
                         }
                 });
             }
@@ -510,23 +494,20 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
         final TransferDiskImageParameters parameters = createInitParams();
         Frontend.getInstance().runAction(VdcActionType.TransferDiskImage, parameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        UploadImageModel model = (UploadImageModel) result.getState();
+                result -> {
+                    UploadImageModel model = (UploadImageModel) result.getState();
 
-                        if (result.getReturnValue().getSucceeded()) {
-                            setCommandId((Guid) result.getReturnValue().getActionReturnValue());
-                            setBytesSent(0);
-                            startStatusPolling();
+                    if (result.getReturnValue().getSucceeded()) {
+                        setCommandId((Guid) result.getReturnValue().getActionReturnValue());
+                        setBytesSent(0);
+                        startStatusPolling();
 
-                            // The dialog will be closed, but the model's upload code will continue in the background
-                            model.stopProgress();
-                            model.getCancelCommand().execute();
-                        } else {
-                            setProgressStr(messages.uploadImageFailedToStartMessage(result.getReturnValue().getDescription()));
-                            model.stopProgress();
-                        }
+                        // The dialog will be closed, but the model's upload code will continue in the background
+                        model.stopProgress();
+                        model.getCancelCommand().execute();
+                    } else {
+                        setProgressStr(messages.uploadImageFailedToStartMessage(result.getReturnValue().getDescription()));
+                        model.stopProgress();
                     }
                 }, this);
     }
@@ -557,12 +538,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         parameters.setDiskId(getDiskModel().getDisk().getId());
 
         Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, parameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        initiateResumeUploadCheckStatus(result);
-                    }
-                }, this);
+                result -> initiateResumeUploadCheckStatus(result), this);
     }
 
     private void initiateResumeUploadCheckStatus(FrontendActionAsyncResult result) {
@@ -589,13 +565,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             parameters.setUpdates(updates);
 
             Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, parameters,
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
-                            initiateResumeUploadStartTransfer(result);
-                        }
-
-                    }, model);
+                    this::initiateResumeUploadStartTransfer, model);
         } else {
             setProgressStr(messages.uploadImageFailedToResumeMessage(result.getReturnValue().getDescription()));
             model.stopProgress();
@@ -626,30 +596,22 @@ public class UploadImageModel extends Model implements ICommandTarget {
     private void startStatusPolling() {
         setContinuePolling(true);
         manageWindowClosingHandler(true);
-        Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {
-            @Override
-            public boolean execute() {
-                log.info("Polling for status"); //$NON-NLS-1$
-                TransferImageStatusParameters statusParameters = new TransferImageStatusParameters(getCommandId());
+        Scheduler.get().scheduleFixedDelay(() -> {
+            log.info("Polling for status"); //$NON-NLS-1$
+            TransferImageStatusParameters statusParameters = new TransferImageStatusParameters(getCommandId());
 
-                // TODO: temp updates from UI until updates from VDSM are implemented
-                ImageTransfer updates = new ImageTransfer();
-                updates.setBytesSent(getBytesSent());
-                updates.setMessage(getMessage() != null ? getMessage() : getProgressStr());
-                statusParameters.setUpdates(updates);
+            // TODO: temp updates from UI until updates from VDSM are implemented
+            ImageTransfer updates = new ImageTransfer();
+            updates.setBytesSent(getBytesSent());
+            updates.setMessage(getMessage() != null ? getMessage() : getProgressStr());
+            statusParameters.setUpdates(updates);
 
-                Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, statusParameters,
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
-                                respondToPollStatus(result);
-                            }
-                        });
-                if (!getContinuePolling()) {
-                    manageWindowClosingHandler(false);
-                }
-                return getContinuePolling();
+            Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, statusParameters,
+                    result -> respondToPollStatus(result));
+            if (!getContinuePolling()) {
+                manageWindowClosingHandler(false);
             }
+            return getContinuePolling();
         }, POLLING_DELAY_MS);
     }
 
@@ -775,16 +737,13 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
         log.info("Updating status to " + statusParameters.getUpdates().getPhase()); //$NON-NLS-1$
         Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, statusParameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        if (!result.getReturnValue().getSucceeded()) {
-                            if (++failedFinalizationAttempts < MAX_FAILED_POLL_ATTEMPTS) {
-                                finalizeImageUpload();
-                            } else {
-                                setContinuePolling(false);
-                                setProgressStr("Failed to update upload status on engine"); //$NON-NLS-1$
-                            }
+                result -> {
+                    if (!result.getReturnValue().getSucceeded()) {
+                        if (++failedFinalizationAttempts < MAX_FAILED_POLL_ATTEMPTS) {
+                            finalizeImageUpload();
+                        } else {
+                            setContinuePolling(false);
+                            setProgressStr("Failed to update upload status on engine"); //$NON-NLS-1$
                         }
                     }
                 });
@@ -799,12 +758,9 @@ public class UploadImageModel extends Model implements ICommandTarget {
     private void manageWindowClosingHandler(boolean add) {
         int uploadCount = adjustTotalUploadCount(add ? 1 : -1);
         if (uploadCount == 1) {
-            HandlerRegistration handlerRegistration = Window.addWindowClosingHandler(new Window.ClosingHandler() {
-                @Override
-                public void onWindowClosing(Window.ClosingEvent event) {
-                    // If the window is closed, uploads will time out and pause
-                    event.setMessage(constants.uploadImageLeaveWindowPopupWarning());
-                }
+            HandlerRegistration handlerRegistration = Window.addWindowClosingHandler(event -> {
+                // If the window is closed, uploads will time out and pause
+                event.setMessage(constants.uploadImageLeaveWindowPopupWarning());
             });
             storeHandlerReference(handlerRegistration);
         } else if (uploadCount == 0) {
@@ -1163,13 +1119,10 @@ public class UploadImageModel extends Model implements ICommandTarget {
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.TransferImageStatus, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        localModel.getCancelCommand().execute(); //parent.cancel();
-                    }
+                result -> {
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    localModel.getCancelCommand().execute(); //parent.cancel();
                 }, model);
     }
 

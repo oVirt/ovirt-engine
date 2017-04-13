@@ -15,10 +15,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -32,7 +30,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
@@ -354,28 +351,24 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         VdcQueryParametersBase queryParameters = new VdcQueryParametersBase();
         queryParameters.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetAllVmsAndVmPools, queryParameters,
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    ArrayList<VM> vms = new ArrayList<>();
+                    ArrayList<VmPool> pools = new ArrayList<>();
 
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        ArrayList<VM> vms = new ArrayList<>();
-                        ArrayList<VmPool> pools = new ArrayList<>();
-
-                        if (returnValue != null && returnValue.getSucceeded()) {
-                            List<Object> list = (ArrayList<Object>) returnValue.getReturnValue();
-                            if (list != null) {
-                                for (Object object : list) {
-                                    if (object instanceof VM) {
-                                        vms.add((VM) object);
-                                    } else if (object instanceof VmPool) {
-                                        pools.add((VmPool) object);
-                                    }
+                    if (returnValue != null && returnValue.getSucceeded()) {
+                        List<Object> list = (ArrayList<Object>) returnValue.getReturnValue();
+                        if (list != null) {
+                            for (Object object : list) {
+                                if (object instanceof VM) {
+                                    vms.add((VM) object);
+                                } else if (object instanceof VmPool) {
+                                    pools.add((VmPool) object);
                                 }
                             }
                         }
-
-                        onVmAndPoolLoad(vms, pools);
                     }
+
+                    onVmAndPoolLoad(vms, pools);
                 }));
     }
 
@@ -534,29 +527,26 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
 
             // Check name unicitate.
             AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery<>(
-                    new AsyncCallback<Boolean>() {
-                        @Override
-                        public void onSuccess(Boolean isNameUnique) {
-                            if (!isNameUnique) {
-                                UnitVmModel vmModel = (UnitVmModel) getWindow();
-                                vmModel.getName().getInvalidityReasons().clear();
-                                vmModel
-                                        .getName()
-                                        .getInvalidityReasons()
-                                        .add(ConstantsManager.getInstance()
-                                                .getConstants()
-                                                .nameMustBeUniqueInvalidReason());
-                                vmModel.getName().setIsValid(false);
-                                vmModel.setIsValid(false);
-                                vmModel.fireValidationCompleteEvent();
-                                stopProgress(UserPortalListModel.this);
-                            }
-                            else {
-                                postNameUniqueCheck(UserPortalListModel.this);
-                            }
+                            isNameUnique -> {
+                                if (!isNameUnique) {
+                                    UnitVmModel vmModel = (UnitVmModel) getWindow();
+                                    vmModel.getName().getInvalidityReasons().clear();
+                                    vmModel
+                                            .getName()
+                                            .getInvalidityReasons()
+                                            .add(ConstantsManager.getInstance()
+                                                    .getConstants()
+                                                    .nameMustBeUniqueInvalidReason());
+                                    vmModel.getName().setIsValid(false);
+                                    vmModel.setIsValid(false);
+                                    vmModel.fireValidationCompleteEvent();
+                                    stopProgress(UserPortalListModel.this);
+                                }
+                                else {
+                                    postNameUniqueCheck(UserPortalListModel.this);
+                                }
 
-                        }
-                    }),
+                            }),
                     name, model.getSelectedDataCenter() == null ? null : model.getSelectedDataCenter().getId());
         }
     }
@@ -595,12 +585,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         }
 
         Frontend.getInstance().runAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        stopProgress(result.getState());
-                        cancel();
-                    }
+                result -> {
+                    stopProgress(result.getState());
+                    cancel();
                 }, this);
     }
 
@@ -632,13 +619,10 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         VM vm = (VM) selectedItem.getEntity();
 
         // populating VMInit
-        AsyncDataProvider.getInstance().getVmById(new AsyncQuery<>(new AsyncCallback<VM>() {
-            @Override
-            public void onSuccess(VM result) {
-                RunOnceModel runOnceModel = new UserPortalRunOnceModel(result, UserPortalListModel.this);
-                setWindow(runOnceModel);
-                runOnceModel.init();
-            }
+        AsyncDataProvider.getInstance().getVmById(new AsyncQuery<>(result -> {
+            RunOnceModel runOnceModel = new UserPortalRunOnceModel(result, UserPortalListModel.this);
+            setWindow(runOnceModel);
+            runOnceModel.init();
         }), vm.getId());
     }
 
@@ -719,12 +703,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         VM vm = (VM) selectedItem.getEntity();
 
         // populating VMInit
-        AsyncQuery<VM> getVmInitQuery = new AsyncQuery<>(new AsyncCallback<VM>() {
-            @Override
-            public void onSuccess(VM result) {
-                editedVm = result;
-                vmInitLoaded(editedVm);
-            }
+        AsyncQuery<VM> getVmInitQuery = new AsyncQuery<>(result -> {
+            editedVm = result;
+            vmInitLoaded(editedVm);
         });
         if (vm.isNextRunConfigurationExists()) {
             AsyncDataProvider.getInstance().getVmNextRunConfiguration(getVmInitQuery, vm.getId());
@@ -792,14 +773,11 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         }
 
         Frontend.getInstance().runMultipleActions(VdcActionType.RemoveVm, paramsList,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        ConfirmationModel model =
-                                (ConfirmationModel) ((UserPortalListModel) result.getState()).getConfirmWindow();
-                        model.stopProgress();
-                        cancel();
-                    }
+                result -> {
+                    ConfirmationModel model =
+                            (ConfirmationModel) ((UserPortalListModel) result.getState()).getConfirmWindow();
+                    model.stopProgress();
+                    cancel();
                 },
                 this);
 
@@ -841,17 +819,14 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         model.getIsoImage().setItems(defaultImages);
         model.getIsoImage().setSelectedItem(Linq.firstOrNull(defaultImages));
 
-        AsyncQuery<List<String>> getImagesQuery = new AsyncQuery<>(new AsyncCallback<List<String>>() {
-            @Override
-            public void onSuccess(List<String> images) {
-                AttachCdModel _attachCdModel = (AttachCdModel) getWindow();
-                images.add(0, ConsoleModel.getEjectLabel());
-                _attachCdModel.getIsoImage().setItems(images);
-                if (_attachCdModel.getIsoImage().getIsChangable()) {
-                    String selectedIso =
-                            Linq.firstOrDefault(images, s -> vm.getCurrentCd().equals(s), ConsoleModel.getEjectLabel());
-                    _attachCdModel.getIsoImage().setSelectedItem(selectedIso);
-                }
+        AsyncQuery<List<String>> getImagesQuery = new AsyncQuery<>(images -> {
+            AttachCdModel _attachCdModel = (AttachCdModel) getWindow();
+            images.add(0, ConsoleModel.getEjectLabel());
+            _attachCdModel.getIsoImage().setItems(images);
+            if (_attachCdModel.getIsoImage().getIsChangable()) {
+                String selectedIso =
+                        Linq.firstOrDefault(images, s -> vm.getCurrentCd().equals(s), ConsoleModel.getEjectLabel());
+                _attachCdModel.getIsoImage().setSelectedItem(selectedIso);
             }
         });
 
@@ -878,12 +853,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
                         : model.getIsoImage().getSelectedItem();
 
         Frontend.getInstance().runAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        stopProgress(result.getState());
-                        cancel();
-                    }
+                result -> {
+                    stopProgress(result.getState());
+                    cancel();
                 }, this);
     }
 
@@ -905,47 +877,44 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         model.startProgress();
         // Check name uniqueness.
         AsyncDataProvider.getInstance().isVmNameUnique(new AsyncQuery<>(
-                new AsyncCallback<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean isNameUnique) {
+                        isNameUnique -> {
 
-                        String newName = model.getName().getEntity();
-                        String currentName = gettempVm().getName();
-                        if (!isNameUnique && newName.compareToIgnoreCase(currentName) != 0) {
-                            UnitVmModel unitModel = (UnitVmModel) getWindow();
-                            unitModel.getName().getInvalidityReasons().clear();
-                            unitModel
-                                    .getName()
-                                    .getInvalidityReasons()
-                                    .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
-                            unitModel.getName().setIsValid(false);
-                            unitModel.setIsValid(false);
-                            unitModel.setValidTab(TabName.GENERAL_TAB, false);
-                            unitModel.fireValidationCompleteEvent();
-                            stopProgress(UserPortalListModel.this);
-                        } else {
-                            String selectedCpu = model.getCustomCpu().getSelectedItem();
-                            if (selectedCpu != null && !selectedCpu.isEmpty()  && !model.getCustomCpu().getItems().contains(selectedCpu)) {
-                                ConfirmationModel confirmModel = new ConfirmationModel();
-                                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuTitle());
-                                confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuMessage());
-                                confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
-                                confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
-
-                                confirmModel.getCommands().add(new UICommand("postVmNameUniqueCheck", UserPortalListModel.this) //$NON-NLS-1$
-                                        .setTitle(ConstantsManager.getInstance().getConstants().ok())
-                                        .setIsDefault(true));
-
-                                confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", UserPortalListModel.this)); //$NON-NLS-1$
-
-                                setConfirmWindow(confirmModel);
+                            String newName = model.getName().getEntity();
+                            String currentName = gettempVm().getName();
+                            if (!isNameUnique && newName.compareToIgnoreCase(currentName) != 0) {
+                                UnitVmModel unitModel = (UnitVmModel) getWindow();
+                                unitModel.getName().getInvalidityReasons().clear();
+                                unitModel
+                                        .getName()
+                                        .getInvalidityReasons()
+                                        .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
+                                unitModel.getName().setIsValid(false);
+                                unitModel.setIsValid(false);
+                                unitModel.setValidTab(TabName.GENERAL_TAB, false);
+                                unitModel.fireValidationCompleteEvent();
+                                stopProgress(UserPortalListModel.this);
                             } else {
-                                postVmNameUniqueCheck();
-                            }
-                        }
+                                String selectedCpu = model.getCustomCpu().getSelectedItem();
+                                if (selectedCpu != null && !selectedCpu.isEmpty()  && !model.getCustomCpu().getItems().contains(selectedCpu)) {
+                                    ConfirmationModel confirmModel = new ConfirmationModel();
+                                    confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuTitle());
+                                    confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuMessage());
+                                    confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
+                                    confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
 
-                    }
-                }),
+                                    confirmModel.getCommands().add(new UICommand("postVmNameUniqueCheck", UserPortalListModel.this) //$NON-NLS-1$
+                                            .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                                            .setIsDefault(true));
+
+                                    confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", UserPortalListModel.this)); //$NON-NLS-1$
+
+                                    setConfirmWindow(confirmModel);
+                                } else {
+                                    postVmNameUniqueCheck();
+                                }
+                            }
+
+                        }),
                 model.getName().getEntity(),
                 model.getSelectedDataCenter() == null ? null : model.getSelectedDataCenter().getId());
     }
@@ -978,36 +947,33 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
 
             if (!selectedItem.isHostedEngine() && selectedItem.isRunningOrPaused()) {
                 AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, gettempVm(), getUpdateVmParameters(false), new AsyncQuery<>(
-                        new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        List<String> changedFields = returnValue.getReturnValue();
-                        if (!changedFields.isEmpty()) {
-                            VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
-                            boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
-                            if (isHeadlessModeChanged) {
-                                changedFields.add(constants.headlessMode());
+                        returnValue -> {
+                            List<String> changedFields = returnValue.getReturnValue();
+                            if (!changedFields.isEmpty()) {
+                                VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
+                                boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
+                                if (isHeadlessModeChanged) {
+                                    changedFields.add(constants.headlessMode());
+                                }
+                                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
+                                confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
+                                confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
+                                confirmModel.setChangedFields(changedFields);
+                                confirmModel.setCpuPluggable(VmCommonUtils.isCpusToBeHotplugged(selectedItem, gettempVm()));
+                                confirmModel.setMemoryPluggable(VmCommonUtils.isMemoryToBeHotplugged(
+                                        selectedItem, gettempVm()));
+                                confirmModel.getCommands().add(new UICommand("updateExistingVm", UserPortalListModel.this) //$NON-NLS-1$
+                                .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                                .setIsDefault(true));
+
+                                confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", UserPortalListModel.this)); //$NON-NLS-1$
+
+                                setConfirmWindow(confirmModel);
                             }
-                            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
-                            confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
-                            confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
-                            confirmModel.setChangedFields(changedFields);
-                            confirmModel.setCpuPluggable(VmCommonUtils.isCpusToBeHotplugged(selectedItem, gettempVm()));
-                            confirmModel.setMemoryPluggable(VmCommonUtils.isMemoryToBeHotplugged(
-                                    selectedItem, gettempVm()));
-                            confirmModel.getCommands().add(new UICommand("updateExistingVm", UserPortalListModel.this) //$NON-NLS-1$
-                            .setTitle(ConstantsManager.getInstance().getConstants().ok())
-                            .setIsDefault(true));
-
-                            confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", UserPortalListModel.this)); //$NON-NLS-1$
-
-                            setConfirmWindow(confirmModel);
-                        }
-                        else {
-                            updateExistingVm(false);
-                        }
-                    }
-                }));
+                            else {
+                                updateExistingVm(false);
+                            }
+                        }));
             }
             else {
                 updateExistingVm(false);
@@ -1143,21 +1109,14 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         }
 
         if (!model.getIsNew() && selectedDataCenterWithCluster == null) {
-            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(new AsyncCallback<StoragePool>() {
-                @Override
-                public void onSuccess(final StoragePool loadedDataCenter) {
-                    final UnitVmModel unitModel = (UnitVmModel) getWindow();
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(loadedDataCenter -> {
+                final UnitVmModel unitModel = (UnitVmModel) getWindow();
 
-                    AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
-
-                        @Override
-                        public void onSuccess(Cluster loadedCluster) {
-                            DataCenterWithCluster newItem = new DataCenterWithCluster(loadedDataCenter, loadedCluster);
-                            unitModel.getDataCenterWithClustersList().setItems(Arrays.asList(newItem));
-                            unitModel.getDataCenterWithClustersList().setSelectedItem(newItem);
-                        }
-                    }), vm.getClusterId());
-                }
+                AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(loadedCluster -> {
+                    DataCenterWithCluster newItem = new DataCenterWithCluster(loadedDataCenter, loadedCluster);
+                    unitModel.getDataCenterWithClustersList().setItems(Arrays.asList(newItem));
+                    unitModel.getDataCenterWithClustersList().setSelectedItem(newItem);
+                }), vm.getClusterId());
             }), vm.getStoragePoolId());
         } else {
             model.getDataCenterWithClustersList().setSelectedItem(selectedDataCenterWithCluster);
@@ -1207,12 +1166,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         if (!model.getIsNew()) {
             if (cachedMaxPriority == null) {
                 AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery<>(
-                        new AsyncCallback<Integer>() {
-                            @Override
-                            public void onSuccess(Integer returnValue) {
-                                cachedMaxPriority = returnValue;
-                                updatePriority(model);
-                            }
+                        returnValue -> {
+                            cachedMaxPriority = returnValue;
+                            updatePriority(model);
                         }));
             } else {
                 updatePriority(model);

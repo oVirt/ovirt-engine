@@ -9,7 +9,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
@@ -97,19 +96,16 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworksByClusterId, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                final List<Network> newItems = returnValue.getReturnValue();
-                Collections.sort(newItems,
-                        Comparator.comparing((Network n) -> n.getCluster().isManagement()).reversed()
-                            .thenComparing(Network::getName, new LexoNumericComparator())
-                        );
-                for (Network network : newItems) {
-                    network.getCluster().setId(new NetworkClusterId(getEntity().getId(), network.getId()));
-                }
-                setItems(newItems);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworksByClusterId, tempVar, new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+            final List<Network> newItems = returnValue.getReturnValue();
+            Collections.sort(newItems,
+                    Comparator.comparing((Network n) -> n.getCluster().isManagement()).reversed()
+                        .thenComparing(Network::getName, new LexoNumericComparator())
+                    );
+            for (Network network : newItems) {
+                network.getCluster().setId(new NetworkClusterId(getEntity().getId(), network.getId()));
             }
+            setItems(newItems);
         }));
     }
 
@@ -131,15 +127,12 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
                 (getEntity().getStoragePoolId() != null) ? getEntity().getStoragePoolId() : Guid.Empty;
 
         // fetch the list of DC Networks
-        AsyncDataProvider.getInstance().getNetworkList(new AsyncQuery<>(new AsyncCallback<List<Network>>() {
-            @Override
-            public void onSuccess(List<Network> dcNetworks) {
-                ClusterNetworkManageModel networkToManage = createNetworkList(dcNetworks);
-                setWindow(networkToManage);
-                networkToManage.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
-                networkToManage.setHelpTag(HelpTag.assign_networks);
-                networkToManage.setHashName("assign_networks"); //$NON-NLS-1$
-            }
+        AsyncDataProvider.getInstance().getNetworkList(new AsyncQuery<>(dcNetworks -> {
+            ClusterNetworkManageModel networkToManage = createNetworkList(dcNetworks);
+            setWindow(networkToManage);
+            networkToManage.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
+            networkToManage.setHelpTag(HelpTag.assign_networks);
+            networkToManage.setHashName("assign_networks"); //$NON-NLS-1$
         }), storagePoolId);
     }
 
@@ -214,12 +207,9 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
 
         // Set selected dc
         if (getEntity().getStoragePoolId() != null) {
-            AsyncDataProvider.getInstance().getDataCenterById(networkModel.asyncQuery(new AsyncCallback<StoragePool>() {
-                @Override
-                public void onSuccess(StoragePool dataCenter) {
-                    networkModel.getDataCenters().setItems(Arrays.asList(dataCenter));
-                    networkModel.getDataCenters().setSelectedItem(dataCenter);
-                }
+            AsyncDataProvider.getInstance().getDataCenterById(networkModel.asyncQuery(dataCenter -> {
+                networkModel.getDataCenters().setItems(Arrays.asList(dataCenter));
+                networkModel.getDataCenters().setSelectedItem(dataCenter);
             }), getEntity().getStoragePoolId());
         }
     }

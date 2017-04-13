@@ -47,8 +47,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotInCollectionValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
@@ -104,14 +102,10 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     private void onRemove() {
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-
-            @Override
-            public void onSuccess(List<StoragePool> pools) {
-                if (pools != null && !pools.isEmpty()) {
-                    pool = pools.get(0);
-                    checkVmsDependentOnTemplate(pool.getId(), getEntity().getId());
-                }
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(pools -> {
+            if (pools != null && !pools.isEmpty()) {
+                pool = pools.get(0);
+                checkVmsDependentOnTemplate(pool.getId(), getEntity().getId());
             }
         }),
                 getEntity().getId());
@@ -124,20 +118,17 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     private AsyncCallback<VdcQueryReturnValue> createGetVmsFromExportDomainCallback() {
-        return new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                if (returnValue == null || returnValue.getReturnValue() == null || !returnValue.getSucceeded()) {
-                    return;
-                }
-                List<VM> vmsInExportDomain = returnValue.getReturnValue();
-                HashMap<String, List<String>> problematicVmNames =
-                        getDependentVMsForTemplates(vmsInExportDomain, getSelectedItems());
-                if (!problematicVmNames.isEmpty()) {
-                    showRemoveTemplateWithDependentVMConfirmationWindow(problematicVmNames);
-                } else {
-                    removeTemplateBackup();
-                }
+        return returnValue -> {
+            if (returnValue == null || returnValue.getReturnValue() == null || !returnValue.getSucceeded()) {
+                return;
+            }
+            List<VM> vmsInExportDomain = returnValue.getReturnValue();
+            HashMap<String, List<String>> problematicVmNames =
+                    getDependentVMsForTemplates(vmsInExportDomain, getSelectedItems());
+            if (!problematicVmNames.isEmpty()) {
+                showRemoveTemplateWithDependentVMConfirmationWindow(problematicVmNames);
+            } else {
+                removeTemplateBackup();
             }
         };
     }
@@ -301,43 +292,40 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ImportVmTemplate, prms,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        TemplateBackupModel templateBackupModel = (TemplateBackupModel) result.getState();
-                        templateBackupModel.getWindow().stopProgress();
-                        templateBackupModel.cancel();
-                        ArrayList<VdcReturnValueBase> retVals =
-                                (ArrayList<VdcReturnValueBase>) result.getReturnValue();
-                        if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size()) {
+                    TemplateBackupModel templateBackupModel = (TemplateBackupModel) result.getState();
+                    templateBackupModel.getWindow().stopProgress();
+                    templateBackupModel.cancel();
+                    ArrayList<VdcReturnValueBase> retVals =
+                            (ArrayList<VdcReturnValueBase>) result.getReturnValue();
+                    if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size()) {
 
-                            StringBuilder importedTemplates = new StringBuilder();
-                            int counter = 0;
-                            boolean toShowConfirmWindow = false;
-                            for (VmTemplate template : templateBackupModel.getSelectedItems()) {
-                                if (retVals.get(counter) != null && retVals.get(counter).isValid()) {
-                                    importedTemplates.append(template.getName()).append(", "); //$NON-NLS-1$
-                                    toShowConfirmWindow = true;
-                                }
-                                counter++;
+                        StringBuilder importedTemplates = new StringBuilder();
+                        int counter = 0;
+                        boolean toShowConfirmWindow = false;
+                        for (VmTemplate template : templateBackupModel.getSelectedItems()) {
+                            if (retVals.get(counter) != null && retVals.get(counter).isValid()) {
+                                importedTemplates.append(template.getName()).append(", "); //$NON-NLS-1$
+                                toShowConfirmWindow = true;
                             }
-                            if (toShowConfirmWindow) {
-                                ConfirmationModel confirmModel = new ConfirmationModel();
-                                templateBackupModel.setConfirmWindow(confirmModel);
-                                confirmModel.setTitle(constants.importTemplatesTitle());
-                                confirmModel.setHelpTag(HelpTag.import_template);
-                                confirmModel.setHashName("import_template"); //$NON-NLS-1$
-                                confirmModel.setMessage(messages.importProcessHasBegunForTemplates(StringHelper.trimEnd(importedTemplates.toString().trim(), ',')));
-                                confirmModel.getCommands().add(new UICommand(CANCEL_CONFIRMATION_COMMAND, templateBackupModel) //$NON-NLS-1$
-                                .setTitle(constants.close())
-                                .setIsDefault(true)
-                                .setIsCancel(true)
-                                );
-                            }
+                            counter++;
                         }
-
+                        if (toShowConfirmWindow) {
+                            ConfirmationModel confirmModel = new ConfirmationModel();
+                            templateBackupModel.setConfirmWindow(confirmModel);
+                            confirmModel.setTitle(constants.importTemplatesTitle());
+                            confirmModel.setHelpTag(HelpTag.import_template);
+                            confirmModel.setHashName("import_template"); //$NON-NLS-1$
+                            confirmModel.setMessage(messages.importProcessHasBegunForTemplates(StringHelper.trimEnd(importedTemplates.toString().trim(), ',')));
+                            confirmModel.getCommands().add(new UICommand(CANCEL_CONFIRMATION_COMMAND, templateBackupModel) //$NON-NLS-1$
+                            .setTitle(constants.close())
+                            .setIsDefault(true)
+                            .setIsCancel(true)
+                            );
+                        }
                     }
+
                 },
                 this);
     }
@@ -358,32 +346,26 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
             setItems(Collections.<VmTemplate>emptyList());
         }
         else {
-            AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-                @Override
-                public void onSuccess(List<StoragePool> list) {
-                    if (list != null && list.size() > 0) {
-                        StoragePool dataCenter = list.get(0);
-                        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain,
-                                new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
-                                        getEntity().getId()), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                                            @Override
-                                            public void onSuccess(VdcQueryReturnValue returnValue) {
-                                                ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> items1 = new ArrayList<>();
-                                                HashMap<VmTemplate, List<DiskImage>> dictionary = returnValue.getReturnValue();
-                                                ArrayList<VmTemplate> list1 = new ArrayList<>();
-                                                for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet()) {
-                                                    items1.add(item);
-                                                    VmTemplate template = item.getKey();
-                                                    template.setDiskList(new ArrayList<DiskImage>());
-                                                    template.getDiskList().addAll(item.getValue());
-                                                    list1.add(template);
-                                                }
-                                                Collections.sort(list1, new LexoNumericNameableComparator<>());
-                                                setItems(list1);
-                                                TemplateBackupModel.this.extendedItems = items1;
-                                            }
-                                        }));
-                    }
+            AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(list -> {
+                if (list != null && list.size() > 0) {
+                    StoragePool dataCenter = list.get(0);
+                    Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain,
+                            new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
+                                    getEntity().getId()), new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+                                        ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> items1 = new ArrayList<>();
+                                        HashMap<VmTemplate, List<DiskImage>> dictionary = returnValue.getReturnValue();
+                                        ArrayList<VmTemplate> list1 = new ArrayList<>();
+                                        for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet()) {
+                                            items1.add(item);
+                                            VmTemplate template = item.getKey();
+                                            template.setDiskList(new ArrayList<DiskImage>());
+                                            template.getDiskList().addAll(item.getValue());
+                                            list1.add(template);
+                                        }
+                                        Collections.sort(list1, new LexoNumericNameableComparator<>());
+                                        setItems(list1);
+                                        TemplateBackupModel.this.extendedItems = items1;
+                                    }));
                 }
             }), getEntity().getId());
         }

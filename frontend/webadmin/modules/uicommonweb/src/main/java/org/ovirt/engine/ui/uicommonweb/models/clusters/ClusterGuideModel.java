@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -32,10 +31,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHostData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NewHostModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 import com.google.gwt.user.client.Timer;
 
@@ -77,42 +72,30 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
 
     private void updateOptionsNonLocalFSData() {
         AsyncDataProvider.getInstance().getHostListByCluster(new AsyncQuery<>(
-                new AsyncCallback<List<VDS>>() {
-                    @Override
-                    public void onSuccess(List<VDS> returnValue) {
-                        hosts = returnValue;
-                        updateOptionsNonLocalFS();
-                    }
+                returnValue -> {
+                    hosts = returnValue;
+                    updateOptionsNonLocalFS();
                 }), getEntity().getName());
 
-        AsyncDataProvider.getInstance().getHostList(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
-                @Override
-                public void onSuccess(List<VDS> returnValue) {
-                    allHosts = returnValue;
-                    updateOptionsNonLocalFS();
-                }
-            }
+        AsyncDataProvider.getInstance().getHostList(new AsyncQuery<>(returnValue -> {
+            allHosts = returnValue;
+            updateOptionsNonLocalFS();
+        }
         ));
         if (getEntity().supportsGlusterService()) {
             AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery<>(
-                    new AsyncCallback<Boolean>() {
-                        @Override
-                        public void onSuccess(Boolean returnValue) {
-                            isAnyHostUpInCluster = returnValue;
-                            updateOptionsNonLocalFS();
-                        }
+                    returnValue -> {
+                        isAnyHostUpInCluster = returnValue;
+                        updateOptionsNonLocalFS();
                     }), getEntity().getName());
         }
     }
 
     private void updateOptionsLocalFSData() {
         AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery<>(
-                new AsyncCallback<VDS>() {
-                    @Override
-                    public void onSuccess(VDS returnValue) {
-                        localStorageHost = returnValue;
-                        updateOptionsLocalFS();
-                    }
+                returnValue -> {
+                    localStorageHost = returnValue;
+                    updateOptionsLocalFS();
                 }), dataCenter.getName());
     }
 
@@ -211,55 +194,47 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
         startProgress();
         if (getEntity().getStoragePoolId() != null) {
             //Datacenter associated with this cluster.
-            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(new AsyncCallback<StoragePool>() {
-                    @Override
-                    public void onSuccess(StoragePool returnValue) {
-                        dataCenter = returnValue;
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(returnValue -> {
+                dataCenter = returnValue;
 
-                        if (dataCenter == null || !dataCenter.isLocal()) {
-                            updateOptionsNonLocalFSData();
-                        } else {
-                            updateOptionsLocalFSData();
-                        }
-                    }
-                }), getEntity().getStoragePoolId());
+                if (dataCenter == null || !dataCenter.isLocal()) {
+                    updateOptionsNonLocalFSData();
+                } else {
+                    updateOptionsLocalFSData();
+                }
+            }), getEntity().getStoragePoolId());
         } else {
             //No data-center associated with this cluster.
-            AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-                    @Override
-                    public void onSuccess(List<StoragePool> dataCenters) {
-                        @SuppressWarnings("unchecked")
-                        final List<StoragePool> localDataCenters = new ArrayList<>();
-                        boolean enableButton = false;
-                        for (StoragePool dataCenter: dataCenters) {
-                            //Find at least one compatible data-center, so we can show the button.
-                            if (getEntity().getCompatibilityVersion().compareTo(
-                                    dataCenter.getCompatibilityVersion()) >= 0 ) {
-                                if (dataCenter.isLocal()) {
-                                    //Check if there are any clusters associated with this data-center already.
-                                    localDataCenters.add(dataCenter);
-                                } else {
-                                    enableButton = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (enableButton || localDataCenters.isEmpty()) {
-                            updateOptionsRequiredAddDataCenter(enableButton);
+            AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
+                @SuppressWarnings("unchecked")
+                final List<StoragePool> localDataCenters = new ArrayList<>();
+                boolean enableButton = false;
+                for (StoragePool dataCenter: dataCenters) {
+                    //Find at least one compatible data-center, so we can show the button.
+                    if (getEntity().getCompatibilityVersion().compareTo(
+                            dataCenter.getCompatibilityVersion()) >= 0 ) {
+                        if (dataCenter.isLocal()) {
+                            //Check if there are any clusters associated with this data-center already.
+                            localDataCenters.add(dataCenter);
                         } else {
-                            updateOptionsRequiredAddDataCenter(localDataCenters);
+                            enableButton = true;
+                            break;
                         }
                     }
                 }
+                if (enableButton || localDataCenters.isEmpty()) {
+                    updateOptionsRequiredAddDataCenter(enableButton);
+                } else {
+                    updateOptionsRequiredAddDataCenter(localDataCenters);
+                }
+            }
             ));
         }
     }
 
     protected void updateOptionsRequiredAddDataCenter(final List<StoragePool> localDataCenters) {
         AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(
-            new AsyncCallback<List<Cluster>>() {
-                @Override
-                public void onSuccess(List<Cluster> clusters) {
+                clusters -> {
                     List<StoragePool> localDataCenterWithCluster = new ArrayList<>();
                     for (StoragePool dataCenter: localDataCenters) {
                         for (Cluster cluster: clusters) {
@@ -272,8 +247,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
                     }
                     localDataCenters.removeAll(localDataCenterWithCluster);
                     updateOptionsRequiredAddDataCenter(!localDataCenters.isEmpty());
-                }
-            })
+                })
         );
     }
 
@@ -323,25 +297,22 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
 
         // In case of local storage, only one host is allowed in the cluster so we should disable multi selection
         AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(
-                new AsyncCallback<StoragePool>() {
-                    @Override
-                    public void onSuccess(StoragePool dataCenter) {
-                        boolean isMultiHostDC = dataCenter.isLocal();
-                        if (isMultiHostDC) {
-                            model.setMultiSelection(false);
-                        }
-
-                        setWindow(model);
-                        model.getCluster().setItems(clusters);
-                        model.getCluster().setSelectedItem(Linq.firstOrNull(clusters));
-                        model.getCluster().setIsAvailable(false);
-
-                        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSelectHost", ClusterGuideModel.this); //$NON-NLS-1$
-                        model.getCommands().add(tempVar);
-                        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", ClusterGuideModel.this); //$NON-NLS-1$
-                        model.getCommands().add(tempVar2);
-
+                dataCenter -> {
+                    boolean isMultiHostDC = dataCenter.isLocal();
+                    if (isMultiHostDC) {
+                        model.setMultiSelection(false);
                     }
+
+                    setWindow(model);
+                    model.getCluster().setItems(clusters);
+                    model.getCluster().setSelectedItem(Linq.firstOrNull(clusters));
+                    model.getCluster().setIsAvailable(false);
+
+                    UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSelectHost", ClusterGuideModel.this); //$NON-NLS-1$
+                    model.getCommands().add(tempVar);
+                    UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", ClusterGuideModel.this); //$NON-NLS-1$
+                    model.getCommands().add(tempVar2);
+
                 }), getEntity().getStoragePoolId());
     }
 
@@ -375,101 +346,91 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
         }
         model.startProgress();
         Frontend.getInstance().runMultipleAction(VdcActionType.ChangeVDSCluster, parameterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        List<MoveHostData> hosts = ((MoveHost) getWindow()).getSelectedHosts();
-                        List<VdcReturnValueBase> retVals = result.getReturnValue();
-                        final List<VdcActionParametersBase> activateVdsParameterList = new ArrayList<>();
-                        if (retVals != null && hosts.size() == retVals.size()) {
-                            int i = 0;
+                    List<MoveHostData> hosts = ((MoveHost) getWindow()).getSelectedHosts();
+                    List<VdcReturnValueBase> retVals = result.getReturnValue();
+                    final List<VdcActionParametersBase> activateVdsParameterList = new ArrayList<>();
+                    if (retVals != null && hosts.size() == retVals.size()) {
+                        int i = 0;
 
-                            for (MoveHostData selectedHostData : hosts) {
-                                VDS selectedHost= selectedHostData.getEntity();
-                                if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
-                                        && retVals.get(i).getSucceeded()) {
-                                    Frontend.getInstance().runAction(VdcActionType.ApproveVds,
-                                            new ApproveVdsParameters(selectedHost.getId()));
-                                } else if (selectedHostData.getActivateHost()) {
-                                    activateVdsParameterList.add(new VdsActionParameters(selectedHostData.getEntity().getId()));
-                                }
-                                i++;
+                        for (MoveHostData selectedHostData : hosts) {
+                            VDS selectedHost= selectedHostData.getEntity();
+                            if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
+                                    && retVals.get(i).getSucceeded()) {
+                                Frontend.getInstance().runAction(VdcActionType.ApproveVds,
+                                        new ApproveVdsParameters(selectedHost.getId()));
+                            } else if (selectedHostData.getActivateHost()) {
+                                activateVdsParameterList.add(new VdsActionParameters(selectedHostData.getEntity().getId()));
                             }
+                            i++;
                         }
-
-                        if (activateVdsParameterList.isEmpty()) {
-                            getWindow().stopProgress();
-                            cancel();
-                            postAction();
-                        } else {
-                            final String searchString = getVdsSearchString((MoveHost) getWindow());
-                            Timer timer = new Timer() {
-                                public void run() {
-                                    checkVdsClusterChangeSucceeded(searchString, parameterList, activateVdsParameterList);
-                                }
-                            };
-                            timer.schedule(2000);
-                        }
-
                     }
+
+                    if (activateVdsParameterList.isEmpty()) {
+                        getWindow().stopProgress();
+                        cancel();
+                        postAction();
+                    } else {
+                        final String searchString = getVdsSearchString((MoveHost) getWindow());
+                        Timer timer = new Timer() {
+                            public void run() {
+                                checkVdsClusterChangeSucceeded(searchString, parameterList, activateVdsParameterList);
+                            }
+                        };
+                        timer.schedule(2000);
+                    }
+
                 },
                 this);
     }
 
     private void addDataCenter() {
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-            @Override
-            public void onSuccess(List<StoragePool> allDataCenters) {
-                @SuppressWarnings("unchecked")
-                List<EntityModel<StoragePool>> filteredDataCenters = new ArrayList<>();
-                List<StoragePool> localDataCenters = new ArrayList<>();
-                for (StoragePool dataCenter: allDataCenters) {
-                    //Find at least one compatible data-center, so we can show the button.
-                    if (getEntity().getCompatibilityVersion().compareTo(
-                            dataCenter.getCompatibilityVersion()) >= 0) {
-                        if (dataCenter.isLocal()) {
-                            //Check if there are any clusters associated with this data-center already.
-                            localDataCenters.add(dataCenter);
-                        } else {
-                            filteredDataCenters.add(new EntityModel<>(dataCenter));
-                        }
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(allDataCenters -> {
+            @SuppressWarnings("unchecked")
+            List<EntityModel<StoragePool>> filteredDataCenters = new ArrayList<>();
+            List<StoragePool> localDataCenters = new ArrayList<>();
+            for (StoragePool dataCenter: allDataCenters) {
+                //Find at least one compatible data-center, so we can show the button.
+                if (getEntity().getCompatibilityVersion().compareTo(
+                        dataCenter.getCompatibilityVersion()) >= 0) {
+                    if (dataCenter.isLocal()) {
+                        //Check if there are any clusters associated with this data-center already.
+                        localDataCenters.add(dataCenter);
+                    } else {
+                        filteredDataCenters.add(new EntityModel<>(dataCenter));
                     }
                 }
-                if (localDataCenters.isEmpty()) {
-                    displayAddDataCenter(filteredDataCenters);
-                } else {
-                    verifyLocalDataCenterNoCluster(filteredDataCenters, localDataCenters);
-                }
             }
-
+            if (localDataCenters.isEmpty()) {
+                displayAddDataCenter(filteredDataCenters);
+            } else {
+                verifyLocalDataCenterNoCluster(filteredDataCenters, localDataCenters);
+            }
         }
-    ));
+        ));
 
     }
 
     private void verifyLocalDataCenterNoCluster(final List<EntityModel<StoragePool>> filteredDataCenters,
             final List<StoragePool> localDataCenters) {
-        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-                @Override
-                public void onSuccess(List<Cluster> clusters) {
-                    List<StoragePool> localDataCenterWithCluster = new ArrayList<>();
-                    for (StoragePool dataCenter: localDataCenters) {
-                        for (Cluster cluster: clusters) {
-                            if (cluster.getStoragePoolId() != null &&
-                                    cluster.getStoragePoolId().equals(dataCenter.getId())) {
-                                localDataCenterWithCluster.add(dataCenter);
-                                break;
-                            }
-                        }
+        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(clusters -> {
+            List<StoragePool> localDataCenterWithCluster = new ArrayList<>();
+            for (StoragePool dataCenter: localDataCenters) {
+                for (Cluster cluster: clusters) {
+                    if (cluster.getStoragePoolId() != null &&
+                            cluster.getStoragePoolId().equals(dataCenter.getId())) {
+                        localDataCenterWithCluster.add(dataCenter);
+                        break;
                     }
-                    localDataCenters.removeAll(localDataCenterWithCluster);
-                    for (StoragePool dataCenter: localDataCenters) {
-                        filteredDataCenters.add(new EntityModel<>(dataCenter));
-                    }
-                    displayAddDataCenter(filteredDataCenters);
                 }
-            })
+            }
+            localDataCenters.removeAll(localDataCenterWithCluster);
+            for (StoragePool dataCenter: localDataCenters) {
+                filteredDataCenters.add(new EntityModel<>(dataCenter));
+            }
+            displayAddDataCenter(filteredDataCenters);
+        })
         );
     }
 
@@ -498,24 +459,21 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
         model.getCluster().setSelectedItem(getEntity());
         model.getCluster().setIsChangeable(false);
 
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-                 @Override
-                 public void onSuccess(List<StoragePool> dataCenters) {
-                     HostModel model = (HostModel) getWindow();
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
+            HostModel model1 = (HostModel) getWindow();
 
-                     model.getDataCenter().setItems(dataCenters);
-                     if (getEntity().getStoragePoolId() != null) {
-                         model.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
-                               new Linq.IdPredicate<>(getEntity().getStoragePoolId())));
-                     }
-                     model.getDataCenter().setIsChangeable(false);
+            model1.getDataCenter().setItems(dataCenters);
+            if (getEntity().getStoragePoolId() != null) {
+                model1.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
+                      new Linq.IdPredicate<>(getEntity().getStoragePoolId())));
+            }
+            model1.getDataCenter().setIsChangeable(false);
 
-                     UICommand tempVar = UICommand.createDefaultOkUiCommand("OnConfirmPMHost", ClusterGuideModel.this); //$NON-NLS-1$
-                     model.getCommands().add(tempVar);
-                     UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", ClusterGuideModel.this); //$NON-NLS-1$
-                     model.getCommands().add(tempVar2);
-                 }
-             }));
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnConfirmPMHost", ClusterGuideModel.this); //$NON-NLS-1$
+            model1.getCommands().add(tempVar);
+            UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", ClusterGuideModel.this); //$NON-NLS-1$
+            model1.getCommands().add(tempVar2);
+        }));
     }
 
     public void onConfirmPMHost() {
@@ -555,9 +513,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
             dataCentersModel.startProgress();
 
             Frontend.getInstance().runAction(VdcActionType.UpdateCluster, new ManagementNetworkOnClusterOperationParameters(cluster),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
+                    result -> {
 
                         if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
                             //Succeeded, close this window.
@@ -567,8 +523,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
                         //Close popup window.
                         setWindow(null);
 
-                    }
-                },
+                    },
             this);
         } else {
             setWindow(null);
@@ -616,14 +571,11 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
         model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.AddVds, vdsActionParams,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
+                result -> {
 
-                        ClusterGuideModel localModel = (ClusterGuideModel) result.getState();
-                        localModel.postOnAddHost(result.getReturnValue());
+                    ClusterGuideModel localModel = (ClusterGuideModel) result.getState();
+                    localModel.postOnAddHost(result.getReturnValue());
 
-                    }
                 }, this);
     }
 

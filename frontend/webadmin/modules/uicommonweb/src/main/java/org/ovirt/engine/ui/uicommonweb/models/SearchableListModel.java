@@ -24,18 +24,15 @@ import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.RegistrationResult;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
-import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent.RefreshActiveModelHandler;
 import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent.GridTimerStateChangeEventHandler;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 /**
@@ -342,22 +339,18 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
      * for when the timer does become active (changing main tabs).
      */
     private void addTimerChangeHandler() {
-        timerChangeHandler = timer.addGridTimerStateChangeEventHandler(new GridTimerStateChangeEventHandler() {
-
-            @Override
-            public void onGridTimerStateChange(GridTimerStateChangeEvent event) {
-                int newInterval = event.getRefreshRate();
-                if (timer.isActive()) {
-                    //Immediately adjust timer and restart if it was active.
-                    if (newInterval != timer.getRefreshRate()) {
-                        timer.stop();
-                        timer.setRefreshRate(newInterval, false);
-                        timer.start();
-                    }
-                } else {
-                    //Update the timer interval for inactive timers, so they are correct when they become active
+        timerChangeHandler = timer.addGridTimerStateChangeEventHandler(event -> {
+            int newInterval = event.getRefreshRate();
+            if (timer.isActive()) {
+                //Immediately adjust timer and restart if it was active.
+                if (newInterval != timer.getRefreshRate()) {
+                    timer.stop();
                     timer.setRefreshRate(newInterval, false);
+                    timer.start();
                 }
+            } else {
+                //Update the timer interval for inactive timers, so they are correct when they become active
+                timer.setRefreshRate(newInterval, false);
             }
         });
     }
@@ -419,13 +412,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         } else {
             //Defer the start of the timer until after the event bus has been added to this model. Then we
             //can pass the event bus to the timer and the timer can become active.
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                @Override
-                public void execute() {
-                    startRefresh();
-                }
-            });
+            Scheduler.get().scheduleDeferred(() -> startRefresh());
         }
     }
 
@@ -803,12 +790,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
         public PrivateAsyncCallback(SearchableListModel<E, T> model) {
             this.model = model;
-            AsyncDataProvider.getInstance().getSearchResultsLimit(model.asyncQuery(new AsyncCallback<Integer>() {
-                @Override
-                public void onSuccess(Integer result) {
-                    ApplySearchPageSize(result);
-                }
-            }));
+            AsyncDataProvider.getInstance().getSearchResultsLimit(model.asyncQuery(result -> ApplySearchPageSize(result)));
         }
 
         public void requestSearch() {
@@ -834,7 +816,6 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     protected class SetItemsAsyncQuery extends AsyncQuery<VdcQueryReturnValue> {
         public SetItemsAsyncQuery() {
             super(new AsyncCallback<VdcQueryReturnValue>() {
-                @SuppressWarnings("unchecked")
                 @Override
                 public void onSuccess(VdcQueryReturnValue returnValue) {
                     setItems((Collection<T>) returnValue.getReturnValue());
@@ -925,19 +906,16 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     protected void registerHandlers() {
         // Register to listen for operation complete events.
         registerHandler(getEventBus().addHandler(RefreshActiveModelEvent.getType(),
-                new RefreshActiveModelHandler() {
-            @Override
-            public void onRefreshActiveModel(RefreshActiveModelEvent event) {
-                if (getTimer().isActive() || refreshOnInactiveTimer()) { // Only if we are active should we refresh.
-                    if (handleRefreshActiveModel(event)) {
-                        syncSearch();
+                event -> {
+                    if (getTimer().isActive() || refreshOnInactiveTimer()) { // Only if we are active should we refresh.
+                        if (handleRefreshActiveModel(event)) {
+                            syncSearch();
+                        }
+                        if (event.isDoFastForward()) {
+                            // Start the fast refresh.
+                            getTimer().fastForward();
+                        }
                     }
-                    if (event.isDoFastForward()) {
-                        // Start the fast refresh.
-                        getTimer().fastForward();
-                    }
-                }
-            }
-        }));
+                }));
     }
 }

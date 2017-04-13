@@ -20,8 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LibvirtSecretModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 import com.google.inject.Inject;
 
@@ -131,12 +129,7 @@ public class ProviderSecretListModel extends SearchableListModel<Provider, Libvi
             parameters.add(param);
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveLibvirtSecret, parameters,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        cancel();
-                    }
-                });
+                result -> cancel());
     }
 
     private LibvirtSecretModel createSecretModel(String title, HelpTag helpTag, String hashName) {

@@ -4,14 +4,10 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentT
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class GlusterHookResolveConflictsModel extends Model {
 
@@ -145,89 +141,63 @@ public class GlusterHookResolveConflictsModel extends Model {
         setResolveMissingConflictCopy(new EntityModel<Boolean>());
         setResolveMissingConflictRemove(new EntityModel<Boolean>());
 
-        getHookSources().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                onSelectedHookSourceChanged();
+        getHookSources().getSelectedItemChangedEvent().addListener((ev, sender, args) -> onSelectedHookSourceChanged());
+
+        getResolveContentConflict().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getResolveContentConflict().getEntity() == null) {
+                getServerHooksList().setIsChangeable(false);
+            }
+            else {
+                getServerHooksList().setIsChangeable(getResolveContentConflict().getEntity());
             }
         });
 
-        getResolveContentConflict().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if(getResolveContentConflict().getEntity() == null) {
-                    getServerHooksList().setIsChangeable(false);
-                }
-                else {
-                    getServerHooksList().setIsChangeable(getResolveContentConflict().getEntity());
-                }
+        getResolveStatusConflict().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getResolveStatusConflict().getEntity() == null) {
+                getResolveStatusConflictEnable().setIsChangeable(false);
+                getResolveStatusConflictDisable().setIsChangeable(false);
+            }
+            else {
+                getResolveStatusConflictEnable().setIsChangeable(getResolveStatusConflict().getEntity());
+                getResolveStatusConflictDisable().setIsChangeable(getResolveStatusConflict().getEntity());
             }
         });
 
-        getResolveStatusConflict().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getResolveStatusConflict().getEntity() == null) {
-                    getResolveStatusConflictEnable().setIsChangeable(false);
-                    getResolveStatusConflictDisable().setIsChangeable(false);
-                }
-                else {
-                    getResolveStatusConflictEnable().setIsChangeable(getResolveStatusConflict().getEntity());
-                    getResolveStatusConflictDisable().setIsChangeable(getResolveStatusConflict().getEntity());
-                }
+        getResolveStatusConflictEnable().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getResolveStatusConflictEnable().getEntity()) {
+                getResolveStatusConflictDisable().setEntity(Boolean.FALSE);
             }
         });
 
-        getResolveStatusConflictEnable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getResolveStatusConflictEnable().getEntity()) {
-                    getResolveStatusConflictDisable().setEntity(Boolean.FALSE);
-                }
+        getResolveStatusConflictDisable().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getResolveStatusConflictDisable().getEntity()) {
+                getResolveStatusConflictEnable().setEntity(Boolean.FALSE);
             }
         });
 
-        getResolveStatusConflictDisable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getResolveStatusConflictDisable().getEntity()) {
-                    getResolveStatusConflictEnable().setEntity(Boolean.FALSE);
-                }
+        getResolveMissingConflict().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getResolveMissingConflict().getEntity() == null) {
+                getResolveMissingConflictCopy().setIsChangeable(false);
+                getResolveMissingConflictRemove().setIsChangeable(false);
+            }
+            else {
+                getResolveMissingConflictCopy().setIsChangeable(getResolveMissingConflict().getEntity());
+                getResolveMissingConflictRemove().setIsChangeable(getResolveMissingConflict().getEntity());
             }
         });
 
-        getResolveMissingConflict().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getResolveMissingConflict().getEntity() == null) {
-                    getResolveMissingConflictCopy().setIsChangeable(false);
-                    getResolveMissingConflictRemove().setIsChangeable(false);
-                }
-                else {
-                    getResolveMissingConflictCopy().setIsChangeable(getResolveMissingConflict().getEntity());
-                    getResolveMissingConflictRemove().setIsChangeable(getResolveMissingConflict().getEntity());
-                }
+        getResolveMissingConflictCopy().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getResolveMissingConflictCopy().getEntity()) {
+                getResolveMissingConflictRemove().setEntity(Boolean.FALSE);
             }
         });
 
-        getResolveMissingConflictCopy().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getResolveMissingConflictCopy().getEntity()) {
-                    getResolveMissingConflictRemove().setEntity(Boolean.FALSE);
-                }
+        getResolveMissingConflictRemove().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getResolveMissingConflictRemove().getEntity()) {
+                getResolveMissingConflictCopy().setEntity(Boolean.FALSE);
             }
-        });
 
-        getResolveMissingConflictRemove().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getResolveMissingConflictRemove().getEntity()) {
-                    getResolveMissingConflictCopy().setEntity(Boolean.FALSE);
-                }
-
-                updateConflictActionsAvailability(getResolveMissingConflictRemove().getEntity());
-            }
+            updateConflictActionsAvailability(getResolveMissingConflictRemove().getEntity());
         });
 
 
@@ -267,12 +237,9 @@ public class GlusterHookResolveConflictsModel extends Model {
 
         if (selectedServer.getContentType() == GlusterHookContentType.TEXT) {
             startProgress();
-            AsyncDataProvider.getInstance().getGlusterHookContent(new AsyncQuery<>(new AsyncCallback<String>() {
-                @Override
-                public void onSuccess(String content) {
-                    getContentModel().getContent().setEntity(content);
-                    stopProgress();
-                }
+            AsyncDataProvider.getInstance().getGlusterHookContent(new AsyncQuery<>(content -> {
+                getContentModel().getContent().setEntity(content);
+                stopProgress();
             }), getGlusterHookEntity().getId(), selectedServer.getServerId());
         }
         else {

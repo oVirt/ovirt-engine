@@ -13,8 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class RemoveVnicProfileModel extends ConfirmationModel {
 
@@ -62,14 +60,11 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
         startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVnicProfile, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        stopProgress();
-                        cancel();
+                    stopProgress();
+                    cancel();
 
-                    }
                 }, null);
     }
 

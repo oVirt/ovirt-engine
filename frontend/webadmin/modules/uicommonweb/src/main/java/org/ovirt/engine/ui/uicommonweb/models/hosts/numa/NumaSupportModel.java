@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -30,7 +29,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class NumaSupportModel extends Model {
 
@@ -66,13 +64,7 @@ public class NumaSupportModel extends Model {
         if (getHosts().getItems().size() <= 1) {
             getHosts().setIsChangeable(false);
         }
-        getHosts().getSelectedItemChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                initHostNUMATopology();
-            }
-        });
+        getHosts().getSelectedItemChangedEvent().addListener((ev, sender, args) -> initHostNUMATopology());
         getHosts().setSelectedItem(host);
     }
 
@@ -86,26 +78,15 @@ public class NumaSupportModel extends Model {
 
     protected void initHostNUMATopology() {
         startProgress();
-        AsyncDataProvider.getInstance().getHostNumaTopologyByHostId(new AsyncQuery<>(new AsyncCallback<List<VdsNumaNode>>() {
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(List<VdsNumaNode> returnValue) {
-                // TODO: host query can be skipped in case it was already fetched.
-                getNumaNodeList().addAll(returnValue);
-                initFirstLevelDistanceSetList();
-                AsyncDataProvider.getInstance().getVMsWithVNumaNodesByClusterId(new AsyncQuery<>(new AsyncCallback<List<VM>>() {
-
-                    @Override
-                    public void onSuccess(List<VM> returnValue) {
-                        setVmsWithvNumaNodeList(returnValue);
-                        initVNumaNodes();
-                        modelReady();
-                    }
-
-                }), hosts.getSelectedItem().getClusterId());
-            }
-
+        AsyncDataProvider.getInstance().getHostNumaTopologyByHostId(new AsyncQuery<>(returnValue -> {
+            // TODO: host query can be skipped in case it was already fetched.
+            getNumaNodeList().addAll(returnValue);
+            initFirstLevelDistanceSetList();
+            AsyncDataProvider.getInstance().getVMsWithVNumaNodesByClusterId(new AsyncQuery<>(returnValue1 -> {
+                setVmsWithvNumaNodeList(returnValue1);
+                initVNumaNodes();
+                modelReady();
+            }), hosts.getSelectedItem().getClusterId());
         }), hosts.getSelectedItem().getId());
     }
 

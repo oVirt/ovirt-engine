@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -39,8 +38,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class VmDiskListModel extends VmDiskListModelBase<VM> {
@@ -284,12 +281,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        cancel();
-                    }
-                },
+                result -> cancel(),
                 this);
     }
 
@@ -354,10 +346,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private void plug() {
         Frontend.getInstance().runMultipleAction(VdcActionType.HotPlugDiskToVm, createPlugOrUnplugParams(true),
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                    }
+                result -> {
                 },
                 this);
     }
@@ -367,12 +356,9 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.HotUnPlugDiskFromVm, createPlugOrUnplugParams(false),
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        model.stopProgress();
-                        setWindow(null);
-                    }
+                result -> {
+                    model.stopProgress();
+                    setWindow(null);
                 },
                 this);
     }
@@ -442,10 +428,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.GetDiskAlignment, parameterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                    }
+                result -> {
                 },
                 this);
     }
@@ -718,12 +701,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     protected void updateDataCenterVersion() {
-        AsyncQuery<StoragePool> query = new AsyncQuery<>(new AsyncCallback<StoragePool>() {
-            @Override
-            public void onSuccess(StoragePool storagePool) {
-                setDataCenterVersion(storagePool.getCompatibilityVersion());
-            }
-        });
+        AsyncQuery<StoragePool> query = new AsyncQuery<>(storagePool -> setDataCenterVersion(storagePool.getCompatibilityVersion()));
         AsyncDataProvider.getInstance().getDataCenterById(query, getEntity().getStoragePoolId());
     }
 

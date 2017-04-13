@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -107,7 +106,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         return true;
     }
 
-    protected void onInitAllDisks(List<Disk> disks) {
+    protected void onInitAllDisks(List<? extends Disk> disks) {
         for (Disk disk : disks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 allDisks.add(DiskModel.diskToModel(disk));
@@ -124,13 +123,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         Collections.sort(getActiveStorageDomains(), new NameableComparator());
 
         if (!storages.isEmpty()) {
-            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(new AsyncCallback<StoragePool>() {
-                @Override
-                public void onSuccess(StoragePool dataCenter) {
-                    setDataCenter(dataCenter);
-                    setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
-                    postInitStorageDomains();
-                }
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(dataCenter -> {
+                setDataCenter(dataCenter);
+                setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
+                postInitStorageDomains();
             }), storages.get(0).getStoragePoolId());
         }
         else {

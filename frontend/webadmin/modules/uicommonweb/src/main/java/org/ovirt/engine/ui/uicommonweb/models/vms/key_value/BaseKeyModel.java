@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
@@ -43,25 +42,21 @@ public abstract class BaseKeyModel extends ListModel<KeyValueLineModel> {
 
     protected abstract void setValueByKey(KeyValueLineModel lineModel, String key);
 
-    public final IEventListener<EventArgs> keyChangedListener = new IEventListener<EventArgs>() {
-
-        @Override
-        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            if (disableEvent) {
-                return;
-            }
-            ListModel<String> listModel = (ListModel<String>) sender;
-            String key = null;
-            if (listModel.getSelectedItem() != null) {
-                key = listModel.getSelectedItem();
-            }
-            for (KeyValueLineModel lineModel : getItems()) {
-                if (lineModel.getKeys().getSelectedItem().equals(key)) {
-                    initLineModel(lineModel, key);
-                }
-            }
-            updateKeys();
+    public final IEventListener<EventArgs> keyChangedListener = (ev, sender, args) -> {
+        if (disableEvent) {
+            return;
         }
+        ListModel<String> listModel = (ListModel<String>) sender;
+        String key = null;
+        if (listModel.getSelectedItem() != null) {
+            key = listModel.getSelectedItem();
+        }
+        for (KeyValueLineModel lineModel : getItems()) {
+            if (lineModel.getKeys().getSelectedItem().equals(key)) {
+                initLineModel(lineModel, key);
+            }
+        }
+        updateKeys();
     };
 
     public KeyValueLineModel createNewLineModel() {

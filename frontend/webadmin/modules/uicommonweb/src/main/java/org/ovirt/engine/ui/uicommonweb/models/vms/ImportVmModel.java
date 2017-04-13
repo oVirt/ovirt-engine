@@ -60,24 +60,19 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
             if (getClusterQuota().getIsAvailable()) {
                 Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForCluster,
                     new IdQueryParameters(getCluster().getSelectedItem().getId()),
-                    new AsyncQuery<>(
-                            new AsyncCallback<VdcQueryReturnValue>() {
-
-                                @Override
-                                public void onSuccess(VdcQueryReturnValue returnValue) {
-                                    ArrayList<Quota> quotaList = returnValue.getReturnValue();
-                                    getClusterQuota().setItems(quotaList);
-                                    if (quotaList.isEmpty()
-                                            && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
-                                        setMessage(ConstantsManager.getInstance()
+                    new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                                ArrayList<Quota> quotaList = returnValue.getReturnValue();
+                                getClusterQuota().setItems(quotaList);
+                                if (quotaList.isEmpty()
+                                        && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
+                                    setMessage(ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .missingQuotaClusterEnforceMode());
+                                } else if (getMessage() != null
+                                        && getMessage().equals(ConstantsManager.getInstance()
                                                 .getConstants()
-                                                .missingQuotaClusterEnforceMode());
-                                    } else if (getMessage() != null
-                                            && getMessage().equals(ConstantsManager.getInstance()
-                                                    .getConstants()
-                                                    .missingQuotaClusterEnforceMode())) {
-                                        setMessage("");
-                                    }
+                                                .missingQuotaClusterEnforceMode())) {
+                                    setMessage("");
                                 }
                             }));
             }
@@ -94,13 +89,9 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     private void fetchCpuProfiles(Guid clusterId) {
         Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
                 new IdQueryParameters(clusterId),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        List<CpuProfile> cpuProfiles = returnValue.getReturnValue();
-                        getCpuProfiles().setItems(cpuProfiles);
-                    }
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    List<CpuProfile> cpuProfiles = returnValue.getReturnValue();
+                    getCpuProfiles().setItems(cpuProfiles);
                 }));
     }
 
@@ -143,38 +134,34 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     public void setItems(final AsyncCallback<VdcQueryReturnValue> callback, final List<VM>  externalVms) {
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(createSearchPattern(externalVms), SearchType.VM),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    List<VM> vms = returnValue.getReturnValue();
 
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        List<VM> vms = returnValue.getReturnValue();
-
-                        Set<String> existingNames = new HashSet<>();
-                        for (VM vm : vms) {
-                            if (vm.getStoragePoolId().equals(getStoragePool().getId())) {
-                                existingNames.add(vm.getName());
-                            }
+                    Set<String> existingNames = new HashSet<>();
+                    for (VM vm : vms) {
+                        if (vm.getStoragePoolId().equals(getStoragePool().getId())) {
+                            existingNames.add(vm.getName());
                         }
-
-                        List<ImportVmData> vmDataList = new ArrayList<>();
-                        for (VM vm : externalVms) {
-                            ImportVmData vmData = new ImportVmData(vm);
-                            if (vms.contains(vm)) {
-                                vmData.setExistsInSystem(true);
-                                vmData.getClone().setEntity(true);
-                                vmData.getClone().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .importVMThatExistsInSystemMustClone());
-                                vmData.getClone().setIsChangeable(false);
-                            }
-
-                            vmData.setNameExistsInTheSystem(existingNames.contains(vm.getName()));
-
-                            vmDataList.add(vmData);
-                        }
-                        setItems(vmDataList);
-                        callback.onSuccess(returnValue);
                     }
+
+                    List<ImportVmData> vmDataList = new ArrayList<>();
+                    for (VM vm : externalVms) {
+                        ImportVmData vmData = new ImportVmData(vm);
+                        if (vms.contains(vm)) {
+                            vmData.setExistsInSystem(true);
+                            vmData.getClone().setEntity(true);
+                            vmData.getClone().setChangeProhibitionReason(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .importVMThatExistsInSystemMustClone());
+                            vmData.getClone().setIsChangeable(false);
+                        }
+
+                        vmData.setNameExistsInTheSystem(existingNames.contains(vm.getName()));
+
+                        vmDataList.add(vmData);
+                    }
+                    setItems(vmDataList);
+                    callback.onSuccess(returnValue);
                 }));
     }
 
@@ -220,14 +207,9 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                         new LengthValidation(maxNameLength),
                         new I18NNameValidation(),
                         new UniqueNameValidator(data),
-                        new IValidation() {
-                            @Override
-                            public ValidationResult validate(Object value) {
-                                return data.isNameExistsInTheSystem() && data.getName().equals(data.getVm().getName())?
-                                       ValidationResult.fail(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason())
-                                       : ValidationResult.ok();
-                            }
-                        }
+                        value -> data.isNameExistsInTheSystem() && data.getName().equals(data.getVm().getName())?
+                               ValidationResult.fail(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason())
+                               : ValidationResult.ok()
                 });
 
         data.setError(vmName.getIsValid() ? null : ConstantsManager.getInstance().getConstants().invalidName());

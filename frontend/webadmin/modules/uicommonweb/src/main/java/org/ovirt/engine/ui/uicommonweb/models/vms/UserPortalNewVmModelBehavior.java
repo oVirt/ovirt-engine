@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -47,34 +46,27 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
         // Get datacenters with permitted create action
         AsyncDataProvider.getInstance().getDataCentersWithPermittedActionOnClusters(new AsyncQuery<>(
-                new AsyncCallback<List<StoragePool>>() {
-                    @Override
-                    public void onSuccess(List<StoragePool> returnValue) {
+                returnValue -> {
 
-                        final List<StoragePool> dataCenters = new ArrayList<>();
-                        for (StoragePool a : returnValue) {
-                            if (a.getStatus() == StoragePoolStatus.Up) {
-                                dataCenters.add(a);
-                            }
+                    final List<StoragePool> dataCenters = new ArrayList<>();
+                    for (StoragePool a : returnValue) {
+                        if (a.getStatus() == StoragePoolStatus.Up) {
+                            dataCenters.add(a);
                         }
+                    }
 
-                        if (!dataCenters.isEmpty()) {
-                            AsyncDataProvider.getInstance().getClustersWithPermittedAction(
-                                    new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-
-                                        @Override
-                                        public void onSuccess(List<Cluster> clusters) {
-                                            // filter clusters without cpu name
-                                            clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusters);
-                                            getModel().setDataCentersAndClusters(getModel(),
-                                                    dataCenters,
-                                                    clusters, null);
-                                        }
-                                    }),
-                                    actionGroup, true, false);
-                        } else {
-                            getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDCWithClusterWithPermissions());
-                        }
+                    if (!dataCenters.isEmpty()) {
+                        AsyncDataProvider.getInstance().getClustersWithPermittedAction(
+                                new AsyncQuery<>(clusters -> {
+                                    // filter clusters without cpu name
+                                    clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusters);
+                                    getModel().setDataCentersAndClusters(getModel(),
+                                            dataCenters,
+                                            clusters, null);
+                                }),
+                                actionGroup, true, false);
+                    } else {
+                        getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDCWithClusterWithPermissions());
                     }
                 }), actionGroup, true, false);
 

@@ -3,9 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class ManageGlusterSwiftModel extends EntityModel {
 
@@ -29,12 +26,7 @@ public class ManageGlusterSwiftModel extends EntityModel {
         setIsManageServerLevel(new EntityModel<Boolean>());
         setHostServicesList(new ListModel<GlusterSwiftServiceModel>());
 
-        getIsManageServerLevel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getHostServicesList().setIsChangeable(getIsManageServerLevel().getEntity());
-            }
-        });
+        getIsManageServerLevel().getEntityChangedEvent().addListener((ev, sender, args) -> getHostServicesList().setIsChangeable(getIsManageServerLevel().getEntity()));
         getIsManageServerLevel().setEntity(Boolean.FALSE);
     }
 

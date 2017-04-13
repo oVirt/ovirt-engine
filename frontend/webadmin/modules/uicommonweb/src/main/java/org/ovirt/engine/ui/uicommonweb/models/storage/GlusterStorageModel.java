@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -20,9 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 @SuppressWarnings("unused")
@@ -41,25 +37,12 @@ public class GlusterStorageModel extends PosixStorageModel {
         getVfsType().setTitle(""); //$NON-NLS-1$
         getVfsType().setEntity("glusterfs"); //$NON-NLS-1$
         getVfsType().setIsChangeable(false);
-        AsyncDataProvider.getInstance().getGlusterVolumesForStorageDomain(new AsyncQuery<>(new AsyncCallback<List<GlusterVolumeEntity>>() {
-            @Override
-            public void onSuccess(List<GlusterVolumeEntity> glusterVolumes) {
-                getGlusterVolumes().setItems(glusterVolumes);
-                getGlusterVolumes().setSelectedItem(null);
-            }
+        AsyncDataProvider.getInstance().getGlusterVolumesForStorageDomain(new AsyncQuery<>(glusterVolumes -> {
+            getGlusterVolumes().setItems(glusterVolumes);
+            getGlusterVolumes().setSelectedItem(null);
         }));
-        getGlusterVolumes().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                volumeSelectedItemChanged();
-            }
-        });
-        getLinkGlusterVolume().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                volumeSelectedItemChanged();
-            }
-        });
+        getGlusterVolumes().getSelectedItemChangedEvent().addListener((ev, sender, args) -> volumeSelectedItemChanged());
+        getLinkGlusterVolume().getEntityChangedEvent().addListener((ev, sender, args) -> volumeSelectedItemChanged());
     }
 
     private void volumeSelectedItemChanged() {

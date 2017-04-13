@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -38,10 +37,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 
@@ -111,27 +106,17 @@ public class BaseImportNetworksModel extends Model {
                         commonModelProvider.get().getSystemTree().getSelectedItem());
         treeSelectedDc = (treeSelectedDcItem == null) ? null : (StoragePool) treeSelectedDcItem.getEntity();
 
-        providers.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                onProviderChosen();
-            }
-        });
+        providers.getSelectedItemChangedEvent().addListener((ev, sender, args) -> onProviderChosen());
 
         initProviderList();
     }
 
     protected void initProviderList() {
         startProgress();
-        AsyncDataProvider.getInstance().getAllNetworkProviders(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
-
-            @Override
-            public void onSuccess(List<Provider<?>> providers) {
-                stopProgress();
-                providers.add(0, null);
-                getProviders().setItems(providers);
-            }
+        AsyncDataProvider.getInstance().getAllNetworkProviders(new AsyncQuery<>(providers -> {
+            stopProgress();
+            providers.add(0, null);
+            getProviders().setItems(providers);
         }));
     }
 
@@ -144,48 +129,40 @@ public class BaseImportNetworksModel extends Model {
         final List<StoragePool> dataCenters = new LinkedList<>();
 
         startProgress();
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(returnValue -> {
+            dataCenters.addAll(returnValue);
+            Collections.sort(dataCenters, new NameableComparator());
 
-            @Override
-            public void onSuccess(List<StoragePool> returnValue) {
-                dataCenters.addAll(returnValue);
-                Collections.sort(dataCenters, new NameableComparator());
+            AsyncDataProvider.getInstance().getExternalNetworkMap(new AsyncQuery<>(externalNetworkToDataCenters -> {
+                List<ExternalNetwork> items = new LinkedList<>();
+                for (Map.Entry<Network, Set<Guid>> entry : externalNetworkToDataCenters.entrySet()) {
+                    Network network = entry.getKey();
+                    Set<Guid> attachedDataCenters = entry.getValue();
 
-                AsyncDataProvider.getInstance().getExternalNetworkMap(new AsyncQuery<>(new AsyncCallback<Map<Network, Set<Guid>>>() {
+                    ExternalNetwork externalNetwork = new ExternalNetwork();
+                    externalNetwork.setNetwork(network);
+                    externalNetwork.setDisplayName(network.getName());
+                    externalNetwork.setPublicUse(true);
 
-                    @Override
-                    public void onSuccess(Map<Network, Set<Guid>> externalNetworkToDataCenters) {
-                        List<ExternalNetwork> items = new LinkedList<>();
-                        for (Map.Entry<Network, Set<Guid>> entry : externalNetworkToDataCenters.entrySet()) {
-                            Network network = entry.getKey();
-                            Set<Guid> attachedDataCenters = entry.getValue();
-
-                            ExternalNetwork externalNetwork = new ExternalNetwork();
-                            externalNetwork.setNetwork(network);
-                            externalNetwork.setDisplayName(network.getName());
-                            externalNetwork.setPublicUse(true);
-
-                            List<StoragePool> availableDataCenters = new LinkedList<>();
-                            for (StoragePool dc : dataCenters) {
-                                if (!attachedDataCenters.contains(dc.getId())) {
-                                    availableDataCenters.add(dc);
-                                }
-                            }
-                            externalNetwork.getDataCenters().setItems(availableDataCenters);
-                            externalNetwork.getDataCenters().setSelectedItem(treeSelectedDc != null
-                                    && availableDataCenters.contains(treeSelectedDc) ? treeSelectedDc
-                                    : Linq.firstOrNull(availableDataCenters));
-
-                            items.add(externalNetwork);
+                    List<StoragePool> availableDataCenters = new LinkedList<>();
+                    for (StoragePool dc : dataCenters) {
+                        if (!attachedDataCenters.contains(dc.getId())) {
+                            availableDataCenters.add(dc);
                         }
-                        Collections.sort(items, Comparator.comparing(ExternalNetwork::getNetwork, new NameableComparator()));
-                        providerNetworks.setItems(items);
-                        importedNetworks.setItems(new LinkedList<ExternalNetwork>());
-
-                        stopProgress();
                     }
-                }), provider.getId());
-            }
+                    externalNetwork.getDataCenters().setItems(availableDataCenters);
+                    externalNetwork.getDataCenters().setSelectedItem(treeSelectedDc != null
+                            && availableDataCenters.contains(treeSelectedDc) ? treeSelectedDc
+                            : Linq.firstOrNull(availableDataCenters));
+
+                    items.add(externalNetwork);
+                }
+                Collections.sort(items, Comparator.comparing(ExternalNetwork::getNetwork, new NameableComparator()));
+                providerNetworks.setItems(items);
+                importedNetworks.setItems(new LinkedList<ExternalNetwork>());
+
+                stopProgress();
+            }), provider.getId());
         }));
     }
 
@@ -238,17 +215,13 @@ public class BaseImportNetworksModel extends Model {
                     new AddNetworkStoragePoolParameters(dcId, network);
             params.setVnicProfileRequired(false);
             multipleActionParameters.add(params);
-            callbacks.add(new IFrontendActionAsyncCallback() {
+            callbacks.add(result -> {
+                VdcReturnValueBase returnValue = result.getReturnValue();
+                if (returnValue != null && returnValue.getSucceeded()) {
+                    network.setId((Guid) returnValue.getActionReturnValue());
 
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-                    VdcReturnValueBase returnValue = result.getReturnValue();
-                    if (returnValue != null && returnValue.getSucceeded()) {
-                        network.setId((Guid) returnValue.getActionReturnValue());
-
-                        // Perform sequentially: first fetch clusters, then attach network, then create VNIC profile
-                        fetchDcClusters(dcId, network, externalNetwork.isPublicUse());
-                    }
+                    // Perform sequentially: first fetch clusters, then attach network, then create VNIC profile
+                    fetchDcClusters(dcId, network, externalNetwork.isPublicUse());
                 }
             });
         }
@@ -261,13 +234,9 @@ public class BaseImportNetworksModel extends Model {
         if (dcClusters.containsKey(dcId)) {
             attachNetworkToClusters(network, dcClusters.get(dcId), publicUse);
         } else {
-            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-
-                @Override
-                public void onSuccess(List<Cluster> clusters) {
-                    dcClusters.put(dcId, clusters);
-                    attachNetworkToClusters(network, clusters, publicUse);
-                }
+            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(clusters -> {
+                dcClusters.put(dcId, clusters);
+                attachNetworkToClusters(network, clusters, publicUse);
             }), dcId);
         }
     }
@@ -285,13 +254,7 @@ public class BaseImportNetworksModel extends Model {
         Frontend.getInstance().runAction(
                 VdcActionType.ManageNetworkClusters,
                 new ManageNetworkClustersParameters(networkAttachments),
-                new IFrontendActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        addVnicProfile(network, publicUse);
-                    }
-                });
+                result -> addVnicProfile(network, publicUse));
     }
 
     private void addVnicProfile(Network network, boolean publicUse) {
@@ -300,13 +263,8 @@ public class BaseImportNetworksModel extends Model {
         vnicProfile.setNetworkId(network.getId());
         AddVnicProfileParameters parameters = new AddVnicProfileParameters(vnicProfile, true);
         parameters.setPublicUse(publicUse);
-        Frontend.getInstance().runAction(VdcActionType.AddVnicProfile, parameters, new IFrontendActionAsyncCallback() {
-
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                sourceListModel.getSearchCommand().execute();
-            }
-        });
+        Frontend.getInstance().runAction(VdcActionType.AddVnicProfile, parameters,
+                result -> sourceListModel.getSearchCommand().execute());
     }
 
     private void addImport() {

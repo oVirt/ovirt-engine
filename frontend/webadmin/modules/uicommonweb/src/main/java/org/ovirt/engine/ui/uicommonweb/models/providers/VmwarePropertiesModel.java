@@ -12,9 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class VmwarePropertiesModel extends ProxyHostPropertiesModel {
 
@@ -26,17 +23,14 @@ public class VmwarePropertiesModel extends ProxyHostPropertiesModel {
     private ListModel<VDS> proxyHost = new ListModel<>();
 
     public VmwarePropertiesModel() {
-        getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    vCenter.setIsAvailable(getIsAvailable());
-                    esx.setIsAvailable(getIsAvailable());
-                    vmwareDatacenter.setIsAvailable(getIsAvailable());
-                    vmwareCluster.setIsAvailable(getIsAvailable());
-                    verifySSL.setIsAvailable(getIsAvailable());
-                    proxyHost.setIsAvailable(getIsAvailable());
-                }
+        getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                vCenter.setIsAvailable(getIsAvailable());
+                esx.setIsAvailable(getIsAvailable());
+                vmwareDatacenter.setIsAvailable(getIsAvailable());
+                vmwareCluster.setIsAvailable(getIsAvailable());
+                verifySSL.setIsAvailable(getIsAvailable());
+                proxyHost.setIsAvailable(getIsAvailable());
             }
         });
     }

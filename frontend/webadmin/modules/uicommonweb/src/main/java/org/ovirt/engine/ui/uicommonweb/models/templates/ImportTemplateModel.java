@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -97,12 +96,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
                             templateDataList.add(templateData);
                         }
                         setItems(templateDataList);
-                        withDataCenterLoaded(storageDomainId, new AsyncCallback<List<StoragePool>>() {
-                            @Override
-                            public void onSuccess(List<StoragePool> returnValue) {
-                                doInit();
-                            }
-                        });
+                        withDataCenterLoaded(storageDomainId, r -> doInit());
                     }
 
                     private VmTemplate findAnyVmTemplateById(List<VmTemplate> vmtList, Guid templateId) {

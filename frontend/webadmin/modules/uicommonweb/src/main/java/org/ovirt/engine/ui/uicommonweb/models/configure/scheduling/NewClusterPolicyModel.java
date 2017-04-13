@@ -31,9 +31,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class NewClusterPolicyModel extends Model {
     public static final Guid NONE_POLICY_UNIT = new Guid("38440000-8cf0-14bd-c43e-10b96e4ef00a"); //$NON-NLS-1$
@@ -169,13 +166,9 @@ public class NewClusterPolicyModel extends Model {
         }
         getLoadBalanceList().setIsChangeable(!clusterPolicy.isLocked());
         getLoadBalanceList().setSelectedItem(currentLoadBalance);
-        getLoadBalanceList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                refreshCustomProperties(currentLoadBalance, false);
-                currentLoadBalance = getLoadBalanceList().getSelectedItem();
-            }
+        getLoadBalanceList().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            refreshCustomProperties(currentLoadBalance, false);
+            currentLoadBalance = getLoadBalanceList().getSelectedItem();
         });
     }
 
@@ -523,14 +516,10 @@ public class NewClusterPolicyModel extends Model {
         policy.setParameterMap(KeyValueModel.convertProperties(getCustomPropertySheet().serialize()));
         Frontend.getInstance().runAction(commandType == CommandType.Edit ? VdcActionType.EditClusterPolicy
                 : VdcActionType.AddClusterPolicy,
-                new ClusterPolicyCRUDParameters(policy.getId(), policy), new IFrontendActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        NewClusterPolicyModel.this.stopProgress();
-                        if (result.getReturnValue().getSucceeded()) {
-                            NewClusterPolicyModel.this.cancel();
-                        }
+                new ClusterPolicyCRUDParameters(policy.getId(), policy), result -> {
+                    NewClusterPolicyModel.this.stopProgress();
+                    if (result.getReturnValue().getSucceeded()) {
+                        NewClusterPolicyModel.this.cancel();
                     }
                 });
     }

@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -89,13 +88,7 @@ import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.ICancelable;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -516,18 +509,15 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         for (Guid id : vmIds) {
             AsyncDataProvider.getInstance().getAttachedTagsToVm(new AsyncQuery<>(
-                    new AsyncCallback<List<Tags>>() {
-                        @Override
-                        public void onSuccess(List<Tags> returnValue) {
+                            returnValue -> {
 
-                            allAttachedTags.addAll(returnValue);
-                            selectedItemsCounter++;
-                            if (selectedItemsCounter == getSelectedItems().size()) {
-                                postGetAttachedTags(model);
-                            }
+                                allAttachedTags.addAll(returnValue);
+                                selectedItemsCounter++;
+                                if (selectedItemsCounter == getSelectedItems().size()) {
+                                    postGetAttachedTags(model);
+                                }
 
-                        }
-                    }),
+                            }),
                     id);
         }
     }
@@ -586,19 +576,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         }
 
         AsyncDataProvider.getInstance().getVmById(new AsyncQuery<>(
-                                                   new AsyncCallback<VM>() {
-                                                       @Override
-                                                       public void onSuccess(VM returnValue) {
-                                                           VmGuideModel model = (VmGuideModel) getWindow();
-                                                           model.setEntity(returnValue);
+                returnValue -> {
+                    VmGuideModel vmGuideModel = (VmGuideModel) getWindow();
+                    vmGuideModel.setEntity(returnValue);
 
-                                                           UICommand tempVar = new UICommand("Cancel", VmListModel.this); //$NON-NLS-1$
-                                                           tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
-                                                           tempVar.setIsDefault(true);
-                                                           tempVar.setIsCancel(true);
-                                                           model.getCommands().add(tempVar);
-                                                       }
-                                                   }), (Guid) getGuideContext());
+                    UICommand tempVar = new UICommand("Cancel", VmListModel.this); //$NON-NLS-1$
+                    tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
+                    tempVar.setIsDefault(true);
+                    tempVar.setIsCancel(true);
+                    vmGuideModel.getCommands().add(tempVar);
+                }), (Guid) getGuideContext());
     }
 
     @Override
@@ -655,12 +642,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         }
 
         // populating VMInit
-        AsyncQuery<VM> getVmInitQuery = new AsyncQuery<>(new AsyncCallback<VM>() {
-            @Override
-            public void onSuccess(VM result) {
-                editedVm = result;
-                vmInitLoaded(editedVm);
-            }
+        AsyncQuery<VM> getVmInitQuery = new AsyncQuery<>(result -> {
+            editedVm = result;
+            vmInitLoaded(editedVm);
         });
         if (vm.isNextRunConfigurationExists()) {
             AsyncDataProvider.getInstance().getVmNextRunConfiguration(getVmInitQuery, vm.getId());
@@ -759,16 +743,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         // TODO: There's no point in creating a VdcQueryType list when you wanna run the same query for all parameters,
         // revise when refactoring org.ovirt.engine.ui.Frontend to support runMultipleQuery with a single query
         if (!params.isEmpty()) {
-            Frontend.getInstance().runMultipleQueries(queries, params, new IFrontendMultipleQueryAsyncCallback() {
-                @Override
-                public void executed(FrontendMultipleQueryAsyncResult result) {
-                    for (int i = 0; i < result.getReturnValues().size(); i++) {
-                        if (result.getReturnValues().get(i).getSucceeded()) {
-                            Guid vmId = ((IdQueryParameters) result.getParameters().get(i)).getId();
-                            initRemoveDisksChecboxesPost(vmId, (List<Disk>) result.getReturnValues()
-                                    .get(i)
-                                    .getReturnValue());
-                        }
+            Frontend.getInstance().runMultipleQueries(queries, params, result -> {
+                for (int i = 0; i < result.getReturnValues().size(); i++) {
+                    if (result.getReturnValues().get(i).getSucceeded()) {
+                        Guid vmId = ((IdQueryParameters) result.getParameters().get(i)).getId();
+                        initRemoveDisksChecboxesPost(vmId, (List<Disk>) result.getReturnValues()
+                                .get(i)
+                                .getReturnValue());
                     }
                 }
             });
@@ -893,13 +874,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
 
         AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(
-                new AsyncCallback<List<StoragePool>>() {
-                    @Override
-                    public void onSuccess(List<StoragePool> storagePools) {
-                        StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
+                storagePools -> {
+                    StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
-                        postGetTemplatesNotPresentOnExportDomain(storagePool);
-                    }
+                    postGetTemplatesNotPresentOnExportDomain(storagePool);
                 }), storageDomainId);
     }
 
@@ -909,47 +887,44 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         if (storagePool != null) {
             AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery<>(
-                            new AsyncCallback<Map<VmTemplate, ArrayList<DiskImage>>>() {
-                                @Override
-                                public void onSuccess(Map<VmTemplate, ArrayList<DiskImage>> templatesDiskSet) {
-                                    HashMap<String, ArrayList<String>> templateDic =
-                                            new HashMap<>();
+                            templatesDiskSet -> {
+                                HashMap<String, ArrayList<String>> templateDic =
+                                        new HashMap<>();
 
-                                    // check if relevant templates are already there
-                                    for (VM vm : getSelectedItems()) {
-                                        boolean hasMatch = false;
-                                        for (VmTemplate a : templatesDiskSet.keySet()) {
-                                            if (vm.getVmtGuid().equals(a.getId())) {
-                                                hasMatch = true;
-                                                break;
-                                            }
-                                        }
-
-                                        if (!vm.getVmtGuid().equals(Guid.Empty) && !hasMatch) {
-                                            if (!templateDic.containsKey(vm.getVmtName())) {
-                                                templateDic.put(vm.getVmtName(), new ArrayList<String>());
-                                            }
-                                            templateDic.get(vm.getVmtName()).add(vm.getName());
+                                // check if relevant templates are already there
+                                for (VM vm : getSelectedItems()) {
+                                    boolean hasMatch = false;
+                                    for (VmTemplate a : templatesDiskSet.keySet()) {
+                                        if (vm.getVmtGuid().equals(a.getId())) {
+                                            hasMatch = true;
+                                            break;
                                         }
                                     }
 
-                                    ArrayList<String> tempList;
-                                    ArrayList<String> missingTemplates = new ArrayList<>();
-                                    for (Map.Entry<String, ArrayList<String>> keyValuePair : templateDic.entrySet()) {
-                                        tempList = keyValuePair.getValue();
-                                        StringBuilder sb = new StringBuilder("Template " + keyValuePair.getKey() + " (for "); //$NON-NLS-1$ //$NON-NLS-2$
-                                        int i;
-                                        for (i = 0; i < tempList.size() - 1; i++) {
-                                            sb.append(tempList.get(i));
-                                            sb.append(", "); //$NON-NLS-1$
+                                    if (!vm.getVmtGuid().equals(Guid.Empty) && !hasMatch) {
+                                        if (!templateDic.containsKey(vm.getVmtName())) {
+                                            templateDic.put(vm.getVmtName(), new ArrayList<String>());
                                         }
-                                        sb.append(tempList.get(i));
-                                        sb.append(")"); //$NON-NLS-1$
-                                        missingTemplates.add(sb.toString());
+                                        templateDic.get(vm.getVmtName()).add(vm.getName());
                                     }
-
-                                    postExportGetMissingTemplates(missingTemplates);
                                 }
+
+                                ArrayList<String> tempList;
+                                ArrayList<String> missingTemplates = new ArrayList<>();
+                                for (Entry<String, ArrayList<String>> keyValuePair : templateDic.entrySet()) {
+                                    tempList = keyValuePair.getValue();
+                                    StringBuilder sb = new StringBuilder("Template " + keyValuePair.getKey() + " (for "); //$NON-NLS-1$ //$NON-NLS-2$
+                                    int i;
+                                    for (i = 0; i < tempList.size() - 1; i++) {
+                                        sb.append(tempList.get(i));
+                                        sb.append(", "); //$NON-NLS-1$
+                                    }
+                                    sb.append(tempList.get(i));
+                                    sb.append(")"); //$NON-NLS-1$
+                                    missingTemplates.add(sb.toString());
+                                }
+
+                                postExportGetMissingTemplates(missingTemplates);
                             }),
                     storagePool.getId(),
                     storageDomainId);
@@ -1004,13 +979,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 model.startProgress();
 
                 Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, parameters,
-                        new IFrontendMultipleActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendMultipleActionAsyncResult result) {
-                                ExportVmModel localModel = (ExportVmModel) result.getState();
-                                localModel.stopProgress();
-                                cancel();
-                            }
+                        result -> {
+                            ExportVmModel localModel = (ExportVmModel) result.getState();
+                            localModel.stopProgress();
+                            cancel();
                         }, model);
             }
         }
@@ -1027,13 +999,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             model.startProgress();
 
             Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, parameters,
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
-                            ExportVmModel localModel = (ExportVmModel) result.getState();
-                            localModel.stopProgress();
-                            cancel();
-                        }
+                    result -> {
+                        ExportVmModel localModel = (ExportVmModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
                     }, model);
         }
     }
@@ -1079,15 +1048,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ExportVmModel localModel = (ExportVmModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    ExportVmModel localModel = (ExportVmModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
     }
 
@@ -1095,14 +1061,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     protected void sendWarningForNonExportableDisks(VM entity) {
         // load VM disks and check if there is one which doesn't allow snapshot
         AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(
-                        new AsyncCallback<List<Disk>>() {
-                            @Override
-                            public void onSuccess(List<Disk> vmDisks) {
-                                final ExportVmModel model = (ExportVmModel) getWindow();
-                                VmModelHelper.sendWarningForNonExportableDisks(model,
-                                        vmDisks,
-                                        VmModelHelper.WarningType.VM_EXPORT);
-                            }
+                        vmDisks -> {
+                            final ExportVmModel model = (ExportVmModel) getWindow();
+                            VmModelHelper.sendWarningForNonExportableDisks(model,
+                                    vmDisks,
+                                    VmModelHelper.WarningType.VM_EXPORT);
                         }),
                 entity.getId());
     }
@@ -1110,13 +1073,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     private void runOnce() {
         VM vm = getSelectedItem();
         // populating VMInit
-        AsyncDataProvider.getInstance().getVmById(new AsyncQuery<>(new AsyncCallback<VM>() {
-            @Override
-            public void onSuccess(VM result) {
-                RunOnceModel runOnceModel = new WebadminRunOnceModel(result, VmListModel.this);
-                setWindow(runOnceModel);
-                runOnceModel.init();
-            }
+        AsyncDataProvider.getInstance().getVmById(new AsyncQuery<>(result -> {
+            RunOnceModel runOnceModel = new WebadminRunOnceModel(result, VmListModel.this);
+            setWindow(runOnceModel);
+            runOnceModel.init();
         }), vm.getId());
 
 
@@ -1176,28 +1136,25 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
             // Check name unicitate.
             AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery<>(
-                    new AsyncCallback<Boolean>() {
-                        @Override
-                        public void onSuccess(Boolean isNameUnique) {
+                            isNameUnique -> {
 
-                            if (!isNameUnique) {
-                                UnitVmModel VmModel = (UnitVmModel) getWindow();
-                                VmModel.getInvalidityReasons().clear();
-                                VmModel.getName()
-                                        .getInvalidityReasons()
-                                        .add(ConstantsManager.getInstance()
-                                                .getConstants()
-                                                .nameMustBeUniqueInvalidReason());
-                                VmModel.getName().setIsValid(false);
-                                VmModel.setIsValid(false);
-                                VmModel.fireValidationCompleteEvent();
-                            }
-                            else {
-                                postNameUniqueCheck();
-                            }
+                                if (!isNameUnique) {
+                                    UnitVmModel VmModel = (UnitVmModel) getWindow();
+                                    VmModel.getInvalidityReasons().clear();
+                                    VmModel.getName()
+                                            .getInvalidityReasons()
+                                            .add(ConstantsManager.getInstance()
+                                                    .getConstants()
+                                                    .nameMustBeUniqueInvalidReason());
+                                    VmModel.getName().setIsValid(false);
+                                    VmModel.setIsValid(false);
+                                    VmModel.fireValidationCompleteEvent();
+                                }
+                                else {
+                                    postNameUniqueCheck();
+                                }
 
-                        }
-                    }),
+                            }),
                     name, model.getSelectedDataCenter() == null ? null : model.getSelectedDataCenter().getId());
         }
     }
@@ -1215,16 +1172,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         BuilderExecutor.build(model, addVmTemplateParameters, new UnitToAddVmTemplateParametersBuilder());
         model.startProgress();
         Frontend.getInstance().runAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        getWindow().stopProgress();
-                        VdcReturnValueBase returnValueBase = result.getReturnValue();
-                        if (returnValueBase != null && returnValueBase.getSucceeded()) {
-                            cancel();
-                        }
-
+                result -> {
+                    getWindow().stopProgress();
+                    VdcReturnValueBase returnValueBase = result.getReturnValue();
+                    if (returnValueBase != null && returnValueBase.getSucceeded()) {
+                        cancel();
                     }
+
                 }, this);
     }
 
@@ -1266,12 +1220,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.CancelMigrateVm, list,
-                                                 new IFrontendMultipleActionAsyncCallback() {
-                                                     @Override
-                                                     public void executed(
-                                                             FrontendMultipleActionAsyncResult result) {
-                                                     }
-                                                 }, null);
+                result -> {
+                }, null);
     }
 
     private void cancelConversion() {
@@ -1302,15 +1252,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             }
 
             Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVm, list,
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
+                    result -> {
 
-                            MigrateModel localModel = (MigrateModel) result.getState();
-                            localModel.stopProgress();
-                            cancel();
+                        MigrateModel localModel = (MigrateModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
 
-                        }
                     }, model);
         }
         else {
@@ -1327,15 +1274,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             }
 
             Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVmToServer, list,
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
+                    result -> {
 
-                            MigrateModel localModel = (MigrateModel) result.getState();
-                            localModel.stopProgress();
-                            cancel();
+                        MigrateModel localModel = (MigrateModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
 
-                        }
                     }, model);
         }
     }
@@ -1346,14 +1290,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             powerAction(actionName, title, message, false);
         } else {
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
-                new AsyncCallback<Cluster>() {
-                    @Override
-                    public void onSuccess(Cluster cluster) {
+                    cluster -> {
                         if (cluster != null) {
                             powerAction(actionName, title, message, cluster.isOptionalReasonRequired());
                         }
-                    }
-                }), clusterId);
+                    }), clusterId);
         }
     }
 
@@ -1437,15 +1378,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(actionType, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
 
     }
@@ -1459,12 +1397,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void onShutdown() {
         final ConfirmationModel model = (ConfirmationModel) getWindow();
-        onPowerAction(VdcActionType.ShutdownVm, new PowerActionParametersFactory<VdcActionParametersBase>() {
-            @Override
-            public VdcActionParametersBase createActionParameters(VM vm) {
-                return new ShutdownVmParameters(vm.getId(), true, model.getReason().getEntity());
-            }
-        });
+        onPowerAction(VdcActionType.ShutdownVm,
+                vm -> new ShutdownVmParameters(vm.getId(), true, model.getReason().getEntity()));
     }
 
     private void stop() {
@@ -1476,12 +1410,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void onStop() {
         final ConfirmationModel model = (ConfirmationModel) getWindow();
-        onPowerAction(VdcActionType.StopVm, new PowerActionParametersFactory<VdcActionParametersBase>() {
-            @Override
-            public VdcActionParametersBase createActionParameters(VM vm) {
-                return new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL, model.getReason().getEntity());
-            }
-        });
+        onPowerAction(VdcActionType.StopVm,
+                vm -> new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL, model.getReason().getEntity()));
     }
 
     private void reboot() {
@@ -1493,12 +1423,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private void onReboot() {
-        onPowerAction(VdcActionType.RebootVm, new PowerActionParametersFactory<VdcActionParametersBase>() {
-            @Override
-            public VdcActionParametersBase createActionParameters(VM vm) {
-                return new VmOperationParameterBase(vm.getId());
-            }
-        });
+        onPowerAction(VdcActionType.RebootVm, vm -> new VmOperationParameterBase(vm.getId()));
     }
 
     private void pause() {
@@ -1508,13 +1433,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             list.add(new VmOperationParameterBase(a.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.HibernateVm, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-
-                    }
-                }, null);
+        Frontend.getInstance().runMultipleAction(VdcActionType.HibernateVm, list, result -> {}, null);
     }
 
     private void run() {
@@ -1524,13 +1443,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             list.add(new RunVmParams(a.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RunVm, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-
-                    }
-                }, null);
+        Frontend.getInstance().runMultipleAction(VdcActionType.RunVm, list, result -> {}, null);
     }
 
     private void onRemove() {
@@ -1548,13 +1461,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVm, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-                    }
+                result -> {
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
                 }, model);
     }
 
@@ -1578,17 +1488,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         attachCdModel.getIsoImage().setItems(images1);
         attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrNull(images1));
 
-        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(new AsyncCallback<List<String>>() {
-            @Override
-            public void onSuccess(List<String> images) {
-                AttachCdModel _attachCdModel = (AttachCdModel) getWindow();
-                images.add(0, ConsoleModel.getEjectLabel());
-                _attachCdModel.getIsoImage().setItems(images);
-                if (_attachCdModel.getIsoImage().getIsChangable()) {
-                    String selectedIso =
-                            Linq.firstOrNull(images, s -> vm.getCurrentCd() != null && vm.getCurrentCd().equals(s));
-                    _attachCdModel.getIsoImage().setSelectedItem(selectedIso == null ? ConsoleModel.getEjectLabel() : selectedIso);
-                }
+        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(images -> {
+            AttachCdModel _attachCdModel = (AttachCdModel) getWindow();
+            images.add(0, ConsoleModel.getEjectLabel());
+            _attachCdModel.getIsoImage().setItems(images);
+            if (_attachCdModel.getIsoImage().getIsChangable()) {
+                String selectedIso =
+                        Linq.firstOrNull(images, s -> vm.getCurrentCd() != null && vm.getCurrentCd().equals(s));
+                _attachCdModel.getIsoImage().setSelectedItem(selectedIso == null ? ConsoleModel.getEjectLabel() : selectedIso);
             }
         }), vm.getStoragePoolId());
 
@@ -1622,15 +1529,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
+                result -> {
 
-                        AttachCdModel attachCdModel = (AttachCdModel) result.getState();
-                        attachCdModel.stopProgress();
-                        cancel();
+                    AttachCdModel attachCdModel = (AttachCdModel) result.getState();
+                    attachCdModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
     }
 
@@ -1805,23 +1709,20 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             model.startProgress();
 
             Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, parameters,
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
+                    result -> {
 
-                            final VmListModel<Void> vmListModel = (VmListModel<Void>) result.getState();
-                            VdcReturnValueBase returnValueBase = result.getReturnValue();
-                            if (returnValueBase != null && returnValueBase.getSucceeded()) {
-                                VM vm = vmListModel.getcurrentVm();
-                                VmManagementParametersBase updateVmParams = vmListModel.getUpdateVmParameters(applyCpuChangesLater);
-                                Frontend.getInstance().runAction(VdcActionType.UpdateVm,
-                                        updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), vmListModel);
-                            }
-                            else {
-                                vmListModel.getWindow().stopProgress();
-                            }
-
+                        final VmListModel<Void> vmListModel = (VmListModel<Void>) result.getState();
+                        VdcReturnValueBase returnValueBase = result.getReturnValue();
+                        if (returnValueBase != null && returnValueBase.getSucceeded()) {
+                            VM vm = vmListModel.getcurrentVm();
+                            VmManagementParametersBase updateVmParams = vmListModel.getUpdateVmParameters(applyCpuChangesLater);
+                            Frontend.getInstance().runAction(VdcActionType.UpdateVm,
+                                    updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), vmListModel);
                         }
+                        else {
+                            vmListModel.getWindow().stopProgress();
+                        }
+
                     },
                     this);
         }
@@ -1896,11 +1797,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         Frontend.getInstance().runMultipleAction(VdcActionType.ChangeDisk,
                 new ArrayList<>(Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(vm.getId(),
                         Objects.equals(isoName, ConsoleModel.getEjectLabel()) ? "" : isoName) })), //$NON-NLS-1$
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                    }
                 },
                 null);
     }
@@ -2216,19 +2114,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                     @Override
                     public void executeCommand(UICommand uiCommand) {
                         model.onRestoreVms(
-                                new IFrontendMultipleActionAsyncCallback() {
-                                    @Override
-                                    public void executed(FrontendMultipleActionAsyncResult result) {
-                                        boolean isAllValidatePassed = true;
-                                        for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
-                                            if (!returnValueBase.isValid()) {
-                                                isAllValidatePassed = false;
-                                                break;
-                                            }
+                                result -> {
+                                    boolean isAllValidatePassed = true;
+                                    for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
+                                        if (!returnValueBase.isValid()) {
+                                            isAllValidatePassed = false;
+                                            break;
                                         }
-                                        if (isAllValidatePassed) {
-                                            setWindow(null);
-                                        }
+                                    }
+                                    if (isAllValidatePassed) {
+                                        setWindow(null);
                                     }
                                 });
                     }
@@ -2313,66 +2208,63 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         importVmsModel.startProgress();
         importVmModel.setMessage("");
 
-        AsyncQuery query = new AsyncQuery(new AsyncCallback() {
-            @Override
-            public void onSuccess(Object returnValue) {
-                if (returnValue instanceof VdcQueryReturnValue) {
-                    importVmsModel.setError(messages.providerFailure());
-                    importVmsModel.stopProgress();
+        AsyncQuery query = new AsyncQuery(returnValue -> {
+            if (returnValue instanceof VdcQueryReturnValue) {
+                importVmsModel.setError(messages.providerFailure());
+                importVmsModel.stopProgress();
+            }
+            else {
+                List<VM> remoteVms = (List<VM>) returnValue;
+                List<VM> remoteDownVms = new ArrayList<>();
+                List<VM> nonRetrievedVms = new ArrayList<>();
+                // find vms with status=down
+                for (VM vm : remoteVms) {
+                    if (vm.isDown()) {
+                        remoteDownVms.add(vm);
+                    }
                 }
-                else {
-                    List<VM> remoteVms = (List<VM>) returnValue;
-                    List<VM> remoteDownVms = new ArrayList<>();
-                    List<VM> nonRetrievedVms = new ArrayList<>();
-                    // find vms with status=down
-                    for (VM vm : remoteVms) {
-                        if (vm.isDown()) {
-                            remoteDownVms.add(vm);
+                // find vms which have some kind of a problem retrieving them with their full info
+                // i.e. they were retrieved with their names only but not with their full info
+                if (remoteVms.size() != externalVms.size()) {
+                    for (VM vm : externalVms) {
+                        if (!remoteVms.contains(vm)) {
+                            nonRetrievedVms.add(vm);
                         }
                     }
-                    // find vms which have some kind of a problem retrieving them with their full info
-                    // i.e. they were retrieved with their names only but not with their full info
-                    if (remoteVms.size() != externalVms.size()) {
-                        for (VM vm : externalVms) {
-                            if (!remoteVms.contains(vm)) {
-                                nonRetrievedVms.add(vm);
-                            }
-                        }
-                    }
+                }
 
-                    importVmsModel.stopProgress();
+                importVmsModel.stopProgress();
 
-                    // prepare error message to be displayed in one of the models
-                    String messageForImportVm = null;
-                    String messageForImportVms = null;
-                    if (remoteVms.size() != remoteDownVms.size()) {
-                        if (!nonRetrievedVms.isEmpty()) {
-                            messageForImportVm = constants.nonRetrievedAndRunningVmsWereFilteredOnImportVm();
-                            messageForImportVms = constants.nonRetrievedAndRunningVmsWereAllFilteredOnImportVm();
-                        } else {
-                            messageForImportVm = constants.runningVmsWereFilteredOnImportVm();
-                            messageForImportVms = constants.runningVmsWereAllFilteredOnImportVm();
-                        }
-                    } else if (!nonRetrievedVms.isEmpty()) {
-                        messageForImportVm = constants.nonRetrievedVmsWereFilteredOnImportVm();
-                        messageForImportVms = constants.nonRetrievedVmsWereAllFilteredOnImportVm();
+                // prepare error message to be displayed in one of the models
+                String messageForImportVm = null;
+                String messageForImportVms = null;
+                if (remoteVms.size() != remoteDownVms.size()) {
+                    if (!nonRetrievedVms.isEmpty()) {
+                        messageForImportVm = constants.nonRetrievedAndRunningVmsWereFilteredOnImportVm();
+                        messageForImportVms = constants.nonRetrievedAndRunningVmsWereAllFilteredOnImportVm();
+                    } else {
+                        messageForImportVm = constants.runningVmsWereFilteredOnImportVm();
+                        messageForImportVms = constants.runningVmsWereAllFilteredOnImportVm();
                     }
+                } else if (!nonRetrievedVms.isEmpty()) {
+                    messageForImportVm = constants.nonRetrievedVmsWereFilteredOnImportVm();
+                    messageForImportVms = constants.nonRetrievedVmsWereAllFilteredOnImportVm();
+                }
 
-                    if (remoteDownVms.isEmpty() && messageForImportVms != null) {
-                        importVmsModel.setError(messageForImportVms);
-                    }
+                if (remoteDownVms.isEmpty() && messageForImportVms != null) {
+                    importVmsModel.setError(messageForImportVms);
+                }
 
-                    if (!importVmsModel.validateArchitectures(remoteDownVms)) {
-                        return;
-                    }
+                if (!importVmsModel.validateArchitectures(remoteDownVms)) {
+                    return;
+                }
 
-                    // init and display next dialog - the importVmsModel model
-                    importVmModel.init(remoteDownVms, importVmsModel.getDataCenters().getSelectedItem().getId());
-                    setWindow(null);
-                    setWindow(importVmModel);
-                    if (messageForImportVm != null) {
-                        importVmModel.setMessage(messageForImportVm);
-                    }
+                // init and display next dialog - the importVmsModel model
+                importVmModel.init(remoteDownVms, importVmsModel.getDataCenters().getSelectedItem().getId());
+                setWindow(null);
+                setWindow(importVmModel);
+                if (messageForImportVm != null) {
+                    importVmModel.setMessage(messageForImportVm);
                 }
             }
         });

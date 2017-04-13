@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -62,20 +61,17 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
         }
 
         final NetworkHostFilter filter = getViewFilterType();
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                if (filter.equals(getViewFilterType())) {
-                    final Iterable returnList = returnValue.getReturnValue();
-                    if (NetworkHostFilter.unattached.equals(getViewFilterType())) {
-                        final List<PairQueryable<VdsNetworkInterface, VDS>> items = new ArrayList<>();
-                        for (Object obj : returnList) {
-                            items.add(new PairQueryable<VdsNetworkInterface, VDS>(null, (VDS) obj));
-                        }
-                        setItems(items);
-                    } else if (NetworkHostFilter.attached.equals(getViewFilterType())) {
-                        initAttachedInterfaces((Collection<PairQueryable<VdsNetworkInterface, VDS>>) returnList);
+        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+            if (filter.equals(getViewFilterType())) {
+                final Iterable returnList = returnValue.getReturnValue();
+                if (NetworkHostFilter.unattached.equals(getViewFilterType())) {
+                    final List<PairQueryable<VdsNetworkInterface, VDS>> items = new ArrayList<>();
+                    for (Object obj : returnList) {
+                        items.add(new PairQueryable<VdsNetworkInterface, VDS>(null, (VDS) obj));
                     }
+                    setItems(items);
+                } else if (NetworkHostFilter.attached.equals(getViewFilterType())) {
+                    initAttachedInterfaces((Collection<PairQueryable<VdsNetworkInterface, VDS>>) returnList);
                 }
             }
         });
@@ -103,18 +99,15 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(false);
         Frontend.getInstance().runQuery(VdcQueryType.GetInterfacesByLabelForNetwork,
-                params,
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValueObj) {
-                        if (!filter.equals(getViewFilterType())) {
-                            return;
-                        }
+            params,
+            new AsyncQuery<VdcQueryReturnValue>(returnValueObj -> {
+                if (!filter.equals(getViewFilterType())) {
+                    return;
+                }
 
-                        attachedByLabelInterfaces = returnValueObj.getReturnValue();
-                        setItems(items);
-                    }
-                }));
+                attachedByLabelInterfaces = returnValueObj.getReturnValue();
+                setItems(items);
+            }));
     }
 
     public Boolean isInterfaceAttachedByLabel(VdsNetworkInterface iface) {

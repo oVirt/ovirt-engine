@@ -31,11 +31,9 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils.VolumeStatus;
@@ -65,13 +63,6 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeRebalanceStatusModel
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeSnapshotOptionModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
@@ -300,12 +291,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         AsyncDataProvider.getInstance()
                 .getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterMetaVolumeName,
                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
-                        new AsyncQuery<>(new AsyncCallback<String>() {
-                            @Override
-                            public void onSuccess(String returnValue) {
-                                glusterMetaVolumeName = returnValue;
-                            }
-                        }));
+                        new AsyncQuery<String>(returnValue -> glusterMetaVolumeName = returnValue));
     }
 
     private void setDetailList(final VolumeGeneralModel volumeGeneralModel,
@@ -334,60 +320,57 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         volumeModel.setHashName("new_volume"); //$NON-NLS-1$
         volumeModel.setTitle(ConstantsManager.getInstance().getConstants().newVolumeTitle());
         setWindow(volumeModel);
-        AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-            @Override
-            public void onSuccess(List<StoragePool> dataCenters) {
-                VolumeModel innerVolumeModel = (VolumeModel) getWindow();
-                final UIConstants constants = ConstantsManager.getInstance().getConstants();
+        AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(new AsyncQuery<>(dataCenters -> {
+            VolumeModel innerVolumeModel = (VolumeModel) getWindow();
+            final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-                if (getSystemTreeSelectedItem() != null) {
-                    switch (getSystemTreeSelectedItem().getType()) {
-                        case Volumes:
-                        case Cluster:
-                        case Cluster_Gluster:
-                            Cluster cluster = (Cluster) getSystemTreeSelectedItem().getEntity();
-                            for (StoragePool dc : dataCenters) {
-                                if (dc.getId().equals(cluster.getStoragePoolId())) {
-                                    innerVolumeModel.getDataCenter()
-                                            .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
-                                    innerVolumeModel.getDataCenter().setSelectedItem(dc);
-                                    break;
-                                }
+            if (getSystemTreeSelectedItem() != null) {
+                switch (getSystemTreeSelectedItem().getType()) {
+                    case Volumes:
+                    case Cluster:
+                    case Cluster_Gluster:
+                        Cluster cluster = (Cluster) getSystemTreeSelectedItem().getEntity();
+                        for (StoragePool dc : dataCenters) {
+                            if (dc.getId().equals(cluster.getStoragePoolId())) {
+                                innerVolumeModel.getDataCenter()
+                                        .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
+                                innerVolumeModel.getDataCenter().setSelectedItem(dc);
+                                break;
                             }
-                            innerVolumeModel.getDataCenter().setIsChangeable(false);
-                            innerVolumeModel.getDataCenter().setChangeProhibitionReason(
-                                    constants.cannotChangeDCInTreeContext());
-                            innerVolumeModel.getCluster().setItems(Arrays.asList(cluster));
-                            innerVolumeModel.getCluster().setSelectedItem(cluster);
-                            innerVolumeModel.getCluster().setIsChangeable(false);
-                            innerVolumeModel.getCluster().setChangeProhibitionReason(
-                                    constants.cannotChangeClusterInTreeContext());
-                            break;
-                        case Clusters:
-                        case DataCenter:
-                            StoragePool selectDataCenter =
-                                    (StoragePool) getSystemTreeSelectedItem().getEntity();
-                            innerVolumeModel.getDataCenter()
-                                    .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
-                            innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
-                            innerVolumeModel.getDataCenter().setIsChangeable(false);
-                            innerVolumeModel.getDataCenter().setChangeProhibitionReason(
-                                    constants.cannotChangeDCInTreeContext());
-                            break;
-                        default:
-                            innerVolumeModel.getDataCenter().setItems(dataCenters);
-                            innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
-                            break;
-                    }
-                } else {
-                    innerVolumeModel.getDataCenter().setItems(dataCenters);
-                    innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
+                        }
+                        innerVolumeModel.getDataCenter().setIsChangeable(false);
+                        innerVolumeModel.getDataCenter().setChangeProhibitionReason(
+                                constants.cannotChangeDCInTreeContext());
+                        innerVolumeModel.getCluster().setItems(Arrays.asList(cluster));
+                        innerVolumeModel.getCluster().setSelectedItem(cluster);
+                        innerVolumeModel.getCluster().setIsChangeable(false);
+                        innerVolumeModel.getCluster().setChangeProhibitionReason(
+                                constants.cannotChangeClusterInTreeContext());
+                        break;
+                    case Clusters:
+                    case DataCenter:
+                        StoragePool selectDataCenter =
+                                (StoragePool) getSystemTreeSelectedItem().getEntity();
+                        innerVolumeModel.getDataCenter()
+                                .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
+                        innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
+                        innerVolumeModel.getDataCenter().setIsChangeable(false);
+                        innerVolumeModel.getDataCenter().setChangeProhibitionReason(
+                                constants.cannotChangeDCInTreeContext());
+                        break;
+                    default:
+                        innerVolumeModel.getDataCenter().setItems(dataCenters);
+                        innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
+                        break;
                 }
-
-                UICommand command = UICommand.createDefaultOkUiCommand("onCreateVolume", VolumeListModel.this); //$NON-NLS-1$
-                innerVolumeModel.getCommands().add(command);
-                innerVolumeModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", VolumeListModel.this)); //$NON-NLS-1$
+            } else {
+                innerVolumeModel.getDataCenter().setItems(dataCenters);
+                innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
             }
+
+            UICommand command = UICommand.createDefaultOkUiCommand("onCreateVolume", VolumeListModel.this); //$NON-NLS-1$
+            innerVolumeModel.getCommands().add(command);
+            innerVolumeModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", VolumeListModel.this)); //$NON-NLS-1$
         }), false, true);
 
     }
@@ -458,14 +441,11 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.DeleteGlusterVolume, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-                    }
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
                 }, model);
     }
 
@@ -826,16 +806,12 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         final GlusterVolumeEntity volumeEntity = getSelectedItem();
         GlusterVolumeRebalanceParameters param = new GlusterVolumeRebalanceParameters(volumeEntity.getId(), false, false);
 
-        Frontend.getInstance().runAction(VdcActionType.StopRebalanceGlusterVolume, param, new IFrontendActionAsyncCallback() {
-
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                ConfirmationModel localModel = (ConfirmationModel) getConfirmWindow();
-                localModel.stopProgress();
-                setConfirmWindow(null);
-                if (result.getReturnValue().getSucceeded()) {
-                    showRebalanceStatus();
-                }
+        Frontend.getInstance().runAction(VdcActionType.StopRebalanceGlusterVolume, param, result -> {
+            ConfirmationModel localModel = (ConfirmationModel) getConfirmWindow();
+            localModel.stopProgress();
+            setConfirmWindow(null);
+            if (result.getReturnValue().getSucceeded()) {
+                showRebalanceStatus();
             }
         });
     }
@@ -857,45 +833,42 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         rebalanceStatusOk.setIsCancel(true);
         cModel.getCommands().add(rebalanceStatusOk);
 
-        AsyncDataProvider.getInstance().getGlusterRebalanceStatus(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                cModel.stopProgress();
-                GlusterVolumeTaskStatusEntity rebalanceStatusEntity = returnValue.getReturnValue();
-                if ((rebalanceStatusEntity == null) || !returnValue.getSucceeded()) {
-                    cModel.setMessage(ConstantsManager.getInstance().getMessages().rebalanceStatusFailed(volumeEntity.getName()));
-                } else {
-                    setConfirmWindow(null);
-                    if (getWindow() == null) {
-                        VolumeRebalanceStatusModel rebalanceStatusModel =
-                                new VolumeRebalanceStatusModel(volumeEntity);
-                        rebalanceStatusModel.setTitle(ConstantsManager.getInstance()
-                                .getConstants()
-                                .volumeRebalanceStatusTitle());
-                        setWindow(rebalanceStatusModel);
-                        rebalanceStatusModel.setHelpTag(HelpTag.volume_rebalance_status);
-                        rebalanceStatusModel.setHashName("volume_rebalance_status"); //$NON-NLS-1$
-                        rebalanceStatusModel.getVolume().setEntity(volumeEntity.getName());
-                        rebalanceStatusModel.getCluster().setEntity(volumeEntity.getClusterName());
+        AsyncDataProvider.getInstance().getGlusterRebalanceStatus(new AsyncQuery<>(returnValue -> {
+            cModel.stopProgress();
+            GlusterVolumeTaskStatusEntity rebalanceStatusEntity = returnValue.getReturnValue();
+            if ((rebalanceStatusEntity == null) || !returnValue.getSucceeded()) {
+                cModel.setMessage(ConstantsManager.getInstance().getMessages().rebalanceStatusFailed(volumeEntity.getName()));
+            } else {
+                setConfirmWindow(null);
+                if (getWindow() == null) {
+                    VolumeRebalanceStatusModel rebalanceStatusModel =
+                            new VolumeRebalanceStatusModel(volumeEntity);
+                    rebalanceStatusModel.setTitle(ConstantsManager.getInstance()
+                            .getConstants()
+                            .volumeRebalanceStatusTitle());
+                    setWindow(rebalanceStatusModel);
+                    rebalanceStatusModel.setHelpTag(HelpTag.volume_rebalance_status);
+                    rebalanceStatusModel.setHashName("volume_rebalance_status"); //$NON-NLS-1$
+                    rebalanceStatusModel.getVolume().setEntity(volumeEntity.getName());
+                    rebalanceStatusModel.getCluster().setEntity(volumeEntity.getClusterName());
 
-                        UICommand stopRebalanceFromStatus = new UICommand("stop_rebalance_from_status", VolumeListModel.this);//$NON-NLS-1$
-                        stopRebalanceFromStatus.setTitle(ConstantsManager.getInstance().getConstants().stopRebalance());
-                        rebalanceStatusModel.getCommands().add(stopRebalanceFromStatus);
-                        rebalanceStatusModel.setStopReblanceFromStatus(stopRebalanceFromStatus);
+                    UICommand stopRebalanceFromStatus = new UICommand("stop_rebalance_from_status", VolumeListModel.this);//$NON-NLS-1$
+                    stopRebalanceFromStatus.setTitle(ConstantsManager.getInstance().getConstants().stopRebalance());
+                    rebalanceStatusModel.getCommands().add(stopRebalanceFromStatus);
+                    rebalanceStatusModel.setStopReblanceFromStatus(stopRebalanceFromStatus);
 
-                        UICommand cancelRebalance = new UICommand("CancelRebalanceStatus", VolumeListModel.this);//$NON-NLS-1$
-                        cancelRebalance.setTitle(ConstantsManager.getInstance().getConstants().close());
-                        cancelRebalance.setIsCancel(true);
-                        rebalanceStatusModel.getCommands().add(cancelRebalance);
+                    UICommand cancelRebalance = new UICommand("CancelRebalanceStatus", VolumeListModel.this);//$NON-NLS-1$
+                    cancelRebalance.setTitle(ConstantsManager.getInstance().getConstants().close());
+                    cancelRebalance.setIsCancel(true);
+                    rebalanceStatusModel.getCommands().add(cancelRebalance);
 
-                        rebalanceStatusModel.showStatus(rebalanceStatusEntity);
-                    }else {
-                        VolumeRebalanceStatusModel statusModel = (VolumeRebalanceStatusModel) getWindow();
-                        statusModel.getCommands().get(0).setIsExecutionAllowed(false);
-                        statusModel.showStatus(rebalanceStatusEntity);
-                    }
-
+                    rebalanceStatusModel.showStatus(rebalanceStatusEntity);
+                }else {
+                    VolumeRebalanceStatusModel statusModel = (VolumeRebalanceStatusModel) getWindow();
+                    statusModel.getCommands().get(0).setIsExecutionAllowed(false);
+                    statusModel.showStatus(rebalanceStatusEntity);
                 }
+
             }
         }),
                 volumeEntity.getClusterId(),
@@ -977,46 +950,32 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
         AsyncDataProvider.getInstance().getConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionGroupVirtValue, AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
-                new AsyncQuery<>(new AsyncCallback<String>() {
-                    @Override
-                    public void onSuccess(final String optionGroupVirt) {
-                        AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerUserVirtValue,
+                new AsyncQuery<String>(optionGroupVirt -> AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerUserVirtValue,
+                                AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
+                        new AsyncQuery<String>(optionOwnerUserVirt -> AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerGroupVirtValue,
                                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
-                                new AsyncQuery<>(new AsyncCallback<String>() {
-                                    @Override
-                                    public void onSuccess(final String optionOwnerUserVirt) {
+                                new AsyncQuery<String>(optionOwnerGroupVirt -> {
 
-                                        AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerGroupVirtValue,
-                                                        AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
-                                                new AsyncQuery<>(new AsyncCallback<String>() {
-                                                    @Override
-                                                    public void onSuccess(String optionOwnerGroupVirt) {
+                                    ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+                                    for (GlusterVolumeEntity volume : volumeList) {
+                                        Guid volumeId = volume.getId();
 
-                                                        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
-                                                        for (GlusterVolumeEntity volume : volumeList) {
-                                                            Guid volumeId = volume.getId();
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", optionGroupVirt)));//$NON-NLS-1$
 
-                                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", optionGroupVirt)));//$NON-NLS-1$
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-uid", optionOwnerUserVirt)));//$NON-NLS-1$
 
-                                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-uid", optionOwnerUserVirt)));//$NON-NLS-1$
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-gid", optionOwnerGroupVirt)));//$NON-NLS-1$
 
-                                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-gid", optionOwnerGroupVirt)));//$NON-NLS-1$
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "server.allow-insecure", "on")));//$NON-NLS-1$ $NON-NLS-2$
 
-                                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "server.allow-insecure", "on")));//$NON-NLS-1$ $NON-NLS-2$
-
-                                                            final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "30");//$NON-NLS-1$//$NON-NLS-2$
-                                                            if (volume.getOptions().stream().noneMatch
-                                                                    (obj -> obj.getKey().equalsIgnoreCase(checkOption.getKey()))) {
-                                                                list.add(new GlusterVolumeOptionParameters(checkOption));//$NON-NLS-1$
-                                                            }
-                                                        }
-                                                        Frontend.getInstance().runMultipleAction(VdcActionType.SetGlusterVolumeOption, list);
-                                                    }
-                                                }));
+                                        final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "30");//$NON-NLS-1$//$NON-NLS-2$
+                                        if (volume.getOptions().stream().noneMatch
+                                                (obj -> obj.getKey().equalsIgnoreCase(checkOption.getKey()))) {
+                                            list.add(new GlusterVolumeOptionParameters(checkOption));//$NON-NLS-1$
+                                        }
                                     }
-                                }));
-                    }
-                }));
+                                    Frontend.getInstance().runMultipleAction(VdcActionType.SetGlusterVolumeOption, list);
+                                }))))));
     }
 
     private GlusterVolumeOptionEntity getOption(Guid volumeId, String key, String value) {
@@ -1078,15 +1037,10 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.StopGlusterVolume, list,
-                new IFrontendMultipleActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-                    }
-
+                result -> {
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
                 }, model);
     }
 
@@ -1121,12 +1075,9 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             cModel.getForce().setIsAvailable(true);
             cModel.getForce().setEntity(true);
 
-            cModel.getForce().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    if(cModel.getCommands() != null && cModel.getCommands().get(0) !=null) {
-                        cModel.getCommands().get(0).setIsExecutionAllowed(cModel.getForce().getEntity());
-                    }
+            cModel.getForce().getEntityChangedEvent().addListener((ev, sender, args) -> {
+                if(cModel.getCommands() != null && cModel.getCommands().get(0) !=null) {
+                    cModel.getCommands().get(0).setIsExecutionAllowed(cModel.getForce().getEntity());
                 }
             });
 
@@ -1218,13 +1169,9 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         CreateGlusterVolumeParameters parameter =
                 new CreateGlusterVolumeParameters(volume, volumeModel.isForceAddBricks());
 
-        Frontend.getInstance().runAction(VdcActionType.CreateGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
-
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                VolumeListModel localModel = (VolumeListModel) result.getState();
-                localModel.postOnCreateVolume(result.getReturnValue(), volume);
-            }
+        Frontend.getInstance().runAction(VdcActionType.CreateGlusterVolume, parameter, result -> {
+            VolumeListModel localModel = (VolumeListModel) result.getState();
+            localModel.postOnCreateVolume(result.getReturnValue(), volume);
         }, this);
     }
 
@@ -1261,28 +1208,18 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 .configureClusterSnapshotOptionsTitle());
         setWindow(clusterSnapshotConfigModel);
 
-        AsyncDataProvider.getInstance().getClustersHavingHosts(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-
-            @Override
-            public void onSuccess(final List<Cluster> returnValue) {
-                if (getSystemTreeSelectedItem() != null) {
-                    Cluster selectedCluster = (Cluster) getSystemTreeSelectedItem().getEntity();
-                    clusterSnapshotConfigModel.getClusters().setItems(returnValue, selectedCluster);
-                } else {
-                    if (getSelectedItems() != null) {
-                        GlusterVolumeEntity volumeEntity = getSelectedItems().get(0);
-                        if (volumeEntity != null) {
-                            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
-
-                                @Override
-                                public void onSuccess(Cluster cluster) {
-                                        clusterSnapshotConfigModel.getClusters().setItems(returnValue, cluster);
-                                }
-                            }), volumeEntity.getClusterId());
-                        }
-                    } else {
-                        clusterSnapshotConfigModel.getClusters().setItems(returnValue);
+        AsyncDataProvider.getInstance().getClustersHavingHosts(new AsyncQuery<>(returnValue -> {
+            if (getSystemTreeSelectedItem() != null) {
+                Cluster selectedCluster = (Cluster) getSystemTreeSelectedItem().getEntity();
+                clusterSnapshotConfigModel.getClusters().setItems(returnValue, selectedCluster);
+            } else {
+                if (getSelectedItems() != null) {
+                    GlusterVolumeEntity volumeEntity = getSelectedItems().get(0);
+                    if (volumeEntity != null) {
+                        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(cluster -> clusterSnapshotConfigModel.getClusters().setItems(returnValue, cluster)), volumeEntity.getClusterId());
                     }
+                } else {
+                    clusterSnapshotConfigModel.getClusters().setItems(returnValue);
                 }
             }
         }));
@@ -1359,15 +1296,12 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         Frontend.getInstance().runAction(VdcActionType.UpdateGlusterVolumeSnapshotConfig,
                 new UpdateGlusterVolumeSnapshotConfigParameters(clusterId, null, vdsParams),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
-                            cancel();
-                        }
-                        if (getConfirmWindow() != null) {
-                            setConfirmWindow(null);
-                        }
+                result -> {
+                    if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
+                        cancel();
+                    }
+                    if (getConfirmWindow() != null) {
+                        setConfirmWindow(null);
                     }
                 },
                 this);
@@ -1390,13 +1324,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 .configureVolumeSnapshotOptionsTitle());
         setWindow(volumeSnapshotConfigModel);
 
-        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
-
-            @Override
-            public void onSuccess(Cluster cluster) {
-                volumeSnapshotConfigModel.getClusterName().setEntity(cluster.getName());
-            }
-        }), volumeEntity.getClusterId());
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(cluster -> volumeSnapshotConfigModel.getClusterName().setEntity(cluster.getName())), volumeEntity.getClusterId());
         volumeSnapshotConfigModel.getVolumeName().setEntity(volumeEntity.getName());
 
         UICommand updateCommand = new UICommand("confirmConfigureVolumeSnapshotOptions", this); //$NON-NLS-1$
@@ -1468,15 +1396,12 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 new UpdateGlusterVolumeSnapshotConfigParameters(volumeEntity.getClusterId(),
                         volumeEntity.getId(),
                         vdsParams),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
-                            cancel();
-                        }
-                        if (getConfirmWindow() != null) {
-                            setConfirmWindow(null);
-                        }
+                result -> {
+                    if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
+                        cancel();
+                    }
+                    if (getConfirmWindow() != null) {
+                        setConfirmWindow(null);
                     }
                 },
                 this);

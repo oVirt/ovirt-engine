@@ -12,8 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class NewExternalSubnetModel extends Model {
 
@@ -77,15 +75,12 @@ public class NewExternalSubnetModel extends Model {
         Frontend.getInstance().runAction(VdcActionType.AddSubnetToProvider,
                 new AddExternalSubnetParameters(getSubnetModel().getSubnet(),
                         providedBy.getProviderId(), providedBy.getExternalId()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        VdcReturnValueBase returnValue = result.getReturnValue();
-                        stopProgress();
+                result -> {
+                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    stopProgress();
 
-                        if (returnValue != null && returnValue.getSucceeded()) {
-                            cancel();
-                        }
+                    if (returnValue != null && returnValue.getSucceeded()) {
+                        cancel();
                     }
                 },
                 this,

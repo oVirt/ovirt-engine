@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -26,8 +25,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class TagListModel extends SearchableListModel<Void, TagModel> {
@@ -159,17 +156,14 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     protected void syncSearch() {
         super.syncSearch();
 
-        AsyncDataProvider.getInstance().getRootTag(new AsyncQuery<>(new AsyncCallback<Tags>() {
-            @Override
-            public void onSuccess(Tags returnValue) {
+        AsyncDataProvider.getInstance().getRootTag(new AsyncQuery<>(returnValue -> {
 
-                TagModel rootTag = tagToModel(returnValue);
-                rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
-                rootTag.setType(TagModelType.Root);
-                rootTag.setIsChangeable(false);
-                setItems(new ArrayList<>(Arrays.asList(new TagModel[] { rootTag })));
+            TagModel rootTag = tagToModel(returnValue);
+            rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
+            rootTag.setType(TagModelType.Root);
+            rootTag.setIsChangeable(false);
+            setItems(new ArrayList<>(Arrays.asList(new TagModel[] { rootTag })));
 
-            }
         }));
     }
 
@@ -386,20 +380,17 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
         model.startProgress();
 
         Frontend.getInstance().runAction(VdcActionType.RemoveTag, new TagsActionParametersBase(getSelectedItem().getId()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
+                result -> {
 
-                        TagListModel tagListModel = (TagListModel) result.getState();
-                        VdcReturnValueBase returnVal = result.getReturnValue();
-                        boolean success = returnVal != null && returnVal.getSucceeded();
-                        if (success) {
-                            tagListModel.getSearchCommand().execute();
-                        }
-                        tagListModel.cancel();
-                        tagListModel.stopProgress();
-
+                    TagListModel tagListModel = (TagListModel) result.getState();
+                    VdcReturnValueBase returnVal = result.getReturnValue();
+                    boolean success = returnVal != null && returnVal.getSucceeded();
+                    if (success) {
+                        tagListModel.getSearchCommand().execute();
                     }
+                    tagListModel.cancel();
+                    tagListModel.stopProgress();
+
                 }, this);
     }
 
@@ -466,14 +457,11 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
 
         Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddTag : VdcActionType.UpdateTag,
                 new TagsOperationParameters(tag),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
+                result -> {
 
-                        TagListModel localModel = (TagListModel) result.getState();
-                        localModel.postOnSave(result.getReturnValue());
+                    TagListModel localModel = (TagListModel) result.getState();
+                    localModel.postOnSave(result.getReturnValue());
 
-                    }
                 },
                 this);
     }

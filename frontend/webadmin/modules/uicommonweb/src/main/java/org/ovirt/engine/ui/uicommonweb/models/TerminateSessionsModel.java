@@ -11,8 +11,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class TerminateSessionsModel extends ConfirmationModel {
 
@@ -68,13 +66,8 @@ public class TerminateSessionsModel extends ConfirmationModel {
         }
 
         Frontend.getInstance()
-                .runMultipleActions(VdcActionType.TerminateSession, parameterList, new IFrontendActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        sourceListModel.getSearchCommand().execute();
-                    }
-                });
+                .runMultipleActions(VdcActionType.TerminateSession, parameterList,
+                        result -> sourceListModel.getSearchCommand().execute());
         cancel();
     }
 

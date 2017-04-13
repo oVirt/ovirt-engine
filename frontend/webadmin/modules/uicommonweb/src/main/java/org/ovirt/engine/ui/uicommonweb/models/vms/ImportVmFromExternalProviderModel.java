@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -37,11 +36,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
@@ -74,12 +68,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         setIso(new ListModel<String>());
         setAttachDrivers(new EntityModel<>(false));
 
-        vmImportGeneralModel.getOperatingSystems().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateWindowsWarningMessage();
-            }
-        });
+        vmImportGeneralModel.getOperatingSystems().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateWindowsWarningMessage());
 
         getClusterQuota().setIsAvailable(false);
         setDetailList(vmImportGeneralModel, vmImportInterfaceListModel, importDiskListModel);
@@ -125,18 +114,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
 
         initIsoAndAttachDriversFields(externalVms);
         setTargetArchitecture(externalVms);
-        withDataCenterLoaded(dataCenterId, new AsyncCallback<StoragePool>() {
-
-            @Override
-            public void onSuccess(StoragePool returnValue) {
-                setItems(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        doInit();
-                    }
-                }, externalVms);
-            }
-        });
+        withDataCenterLoaded(dataCenterId, returnValue -> setItems(r -> doInit(), externalVms));
     }
 
     private void initIsoAndAttachDriversFields(final List<VM> externalVms) {
@@ -148,30 +126,19 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
             setAttachDrivers(new EntityModel<>(false));
             getIso().setIsChangeable(false);
 
-            getAttachDrivers().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    getIso().setIsChangeable(getAttachDrivers().getEntity());
-                    updateWindowsWarningMessage();
-                }
+            getAttachDrivers().getEntityChangedEvent().addListener((ev, sender, args) -> {
+                getIso().setIsChangeable(getAttachDrivers().getEntity());
+                updateWindowsWarningMessage();
             });
 
-            getIso().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    updateWindowsWarningMessage();
-                }
-            });
+            getIso().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateWindowsWarningMessage());
         }
     }
 
     private void withDataCenterLoaded(Guid dataCenterId, final AsyncCallback<StoragePool> callback) {
-        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(new AsyncCallback<StoragePool>() {
-            @Override
-            public void onSuccess(StoragePool returnValue) {
-                setStoragePool(returnValue);
-                callback.onSuccess(returnValue);
-            }
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(returnValue -> {
+            setStoragePool(returnValue);
+            callback.onSuccess(returnValue);
         }), dataCenterId);
     }
 
@@ -191,52 +158,41 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
 
         // get cluster
         getCluster().setItems(null);
-        AsyncDataProvider.getInstance().getVnicProfilesByDcId(new AsyncQuery<>(new AsyncCallback<List<VnicProfileView>>() {
-            @Override
-            public void onSuccess(List<VnicProfileView> returnValue) {
-                networkProfiles = returnValue;
-                initNetworksList();
-                initClusterAndStorage(dataCenter);
-            }
+        AsyncDataProvider.getInstance().getVnicProfilesByDcId(new AsyncQuery<>(returnValue -> {
+            networkProfiles = returnValue;
+            initNetworksList();
+            initClusterAndStorage(dataCenter);
         }), dataCenter.getId());
      }
 
     private void initClusterAndStorage(StoragePool dataCenter) {
-        AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-            @Override
-            public void onSuccess(List<Cluster> clusters) {
-                ArchitectureType targetArch = getTargetArchitecture();
-                if (targetArch != null) {
-                    clusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, targetArch);
-                }
-                getCluster().setItems(clusters);
-                getCluster().setSelectedItem(Linq.firstOrNull(clusters));
-
-                // get storage domains
-                AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
-                        new AsyncCallback<List<StorageDomain>>() {
-
-                    @Override
-                    public void onSuccess(List<StorageDomain> storageDomains) {
-                        // filter storage domains
-                        List<StorageDomain> filteredStorageDomains = new ArrayList<>();
-                        for (StorageDomain domain : storageDomains) {
-                            if (Linq.isDataActiveStorageDomain(domain)) {
-                                filteredStorageDomains.add(domain);
-                            }
-                        }
-
-                        getStorage().setItems(filteredStorageDomains);
-                        if (getClusterQuota().getIsAvailable()) {
-                            initQuotaForStorageDomains();
-                        } else {
-                            initDisksStorageDomainsList();
-                        }
-                    }
-
-                }),
-                getStoragePool().getId());
+        AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(clusters -> {
+            ArchitectureType targetArch = getTargetArchitecture();
+            if (targetArch != null) {
+                clusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, targetArch);
             }
+            getCluster().setItems(clusters);
+            getCluster().setSelectedItem(Linq.firstOrNull(clusters));
+
+            // get storage domains
+            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
+                            storageDomains -> {
+                                // filter storage domains
+                                List<StorageDomain> filteredStorageDomains = new ArrayList<>();
+                                for (StorageDomain domain : storageDomains) {
+                                    if (Linq.isDataActiveStorageDomain(domain)) {
+                                        filteredStorageDomains.add(domain);
+                                    }
+                                }
+
+                                getStorage().setItems(filteredStorageDomains);
+                                if (getClusterQuota().getIsAvailable()) {
+                                    initQuotaForStorageDomains();
+                                } else {
+                                    initDisksStorageDomainsList();
+                                }
+                            }),
+            getStoragePool().getId());
         }),
         dataCenter.getId(), true, false);
     }
@@ -293,13 +249,10 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
 
     private void initIsoImages() {
         AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(
-                new AsyncCallback<List<String>>() {
-                    @Override
-                    public void onSuccess(List<String> images) {
-                        getIso().setItems(images);
-                        getIso().setSelectedItem(tryToFindVirtioTools(images));
-                    }
-                }),
+                        images -> {
+                            getIso().setItems(images);
+                            getIso().setSelectedItem(tryToFindVirtioTools(images));
+                        }),
                 getStoragePool().getId(),
                 false);
     }
@@ -323,26 +276,23 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         storageQuotaMap = new HashMap<>();
         Frontend.getInstance().runMultipleQueries(queryTypeList,
                 queryParamsList,
-                new IFrontendMultipleQueryAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleQueryAsyncResult result) {
-                        Iterator<VdcQueryReturnValue> returnValuesIter = result.getReturnValues().iterator();
-                        Iterator<StorageDomain> domainsIter = getStorage().getItems().iterator();
-                        boolean noQuota = true;
-                        while(domainsIter.hasNext()) {
-                            ArrayList<Quota> quotaList = returnValuesIter.next().getReturnValue();
-                            noQuota = noQuota && quotaList.isEmpty();
-                            storageQuotaMap.put(
-                                    domainsIter.next().getId(),
-                                    quotaList);
-                        }
-                        if (noQuota
-                                && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
-                            showCloseMessage(ConstantsManager.getInstance()
-                                    .getConstants().missingQuotaStorageEnforceMode());
-                        }
-                        initDisksStorageDomainsList();
+                result -> {
+                    Iterator<VdcQueryReturnValue> returnValuesIter = result.getReturnValues().iterator();
+                    Iterator<StorageDomain> domainsIter = getStorage().getItems().iterator();
+                    boolean noQuota = true;
+                    while(domainsIter.hasNext()) {
+                        ArrayList<Quota> quotaList = returnValuesIter.next().getReturnValue();
+                        noQuota = noQuota && quotaList.isEmpty();
+                        storageQuotaMap.put(
+                                domainsIter.next().getId(),
+                                quotaList);
                     }
+                    if (noQuota
+                            && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
+                        showCloseMessage(ConstantsManager.getInstance()
+                                .getConstants().missingQuotaStorageEnforceMode());
+                    }
+                    initDisksStorageDomainsList();
                 });
     }
 

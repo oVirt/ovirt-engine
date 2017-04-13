@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -24,8 +23,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase, R extends BusinessEntity<Guid>> extends Model {
 
@@ -126,12 +123,9 @@ public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase,
 
         Frontend.getInstance().runAction(vdcActionType,
                 getParameters(),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        stopProgress();
-                        cancel();
-                    }
+                result -> {
+                    stopProgress();
+                    cancel();
                 },
                 this);
     }
@@ -163,15 +157,8 @@ public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase,
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllQosByStoragePoolIdAndType,
                 new QosQueryParameterBase(dataCenterId, getQosType()),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        postInitQosList(returnValue == null ? new ArrayList<Q>()
-                                : (List<Q>) returnValue.getReturnValue());
-                    }
-
-                }));
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> postInitQosList(returnValue == null ? new ArrayList<Q>()
+                        : (List<Q>) returnValue.getReturnValue())));
     }
 
     protected abstract QosType getQosType();

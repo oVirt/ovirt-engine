@@ -5,16 +5,12 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class ReplaceBrickModel extends Model {
 
@@ -34,31 +30,23 @@ public class ReplaceBrickModel extends Model {
     private void init() {
         getShowBricksList().setEntity(true);
         getBrickDirectory().setIsAvailable(false);
-        getShowBricksList().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getShowBricksList().getEntity()) {
-                    // Show the brick list and hide the text box for entering brick dir
-                    getBricksFromServer().setIsAvailable(true);
-                    getBrickDirectory().setIsAvailable(false);
-                    updateBricksFromHost();
-                } else {
-                    // Hide the brick list and show the text box for entering brick dir
-                    getBricksFromServer().setIsAvailable(false);
-                    getBrickDirectory().setIsAvailable(true);
-                }
+        getShowBricksList().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getShowBricksList().getEntity()) {
+                // Show the brick list and hide the text box for entering brick dir
+                getBricksFromServer().setIsAvailable(true);
+                getBrickDirectory().setIsAvailable(false);
+                updateBricksFromHost();
+            } else {
+                // Hide the brick list and show the text box for entering brick dir
+                getBricksFromServer().setIsAvailable(false);
+                getBrickDirectory().setIsAvailable(true);
             }
-
         });
 
-        getServers().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getShowBricksList().getEntity()) {
-                    updateBricksFromHost();
-                }
+        getServers().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            if (getShowBricksList().getEntity()) {
+                updateBricksFromHost();
             }
-
         });
 
     }
@@ -66,21 +54,18 @@ public class ReplaceBrickModel extends Model {
     private void updateBricksFromHost() {
         VDS selectedServer = getServers().getSelectedItem();
         if (selectedServer != null) {
-            AsyncDataProvider.getInstance().getUnusedBricksFromServer(new AsyncQuery<>(new AsyncCallback<List<StorageDevice>>() {
-                @Override
-                public void onSuccess(List<StorageDevice> bricks) {
-                    List<String> lvNames = new ArrayList<>();
-                    for (StorageDevice brick : bricks) {
-                        String mountPoint = brick.getMountPoint();
-                        if (mountPoint != null && !mountPoint.isEmpty()) {
-                            // Gluster requires a directory under the mount point, not the mount point itself as
-                            // a brick directory. So adding a directory with name of the brick under the mount
-                            // point.
-                            lvNames.add(mountPoint + mountPoint.substring(mountPoint.lastIndexOf("/"))); //$NON-NLS-1$
-                        }
+            AsyncDataProvider.getInstance().getUnusedBricksFromServer(new AsyncQuery<>(bricks -> {
+                List<String> lvNames = new ArrayList<>();
+                for (StorageDevice brick : bricks) {
+                    String mountPoint = brick.getMountPoint();
+                    if (mountPoint != null && !mountPoint.isEmpty()) {
+                        // Gluster requires a directory under the mount point, not the mount point itself as
+                        // a brick directory. So adding a directory with name of the brick under the mount
+                        // point.
+                        lvNames.add(mountPoint + mountPoint.substring(mountPoint.lastIndexOf("/"))); //$NON-NLS-1$
                     }
-                    getBricksFromServer().setItems(lvNames);
                 }
+                getBricksFromServer().setItems(lvNames);
             }), selectedServer.getId());
         }
 

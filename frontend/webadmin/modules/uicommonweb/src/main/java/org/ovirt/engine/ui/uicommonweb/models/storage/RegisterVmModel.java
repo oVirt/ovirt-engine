@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.ErrorTranslator;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -30,11 +29,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.register.RegisterVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
 
@@ -58,12 +54,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
     public void initialize() {
         addVnicProfileMappingCommand();
 
-        getCluster().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                postClustersInit();
-            }
-        });
+        getCluster().getItemsChangedEvent().addListener((ev, sender, args) -> postClustersInit());
 
         super.initialize();
     }
@@ -78,12 +69,8 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
         validateAllMacs();
 
         for (final RegisterVmData registerVmData : getEntities().getItems()) {
-            final IEventListener<EventArgs> validateMacsListener = new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    validateVmMacs(Collections.singletonList(registerVmData));
-                }
-            };
+            final IEventListener<EventArgs> validateMacsListener =
+                    (ev, sender, args) -> validateVmMacs(Collections.singletonList(registerVmData));
             registerVmData.getReassignMacs().getEntityChangedEvent().addListener(validateMacsListener);
             registerVmData.getCluster().getSelectedItemChangedEvent().addListener(validateMacsListener);
         }
@@ -103,12 +90,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
         final Map<Guid, List<VM>> vmsByClusterId = mapVmsByTargetClusterId(vmsToBeValidated);
         AsyncDataProvider.getInstance().validateVmMacs(
                 new AsyncQuery<>(
-                        new AsyncCallback<Map<Guid, List<List<String>>>>() {
-                            @Override
-                            public void onSuccess(Map<Guid, List<List<String>>> returnValue) {
-                                processVmMacsValidationResult(vmsToBeValidated, returnValue);
-                            }
-                        }),
+                        returnValue -> processVmMacsValidationResult(vmsToBeValidated, returnValue)),
                 vmsByClusterId);
     }
 
@@ -283,12 +265,9 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
         }
 
         startProgress();
-        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVmFromConfiguration, parameters, new IFrontendMultipleActionAsyncCallback() {
-            @Override
-            public void executed(FrontendMultipleActionAsyncResult result) {
-                stopProgress();
-                cancel();
-            }
+        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVmFromConfiguration, parameters, result -> {
+            stopProgress();
+            cancel();
         }, this);
     }
 

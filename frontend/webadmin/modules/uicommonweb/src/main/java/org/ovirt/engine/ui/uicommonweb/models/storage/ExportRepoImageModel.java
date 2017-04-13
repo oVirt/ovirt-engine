@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
 
@@ -69,13 +67,10 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ExportRepoImage, actionParameters,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) result.getState();
-                        model.stopProgress();
-                        model.cancel();
-                    }
+                result -> {
+                    ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) result.getState();
+                    model.stopProgress();
+                    model.cancel();
                 }, this);
     }
 

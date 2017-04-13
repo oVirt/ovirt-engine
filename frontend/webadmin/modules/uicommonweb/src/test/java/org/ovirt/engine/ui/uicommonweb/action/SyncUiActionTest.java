@@ -46,14 +46,7 @@ public class SyncUiActionTest extends UiActionBaseTest {
     @Test
     public void runActionWithFlowStateTest() {
         final UiAction action2 = createAction();
-        final UiAction action1 = createAction(new Executer() {
-
-            @Override
-            public void onActionExecuted(UiAction action) {
-                action2.runParallelAction(action.getActionFlowState());
-
-            }
-        });
+        final UiAction action1 = createAction(action -> action2.runParallelAction(action.getActionFlowState()));
 
         action1.runAction();
         assertSame(action1.getActionFlowState(), action2.getActionFlowState());
@@ -62,21 +55,9 @@ public class SyncUiActionTest extends UiActionBaseTest {
 
     @Test
     public void finalActionTest() {
-        final UiAction action1 = createAction(new Executer() {
+        final UiAction action1 = createAction(action -> assertNotAllDone(action.getActionFlowState()));
 
-            @Override
-            public void onActionExecuted(UiAction action) {
-                assertNotAllDone(action.getActionFlowState());
-            }
-        });
-
-        final UiAction action2 = createAction(new Executer() {
-
-            @Override
-            public void onActionExecuted(UiAction action) {
-                assertNotAllDone(action.getActionFlowState());
-            }
-        });
+        final UiAction action2 = createAction(action -> assertNotAllDone(action.getActionFlowState()));
 
         final SimpleAction finalAction = createFinalAction(new ArrayList<UiAction>(Arrays.asList(action1, action2)));
 
@@ -118,13 +99,7 @@ public class SyncUiActionTest extends UiActionBaseTest {
         UiAction action1 = createAction();
         UiAction action2 = createAction();
 
-        SimpleAction finalAction = new SimpleAction() {
-
-            @Override
-            public void execute() {
-                fail();
-            }
-        };
+        SimpleAction finalAction = () -> fail();
         action1.onAllExecutionsFinish(finalAction);
         action2.onAllExecutionsFinish(finalAction);
 
@@ -133,13 +108,7 @@ public class SyncUiActionTest extends UiActionBaseTest {
     }
 
     private SimpleAction createFinalAction(final List<UiAction> actions) {
-        return new SimpleAction() {
-
-            @Override
-            public void execute() {
-                assertAllDone(actions);
-            }
-        };
+        return () -> assertAllDone(actions);
     }
 
     protected UiAction createAction() {

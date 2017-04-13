@@ -8,21 +8,16 @@ import org.ovirt.engine.core.common.businessentities.gluster.FopStats;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileStats;
 import org.ovirt.engine.core.common.businessentities.gluster.StatsInfo;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
@@ -140,18 +135,8 @@ public class VolumeProfileStatisticsModel extends Model {
         setBricks(new ListModel<BrickProfileDetails>());
         setNfsServers(new ListModel<GlusterVolumeProfileStats>());
         final UIMessages messages = ConstantsManager.getInstance().getMessages();
-        getBricks().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                onBrickSelectionChange(messages);
-            }
-        });
-        getNfsServers().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                onNfsServerSelectionChange(messages);
-            }
-        });
+        getBricks().getSelectedItemChangedEvent().addListener((ev, sender, args) -> onBrickSelectionChange(messages));
+        getNfsServers().getSelectedItemChangedEvent().addListener((ev, sender, args) -> onNfsServerSelectionChange(messages));
         setProfileRunTime("");//$NON-NLS-1$
         setNfsProfileRunTime("");//$NON-NLS-1$
         setBytesRead("");//$NON-NLS-1$
@@ -210,31 +195,28 @@ public class VolumeProfileStatisticsModel extends Model {
     public void queryBackend(final boolean isBrickSelected) {
         startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());
 
-        AsyncDataProvider.getInstance().getGlusterVolumeProfilingStatistics(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                stopProgress();
-                GlusterVolumeProfileInfo profileInfoEntity =returnValue.getReturnValue();
-                if((profileInfoEntity == null) || !returnValue.getSucceeded()) {
-                    setSuccessfulProfileStatsFetch(false);
-                    if(!isBrickSelected) {
-                        showNfsProfileStats(profileInfoEntity);
-                    } else {
-                        showProfileStats(profileInfoEntity);
-                    }
+        AsyncDataProvider.getInstance().getGlusterVolumeProfilingStatistics(new AsyncQuery<>(returnValue -> {
+            stopProgress();
+            GlusterVolumeProfileInfo profileInfoEntity =returnValue.getReturnValue();
+            if((profileInfoEntity == null) || !returnValue.getSucceeded()) {
+                setSuccessfulProfileStatsFetch(false);
+                if(!isBrickSelected) {
+                    showNfsProfileStats(profileInfoEntity);
                 } else {
-                    GlusterVolumeProfileInfo aggregatedProfileInfo = new GlusterVolumeProfileInfo();
-                    aggregatedProfileInfo.setBrickProfileDetails((profileInfoEntity.getBrickProfileDetails() != null) ? profileInfoEntity.getBrickProfileDetails() : getProfileInfo().getBrickProfileDetails());
-                    aggregatedProfileInfo.setNfsProfileDetails((profileInfoEntity.getNfsProfileDetails() != null) ? profileInfoEntity.getNfsProfileDetails() : getProfileInfo().getNfsProfileDetails());
-                    setProfileExportUrl(formProfileUrl(clusterId.toString(), volumeId.toString(), isBrickSelected));
-                    setProfileInfo(aggregatedProfileInfo);
-                    setSuccessfulProfileStatsFetch(true);
-                    setTitle(ConstantsManager.getInstance().getMessages().volumeProfilingStatsTitle(volumeName));
-                    if(!isBrickSelected) {
-                        showNfsProfileStats(profileInfoEntity);
-                    } else {
-                        showProfileStats(profileInfoEntity);
-                    }
+                    showProfileStats(profileInfoEntity);
+                }
+            } else {
+                GlusterVolumeProfileInfo aggregatedProfileInfo = new GlusterVolumeProfileInfo();
+                aggregatedProfileInfo.setBrickProfileDetails((profileInfoEntity.getBrickProfileDetails() != null) ? profileInfoEntity.getBrickProfileDetails() : getProfileInfo().getBrickProfileDetails());
+                aggregatedProfileInfo.setNfsProfileDetails((profileInfoEntity.getNfsProfileDetails() != null) ? profileInfoEntity.getNfsProfileDetails() : getProfileInfo().getNfsProfileDetails());
+                setProfileExportUrl(formProfileUrl(clusterId.toString(), volumeId.toString(), isBrickSelected));
+                setProfileInfo(aggregatedProfileInfo);
+                setSuccessfulProfileStatsFetch(true);
+                setTitle(ConstantsManager.getInstance().getMessages().volumeProfilingStatsTitle(volumeName));
+                if(!isBrickSelected) {
+                    showNfsProfileStats(profileInfoEntity);
+                } else {
+                    showProfileStats(profileInfoEntity);
                 }
             }
         }), clusterId, volumeId, !isBrickSelected);

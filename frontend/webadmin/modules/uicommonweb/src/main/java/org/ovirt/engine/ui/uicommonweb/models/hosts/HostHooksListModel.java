@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -66,27 +65,24 @@ public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String,
         setIsEmpty(false);
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsHooksById, tempVar, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                ArrayList<HashMap<String, String>> list = new ArrayList<>();
-                HashMap<String, HashMap<String, HashMap<String, String>>> dictionary = returnValue.getReturnValue();
-                HashMap<String, String> row;
-                for (Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair : dictionary.entrySet()) {
-                    for (Map.Entry<String, HashMap<String, String>> keyValuePair1 : keyValuePair.getValue()
-                            .entrySet()) {
-                        for (Map.Entry<String, String> keyValuePair2 : keyValuePair1.getValue().entrySet()) {
-                            row = new HashMap<>();
-                            row.put("EventName", keyValuePair.getKey()); //$NON-NLS-1$
-                            row.put("ScriptName", keyValuePair1.getKey()); //$NON-NLS-1$
-                            row.put("PropertyName", keyValuePair2.getKey()); //$NON-NLS-1$
-                            row.put("PropertyValue", keyValuePair2.getValue()); //$NON-NLS-1$
-                            list.add(row);
-                        }
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsHooksById, tempVar, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            ArrayList<HashMap<String, String>> list = new ArrayList<>();
+            HashMap<String, HashMap<String, HashMap<String, String>>> dictionary = returnValue.getReturnValue();
+            HashMap<String, String> row;
+            for (Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair : dictionary.entrySet()) {
+                for (Map.Entry<String, HashMap<String, String>> keyValuePair1 : keyValuePair.getValue()
+                        .entrySet()) {
+                    for (Map.Entry<String, String> keyValuePair2 : keyValuePair1.getValue().entrySet()) {
+                        row = new HashMap<>();
+                        row.put("EventName", keyValuePair.getKey()); //$NON-NLS-1$
+                        row.put("ScriptName", keyValuePair1.getKey()); //$NON-NLS-1$
+                        row.put("PropertyName", keyValuePair2.getKey()); //$NON-NLS-1$
+                        row.put("PropertyValue", keyValuePair2.getValue()); //$NON-NLS-1$
+                        list.add(row);
                     }
                 }
-                setItems(list);
             }
+            setItems(list);
         }));
 
     }

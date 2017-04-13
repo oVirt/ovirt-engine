@@ -24,7 +24,6 @@ import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent.ApplySearchStringHandler;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
@@ -56,7 +55,6 @@ import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
@@ -203,21 +201,15 @@ public class CommonModel extends ListModel<SearchableListModel> {
         setSelectedItem(getDefaultItem());
 
         setLoggedInUser(Frontend.getInstance().getLoggedInUser());
-        getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getEventBus() != null && getSelectedItem() != null) {
-                    MainModelSelectionChangeEvent.fire(getEventBus(), getSelectedItem());
-                }
+        getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            if (getEventBus() != null && getSelectedItem() != null) {
+                MainModelSelectionChangeEvent.fire(getEventBus(), getSelectedItem());
             }
         });
 
-        eventBus.addHandler(ApplySearchStringEvent.getType(), new ApplySearchStringHandler() {
-            @Override
-            public void onApplySearchString(ApplySearchStringEvent event) {
-                setSearchString(event.getSearchString(), false);
-                getSearchCommand().execute();
-            }
+        eventBus.addHandler(ApplySearchStringEvent.getType(), event -> {
+            setSearchString(event.getSearchString(), false);
+            getSearchCommand().execute();
         });
     }
 

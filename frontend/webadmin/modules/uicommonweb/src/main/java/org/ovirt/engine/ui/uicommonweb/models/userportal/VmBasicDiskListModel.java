@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
@@ -43,22 +42,19 @@ public class VmBasicDiskListModel extends SearchableListModel<Object, DiskImage>
 
             Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                     new IdQueryParameters(pool.getVmPoolId()),
-                    new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                        @Override
-                        public void onSuccess(VdcQueryReturnValue result) {
-                            if (result != null) {
-                                VM vm = result.getReturnValue();
-                                if (vm == null) {
-                                    return;
-                                }
-
-                                IdQueryParameters queryParameters = new IdQueryParameters(vm.getId());
-                                queryParameters.setRefresh(getIsQueryFirstTime());
-                                Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksPartialDataByVmId, queryParameters,
-                                        new SetSortedItemsAsyncQuery(new DiskByDiskAliasComparator()));
+                    new AsyncQuery<VdcQueryReturnValue>(result -> {
+                        if (result != null) {
+                            VM vm = result.getReturnValue();
+                            if (vm == null) {
+                                return;
                             }
 
+                            IdQueryParameters queryParameters = new IdQueryParameters(vm.getId());
+                            queryParameters.setRefresh(getIsQueryFirstTime());
+                            Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksPartialDataByVmId, queryParameters,
+                                    new SetSortedItemsAsyncQuery(new DiskByDiskAliasComparator()));
                         }
+
                     }));
         }
     }

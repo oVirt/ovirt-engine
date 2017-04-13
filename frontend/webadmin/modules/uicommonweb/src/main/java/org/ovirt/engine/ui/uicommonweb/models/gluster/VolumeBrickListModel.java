@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksPara
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
@@ -28,7 +27,6 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -39,8 +37,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntity, GlusterBrickEntity> {
     private String glusterMetaVolumeName;
@@ -68,12 +64,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         AsyncDataProvider.getInstance()
                 .getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterMetaVolumeName,
                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
-                        new AsyncQuery<>(new AsyncCallback<String>() {
-                            @Override
-                            public void onSuccess(String returnValue) {
-                                glusterMetaVolumeName = returnValue;
-                            }
-                        }));
+                        new AsyncQuery<String>(returnValue -> glusterMetaVolumeName = returnValue));
 
     }
 
@@ -299,28 +290,25 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             return;
         }
 
-        AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean clusterHasUpHost) {
-                if (clusterHasUpHost) {
-                    preAddBricks(volumeEntity);
-                }
-                else {
-                    ConfirmationModel model = new ConfirmationModel();
-                    setWindow(model);
-                    model.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());
-                    model.setMessage(ConstantsManager.getInstance()
-                            .getConstants()
-                            .cannotAddBricksNoUpServerFound());
-                    model.setHelpTag(HelpTag.cannot_add_bricks);
-                    model.setHashName("cannot_add_bricks"); //$NON-NLS-1$
+        AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery<>(clusterHasUpHost -> {
+            if (clusterHasUpHost) {
+                preAddBricks(volumeEntity);
+            }
+            else {
+                ConfirmationModel model = new ConfirmationModel();
+                setWindow(model);
+                model.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());
+                model.setMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .cannotAddBricksNoUpServerFound());
+                model.setHelpTag(HelpTag.cannot_add_bricks);
+                model.setHashName("cannot_add_bricks"); //$NON-NLS-1$
 
-                    UICommand command = new UICommand("Cancel", VolumeBrickListModel.this); //$NON-NLS-1$
-                    command.setTitle(ConstantsManager.getInstance().getConstants().close());
-                    command.setIsCancel(true);
-                    model.getCommands().add(command);
-                    return;
-                }
+                UICommand command = new UICommand("Cancel", VolumeBrickListModel.this); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().close());
+                command.setIsCancel(true);
+                model.getCommands().add(command);
+                return;
             }
         }), volumeEntity.getClusterName());
     }
@@ -334,32 +322,29 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         if (volumeEntity.getVolumeType().isReplicatedType()) {
 
-            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
-                @Override
-                public void onSuccess(Cluster cluster) {
-                    if (cluster.supportsGlusterService() && cluster.supportsVirtService()) {
-                        //in HC mode, show a warning that add bricks is not recommended
-                        ConfirmationModel model = new ConfirmationModel();
-                        setConfirmWindow(model);
-                        model.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());
-                        model.setMessage(ConstantsManager.getInstance()
-                                .getConstants().hcAddBrickWarning());
-                        model.setHelpTag(HelpTag.cannot_add_bricks);
-                        model.setHashName("cannot_add_bricks"); //$NON-NLS-1$
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(cluster -> {
+                if (cluster.supportsGlusterService() && cluster.supportsVirtService()) {
+                    //in HC mode, show a warning that add bricks is not recommended
+                    ConfirmationModel model = new ConfirmationModel();
+                    setConfirmWindow(model);
+                    model.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());
+                    model.setMessage(ConstantsManager.getInstance()
+                            .getConstants().hcAddBrickWarning());
+                    model.setHelpTag(HelpTag.cannot_add_bricks);
+                    model.setHashName("cannot_add_bricks"); //$NON-NLS-1$
 
-                        UICommand yesCommand = new UICommand("AddBricks", VolumeBrickListModel.this); //$NON-NLS-1$
-                        yesCommand.setTitle(ConstantsManager.getInstance().getConstants().yes());
-                        model.getCommands().add(yesCommand);
-                        UICommand noCommand = new UICommand("CancelAll", VolumeBrickListModel.this); //$NON-NLS-1$
-                        noCommand.setTitle(ConstantsManager.getInstance().getConstants().no());
-                        noCommand.setIsCancel(true);
-                        noCommand.setIsDefault(true);
-                        model.getCommands().add(noCommand);
+                    UICommand yesCommand = new UICommand("AddBricks", VolumeBrickListModel.this); //$NON-NLS-1$
+                    yesCommand.setTitle(ConstantsManager.getInstance().getConstants().yes());
+                    model.getCommands().add(yesCommand);
+                    UICommand noCommand = new UICommand("CancelAll", VolumeBrickListModel.this); //$NON-NLS-1$
+                    noCommand.setTitle(ConstantsManager.getInstance().getConstants().no());
+                    noCommand.setIsCancel(true);
+                    noCommand.setIsDefault(true);
+                    model.getCommands().add(noCommand);
 
-                        return;
-                    } else {
-                        addBricks();
-                    }
+                    return;
+                } else {
+                    addBricks();
                 }
             }), volumeEntity.getClusterId());
         } else {
@@ -385,25 +370,19 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
         volumeBrickModel.getVolumeType().setEntity(volumeEntity.getVolumeType());
 
-        AsyncDataProvider.getInstance().getClusterById(volumeBrickModel.asyncQuery(new AsyncCallback<Cluster>() {
-            @Override
-            public void onSuccess(Cluster cluster) {
-                volumeBrickModel.getForce().setIsAvailable(true);
-                volumeBrickModel.setIsBrickProvisioningSupported();
-                AsyncDataProvider.getInstance().getHostListByCluster(volumeBrickModel.asyncQuery(new AsyncCallback<List<VDS>>() {
-                    @Override
-                    public void onSuccess(List<VDS> hostList) {
-                        Iterator<VDS> iterator = hostList.iterator();
-                        while (iterator.hasNext()) {
-                            if (iterator.next().getStatus() != VDSStatus.Up) {
-                                iterator.remove();
-                            }
-                        }
-
-                        volumeBrickModel.setHostList(hostList);
+        AsyncDataProvider.getInstance().getClusterById(volumeBrickModel.asyncQuery(cluster -> {
+            volumeBrickModel.getForce().setIsAvailable(true);
+            volumeBrickModel.setIsBrickProvisioningSupported();
+            AsyncDataProvider.getInstance().getHostListByCluster(volumeBrickModel.asyncQuery(hostList -> {
+                Iterator<VDS> iterator = hostList.iterator();
+                while (iterator.hasNext()) {
+                    if (iterator.next().getStatus() != VDSStatus.Up) {
+                        iterator.remove();
                     }
-                }), cluster.getName());
-            }
+                }
+
+                volumeBrickModel.setHostList(hostList);
+            }), cluster.getName());
         }), volumeEntity.getClusterId());
 
         // TODO: fetch the mount points to display
@@ -507,14 +486,10 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                         volumeBrickModel.getStripeCountValue(),
                 volumeBrickModel.getForce().getEntity());
 
-        Frontend.getInstance().runAction(VdcActionType.AddBricksToGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.AddBricksToGlusterVolume, parameter, result -> {
+            VolumeBrickListModel localModel = (VolumeBrickListModel) result.getState();
+            localModel.postOnAddBricks(result.getReturnValue());
 
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                VolumeBrickListModel localModel = (VolumeBrickListModel) result.getState();
-                localModel.postOnAddBricks(result.getReturnValue());
-
-            }
         }, this);
     }
 
@@ -819,15 +794,12 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         boolean isMigrate = model.getMigrateData().getEntity();
 
         Frontend.getInstance().runAction(isMigrate ? VdcActionType.StartRemoveGlusterVolumeBricks
-                : VdcActionType.GlusterVolumeRemoveBricks, parameter, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
+                : VdcActionType.GlusterVolumeRemoveBricks, parameter, result -> {
 
-                ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                localModel.stopProgress();
-                setWindow(null);
-            }
-        }, model);
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    setWindow(null);
+                }, model);
     }
 
     private void stopRemoveBricks() {
@@ -884,15 +856,12 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.StopRemoveGlusterVolumeBricks, parameter, new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                localModel.stopProgress();
-                setConfirmWindow(null);
-                if (result.getReturnValue().getSucceeded()) {
-                    showRemoveBricksStatus();
-                }
+        Frontend.getInstance().runAction(VdcActionType.StopRemoveGlusterVolumeBricks, parameter, result -> {
+            ConfirmationModel localModel = (ConfirmationModel) result.getState();
+            localModel.stopProgress();
+            setConfirmWindow(null);
+            if (result.getReturnValue().getSucceeded()) {
+                showRemoveBricksStatus();
             }
         }, model);
     }
@@ -950,15 +919,12 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         Frontend.getInstance().runAction(VdcActionType.CommitRemoveGlusterVolumeBricks,
                 parameter,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        setConfirmWindow(null);
-                        if (result.getReturnValue().getSucceeded()) {
-                            disableRemoveBrickStatusPopUpActions();
-                        }
+                result -> {
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    setConfirmWindow(null);
+                    if (result.getReturnValue().getSucceeded()) {
+                        disableRemoveBrickStatusPopUpActions();
                     }
                 },
                 model);
@@ -1000,47 +966,44 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
         cancelCommand.setIsCancel(true);
 
-        AsyncDataProvider.getInstance().getGlusterRemoveBricksStatus(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                cModel.stopProgress();
-                if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
-                    cancelConfirmation();
+        AsyncDataProvider.getInstance().getGlusterRemoveBricksStatus(new AsyncQuery<>(returnValue -> {
+            cModel.stopProgress();
+            if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
+                cancelConfirmation();
 
-                    RemoveBrickStatusModel removeBrickStatusModel;
-                    GlusterVolumeTaskStatusEntity removeBrickStatusEntity = returnValue.getReturnValue();
+                RemoveBrickStatusModel removeBrickStatusModel;
+                GlusterVolumeTaskStatusEntity removeBrickStatusEntity = returnValue.getReturnValue();
 
-                    if (getWindow() == null) {
-                        removeBrickStatusModel =
-                                new RemoveBrickStatusModel(volumeEntity, bricks);
-                        removeBrickStatusModel.setTitle(ConstantsManager.getInstance()
-                                .getConstants()
-                                .removeBricksStatusTitle());
-                        removeBrickStatusModel.setHelpTag(HelpTag.volume_remove_bricks_status);
-                        removeBrickStatusModel.setHashName("volume_remove_bricks_status"); ////$NON-NLS-1$
+                if (getWindow() == null) {
+                    removeBrickStatusModel =
+                            new RemoveBrickStatusModel(volumeEntity, bricks);
+                    removeBrickStatusModel.setTitle(ConstantsManager.getInstance()
+                            .getConstants()
+                            .removeBricksStatusTitle());
+                    removeBrickStatusModel.setHelpTag(HelpTag.volume_remove_bricks_status);
+                    removeBrickStatusModel.setHashName("volume_remove_bricks_status"); ////$NON-NLS-1$
 
-                        setWindow(removeBrickStatusModel);
+                    setWindow(removeBrickStatusModel);
 
-                        removeBrickStatusModel.getVolume().setEntity(volumeEntity.getName());
-                        removeBrickStatusModel.getCluster().setEntity(volumeEntity.getClusterName());
+                    removeBrickStatusModel.getVolume().setEntity(volumeEntity.getName());
+                    removeBrickStatusModel.getCluster().setEntity(volumeEntity.getClusterName());
 
-                        removeBrickStatusModel.addStopRemoveBricksCommand(stopRemoveBrickFromStatus);
-                        removeBrickStatusModel.addCommitRemoveBricksCommand(commitRemoveBrickFromStatus);
-                        removeBrickStatusModel.addRetainBricksCommand(retainBricksFromStatus);
-                        removeBrickStatusModel.getCommands().add(cancelCommand);
-                    }
-                    else {
-                        removeBrickStatusModel = (RemoveBrickStatusModel) getWindow();
-                    }
-
-                    removeBrickStatusModel.showStatus(removeBrickStatusEntity);
-
+                    removeBrickStatusModel.addStopRemoveBricksCommand(stopRemoveBrickFromStatus);
+                    removeBrickStatusModel.addCommitRemoveBricksCommand(commitRemoveBrickFromStatus);
+                    removeBrickStatusModel.addRetainBricksCommand(retainBricksFromStatus);
+                    removeBrickStatusModel.getCommands().add(cancelCommand);
                 }
                 else {
-                    cModel.setMessage(ConstantsManager.getInstance()
-                            .getMessages()
-                            .removeBrickStatusFailed(volumeEntity.getName()));
+                    removeBrickStatusModel = (RemoveBrickStatusModel) getWindow();
                 }
+
+                removeBrickStatusModel.showStatus(removeBrickStatusEntity);
+
+            }
+            else {
+                cModel.setMessage(ConstantsManager.getInstance()
+                        .getMessages()
+                        .removeBrickStatusFailed(volumeEntity.getName()));
             }
         }),
                 volumeEntity.getClusterId(),
@@ -1112,16 +1075,13 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         Frontend.getInstance().runAction(VdcActionType.StopRemoveGlusterVolumeBricks,
                 parameter,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        setConfirmWindow(null);
-                        if (result.getReturnValue().getSucceeded()) {
-                            showRemoveBricksStatus();
-                            disableRemoveBrickStatusPopUpActions();
-                        }
+                result -> {
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    setConfirmWindow(null);
+                    if (result.getReturnValue().getSucceeded()) {
+                        showRemoveBricksStatus();
+                        disableRemoveBrickStatusPopUpActions();
                     }
                 },
                 model);
@@ -1153,17 +1113,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         brickModel.setHelpTag(HelpTag.replace_brick);
         brickModel.setHashName("replace_brick"); //$NON-NLS-1$
 
-        AsyncDataProvider.getInstance().getClusterById(brickModel.asyncQuery(new AsyncCallback<Cluster>() {
-            @Override
-            public void onSuccess(Cluster cluster) {
-                AsyncDataProvider.getInstance().getHostListByCluster(brickModel.asyncQuery(new AsyncCallback<List<VDS>>() {
-                    @Override
-                    public void onSuccess(List<VDS> hostList) {
-                        brickModel.getServers().setItems(hostList);
-                    }
-                }), cluster.getName());
-            }
-        }), volumeEntity.getClusterId());
+        AsyncDataProvider.getInstance().getClusterById(brickModel.asyncQuery(cluster -> AsyncDataProvider.getInstance().getHostListByCluster(brickModel.asyncQuery(hostList -> brickModel.getServers().setItems(hostList)), cluster.getName())), volumeEntity.getClusterId());
 
         UICommand command = UICommand.createDefaultOkUiCommand("OnReplace", this); //$NON-NLS-1$
         brickModel.getCommands().add(command);
@@ -1206,27 +1156,18 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                         existingBrick,
                         newBrick);
 
-        Frontend.getInstance().runAction(VdcActionType.ReplaceGlusterVolumeBrick, parameter, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.ReplaceGlusterVolumeBrick, parameter, result -> {
 
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-
-                ReplaceBrickModel localModel = (ReplaceBrickModel) result.getState();
-                localModel.stopProgress();
-                setWindow(null);
-            }
+            ReplaceBrickModel localModel = (ReplaceBrickModel) result.getState();
+            localModel.stopProgress();
+            setWindow(null);
         }, replaceBrickModel);
 
     }
 
     private void showBrickAdvancedDetails() {
         final GlusterVolumeEntity volumeEntity = getEntity();
-        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(new AsyncCallback<Cluster>() {
-            @Override
-            public void onSuccess(Cluster returnValue) {
-                onShowBrickAdvancedDetails(volumeEntity);
-            }
-        }),
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(returnValue -> onShowBrickAdvancedDetails(volumeEntity)),
                 volumeEntity.getClusterId());
     }
 
@@ -1240,40 +1181,37 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         brickModel.setHashName("brick_advanced"); //$NON-NLS-1$
         brickModel.startProgress();
 
-        AsyncDataProvider.getInstance().getGlusterVolumeBrickDetails(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                brickModel.stopProgress();
+        AsyncDataProvider.getInstance().getGlusterVolumeBrickDetails(new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            brickModel.stopProgress();
 
-                if (returnValue == null || !returnValue.getSucceeded()) {
-                    brickModel.setMessage(ConstantsManager.getInstance()
-                            .getConstants()
-                            .errorInFetchingBrickAdvancedDetails());
-                    return;
+            if (returnValue == null || !returnValue.getSucceeded()) {
+                brickModel.setMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .errorInFetchingBrickAdvancedDetails());
+                return;
+            }
+
+            GlusterVolumeAdvancedDetails advDetails = returnValue.getReturnValue();
+            brickModel.getBrick().setEntity(brickEntity.getQualifiedName());
+            if (advDetails != null && advDetails.getBrickDetails() != null
+                    && advDetails.getBrickDetails().size() == 1) {
+                BrickDetails brickDetails = advDetails.getBrickDetails().get(0);
+                brickModel.getBrickProperties().setProperties(brickDetails.getBrickProperties());
+
+                ArrayList<EntityModel<GlusterClientInfo>> clients = new ArrayList<>();
+                for (GlusterClientInfo client : brickDetails.getClients()) {
+                    clients.add(new EntityModel<>(client));
                 }
+                brickModel.getClients().setItems(clients);
 
-                GlusterVolumeAdvancedDetails advDetails = returnValue.getReturnValue();
-                brickModel.getBrick().setEntity(brickEntity.getQualifiedName());
-                if (advDetails != null && advDetails.getBrickDetails() != null
-                        && advDetails.getBrickDetails().size() == 1) {
-                    BrickDetails brickDetails = advDetails.getBrickDetails().get(0);
-                    brickModel.getBrickProperties().setProperties(brickDetails.getBrickProperties());
+                brickModel.getMemoryStatistics().updateMemoryStatistics(brickDetails.getMemoryStatus()
+                        .getMallInfo());
 
-                    ArrayList<EntityModel<GlusterClientInfo>> clients = new ArrayList<>();
-                    for (GlusterClientInfo client : brickDetails.getClients()) {
-                        clients.add(new EntityModel<>(client));
-                    }
-                    brickModel.getClients().setItems(clients);
-
-                    brickModel.getMemoryStatistics().updateMemoryStatistics(brickDetails.getMemoryStatus()
-                            .getMallInfo());
-
-                    ArrayList<EntityModel<Mempool>> memoryPools = new ArrayList<>();
-                    for (Mempool mempool : brickDetails.getMemoryStatus().getMemPools()) {
-                        memoryPools.add(new EntityModel<>(mempool));
-                    }
-                    brickModel.getMemoryPools().setItems(memoryPools);
+                ArrayList<EntityModel<Mempool>> memoryPools = new ArrayList<>();
+                for (Mempool mempool : brickDetails.getMemoryStatus().getMemPools()) {
+                    memoryPools.add(new EntityModel<>(mempool));
                 }
+                brickModel.getMemoryPools().setItems(memoryPools);
             }
         }, true), volumeEntity.getClusterId(), volumeEntity.getId(), brickEntity.getId());
 

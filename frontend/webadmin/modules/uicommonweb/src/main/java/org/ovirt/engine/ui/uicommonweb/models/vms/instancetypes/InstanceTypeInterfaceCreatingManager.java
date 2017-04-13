@@ -60,13 +60,9 @@ public class InstanceTypeInterfaceCreatingManager extends BaseInterfaceCreatingM
                                     public void executed(FrontendActionAsyncResult result) {
                                         Frontend.getInstance().runMultipleActions(VdcActionType.RemoveVmTemplateInterface,
                                                 removeVnicParameters,
-                                                new IFrontendActionAsyncCallback() {
-
-                                                    @Override
-                                                    public void executed(FrontendActionAsyncResult result) {
-                                                        // no need to reorder - it will be done for the VMs when creating from instance type
-                                                        getCallback().vnicCreated(id, unitVmModel);
-                                                    }
+                                                r -> {
+                                                    // no need to reorder - it will be done for the VMs when creating from instance type
+                                                    getCallback().vnicCreated(id, unitVmModel);
                                                 }, this);
                                     }
                                 }, this);

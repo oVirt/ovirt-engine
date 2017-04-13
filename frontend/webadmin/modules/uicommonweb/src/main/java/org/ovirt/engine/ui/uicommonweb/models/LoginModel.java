@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -100,29 +99,26 @@ public class LoginModel extends Model {
         getUserName().getEntityChangedEvent().addListener(this);
         setCreateInstanceOnly(new EntityModel<>(false));
 
-        AsyncQuery<List<String>> asyncQuery = new AsyncQuery<>(new AsyncCallback<List<String>>() {
-            @Override
-            public void onSuccess(List<String> domains) {
+        AsyncQuery<List<String>> asyncQuery = new AsyncQuery<>(domains -> {
 
-                if (domains == null) {
-                    setMessages(Arrays.asList(ConstantsManager.getInstance()
-                            .getConstants()
-                            .couldNotConnectToOvirtEngineServiceMsg()));
-                    return;
-                }
-
-                if (!loggingInAutomatically) {
-                    // Don't enable the screen when we are in the process of logging in automatically.
-                    // If this happens to be executed before the AutoLogin() is executed,
-                    // it is not a problem, as the AutoLogin() will disable the screen by itself.
-                    getUserName().setIsChangeable(true);
-                    getProfile().setIsChangeable(true);
-                }
-
-                Collections.sort(domains);
-                getProfile().setItems(domains);
-
+            if (domains == null) {
+                setMessages(Arrays.asList(ConstantsManager.getInstance()
+                        .getConstants()
+                        .couldNotConnectToOvirtEngineServiceMsg()));
+                return;
             }
+
+            if (!loggingInAutomatically) {
+                // Don't enable the screen when we are in the process of logging in automatically.
+                // If this happens to be executed before the AutoLogin() is executed,
+                // it is not a problem, as the AutoLogin() will disable the screen by itself.
+                getUserName().setIsChangeable(true);
+                getProfile().setIsChangeable(true);
+            }
+
+            Collections.sort(domains);
+            getProfile().setItems(domains);
+
         });
         asyncQuery.setHandleFailure(true);
         AsyncDataProvider.getInstance().getAAAProfilesListViaPublic(asyncQuery, true);

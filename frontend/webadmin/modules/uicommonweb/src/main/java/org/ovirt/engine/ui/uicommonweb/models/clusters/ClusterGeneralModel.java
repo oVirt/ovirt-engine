@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -25,7 +24,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -35,10 +33,6 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.DetachGlusterHostsModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class ClusterGeneralModel extends EntityModel<Cluster> {
@@ -218,26 +212,18 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         setEmulatedMachine(cluster.getEmulatedMachine());
         setCompatibilityVersion(cluster.getCompatibilityVersion().getValue());
         generateClusterType(cluster.supportsGlusterService(), cluster.supportsVirtService());
-        AsyncDataProvider.getInstance().getNumberOfVmsInCluster(new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                setNumberOfVms((Integer) returnValue.getReturnValue());
-            }
-        }), cluster.getId());
+        AsyncDataProvider.getInstance().getNumberOfVmsInCluster(new AsyncQuery<>(
+                (VdcQueryReturnValue returnValue) -> setNumberOfVms((Integer) returnValue.getReturnValue())), cluster.getId());
 
     }
 
     private void updateConsoleAddressPartiallyOverridden(Cluster cluster) {
 
-        AsyncQuery query = new AsyncQuery<>(
-                new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        boolean isConsistent = returnValue.getReturnValue();
-                        setConsoleAddressPartiallyOverridden(!isConsistent);
-                    }
-                }
-                );
+        AsyncQuery<VdcQueryReturnValue> query = new AsyncQuery<>(returnValue -> {
+                boolean isConsistent = returnValue.getReturnValue();
+                setConsoleAddressPartiallyOverridden(!isConsistent);
+            }
+        );
 
         Frontend.getInstance().runQuery(
                 VdcQueryType.IsDisplayAddressConsistentInCluster,
@@ -271,22 +257,19 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
                 || getGlusterSwiftStatus() == GlusterServiceStatus.MIXED
                 || getGlusterSwiftStatus() == GlusterServiceStatus.UNKNOWN);
 
-        AsyncDataProvider.getInstance().getGlusterSwiftServerServices(glusterSwiftModel.asyncQuery(new AsyncCallback<List<GlusterServerService>>() {
-            @Override
-            public void onSuccess(List<GlusterServerService> returnValue) {
-                List<GlusterSwiftServiceModel> serviceList = getGroupedGlusterSwiftServices(returnValue);
-                glusterSwiftModel.getHostServicesList().setItems(serviceList);
+        AsyncDataProvider.getInstance().getGlusterSwiftServerServices(glusterSwiftModel.asyncQuery(returnValue -> {
+            List<GlusterSwiftServiceModel> serviceList = getGroupedGlusterSwiftServices(returnValue);
+            glusterSwiftModel.getHostServicesList().setItems(serviceList);
 
-                glusterSwiftModel.stopProgress();
+            glusterSwiftModel.stopProgress();
 
-                UICommand command = UICommand.createDefaultOkUiCommand("OnManageGlusterSwift", ClusterGeneralModel.this); //$NON-NLS-1$
-                glusterSwiftModel.getCommands().add(command);
+            UICommand command = UICommand.createDefaultOkUiCommand("OnManageGlusterSwift", ClusterGeneralModel.this); //$NON-NLS-1$
+            glusterSwiftModel.getCommands().add(command);
 
-                command = new UICommand("Cancel", ClusterGeneralModel.this); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().close());
-                command.setIsCancel(true);
-                glusterSwiftModel.getCommands().add(command);
-            }
+            command = new UICommand("Cancel", ClusterGeneralModel.this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().close());
+            command.setIsCancel(true);
+            glusterSwiftModel.getCommands().add(command);
         }), cluster.getId());
     }
 
@@ -340,14 +323,11 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
                 Frontend.getInstance().runMultipleAction(VdcActionType.ManageGlusterService,
                         parametersList,
                         false,
-                        new IFrontendMultipleActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendMultipleActionAsyncResult result) {
-                                ManageGlusterSwiftModel innerGlusterSwiftModel = (ManageGlusterSwiftModel) result.getState();
-                                innerGlusterSwiftModel.stopProgress();
-                                cancel();
-                                updateGlusterDetails();
-                            }
+                        result -> {
+                            ManageGlusterSwiftModel innerGlusterSwiftModel = (ManageGlusterSwiftModel) result.getState();
+                            innerGlusterSwiftModel.stopProgress();
+                            cancel();
+                            updateGlusterDetails();
                         },
                         glusterSwiftModel);
             }
@@ -369,15 +349,12 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
                                 null,
                                 ServiceType.GLUSTER_SWIFT,
                                 action.name().toLowerCase());
-                Frontend.getInstance().runAction(VdcActionType.ManageGlusterService, parameters, new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        ManageGlusterSwiftModel innerGlusterSwiftModel = (ManageGlusterSwiftModel) result.getState();
-                        innerGlusterSwiftModel.stopProgress();
-                        if (result.getReturnValue().getSucceeded()) {
-                            cancel();
-                            updateGlusterDetails();
-                        }
+                Frontend.getInstance().runAction(VdcActionType.ManageGlusterService, parameters, result -> {
+                    ManageGlusterSwiftModel innerGlusterSwiftModel = (ManageGlusterSwiftModel) result.getState();
+                    innerGlusterSwiftModel.stopProgress();
+                    if (result.getReturnValue().getSucceeded()) {
+                        cancel();
+                        updateGlusterDetails();
                     }
                 }, glusterSwiftModel);
             }
@@ -423,25 +400,22 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
 
         hostsModel.startProgress();
 
-        AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(new AsyncQuery<>(new AsyncCallback<Map<String, String>>() {
-            @Override
-            public void onSuccess(Map<String, String> hostMap) {
-                if (hostMap == null || hostMap.isEmpty()) {
-                    hostsModel.setMessage(ConstantsManager.getInstance().getConstants().emptyNewGlusterHosts());
-                }
-                else {
-                    ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<>();
-                    for (Map.Entry<String, String> host : hostMap.entrySet()) {
-                        HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
-                        hostModel.setName(host.getKey());
-                        hostModel.setPassword("");//$NON-NLS-1$
-                        EntityModel<HostDetailModel> entityModel = new EntityModel<>(hostModel);
-                        list.add(entityModel);
-                    }
-                    hostsModel.getHosts().setItems(list);
-                }
-                hostsModel.stopProgress();
+        AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(new AsyncQuery<>(hostMap -> {
+            if (hostMap == null || hostMap.isEmpty()) {
+                hostsModel.setMessage(ConstantsManager.getInstance().getConstants().emptyNewGlusterHosts());
             }
+            else {
+                ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<>();
+                for (Map.Entry<String, String> host : hostMap.entrySet()) {
+                    HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
+                    hostModel.setName(host.getKey());
+                    hostModel.setPassword("");//$NON-NLS-1$
+                    EntityModel<HostDetailModel> entityModel = new EntityModel<>(hostModel);
+                    list.add(entityModel);
+                }
+                hostsModel.getHosts().setItems(list);
+            }
+            hostsModel.stopProgress();
         }), getEntity().getId(), true);
 
     }
@@ -485,22 +459,18 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         Frontend.getInstance().runMultipleAction(VdcActionType.AddVds,
                 parametersList,
                 false,
-                new IFrontendMultipleActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        hostsModel.stopProgress();
-                        boolean isAllValidatePassed = true;
-                        for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
-                            isAllValidatePassed = isAllValidatePassed && returnValueBase.isValid();
-                            if (!isAllValidatePassed) {
-                                break;
-                            }
+                result -> {
+                    hostsModel.stopProgress();
+                    boolean isAllValidatePassed = true;
+                    for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
+                        isAllValidatePassed = isAllValidatePassed && returnValueBase.isValid();
+                        if (!isAllValidatePassed) {
+                            break;
                         }
-                        if (isAllValidatePassed) {
-                            updateAlerts();
-                            cancel();
-                        }
+                    }
+                    if (isAllValidatePassed) {
+                        updateAlerts();
+                        cancel();
                     }
                 }, null);
     }
@@ -524,21 +494,18 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
 
         hostsModel.startProgress();
 
-        AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(new AsyncQuery<>(new AsyncCallback<Map<String, String>>() {
-            @Override
-            public void onSuccess(Map<String, String> hostMap) {
-                if (hostMap == null || hostMap.isEmpty()) {
-                    hostsModel.setMessage(ConstantsManager.getInstance().getConstants().emptyNewGlusterHosts());
-                }
-                else {
-                    ArrayList<EntityModel<String>> hostList = new ArrayList<>();
-                    for (String host : hostMap.keySet()) {
-                        hostList.add(new EntityModel<>(host));
-                    }
-                    hostsModel.getHosts().setItems(hostList);
-                }
-                hostsModel.stopProgress();
+        AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(new AsyncQuery<>(hostMap -> {
+            if (hostMap == null || hostMap.isEmpty()) {
+                hostsModel.setMessage(ConstantsManager.getInstance().getConstants().emptyNewGlusterHosts());
             }
+            else {
+                ArrayList<EntityModel<String>> hostList = new ArrayList<>();
+                for (String host : hostMap.keySet()) {
+                    hostList.add(new EntityModel<>(host));
+                }
+                hostsModel.getHosts().setItems(hostList);
+            }
+            hostsModel.stopProgress();
         }), getEntity().getId(), true);
     }
 
@@ -567,53 +534,44 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
 
 
     private void updateGlusterDetails() {
-        AsyncDataProvider.getInstance().getVolumeList(new AsyncQuery<>(new AsyncCallback<List<GlusterVolumeEntity>>() {
-            @Override
-            public void onSuccess(List<GlusterVolumeEntity> volumeList) {
-                int volumesUp = 0;
-                int volumesDown = 0;
-                for (GlusterVolumeEntity volumeEntity : volumeList) {
-                    if (volumeEntity.getStatus() == GlusterStatus.UP) {
-                        volumesUp++;
-                    }
-                    else {
-                        volumesDown++;
-                    }
+        AsyncDataProvider.getInstance().getVolumeList(new AsyncQuery<>(volumeList -> {
+            int volumesUp = 0;
+            int volumesDown = 0;
+            for (GlusterVolumeEntity volumeEntity : volumeList) {
+                if (volumeEntity.getStatus() == GlusterStatus.UP) {
+                    volumesUp++;
                 }
-                setNoOfVolumesTotal(volumeList.size());
-                setNoOfVolumesUp(volumesUp);
-                setNoOfVolumesDown(volumesDown);
+                else {
+                    volumesDown++;
+                }
             }
+            setNoOfVolumesTotal(volumeList.size());
+            setNoOfVolumesUp(volumesUp);
+            setNoOfVolumesDown(volumesDown);
         }), getEntity().getName());
 
         getManageGlusterSwiftCommand().setIsExecutionAllowed(getGlusterSwiftStatus() != GlusterServiceStatus.NOT_AVAILABLE);
 
-        AsyncDataProvider.getInstance().getClusterGlusterSwiftService(new AsyncQuery<>(new AsyncCallback<GlusterClusterService>() {
-            @Override
-            public void onSuccess(GlusterClusterService swiftService) {
-                if(swiftService != null) {
-                    setGlusterSwiftStatus(swiftService.getStatus());
-                }
-                else {
-                    setGlusterSwiftStatus(GlusterServiceStatus.UNKNOWN);
-                }
+        AsyncDataProvider.getInstance().getClusterGlusterSwiftService(new AsyncQuery<>(swiftService -> {
+            if(swiftService != null) {
+                setGlusterSwiftStatus(swiftService.getStatus());
+            }
+            else {
+                setGlusterSwiftStatus(GlusterServiceStatus.UNKNOWN);
             }
         }), getEntity().getId());
     }
 
     private void updateAlerts() {
         if (getEntity().supportsGlusterService()) {
-            AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(new AsyncQuery<>(new AsyncCallback<Map<String, String>>() {
-                @Override
-                public void onSuccess(Map<String, String> serverMap) {
-                    if (!serverMap.isEmpty()) {
-                        setHasNewGlusterHostsAlert(true);
-                        setHasAnyAlert(true);
-                    }
-                    else {
-                        setHasNewGlusterHostsAlert(false);
-                        setHasAnyAlert(false);
-                    }
+            AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(new AsyncQuery<>(serverMap -> {
+                if (!serverMap.isEmpty()) {
+                    setHasNewGlusterHostsAlert(true);
+                    setHasAnyAlert(true);
+                }
+                else {
+                    setHasNewGlusterHostsAlert(false);
+                    setHasAnyAlert(false);
                 }
             }), getEntity().getId(), false);
         }

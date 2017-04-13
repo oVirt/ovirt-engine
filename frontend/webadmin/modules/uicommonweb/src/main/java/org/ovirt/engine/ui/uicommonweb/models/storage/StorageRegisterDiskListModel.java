@@ -16,8 +16,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class StorageRegisterDiskListModel extends SearchableListModel<StorageDomain, Disk> {
     private UICommand registerCommand;
@@ -101,13 +99,7 @@ public class StorageRegisterDiskListModel extends SearchableListModel<StorageDom
             parametersList.add(parameters);
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RegisterCinderDisk, parametersList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                    }
-                },
-                this);
+        Frontend.getInstance().runMultipleAction(VdcActionType.RegisterCinderDisk, parametersList, result -> {}, this);
     }
 
     private void onRegister() {

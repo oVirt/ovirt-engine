@@ -1,11 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.aaa.AuthzGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -25,15 +23,11 @@ public class UserGroupListModel extends SearchableListModel<DbUser, UserGroup> {
 
         if (getEntity() != null) {
             final ArrayList<UserGroup> items = new ArrayList<>();
-            AsyncDataProvider.getInstance().getAuthzGroupsByUserId(new AsyncQuery<>(new AsyncCallback<List<AuthzGroup>>() {
-
-                @Override
-                public void onSuccess(List<AuthzGroup> returnValue) {
-                    for (AuthzGroup grp : returnValue) {
-                        items.add(createUserGroup(grp.getName(), grp.getNamespace(), grp.getAuthz()));
-                    }
-                    setItems(items);
+            AsyncDataProvider.getInstance().getAuthzGroupsByUserId(new AsyncQuery<>(returnValue -> {
+                for (AuthzGroup grp : returnValue) {
+                    items.add(createUserGroup(grp.getName(), grp.getNamespace(), grp.getAuthz()));
                 }
+                setItems(items);
             }), getEntity().getId());
         }
         else {

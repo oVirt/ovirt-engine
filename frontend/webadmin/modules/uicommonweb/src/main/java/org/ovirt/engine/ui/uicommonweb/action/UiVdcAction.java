@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 /**
@@ -73,21 +72,18 @@ public class UiVdcAction extends UiAction {
     }
 
     private IFrontendActionAsyncCallback createCallback() {
-        return new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                VdcReturnValueBase returnValue = result.getReturnValue();
-                if (returnValue == null || !returnValue.getSucceeded()) {
-                    if (!showErrorDialogOnFirstFailure && returnValue != null) {
-                        getActionFlowState().addFailure(actionType, returnValue);
-                    }
-
-                    // Reset the next action
-                    then(null);
+        return result -> {
+            VdcReturnValueBase returnValue = result.getReturnValue();
+            if (returnValue == null || !returnValue.getSucceeded()) {
+                if (!showErrorDialogOnFirstFailure && returnValue != null) {
+                    getActionFlowState().addFailure(actionType, returnValue);
                 }
 
-                runNextAction();
+                // Reset the next action
+                then(null);
             }
+
+            runNextAction();
         };
     }
 }

@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 /**
@@ -79,24 +78,21 @@ public class UiVdcMultipleAction extends UiAction {
     }
 
     private IFrontendMultipleActionAsyncCallback createCallback() {
-        return new IFrontendMultipleActionAsyncCallback() {
-            @Override
-            public void executed(FrontendMultipleActionAsyncResult result) {
-                boolean hasError = false;
+        return result -> {
+            boolean hasError = false;
 
-                for (VdcReturnValueBase singleResult : result.getReturnValue()) {
-                    if (!singleResult.isValid() || (waitForResult && !singleResult.getSucceeded())) {
-                        hasError = true;
-                        getActionFlowState().addFailure(actionType, singleResult);
-                    }
+            for (VdcReturnValueBase singleResult : result.getReturnValue()) {
+                if (!singleResult.isValid() || (waitForResult && !singleResult.getSucceeded())) {
+                    hasError = true;
+                    getActionFlowState().addFailure(actionType, singleResult);
                 }
-
-                if (hasError && !runNextInCaseOfError) {
-                    then(null);
-                }
-
-                runNextAction();
             }
+
+            if (hasError && !runNextInCaseOfError) {
+                then(null);
+            }
+
+            runNextAction();
         };
     }
 

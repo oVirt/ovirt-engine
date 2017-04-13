@@ -4,69 +4,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class NewHostModel extends HostModel {
 
     public static final int NewHostDefaultPort = 54321;
 
     public NewHostModel() {
-        getExternalHostName().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                hostName_SelectedItemChanged();
-            }
-        });
+        getExternalHostName().getSelectedItemChangedEvent().addListener((ev, sender, args) -> hostName_SelectedItemChanged());
 
         getExternalHostName().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
-        getExternalDiscoveredHosts().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                discoverHostName_SelectedItemChanged();
-            }
-        });
+        getExternalDiscoveredHosts().getSelectedItemChangedEvent().addListener((ev, sender, args) -> discoverHostName_SelectedItemChanged());
 
         getExternalDiscoveredHosts().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
 
         getExternalHostProviderEnabled().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
-        getProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                // While load don't let user to change provider
-                getProviders().setIsChangeable(false);
-                providers_SelectedItemChanged();
-                updateHostList();
-            }
+        getProviders().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            // While load don't let user to change provider
+            getProviders().setIsChangeable(false);
+            providers_SelectedItemChanged();
+            updateHostList();
         });
 
-        getExternalHostGroups().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                externalHostGroups_SelectedItemChanged();
-            }
-        });
+        getExternalHostGroups().getSelectedItemChangedEvent().addListener((ev, sender, args) -> externalHostGroups_SelectedItemChanged());
 
-        getIsDiscoveredHosts().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (Boolean.TRUE.equals(getIsDiscoveredHosts().getEntity())) {
-                    discoverHostName_SelectedItemChanged();
-                } else if (Boolean.FALSE.equals(getIsDiscoveredHosts().getEntity())) {
-                    hostName_SelectedItemChanged();
-                }
+        getIsDiscoveredHosts().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (Boolean.TRUE.equals(getIsDiscoveredHosts().getEntity())) {
+                discoverHostName_SelectedItemChanged();
+            } else if (Boolean.FALSE.equals(getIsDiscoveredHosts().getEntity())) {
+                hostName_SelectedItemChanged();
             }
         });
 
@@ -123,56 +97,41 @@ public class NewHostModel extends HostModel {
             return;
         }
 
-        AsyncDataProvider.getInstance().getExternalProviderHostList(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
-            @Override
-            public void onSuccess(List<VDS> hosts) {
-                ListModel<VDS> hostNameListModel = getExternalHostName();
-                hostNameListModel.setItems(hosts);
-                hostNameListModel.setIsChangeable(true);
-                setEnableSearchHost(true);
-                getProviders().setIsChangeable(true);
-            }
+        AsyncDataProvider.getInstance().getExternalProviderHostList(new AsyncQuery<>(hosts -> {
+            ListModel<VDS> hostNameListModel = getExternalHostName();
+            hostNameListModel.setItems(hosts);
+            hostNameListModel.setIsChangeable(true);
+            setEnableSearchHost(true);
+            getProviders().setIsChangeable(true);
         }), provider.getId(), true, getProviderSearchFilter().getEntity());
 
-        AsyncDataProvider.getInstance().getExternalProviderHostGroupList(new AsyncQuery<>(new AsyncCallback<List<ExternalHostGroup>>() {
-            @Override
-            public void onSuccess(List<ExternalHostGroup> hostGroups) {
-                ListModel externalHostGroupsListModel = getExternalHostGroups();
-                externalHostGroupsListModel.setItems(hostGroups);
-                externalHostGroupsListModel.setIsChangeable(true);
+        AsyncDataProvider.getInstance().getExternalProviderHostGroupList(new AsyncQuery<>(hostGroups -> {
+            ListModel externalHostGroupsListModel = getExternalHostGroups();
+            externalHostGroupsListModel.setItems(hostGroups);
+            externalHostGroupsListModel.setIsChangeable(true);
 
-                AsyncDataProvider.getInstance().getExternalProviderDiscoveredHostList(new AsyncQuery<>(new AsyncCallback<List<ExternalDiscoveredHost>>() {
-                    @Override
-                    public void onSuccess(List<ExternalDiscoveredHost> hosts) {
-                        ListModel externalDiscoveredHostsListModel = getExternalDiscoveredHosts();
-                        externalDiscoveredHostsListModel.setItems(hosts);
-                        externalDiscoveredHostsListModel.setIsChangeable(true);
-                    }
-                }), getProviders().getSelectedItem());
-            }
+            AsyncDataProvider.getInstance().getExternalProviderDiscoveredHostList(new AsyncQuery<>(hosts -> {
+                ListModel externalDiscoveredHostsListModel = getExternalDiscoveredHosts();
+                externalDiscoveredHostsListModel.setItems(hosts);
+                externalDiscoveredHostsListModel.setIsChangeable(true);
+            }), getProviders().getSelectedItem());
         }), provider);
 
-        AsyncDataProvider.getInstance().getExternalProviderComputeResourceList(new AsyncQuery<>(new AsyncCallback<List<ExternalComputeResource>>() {
-            @Override
-            public void onSuccess(List<ExternalComputeResource> computeResources) {
-                ListModel externalComputeResourceListModel = getExternalComputeResource();
-                externalComputeResourceListModel.setItems(computeResources);
-                externalComputeResourceListModel.setIsChangeable(true);
-            }
+        AsyncDataProvider.getInstance().getExternalProviderComputeResourceList(new AsyncQuery<>(computeResources -> {
+            ListModel externalComputeResourceListModel = getExternalComputeResource();
+            externalComputeResourceListModel.setItems(computeResources);
+            externalComputeResourceListModel.setIsChangeable(true);
         }), provider);
     }
 
     private void updateDiscoveredHostList(String searchFilter) {
         Provider provider = getProviders().getSelectedItem();
         if (provider != null ) {
-            AsyncDataProvider.getInstance().getExternalProviderHostList(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
-                @Override
-                public void onSuccess(List<VDS> hosts) {
-                    ListModel<VDS> hostNameListModel = getExternalHostName();
-                    hostNameListModel.setItems(hosts);
-                    hostNameListModel.setIsChangeable(true);
-                    setEnableSearchHost(true);
-                }
+            AsyncDataProvider.getInstance().getExternalProviderHostList(new AsyncQuery<>(hosts -> {
+                ListModel<VDS> hostNameListModel = getExternalHostName();
+                hostNameListModel.setItems(hosts);
+                hostNameListModel.setIsChangeable(true);
+                setEnableSearchHost(true);
             }), provider.getId(), true, searchFilter);
         } else {
             getExternalHostName().setItems(null);

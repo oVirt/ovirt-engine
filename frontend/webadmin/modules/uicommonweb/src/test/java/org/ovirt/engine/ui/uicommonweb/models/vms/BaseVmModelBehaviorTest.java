@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
@@ -76,12 +75,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
     public void testBuildModel() {
         VmModelBehaviorBase behavior = getBehavior();
         final UnitVmModel model = initModel(behavior);
-        behavior.buildModel(getVm(), new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
-            @Override
-            public void finished(VmBase source, UnitVmModel destination) {
-                verifyBuiltModel(model);
-            }
-        });
+        behavior.buildModel(getVm(), (source, destination) -> verifyBuiltModel(model));
     }
 
     protected abstract VmBase getVm();

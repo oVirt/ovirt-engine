@@ -222,14 +222,10 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
      * Create and run the query for all data centers.
      */
     private void doDataCenterSearch() {
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(List<StoragePool> result) {
-                setDataCenters(result);
-                //These need to be here so we can get data center ids for use in the queries.
-                doNetworksSearch();
-            }
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(result -> {
+            setDataCenters(result);
+            //These need to be here so we can get data center ids for use in the queries.
+            doNetworksSearch();
         }), false);
     }
 
@@ -237,20 +233,16 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
      * Create and run the query for all clusters.
      */
     private void doClusterSearch() {
-        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(List<Cluster> clusters) {
-                setClusterMap(new HashMap<Guid, ArrayList<Cluster>>());
-                for (Cluster cluster : clusters) {
-                    if (cluster.getStoragePoolId() != null) {
-                        Guid key = cluster.getStoragePoolId();
-                        if (!getClusterMap().containsKey(key)) {
-                            getClusterMap().put(key, new ArrayList<Cluster>());
-                        }
-                        List<Cluster> list = getClusterMap().get(key);
-                        list.add(cluster);
+        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>((AsyncCallback<List<Cluster>>) clusters -> {
+            setClusterMap(new HashMap<Guid, ArrayList<Cluster>>());
+            for (Cluster cluster : clusters) {
+                if (cluster.getStoragePoolId() != null) {
+                    Guid key = cluster.getStoragePoolId();
+                    if (!getClusterMap().containsKey(key)) {
+                        getClusterMap().put(key, new ArrayList<Cluster>());
                     }
+                    List<Cluster> list = getClusterMap().get(key);
+                    list.add(cluster);
                 }
             }
         }), false);
@@ -260,19 +252,15 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
      * Create and run the query for all hosts.
      */
     private void doHostSearch() {
-        AsyncDataProvider.getInstance().getHostList(new AsyncQuery<>(new AsyncCallback<List<VDS>>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(List<VDS> hosts) {
-                setHostMap(new HashMap<Guid, ArrayList<VDS>>());
-                for (VDS host : hosts) {
-                    Guid key = host.getClusterId();
-                    if (!getHostMap().containsKey(key)) {
-                        getHostMap().put(key, new ArrayList<VDS>());
-                    }
-                    List<VDS> list = getHostMap().get(key);
-                    list.add(host);
+        AsyncDataProvider.getInstance().getHostList(new AsyncQuery<>(hosts -> {
+            setHostMap(new HashMap<Guid, ArrayList<VDS>>());
+            for (VDS host : hosts) {
+                Guid key = host.getClusterId();
+                if (!getHostMap().containsKey(key)) {
+                    getHostMap().put(key, new ArrayList<VDS>());
                 }
+                List<VDS> list = getHostMap().get(key);
+                list.add(host);
             }
         }), false);
     }
@@ -281,20 +269,16 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
      * Create and run the query for all volumes.
      */
     private void doVolumeSearch() {
-        AsyncQuery<List<GlusterVolumeEntity>> volumeQuery = new AsyncQuery<>(new AsyncCallback<List<GlusterVolumeEntity>>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(List<GlusterVolumeEntity> volumes) {
-                setVolumeMap(new HashMap<Guid, ArrayList<GlusterVolumeEntity>>());
+        AsyncQuery<List<GlusterVolumeEntity>> volumeQuery = new AsyncQuery<>(volumes -> {
+            setVolumeMap(new HashMap<Guid, ArrayList<GlusterVolumeEntity>>());
 
-                for (GlusterVolumeEntity volume : volumes) {
-                    Guid key = volume.getClusterId();
-                    if (!getVolumeMap().containsKey(key)) {
-                        getVolumeMap().put(key, new ArrayList<GlusterVolumeEntity>());
-                    }
-                    List<GlusterVolumeEntity> list = getVolumeMap().get(key);
-                    list.add(volume);
+            for (GlusterVolumeEntity volume : volumes) {
+                Guid key = volume.getClusterId();
+                if (!getVolumeMap().containsKey(key)) {
+                    getVolumeMap().put(key, new ArrayList<GlusterVolumeEntity>());
                 }
+                List<GlusterVolumeEntity> list = getVolumeMap().get(key);
+                list.add(volume);
             }
         });
         AsyncDataProvider.getInstance().getVolumeList(volumeQuery, null, false);
@@ -314,29 +298,24 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
         }
 
         Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamList,
-                new IFrontendMultipleQueryAsyncCallback() {
+                result -> {
 
-            @SuppressWarnings("unchecked")
-            @Override
-            public void executed(FrontendMultipleQueryAsyncResult result) {
+                    setNetworkMap(new HashMap<Guid, List<Network>>());
 
-                setNetworkMap(new HashMap<Guid, List<Network>>());
+                    List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
+                    List<Network> dcNetworkList;
+                    Guid dcId;
 
-                List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
-                List<Network> dcNetworkList;
-                Guid dcId;
-
-                for (int i = 0; i < returnValueList.size(); i++) {
-                    VdcQueryReturnValue returnValue = returnValueList.get(i);
-                    if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
-                        dcNetworkList = returnValue.getReturnValue();
-                        dcId = getDataCenters().get(i).getId();
-                        getNetworkMap().put(dcId, dcNetworkList);
+                    for (int i = 0; i < returnValueList.size(); i++) {
+                        VdcQueryReturnValue returnValue = returnValueList.get(i);
+                        if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
+                            dcNetworkList = returnValue.getReturnValue();
+                            dcId = getDataCenters().get(i).getId();
+                            getNetworkMap().put(dcId, dcNetworkList);
+                        }
                     }
-                }
-                doStorageSearch();
-            }
-        });
+                    doStorageSearch();
+                });
     }
 
     /**
@@ -366,14 +345,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
      * Create and run the query for all providers.
      */
     private void doProviderSearch() {
-        AsyncDataProvider.getInstance().getAllProviders(new AsyncQuery<>(new AsyncCallback<List<Provider<?>>>() {
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(List<Provider<?>> returnValue) {
-                setProviders((List) returnValue);
-            }
-        }), false);
+        AsyncDataProvider.getInstance().getAllProviders(new AsyncQuery<>(returnValue -> setProviders((List) returnValue)), false);
     }
 
     @Override

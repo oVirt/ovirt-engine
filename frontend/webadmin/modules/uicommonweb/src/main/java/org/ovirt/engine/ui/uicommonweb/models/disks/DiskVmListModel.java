@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -43,24 +42,21 @@ public class DiskVmListModel extends SearchableListModel<Disk, VM> {
         IdQueryParameters getVmsByDiskGuidParameters = new IdQueryParameters(disk.getId());
         getVmsByDiskGuidParameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByDiskGuid, getVmsByDiskGuidParameters, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
-                diskVmMap = returnValue.getReturnValue();
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByDiskGuid, getVmsByDiskGuidParameters, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+            diskVmMap = returnValue.getReturnValue();
 
-                ArrayList<VM> vmList = new ArrayList<>();
-                ArrayList<VM> pluggedList = (ArrayList<VM>) diskVmMap.get(true);
-                ArrayList<VM> unPluggedList = (ArrayList<VM>) diskVmMap.get(false);
+            ArrayList<VM> vmList = new ArrayList<>();
+            ArrayList<VM> pluggedList = (ArrayList<VM>) diskVmMap.get(true);
+            ArrayList<VM> unPluggedList = (ArrayList<VM>) diskVmMap.get(false);
 
-                if (pluggedList != null) {
-                    vmList.addAll(pluggedList);
-                }
-                if (unPluggedList != null) {
-                    vmList.addAll(unPluggedList);
-                }
-
-                setItems(vmList);
+            if (pluggedList != null) {
+                vmList.addAll(pluggedList);
             }
+            if (unPluggedList != null) {
+                vmList.addAll(unPluggedList);
+            }
+
+            setItems(vmList);
         }));
 
         setIsQueryFirstTime(false);

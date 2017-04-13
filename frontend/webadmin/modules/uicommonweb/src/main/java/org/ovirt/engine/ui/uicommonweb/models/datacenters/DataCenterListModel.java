@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
@@ -55,10 +54,6 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetw
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -212,18 +207,15 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         }
 
         AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<>(
-                new AsyncCallback<StoragePool>() {
-                    @Override
-                    public void onSuccess(StoragePool returnValue) {
-                        DataCenterGuideModel model = (DataCenterGuideModel) getWindow();
-                        model.setEntity(returnValue);
+                returnValue -> {
+                    DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) getWindow();
+                    dataCenterGuideModel.setEntity(returnValue);
 
-                        UICommand tempVar = new UICommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
-                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
-                        tempVar.setIsDefault(true);
-                        tempVar.setIsCancel(true);
-                        model.getCommands().add(tempVar);
-                    }
+                    UICommand tempVar = new UICommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
+                    tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
+                    tempVar.setIsDefault(true);
+                    tempVar.setIsCancel(true);
+                    dataCenterGuideModel.getCommands().add(tempVar);
                 }), (Guid) getGuideContext());
     }
 
@@ -389,46 +381,43 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
 
         windowModel.startProgress();
 
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-            @Override
-            public void onSuccess(List<StorageDomain> storageDomainList) {
-                windowModel.stopProgress();
-                List<EntityModel> models = new ArrayList<>();
-                for (StorageDomain a : storageDomainList) {
-                    if (a.getStorageDomainType() == StorageDomainType.Data
-                            && (a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)) {
-                        EntityModel tempVar = new EntityModel();
-                        tempVar.setEntity(a);
-                        models.add(tempVar);
-                    }
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(storageDomainList -> {
+            windowModel.stopProgress();
+            List<EntityModel> models = new ArrayList<>();
+            for (StorageDomain a : storageDomainList) {
+                if (a.getStorageDomainType() == StorageDomainType.Data
+                        && (a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)) {
+                    EntityModel tempVar = new EntityModel();
+                    tempVar.setEntity(a);
+                    models.add(tempVar);
                 }
-                windowModel.setItems(models);
-
-                if (models.size() > 0) {
-                    EntityModel entityModel = models.size() != 0 ? models.get(0) : null;
-                    if (entityModel != null) {
-                        entityModel.setIsSelected(true);
-                    }
-                }
-
-                if (models.isEmpty()) {
-                    windowModel.setMessage(ConstantsManager.getInstance()
-                                                   .getConstants()
-                                                   .thereAreNoCompatibleStorageDomainsAttachThisDcMsg());
-                    windowModel.getLatch().setIsAvailable(false);
-                    UICommand tempVar2 = new UICommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
-                    tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
-                    tempVar2.setIsDefault(true);
-                    tempVar2.setIsCancel(true);
-                    windowModel.getCommands().add(tempVar2);
-                } else {
-                    UICommand tempVar3 = UICommand.createDefaultOkUiCommand("OnRecover", DataCenterListModel.this); //$NON-NLS-1$
-                    windowModel.getCommands().add(tempVar3);
-                    UICommand tempVar4 = UICommand.createCancelUiCommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
-                    windowModel.getCommands().add(tempVar4);
-                }
-
             }
+            windowModel.setItems(models);
+
+            if (models.size() > 0) {
+                EntityModel entityModel = models.size() != 0 ? models.get(0) : null;
+                if (entityModel != null) {
+                    entityModel.setIsSelected(true);
+                }
+            }
+
+            if (models.isEmpty()) {
+                windowModel.setMessage(ConstantsManager.getInstance()
+                                               .getConstants()
+                                               .thereAreNoCompatibleStorageDomainsAttachThisDcMsg());
+                windowModel.getLatch().setIsAvailable(false);
+                UICommand tempVar2 = new UICommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
+                tempVar2.setIsDefault(true);
+                tempVar2.setIsCancel(true);
+                windowModel.getCommands().add(tempVar2);
+            } else {
+                UICommand tempVar3 = UICommand.createDefaultOkUiCommand("OnRecover", DataCenterListModel.this); //$NON-NLS-1$
+                windowModel.getCommands().add(tempVar3);
+                UICommand tempVar4 = UICommand.createCancelUiCommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
+                windowModel.getCommands().add(tempVar4);
+            }
+
         }));
     }
 
@@ -439,47 +428,41 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             return;
         }
 
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(new AsyncCallback<List<StorageDomain>>() {
-            @Override
-            public void onSuccess(List<StorageDomain> storageDomainList) {
-                for (StorageDomain a : storageDomainList) {
-                    if (a.getStorageDomainType() == StorageDomainType.Master) {
-                        break;
-                    }
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(storageDomainList -> {
+            for (StorageDomain a : storageDomainList) {
+                if (a.getStorageDomainType() == StorageDomainType.Master) {
+                    break;
                 }
-                List<StorageDomain> items = new ArrayList<>();
-                for (Object item : windowModel.getItems()) {
-                    EntityModel<StorageDomain> a = (EntityModel<StorageDomain>) item;
-                    if (a.getIsSelected()) {
-                        items.add(a.getEntity());
-                    }
+            }
+            List<StorageDomain> items = new ArrayList<>();
+            for (Object item : windowModel.getItems()) {
+                EntityModel<StorageDomain> a = (EntityModel<StorageDomain>) item;
+                if (a.getIsSelected()) {
+                    items.add(a.getEntity());
                 }
-                if (items.size() > 0) {
-                    if (windowModel.getProgress() != null) {
-                        return;
-                    }
-                    ArrayList<VdcActionParametersBase> parameters =
-                            new ArrayList<>();
-                    for (StorageDomain a : items) {
-                        parameters.add(new ReconstructMasterParameters(getSelectedItem().getId(),
-                                a.getId()));
-                    }
-                    windowModel.startProgress();
-                    Frontend.getInstance().runMultipleAction(VdcActionType.RecoveryStoragePool, parameters,
-                            new IFrontendMultipleActionAsyncCallback() {
-                                @Override
-                                public void executed(FrontendMultipleActionAsyncResult result) {
+            }
+            if (items.size() > 0) {
+                if (windowModel.getProgress() != null) {
+                    return;
+                }
+                ArrayList<VdcActionParametersBase> parameters =
+                        new ArrayList<>();
+                for (StorageDomain a : items) {
+                    parameters.add(new ReconstructMasterParameters(getSelectedItem().getId(),
+                            a.getId()));
+                }
+                windowModel.startProgress();
+                Frontend.getInstance().runMultipleAction(VdcActionType.RecoveryStoragePool, parameters,
+                        result -> {
 
-                                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                                    localModel.stopProgress();
-                                    cancel();
+                            ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                            localModel.stopProgress();
+                            cancel();
 
-                                }
-                            }, windowModel);
-                }
-                else {
-                    cancel();
-                }
+                        }, windowModel);
+            }
+            else {
+                cancel();
             }
         }),
                 getSelectedItem().getId());
@@ -500,15 +483,12 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveStoragePool, parameters,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                result -> {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
 
-                    }
                 }, model);
     }
 
@@ -564,38 +544,36 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             startProgress();
 
             IdQueryParameters params = new IdQueryParameters(sp.getId());
-            Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, params, new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                @Override
-                public void onSuccess(VdcQueryReturnValue returnValue) {
-                    List<StorageDomain> storages = returnValue.getReturnValue();
+            Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, params, new AsyncQuery<VdcQueryReturnValue>(
+                    returnValue -> {
+                        List<StorageDomain> storages = returnValue.getReturnValue();
 
-                    StorageDomain storage = null;
-                    for (StorageDomain sd : storages) {
-                        if (sd.getStorageDomainType().isDataDomain()) {
-                            storage = sd;
+                        StorageDomain storage = null;
+                        for (StorageDomain sd : storages) {
+                            if (sd.getStorageDomainType().isDataDomain()) {
+                                storage = sd;
+                            }
                         }
-                    }
 
-                    StorageFormatType newFormat = null;
-                    StorageFormatType oldFormat = null;
-                    if (storage != null) {
-                        newFormat = VersionStorageFormatUtil.getForVersion(dcModel.getVersion().getSelectedItem());
-                        oldFormat = VersionStorageFormatUtil.getForVersion(sp.getCompatibilityVersion());
-                    }
+                        StorageFormatType newFormat = null;
+                        StorageFormatType oldFormat = null;
+                        if (storage != null) {
+                            newFormat = VersionStorageFormatUtil.getForVersion(dcModel.getVersion().getSelectedItem());
+                            oldFormat = VersionStorageFormatUtil.getForVersion(sp.getCompatibilityVersion());
+                        }
 
-                    if (newFormat == oldFormat) {
-                        confirmModel.setMessage(ConstantsManager.getInstance()
-                                .getConstants()
-                                .youAreAboutChangeDcCompatibilityVersionMsg());
-                    } else {
-                        Version v = VersionStorageFormatUtil.getEarliestVersionSupported(newFormat);
-                        confirmModel.setMessage(ConstantsManager.getInstance()
-                                .getMessages()
-                                .youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg(v.getValue()));
-                    }
-                    stopProgress();
-                }
-            }));
+                        if (newFormat == oldFormat) {
+                            confirmModel.setMessage(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .youAreAboutChangeDcCompatibilityVersionMsg());
+                        } else {
+                            Version v = VersionStorageFormatUtil.getEarliestVersionSupported(newFormat);
+                            confirmModel.setMessage(ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg(v.getValue()));
+                        }
+                        stopProgress();
+                    }));
 
             UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveInternal", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar);
@@ -616,42 +594,33 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
     private void validateDataCenterName(final DataCenterModel dataCenter) {
         Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolByDatacenterName,
                 new NameQueryParameters(dataCenter.getName().getEntity()),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        if (!((Collection<?>)returnValue.getReturnValue()).isEmpty()) {
-                            dataCenter.getName().getInvalidityReasons().add(
-                                    ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
-                            dataCenter.getName().setIsValid(false);
-                            dataCenter.setValidTab(TabName.GENERAL_TAB, false);
-                        } else {
-                            dataCenter.getName().getInvalidityReasons().clear();
-                            dataCenter.getName().setIsValid(true);
-                            dataCenter.setValidTab(TabName.GENERAL_TAB, true);
-                            onSaveInternal();
-                        }
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    if (!((Collection<?>)returnValue.getReturnValue()).isEmpty()) {
+                        dataCenter.getName().getInvalidityReasons().add(
+                                ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
+                        dataCenter.getName().setIsValid(false);
+                        dataCenter.setValidTab(TabName.GENERAL_TAB, false);
+                    } else {
+                        dataCenter.getName().getInvalidityReasons().clear();
+                        dataCenter.getName().setIsValid(true);
+                        dataCenter.setValidTab(TabName.GENERAL_TAB, true);
+                        onSaveInternal();
                     }
                 }
-        ));
+                ));
     }
 
     private void checkForQuotaInDC(StoragePool storage_pool, final ICommandTarget commandTarget) {
         IdQueryParameters parameters = new IdQueryParameters(storage_pool.getId());
         Frontend.getInstance().runQuery(VdcQueryType.GetQuotaByStoragePoolId,
                 parameters,
-                new AsyncQuery<>(
-                        new AsyncCallback<VdcQueryReturnValue>() {
-
-                            @Override
-                            public void onSuccess(VdcQueryReturnValue returnValue) {
-                                if (((ArrayList<Quota>) returnValue.getReturnValue()).size() == 0) {
-                                    promptNoQuotaInDCMessage();
-                                } else {
-                                    onSaveInternal();
-                                }
-                            }
-                        }));
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    if (((ArrayList<Quota>) returnValue.getReturnValue()).size() == 0) {
+                        promptNoQuotaInDCMessage();
+                    } else {
+                        onSaveInternal();
+                    }
+                }));
     }
 
     private void promptNoQuotaInDCMessage() {
@@ -701,13 +670,10 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             // When adding a data center use sync action to be able present a Guide Me dialog afterwards.
             Frontend.getInstance().runAction(VdcActionType.AddEmptyStoragePool,
                 new StoragePoolManagementParameter(dataCenter),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
+                    result -> {
                         DataCenterListModel localModel = (DataCenterListModel) result.getState();
                         localModel.postOnSaveInternal(result.getReturnValue());
-                    }
-                },
+                    },
                 this);
         } else {
             // Update the Quota at the corresponding DC object at the system tree.
@@ -720,13 +686,10 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(
                     new StoragePoolManagementParameter(dataCenter))
                 ),
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                    result -> {
                         DataCenterListModel localModel = (DataCenterListModel) result.getState();
                         localModel.postOnSaveInternal(result.getReturnValue().get(0));
-                    }
-                },
+                    },
                 this);
         }
     }
@@ -829,21 +792,17 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
     }
 
     private void updateIscsiBondListAvailability(StoragePool storagePool) {
-        AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery<>(new AsyncCallback<List<StorageServerConnections>>() {
+        AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery<>(connections -> {
+            boolean hasIscsiStorage = false;
 
-            @Override
-            public void onSuccess(List<StorageServerConnections> connections) {
-                boolean hasIscsiStorage = false;
-
-                for (StorageServerConnections connection : connections) {
-                    if (connection.getStorageType() == StorageType.ISCSI) {
-                        hasIscsiStorage = true;
-                        break;
-                    }
+            for (StorageServerConnections connection : connections) {
+                if (connection.getStorageType() == StorageType.ISCSI) {
+                    hasIscsiStorage = true;
+                    break;
                 }
-
-                iscsiBondListModel.setIsAvailable(hasIscsiStorage);
             }
+
+            iscsiBondListModel.setIsAvailable(hasIscsiStorage);
         }), storagePool.getId(), StorageType.ISCSI);
     }
 

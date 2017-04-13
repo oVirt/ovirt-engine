@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -23,7 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class NewNetworkModel extends NetworkModel {
@@ -57,12 +55,7 @@ public class NewNetworkModel extends NetworkModel {
         super.syncWithBackend();
         // Get dc- cluster list
         AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(
-                new AsyncCallback<List<Cluster>>() {
-                    @Override
-                    public void onSuccess(List<Cluster> clusters) {
-                        onGetClusterList(clusters);
-                    }
-                }), getSelectedDc().getId());
+                clusters -> onGetClusterList(clusters)), getSelectedDc().getId());
     }
 
     protected void onGetClusterList(List<Cluster> clusterList) {
@@ -142,21 +135,11 @@ public class NewNetworkModel extends NetworkModel {
     }
 
     private IFrontendActionAsyncCallback addNetworkCallback() {
-        return new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result1) {
-                postAddNetwork(result1.getReturnValue());
-            }
-        };
+        return result -> postAddNetwork(result.getReturnValue());
     }
 
     private IFrontendActionAsyncCallback addNetworkOnProviderCallback() {
-        return new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result1) {
-                postAddNetworkOnProvider(result1.getReturnValue());
-            }
-        };
+        return result -> postAddNetworkOnProvider(result.getReturnValue());
     }
 
     private void postAddNetwork(VdcReturnValueBase retVal) {

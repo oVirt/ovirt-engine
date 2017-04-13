@@ -42,9 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
@@ -84,47 +82,38 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
         // get cluster
         getCluster().setItems(null);
-        AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-                   @Override
-                   public void onSuccess(List<Cluster> clusters) {
-                       ArchitectureType targetArch = getTargetArchitecture();
+        AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(clusters -> {
+            ArchitectureType targetArch = getTargetArchitecture();
 
-                       if (targetArch != null) {
-                           List<Cluster> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters,
-                                   targetArch);
-                           getCluster().setItems(filteredClusters);
-                           getCluster().setSelectedItem(Linq.firstOrNull(filteredClusters));
-                       } else {
-                           getCluster().setItems(clusters);
-                           getCluster().setSelectedItem(Linq.firstOrNull(clusters));
-                       }
+            if (targetArch != null) {
+                List<Cluster> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters,
+                        targetArch);
+                getCluster().setItems(filteredClusters);
+                getCluster().setSelectedItem(Linq.firstOrNull(filteredClusters));
+            } else {
+                getCluster().setItems(clusters);
+                getCluster().setSelectedItem(Linq.firstOrNull(clusters));
+            }
 
-                       // get storage domains
-                       AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
-                                       new AsyncCallback<List<StorageDomain>>() {
+            // get storage domains
+            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
+                            storageDomains -> {
+                                // filter storage domains
+                                filteredStorageDomains = new ArrayList<>();
+                                for (StorageDomain domain : storageDomains) {
+                                    if (Linq.isDataActiveStorageDomain(domain)) {
+                                        filteredStorageDomains.add(domain);
+                                    }
+                                }
 
-                                           @Override
-                                           public void onSuccess(List<StorageDomain> storageDomains) {
-                                               // filter storage domains
-                                               filteredStorageDomains = new ArrayList<>();
-                                               for (StorageDomain domain : storageDomains) {
-                                                   if (Linq.isDataActiveStorageDomain(domain)) {
-                                                       filteredStorageDomains.add(domain);
-                                                   }
-                                               }
-
-                                               if (getClusterQuota().getIsAvailable()) {
-                                                   initQuotaForStorageDomains();
-                                               } else {
-                                                   initDisksStorageDomainsList();
-                                               }
-                                           }
-
-                                       }),
-                               getStoragePool().getId());
-                   }
-
-               }), dataCenter.getId(), true, false);
+                                if (getClusterQuota().getIsAvailable()) {
+                                    initQuotaForStorageDomains();
+                                } else {
+                                    initDisksStorageDomainsList();
+                                }
+                            }),
+                    getStoragePool().getId());
+        }), dataCenter.getId(), true, false);
     }
 
     private void initQuotaForStorageDomains() {
@@ -138,31 +127,28 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         storageQuotaMap = new HashMap<>();
         Frontend.getInstance().runMultipleQueries(queryTypeList,
                 queryParamsList,
-                new IFrontendMultipleQueryAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleQueryAsyncResult result) {
-                        List<VdcQueryReturnValue> returnValueList =
-                                result.getReturnValues();
-                        boolean noQuota = true;
-                        for (int i = 0; i < filteredStorageDomains.size(); i++) {
-                            ArrayList<Quota> quotaList = returnValueList.get(i)
-                                    .getReturnValue();
-                            if (noQuota
-                                    && !quotaList.isEmpty()) {
-                                noQuota = false;
-                            }
-                            storageQuotaMap.put(
-                                    filteredStorageDomains.get(i).getId(),
-                                    quotaList);
-                        }
+                result -> {
+                    List<VdcQueryReturnValue> returnValueList =
+                            result.getReturnValues();
+                    boolean noQuota = true;
+                    for (int i = 0; i < filteredStorageDomains.size(); i++) {
+                        ArrayList<Quota> quotaList = returnValueList.get(i)
+                                .getReturnValue();
                         if (noQuota
-                                && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
-                            showCloseMessage(ConstantsManager.getInstance()
-                                    .getConstants()
-                                    .missingQuotaStorageEnforceMode());
+                                && !quotaList.isEmpty()) {
+                            noQuota = false;
                         }
-                        initDisksStorageDomainsList();
+                        storageQuotaMap.put(
+                                filteredStorageDomains.get(i).getId(),
+                                quotaList);
                     }
+                    if (noQuota
+                            && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
+                        showCloseMessage(ConstantsManager.getInstance()
+                                .getConstants()
+                                .missingQuotaStorageEnforceMode());
+                    }
+                    initDisksStorageDomainsList();
                 });
     }
 
@@ -219,36 +205,33 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                 queryTypeList.add(VdcQueryType.GetVmTemplatesDisks);
                 queryParamsList.add(new IdQueryParameters(templateId));
             }
-            Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
-                @Override
-                public void executed(FrontendMultipleQueryAsyncResult result) {
-                    List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
-                    Map<Guid, ArrayList<StorageDomain>> templateDisksStorageDomains =
-                            new HashMap<>();
-                    for (VdcQueryReturnValue returnValue : returnValueList) {
-                        for (DiskImage diskImage : (ArrayList<DiskImage>) returnValue.getReturnValue()) {
-                            templateDisksStorageDomains.put(diskImage.getImageId(),
-                                    getStorageDomainsByIds(diskImage.getStorageIds()));
-                        }
+            Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, result -> {
+                List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
+                Map<Guid, ArrayList<StorageDomain>> templateDisksStorageDomains =
+                        new HashMap<>();
+                for (VdcQueryReturnValue returnValue : returnValueList) {
+                    for (DiskImage diskImage : (ArrayList<DiskImage>) returnValue.getReturnValue()) {
+                        templateDisksStorageDomains.put(diskImage.getImageId(),
+                                getStorageDomainsByIds(diskImage.getStorageIds()));
                     }
+                }
 
-                    for (Entry<Guid, List<Disk>> guidListEntry : templateDiskMap.entrySet()) {
-                        for (Disk disk : guidListEntry.getValue()) {
-                            DiskImage diskImage = (DiskImage) disk;
-                            if (diskImage.getParentId() != null && !Guid.Empty.equals(diskImage.getParentId())) {
-                                ArrayList<StorageDomain> storageDomains =
-                                        templateDisksStorageDomains.get(diskImage.getParentId());
-                                if (storageDomains == null) {
-                                    missingTemplateDiskMap.put(guidListEntry.getKey(), guidListEntry.getValue());
-                                }
+                for (Entry<Guid, List<Disk>> guidListEntry : templateDiskMap.entrySet()) {
+                    for (Disk disk : guidListEntry.getValue()) {
+                        DiskImage diskImage = (DiskImage) disk;
+                        if (diskImage.getParentId() != null && !Guid.Empty.equals(diskImage.getParentId())) {
+                            ArrayList<StorageDomain> storageDomains =
+                                    templateDisksStorageDomains.get(diskImage.getParentId());
+                            if (storageDomains == null) {
+                                missingTemplateDiskMap.put(guidListEntry.getKey(), guidListEntry.getValue());
                             }
                         }
                     }
-                    if (!missingTemplateDiskMap.keySet().isEmpty()) {
-                        getTemplatesFromExportDomain();
-                    } else {
-                        postInitDisks();
-                    }
+                }
+                if (!missingTemplateDiskMap.keySet().isEmpty()) {
+                    getTemplatesFromExportDomain();
+                } else {
+                    postInitDisks();
                 }
             });
         } else {
@@ -283,44 +266,40 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     protected void getTemplatesFromExportDomain() {
         GetAllFromExportDomainQueryParameters tempVar =
                 new GetAllFromExportDomainQueryParameters(storagePool.getId(), (Guid) getEntity());
-        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, new AsyncQuery<>(
-                new AsyncCallback<VdcQueryReturnValue>() {
-
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        Map<VmTemplate, List<DiskImage>> dictionary = (HashMap<VmTemplate, List<DiskImage>>) returnValue.getReturnValue();
-                        Map<Guid, Guid> tempMap = new HashMap<>();
-                        for (Entry<VmTemplate, List<DiskImage>> entry : dictionary.entrySet()) {
-                            tempMap.put(entry.getKey().getId(), null);
-                        }
-                        for (Entry<Guid, List<Disk>> missingTemplateEntry : missingTemplateDiskMap.entrySet()) {
-                            if (tempMap.containsKey(missingTemplateEntry.getKey())) {
-                                for (Disk disk : missingTemplateEntry.getValue()) {
-                                    addDiskImportData(disk.getId(),
-                                            filteredStorageDomains,
-                                            ((DiskImage) disk).getVolumeType(),
-                                            new EntityModel(true));
-                                }
-                            } else {
-                                showCloseMessage(ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .errorTemplateCannotBeFoundMessage());
-                                return;
-                            }
-                        }
-                        ImportVmFromExportDomainModel.this.setMessage(ConstantsManager.getInstance()
-                                .getConstants()
-                                .importMissingStorages());
-
-                        for (ImportVmData vmData : (List<ImportVmData>) getItems()) {
-                            if (!Guid.Empty.equals(vmData.getVm().getVmtGuid())
-                                    && missingTemplateDiskMap.containsKey(vmData.getVm().getVmtGuid())) {
-                                vmData.setTemplateExistsInSetup(false);
-                            }
-                        }
-
-                        postInitDisks();
+        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar,
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    Map<VmTemplate, List<DiskImage>> dictionary = (HashMap<VmTemplate, List<DiskImage>>) returnValue.getReturnValue();
+                    Map<Guid, Guid> tempMap = new HashMap<>();
+                    for (Entry<VmTemplate, List<DiskImage>> entry : dictionary.entrySet()) {
+                        tempMap.put(entry.getKey().getId(), null);
                     }
+                    for (Entry<Guid, List<Disk>> missingTemplateEntry : missingTemplateDiskMap.entrySet()) {
+                        if (tempMap.containsKey(missingTemplateEntry.getKey())) {
+                            for (Disk disk : missingTemplateEntry.getValue()) {
+                                addDiskImportData(disk.getId(),
+                                        filteredStorageDomains,
+                                        ((DiskImage) disk).getVolumeType(),
+                                        new EntityModel(true));
+                            }
+                        } else {
+                            showCloseMessage(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .errorTemplateCannotBeFoundMessage());
+                            return;
+                        }
+                    }
+                    ImportVmFromExportDomainModel.this.setMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .importMissingStorages());
+
+                    for (ImportVmData vmData : (List<ImportVmData>) getItems()) {
+                        if (!Guid.Empty.equals(vmData.getVm().getVmtGuid())
+                                && missingTemplateDiskMap.containsKey(vmData.getVm().getVmtGuid())) {
+                            vmData.setTemplateExistsInSetup(false);
+                        }
+                    }
+
+                    postInitDisks();
                 }));
 
     }
@@ -398,32 +377,19 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
 
     protected void withDataCenterLoaded(Guid storageDomainId, final AsyncCallback<List<StoragePool>> callback) {
         // get Storage pool
-        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(new AsyncCallback<List<StoragePool>>() {
-            @Override
-            public void onSuccess(List<StoragePool> pools) {
-                if (pools == null || pools.size() != 1) {
-                    return;
-                }
-
-                StoragePool dataCenter = pools.get(0);
-                setStoragePool(dataCenter);
-                callback.onSuccess(pools);
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(pools -> {
+            if (pools == null || pools.size() != 1) {
+                return;
             }
+
+            StoragePool dataCenter = pools.get(0);
+            setStoragePool(dataCenter);
+            callback.onSuccess(pools);
         }), storageDomainId);
     }
 
     public void init(final List<VM> externalVms, final Guid storageDomainId) {
-        withDataCenterLoaded(storageDomainId, new AsyncCallback<List<StoragePool>>() {
-            @Override
-            public void onSuccess(List<StoragePool> returnValue) {
-                setItems(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        doInit();
-                    }
-                }, externalVms);
-            }
-        });
+        withDataCenterLoaded(storageDomainId, returnValue -> setItems(r -> doInit(), externalVms));
     }
 
     @Override

@@ -14,8 +14,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("deprecation")
 public class RemoveProvidersModel extends ConfirmationModel {
@@ -57,13 +55,8 @@ public class RemoveProvidersModel extends ConfirmationModel {
             parameterList.add(new ProviderParameters(provider));
         }
 
-        Frontend.getInstance().runMultipleActions(VdcActionType.RemoveProvider, parameterList, new IFrontendActionAsyncCallback() {
-
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                sourceListModel.getSearchCommand().execute();
-            }
-        });
+        Frontend.getInstance().runMultipleActions(VdcActionType.RemoveProvider, parameterList,
+                result -> sourceListModel.getSearchCommand().execute());
         cancel();
     }
 

@@ -387,22 +387,19 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                             if (getHasDefaultHost()) {
 
                                 Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
-                                        + getvm().getClusterName() + " sortby name", SearchType.VDS), new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() { //$NON-NLS-1$
-                                            @Override
-                                            public void onSuccess(VdcQueryReturnValue returnValue1) {
-                                                String defaultHost1 = "";
-                                                ArrayList<VDS> hosts = returnValue1.getReturnValue();
-                                                for (VDS host : hosts) {
-                                                    if (getvm().getDedicatedVmForVdsList().contains(host.getId())) {
-                                                        if (defaultHost1.isEmpty()) {
-                                                            defaultHost1 = host.getName();
-                                                        } else {
-                                                            defaultHost1 += ", " + host.getName(); //$NON-NLS-1$
-                                                        }
+                                        + getvm().getClusterName() + " sortby name", SearchType.VDS), new AsyncQuery<VdcQueryReturnValue>(returnValue1 -> { //$NON-NLS-1$
+                                            String defaultHost1 = "";
+                                            ArrayList<VDS> hosts = returnValue1.getReturnValue();
+                                            for (VDS host : hosts) {
+                                                if (getvm().getDedicatedVmForVdsList().contains(host.getId())) {
+                                                    if (defaultHost1.isEmpty()) {
+                                                        defaultHost1 = host.getName();
+                                                    } else {
+                                                        defaultHost1 += ", " + host.getName(); //$NON-NLS-1$
                                                     }
                                                 }
-                                                setDefaultHost(defaultHost1);
                                             }
+                                            setDefaultHost(defaultHost1);
                                         }));
                             }
                             else {

@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-
 public class AsyncIterator<T> {
 
     private List<T> source;
@@ -69,35 +66,32 @@ public class AsyncIterator<T> {
             AsyncIteratorCallback<T> callback = new AsyncIteratorCallback<>();
 
             callback.getNotifyEvent().addListener(
-                    new IEventListener<ValueEventArgs<T>>() {
-                        @Override
-                        public void eventRaised(Event<? extends ValueEventArgs<T>> ev, Object sender, ValueEventArgs<T> args) {
+                    (ev, sender, args) -> {
 
-                            CallbackContext<T> context = (CallbackContext<T>) ev.getContext();
-                            AsyncIterator<T> iterator = context.getIterator();
-                            AsyncIteratorPredicate<T> action = context.getAction();
-                            T item = context.getItem();
-                            Object value = args.getValue();
+                        CallbackContext<T> context = (CallbackContext<T>) ev.getContext();
+                        AsyncIterator<T> iterator = context.getIterator();
+                        AsyncIteratorPredicate<T> action1 = context.getAction();
+                        T item1 = context.getItem();
+                        Object value = args.getValue();
 
-                            boolean callComplete = false;
+                        boolean callComplete = false;
 
-                            if (action.match(item, value)) {
+                        if (action1.match(item1, value)) {
 
-                                callComplete = true;
-                                iterator.setStopped(true);
-                            }
+                            callComplete = true;
+                            iterator.setStopped(true);
+                        }
 
-                            // Call complete method even when there is no match.
-                            iterator.setCounter(iterator.getCounter() + 1);
+                        // Call complete method even when there is no match.
+                        iterator.setCounter(iterator.getCounter() + 1);
 
-                            if (!iterator.getStopped() && iterator.getCounter() == iterator.getSource().size()) {
-                                callComplete = true;
-                            }
+                        if (!iterator.getStopped() && iterator.getCounter() == iterator.getSource().size()) {
+                            callComplete = true;
+                        }
 
-                            // Call complete method.
-                            if (callComplete && iterator.getComplete() != null) {
-                                iterator.getComplete().run(item, value);
-                            }
+                        // Call complete method.
+                        if (callComplete && iterator.getComplete() != null) {
+                            iterator.getComplete().run(item1, value);
                         }
                     },
                     new CallbackContext<>(this, item, action));

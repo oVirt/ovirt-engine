@@ -15,8 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 @SuppressWarnings("unused")
@@ -66,12 +64,9 @@ public class SparsifyDiskModel extends ConfirmationModel {
 
         Frontend.getInstance().runMultipleAction(VdcActionType.SparsifyImage,
                 parameterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        stopProgress();
-                        target.executeCommand(cancelCommand);
-                    }
+                result -> {
+                    stopProgress();
+                    target.executeCommand(cancelCommand);
                 },
                 this);
     }

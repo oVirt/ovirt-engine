@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -97,28 +96,24 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
         VdcQueryParametersBase queryParameters = new VdcQueryParametersBase();
         queryParameters.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetAllVmsAndVmPools, queryParameters,
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    ArrayList<VM> vms = new ArrayList<>();
+                    ArrayList<VmPool> pools = new ArrayList<>();
 
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        ArrayList<VM> vms = new ArrayList<>();
-                        ArrayList<VmPool> pools = new ArrayList<>();
-
-                        if (returnValue != null && returnValue.getSucceeded()) {
-                            List<Object> list = (ArrayList<Object>) returnValue.getReturnValue();
-                            if (list != null) {
-                                for (Object object : list) {
-                                    if (object instanceof VM) {
-                                        vms.add((VM) object);
-                                    } else if (object instanceof VmPool) {
-                                        pools.add((VmPool) object);
-                                    }
+                    if (returnValue != null && returnValue.getSucceeded()) {
+                        List<Object> list = (ArrayList<Object>) returnValue.getReturnValue();
+                        if (list != null) {
+                            for (Object object : list) {
+                                if (object instanceof VM) {
+                                    vms.add((VM) object);
+                                } else if (object instanceof VmPool) {
+                                    pools.add((VmPool) object);
                                 }
                             }
                         }
-
-                        onVmAndPoolLoad(vms, pools);
                     }
+
+                    onVmAndPoolLoad(vms, pools);
                 }));
     }
 
@@ -164,14 +159,11 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
             VmPool pool = (VmPool) entity;
             Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                     new IdQueryParameters(pool.getVmPoolId()),
-                    new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                        @Override
-                        public void onSuccess(VdcQueryReturnValue result) {
-                            if (result != null) {
-                                VM vm = result.getReturnValue();
-                                if (vm != null) {
-                                    updateDetails(vm);
-                                }
+                    new AsyncQuery<VdcQueryReturnValue>(result -> {
+                        if (result != null) {
+                            VM vm = result.getReturnValue();
+                            if (vm != null) {
+                                updateDetails(vm);
                             }
                         }
                     }));

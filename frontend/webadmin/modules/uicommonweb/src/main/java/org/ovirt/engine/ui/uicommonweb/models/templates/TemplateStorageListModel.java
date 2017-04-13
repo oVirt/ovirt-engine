@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -27,8 +26,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class TemplateStorageListModel extends SearchableListModel<VmTemplate, StorageDomainModel> {
@@ -93,35 +90,31 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
         else {
             VmTemplate template = getEntity();
             AsyncDataProvider.getInstance().getTemplateDiskList(new AsyncQuery<>(
-                    new AsyncCallback<List<DiskImage>>() {
-                        @SuppressWarnings("unchecked")
-                        @Override
-                        public void onSuccess(List<DiskImage> diskImages) {
+                            diskImages -> {
 
-                            Collection<? extends Object> storageDomains = value;
-                            List<StorageDomainModel> storageDomainModels = new ArrayList<>();
+                                Collection<? extends Object> storageDomains = value;
+                                List<StorageDomainModel> storageDomainModels = new ArrayList<>();
 
-                            for (Object o : storageDomains) {
-                                StorageDomain storageDomain = (StorageDomain) o;
-                                StorageDomainModel storageDomainModel = new StorageDomainModel();
-                                storageDomainModel.setStorageDomain(storageDomain);
+                                for (Object o : storageDomains) {
+                                    StorageDomain storageDomain = (StorageDomain) o;
+                                    StorageDomainModel storageDomainModel = new StorageDomainModel();
+                                    storageDomainModel.setStorageDomain(storageDomain);
 
-                                ArrayList<DiskImage> disks = new ArrayList<>();
-                                for (DiskImage diskImage : diskImages) {
-                                    if (diskImage.getStorageIds().contains(storageDomain.getId())) {
-                                        disks.add(diskImage);
+                                    ArrayList<DiskImage> disks = new ArrayList<>();
+                                    for (DiskImage diskImage : diskImages) {
+                                        if (diskImage.getStorageIds().contains(storageDomain.getId())) {
+                                            disks.add(diskImage);
+                                        }
                                     }
+
+                                    Collections.sort(disks, new DiskByDiskAliasComparator());
+                                    storageDomainModel.setDisks(disks);
+                                    storageDomainModels.add(storageDomainModel);
                                 }
 
-                                Collections.sort(disks, new DiskByDiskAliasComparator());
-                                storageDomainModel.setDisks(disks);
-                                storageDomainModels.add(storageDomainModel);
-                            }
-
-                            TemplateStorageListModel.this.storageDomainModels = storageDomainModels;
-                            setItems(value);
-                        }
-                    }),
+                                TemplateStorageListModel.this.storageDomainModels = storageDomainModels;
+                                setItems(value);
+                            }),
                     template.getId());
         }
     }
@@ -169,13 +162,10 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDisk, parameters,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-                    }
+                result -> {
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
                 }, model);
 
         cancel();
