@@ -7,7 +7,6 @@ import org.ovirt.engine.api.model.Weights;
 import org.ovirt.engine.api.resource.WeightResource;
 import org.ovirt.engine.api.resource.WeightsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -46,12 +45,7 @@ public class BackendWeightsResource extends BackendPolicyUnitsResource<Weights, 
 
     @Override
     protected ParametersProvider<Weight, ClusterPolicy> getAddParametersProvider() {
-        return new ParametersProvider<Weight, ClusterPolicy>() {
-            @Override
-            public VdcActionParametersBase getParameters(Weight model, ClusterPolicy entity) {
-                return new ClusterPolicyCRUDParameters(entity.getId(), map(model, entity));
-            }
-        };
+        return (model, entity) -> new ClusterPolicyCRUDParameters(entity.getId(), map(model, entity));
     }
 
     @Override

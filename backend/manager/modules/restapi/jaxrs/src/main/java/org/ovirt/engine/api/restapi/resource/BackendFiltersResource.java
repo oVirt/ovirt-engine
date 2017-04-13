@@ -7,7 +7,6 @@ import org.ovirt.engine.api.model.Filters;
 import org.ovirt.engine.api.resource.FilterResource;
 import org.ovirt.engine.api.resource.FiltersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -46,12 +45,7 @@ public class BackendFiltersResource
 
     @Override
     protected ParametersProvider<Filter, ClusterPolicy> getAddParametersProvider() {
-        return new ParametersProvider<Filter, ClusterPolicy>() {
-            @Override
-            public VdcActionParametersBase getParameters(Filter model, ClusterPolicy entity) {
-                return new ClusterPolicyCRUDParameters(entity.getId(), map(model, entity));
-            }
-        };
+        return (model, entity) -> new ClusterPolicyCRUDParameters(entity.getId(), map(model, entity));
     }
 
     @Override

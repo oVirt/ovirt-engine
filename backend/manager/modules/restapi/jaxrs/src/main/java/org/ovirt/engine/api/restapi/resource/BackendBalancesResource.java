@@ -7,7 +7,6 @@ import org.ovirt.engine.api.model.Balances;
 import org.ovirt.engine.api.resource.BalanceResource;
 import org.ovirt.engine.api.resource.BalancesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -44,12 +43,7 @@ public class BackendBalancesResource
 
     @Override
     protected ParametersProvider<Balance, ClusterPolicy> getAddParametersProvider() {
-        return new ParametersProvider<Balance, ClusterPolicy>() {
-            @Override
-            public VdcActionParametersBase getParameters(Balance model, ClusterPolicy entity) {
-                return new ClusterPolicyCRUDParameters(entity.getId(), map(model, entity));
-            }
-        };
+        return (model, entity) -> new ClusterPolicyCRUDParameters(entity.getId(), map(model, entity));
     }
 
     @Override

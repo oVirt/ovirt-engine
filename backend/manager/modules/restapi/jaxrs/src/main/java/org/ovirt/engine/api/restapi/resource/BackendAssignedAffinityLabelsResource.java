@@ -57,16 +57,7 @@ public class BackendAssignedAffinityLabelsResource extends AbstractBackendCollec
         // the result of the operation, we can fetch it using a simple "identity" resolver, that just returns the same
         // value it is passed.
         LabelActionParameters updateParams = new LabelActionParameters(updatedLabel);
-        return performCreate(
-            VdcActionType.UpdateLabel,
-            updateParams,
-            new IResolver<Label, Label>() {
-                @Override
-                public Label resolve(Label result) throws BackendFailureException {
-                    return result;
-                }
-            }
-        );
+        return performCreate(VdcActionType.UpdateLabel, updateParams, (IResolver<Label, Label>) result -> result);
     }
 
     @Override

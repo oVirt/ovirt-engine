@@ -43,15 +43,11 @@ public class BackendQosResource extends AbstractBackendSubResource<Qos, QosBase>
         return performUpdate(incoming,
                 entityResolver,
                 updateActionTypeForQosType(qosBase.getQosType()),
-                new ParametersProvider<Qos, QosBase>() {
-                    @Override
-                    public VdcActionParametersBase getParameters(Qos model,
-                            QosBase entity) {
-                        QosParametersBase<QosBase> parameters = new QosParametersBase<>();
-                        parameters.setQosId(guid);
-                        parameters.setQos(map(incoming, entity));
-                        return parameters;
-                    }
+                (model, entity) -> {
+                    QosParametersBase<QosBase> parameters = new QosParametersBase<>();
+                    parameters.setQosId(guid);
+                    parameters.setQos(map(incoming, entity));
+                    return parameters;
                 });
     }
 

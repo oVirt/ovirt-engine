@@ -5,7 +5,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.resource.AffinityGroupResource;
 import org.ovirt.engine.api.resource.AffinityGroupVmsResource;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -30,13 +29,7 @@ public class BackendAffinityGroupResource
         return performUpdate(incoming,
                 new QueryIdResolver<>(VdcQueryType.GetAffinityGroupById, IdQueryParameters.class),
                 VdcActionType.EditAffinityGroup,
-                new ParametersProvider<AffinityGroup, org.ovirt.engine.core.common.scheduling.AffinityGroup>() {
-                    @Override
-                    public VdcActionParametersBase getParameters(AffinityGroup model,
-                            org.ovirt.engine.core.common.scheduling.AffinityGroup entity) {
-                        return new AffinityGroupCRUDParameters(guid, map(incoming, entity));
-                    }
-                });
+                (model, entity) -> new AffinityGroupCRUDParameters(guid, map(incoming, entity)));
     }
 
     @Override
