@@ -120,11 +120,7 @@ public final class Linq {
     }
 
     public static Set<String> getDiskAliases(List<? extends Disk> disks) {
-        Set<String> aliases = new HashSet<>();
-        for (Disk disk : disks) {
-            aliases.add(disk.getDiskAlias());
-        }
-        return aliases;
+        return disks.stream().map(Disk::getDiskAlias).collect(Collectors.toSet());
     }
 
     public static class TimeZonePredicate implements Predicate<TimeZoneModel> {
