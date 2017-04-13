@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -229,13 +230,7 @@ public class DiskModel extends Model {
         return diskModel;
     }
 
-    public static ArrayList<DiskModel> disksToDiskModelList(List<Disk> disks) {
-        ArrayList<DiskModel> diskModels = new ArrayList<>();
-
-        for (Disk disk : disks) {
-            diskModels.add(diskToModel(disk));
-        }
-
-        return diskModels;
+    public static List<DiskModel> disksToDiskModelList(List<Disk> disks) {
+        return disks.stream().map(DiskModel::diskToModel).collect(Collectors.toList());
     }
 }

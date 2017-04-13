@@ -150,7 +150,7 @@ public class AttachDiskModel extends NewDiskModel {
         public void onSuccess(List<Disk> returnValue) {
             List<Disk> disks = adjustReturnValue(returnValue);
             Collections.sort(disks, new DiskByDiskAliasComparator());
-            final ArrayList<DiskModel> diskModels = DiskModel.disksToDiskModelList(disks);
+            final List<DiskModel> diskModels = DiskModel.disksToDiskModelList(disks);
 
             AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getVmOsId(), getVm().getClusterCompatibilityVersion(), new AsyncQuery<>(new AsyncCallback<List<DiskInterface>>() {
                 @Override
