@@ -11,8 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.shared.EventBus;
@@ -72,16 +70,13 @@ public class ModelBoundPopupHandler<M extends IModel> {
     public void addDialogModelListener(final M model) {
         hideAndClearAllPopups();
 
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
 
-                if (windowPropertyNames.contains(propName)) {
-                    handleWindowModelChange(model, propName, windowPopupInstances.get(propName), false);
-                } else if (confirmWindowPropertyNames.contains(propName)) {
-                    handleWindowModelChange(model, propName, confirmWindowPopupInstances.get(propName), true);
-                }
+            if (windowPropertyNames.contains(propName)) {
+                handleWindowModelChange(model, propName, windowPopupInstances.get(propName), false);
+            } else if (confirmWindowPropertyNames.contains(propName)) {
+                handleWindowModelChange(model, propName, confirmWindowPopupInstances.get(propName), true);
             }
         });
     }
@@ -149,12 +144,9 @@ public class ModelBoundPopupHandler<M extends IModel> {
         popup.init(model);
 
         // Add "progress" property change handler to Window model
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
-                    updatePopupProgress(model, popup);
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
+                updatePopupProgress(model, popup);
             }
         });
         updatePopupProgress(model, popup);

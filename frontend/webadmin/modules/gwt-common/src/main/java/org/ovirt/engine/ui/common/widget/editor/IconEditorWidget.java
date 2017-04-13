@@ -19,12 +19,9 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.editor.client.LeafValueEditor;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -159,14 +156,11 @@ public class IconEditorWidget extends AbstractValidatedWidget
     }-*/;
 
     private KeyPressHandler createPreventEnterKeyPressHandler() {
-        return new KeyPressHandler() {
-            @Override
-            public void onKeyPress(KeyPressEvent event) {
-                if (!event.isAnyModifierKeyDown()
-                        && event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
+        return event -> {
+            if (!event.isAnyModifierKeyDown()
+                    && event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+                event.preventDefault();
+                event.stopPropagation();
             }
         };
     }
@@ -210,12 +204,7 @@ public class IconEditorWidget extends AbstractValidatedWidget
         hiddenPanel.clear();
         final FileUpload inputFileWidget = new FileUpload();
         inputFileWidget.getElement().setAttribute("accept", "image/gif,image/jpeg,image/png"); //$NON-NLS-1$ //$NON-NLS-2$
-        inputFileWidget.addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent event) {
-                readUploadedIconFile(inputFileWidget.getElement());
-            }
-        });
+        inputFileWidget.addChangeHandler(e -> readUploadedIconFile(inputFileWidget.getElement()));
         inputFileWidget.getElement().setTabIndex(-1);
         hiddenPanel.add(inputFileWidget);
         inputFileWidget.click();

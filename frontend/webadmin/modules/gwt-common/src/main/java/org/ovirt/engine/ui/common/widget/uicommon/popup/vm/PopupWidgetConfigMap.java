@@ -30,49 +30,24 @@ public class PopupWidgetConfigMap extends HashMap<Widget, PopupWidgetConfig> {
     }
 
     public PopupWidgetConfigMap getAll() {
-        return filter(new Predicate() {
-            @Override
-            public boolean apply(PopupWidgetConfig config) {
-                return true;
-            }
-        });
+        return filter(config -> true);
     }
 
     // will be used as soon as the server supports this flag
     public PopupWidgetConfigMap getVisibleForAdminOnly() {
-        return filter(new Predicate() {
-            @Override
-            public boolean apply(PopupWidgetConfig config) {
-                return config.isAdminOnly();
-            }
-        });
+        return filter(config -> config.isAdminOnly());
     }
 
     public PopupWidgetConfigMap getVisibleInAdvanceMode() {
-        return filter(new Predicate() {
-            @Override
-            public boolean apply(PopupWidgetConfig config) {
-                return config.isVisibleOnlyInAdvanced() && config.isApplicationLevelVisible();
-            }
-        });
+        return filter(config -> config.isVisibleOnlyInAdvanced() && config.isApplicationLevelVisible());
     }
 
     public PopupWidgetConfigMap getAlwaysHidden() {
-        return filter(new Predicate() {
-            @Override
-            public boolean apply(PopupWidgetConfig config) {
-                return config.isAlwaysHidden();
-            }
-        });
+        return filter(config -> config.isAlwaysHidden());
     }
 
     public PopupWidgetConfigMap getDetachables() {
-        return filter(new Predicate() {
-            @Override
-            public boolean apply(PopupWidgetConfig config) {
-                return config.isDetachable();
-            }
-        });
+        return filter(config -> config.isDetachable());
     }
 
     private PopupWidgetConfigMap filter(Predicate predicate) {

@@ -9,8 +9,6 @@ import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -79,12 +77,9 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
         final CheckBox newCheckBox = new CheckBox(SafeHtmlUtils.fromString(renderer.render(checkBoxValue)));
         newCheckBox.setValue(false);
         newCheckBox.setStyleName(style.checkBox());
-        newCheckBox.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // ValueChangeEvent fired to notify the mapped ListModel about the new Selection/deselection.
-                ValueChangeEvent.fire(CheckBoxGroup.this, getValue());
-            }
+        newCheckBox.addClickHandler(event -> {
+            // ValueChangeEvent fired to notify the mapped ListModel about the new Selection/deselection.
+            ValueChangeEvent.fire(CheckBoxGroup.this, getValue());
         });
         return newCheckBox;
     }

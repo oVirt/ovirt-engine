@@ -22,22 +22,19 @@ public class EnterIgnoringFocusHandler implements FocusHandler, BlurHandler {
 
     @Override
     public void onFocus(FocusEvent event) {
-        eventHandler = Event.addNativePreviewHandler(new Event.NativePreviewHandler() {
-            @Override
-            public void onPreviewNativeEvent(Event.NativePreviewEvent event) {
-                NativeEvent nativeEvent = event.getNativeEvent();
-                if (nativeEvent.getKeyCode() == KeyCodes.KEY_ENTER
-                        && (event.getTypeInt() == Event.ONKEYPRESS || event.getTypeInt() == Event.ONKEYDOWN)
-                        && !event.isCanceled()) {
+        eventHandler = Event.addNativePreviewHandler(e -> {
+            NativeEvent nativeEvent = e.getNativeEvent();
+            if (nativeEvent.getKeyCode() == KeyCodes.KEY_ENTER
+                    && (e.getTypeInt() == Event.ONKEYPRESS || e.getTypeInt() == Event.ONKEYDOWN)
+                    && !e.isCanceled()) {
 
-                    // swallow the enter key otherwise the whole dialog would get submitted
-                    nativeEvent.preventDefault();
-                    nativeEvent.stopPropagation();
-                    event.cancel();
+                // swallow the enter key otherwise the whole dialog would get submitted
+                nativeEvent.preventDefault();
+                nativeEvent.stopPropagation();
+                e.cancel();
 
-                    if (event.getTypeInt() == Event.ONKEYDOWN) {
-                        enterPressed();
-                    }
+                if (e.getTypeInt() == Event.ONKEYDOWN) {
+                    enterPressed();
                 }
             }
         });

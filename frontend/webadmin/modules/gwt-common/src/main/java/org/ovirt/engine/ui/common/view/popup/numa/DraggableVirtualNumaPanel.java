@@ -16,7 +16,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -29,7 +28,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -88,14 +86,11 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
         if (!dragEnabled) {
             return;
         }
-        contextMenuHandlerRegistration = numaPanel.addDomHandler(new ContextMenuHandler() {
-            @Override
-            public void onContextMenu(ContextMenuEvent event) {
-                NativeEvent nativeEvent = event.getNativeEvent();
-                showContextMenu(nativeEvent.getClientX(), nativeEvent.getClientY());
-                event.stopPropagation();
-                event.preventDefault();
-            }
+        contextMenuHandlerRegistration = numaPanel.addDomHandler(event -> {
+            NativeEvent nativeEvent = event.getNativeEvent();
+            showContextMenu(nativeEvent.getClientX(), nativeEvent.getClientY());
+            event.stopPropagation();
+            event.preventDefault();
         }, ContextMenuEvent.getType());
     }
 
@@ -193,26 +188,18 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
         menuBar = new MenuBar(true);
         for (final VdsNumaNode numaNode : numaNodeList) {
             final int nodeIndex = numaNode.getIndex();
-            menuBar.addItem(messages.numaNode(nodeIndex), new Command() {
-
-                @Override
-                public void execute() {
-                    UpdatedVnumaEvent.fire(DraggableVirtualNumaPanel.this, nodeModel.getVm().getId(),
-                            true, nodeModel.getIndex(), nodeIndex);
-                    menuPopup.hide();
-                }
+            menuBar.addItem(messages.numaNode(nodeIndex), () -> {
+                UpdatedVnumaEvent.fire(DraggableVirtualNumaPanel.this, nodeModel.getVm().getId(),
+                        true, nodeModel.getIndex(), nodeIndex);
+                menuPopup.hide();
             });
         }
         if (nodeModel.isPinned()) {
             menuBar.addSeparator();
-            menuBar.addItem(constants.unPinNode(), new Command() {
-
-                @Override
-                public void execute() {
-                    UpdatedVnumaEvent.fire(DraggableVirtualNumaPanel.this, nodeModel.getVm().getId(),
-                            false, nodeModel.getIndex(), -1);
-                    menuPopup.hide();
-                }
+            menuBar.addItem(constants.unPinNode(), () -> {
+                UpdatedVnumaEvent.fire(DraggableVirtualNumaPanel.this, nodeModel.getVm().getId(),
+                        false, nodeModel.getIndex(), -1);
+                menuPopup.hide();
             });
         }
     }

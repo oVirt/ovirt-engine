@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -92,15 +91,12 @@ public class FormBuilder {
         }
     }
 
-    private final IEventListener<PropertyChangedEventArgs> propertyChangedEventListener = new IEventListener<PropertyChangedEventArgs>() {
-        @Override
-        public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-            String propertyName = args.propertyName;
-            List<FormItem> formItems = propertyNameMap.get(propertyName);
-            if (formItems != null) {
-                for (FormItem item : formItems) {
-                    item.update();
-                }
+    private final IEventListener<PropertyChangedEventArgs> propertyChangedEventListener = (ev, sender, args) -> {
+        String propertyName = args.propertyName;
+        List<FormItem> formItems = propertyNameMap.get(propertyName);
+        if (formItems != null) {
+            for (FormItem item : formItems) {
+                item.update();
             }
         }
     };

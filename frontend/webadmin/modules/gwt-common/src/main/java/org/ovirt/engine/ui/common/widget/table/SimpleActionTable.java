@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionButton;
 import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
-import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager.ManualRefreshCallback;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 import com.google.gwt.core.client.GWT;
@@ -89,13 +88,10 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         nextPageButton.setVisible(false);
         itemsCountLabel.setVisible(false);
 
-        refreshManager.setManualRefreshCallback(new ManualRefreshCallback() {
-            @Override
-            public void onManualRefresh() {
-                //Do any special refresh options.
-                dataProvider.onManualRefresh();
-                setLoadingState(LoadingState.LOADING);
-            }
+        refreshManager.setManualRefreshCallback(() -> {
+            //Do any special refresh options.
+            dataProvider.onManualRefresh();
+            setLoadingState(LoadingState.LOADING);
         });
     }
 

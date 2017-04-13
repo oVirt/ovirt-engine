@@ -4,8 +4,6 @@ import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
 import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -44,27 +42,14 @@ public abstract class AbstractHeaderPresenterWidget<V extends AbstractHeaderPres
     protected void onBind() {
         super.onBind();
 
-        registerHandler(getView().getLogoutLink().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                user.logout();
-            }
-        }));
+        registerHandler(getView().getLogoutLink().addClickHandler(event -> user.logout()));
 
-        registerHandler(getView().getGuideLink().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                WebUtils.openUrlInNewWindow(windowName, guideUrl);
-            }
-        }));
+        registerHandler(getView().getGuideLink().addClickHandler(event -> WebUtils.openUrlInNewWindow(windowName, guideUrl)));
 
 
-        registerHandler(getView().getOptionsLink().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                OptionsModel model = optionsProvider.getModel();
-                model.executeCommand(model.getEditCommand());
-            }
+        registerHandler(getView().getOptionsLink().addClickHandler(event -> {
+            OptionsModel model = optionsProvider.getModel();
+            model.executeCommand(model.getEditCommand());
         }));
     }
 

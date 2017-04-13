@@ -14,9 +14,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -75,12 +72,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     public void activateItemsUpdate() {
         disableItemsUpdate();
 
-        model.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateItems();
-            }
-        });
+        model.getItemsChangedEvent().addListener((ev, sender, args) -> updateItems());
         updateItems();
     }
 
@@ -110,19 +102,16 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
 
             // Defer styling in order to override padding done in:
             // com.google.gwt.user.client.ui.Tree -> showLeafImage
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    leafItem.getElement().getStyle().setBackgroundColor("#ffffff"); //$NON-NLS-1$
-                    leafItem.getElement().getStyle().setMarginLeft(20, Unit.PX);
-                    leafItem.getElement().getStyle().setPadding(0, Unit.PX);
+            Scheduler.get().scheduleDeferred(() -> {
+                leafItem.getElement().getStyle().setBackgroundColor("#ffffff"); //$NON-NLS-1$
+                leafItem.getElement().getStyle().setMarginLeft(20, Unit.PX);
+                leafItem.getElement().getStyle().setPadding(0, Unit.PX);
 
-                    Boolean isLeafEmpty = (Boolean) leafItem.getUserObject();
-                    if (isLeafEmpty != null && isLeafEmpty.equals(Boolean.TRUE)) {
-                        rootItem.getElement().getElementsByTagName("td").getItem(0).getStyle().setVisibility(Visibility.HIDDEN); //$NON-NLS-1$
-                    }
-                    rootItem.getElement().getElementsByTagName("td").getItem(1).getStyle().setWidth(100, Unit.PCT); //$NON-NLS-1$
+                Boolean isLeafEmpty = (Boolean) leafItem.getUserObject();
+                if (isLeafEmpty != null && isLeafEmpty.equals(Boolean.TRUE)) {
+                    rootItem.getElement().getElementsByTagName("td").getItem(0).getStyle().setVisibility(Visibility.HIDDEN); //$NON-NLS-1$
                 }
+                rootItem.getElement().getElementsByTagName("td").getItem(1).getStyle().setWidth(100, Unit.PCT); //$NON-NLS-1$
             });
         }
 

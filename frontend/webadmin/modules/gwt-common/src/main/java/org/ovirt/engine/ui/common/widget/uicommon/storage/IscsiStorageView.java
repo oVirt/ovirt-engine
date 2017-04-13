@@ -11,13 +11,8 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -101,16 +96,13 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         initLists(object);
 
         // Add event handlers
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if (propName.equals("IsValid")) { //$NON-NLS-1$
-                    onIsValidPropertyChange(object);
-                }
-                else if (propName.equals("IsGrouppedByTarget")) { //$NON-NLS-1$
-                    updateListByGropping(object);
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if (propName.equals("IsValid")) { //$NON-NLS-1$
+                onIsValidPropertyChange(object);
+            }
+            else if (propName.equals("IsGrouppedByTarget")) { //$NON-NLS-1$
+                updateListByGropping(object);
             }
         });
 
@@ -119,20 +111,14 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         iscsiLunToTargetView.edit(object);
 
         // Add click handlers
-        targetsToLunTab.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                iscsiLunToTargetView.disableItemsUpdate();
-                object.setIsGrouppedByTarget(true);
-            }
+        targetsToLunTab.addClickHandler(event -> {
+            iscsiLunToTargetView.disableItemsUpdate();
+            object.setIsGrouppedByTarget(true);
         });
 
-        lunToTargetsTab.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                iscsiTargetToLunView.disableItemsUpdate();
-                object.setIsGrouppedByTarget(false);
-            }
+        lunToTargetsTab.addClickHandler(event -> {
+            iscsiTargetToLunView.disableItemsUpdate();
+            object.setIsGrouppedByTarget(false);
         });
 
         // Update selected tab and list

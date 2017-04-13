@@ -21,10 +21,6 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupW
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -195,30 +191,17 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     public void edit(final UnitVmModel model) {
         driver.edit(model);
 
-        model.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                addDiskAllocation(model);
-            }
-        });
+        model.getStorageDomain().getItemsChangedEvent().addListener((ev, sender, args) -> addDiskAllocation(model));
 
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("Message".equals(propName)) { //$NON-NLS-1$
-                    appendMessage(model.getMessage());
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if ("Message".equals(propName)) { //$NON-NLS-1$
+                appendMessage(model.getMessage());
             }
         });
 
         subTemplateExpanderContent.setVisible(false);
-        model.getIsSubTemplate().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                subTemplateExpanderContent.setVisible(model.getIsSubTemplate().getEntity());
-            }
-        });
+        model.getIsSubTemplate().getEntityChangedEvent().addListener((ev, sender, args) -> subTemplateExpanderContent.setVisible(model.getIsSubTemplate().getEntity()));
     }
 
     private void addDiskAllocation(UnitVmModel model) {

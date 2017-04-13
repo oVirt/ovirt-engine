@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -40,12 +39,7 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
 
         });
 
-        setUpdater(new ValueUpdater<Boolean>() {
-            @Override
-            public void update(Boolean value) {
-                selectionChanged(value);
-            }
-        });
+        setUpdater(value -> selectionChanged(value));
 
         if (getTooltip() != null) {
             getCell().setTooltipFallback(getTooltip());

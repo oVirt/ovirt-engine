@@ -17,12 +17,8 @@ import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -193,32 +189,16 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         });
 
         // Add selection listener
-        getModel().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateInfoPanel();
-            }
-        });
+        getModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateInfoPanel());
 
-        getModel().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateInfoPanel();
-            }
-        });
+        getModel().getItemsChangedEvent().addListener((ev, sender, args) -> updateInfoPanel());
     }
 
     private void updateInfoPanel() {
         final VmNetworkInterface vmNetworkInterface = getModel().getSelectedItem();
         if (vmNetworkInterface != null && !getTable().getSelectionModel().isSelected(vmNetworkInterface)) {
             // first let list of items get updated, only then select item
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                @Override
-                public void execute() {
-                    getTable().getSelectionModel().setSelected(vmNetworkInterface, true);
-                }
-            });
+            Scheduler.get().scheduleDeferred(() -> getTable().getSelectionModel().setSelected(vmNetworkInterface, true));
         }
         vmInterfaceInfoPanel.updatePanel(vmNetworkInterface);
     }

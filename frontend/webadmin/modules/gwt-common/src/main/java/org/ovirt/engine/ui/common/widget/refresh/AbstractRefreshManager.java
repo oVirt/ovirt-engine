@@ -5,16 +5,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent;
-import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent.ApplicationFocusChangeHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
-import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent;
-import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent.GridTimerStateChangeEventHandler;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -73,12 +68,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
         updateController();
 
         // Add handler to be notified when the application window gains or looses its focus
-        eventBus.addHandler(ApplicationFocusChangeEvent.getType(), new ApplicationFocusChangeHandler() {
-            @Override
-            public void onApplicationFocusChange(ApplicationFocusChangeEvent event) {
-                onWindowFocusChange(event.isInFocus());
-            }
-        });
+        eventBus.addHandler(ApplicationFocusChangeEvent.getType(), event -> onWindowFocusChange(event.isInFocus()));
     }
 
     private void updateController() {
@@ -93,12 +83,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
             statusUpdateHandlerRegistration.removeHandler();
         }
 
-        statusUpdateHandlerRegistration = modelTimer.addGridTimerStateChangeEventHandler(new GridTimerStateChangeEventHandler() {
-            @Override
-            public void onGridTimerStateChange(GridTimerStateChangeEvent event) {
-                onRefresh(modelTimer.getTimerRefreshStatus());
-            }
-        });
+        statusUpdateHandlerRegistration = modelTimer.addGridTimerStateChangeEventHandler(event -> onRefresh(modelTimer.getTimerRefreshStatus()));
 
         modelTimer.resume();
     }
@@ -132,15 +117,12 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
      * When the user clicks the refresh button, enforce the refresh without even asking the timer.
      */
     protected void listenOnManualRefresh() {
-        refreshPanel.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (manualRefreshCallback != null) {
-                    manualRefreshCallback.onManualRefresh();
-                }
-                ManualRefreshEvent.fire(AbstractRefreshManager.this);
-                modelProvider.getModel().refresh();
+        refreshPanel.addClickHandler(event -> {
+            if (manualRefreshCallback != null) {
+                manualRefreshCallback.onManualRefresh();
             }
+            ManualRefreshEvent.fire(AbstractRefreshManager.this);
+            modelProvider.getModel().refresh();
         });
     }
 

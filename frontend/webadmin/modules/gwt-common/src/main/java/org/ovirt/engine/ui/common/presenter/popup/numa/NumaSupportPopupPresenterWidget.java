@@ -10,9 +10,6 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.presenter.CollapsiblePanelPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -69,39 +66,24 @@ public class NumaSupportPopupPresenterWidget extends AbstractModelBoundPopupPres
         super.init(model);
         supportModel = model;
         this.unassignedVNumaNodesPanelPresenterWidget.setModel(model);
-        supportModel.getModelReady().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                modelReady();
-            }
-        });
+        supportModel.getModelReady().addListener((ev, sender, args) -> modelReady());
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         registerHandler(getEventBus().addHandler(UpdatedVnumaEvent.getType(),
-                new UpdatedVnumaEvent.UpdatedVnumaHandler() {
-
-            @Override
-            public void onUpdatedVnuma(UpdatedVnumaEvent event) {
-                if (event.getTargetNumaNodeIndex() != -1) {
-                    supportModel.pinVNode(event.getSourceVmGuid(), event.getSourceVNumaNodeIndex(),
-                            event.getTargetNumaNodeIndex());
-                } else {
-                    supportModel.unpinVNode(event.getSourceVmGuid(), event.getSourceVNumaNodeIndex());
-                }
-            }
-        }));
+                event -> {
+                    if (event.getTargetNumaNodeIndex() != -1) {
+                        supportModel.pinVNode(event.getSourceVmGuid(), event.getSourceVNumaNodeIndex(),
+                                event.getTargetNumaNodeIndex());
+                    } else {
+                        supportModel.unpinVNode(event.getSourceVmGuid(), event.getSourceVNumaNodeIndex());
+                    }
+                }));
 
         registerHandler(getEventBus().addHandler(NumaVmSelectedEvent.getType(),
-                new NumaVmSelectedEvent.NumaVmSelectedHandler() {
-
-            @Override
-            public void onNumaVmSelected(NumaVmSelectedEvent event) {
-                getView().displayVmDetails(event.getVNodeModel());
-            }
-        }));
+                event -> getView().displayVmDetails(event.getVNodeModel())));
     }
 
     @Override

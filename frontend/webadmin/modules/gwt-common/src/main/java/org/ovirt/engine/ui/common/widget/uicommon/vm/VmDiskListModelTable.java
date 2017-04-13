@@ -11,10 +11,6 @@ import org.ovirt.engine.ui.common.widget.action.ImageUiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -141,22 +137,16 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
     }
 
     protected void attachActivationListenersForModel() {
-        getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsDiskHotPlugAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    InitializeEvent.fire(plugButtonDefinition);
-                    InitializeEvent.fire(unPlugButtonDefinition);
-                }
-            }
-        });
-
-        getModel().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+        getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsDiskHotPlugAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                 InitializeEvent.fire(plugButtonDefinition);
                 InitializeEvent.fire(unPlugButtonDefinition);
             }
+        });
+
+        getModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            InitializeEvent.fire(plugButtonDefinition);
+            InitializeEvent.fire(unPlugButtonDefinition);
         });
     }
 

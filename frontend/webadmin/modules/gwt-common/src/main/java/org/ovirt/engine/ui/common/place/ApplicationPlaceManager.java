@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent.MainModelSelectionChangeHandler;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.EventBus;
@@ -50,15 +49,12 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
     public void onValueChange(ValueChangeEvent<String> event) {
         super.onValueChange(event);
         if (clientAgentType.isFirefox()) {
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                @Override
-                public void execute() {
-                    Node favicon = DOM.getElementById("id-link-favicon");  //$NON-NLS-1$
-                    if (favicon != null) {
-                        Node parent = favicon.getParentNode();
-                        favicon.removeFromParent();
-                        parent.appendChild(favicon);
-                    }
+            Scheduler.get().scheduleDeferred(() -> {
+                Node favicon = DOM.getElementById("id-link-favicon");  //$NON-NLS-1$
+                if (favicon != null) {
+                    Node parent = favicon.getParentNode();
+                    favicon.removeFromParent();
+                    parent.appendChild(favicon);
                 }
             });
         }

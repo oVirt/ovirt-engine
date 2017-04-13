@@ -15,19 +15,11 @@ import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueListEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.editor.client.EditorContext;
 import com.google.gwt.editor.client.EditorVisitor;
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
 /**
  * Editor visitor that implements integration with UiCommon models.
@@ -63,12 +55,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
 
         // If this Editor implements HasValueChangeHandlers, register a value change listener
         if (editor instanceof HasValueChangeHandlers) {
-            ((HasValueChangeHandlers<T>) editor).addValueChangeHandler(new ValueChangeHandler<T>() {
-                @Override
-                public void onValueChange(ValueChangeEvent<T> event) {
-                    setInModel(ctx, event.getSource(), event.getValue());
-                }
-            });
+            ((HasValueChangeHandlers<T>) editor).addValueChangeHandler(event -> setInModel(ctx, event.getSource(), event.getValue()));
         }
 
         final UiCommonEditor<T> functionalEditor = getFunctionalEditor(currentLeafEditor);
@@ -81,12 +68,9 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
             }
 
             // Add key press handler
-            functionalEditor.addKeyPressHandler(new KeyPressHandler() {
-                @Override
-                public void onKeyPress(KeyPressEvent event) {
-                    if (KeyCodes.KEY_ENTER == event.getNativeEvent().getKeyCode()) {
-                        setInModel(ctx, editor, editor.getValue());
-                    }
+            functionalEditor.addKeyPressHandler(event -> {
+                if (KeyCodes.KEY_ENTER == event.getNativeEvent().getKeyCode()) {
+                    setInModel(ctx, editor, editor.getValue());
                 }
             });
         }
@@ -104,31 +88,28 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
 
             if (functionalEditor != null) {
                 // Register a property change listener on the owner entity model
-                ownerModel.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-                    @Override
-                    public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                        Model ownerModel = (Model) sender;
-                        String propName = args.propertyName;
+                ownerModel.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+                    Model owner = (Model) sender;
+                    String propName = args.propertyName;
 
-                        // IsValid
-                        if ("IsValid".equals(propName)) { //$NON-NLS-1$
-                            onIsValidPropertyChange(functionalEditor, ownerModel);
-                        }
+                    // IsValid
+                    if ("IsValid".equals(propName)) { //$NON-NLS-1$
+                        onIsValidPropertyChange(functionalEditor, owner);
+                    }
 
-                        // IsChangable
-                        else if ("IsChangable".equals(propName)) { //$NON-NLS-1$
-                            onIsChangablePropertyChange(functionalEditor, ownerModel);
-                        }
+                    // IsChangable
+                    else if ("IsChangable".equals(propName)) { //$NON-NLS-1$
+                        onIsChangablePropertyChange(functionalEditor, owner);
+                    }
 
-                        // ChangeProhibitionReason
-                        else if ("ChangeProhibitionReason".equals(propName)) { //$NON-NLS-1$
-                            onChangeProhibitionReasonChange(functionalEditor, ownerModel);
-                        }
+                    // ChangeProhibitionReason
+                    else if ("ChangeProhibitionReason".equals(propName)) { //$NON-NLS-1$
+                        onChangeProhibitionReasonChange(functionalEditor, owner);
+                    }
 
-                        // IsAvailable
-                        else if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
-                            onIsAvailablePropertyChange(functionalEditor, ownerModel);
-                        }
+                    // IsAvailable
+                    else if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
+                        onIsAvailablePropertyChange(functionalEditor, owner);
                     }
                 });
 
@@ -142,35 +123,21 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         }
 
         // Register listeners
-        eventMap.registerListener(absolutePath, "EntityChanged", new IEventListener() { //$NON-NLS-1$
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                editor.setValue((T) ((EntityModel) sender).getEntity());
+        eventMap.registerListener(absolutePath, "EntityChanged", //$NON-NLS-1$
+                (ev, sender, args) -> editor.setValue((T) ((EntityModel) sender).getEntity()));
+        eventMap.registerListener(absolutePath, "ItemsChanged", //$NON-NLS-1$
+                (ev, sender, args) -> updateListEditor((TakesConstrainedValueEditor<T>) editor, (ListModel) sender));
+        eventMap.registerListener(absolutePath, "SelectedItemChanged", (ev, sender, args) -> { //$NON-NLS-1$
+            T selectedItem = (T) ((ListModel) sender).getSelectedItem();
+            if (editor instanceof TakesConstrainedValueListEditor && ownerModels.get(absolutePath) instanceof ListModel) {
+                editor.setValue((T)Arrays.asList(selectedItem));
+            } else {
+                editor.setValue(selectedItem);
             }
         });
-        eventMap.registerListener(absolutePath, "ItemsChanged", new IEventListener() { //$NON-NLS-1$
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                updateListEditor((TakesConstrainedValueEditor<T>) editor, (ListModel) sender);
-            }
-        });
-        eventMap.registerListener(absolutePath, "SelectedItemChanged", new IEventListener() { //$NON-NLS-1$
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                T selectedItem = (T) ((ListModel) sender).getSelectedItem();
-                if (editor instanceof TakesConstrainedValueListEditor && ownerModels.get(absolutePath) instanceof ListModel) {
-                    editor.setValue((T)Arrays.asList(selectedItem));
-                } else {
-                    editor.setValue(selectedItem);
-                }
-            }
-        });
-        eventMap.registerListener(absolutePath, "SelectedItemsChanged", new IEventListener() { //$NON-NLS-1$
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (editor instanceof TakesConstrainedValueListEditor && ownerModels.get(absolutePath) instanceof ListModel) {
-                    ((TakesConstrainedValueListEditor)editor).setListValue((List<T>)((ListModel) sender).getSelectedItems());
-                }
+        eventMap.registerListener(absolutePath, "SelectedItemsChanged", (ev, sender, args) -> { //$NON-NLS-1$
+            if (editor instanceof TakesConstrainedValueListEditor && ownerModels.get(absolutePath) instanceof ListModel) {
+                ((TakesConstrainedValueListEditor)editor).setListValue((List<T>)((ListModel) sender).getSelectedItems());
             }
         });
 

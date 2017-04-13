@@ -35,26 +35,11 @@ public class VmGuestInfoModelForm extends AbstractModelBoundFormWidget<VmGuestIn
 
         // First row - OS Info
         formBuilder.addFormItem(new FormItem(constants.guestOsType(), guestOsType, 0, 0)
-            .withDefaultValue(constants.unknown(), new FormItem.DefaultValueCondition() {
-                @Override
-                public boolean showDefaultValue() {
-                    return getModel().getGuestOsType().equals(OsType.Other.toString());
-                }
-            }));
+            .withDefaultValue(constants.unknown(), () -> getModel().getGuestOsType().equals(OsType.Other.toString())));
         formBuilder.addFormItem(new FormItem(constants.guestOsArchitecture(), guestOsArch, 1, 0)
-            .withDefaultValue(constants.unknown(), new FormItem.DefaultValueCondition() {
-                @Override
-                public boolean showDefaultValue() {
-                    return getModel().getGuestOsType().equals(OsType.Other.toString());
-                }
-            }));
+            .withDefaultValue(constants.unknown(), () -> getModel().getGuestOsType().equals(OsType.Other.toString())));
         formBuilder.addFormItem(new FormItem(constants.guestOperatingSystem(), guestOsNamedVersion, 2, 0)
-            .withDefaultValue(constants.unknown(), new FormItem.DefaultValueCondition() {
-                @Override
-                public boolean showDefaultValue() {
-                    return getModel().getGuestOsType().equals(OsType.Other.toString());
-                }
-            }));
+            .withDefaultValue(constants.unknown(), () -> getModel().getGuestOsType().equals(OsType.Other.toString())));
         // The kernel version is only reported and displayed for Linux based systems
         formBuilder.addFormItem(new FormItem(constants.guestOsKernelInfo(), guestOsKernelVersion, 3, 0) {
             @Override
@@ -65,12 +50,7 @@ public class VmGuestInfoModelForm extends AbstractModelBoundFormWidget<VmGuestIn
 
         // Second row - Timezone Info
         formBuilder.addFormItem(new FormItem(constants.guestOsTimezone(), guestOsTimezone, 0, 1)
-            .withDefaultValue(constants.unknown(), new FormItem.DefaultValueCondition() {
-                @Override
-                public boolean showDefaultValue() {
-                    return getModel().getGuestOsType().equals(OsType.Other.toString());
-                }
-            }));
+            .withDefaultValue(constants.unknown(), () -> getModel().getGuestOsType().equals(OsType.Other.toString())));
 
         // Third row - Logged In User & Console Info
         formBuilder.addFormItem(new FormItem(constants.loggedInUserVm(), guestUserName, 0, 2));

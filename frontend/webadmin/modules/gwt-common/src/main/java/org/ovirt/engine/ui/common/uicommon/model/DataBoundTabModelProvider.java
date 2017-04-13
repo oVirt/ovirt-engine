@@ -6,9 +6,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -52,20 +49,14 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         super.initializeModelHandlers(model);
 
         // Add model items change handler
-        model.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (handleItemsChangedEvent()) {
-                    updateData();
-                }
+        model.getItemsChangedEvent().addListener((ev, sender, args) -> {
+            if (handleItemsChangedEvent()) {
+                updateData();
             }
         });
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
-                    clearData();
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
+                clearData();
             }
         });
     }

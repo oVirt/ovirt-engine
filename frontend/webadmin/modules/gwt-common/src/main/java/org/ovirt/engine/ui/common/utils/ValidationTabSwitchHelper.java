@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.view.TabbedView;
 import org.ovirt.engine.ui.common.widget.dialog.tab.OvirtTabListItem;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
-import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent.ValidationCompleteEventHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 
@@ -34,28 +33,24 @@ public final class ValidationTabSwitchHelper {
     public static HandlerRegistration registerValidationHandler(final EventBus eventBus,
             final AbstractModelBoundPopupPresenterWidget<?, ?> presenterWidget, final TabbedView view) {
         return eventBus.addHandler(ValidationCompleteEvent.getType(),
-                new ValidationCompleteEventHandler() {
-
-            @Override
-            public void onValidationComplete(ValidationCompleteEvent event) {
-                //Make sure the model in the event is the one we are interested in.
-                if (event.getModel() != null && event.getModel().equals(presenterWidget.getModel())) {
-                    //Get the invalid tab names from the model.
-                    Set<TabName> invalidTabs = presenterWidget.getModel().getInvalidTabs();
-                    //Get the tab names to dialog tab widget map from the view.
-                    Map<TabName, OvirtTabListItem> mapping = view.getTabNameMapping();
-                    markTabs(invalidTabs, mapping);
-                    //Check if the current active tab is invalid, if so don't do anything.
-                    for (TabName invalidTabName: invalidTabs) {
-                        if (view.getTabPanel().getActiveTab().equals(mapping.get(invalidTabName))) {
-                            return;
+                event -> {
+                    //Make sure the model in the event is the one we are interested in.
+                    if (event.getModel() != null && event.getModel().equals(presenterWidget.getModel())) {
+                        //Get the invalid tab names from the model.
+                        Set<TabName> invalidTabs = presenterWidget.getModel().getInvalidTabs();
+                        //Get the tab names to dialog tab widget map from the view.
+                        Map<TabName, OvirtTabListItem> mapping = view.getTabNameMapping();
+                        markTabs(invalidTabs, mapping);
+                        //Check if the current active tab is invalid, if so don't do anything.
+                        for (TabName invalidTabName: invalidTabs) {
+                            if (view.getTabPanel().getActiveTab().equals(mapping.get(invalidTabName))) {
+                                return;
+                            }
                         }
+                        //The current tab is not invalid, switch to the top invalid tab.
+                        switchTab(invalidTabs, mapping, view);
                     }
-                    //The current tab is not invalid, switch to the top invalid tab.
-                    switchTab(invalidTabs, mapping, view);
-                }
-            }
-        });
+                });
     }
 
     /**

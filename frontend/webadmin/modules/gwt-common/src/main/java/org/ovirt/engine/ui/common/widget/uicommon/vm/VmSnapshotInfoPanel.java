@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
@@ -65,12 +64,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
     }
 
     public void updatePanel(final SnapshotModel snapshotModel) {
-        snapshotModel.updateVmConfiguration(new AsyncCallback<Void>() {
-            @Override
-            public void onSuccess(Void returnValue) {
-                updateTabsData(snapshotModel);
-            }
-        });
+        snapshotModel.updateVmConfiguration(returnValue -> updateTabsData(snapshotModel));
     }
 
     private void addStyle() {

@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.common.widget.tab;
 
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
@@ -24,14 +21,11 @@ public class ModelBoundTab extends SimpleTab implements HasHandlers {
     }
 
     void registerModelEventListeners(final ModelProvider<? extends HasEntity> modelProvider) {
-        modelProvider.getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                // Update tab accessibility when 'IsAvailable' property changes
-                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    boolean isAvailable = modelProvider.getModel().getIsAvailable();
-                    setAccessible(isAvailable);
-                }
+        modelProvider.getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            // Update tab accessibility when 'IsAvailable' property changes
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                boolean isAvailable = modelProvider.getModel().getIsAvailable();
+                setAccessible(isAvailable);
             }
         });
     }

@@ -6,9 +6,6 @@ import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueLineModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -71,12 +68,9 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
     @Override
     public void edit(final KeyValueLineModel object) {
         updateKeyTitle(object);
-        object.getKeys().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ValueChangeEvent.fire(KeyValueLineWidget.this, object);
-                updateKeyTitle(object);
-            }
+        object.getKeys().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            ValueChangeEvent.fire(KeyValueLineWidget.this, object);
+            updateKeyTitle(object);
         });
         driver.edit(object);
     }

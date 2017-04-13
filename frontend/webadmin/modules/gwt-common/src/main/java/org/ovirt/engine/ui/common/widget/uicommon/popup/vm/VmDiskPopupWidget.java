@@ -42,15 +42,9 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.NewEditStorageModelBehavio
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -271,100 +265,73 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     public void edit(final AbstractDiskModel disk) {
         driver.edit(disk);
 
-        disk.getIsDirectLunDiskAvaialable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean isDirectLunDiskAvaialable = ((EntityModel<Boolean>) sender).getEntity();
-                externalDiskPanel.setVisible(isDirectLunDiskAvaialable);
-            }
+        disk.getIsDirectLunDiskAvaialable().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            boolean isDirectLunDiskAvaialable = ((EntityModel<Boolean>) sender).getEntity();
+            externalDiskPanel.setVisible(isDirectLunDiskAvaialable);
         });
 
-        disk.getIsUsingScsiReservation().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                scsiReservationInfoIcon.setVisible(disk.getIsUsingScsiReservation().getEntity());
+        disk.getIsUsingScsiReservation().getEntityChangedEvent().addListener((ev, sender, args) -> scsiReservationInfoIcon.setVisible(disk.getIsUsingScsiReservation().getEntity()));
+
+        disk.getIsVirtioScsiEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (disk.getVm() == null) {
+                // not relevant for floating disks
+                return;
             }
+
+            boolean isVirtioScsiEnabled = Boolean.TRUE.equals(((EntityModel) sender).getEntity());
+
+            // Show the info icon if VirtIO-SCSI is supported by the cluster but disabled for the VM
+            interfaceInfoIcon.setVisible(!isVirtioScsiEnabled);
         });
 
-        disk.getIsVirtioScsiEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (disk.getVm() == null) {
-                    // not relevant for floating disks
-                    return;
-                }
-
-                boolean isVirtioScsiEnabled = Boolean.TRUE.equals(((EntityModel) sender).getEntity());
-
-                // Show the info icon if VirtIO-SCSI is supported by the cluster but disabled for the VM
-                interfaceInfoIcon.setVisible(!isVirtioScsiEnabled);
-            }
+        disk.getCinderVolumeType().getItemsChangedEvent().addListener((ev, sender, args) -> {
+            Collection<String> volumeTypes = disk.getCinderVolumeType().getItems();
+            cinderVolumeTypeInfoIcon.setVisible(volumeTypes == null || volumeTypes.isEmpty());
         });
 
-        disk.getCinderVolumeType().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                Collection<String> volumeTypes = disk.getCinderVolumeType().getItems();
-                cinderVolumeTypeInfoIcon.setVisible(volumeTypes == null || volumeTypes.isEmpty());
-            }
-        });
-
-        disk.getIsModelDisabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (disk.getIsModelDisabled().getEntity()) {
-                    disableWidget(getWidget());
-                    enableWidget(radioButtonPanel);
-                    enableWidget(datacenterEditor);
-                    disk.getDefaultCommand().setIsExecutionAllowed(false);
-                    disk.setIsChangeable(false);
-                } else {
-                    enableWidget(getWidget());
-                    disk.getDefaultCommand().setIsExecutionAllowed(true);
-                    disk.setIsChangeable(true);
-                    driver.edit(disk);
-                }
+        disk.getIsModelDisabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (disk.getIsModelDisabled().getEntity()) {
+                disableWidget(getWidget());
+                enableWidget(radioButtonPanel);
+                enableWidget(datacenterEditor);
+                disk.getDefaultCommand().setIsExecutionAllowed(false);
+                disk.setIsChangeable(false);
+            } else {
+                enableWidget(getWidget());
+                disk.getDefaultCommand().setIsExecutionAllowed(true);
+                disk.setIsChangeable(true);
+                driver.edit(disk);
             }
         });
 
         radioButtonPanel.addRadioButton(constants.imageDisk(),
                 disk.getDisk() == null || disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE,
                 disk.getIsNew(),
-                new ValueChangeHandler<Boolean>() {
-
-                @Override
-                public void onValueChange(ValueChangeEvent<Boolean> event) {
+                event -> {
                     if (disk.getIsNew()) {
                         disk.getDiskStorageType().setEntity(DiskStorageType.IMAGE);
                         revealDiskPanel(disk);
                     }
-                }
-            });
+                });
 
         radioButtonPanel.addRadioButton(constants.directLunDisk(),
                 disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.LUN,
                 disk.getIsNew(),
-                new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        if (disk.getIsNew()) {
-                            disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
-                            revealStorageView(disk);
-                            revealDiskPanel(disk);
-                        }
+                event -> {
+                    if (disk.getIsNew()) {
+                        disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
+                        revealStorageView(disk);
+                        revealDiskPanel(disk);
                     }
                 });
 
         radioButtonPanel.addRadioButton(constants.cinderDisk(),
                 disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.CINDER,
                 disk.getIsNew(),
-                new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        if (disk.getIsNew()) {
-                            disk.getDiskStorageType().setEntity(DiskStorageType.CINDER);
-                            revealDiskPanel(disk);
-                        }
+                event -> {
+                    if (disk.getIsNew()) {
+                        disk.getDiskStorageType().setEntity(DiskStorageType.CINDER);
+                        revealDiskPanel(disk);
                     }
                 });
 
@@ -409,30 +376,17 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         fcpStorageView.edit(fcpStorageModel);
 
         // SelectedItemChangedEvent handlers
-        disk.getStorageType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                revealStorageView(disk);
-            }
-        });
+        disk.getStorageType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> revealStorageView(disk));
 
-        disk.getHost().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                revealStorageView(disk);
-            }
-        });
+        disk.getHost().getSelectedItemChangedEvent().addListener((ev, sender, args) -> revealStorageView(disk));
 
-        disk.getDiskStorageType().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("IsChangable".equals(propName)) { //$NON-NLS-1$
-                    if (disk.getDiskStorageType().getIsChangable() && disk.isEditEnabled()) {
-                        enableWidget(radioButtonPanel);
-                    } else {
-                        disableWidget(radioButtonPanel);
-                    }
+        disk.getDiskStorageType().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if ("IsChangable".equals(propName)) { //$NON-NLS-1$
+                if (disk.getDiskStorageType().getIsChangable() && disk.isEditEnabled()) {
+                    enableWidget(radioButtonPanel);
+                } else {
+                    disableWidget(radioButtonPanel);
                 }
             }
         });

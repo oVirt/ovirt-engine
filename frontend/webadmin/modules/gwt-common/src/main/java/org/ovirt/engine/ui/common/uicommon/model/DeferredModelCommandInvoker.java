@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 
 /**
  * Used to invoke UiCommon model {@linkplain UICommand commands} as GWT {@linkplain Scheduler#scheduleDeferred deferred
@@ -39,17 +38,14 @@ public class DeferredModelCommandInvoker {
 
     void scheduleCommandExecution(final UICommand command) {
         if (command != null) {
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                @Override
-                public void execute() {
-                    try {
-                        executeCommand(command);
-                    } catch (Exception ex) {
-                        logger.log(Level.SEVERE, "UICommand execution failed", ex); //$NON-NLS-1$
-                        commandFailed(command);
-                    } finally {
-                        commandFinished(command);
-                    }
+            Scheduler.get().scheduleDeferred(() -> {
+                try {
+                    executeCommand(command);
+                } catch (Exception ex) {
+                    logger.log(Level.SEVERE, "UICommand execution failed", ex); //$NON-NLS-1$
+                    commandFailed(command);
+                } finally {
+                    commandFinished(command);
                 }
             });
         }

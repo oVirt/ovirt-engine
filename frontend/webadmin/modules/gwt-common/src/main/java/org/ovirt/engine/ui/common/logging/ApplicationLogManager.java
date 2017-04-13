@@ -4,7 +4,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent;
-import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent.ApplicationFocusChangeHandler;
 import org.ovirt.engine.ui.common.system.ApplicationFocusManager;
 
 import com.google.gwt.event.shared.EventBus;
@@ -42,12 +41,8 @@ public class ApplicationLogManager {
         remoteLogger.addHandler(new SimpleRemoteLogHandler());
 
         // Enable/disable log handlers when the application window gains/looses its focus
-        eventBus.addHandler(ApplicationFocusChangeEvent.getType(), new ApplicationFocusChangeHandler() {
-            @Override
-            public void onApplicationFocusChange(ApplicationFocusChangeEvent event) {
-                localStorageLogHandler.setActive(event.isInFocus());
-            }
-        });
+        eventBus.addHandler(ApplicationFocusChangeEvent.getType(),
+                event -> localStorageLogHandler.setActive(event.isInFocus()));
     }
 
     /**

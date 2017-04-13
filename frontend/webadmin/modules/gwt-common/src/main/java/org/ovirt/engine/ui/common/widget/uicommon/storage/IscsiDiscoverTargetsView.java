@@ -13,13 +13,8 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasKeyPressHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -163,27 +158,21 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
         driver.edit(object);
 
         // Handle property change event
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if (propName.equals("ProposeDiscoverTargets")) { //$NON-NLS-1$
-                    setProposeDiscover(object.getProposeDiscoverTargets());
-                }
-                else if (propName.equals("Message")) { //$NON-NLS-1$
-                    messageLabel.setText(object.getMessage());
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if (propName.equals("ProposeDiscoverTargets")) { //$NON-NLS-1$
+                setProposeDiscover(object.getProposeDiscoverTargets());
+            }
+            else if (propName.equals("Message")) { //$NON-NLS-1$
+                messageLabel.setText(object.getMessage());
             }
         });
 
         // Handle key press event
-        addKeyPressHandler(new KeyPressHandler() {
-            @Override
-            public void onKeyPress(KeyPressEvent event) {
-                if (KeyCodes.KEY_ENTER == event.getNativeEvent().getKeyCode()) {
-                    object.getDiscoverTargetsCommand().execute();
-                    setIsFocused(false);
-                }
+        addKeyPressHandler(event -> {
+            if (KeyCodes.KEY_ENTER == event.getNativeEvent().getKeyCode()) {
+                object.getDiscoverTargetsCommand().execute();
+                setIsFocused(false);
             }
         });
 
@@ -195,19 +184,9 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
         discoverButton.setCommand(object.getDiscoverTargetsCommand());
 
         discoverTargetsPanelInner.setVisible(discoverTargetsImageButton.isDown());
-        discoverTargetsImageButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                object.setProposeDiscoverTargets(discoverTargetsImageButton.isDown());
-            }
-        });
+        discoverTargetsImageButton.addClickHandler(event -> object.setProposeDiscoverTargets(discoverTargetsImageButton.isDown()));
 
-        discoverButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                discoverButton.getCommand().execute();
-            }
-        });
+        discoverButton.addClickHandler(event -> discoverButton.getCommand().execute());
 
         initLoginButton(object);
     }
@@ -215,12 +194,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
     protected void initLoginButton(SanStorageModelBase object) {
 
         loginButton.setCommand(object.getLoginCommand());
-        loginButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                loginButton.getCommand().execute();
-            }
-        });
+        loginButton.addClickHandler(event -> loginButton.getCommand().execute());
 
         loginButton.setLabel(object.getLoginButtonLabel());
     }

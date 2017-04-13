@@ -3,20 +3,14 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
-import java.text.ParseException;
-
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ToStringEntityModelRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.text.shared.Parser;
 
 public class PoolEditPopupWidget extends PoolNewPopupWidget {
 
@@ -32,15 +26,11 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
     @Override
     public void edit(final UnitVmModel object) {
         super.edit(object);
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (object.getProgress() == null) {
-                    disableAllTabs();
-                    enableEditPoolFields(object);
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (object.getProgress() == null) {
+                disableAllTabs();
+                enableEditPoolFields(object);
             }
-
         });
     }
 
@@ -48,14 +38,9 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
     protected void createNumOfDesktopEditors() {
         increaseNumOfVmsEditor = new IntegerEntityModelTextBoxEditor();
 
-        numOfVmsEditor = new EntityModelTextBoxEditor<>(new ToStringEntityModelRenderer<Integer>(), new Parser<Integer>() {
-
-            @Override
-            public Integer parse(CharSequence text) throws ParseException {
-                // forwards to the currently active editor
-                return increaseNumOfVmsEditor.asEditor().getValue();
-            }
-
+        numOfVmsEditor = new EntityModelTextBoxEditor<>(new ToStringEntityModelRenderer<Integer>(), text -> {
+            // forwards to the currently active editor
+            return increaseNumOfVmsEditor.asEditor().getValue();
         });
     }
 

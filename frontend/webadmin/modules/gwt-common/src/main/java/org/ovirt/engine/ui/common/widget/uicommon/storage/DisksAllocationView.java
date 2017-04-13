@@ -19,9 +19,6 @@ import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -177,16 +174,13 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     }
 
     private void initListeners(final DisksAllocationModel model) {
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("Disks".equals(args.propertyName)) { //$NON-NLS-1$
-                    addDiskList(model);
-                }
-                else if ("QuotaEnforcmentType".equals(args.propertyName)) { //$NON-NLS-1$
-                    updateColumnsAvailability(model);
-                    updateListHeader();
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("Disks".equals(args.propertyName)) { //$NON-NLS-1$
+                addDiskList(model);
+            }
+            else if ("QuotaEnforcmentType".equals(args.propertyName)) { //$NON-NLS-1$
+                updateColumnsAvailability(model);
+                updateListHeader();
             }
         });
     }

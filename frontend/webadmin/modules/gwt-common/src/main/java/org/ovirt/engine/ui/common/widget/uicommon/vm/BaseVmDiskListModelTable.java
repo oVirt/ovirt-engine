@@ -13,9 +13,6 @@ import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModelBase;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -51,12 +48,9 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
         disksViewRadioGroup = new DisksViewRadioGroup();
     }
 
-    final ClickHandler clickHandler = new ClickHandler() {
-        @Override
-        public void onClick(ClickEvent event) {
-            if (((RadioButton) event.getSource()).getValue()) {
-                handleRadioButtonClick(event);
-            }
+    final ClickHandler clickHandler = event -> {
+        if (((RadioButton) event.getSource()).getValue()) {
+            handleRadioButtonClick(event);
         }
     };
 
@@ -74,12 +68,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
         initTableOverhead();
         handleRadioButtonClick(null);
 
-        getModel().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                disksViewRadioGroup.setDiskStorageType(getModel().getDiskViewType().getEntity());
-            }
-        });
+        getModel().getItemsChangedEvent().addListener((ev, sender, args) -> disksViewRadioGroup.setDiskStorageType(getModel().getDiskViewType().getEntity()));
     }
 
     void handleRadioButtonClick(ClickEvent event) {

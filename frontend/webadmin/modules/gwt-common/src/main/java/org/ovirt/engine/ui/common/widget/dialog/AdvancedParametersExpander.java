@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.common.widget.PatternFlyCompatible;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -83,12 +82,7 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
     }
 
     private void initListener() {
-        expander.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                expanderContent.getStyle().setDisplay(expander.isDown() ? Display.BLOCK : Display.NONE);
-            }
-        });
+        expander.addClickHandler(event -> expanderContent.getStyle().setDisplay(expander.isDown() ? Display.BLOCK : Display.NONE));
     }
 
     public void addClickHandler(ClickHandler clickHandler) {

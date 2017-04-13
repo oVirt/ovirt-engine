@@ -7,8 +7,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -121,20 +119,10 @@ public class ScrollableTabBarView extends AbstractView implements ScrollableTabB
     public ScrollableTabBarView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         configureAutoHidePartners();
-        asWidget().addAttachHandler(new AttachEvent.Handler() {
-
-            @Override
-            public void onAttachOrDetach(AttachEvent event) {
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-
-                    @Override
-                    public void execute() {
-                        recalculateSize();
-                        showScrollButtons();
-                    }
-                });
-            }
-        });
+        asWidget().addAttachHandler(event -> Scheduler.get().scheduleDeferred(() -> {
+            recalculateSize();
+            showScrollButtons();
+        }));
     }
 
     /**
@@ -179,14 +167,10 @@ public class ScrollableTabBarView extends AbstractView implements ScrollableTabB
             newWidget = new HTML();
             newWidget.setHTML(widget.asWidget().getElement().getString().replaceAll("class=\".*?\"", //$NON-NLS-1$
                     "class=\"" + style.dropdownItem() + "\"")); //$NON-NLS-1$ //$NON-NLS-2$
-            newWidget.addClickHandler(new ClickHandler() {
-
-                @Override
-                public void onClick(ClickEvent event) {
-                    dropdownPopupPanel.hide();
-                    widget.asWidget().getElement().scrollIntoView();
-                    adjustButtons();
-                }
+            newWidget.addClickHandler(event -> {
+                dropdownPopupPanel.hide();
+                widget.asWidget().getElement().scrollIntoView();
+                adjustButtons();
             });
             newWidget.addStyleName(style.dropdownItemContainer());
         }

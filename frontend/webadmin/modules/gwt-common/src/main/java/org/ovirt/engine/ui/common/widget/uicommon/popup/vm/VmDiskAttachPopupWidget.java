@@ -31,16 +31,9 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -431,13 +424,10 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 constants.imageDisk(),
                 disk.getIsNew() || disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE,
                 disk.getIsNew(),
-                new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        if (disk.getIsNew()) {
-                            disk.getDiskStorageType().setEntity(DiskStorageType.IMAGE);
-                            revealDiskPanel(disk);
-                        }
+                event -> {
+                    if (disk.getIsNew()) {
+                        disk.getDiskStorageType().setEntity(DiskStorageType.IMAGE);
+                        revealDiskPanel(disk);
                     }
                 });
 
@@ -445,13 +435,10 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 constants.directLunDisk(),
                 !disk.getIsNew() && disk.getDisk().getDiskStorageType() == DiskStorageType.LUN,
                 disk.getIsNew(),
-                new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        if (disk.getIsNew()) {
-                            disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
-                            revealDiskPanel(disk);
-                        }
+                event -> {
+                    if (disk.getIsNew()) {
+                        disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
+                        revealDiskPanel(disk);
                     }
                 });
 
@@ -459,57 +446,41 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 constants.cinderDisk(),
                 !disk.getIsNew() && disk.getDisk().getDiskStorageType() == DiskStorageType.CINDER,
                 disk.getIsNew(),
-                new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        if (disk.getIsNew()) {
-                            disk.getDiskStorageType().setEntity(DiskStorageType.CINDER);
-                            revealDiskPanel(disk);
-                        }
+                event -> {
+                    if (disk.getIsNew()) {
+                        disk.getDiskStorageType().setEntity(DiskStorageType.CINDER);
+                        revealDiskPanel(disk);
                     }
                 });
 
         // Add event handlers
-        disk.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if (propName.equals("IsValid")) { //$NON-NLS-1$
-                    if (disk.getIsValid()) {
-                        attachDiskPanel.markAsValid();
-                    } else {
-                        attachDiskPanel.markAsInvalid(disk.getInvalidityReasons());
-                    }
-                } else if ("Message".equals(propName)) { //$NON-NLS-1$
-                    if (StringUtils.isNotEmpty(disk.getMessage())) {
-                        messageLabel.setHTML(wrapInUnorderedList(disk.getMessage()));
-                    } else {
-                        messageLabel.setHTML(""); //$NON-NLS-1$
-                    }
+        disk.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if (propName.equals("IsValid")) { //$NON-NLS-1$
+                if (disk.getIsValid()) {
+                    attachDiskPanel.markAsValid();
+                } else {
+                    attachDiskPanel.markAsInvalid(disk.getInvalidityReasons());
+                }
+            } else if ("Message".equals(propName)) { //$NON-NLS-1$
+                if (StringUtils.isNotEmpty(disk.getMessage())) {
+                    messageLabel.setHTML(wrapInUnorderedList(disk.getMessage()));
+                } else {
+                    messageLabel.setHTML(""); //$NON-NLS-1$
                 }
             }
         });
 
-        disk.getWarningLabel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev,
-                    Object sender,
-                    PropertyChangedEventArgs args) {
-                EntityModel ownerModel = (EntityModel) sender;
-                String propName = args.propertyName;
+        disk.getWarningLabel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            EntityModel ownerModel = (EntityModel) sender;
+            String propName = args.propertyName;
 
-                if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
-                    warningLabel.setVisible(ownerModel.getIsAvailable());
-                }
+            if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
+                warningLabel.setVisible(ownerModel.getIsAvailable());
             }
         });
 
-        disk.getWarningLabel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                warningLabel.setHTML(wrapInUnorderedList(disk.getWarningLabel().getEntity()));
-            }
-        });
+        disk.getWarningLabel().getEntityChangedEvent().addListener((ev, sender, args) -> warningLabel.setHTML(wrapInUnorderedList(disk.getWarningLabel().getEntity())));
         revealDiskPanel(disk);
     }
 
@@ -560,13 +531,10 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
 
     private AbstractCheckboxColumn<EntityModel> getReadOnlyCheckBoxColumn() {
         AbstractCheckboxColumn<EntityModel> readOnlyCheckboxColumn = new AbstractCheckboxColumn<EntityModel>(
-            new FieldUpdater<EntityModel, Boolean>() {
-                @Override
-                public void update(int idx, EntityModel object, Boolean value) {
+                (idx, object, value) -> {
                     DiskModel diskModel = (DiskModel) object.getEntity();
                     diskModel.getDisk().setReadOnly(value);
-                }
-            }) {
+                }) {
                 @Override
                 protected boolean canEdit(EntityModel object) {
                     DiskModel diskModel = (DiskModel) object.getEntity();
@@ -587,13 +555,10 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
 
     private AbstractCheckboxColumn<EntityModel> getBootCheckBoxColumn() {
         AbstractCheckboxColumn<EntityModel> bootCheckboxColumn = new AbstractCheckboxColumn<EntityModel>(
-            new FieldUpdater<EntityModel, Boolean>() {
-                @Override
-                public void update(int idx, EntityModel object, Boolean value) {
+                (idx, object, value) -> {
                     DiskModel diskModel = (DiskModel) object.getEntity();
                     diskModel.getIsBootable().setEntity(value);
-                }
-            }) {
+                }) {
                 @Override
                 public SafeHtml getTooltip(EntityModel object) {
                     EntityModel<Boolean> bootModel = ((DiskModel) object.getEntity()).getIsBootable();

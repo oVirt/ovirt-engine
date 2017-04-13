@@ -79,12 +79,9 @@ public class InstanceImagesEditor extends AddRemoveRowWidget<InstanceImagesModel
 
     @Override
     protected boolean vetoRemoveWidget(final Pair<InstanceImageLineModel, InstanceImageLineEditor> item, final InstanceImageLineModel value, final InstanceImageLineEditor widget) {
-        model.approveRemoveDisk(item.getFirst(), new InstanceImagesModel.RemoveApprovedCallback() {
-            @Override
-            public void removeApproved(boolean approved) {
-                if (approved) {
-                    doRemoveItem(item, value, widget);
-                }
+        model.approveRemoveDisk(item.getFirst(), approved -> {
+            if (approved) {
+                doRemoveItem(item, value, widget);
             }
         });
 

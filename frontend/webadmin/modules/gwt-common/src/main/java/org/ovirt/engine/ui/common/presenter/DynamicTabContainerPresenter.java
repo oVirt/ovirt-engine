@@ -4,7 +4,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.gwtplatform.mvp.client.ChangeTabHandler;
@@ -90,25 +89,18 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
     protected void onBind() {
         super.onBind();
         registerHandler(getEventBus().addHandler(RedrawDynamicTabContainerEvent.getType(),
-                new RedrawDynamicTabContainerEvent.RedrawDynamicTabContainerHandler() {
-
-            @Override
-            public void onRedrawDynamicTabContainer(RedrawDynamicTabContainerEvent event) {
+            event -> {
                 if (requestTabsEventType == event.getRequestTabsEventType()) {
-                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                        @Override
-                        public void execute() {
-                            // Remove all tabs
-                            getView().removeTabs();
+                    Scheduler.get().scheduleDeferred(() -> {
+                        // Remove all tabs
+                        getView().removeTabs();
 
-                            // Re-add tabs in response to RequestTabsEvent
-                            RequestTabsEvent.fire(DynamicTabContainerPresenter.this,
-                                        requestTabsEventType, DynamicTabContainerPresenter.this);
-                        }
+                        // Re-add tabs in response to RequestTabsEvent
+                        RequestTabsEvent.fire(DynamicTabContainerPresenter.this,
+                                    requestTabsEventType, DynamicTabContainerPresenter.this);
                     });
                 }
-            }
-        }));
+            }));
     }
 
 }

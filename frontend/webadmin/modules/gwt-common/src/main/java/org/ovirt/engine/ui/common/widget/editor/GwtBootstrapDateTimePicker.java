@@ -4,8 +4,6 @@ import java.util.Date;
 
 import org.gwtbootstrap3.extras.datetimepicker.client.ui.DateTimePicker;
 import org.gwtbootstrap3.extras.datetimepicker.client.ui.base.constants.DateTimePickerView;
-import org.gwtbootstrap3.extras.datetimepicker.client.ui.base.events.ChangeDateEvent;
-import org.gwtbootstrap3.extras.datetimepicker.client.ui.base.events.ChangeDateHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -36,12 +34,7 @@ public class GwtBootstrapDateTimePicker implements IsWidget, TakesValue<Date> {
         dateTimePicker.setAutoClose(autoClose);
         dateTimePicker.setShowTodayButton(true);
         this.dateTimeFormat = format;
-        this.dateTimePicker.addChangeDateHandler(new ChangeDateHandler() {
-            @Override
-            public void onChangeDate(ChangeDateEvent evt) {
-                ValueChangeEvent.fire(dateTimePicker, dateTimePicker.getValue());
-            }
-        });
+        this.dateTimePicker.addChangeDateHandler(evt -> ValueChangeEvent.fire(dateTimePicker, dateTimePicker.getValue()));
     }
 
     public String getDateTimeFormat() {

@@ -4,16 +4,9 @@ import java.util.Collection;
 
 import org.ovirt.engine.ui.common.widget.editor.BaseListModelSuggestBox;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Event.NativePreviewEvent;
-import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 
 /**
@@ -25,41 +18,13 @@ public class ListModelSuggestBox extends BaseListModelSuggestBox<String> {
         super(new MultiWordSuggestOracle());
         initWidget(asSuggestBox());
 
-        handlerRegistrations.add(asSuggestBox().getValueBox().addFocusHandler(new FocusHandler() {
-
-            @Override
-            public void onFocus(FocusEvent event) {
-                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                    @Override
-                    public void execute() {
-                        asSuggestBox().showSuggestionList();
-                    }
-                });
-            }
-        }));
-        handlerRegistrations.add(addKeyPressHandler(new KeyPressHandler() {
-
-            @Override
-            public void onKeyPress(KeyPressEvent event) {
-                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                    @Override
-                    public void execute() {
-                        ValueChangeEvent.fire(asSuggestBox(), asSuggestBox().getText());
-                    }
-                });
-            }
-        }));
-        handlerRegistrations.add(Event.addNativePreviewHandler(new NativePreviewHandler() {
-
-            @Override
-            public void onPreviewNativeEvent(NativePreviewEvent event) {
-                if (event.getTypeInt() == Event.ONKEYDOWN && event.getNativeEvent().getKeyCode() == KeyCodes.KEY_TAB) {
-                    // By default SuggestBox applies selection upon tab press - this is bad
-                    event.getNativeEvent().stopPropagation();
-                    hideSuggestions();
-                }
+        handlerRegistrations.add(asSuggestBox().getValueBox().addFocusHandler(event -> Scheduler.get().scheduleDeferred(() -> asSuggestBox().showSuggestionList())));
+        handlerRegistrations.add(addKeyPressHandler(event -> Scheduler.get().scheduleDeferred(() -> ValueChangeEvent.fire(asSuggestBox(), asSuggestBox().getText()))));
+        handlerRegistrations.add(Event.addNativePreviewHandler(event -> {
+            if (event.getTypeInt() == Event.ONKEYDOWN && event.getNativeEvent().getKeyCode() == KeyCodes.KEY_TAB) {
+                // By default SuggestBox applies selection upon tab press - this is bad
+                event.getNativeEvent().stopPropagation();
+                hideSuggestions();
             }
         }));
     }

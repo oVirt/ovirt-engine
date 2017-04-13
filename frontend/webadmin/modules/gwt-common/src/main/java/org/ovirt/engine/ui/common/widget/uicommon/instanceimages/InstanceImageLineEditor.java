@@ -9,12 +9,7 @@ import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.InstanceImageLineModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -75,28 +70,15 @@ public class InstanceImageLineEditor extends AbstractModelBoundPopupWidget<Insta
         createEditButton.setCommand(model.getCreateEditCommand());
         attachButton.setCommand(model.getAttachCommand());
 
-        createEditButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                createEditButton.getCommand().execute();
-            }
-        });
+        createEditButton.addClickHandler(event -> createEditButton.getCommand().execute());
 
-        attachButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                attachButton.getCommand().execute();
-            }
-        });
+        attachButton.addClickHandler(event -> attachButton.getCommand().execute());
 
         updateButtonText(model);
 
-        model.getDiskModel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ValueChangeEvent.fire(InstanceImageLineEditor.this, model);
-                updateButtonText(model);
-            }
+        model.getDiskModel().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            ValueChangeEvent.fire(InstanceImageLineEditor.this, model);
+            updateButtonText(model);
         });
     }
 

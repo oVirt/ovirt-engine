@@ -105,17 +105,11 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.client.IntegerRenderer;
@@ -1534,13 +1528,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         numaSupportButton.setCommand(model.getNumaSupportCommand());
         numaPanel.setVisible(false);
         enableNumaFields(false);
-        model.getNumaEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                numaPanel.setVisible(true);
-                enableNumaFields(model.getNumaEnabled().getEntity());
-                setNumaInfoMsg(model.getNumaEnabled().getMessage());
-            }
+        model.getNumaEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            numaPanel.setVisible(true);
+            enableNumaFields(model.getNumaEnabled().getEntity());
+            setNumaInfoMsg(model.getNumaEnabled().getMessage());
         });
     }
 
@@ -1573,141 +1564,94 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     protected void initListeners(final UnitVmModel object) {
         // TODO should be handled by the core framework
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("IsCustomPropertiesTabAvailable".equals(propName)) { //$NON-NLS-1$
-                    setupCustomPropertiesAvailability(object);
-                } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
-                    addDiskAllocation(object);
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if ("IsCustomPropertiesTabAvailable".equals(propName)) { //$NON-NLS-1$
+                setupCustomPropertiesAvailability(object);
+            } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
+                addDiskAllocation(object);
             }
         });
 
-        object.getIsAutoAssign().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean isAutoAssign = object.getIsAutoAssign().getEntity();
-                defaultHostEditor.setEnabled(!isAutoAssign);
+        object.getIsAutoAssign().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            boolean isAutoAssign = object.getIsAutoAssign().getEntity();
+            defaultHostEditor.setEnabled(!isAutoAssign);
 
-                // only this is not bind to the model, so needs to listen to the change explicitly
-                specificHost.asRadioButton().setValue(!isAutoAssign);
+            // only this is not bind to the model, so needs to listen to the change explicitly
+            specificHost.asRadioButton().setValue(!isAutoAssign);
+        });
+
+        object.getProvisioning().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            boolean isProvisioningChangable = object.getProvisioning().getIsChangable();
+            provisioningThinEditor.setEnabled(isProvisioningChangable);
+            provisioningCloneEditor.setEnabled(isProvisioningChangable);
+
+            boolean isProvisioningAvailable = object.getProvisioning().getIsAvailable();
+            changeApplicationLevelVisibility(provisionSelectionPanel, isProvisioningAvailable);
+
+            boolean isDisksAvailable = object.getIsDisksAvailable();
+            changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable ||
+                    object.getIsVirtioScsiEnabled().getIsAvailable());
+
+            changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable);
+        });
+
+        object.getIsVirtioScsiEnabled().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                isVirtioScsiEnabledInfoIcon.setVisible(object.getIsVirtioScsiEnabled().getIsAvailable());
             }
         });
 
-        object.getProvisioning().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean isProvisioningChangable = object.getProvisioning().getIsChangable();
-                provisioningThinEditor.setEnabled(isProvisioningChangable);
-                provisioningCloneEditor.setEnabled(isProvisioningChangable);
-
-                boolean isProvisioningAvailable = object.getProvisioning().getIsAvailable();
-                changeApplicationLevelVisibility(provisionSelectionPanel, isProvisioningAvailable);
-
-                boolean isDisksAvailable = object.getIsDisksAvailable();
-                changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable ||
-                        object.getIsVirtioScsiEnabled().getIsAvailable());
-
-                changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable);
+        object.getEditingEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            Boolean enabled = object.getEditingEnabled().getEntity();
+            if (Boolean.FALSE.equals(enabled)) {
+                disableAllTabs();
+                generalWarningMessage.setText(object.getEditingEnabled().getMessage());
+                generalWarningMessage.setVisible(true);
             }
         });
 
-        object.getIsVirtioScsiEnabled().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    isVirtioScsiEnabledInfoIcon.setVisible(object.getIsVirtioScsiEnabled().getIsAvailable());
-                }
+        object.getCpuSharesAmountSelection().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                changeApplicationLevelVisibility(cpuSharesEditorRow, object.getCpuSharesAmountSelection().getIsAvailable());
             }
         });
 
-        object.getEditingEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                Boolean enabled = object.getEditingEnabled().getEntity();
-                if (Boolean.FALSE.equals(enabled)) {
-                    disableAllTabs();
-                    generalWarningMessage.setText(object.getEditingEnabled().getMessage());
-                    generalWarningMessage.setVisible(true);
-                }
+        object.getCloudInitEnabled().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (object.getCloudInitEnabled().getEntity() != null) {
+                vmInitEditor.setCloudInitContentVisible(object.getCloudInitEnabled().getEntity());
             }
         });
 
-        object.getCpuSharesAmountSelection().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    changeApplicationLevelVisibility(cpuSharesEditorRow, object.getCpuSharesAmountSelection().getIsAvailable());
-                }
+        object.getSysprepEnabled().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (object.getSysprepEnabled().getEntity() != null) {
+                vmInitEditor.setSyspepContentVisible(object.getSysprepEnabled().getEntity());
             }
         });
 
-        object.getCloudInitEnabled().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (object.getCloudInitEnabled().getEntity() != null) {
-                    vmInitEditor.setCloudInitContentVisible(object.getCloudInitEnabled().getEntity());
-                }
+        object.getDataCenterWithClustersList().getPropertyChangedEvent().addListener((ev, sender, args) -> changeApplicationLevelVisibility(serialNumberPolicyEditor, true));
+
+        object.getIsRngEnabled().getPropertyChangedEvent().addListener((ev, sender, args) -> rngPanel.setVisible(object.getIsRngEnabled().getEntity()));
+
+        object.getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel());
+            customCpu.setNullReplacementString(getDefaultCpuTypeLabel());
+            updateUrandomLabel(object);
+        });
+
+        object.getCpuPinning().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
+                cpuPinningLabel.setStyleName(object.getCpuPinning().getIsChangable() ? OvirtCss.LABEL_ENABLED : OvirtCss.LABEL_DISABLED);
             }
         });
 
-        object.getSysprepEnabled().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (object.getSysprepEnabled().getEntity() != null) {
-                    vmInitEditor.setSyspepContentVisible(object.getSysprepEnabled().getEntity());
-                }
-            }
-        });
+        object.getCustomCompatibilityVersion().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateUrandomLabel(object));
 
-        object.getDataCenterWithClustersList().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                changeApplicationLevelVisibility(serialNumberPolicyEditor, true);
-            }
-        });
-
-        object.getIsRngEnabled().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                rngPanel.setVisible(object.getIsRngEnabled().getEntity());
-            }
-        });
-
-        object.getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel());
-                customCpu.setNullReplacementString(getDefaultCpuTypeLabel());
-                updateUrandomLabel(object);
-            }
-        });
-
-        object.getCpuPinning().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
-                    cpuPinningLabel.setStyleName(object.getCpuPinning().getIsChangable() ? OvirtCss.LABEL_ENABLED : OvirtCss.LABEL_DISABLED);
-                }
-            }
-        });
-
-        object.getCustomCompatibilityVersion().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateUrandomLabel(object);
-            }
-        });
-
-        object.getIsHeadlessModeEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean isHeadlessEnabled = object.getIsHeadlessModeEnabled().getEntity();
-                ssoMethodLabel.setEnabled(!isHeadlessEnabled);
-                monitorsLabel.setEnabled(!isHeadlessEnabled);
-                spiceProxyEnabledCheckboxWithInfoIcon.setEnabled(!isHeadlessEnabled);
-            }
+        object.getIsHeadlessModeEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            boolean isHeadlessEnabled = object.getIsHeadlessModeEnabled().getEntity();
+            ssoMethodLabel.setEnabled(!isHeadlessEnabled);
+            monitorsLabel.setEnabled(!isHeadlessEnabled);
+            spiceProxyEnabledCheckboxWithInfoIcon.setEnabled(!isHeadlessEnabled);
         });
     }
 
@@ -1749,105 +1693,75 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private void initTabAvailabilityListeners(final UnitVmModel vm) {
         // TODO should be handled by the core framework
-        vm.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("IsHighlyAvailable".equals(propName)) { //$NON-NLS-1$
-                    changeApplicationLevelVisibility(highAvailabilityTab, vm.getIsHighlyAvailable().getEntity());
-                } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
-                    boolean isDisksAvailable = vm.getIsDisksAvailable();
-                    changeApplicationLevelVisibility(disksPanel, isDisksAvailable);
+        vm.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if ("IsHighlyAvailable".equals(propName)) { //$NON-NLS-1$
+                changeApplicationLevelVisibility(highAvailabilityTab, vm.getIsHighlyAvailable().getEntity());
+            } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
+                boolean isDisksAvailable = vm.getIsDisksAvailable();
+                changeApplicationLevelVisibility(disksPanel, isDisksAvailable);
 
-                    boolean isProvisioningAvailable = vm.getProvisioning().getIsAvailable();
-                    changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable);
+                boolean isProvisioningAvailable = vm.getProvisioning().getIsAvailable();
+                changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable);
 
-                    changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable ||
-                            vm.getIsVirtioScsiEnabled().getIsAvailable());
+                changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable ||
+                        vm.getIsVirtioScsiEnabled().getIsAvailable());
 
-                    if (isDisksAvailable) {
-                        // Update warning message by disks status
-                        updateDisksWarningByImageStatus(vm.getDisks(), ImageStatus.ILLEGAL);
-                        updateDisksWarningByImageStatus(vm.getDisks(), ImageStatus.LOCKED);
-                    } else {
-                        // Clear warning message
-                        generalWarningMessage.setText(""); //$NON-NLS-1$
-                        generalWarningMessage.setVisible(false);
-                    }
+                if (isDisksAvailable) {
+                    // Update warning message by disks status
+                    updateDisksWarningByImageStatus(vm.getDisks(), ImageStatus.ILLEGAL);
+                    updateDisksWarningByImageStatus(vm.getDisks(), ImageStatus.LOCKED);
+                } else {
+                    // Clear warning message
+                    generalWarningMessage.setText(""); //$NON-NLS-1$
+                    generalWarningMessage.setVisible(false);
                 }
-
             }
+
         });
 
         // TODO: Move to a more appropriate method
-        vm.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("IsLinuxOS".equals(propName)) { //$NON-NLS-1$
-                    changeApplicationLevelVisibility(linuxBootOptionsPanel, vm.getIsLinuxOS());
-                }
+        vm.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if ("IsLinuxOS".equals(propName)) { //$NON-NLS-1$
+                changeApplicationLevelVisibility(linuxBootOptionsPanel, vm.getIsLinuxOS());
             }
         });
 
         defaultHostEditor.setEnabled(false);
-        specificHost.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                defaultHostEditor.setEnabled(specificHost.asRadioButton().getValue());
-                ValueChangeEvent.fire(isAutoAssignEditor.asRadioButton(), false);
-            }
+        specificHost.asRadioButton().addValueChangeHandler(event -> {
+            defaultHostEditor.setEnabled(specificHost.asRadioButton().getValue());
+            ValueChangeEvent.fire(isAutoAssignEditor.asRadioButton(), false);
         });
 
-        rngSourceUrandom.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-                vm.getRngSourceUrandom().setEntity(true);
-                vm.getRngSourceHwrng().setEntity(false);
-            }
+        rngSourceUrandom.asRadioButton().addValueChangeHandler(booleanValueChangeEvent -> {
+            vm.getRngSourceUrandom().setEntity(true);
+            vm.getRngSourceHwrng().setEntity(false);
         });
 
-        rngSourceHwrng.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-                vm.getRngSourceHwrng().setEntity(true);
-                vm.getRngSourceUrandom().setEntity(false);
-            }
+        rngSourceHwrng.asRadioButton().addValueChangeHandler(booleanValueChangeEvent -> {
+            vm.getRngSourceHwrng().setEntity(true);
+            vm.getRngSourceUrandom().setEntity(false);
         });
 
         // TODO: This is a hack and should be handled cleanly via model property availability
-        isAutoAssignEditor.addDomHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                defaultHostEditor.setEnabled(false);
-            }
-        }, ClickEvent.getType());
+        isAutoAssignEditor.addDomHandler(event -> defaultHostEditor.setEnabled(false), ClickEvent.getType());
 
-        vm.getIsAutoAssign().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (!isAutoAssignEditor.asRadioButton().getValue()) {
-                        specificHost.asRadioButton().setValue(true, true);
-                }
+        vm.getIsAutoAssign().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (!isAutoAssignEditor.asRadioButton().getValue()) {
+                    specificHost.asRadioButton().setValue(true, true);
             }
         });
 
-        ssoMethodGuestAgent.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                if (Boolean.TRUE.equals(event.getValue())) {
-                    ValueChangeEvent.fire(ssoMethodNone.asRadioButton(), false);
-                }
+        ssoMethodGuestAgent.asRadioButton().addValueChangeHandler(event -> {
+            if (Boolean.TRUE.equals(event.getValue())) {
+                ValueChangeEvent.fire(ssoMethodNone.asRadioButton(), false);
             }
         });
 
-        ssoMethodNone.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                if (Boolean.TRUE.equals(event.getValue())) {
-                    ValueChangeEvent.fire(ssoMethodGuestAgent.asRadioButton(), false);
-                }
+        ssoMethodNone.asRadioButton().addValueChangeHandler(event -> {
+            if (Boolean.TRUE.equals(event.getValue())) {
+                ValueChangeEvent.fire(ssoMethodGuestAgent.asRadioButton(), false);
             }
         });
     }

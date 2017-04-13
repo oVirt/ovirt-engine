@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.OvirtTabListItem;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 
 public abstract class AbstractTabbedModelBoundPopupView<T extends Model> extends AbstractModelBoundPopupView<T>
@@ -26,13 +25,7 @@ public abstract class AbstractTabbedModelBoundPopupView<T extends Model> extends
     public AbstractTabbedModelBoundPopupView(EventBus eventBus) {
         super(eventBus);
         //Have to populate deferred, so we can be sure that the DialogTabs have been initialized and are not null.
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-            @Override
-            public void execute() {
-                populateTabMap();
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> populateTabMap());
     }
 
     /**

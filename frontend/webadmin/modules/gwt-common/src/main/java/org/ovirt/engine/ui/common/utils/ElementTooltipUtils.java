@@ -19,7 +19,6 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -50,12 +49,7 @@ public final class ElementTooltipUtils {
     public static class TooltipHideOnRootPanelClick {
 
         public TooltipHideOnRootPanelClick() {
-            RootPanel.get().addDomHandler(new MouseDownHandler() {
-                @Override
-                public void onMouseDown(MouseDownEvent event) {
-                    ElementTooltipUtils.hideAllTooltips();
-                }
-            }, MouseDownEvent.getType());
+            RootPanel.get().addDomHandler(event -> ElementTooltipUtils.hideAllTooltips(), MouseDownEvent.getType());
         }
     }
 

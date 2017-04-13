@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -35,27 +34,17 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
     @Override
     protected void onBind() {
         super.onBind();
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-            @Override
-            public void execute() {
-                addPluginActionButtons(actionButtonPluginHandler.getButtons(getProxy().getTargetHistoryToken()));
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> addPluginActionButtons(actionButtonPluginHandler.getButtons(getProxy().getTargetHistoryToken())));
         //Register this handler for whichever tab opens first, it is bound before the plugin fires its events and
         //before the actionButtonPluginHandler is instantiated and listening to events.
         registerHandler(getEventBus().addHandler(AddTabActionButtonEvent.getType(),
-                new AddTabActionButtonEvent.AddTabActionButtonHandler() {
-
-            @Override
-            public void onAddTabActionButton(AddTabActionButtonEvent event) {
+            event -> {
                 if (getProxy().getTargetHistoryToken().equals(event.getHistoryToken())) {
                     List<ActionButtonDefinition<?>> pluginActionButtonList = new ArrayList<>();
                     pluginActionButtonList.add(event.getButtonDefinition());
                     addPluginActionButtons(pluginActionButtonList);
                 }
-            }
-        }));
+            }));
 
     }
 

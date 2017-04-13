@@ -17,10 +17,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.TableLayout;
@@ -30,8 +28,6 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, ListModel> {
@@ -115,12 +111,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             }
         };
 
-        selectAllHeader.setUpdater(new ValueUpdater<Boolean>() {
-            @Override
-            public void update(Boolean value) {
-                model.setIsAllLunsSelected(value);
-            }
-        });
+        selectAllHeader.setUpdater(value -> model.setIsAllLunsSelected(value));
 
         table.addColumn(new TextColumn<LunModel>() {
             @Override
@@ -130,22 +121,16 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         }, multiSelection ? selectAllHeader : null, "20px"); //$NON-NLS-1$
     }
 
-    final IEventListener<PropertyChangedEventArgs> lunModelSelectedItemListener = new IEventListener<PropertyChangedEventArgs>() {
-        @Override
-        public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-            String propName = args.propertyName;
-            final EntityModelCellTable<ListModel> table = (EntityModelCellTable<ListModel>) ev.getContext();
+    final IEventListener<PropertyChangedEventArgs> lunModelSelectedItemListener = (ev, sender, args) -> {
+        String propName = args.propertyName;
+        final EntityModelCellTable<ListModel> table = (EntityModelCellTable<ListModel>) ev.getContext();
 
-            if (propName.equals("IsSelected")) { //$NON-NLS-1$
-                final LunModel lunModel = (LunModel) sender;
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                    @Override
-                    public void execute() {
-                        table.getSelectionModel().setSelected(lunModel, lunModel.getIsSelected());
-                        table.redraw();
-                    }
-                });
-            }
+        if (propName.equals("IsSelected")) { //$NON-NLS-1$
+            final LunModel lunModel = (LunModel) sender;
+            Scheduler.get().scheduleDeferred(() -> {
+                table.getSelectionModel().setSelected(lunModel, lunModel.getIsSelected());
+                table.redraw();
+            });
         }
     };
 
@@ -182,26 +167,18 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         rootModel.getPropertyChangedEvent().addListener(lunModelSelectedItemListener, table);
 
         if (!multiSelection) {
-            table.getSelectionModel().addSelectionChangeHandler(new Handler() {
-                @Override
-                public void onSelectionChange(SelectionChangeEvent event) {
-                    SingleSelectionModel SingleSelectionModel = (SingleSelectionModel) event.getSource();
-                    LunModel selectedLunModel = (LunModel) SingleSelectionModel.getSelectedObject();
+            table.getSelectionModel().addSelectionChangeHandler(event -> {
+                SingleSelectionModel SingleSelectionModel = (SingleSelectionModel) event.getSource();
+                LunModel selectedLunModel = (LunModel) SingleSelectionModel.getSelectedObject();
 
-                    if (selectedLunModel != null) {
-                        updateSelectedLunWarning(selectedLunModel);
-                    }
+                if (selectedLunModel != null) {
+                    updateSelectedLunWarning(selectedLunModel);
                 }
             });
         }
         else {
             table.getSelectionModel().setSelected(rootModel, rootModel.getIsSelected());
-            table.getSelectionModel().addSelectionChangeHandler(new Handler() {
-                @Override
-                public void onSelectionChange(SelectionChangeEvent event) {
-                    model.updateLunWarningForDiscardAfterDelete();
-                }
-            });
+            table.getSelectionModel().addSelectionChangeHandler(event -> model.updateLunWarningForDiscardAfterDelete());
         }
 
         // Create tree item

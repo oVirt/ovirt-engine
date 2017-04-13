@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.system;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Cursor;
@@ -48,12 +47,7 @@ public class LockInteractionManager implements LockInteractionHandler {
             // Use deferred command because some other initialization might happen
             // right after place transition; therefore we want to hide the loading
             // indicator only after the browser event loop returns
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                @Override
-                public void execute() {
-                    hideLoadingIndicator();
-                }
-            });
+            Scheduler.get().scheduleDeferred(() -> hideLoadingIndicator());
         }
 
         // Set data attribute on body element to indicate the status of the application

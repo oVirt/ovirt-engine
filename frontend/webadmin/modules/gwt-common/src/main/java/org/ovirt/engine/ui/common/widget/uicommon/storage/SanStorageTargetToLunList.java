@@ -22,12 +22,9 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -35,8 +32,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetModel, ListModel> {
@@ -136,12 +131,9 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         loginButton.setCommand(rootModel.getLoginCommand());
         loginButton.setTitle(constants.storageIscsiPopupLoginButtonLabel());
         loginButton.setIcon(IconType.ARROW_RIGHT);
-        loginButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                treeScrollPosition = treeContainer.getVerticalScrollPosition();
-                loginButton.getCommand().execute();
-            }
+        loginButton.addClickHandler(event -> {
+            treeScrollPosition = treeContainer.getVerticalScrollPosition();
+            loginButton.getCommand().execute();
         });
         loginButton.getElement().getStyle().setFloat(Float.RIGHT);
         loginButton.getElement().getStyle().setMarginRight(6, Unit.PX);
@@ -274,17 +266,14 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 }
             }
 
-            table.getSelectionModel().addSelectionChangeHandler(new Handler() {
-                @Override
-                public void onSelectionChange(SelectionChangeEvent event) {
-                    SingleSelectionModel SingleSelectionModel = (SingleSelectionModel) event.getSource();
-                    selectedLunModel = SingleSelectionModel.getSelectedObject() == null ? selectedLunModel :
-                            (LunModel) SingleSelectionModel.getSelectedObject();
+            table.getSelectionModel().addSelectionChangeHandler(event -> {
+                SingleSelectionModel SingleSelectionModel = (SingleSelectionModel) event.getSource();
+                selectedLunModel = SingleSelectionModel.getSelectedObject() == null ? selectedLunModel :
+                        (LunModel) SingleSelectionModel.getSelectedObject();
 
-                    if (selectedLunModel != null) {
-                        updateSelectedLunWarning(selectedLunModel);
-                        sortedLeafModel.setSelectedItem(selectedLunModel);
-                    }
+                if (selectedLunModel != null) {
+                    updateSelectedLunWarning(selectedLunModel);
+                    sortedLeafModel.setSelectedItem(selectedLunModel);
                 }
             });
         }
@@ -292,12 +281,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             for (LunModel lunModel : items) {
                 table.getSelectionModel().setSelected(lunModel, lunModel.getIsSelected());
             }
-            table.getSelectionModel().addSelectionChangeHandler(new Handler() {
-                @Override
-                public void onSelectionChange(SelectionChangeEvent event) {
-                    model.updateLunWarningForDiscardAfterDelete();
-                }
-            });
+            table.getSelectionModel().addSelectionChangeHandler(event -> model.updateLunWarningForDiscardAfterDelete());
         }
 
         ScrollPanel panel = new ScrollPanel();
@@ -318,11 +302,6 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     protected void updateItems() {
         super.updateItems();
 
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                treeContainer.setVerticalScrollPosition(treeScrollPosition);
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> treeContainer.setVerticalScrollPosition(treeScrollPosition));
     }
 }

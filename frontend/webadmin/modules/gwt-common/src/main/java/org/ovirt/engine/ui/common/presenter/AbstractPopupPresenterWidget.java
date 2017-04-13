@@ -1,15 +1,11 @@
 package org.ovirt.engine.ui.common.presenter;
 
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
-import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
 import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
@@ -59,37 +55,19 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
 
         HasClickHandlers closeButton = getView().getCloseButton();
         if (closeButton != null) {
-            registerHandler(closeButton.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    AbstractPopupPresenterWidget.this.onClose();
-                }
-            }));
+            registerHandler(closeButton.addClickHandler(event -> AbstractPopupPresenterWidget.this.onClose()));
         }
 
         HasClickHandlers closeIconButton = getView().getCloseIconButton();
         if (closeIconButton != null) {
-            registerHandler(closeIconButton.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    AbstractPopupPresenterWidget.this.onClose();
-                }
-            }));
+            registerHandler(closeIconButton.addClickHandler(event -> AbstractPopupPresenterWidget.this.onClose()));
         }
 
-        getView().setPopupKeyPressHandler(new PopupNativeKeyPressHandler() {
-            @Override
-            public void onKeyPress(NativeEvent event) {
-                AbstractPopupPresenterWidget.this.onKeyPress(event);
-            }
-        });
+        getView().setPopupKeyPressHandler(event -> AbstractPopupPresenterWidget.this.onKeyPress(event));
 
-        registerHandler(getEventBus().addHandler(UserLoginChangeEvent.getType(), new UserLoginChangeHandler() {
-            @Override
-            public void onUserLoginChange(UserLoginChangeEvent event) {
-                if (isVisible()) {
-                    getView().hide();
-                }
+        registerHandler(getEventBus().addHandler(UserLoginChangeEvent.getType(), event -> {
+            if (isVisible()) {
+                getView().hide();
             }
         }));
     }
@@ -107,12 +85,7 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
 
         if (activePopups == 0) {
             // No popups active, reap tooltips attached to popup content.
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                @Override
-                public void execute() {
-                    ElementTooltipUtils.reapPopupContentTooltips();
-                }
-            });
+            Scheduler.get().scheduleDeferred(() -> ElementTooltipUtils.reapPopupContentTooltips());
         }
     }
 

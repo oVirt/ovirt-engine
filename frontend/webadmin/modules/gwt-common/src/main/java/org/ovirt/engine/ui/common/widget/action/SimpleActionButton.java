@@ -1,12 +1,6 @@
 package org.ovirt.engine.ui.common.widget.action;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -24,28 +18,19 @@ public class SimpleActionButton extends AbstractActionButton {
     public SimpleActionButton() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this).asWidget());
 
-        button.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                button.removeStyleName(style.buttonMouseOver());
-                button.addStyleName(style.buttonMouseOut());
-            }
+        button.addClickHandler(event -> {
+            button.removeStyleName(style.buttonMouseOver());
+            button.addStyleName(style.buttonMouseOut());
         });
 
-        button.addMouseOverHandler(new MouseOverHandler() {
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                button.removeStyleName(style.buttonMouseOut());
-                button.addStyleName(style.buttonMouseOver());
-            }
+        button.addMouseOverHandler(event -> {
+            button.removeStyleName(style.buttonMouseOut());
+            button.addStyleName(style.buttonMouseOver());
         });
 
-        button.addMouseOutHandler(new MouseOutHandler() {
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                button.removeStyleName(style.buttonMouseOver());
-                button.addStyleName(style.buttonMouseOut());
-            }
+        button.addMouseOutHandler(event -> {
+            button.removeStyleName(style.buttonMouseOver());
+            button.addStyleName(style.buttonMouseOut());
         });
     }
 

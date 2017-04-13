@@ -1,14 +1,10 @@
 package org.ovirt.engine.ui.common.presenter;
 
-import org.ovirt.engine.ui.common.presenter.SetDynamicTabAccessibleEvent.SetDynamicTabAccessibleHandler;
 import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
 import org.ovirt.engine.ui.common.widget.tab.TabAccessibleChangeEvent;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -74,26 +70,12 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
         super.onBind();
         //This handler is called when tab accessibility changes.
         registerHandler(getEventBus().addHandler(TabAccessibleChangeEvent.getType(),
-                new TabAccessibleChangeEvent.TabAccessibleChangeHandler() {
-
-            @Override
-            public void onTabAccessibleChange(TabAccessibleChangeEvent event) {
-                onTabAccessibleChanged();
-            }
-        }));
+                event -> onTabAccessibleChanged()));
         //This handler is called when tab accessibility changes.
         registerHandler(getEventBus().addHandler(SetDynamicTabAccessibleEvent.getType(),
-                new SetDynamicTabAccessibleHandler() {
-            @Override
-            public void onSetDynamicTabAccessible(SetDynamicTabAccessibleEvent event) {
-                onTabAccessibleChanged();
-            }
-        }));
+                event -> onTabAccessibleChanged()));
         registerHandler(getEventBus().addHandler(HeaderOffsetChangeEvent.getType(),
-                new HeaderOffsetChangeEvent.HeaderOffsetChangeHandler() {
-
-            @Override
-            public void onHeaderOffsetChange(HeaderOffsetChangeEvent event) {
+            event -> {
                 getView().setOffset(event.getWidth(), wantsOffset);
                 //This may seem a little strange, removing the handler for the resize event after the first
                 //offset change event. But the splitter also generates a resize event. So we would be handling the
@@ -104,14 +86,8 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
                     resizeHandlerRegistration.removeHandler();
                     resizeHandlerRegistration = null;
                 }
-            }
-        }));
-        resizeHandlerRegistration = Window.addResizeHandler(new ResizeHandler() {
-            @Override
-            public void onResize(ResizeEvent resizeEvent) {
-                redraw();
-            }
-        });
+            }));
+        resizeHandlerRegistration = Window.addResizeHandler(resizeEvent -> redraw());
     }
 
     @Override
@@ -161,12 +137,9 @@ public class ScrollableTabBarPresenterWidget extends PresenterWidget<ScrollableT
 
     private void onTabAccessibleChanged() {
         if (!scheduled) {
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                @Override
-                public void execute() {
-                    redraw();
-                    scheduled = false;
-                }
+            Scheduler.get().scheduleDeferred(() -> {
+                redraw();
+                scheduled = false;
             });
             scheduled = true;
         }

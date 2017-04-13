@@ -1,9 +1,6 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
 /**
@@ -24,13 +21,10 @@ public class TogglePanel extends HorizontalPanel {
         setVerticalAlignment(ALIGN_MIDDLE);
         setChecked(false);
 
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("IsSelected".equals(propName)) { //$NON-NLS-1$
-                    setChecked(model.getIsSelected());
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if ("IsSelected".equals(propName)) { //$NON-NLS-1$
+                setChecked(model.getIsSelected());
             }
         });
     }

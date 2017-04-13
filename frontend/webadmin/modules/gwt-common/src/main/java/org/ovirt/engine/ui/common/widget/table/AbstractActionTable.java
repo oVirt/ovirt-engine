@@ -14,10 +14,7 @@ import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Position;
@@ -27,12 +24,9 @@ import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -173,12 +167,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                     return;
                 }
 
-                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                    @Override
-                    public void execute() {
-                        setFocus(true);
-                    }
-                });
+                Scheduler.get().scheduleDeferred(() -> setFocus(true));
             }
 
             @Override
@@ -197,23 +186,15 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                 super.onLoadingStateChanged(state);
                 enforceScrollPosition();
                 if (state == LoadingState.LOADING) {
-                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                        @Override
-                        public void execute() {
-                            doAutoSelect = true;
-                        }
-                    });
+                    Scheduler.get().scheduleDeferred(() -> doAutoSelect = true);
                 } else if (state == LoadingState.LOADED) {
-                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                        @Override
-                        public void execute() {
-                            if (rowVisitor != null) {
-                                int count = getVisibleItemCount();
-                                for (int i = 0; i < count; i++) {
-                                    TableRowElement row = getChildElement(i);
-                                    T item = getVisibleItem(i);
-                                    rowVisitor.visit(row, item);
-                                }
+                    Scheduler.get().scheduleDeferred(() -> {
+                        if (rowVisitor != null) {
+                            int count = getVisibleItemCount();
+                            for (int i = 0; i < count; i++) {
+                                TableRowElement row = getChildElement(i);
+                                T item = getVisibleItem(i);
+                                rowVisitor.visit(row, item);
                             }
                         }
                     });
@@ -238,15 +219,12 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         };
 
         // Can't do this in the onBrowserEvent, as GWT CellTable doesn't support double click.
-        this.table.addDomHandler(new DoubleClickHandler() {
-            @Override
-            public void onDoubleClick(DoubleClickEvent event) {
-                SearchableListModel model = dataProvider.getModel();
-                UICommand command = model.getDoubleClickCommand();
-                if (command != null && command.getIsExecutionAllowed()) {
-                    DeferredModelCommandInvoker invoker = new DeferredModelCommandInvoker(model);
-                    invoker.invokeCommand(command);
-                }
+        this.table.addDomHandler(event -> {
+            SearchableListModel model = dataProvider.getModel();
+            UICommand command = model.getDoubleClickCommand();
+            if (command != null && command.getIsExecutionAllowed()) {
+                DeferredModelCommandInvoker invoker = new DeferredModelCommandInvoker(model);
+                invoker.invokeCommand(command);
             }
         }, DoubleClickEvent.getType());
 
@@ -337,13 +315,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     private void autoSelectFirst() {
         if (table.getRowCount() == 1 && selectionModel.getSelectedList().isEmpty() && doAutoSelect) {
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                @Override
-                public void execute() {
-                    if (table.getVisibleItemCount() > 0) {
-                        selectionModel.setSelected(table.getVisibleItems().get(0), true);
-                    }
+            Scheduler.get().scheduleDeferred(() -> {
+                if (table.getVisibleItemCount() > 0) {
+                    selectionModel.setSelected(table.getVisibleItems().get(0), true);
                 }
             });
             doAutoSelect = false;
@@ -355,44 +329,30 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             selectionModelScrollHandlerRegistration.removeHandler();
         }
         selectionModelScrollHandlerRegistration = selectionModel.addSelectionChangeHandler(
-                new SelectionChangeEvent.Handler() {
-
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                if (selectionModel.getSelectedList().isEmpty()) {
-                    scrollOffset = 0;
-                } else {
-                    updateScrollPosition();
-                }
-                enforceScrollPosition();
-            }
-
-        });
+                event -> {
+                    if (selectionModel.getSelectedList().isEmpty()) {
+                        scrollOffset = 0;
+                    } else {
+                        updateScrollPosition();
+                    }
+                    enforceScrollPosition();
+                });
     }
 
     private void addScrollListener() {
         if (scrollHandlerRegistration != null) {
             scrollHandlerRegistration.removeHandler();
         }
-        scrollHandlerRegistration = tableContainer.addScrollHandler(new ScrollHandler() {
-
-            @Override
-            public void onScroll(ScrollEvent event) {
-                updateScrollPosition();
-            }
-        });
+        scrollHandlerRegistration = tableContainer.addScrollHandler(event -> updateScrollPosition());
     }
 
     void addModelSearchStringChangeListener(final SearchableListModel<?, ?> model) {
         if (model.supportsServerSideSorting()) {
-            model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-                @Override
-                public void eventRaised(org.ovirt.engine.ui.uicompat.Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                    if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
-                        if (!model.isSearchValidForServerSideSorting()) {
-                            model.clearSortOptions();
-                            clearColumnSort();
-                        }
+            model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+                if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
+                    if (!model.isSearchValidForServerSideSorting()) {
+                        model.clearSortOptions();
+                        clearColumnSort();
                     }
                 }
             });
@@ -481,37 +441,34 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 
         // Add arrow key handler
-        table.addDomHandler(new KeyDownHandler() {
-            @Override
-            public void onKeyDown(KeyDownEvent event) {
-                boolean shiftPageDown = event.isShiftKeyDown() && KeyCodes.KEY_PAGEDOWN == event.getNativeKeyCode();
-                boolean shiftPageUp = event.isShiftKeyDown() && KeyCodes.KEY_PAGEUP == event.getNativeKeyCode();
-                boolean ctrlA = event.isControlKeyDown()
-                        && ('a' == event.getNativeKeyCode() || 'A' == event.getNativeKeyCode());
-                boolean arrow = KeyDownEvent.isArrow(event.getNativeKeyCode());
+        table.addDomHandler(event -> {
+            boolean shiftPageDown = event.isShiftKeyDown() && KeyCodes.KEY_PAGEDOWN == event.getNativeKeyCode();
+            boolean shiftPageUp = event.isShiftKeyDown() && KeyCodes.KEY_PAGEUP == event.getNativeKeyCode();
+            boolean ctrlA = event.isControlKeyDown()
+                    && ('a' == event.getNativeKeyCode() || 'A' == event.getNativeKeyCode());
+            boolean arrow = KeyDownEvent.isArrow(event.getNativeKeyCode());
 
-                if (shiftPageUp || shiftPageDown || ctrlA || arrow) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                } else {
-                    return;
-                }
+            if (shiftPageUp || shiftPageDown || ctrlA || arrow) {
+                event.preventDefault();
+                event.stopPropagation();
+            } else {
+                return;
+            }
 
-                if (shiftPageDown) {
-                    selectionModel.selectAllNext();
-                } else if (shiftPageUp) {
-                    selectionModel.selectAllPrev();
-                } else if (ctrlA) {
-                    selectionModel.selectAll();
-                } else if (arrow) {
-                    selectionModel.setMultiSelectEnabled(event.isControlKeyDown() && !multiSelectionDisabled);
-                    selectionModel.setMultiRangeSelectEnabled(event.isShiftKeyDown() && !multiSelectionDisabled);
+            if (shiftPageDown) {
+                selectionModel.selectAllNext();
+            } else if (shiftPageUp) {
+                selectionModel.selectAllPrev();
+            } else if (ctrlA) {
+                selectionModel.selectAll();
+            } else if (arrow) {
+                selectionModel.setMultiSelectEnabled(event.isControlKeyDown() && !multiSelectionDisabled);
+                selectionModel.setMultiRangeSelectEnabled(event.isShiftKeyDown() && !multiSelectionDisabled);
 
-                    if (event.isDownArrow()) {
-                        selectionModel.selectNext();
-                    } else if (event.isUpArrow()) {
-                        selectionModel.selectPrev();
-                    }
+                if (event.isDownArrow()) {
+                    selectionModel.selectNext();
+                } else if (event.isUpArrow()) {
+                    selectionModel.selectPrev();
                 }
             }
         }, KeyDownEvent.getType());
@@ -532,12 +489,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
         // Attach scroll event handler to main table container, so that the tableHeader widget
         // can have its position aligned with main table container's current scroll position
-        tableContainer.addDomHandler(new ScrollHandler() {
-            @Override
-            public void onScroll(ScrollEvent event) {
-                tableContainerHorizontalScrollPosition = tableContainer.getElement().getScrollLeft();
-                updateTableHeaderPosition();
-            }
+        tableContainer.addDomHandler(event -> {
+            tableContainerHorizontalScrollPosition = tableContainer.getElement().getScrollLeft();
+            updateTableHeaderPosition();
         }, ScrollEvent.getType());
 
         // Reset main table container's scroll position

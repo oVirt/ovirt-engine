@@ -7,9 +7,6 @@ import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -59,13 +56,10 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModelBase> imp
         initLists(object);
 
         // Add event handlers
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if (propName.equals("IsValid")) { //$NON-NLS-1$
-                    onIsValidPropertyChange(object);
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if (propName.equals("IsValid")) { //$NON-NLS-1$
+                onIsValidPropertyChange(object);
             }
         });
     }

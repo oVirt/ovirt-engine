@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
-import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
@@ -108,12 +107,7 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
 
         formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.guestFreeCachedBufferedMemInfo(), guestFreeCachedBufferedMemInfo, 1, 1)
-        .withDefaultValue(constants.notConfigured(), new DefaultValueCondition() {
-            @Override
-            public boolean showDefaultValue() {
-                return getModel().getGuestFreeCachedBufferedMemInfo() == null;
-            }
-        }));
+        .withDefaultValue(constants.notConfigured(), () -> getModel().getGuestFreeCachedBufferedMemInfo() == null));
         WidgetTooltip cpuInfoWithTooltip = new WidgetTooltip(cpuInfo);
         cpuInfoWithTooltip.setHtml(SafeHtmlUtils.fromString(constants.numOfCpuCoresTooltip()));
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfoWithTooltip, 2, 1));
@@ -132,12 +126,9 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
             public boolean getIsAvailable() {
                 return getModel().isQuotaAvailable();
             }
-        }.withDefaultValue(constants.notConfigured(), new DefaultValueCondition() {
-            @Override
-            public boolean showDefaultValue() {
-                String quotaName = getModel().getQuotaName();
-                return quotaName == null || "".equals(quotaName);
-            }
+        }.withDefaultValue(constants.notConfigured(), () -> {
+            String quotaName = getModel().getQuotaName();
+            return quotaName == null || "".equals(quotaName);
         }));
         formBuilder.addFormItem(new FormItem(constants.domainVm(), domain, 5, 2) {
             @Override

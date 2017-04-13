@@ -13,12 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasAttachHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.HasVisibility;
@@ -99,37 +94,16 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
     }
 
     private void initListeners(final UnitVmModel model) {
-        model.getAdvancedMode().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                storeAdvancedModeToLocalStorage(model);
-                swithAccordingToMode(model);
-            }
-
+        model.getAdvancedMode().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            storeAdvancedModeToLocalStorage(model);
+            swithAccordingToMode(model);
         });
 
-        model.getAttachedToInstanceType().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                swithAttachToInstanceType(model);
-            }
-        });
+        model.getAttachedToInstanceType().getPropertyChangedEvent().addListener((ev, sender, args) -> swithAttachToInstanceType(model));
 
-        model.getValid().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                switchToAdvancedIfNeeded(model);
-            }
+        model.getValid().getPropertyChangedEvent().addListener((ev, sender, args) -> switchToAdvancedIfNeeded(model));
 
-        });
-
-        registerHandler(getView().getNumaSupportButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getView().getNumaSupportButton().getCommand().execute();
-            }
-        }));
+        registerHandler(getView().getNumaSupportButton().addClickHandler(event -> getView().getNumaSupportButton().getCommand().execute()));
     }
 
     private void switchToAdvancedIfNeeded(final UnitVmModel model) {

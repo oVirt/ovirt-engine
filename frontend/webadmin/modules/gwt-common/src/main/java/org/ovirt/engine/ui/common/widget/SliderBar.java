@@ -22,7 +22,6 @@ import java.util.List;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -792,12 +791,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
         // workaround to render properly when parent Widget does not
         // implement ProvidesResize since DOM doesn't provide element
         // height and width until onModuleLoad() finishes.
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                onResize();
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> onResize());
     }
 
     /**

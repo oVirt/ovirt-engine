@@ -7,9 +7,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
@@ -79,14 +76,11 @@ public abstract class TabModelProvider<M extends HasEntity> implements ModelProv
         popupHandler.addDialogModelListener(model);
 
         // Register WidgetModel property change listener
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
 
-                if ("WidgetModel".equals(propName)) { //$NON-NLS-1$
-                    modelBoundWidgetChange();
-                }
+            if ("WidgetModel".equals(propName)) { //$NON-NLS-1$
+                modelBoundWidgetChange();
             }
         });
     }

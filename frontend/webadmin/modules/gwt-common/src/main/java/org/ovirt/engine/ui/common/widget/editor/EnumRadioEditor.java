@@ -31,8 +31,6 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
@@ -132,15 +130,9 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
             super(15, resources, new ListDataProvider<>(Arrays.asList(enumClass.getEnumConstants())));
             this.resources = resources;
             disabledSet = new HashSet<>();
-            RowStyles<E> rowStyles = new RowStyles<E>() {
-
-                @Override
-                public String getStyleNames(E row, int rowIndex) {
-                    return disabledSet.contains(row)
-                            ? resources.cellTableStyle().cellTableDisabledRow()
-                            : resources.cellTableStyle().cellTableEnabledRow();
-                }
-            };
+            RowStyles<E> rowStyles = (row, rowIndex) -> disabledSet.contains(row)
+                    ? resources.cellTableStyle().cellTableDisabledRow()
+                    : resources.cellTableStyle().cellTableEnabledRow();
 
             setRowStyles(rowStyles);
 
@@ -243,13 +235,10 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
             };
         };
         peer.setSelectionModel(selectionModel);
-        selectionModel.addSelectionChangeHandler(new Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                E selectedObject = selectionModel.getSelectedObject();
-                setValue(selectedObject);
-                ValueChangeEvent.<E> fire(EnumRadioEditor.this, selectedObject);
-            }
+        selectionModel.addSelectionChangeHandler(event -> {
+            E selectedObject = selectionModel.getSelectedObject();
+            setValue(selectedObject);
+            ValueChangeEvent.<E> fire(EnumRadioEditor.this, selectedObject);
         });
     }
 

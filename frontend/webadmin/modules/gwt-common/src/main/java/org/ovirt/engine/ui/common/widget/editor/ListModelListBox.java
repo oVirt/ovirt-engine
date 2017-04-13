@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
@@ -147,13 +146,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         dropdownButton.getElement().setInnerHTML(selectedValue.getString()
                 + buttonSelectedValueSpan.selectedValue().asString());
         dropdownPanel.add(listPanel);
-        dropdownButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                listPanel.scrollToSelected();
-            }
-        });
+        dropdownButton.addClickHandler(event -> listPanel.scrollToSelected());
     }
 
     public void setDropdownWidth(String width) {
@@ -252,22 +245,12 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
             dropdownButton.setTitle(renderedValue);
         }
         ((Element)dropdownButton.getElement().getChild(0)).setInnerHTML(renderedValue);
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-            @Override
-            public void execute() {
-                listPanel.setSelected(value);
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> listPanel.setSelected(value));
         currentValue = value;
         if (fireEvents) {
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                @Override
-                public void execute() {
-                    ValueChangeEvent.fire(ListModelListBox.this, currentValue);
-                    setChanging(false);
-                }
+            Scheduler.get().scheduleDeferred(() -> {
+                ValueChangeEvent.fire(ListModelListBox.this, currentValue);
+                setChanging(false);
             });
         } else {
             setChanging(false);
@@ -387,13 +370,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
                 if (child instanceof ListModelListBox.ListItem) {
                     final ListItem item = (ListModelListBox<T>.ListItem) child;
                     if (item.isSelected()) {
-                        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                            @Override
-                            public void execute() {
-                                item.getElement().scrollIntoView();
-                            }
-                        });
+                        Scheduler.get().scheduleDeferred(() -> item.getElement().scrollIntoView());
                     }
                 }
             }
@@ -406,16 +383,12 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         void addListItem(String text, T value) {
             String nonEmptyText = "".equals(text) ? NBSP : text;
             ListItem li = getListItem(nonEmptyText, value);
-            getClickHandlers().add(li.addClickHandler(new ClickHandler() {
-
-                @Override
-                public void onClick(ClickEvent event) {
-                    @SuppressWarnings("unchecked")
-                    ListItem item = (ListModelListBox<T>.ListItem) event.getSource();
-                    ListModelListBox.this.setValue(item.getValue(), true, true);
-                    if (ListModelListBox.this.isMultiSelect) {
-                        event.stopPropagation();
-                    }
+            getClickHandlers().add(li.addClickHandler(event -> {
+                @SuppressWarnings("unchecked")
+                ListItem item = (ListItem) event.getSource();
+                ListModelListBox.this.setValue(item.getValue(), true, true);
+                if (ListModelListBox.this.isMultiSelect) {
+                    event.stopPropagation();
                 }
             }));
             add(li, getElement());

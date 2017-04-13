@@ -12,23 +12,15 @@ import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
-import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent.AsyncOperationCompleteHandler;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
-import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent.AsyncOperationStartedHandler;
 import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Provider;
 
@@ -147,30 +139,24 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
         // Set up async operation listeners to automatically display/hide progress bar
         asyncOperationCounter = 0;
-        addRegisteredHandler(AsyncOperationStartedEvent.getType(), new AsyncOperationStartedHandler() {
-            @Override
-            public void onAsyncOperationStarted(AsyncOperationStartedEvent event) {
-                if (event.getTarget() != getModel() || getModel().getProgress() != null) {
-                    return;
-                }
-
-                if (asyncOperationCounter == 0) {
-                    startProgress(null);
-                }
-                asyncOperationCounter++;
+        addRegisteredHandler(AsyncOperationStartedEvent.getType(), event -> {
+            if (event.getTarget() != getModel() || getModel().getProgress() != null) {
+                return;
             }
-        });
-        addRegisteredHandler(AsyncOperationCompleteEvent.getType(), new AsyncOperationCompleteHandler() {
-            @Override
-            public void onAsyncOperationComplete(AsyncOperationCompleteEvent event) {
-                if (event.getTarget() != getModel() || getModel().getProgress() != null) {
-                    return;
-                }
 
-                asyncOperationCounter--;
-                if (asyncOperationCounter == 0) {
-                    stopProgress();
-                }
+            if (asyncOperationCounter == 0) {
+                startProgress(null);
+            }
+            asyncOperationCounter++;
+        });
+        addRegisteredHandler(AsyncOperationCompleteEvent.getType(), event -> {
+            if (event.getTarget() != getModel() || getModel().getProgress() != null) {
+                return;
+            }
+
+            asyncOperationCounter--;
+            if (asyncOperationCounter == 0) {
+                stopProgress();
             }
         });
 
@@ -201,24 +187,21 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         updateItems(model);
         updateHashName(model);
         updateHelpTag(model);
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
 
-                if ("Title".equals(propName)) { //$NON-NLS-1$
-                    updateTitle(model);
-                } else if ("Message".equals(propName)) { //$NON-NLS-1$
-                    updateMessage(model);
-                } else if ("Items".equals(propName)) { //$NON-NLS-1$
-                    updateItems(model);
-                } else if ("HashName".equals(propName)) { //$NON-NLS-1$
-                    updateHashName(model);
-                } else if ("HelpTag".equals(propName)) { //$NON-NLS-1$
-                    updateHelpTag(model);
-                } else if ("OpenDocumentation".equals(propName)) { //$NON-NLS-1$
-                    openDocumentation(model);
-                }
+            if ("Title".equals(propName)) { //$NON-NLS-1$
+                updateTitle(model);
+            } else if ("Message".equals(propName)) { //$NON-NLS-1$
+                updateMessage(model);
+            } else if ("Items".equals(propName)) { //$NON-NLS-1$
+                updateItems(model);
+            } else if ("HashName".equals(propName)) { //$NON-NLS-1$
+                updateHashName(model);
+            } else if ("HelpTag".equals(propName)) { //$NON-NLS-1$
+                updateHelpTag(model);
+            } else if ("OpenDocumentation".equals(propName)) { //$NON-NLS-1$
+                openDocumentation(model);
             }
         });
 
@@ -226,13 +209,10 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         addFooterButtons(model);
         if (model.getCommands() instanceof ObservableCollection) {
             ObservableCollection<UICommand> commands = (ObservableCollection<UICommand>) model.getCommands();
-            commands.getCollectionChangedEvent().addListener(new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    getView().removeButtons();
-                    addFooterButtons(model);
-                    getView().updateTabIndexes();
-                }
+            commands.getCollectionChangedEvent().addListener((ev, sender, args) -> {
+                getView().removeButtons();
+                addFooterButtons(model);
+                getView().updateTabIndexes();
             });
         }
 
@@ -353,13 +333,10 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
             button.setCommand(command);
 
             // Register command execution handler
-            registerHandler(button.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    getView().flush();
-                    beforeCommandExecuted(button.getCommand());
-                    button.getCommand().execute();
-                }
+            registerHandler(button.addClickHandler(event -> {
+                getView().flush();
+                beforeCommandExecuted(button.getCommand());
+                button.getCommand().execute();
             }));
         }
     }

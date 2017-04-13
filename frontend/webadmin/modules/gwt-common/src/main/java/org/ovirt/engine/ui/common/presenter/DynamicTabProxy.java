@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.presenter;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.DynamicTabData;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Provider;
@@ -58,12 +57,7 @@ public abstract class DynamicTabProxy<T extends DynamicTabPresenter<?, ?>> exten
         setPlace(new PlaceWithGatekeeper(historyToken, gatekeeper));
 
         // Create and bind presenter eagerly (don't wait for reveal request)
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                get();
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> get());
     }
 
     @Override

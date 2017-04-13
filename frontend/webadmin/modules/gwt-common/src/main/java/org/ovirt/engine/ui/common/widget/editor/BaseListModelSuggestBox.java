@@ -10,8 +10,6 @@ import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -54,12 +52,7 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements
 
         suggestBox.removeStyleName("gwt-SuggestBox"); //$NON-NLS-1$
 
-        handlerRegistrations.add(suggestBox.addSelectionHandler(new SelectionHandler<Suggestion>() {
-            @Override
-            public void onSelection(SelectionEvent<Suggestion> event) {
-                ValueChangeEvent.fire(suggestBox, event.getSelectedItem().getReplacementString());
-            }
-        }));
+        handlerRegistrations.add(suggestBox.addSelectionHandler(event -> ValueChangeEvent.fire(suggestBox, event.getSelectedItem().getReplacementString())));
 
     }
 
@@ -187,15 +180,12 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements
 
     @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<T> handler) {
-        HandlerRegistration handlerRegistration = asSuggestBox().addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                try {
-                    T value = asEntity(event.getValue());
-                    handler.onValueChange(new ValueChangeEvent<T>(value) {});
-                } catch (IllegalArgumentException e) {
-                    // ignore - the user entered an incorrect string. Just do not notify the listeners
-                }
+        HandlerRegistration handlerRegistration = asSuggestBox().addValueChangeHandler(event -> {
+            try {
+                T value = asEntity(event.getValue());
+                handler.onValueChange(new ValueChangeEvent<T>(value) {});
+            } catch (IllegalArgumentException e) {
+                // ignore - the user entered an incorrect string. Just do not notify the listeners
             }
         });
         handlerRegistrations.add(handlerRegistration);

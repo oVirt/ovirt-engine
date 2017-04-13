@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget.action;
 import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.logical.shared.InitializeEvent;
@@ -70,12 +69,7 @@ public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinit
     }
 
     void addPropertyChangeEventHandler() {
-        propertyChangeListener = new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                InitializeEvent.fire(UiCommandButtonDefinition.this);
-            }
-        };
+        propertyChangeListener = (ev, sender, args) -> InitializeEvent.fire(UiCommandButtonDefinition.this);
         command.getPropertyChangedEvent().addListener(propertyChangeListener);
     }
 

@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.common.widget.dialog.tab;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gwtbootstrap3.client.shared.event.TabShownEvent;
-import org.gwtbootstrap3.client.shared.event.TabShownHandler;
 import org.gwtbootstrap3.client.ui.NavTabs;
 import org.gwtbootstrap3.client.ui.TabContent;
 import org.gwtbootstrap3.client.ui.TabListItem;
@@ -76,13 +74,7 @@ public class DialogTabPanel extends Composite {
         tab.getTabListItem().addStyleName(Styles.LIST_GROUP_ITEM);
         String tabId = "tab" + navTabs.getWidgetCount(); //$NON-NLS-1$
         tab.getTabListItem().setDataTarget(tabId);
-        tab.getTabListItem().addShownHandler(new TabShownHandler() {
-
-            @Override
-            public void onShown(TabShownEvent event) {
-                switchTab(event.getTab());
-            }
-        });
+        tab.getTabListItem().addShownHandler(event -> switchTab(event.getTab()));
 
         TabPane pane = new TabPane();
         FlowPanel panel = new FlowPanel();

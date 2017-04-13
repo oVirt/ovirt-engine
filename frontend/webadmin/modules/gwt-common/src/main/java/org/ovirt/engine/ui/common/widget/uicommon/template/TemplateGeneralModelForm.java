@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
-import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
@@ -103,12 +102,9 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
             public boolean getIsAvailable() {
                 return getModel().isQuotaAvailable();
             }
-        }.withDefaultValue(constants.notConfigured(), new DefaultValueCondition() {
-            @Override
-            public boolean showDefaultValue() {
-                String quotaName = getModel().getQuotaName();
-                return quotaName == null || "".equals(quotaName);
-            }
+        }.withDefaultValue(constants.notConfigured(), () -> {
+            String quotaName = getModel().getQuotaName();
+            return quotaName == null || "".equals(quotaName);
         }));
     }
 

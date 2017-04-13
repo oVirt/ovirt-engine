@@ -44,7 +44,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.ui.Widget;
@@ -179,16 +178,13 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     private NativeContextMenuHandler ensureContextMenuHandler() {
         if (headerContextMenuHandler == null) {
-            headerContextMenuHandler = new NativeContextMenuHandler() {
-                @Override
-                public void onContextMenu(NativeEvent event) {
-                    event.preventDefault();
-                    event.stopPropagation();
+            headerContextMenuHandler = event -> {
+                event.preventDefault();
+                event.stopPropagation();
 
-                    if (headerContextMenuEnabled) {
-                        contextPopup.getContextMenu().update();
-                        contextPopup.showAndFitToScreen(event.getClientX(), event.getClientY());
-                    }
+                if (headerContextMenuEnabled) {
+                    contextPopup.getContextMenu().update();
+                    contextPopup.showAndFitToScreen(event.getClientX(), event.getClientY());
                 }
             };
         }
@@ -627,55 +623,52 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         final SearchableListModel<?, T> searchableModel = (sortedModel instanceof SearchableListModel)
                 ? (SearchableListModel<?, T>) sortedModel : null;
 
-        addColumnSortHandler(new ColumnSortEvent.Handler() {
-            @Override
-            public void onColumnSort(ColumnSortEvent event) {
-                Column<?, ?> column = event.getColumn();
+        addColumnSortHandler(event -> {
+            Column<?, ?> column = event.getColumn();
 
-                if (column instanceof SortableColumn) {
-                    SortableColumn<T, ?> sortableColumn = (SortableColumn<T, ?>) column;
-                    boolean sortApplied = false;
-                    Comparator<? super T> comparator = sortableColumn.getComparator();
-                    boolean supportsServerSideSorting = searchableModel != null && searchableModel.supportsServerSideSorting();
+            if (column instanceof SortableColumn) {
+                SortableColumn<T, ?> sortableColumn = (SortableColumn<T, ?>) column;
+                boolean sortApplied = false;
+                Comparator<? super T> comparator = sortableColumn.getComparator();
+                boolean supportsServerSideSorting = searchableModel != null && searchableModel.supportsServerSideSorting();
 
-                    // If server-side sorting is supported by the model, but the column
-                    // uses Comparator for client-side sorting, use client-side sorting
-                    if (supportsServerSideSorting && comparator != null) {
-                        sortedModel.setComparator(comparator, event.isSortAscending());
+                // If server-side sorting is supported by the model, but the column
+                // uses Comparator for client-side sorting, use client-side sorting
+                if (supportsServerSideSorting && comparator != null) {
+                    sortedModel.setComparator(comparator, event.isSortAscending());
+                    sortApplied = true;
+                }
+
+                // Otherwise, if server-side sorting is supported by the model,
+                // update model's sort options and reload its items via search query
+                else if (supportsServerSideSorting) {
+                    sortedModel.setComparator(null);
+                    if (searchableModel.isSearchValidForServerSideSorting()) {
+                        searchableModel.updateSortOptions(sortableColumn.getSortBy(), event.isSortAscending());
                         sortApplied = true;
-                    }
-
-                    // Otherwise, if server-side sorting is supported by the model,
-                    // update model's sort options and reload its items via search query
-                    else if (supportsServerSideSorting) {
-                        sortedModel.setComparator(null);
-                        if (searchableModel.isSearchValidForServerSideSorting()) {
-                            searchableModel.updateSortOptions(sortableColumn.getSortBy(), event.isSortAscending());
-                            sortApplied = true;
-                        } else {
-                            // Search string not valid, cannot perform search query
-                            searchableModel.clearSortOptions();
-                        }
-                    }
-
-                    // Otherwise, fall back to client-side sorting
-                    else if (comparator != null) {
-                        sortedModel.setComparator(comparator, event.isSortAscending());
-                        sortApplied = true;
-
-                        // SortedListModel.setComparator does not sort the items
-                        if (searchableModel == null) {
-                            sortedModel.setItems(sortedModel.getItems());
-                        }
-                    }
-
-                    // Update column sort status, redrawing table headers if necessary
-                    ColumnSortInfo columnSortInfo = event.getColumnSortList().get(0);
-                    if (sortApplied) {
-                        pushColumnSort(columnSortInfo);
                     } else {
-                        clearColumnSort();
+                        // Search string not valid, cannot perform search query
+                        searchableModel.clearSortOptions();
                     }
+                }
+
+                // Otherwise, fall back to client-side sorting
+                else if (comparator != null) {
+                    sortedModel.setComparator(comparator, event.isSortAscending());
+                    sortApplied = true;
+
+                    // SortedListModel.setComparator does not sort the items
+                    if (searchableModel == null) {
+                        sortedModel.setItems(sortedModel.getItems());
+                    }
+                }
+
+                // Update column sort status, redrawing table headers if necessary
+                ColumnSortInfo columnSortInfo = event.getColumnSortList().get(0);
+                if (sortApplied) {
+                    pushColumnSort(columnSortInfo);
+                } else {
+                    clearColumnSort();
                 }
             }
         });

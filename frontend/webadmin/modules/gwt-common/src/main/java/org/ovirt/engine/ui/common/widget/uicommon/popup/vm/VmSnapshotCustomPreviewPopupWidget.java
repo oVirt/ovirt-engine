@@ -24,17 +24,12 @@ import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmSnapshotInfoPanel;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.PreviewSnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.NativeEvent;
@@ -152,25 +147,17 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             }
         };
 
-        vmConfColumn.setFieldUpdater(new FieldUpdater<SnapshotModel, Boolean>() {
-            @Override
-            public void update(int index, SnapshotModel snapshotModel, Boolean value) {
-                previewSnapshotModel.setSnapshotModel(snapshotModel);
-                previewSnapshotModel.clearMemorySelection();
-                updateWarnings();
-                refreshTable(previewTable);
+        vmConfColumn.setFieldUpdater((index, snapshotModel, value) -> {
+            previewSnapshotModel.setSnapshotModel(snapshotModel);
+            previewSnapshotModel.clearMemorySelection();
+            updateWarnings();
+            refreshTable(previewTable);
 
-                if (snapshotModel.getVm() == null) {
-                    snapshotModel.updateVmConfiguration(new AsyncCallback<Void>() {
-                        @Override
-                        public void onSuccess(Void returnValue) {
-                            updateInfoPanel();
-                        }
-                    });
-                }
-                else {
-                    updateInfoPanel();
-                }
+            if (snapshotModel.getVm() == null) {
+                snapshotModel.updateVmConfiguration(returnValue -> updateInfoPanel());
+            }
+            else {
+                updateInfoPanel();
             }
         });
 
@@ -179,13 +166,10 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 "30px"); //$NON-NLS-1$
 
         AbstractCheckboxColumn<SnapshotModel> memoryColumn = new AbstractCheckboxColumn<SnapshotModel>(
-                new FieldUpdater<SnapshotModel, Boolean>() {
-                    @Override
-                    public void update(int index, SnapshotModel snapshotModel, Boolean value) {
-                        previewSnapshotModel.getSnapshotModel().getMemory().setEntity(value);
-                        refreshTable(previewTable);
-                        updateWarnings();
-                    }
+                (index, snapshotModel, value) -> {
+                    previewSnapshotModel.getSnapshotModel().getMemory().setEntity(value);
+                    refreshTable(previewTable);
+                    updateWarnings();
                 }) {
 
             @Override
@@ -220,17 +204,14 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
         Collections.sort(disks, new DiskByDiskAliasComparator());
 
         for (final DiskImage disk : disks) {
-            previewTable.addColumn(new AbstractCheckboxColumn<SnapshotModel>(new FieldUpdater<SnapshotModel, Boolean>() {
-                @Override
-                public void update(int index, SnapshotModel snapshotModel, Boolean value) {
-                    ListModel diskListModel = previewSnapshotModel.getDiskSnapshotsMap().get(disk.getId());
-                    DiskImage image = snapshotModel.getImageByDiskId(disk.getId());
+            previewTable.addColumn(new AbstractCheckboxColumn<SnapshotModel>((index, snapshotModel, value) -> {
+                ListModel diskListModel = previewSnapshotModel.getDiskSnapshotsMap().get(disk.getId());
+                DiskImage image = snapshotModel.getImageByDiskId(disk.getId());
 
-                    diskListModel.setSelectedItem(Boolean.TRUE.equals(value) ? image : null);
-                    refreshTable(previewTable);
-                    updateWarnings();
-                    updateInfoPanel();
-                }
+                diskListModel.setSelectedItem(Boolean.TRUE.equals(value) ? image : null);
+                refreshTable(previewTable);
+                updateWarnings();
+                updateInfoPanel();
             }) {
                 @Override
                 public Boolean getValue(SnapshotModel snapshotModel) {
@@ -391,22 +372,14 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
         previewTable.asEditor().edit(previewSnapshotModel.getSnapshots());
 
         // Add selection listener
-        model.getSnapshots().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ListModel snapshots = (ListModel) sender;
-                SnapshotModel snapshotModel = (SnapshotModel) snapshots.getSelectedItem();
-                if (snapshotModel != null) {
-                    vmSnapshotInfoPanel.updatePanel(snapshotModel);
-                }
+        model.getSnapshots().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            ListModel snapshots = (ListModel) sender;
+            SnapshotModel snapshotModel = (SnapshotModel) snapshots.getSelectedItem();
+            if (snapshotModel != null) {
+                vmSnapshotInfoPanel.updatePanel(snapshotModel);
             }
         });
-        model.getSnapshots().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                createPreviewTable();
-            }
-        });
+        model.getSnapshots().getItemsChangedEvent().addListener((ev, sender, args) -> createPreviewTable());
     }
 
     @Override

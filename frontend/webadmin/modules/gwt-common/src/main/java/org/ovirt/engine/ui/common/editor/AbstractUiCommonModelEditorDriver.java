@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.editor;
 import java.util.Map;
 
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.editor.client.Editor;
@@ -38,12 +37,9 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
 
         final UiCommonListenerMap listenerMap = getListenerMap();
 
-        propertyChangeListener = new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                listenerMap.callListener(propName, "PropertyChanged"); //$NON-NLS-1$
-            }
+        propertyChangeListener = (ev, sender, args) -> {
+            String propName = args.propertyName;
+            listenerMap.callListener(propName, "PropertyChanged"); //$NON-NLS-1$
         };
 
         // Register a "PropertyChangedEvent" to get Model changes

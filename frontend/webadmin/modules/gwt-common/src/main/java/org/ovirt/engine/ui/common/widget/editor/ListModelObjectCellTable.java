@@ -22,8 +22,6 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
@@ -51,12 +49,7 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
         SingleSelectionModel<T> selectionModel = new SingleSelectionModel<>();
         setSelectionModel(selectionModel);
 
-        getSelectionModel().addSelectionChangeHandler(new Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                getListModel().setSelectedItem(((SingleSelectionModel<?>) getSelectionModel()).getSelectedObject());
-            }
-        });
+        getSelectionModel().addSelectionChangeHandler(event -> getListModel().setSelectedItem(((SingleSelectionModel<?>) getSelectionModel()).getSelectedObject()));
     }
 
     public ListModelObjectCellTable(boolean multiSelection) {
@@ -75,27 +68,24 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
         }
 
         // Handle Selection
-        getSelectionModel().addSelectionChangeHandler(new Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                if (getListModel() == null || getListModel().getItems() == null) {
-                    return;
-                }
+        getSelectionModel().addSelectionChangeHandler(event -> {
+            if (getListModel() == null || getListModel().getItems() == null) {
+                return;
+            }
 
-                // Clear "IsSelected"
-                getListModel().setSelectedItems(null);
+            // Clear "IsSelected"
+            getListModel().setSelectedItems(null);
 
-                // Set "IsSelected"
-                SelectionModel<? super T> selectionModel = ListModelObjectCellTable.this.getSelectionModel();
-                if (selectionModel instanceof SingleSelectionModel) {
-                    getListModel().setSelectedItem(((SingleSelectionModel<T>) selectionModel).getSelectedObject());
-                } else if (selectionModel instanceof MultiSelectionModel) {
-                    List<T> selectedItems = new ArrayList<>();
-                    for (T entity : ((MultiSelectionModel<T>) selectionModel).getSelectedSet()) {
-                        selectedItems.add(entity);
-                    }
-                    getListModel().setSelectedItems(selectedItems);
+            // Set "IsSelected"
+            SelectionModel<? super T> selectionModel = ListModelObjectCellTable.this.getSelectionModel();
+            if (selectionModel instanceof SingleSelectionModel) {
+                getListModel().setSelectedItem(((SingleSelectionModel<T>) selectionModel).getSelectedObject());
+            } else if (selectionModel instanceof MultiSelectionModel) {
+                List<T> selectedItems = new ArrayList<>();
+                for (T entity : ((MultiSelectionModel<T>) selectionModel).getSelectedSet()) {
+                    selectedItems.add(entity);
                 }
+                getListModel().setSelectedItems(selectedItems);
             }
         });
 

@@ -29,20 +29,12 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BootSequenceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -417,13 +409,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         sysPrepDomainNameListBoxEditor = new ListModelListBoxEditor<>();
         sysPrepDomainNameTextBoxEditor = new StringEntityModelTextBoxEditor();
 
-        sysPrepDomainNameListBoxEditor.asListBox().addValueChangeHandler(new ValueChangeHandler<String>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                runOnceModel.sysPrepListBoxChanged();
-            }
-        });
+        sysPrepDomainNameListBoxEditor.asListBox().addValueChangeHandler(event -> runOnceModel.sysPrepListBoxChanged());
 
         sysPrepDomainNameComboBox = new ComboBox<>(sysPrepDomainNameListBoxEditor, sysPrepDomainNameTextBoxEditor);
 
@@ -471,96 +457,64 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
         // Update Linux options panel
         final EntityModel<Boolean> isLinuxOptionsAvailable = object.getIsLinuxOptionsAvailable();
-        object.getIsLinuxOptionsAvailable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean isLinux = isLinuxOptionsAvailable.getEntity();
-                linuxBootOptionsPanel.setVisible(isLinux);
+        object.getIsLinuxOptionsAvailable().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            boolean isLinux = isLinuxOptionsAvailable.getEntity();
+            linuxBootOptionsPanel.setVisible(isLinux);
+        });
+
+        object.getIsSysprepEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            updateSysprepVisibility(object);
+            if (Boolean.TRUE.equals(object.getIsSysprepEnabled().getEntity())) {
+                runOnceModel.autoSetVmHostname();
             }
         });
 
-        object.getIsSysprepEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateSysprepVisibility(object);
-                if (Boolean.TRUE.equals(object.getIsSysprepEnabled().getEntity())) {
-                    runOnceModel.autoSetVmHostname();
-                }
+        object.getIsCloudInitPossible().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            updateCloudInitVisibility(object);
+            updateInitialRunTabVisibility(object);
+        });
+
+        object.getIsCloudInitEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            updateCloudInitVisibility(object);
+            if (Boolean.TRUE.equals(object.getIsCloudInitEnabled().getEntity())) {
+                runOnceModel.autoSetVmHostname();
             }
         });
 
-        object.getIsCloudInitPossible().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateCloudInitVisibility(object);
-                updateInitialRunTabVisibility(object);
-            }
-        });
-
-        object.getIsCloudInitEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateCloudInitVisibility(object);
-                if (Boolean.TRUE.equals(object.getIsCloudInitEnabled().getEntity())) {
-                    runOnceModel.autoSetVmHostname();
-                }
-            }
-        });
-
-        object.getIsSysprepPossible().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateSysprepVisibility(object);
-                updateInitialRunTabVisibility(object);
-            }
+        object.getIsSysprepPossible().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            updateSysprepVisibility(object);
+            updateInitialRunTabVisibility(object);
         });
 
         // Update Host combo
         object.getIsAutoAssign().getPropertyChangedEvent()
-                .addListener(new IEventListener<PropertyChangedEventArgs>() {
-                    @Override
-                    public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                        boolean isAutoAssign = object.getIsAutoAssign().getEntity();
-                        defaultHostEditor.setEnabled(!isAutoAssign);
-                        // only this is not bind tloudInitSubo the model, so needs to
-                        // listen to the change explicitly
-                        specificHost.setValue(!isAutoAssign);
-                    }
+                .addListener((ev, sender, args) -> {
+                    boolean isAutoAssign = object.getIsAutoAssign().getEntity();
+                    defaultHostEditor.setEnabled(!isAutoAssign);
+                    // only this is not bind tloudInitSubo the model, so needs to
+                    // listen to the change explicitly
+                    specificHost.setValue(!isAutoAssign);
+                });
+
+        specificHost.addValueChangeHandler(event -> {
+            defaultHostEditor.setEnabled(specificHost.getValue());
+            ValueChangeEvent.fire(isAutoAssignEditor.asRadioButton(), false);
         });
 
-        specificHost.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                defaultHostEditor.setEnabled(specificHost.getValue());
-                ValueChangeEvent.fire(isAutoAssignEditor.asRadioButton(), false);
+        isAutoAssignEditor.addDomHandler(event -> defaultHostEditor.setEnabled(false), ClickEvent.getType());
+
+        object.getIsAutoAssign().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (!isAutoAssignEditor.asRadioButton().getValue()) {
+                specificHost.setValue(true, true);
             }
         });
 
-        isAutoAssignEditor.addDomHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                defaultHostEditor.setEnabled(false);
-            }
-        }, ClickEvent.getType());
-
-        object.getIsAutoAssign().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (!isAutoAssignEditor.asRadioButton().getValue()) {
-                    specificHost.setValue(true, true);
-                }
-            }
-        });
-
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("IsHostTabVisible".equals(propName)) { //$NON-NLS-1$
-                    hostPanel.setVisible(object.getIsHostTabVisible());
-                } else if ("IsCustomPropertiesSheetVisible".equals(propName)) { //$NON-NLS-1$
-                    customPropertiesPanel.setVisible(object.getIsCustomPropertiesSheetVisible());
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if ("IsHostTabVisible".equals(propName)) { //$NON-NLS-1$
+                hostPanel.setVisible(object.getIsHostTabVisible());
+            } else if ("IsCustomPropertiesSheetVisible".equals(propName)) { //$NON-NLS-1$
+                customPropertiesPanel.setVisible(object.getIsCustomPropertiesSheetVisible());
             }
         });
 
@@ -627,57 +581,41 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         updateBootSequenceItems();
 
         // Items change handling
-        bootSequenceModel.getItems().getCollectionChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateBootSequenceItems();
+        bootSequenceModel.getItems().getCollectionChangedEvent().addListener((ev, sender, args) -> {
+            updateBootSequenceItems();
 
-                // Update selected item
-                bootSequenceBox.setSelectedIndex(bootSequenceModel.getSelectedItemIndex());
-            }
+            // Update selected item
+            bootSequenceBox.setSelectedIndex(bootSequenceModel.getSelectedItemIndex());
         });
 
         // Attach CD change handling
-        bootSequenceModel.getCdromOption().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                boolean isEnabled = bootSequenceModel.getCdromOption().getIsChangable();
-                String itemName = bootSequenceModel.getCdromOption().getTitle();
-                updateItemAvailability(itemName, isEnabled);
-            }
+        bootSequenceModel.getCdromOption().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            boolean isEnabled = bootSequenceModel.getCdromOption().getIsChangable();
+            String itemName = bootSequenceModel.getCdromOption().getTitle();
+            updateItemAvailability(itemName, isEnabled);
         });
 
         // NIC change handling
-        bootSequenceModel.getNetworkOption().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                boolean isEnabled = bootSequenceModel.getNetworkOption().getIsChangable();
-                String itemName = bootSequenceModel.getNetworkOption().getTitle();
-                updateItemAvailability(itemName, isEnabled);
-            }
+        bootSequenceModel.getNetworkOption().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            boolean isEnabled = bootSequenceModel.getNetworkOption().getIsChangable();
+            String itemName = bootSequenceModel.getNetworkOption().getTitle();
+            updateItemAvailability(itemName, isEnabled);
         });
 
         // Hard disk change handling
-        bootSequenceModel.getHardDiskOption().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                boolean isEnabled = bootSequenceModel.getHardDiskOption().getIsChangable();
-                String itemName = bootSequenceModel.getHardDiskOption().getTitle();
-                updateItemAvailability(itemName, isEnabled);
-            }
+        bootSequenceModel.getHardDiskOption().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            boolean isEnabled = bootSequenceModel.getHardDiskOption().getIsChangable();
+            String itemName = bootSequenceModel.getHardDiskOption().getTitle();
+            updateItemAvailability(itemName, isEnabled);
         });
 
         // Change boot option handling
-        bootSequenceBox.addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent event) {
-                int selectedIndex = bootSequenceBox.getSelectedIndex();
-                bootSequenceModel.setSelectedItem(bootSequenceModel.getItems().get(selectedIndex));
+        bootSequenceBox.addChangeHandler(event -> {
+            int selectedIndex = bootSequenceBox.getSelectedIndex();
+            bootSequenceModel.setSelectedItem(bootSequenceModel.getItems().get(selectedIndex));
 
-                bootSequenceUpButton.setEnabled(bootSequenceModel.getMoveItemUpCommand().getIsExecutionAllowed());
-                bootSequenceDownButton.setEnabled(bootSequenceModel.getMoveItemDownCommand().getIsExecutionAllowed());
-            }
-
+            bootSequenceUpButton.setEnabled(bootSequenceModel.getMoveItemUpCommand().getIsExecutionAllowed());
+            bootSequenceDownButton.setEnabled(bootSequenceModel.getMoveItemDownCommand().getIsExecutionAllowed());
         });
     }
 

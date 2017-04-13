@@ -76,12 +76,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     @Override
     public void runMultipleActionsFailed(List<VdcActionType> actions, List<VdcReturnValueBase> returnValues) {
-        runMultipleActionsFailed(actions, returnValues, new MessageFormatter() {
-            @Override
-            public String format(String innerMessage) {
-                return messages.uiCommonRunActionFailed(innerMessage);
-            }
-        });
+        runMultipleActionsFailed(actions, returnValues, innerMessage -> messages.uiCommonRunActionFailed(innerMessage));
     }
 
     public void runMultipleActionsFailed(List<VdcActionType> actions,

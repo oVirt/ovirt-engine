@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.view.client.SelectionModel;
 
@@ -15,12 +14,7 @@ public abstract class AbstractSelectAllCheckBoxHeader<T> extends Header<Boolean>
 
     public AbstractSelectAllCheckBoxHeader() {
         super(new CheckboxCell(true, true));
-        setUpdater(new ValueUpdater<Boolean>() {
-            @Override
-            public void update(Boolean value) {
-                selectionChanged(value);
-            }
-        });
+        setUpdater(value -> selectionChanged(value));
     }
 
     protected abstract void selectionChanged(Boolean value);

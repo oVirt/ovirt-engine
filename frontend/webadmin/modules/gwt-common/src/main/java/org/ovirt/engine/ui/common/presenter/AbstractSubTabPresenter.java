@@ -10,16 +10,11 @@ import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
@@ -84,12 +79,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
         OrderedMultiSelectionModel<?> tableSelectionModel = getTable() != null ? getTable().getSelectionModel() : null;
         if (tableSelectionModel != null) {
-            registerHandler(tableSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-                @Override
-                public void onSelectionChange(SelectionChangeEvent event) {
-                    // Update detail model selection
-                    updateDetailModelSelection();
-                }
+            registerHandler(tableSelectionModel.addSelectionChangeHandler(event -> {
+                // Update detail model selection
+                updateDetailModelSelection();
             }));
         }
         initializeHandlers();
@@ -188,31 +180,22 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
     public void initializeHandlers() {
         // Notify view when the entity of the detail model changes
-        modelProvider.getModel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                Object entity = modelProvider.getModel().getEntity();
-                if (entity != null) {
-                    onDetailModelEntityChange(entity);
-                }
+        modelProvider.getModel().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            Object entity = modelProvider.getModel().getEntity();
+            if (entity != null) {
+                onDetailModelEntityChange(entity);
             }
         });
 
         // Notify view when the detail model indicates progress
-        modelProvider.getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
-                    if (modelProvider.getModel().getProgress() != null) {
-                        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                            @Override
-                            public void execute() {
-                                if (getTable() != null) {
-                                    getTable().setLoadingState(LoadingState.LOADING);
-                                }
-                            }
-                        });
-                    }
+        modelProvider.getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
+                if (modelProvider.getModel().getProgress() != null) {
+                    Scheduler.get().scheduleDeferred(() -> {
+                        if (getTable() != null) {
+                            getTable().setLoadingState(LoadingState.LOADING);
+                        }
+                    });
                 }
             }
         });

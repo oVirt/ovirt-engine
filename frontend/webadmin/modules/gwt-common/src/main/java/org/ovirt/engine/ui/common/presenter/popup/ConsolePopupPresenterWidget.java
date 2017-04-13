@@ -18,15 +18,10 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleClient;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
@@ -159,12 +154,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             return;
         }
 
-        viewUpdatingListener = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getView().edit(model);
-            }
-        };
+        viewUpdatingListener = (ev, sender, args) -> getView().edit(model);
     }
 
     private void removeListeners(ConsolePopupModel model) {
@@ -234,20 +224,12 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         getView().setAdditionalConsoleAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.RDP));
         getView().setSpiceConsoleAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.SPICE));
 
-        registerHandler(getView().getConsoleClientResourcesAnchor().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Window.open(dynamicMessages.consoleClientResourcesUrl(), "_blank", "resizable=yes,scrollbars=yes"); //$NON-NLS-1$ $NON-NLS-2$
-            }
+        registerHandler(getView().getConsoleClientResourcesAnchor().addClickHandler(event -> {
+            Window.open(dynamicMessages.consoleClientResourcesUrl(), "_blank", "resizable=yes,scrollbars=yes"); //$NON-NLS-1$ $NON-NLS-2$
         }));
 
         registerHandler(getView().getSpiceProxyEnabledCheckBox().addValueChangeHandler(
-                new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-                        spiceProxyUserPreference = booleanValueChangeEvent.getValue();
-                    }
-                }
+                booleanValueChangeEvent -> spiceProxyUserPreference = booleanValueChangeEvent.getValue()
         ));
 
         final boolean enableUsbAutoshareEnabled =
@@ -280,92 +262,38 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     }
 
     protected void listenOnRadioButtons(final ConsolePopupModel model) {
-        registerHandler(getView().getRdpRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                getView().showRdpPanel(event.getValue());
-            }
-        }));
+        registerHandler(getView().getRdpRadioButton().addValueChangeHandler(event -> getView().showRdpPanel(event.getValue())));
 
-        registerHandler(getView().getVncRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+        registerHandler(getView().getVncRadioButton().addValueChangeHandler(event -> getView().showVncPanel(event.getValue())));
 
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                getView().showVncPanel(event.getValue());
-            }
-        }));
-
-        registerHandler(getView().getSpiceRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                getView().showSpicePanel(event.getValue());
-            }
-        }));
+        registerHandler(getView().getSpiceRadioButton().addValueChangeHandler(event -> getView().showSpicePanel(event.getValue())));
 
         registerHandler(getView().getSpiceAutoImplRadioButton()
-                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Auto);
-                    }
-                }));
+                .addValueChangeHandler(event -> selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Auto)));
 
         registerHandler(getView().getSpiceNativeImplRadioButton()
-                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Native);
-                    }
-                }));
+                .addValueChangeHandler(event -> selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Native)));
         registerHandler(getView().getSpiceHtml5ImplRadioButton()
-                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        boolean previousSpicePreference = getView().getSpiceProxy();
-                        selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Html5);
-                        spiceProxyUserPreference = previousSpicePreference;
-                    }
+                .addValueChangeHandler(event -> {
+                    boolean previousSpicePreference = getView().getSpiceProxy();
+                    selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Html5);
+                    spiceProxyUserPreference = previousSpicePreference;
                 }));
 
          registerHandler(getView().getNoVncImplRadioButton()
-                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        getView().selectVncImplementation(VncConsoleModel.ClientConsoleMode.NoVnc);
-                    }
-                }));
+                .addValueChangeHandler(event -> getView().selectVncImplementation(VncConsoleModel.ClientConsoleMode.NoVnc)));
 
          registerHandler(getView().getVncNativeImplRadioButton()
-                 .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                     @Override
-                     public void onValueChange(ValueChangeEvent<Boolean> event) {
-                         getView().selectVncImplementation(VncConsoleModel.ClientConsoleMode.Native);
-                     }
-                 }));
+                 .addValueChangeHandler(event -> getView().selectVncImplementation(VncConsoleModel.ClientConsoleMode.Native)));
 
         registerHandler(getView().getRdpAutoImplRadioButton()
-                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        getView().selectRdpImplementation(RdpConsoleModel.ClientConsoleMode.Auto);
-                    }
-                }));
+                .addValueChangeHandler(event -> getView().selectRdpImplementation(RdpConsoleModel.ClientConsoleMode.Auto)));
 
         registerHandler(getView().getRdpNativeImplRadioButton()
-                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        getView().selectRdpImplementation(RdpConsoleModel.ClientConsoleMode.Native);
-                    }
-                }));
+                .addValueChangeHandler(event -> getView().selectRdpImplementation(RdpConsoleModel.ClientConsoleMode.Native)));
 
         registerHandler(getView().getRdpPluginImplRadioButton()
-                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        getView().selectRdpImplementation(RdpConsoleModel.ClientConsoleMode.Plugin);
-                    }
-                }));
+                .addValueChangeHandler(event -> getView().selectRdpImplementation(RdpConsoleModel.ClientConsoleMode.Plugin)));
     }
 
     /**

@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -157,29 +156,14 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
             }
         });
 
-        model.getMemory().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateMemoryWarning(model);
-            }
-        });
+        model.getMemory().getEntityChangedEvent().addListener((ev, sender, args) -> updateMemoryWarning(model));
     }
 
     private void editDisksTable(final SnapshotModel model) {
         disksTable.asEditor().edit(model.getSnapshotDisks());
-        model.getSnapshotDisks().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                disksTable.selectAll();
-            }
-        });
+        model.getSnapshotDisks().getItemsChangedEvent().addListener((ev, sender, args) -> disksTable.selectAll());
 
-        model.getSnapshotDisks().getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateMemoryWarning(model);
-            }
-        });
+        model.getSnapshotDisks().getSelectedItemsChangedEvent().addListener((ev, sender, args) -> updateMemoryWarning(model));
     }
 
     private void updateMemoryWarning(SnapshotModel model) {

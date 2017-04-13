@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.common.widget;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gwtbootstrap3.client.shared.event.AlertCloseEvent;
-import org.gwtbootstrap3.client.shared.event.AlertCloseHandler;
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -109,40 +107,29 @@ public class AlertManager {
     }
 
     public void showAlert(final Type type, final SafeHtml message, final int autoHideMs) {
-        ScheduledCommand command = new ScheduledCommand() {
-            @Override
-            public void execute() {
-                if (alert == null) {
-                    alert = createAlert(type, message);
-                    attachAlert(alert);
-                } else {
-                    alert.incCount();
-                    updateAlert(type, message, alert);
-                }
+        ScheduledCommand command = () -> {
+            if (alert == null) {
+                alert = createAlert(type, message);
+                attachAlert(alert);
+            } else {
+                alert.incCount();
+                updateAlert(type, message, alert);
+            }
 
-                if (autoHideMs > 0) {
-                    final Timer timer = new Timer() {
-                        @Override
-                        public void run() {
-                            detachAlert(alert);
-                        }
-                    };
-                    alert.getWidget().addCloseHandler(new AlertCloseHandler() {
-                        @Override
-                        public void onClose(AlertCloseEvent evt) {
-                            timer.cancel();
-                            alert = null;
-                        }
-                    });
-                    timer.schedule(autoHideMs);
-                } else {
-                    alert.getWidget().addCloseHandler(new AlertCloseHandler() {
-                        @Override
-                        public void onClose(AlertCloseEvent evt) {
-                            alert = null;
-                        }
-                    });
-                }
+            if (autoHideMs > 0) {
+                final Timer timer = new Timer() {
+                    @Override
+                    public void run() {
+                        detachAlert(alert);
+                    }
+                };
+                alert.getWidget().addCloseHandler(evt -> {
+                    timer.cancel();
+                    alert = null;
+                });
+                timer.schedule(autoHideMs);
+            } else {
+                alert.getWidget().addCloseHandler(evt -> alert = null);
             }
         };
 

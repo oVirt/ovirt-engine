@@ -13,8 +13,6 @@ import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.text.shared.Renderer;
@@ -43,12 +41,7 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
 
     public GroupedListModelListBox(Renderer<T> renderer) {
         super(renderer);
-        addValueChangeHandler(new ValueChangeHandler<T>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<T> event) {
-                updateGroupLabel(event.getValue());
-            }
-        });
+        addValueChangeHandler(event -> updateGroupLabel(event.getValue()));
         groupLabelContainer = new FlowPanel();
         groupLabelContainer.addStyleName(style.labelContainer());
         groupLabel = new EnableableFormLabel();

@@ -8,9 +8,6 @@ import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.label.LabelWithTextTruncation;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -74,13 +71,9 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
         profileEditor.addContentWidgetContainerStyleName(style.contentStyle());
         profileEditor.setElementId(ElementIdUtils.createElementId(elementId, model.getNetworkInterface().getName()));
         syncSelectedItemWithNetworkInterface(model);
-        model.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                syncSelectedItemWithNetworkInterface(model);
-                ValueChangeEvent.fire(ProfileInstanceTypeEditor.this, model);
-            }
+        model.getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            syncSelectedItemWithNetworkInterface(model);
+            ValueChangeEvent.fire(ProfileInstanceTypeEditor.this, model);
         });
     }
 

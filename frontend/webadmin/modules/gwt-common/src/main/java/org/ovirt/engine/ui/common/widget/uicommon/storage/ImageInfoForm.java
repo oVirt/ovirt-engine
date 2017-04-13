@@ -11,9 +11,6 @@ import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumTextBoxLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImageInfoModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiConstructor;
@@ -79,12 +76,7 @@ public class ImageInfoForm extends AbstractModelBoundFormWidget<ImageInfoModel> 
         formBuilder.setRelativeColumnWidth(0, 5);
         formBuilder.setRelativeColumnWidth(1, 5);
 
-        getModel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                update();
-            }
-        });
+        getModel().getEntityChangedEvent().addListener((ev, sender, args) -> update());
     }
 
     @Override

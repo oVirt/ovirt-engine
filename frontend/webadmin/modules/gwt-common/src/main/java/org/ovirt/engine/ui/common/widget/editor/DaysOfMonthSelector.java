@@ -7,8 +7,6 @@ import java.util.List;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -54,21 +52,18 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
         style.ensureInjected();
         daysOfMonth.setStyleName(style.daysOfMonthWidget());
         showDaysOfMonth();
-        daysOfMonth.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Cell cellClicked = daysOfMonth.getCellForEvent(event);
-                if (cellClicked != null) {
-                    int cellColumn = cellClicked.getCellIndex();
-                    int cellRow = cellClicked.getRowIndex();
-                    int actualCellIndex = (cellRow - 1) * DAYS_IN_WEEK + cellColumn;
-                    if (!clickedList.get(actualCellIndex)) {
-                        ValueChangeEvent.fire(DaysOfMonthSelector.this,
-                            addSelectedDate(getValue(), getDateFromIndex(actualCellIndex)));
-                    } else {
-                        ValueChangeEvent.fire(DaysOfMonthSelector.this,
-                            removeSelectedDate(getValue(), getDateFromIndex(actualCellIndex)));
-                    }
+        daysOfMonth.addClickHandler(event -> {
+            Cell cellClicked = daysOfMonth.getCellForEvent(event);
+            if (cellClicked != null) {
+                int cellColumn = cellClicked.getCellIndex();
+                int cellRow = cellClicked.getRowIndex();
+                int actualCellIndex = (cellRow - 1) * DAYS_IN_WEEK + cellColumn;
+                if (!clickedList.get(actualCellIndex)) {
+                    ValueChangeEvent.fire(DaysOfMonthSelector.this,
+                        addSelectedDate(getValue(), getDateFromIndex(actualCellIndex)));
+                } else {
+                    ValueChangeEvent.fire(DaysOfMonthSelector.this,
+                        removeSelectedDate(getValue(), getDateFromIndex(actualCellIndex)));
                 }
             }
         });

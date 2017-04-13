@@ -32,7 +32,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
-import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.NoSelectionModel;
@@ -318,25 +317,22 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                 selectionColumnPresent = true;
             }
 
-            addCellPreviewHandler(new CellPreviewEvent.Handler<EntityModel>() {
-                @Override
-                public void onCellPreview(CellPreviewEvent<EntityModel> event) {
-                    int columnIndex = event.getColumn();
-                    Cell<?> cell = getColumn(columnIndex).getCell();
-                    if (cell instanceof EventHandlingCell
-                            && ((EventHandlingCell) cell).handlesEvent(event)) {
+            addCellPreviewHandler(event -> {
+                int columnIndex = event.getColumn();
+                Cell<?> cell = getColumn(columnIndex).getCell();
+                if (cell instanceof EventHandlingCell
+                        && ((EventHandlingCell) cell).handlesEvent(event)) {
+                    return;
+                }
+
+                if (BrowserEvents.CLICK.equals(event.getNativeEvent().getType())
+                        && !(getSelectionModel() instanceof NoSelectionModel)) {
+                    // Let the selection column deal with this
+                    if (event.getColumn() == 0) {
                         return;
                     }
-
-                    if (BrowserEvents.CLICK.equals(event.getNativeEvent().getType())
-                            && !(getSelectionModel() instanceof NoSelectionModel)) {
-                        // Let the selection column deal with this
-                        if (event.getColumn() == 0) {
-                            return;
-                        }
-                        getSelectionModel().setSelected(event.getValue(),
-                                !getSelectionModel().isSelected(event.getValue()));
-                    }
+                    getSelectionModel().setSelected(event.getValue(),
+                            !getSelectionModel().isSelected(event.getValue()));
                 }
             });
         }

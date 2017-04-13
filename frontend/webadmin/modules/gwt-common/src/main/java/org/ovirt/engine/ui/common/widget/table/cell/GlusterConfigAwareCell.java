@@ -42,23 +42,17 @@ public class GlusterConfigAwareCell extends AbstractCell<GlusterGeoRepSessionCon
         boolean isValuesConstrained =
                 isValueConstrained(allowedValuesList);
         if (isValuesConstrained) {
-            delegate.onBrowserEvent(context, parent, configInRow.getValue(), event, new ValueUpdater<String>() {
-                @Override
-                public void update(String value) {
-                    SelectElement select = parent.getFirstChild().cast();
-                    int selectedIndex = select.getSelectedIndex();
-                    configInRow.setValue(allowedValuesList.get(selectedIndex));
-                }
+            delegate.onBrowserEvent(context, parent, configInRow.getValue(), event, value -> {
+                SelectElement select = parent.getFirstChild().cast();
+                int selectedIndex = select.getSelectedIndex();
+                configInRow.setValue(allowedValuesList.get(selectedIndex));
             });
         } else {
-            textInputCell.onBrowserEvent(context, parent, configInRow.getValue(), event, new ValueUpdater<String>() {
-                @Override
-                public void update(String value) {
-                    if (value != null) {
-                        configInRow.setValue(value);
-                    }
-
+            textInputCell.onBrowserEvent(context, parent, configInRow.getValue(), event, value -> {
+                if (value != null) {
+                    configInRow.setValue(value);
                 }
+
             });
         }
 

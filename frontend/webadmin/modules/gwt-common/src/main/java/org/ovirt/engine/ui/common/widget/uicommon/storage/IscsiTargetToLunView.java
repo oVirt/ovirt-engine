@@ -3,9 +3,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -66,13 +63,10 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
         object.getCommands().add(object.getDiscoverTargetsCommand());
 
         // Add event handlers
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if (propName.equals("ProposeDiscoverTargets")) { //$NON-NLS-1$
-                    setProposeDiscover(object.getProposeDiscoverTargets());
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if (propName.equals("ProposeDiscoverTargets")) { //$NON-NLS-1$
+                setProposeDiscover(object.getProposeDiscoverTargets());
             }
         });
 

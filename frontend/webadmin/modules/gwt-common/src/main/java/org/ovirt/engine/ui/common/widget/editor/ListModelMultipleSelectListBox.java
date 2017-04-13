@@ -9,7 +9,6 @@ import java.util.List;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -89,22 +88,12 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
         }
         ((Element)dropdownButton.getElement().getChild(0)).setInnerHTML(renderedValue);
         dropdownButton.setTitle(renderedValue);
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-            @Override
-            public void execute() {
-                listPanel.setSelected(value);
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> listPanel.setSelected(value));
         if (fireEvents) {
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                @Override
-                public void execute() {
-                    ValueChangeEvent.fire(ListModelMultipleSelectListBox.this, selectedItems());
-                    // Clear the value so we don't have any leaks
-                    lastValues = null;
-                }
+            Scheduler.get().scheduleDeferred(() -> {
+                ValueChangeEvent.fire(ListModelMultipleSelectListBox.this, selectedItems());
+                // Clear the value so we don't have any leaks
+                lastValues = null;
             });
         } else {
             // Clear the value so we don't have any leaks

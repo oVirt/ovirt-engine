@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -35,12 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class AbstractUiCommandButton extends Composite
         implements HasUiCommandClickHandlers, HasLabel, FocusableComponentsContainer, HasCleanup {
 
-    private final IEventListener<PropertyChangedEventArgs> listener = new IEventListener<PropertyChangedEventArgs>() {
-        @Override
-        public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-            updateButton();
-        }
-    };
+    private final IEventListener<PropertyChangedEventArgs> listener = (ev, sender, args) -> updateButton();
 
     private UICommand command;
 

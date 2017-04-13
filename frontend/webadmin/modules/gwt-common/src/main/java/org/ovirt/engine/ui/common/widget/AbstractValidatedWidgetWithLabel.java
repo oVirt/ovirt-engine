@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -207,19 +206,9 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
      * Render widget more responsive, by firing {@link ValueChangeEvent} on each {@link KeyDownEvent}.
      */
     public void fireValueChangeOnKeyDown() {
-        getContentWidget().addKeyDownHandler(new KeyDownHandler() {
-
-            @Override
-            public void onKeyDown(KeyDownEvent event) {
-                // deferring is required to allow the widget's internal value to update according to key press
-                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                    @Override
-                    public void execute() {
-                        ValueChangeEvent.fire(getContentWidget(), getContentWidget().getValue());
-                    }
-                });
-            }
+        getContentWidget().addKeyDownHandler(event -> {
+            // deferring is required to allow the widget's internal value to update according to key press
+            Scheduler.get().scheduleDeferred(() -> ValueChangeEvent.fire(getContentWidget(), getContentWidget().getValue()));
         });
     }
 
@@ -449,17 +438,14 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     private void addStateUpdateHandler() {
-        this.getContentWidget().asWidget().addHandler(new EditorStateUpdateEvent.EditorStateUpdateHandler() {
-            @Override
-            public void onEditorStateUpdate(EditorStateUpdateEvent event) {
-                if (event.isValid()) {
-                    //Mark the editor as valid.
-                    editorStateValid = true;
-                    markAsValid();
-                } else {
-                    //Mark the editor as invalid.
-                    handleInvalidState();
-                }
+        this.getContentWidget().asWidget().addHandler(event -> {
+            if (event.isValid()) {
+                //Mark the editor as valid.
+                editorStateValid = true;
+                markAsValid();
+            } else {
+                //Mark the editor as invalid.
+                handleInvalidState();
             }
         }, EditorStateUpdateEvent.getType());
     }

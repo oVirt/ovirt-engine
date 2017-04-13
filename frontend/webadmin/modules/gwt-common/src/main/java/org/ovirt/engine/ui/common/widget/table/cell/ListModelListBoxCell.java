@@ -98,12 +98,9 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
                 parent,
                 renderer.render((T) model.getSelectedItem()),
                 event,
-                new ValueUpdater<String>() {
-                    @Override
-                    public void update(String value) {
-                        if (value != null) {
-                            model.setSelectedItem(entityByName.get(value));
-                        }
+                value -> {
+                    if (value != null) {
+                        model.setSelectedItem(entityByName.get(value));
                     }
                 });
     }

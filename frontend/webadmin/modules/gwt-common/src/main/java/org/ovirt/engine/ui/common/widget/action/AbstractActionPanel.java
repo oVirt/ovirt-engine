@@ -16,31 +16,20 @@ import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.InitializeEvent;
-import com.google.gwt.event.logical.shared.InitializeHandler;
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
@@ -190,35 +179,22 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     public void onLoad() {
         super.onLoad();
         // Defer size calculations until sizes are available.
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-
-            @Override
-            public void execute() {
-                int minWidth = calculateWidgetMinWidthNeeded();
-                contentPanel.getElement().getStyle().setProperty(MIN_WIDTH, minWidth, Unit.PX);
-                if (widgetMinWidth > 0) {
-                    siblingWidth = calculateSiblingWidth();
-                }
-                initializeCascadeMenuPanel();
+        Scheduler.get().scheduleDeferred(() -> {
+            int minWidth = calculateWidgetMinWidthNeeded();
+            contentPanel.getElement().getStyle().setProperty(MIN_WIDTH, minWidth, Unit.PX);
+            if (widgetMinWidth > 0) {
+                siblingWidth = calculateSiblingWidth();
             }
+            initializeCascadeMenuPanel();
         });
-        resizeHandlerRegistration = Window.addResizeHandler(new ResizeHandler() {
-            @Override
-            public void onResize(ResizeEvent resizeEvent) {
-                initializeCascadeMenuPanel();
-            }
-        });
+        resizeHandlerRegistration = Window.addResizeHandler(resizeEvent -> initializeCascadeMenuPanel());
         eventBus.addHandler(HeaderOffsetChangeEvent.getType(),
-                new HeaderOffsetChangeEvent.HeaderOffsetChangeHandler() {
-
-            @Override
-            public void onHeaderOffsetChange(HeaderOffsetChangeEvent event) {
-                initializeCascadeMenuPanel();
-                //Unregister the resize handler, we don't need it because resizes trigger the
-                //HeaderOffsetChangeEvents.
-                unregisterResizeHandler();
-            }
-        });
+                event -> {
+                    initializeCascadeMenuPanel();
+                    //Unregister the resize handler, we don't need it because resizes trigger the
+                    //HeaderOffsetChangeEvents.
+                    unregisterResizeHandler();
+                });
     }
 
     @Override
@@ -333,44 +309,31 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         }
 
         actionPanelPopupPanel.asPopupPanel()
-                .addCloseHandler(new CloseHandler<com.google.gwt.user.client.ui.PopupPanel>() {
-                    @Override
-                    public void onClose(CloseEvent<com.google.gwt.user.client.ui.PopupPanel> event) {
-                        newActionButton.asToggleButton().setDown(false);
-                    }
-                });
+                .addCloseHandler(event -> newActionButton.asToggleButton().setDown(false));
 
         // Add button widget click handler
-        newActionButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (buttonDef instanceof UiMenuBarButtonDefinition) {
-                    actionPanelPopupPanel.asPopupPanel().addAutoHidePartner(newActionButton.asToggleButton()
-                            .getElement());
-                    if (newActionButton.asToggleButton().isDown()) {
-                        updateContextMenu(actionPanelPopupPanel.getMenuBar(),
-                                ((UiMenuBarButtonDefinition<T>) buttonDef).getSubActions(),
-                                actionPanelPopupPanel.asPopupPanel());
-                        actionPanelPopupPanel.asPopupPanel()
-                                .showRelativeToAndFitToScreen(newActionButton.asWidget());
-                    } else {
-                        actionPanelPopupPanel.asPopupPanel().hide();
-                    }
+        newActionButton.addClickHandler(event -> {
+            if (buttonDef instanceof UiMenuBarButtonDefinition) {
+                actionPanelPopupPanel.asPopupPanel().addAutoHidePartner(newActionButton.asToggleButton()
+                        .getElement());
+                if (newActionButton.asToggleButton().isDown()) {
+                    updateContextMenu(actionPanelPopupPanel.getMenuBar(),
+                            ((UiMenuBarButtonDefinition<T>) buttonDef).getSubActions(),
+                            actionPanelPopupPanel.asPopupPanel());
+                    actionPanelPopupPanel.asPopupPanel()
+                            .showRelativeToAndFitToScreen(newActionButton.asWidget());
                 } else {
-                    buttonDef.onClick(getSelectedItems());
+                    actionPanelPopupPanel.asPopupPanel().hide();
                 }
+            } else {
+                buttonDef.onClick(getSelectedItems());
             }
         });
 
         registerSelectionChangeHandler(buttonDef);
 
         // Update button whenever its definition gets re-initialized
-        buttonDef.addInitializeHandler(new InitializeHandler() {
-            @Override
-            public void onInitialize(InitializeEvent event) {
-                updateActionButton(newActionButton, buttonDef);
-            }
-        });
+        buttonDef.addInitializeHandler(event -> updateActionButton(newActionButton, buttonDef));
 
         updateActionButton(newActionButton, buttonDef);
     }
@@ -442,22 +405,18 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
      * @return The {@code ClickHandler}
      */
     private ClickHandler getCascadeButtonClickHandler() {
-        return new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                if (!cascadePopupPanel.isShowing()) {
-                    List<ActionButtonDefinition<T>> cascadeActionButtonList = new ArrayList<>();
-                    for (int i = 0; i < contentPanel.getWidgetCount() - 1; i++) {
-                        if (!contentPanel.getWidget(i).isVisible()) {
-                            cascadeActionButtonList.add(toolbarOnlyActionButtonList.get(i));
-                        }
+        return event -> {
+            if (!cascadePopupPanel.isShowing()) {
+                List<ActionButtonDefinition<T>> cascadeActionButtonList = new ArrayList<>();
+                for (int i = 0; i < contentPanel.getWidgetCount() - 1; i++) {
+                    if (!contentPanel.getWidget(i).isVisible()) {
+                        cascadeActionButtonList.add(toolbarOnlyActionButtonList.get(i));
                     }
-                    updateContextMenu(cascadeMenu, cascadeActionButtonList, cascadePopupPanel);
-                    cascadePopupPanel.showRelativeToAndFitToScreen(cascadeButton);
-                } else {
-                    cascadePopupPanel.hide();
                 }
+                updateContextMenu(cascadeMenu, cascadeActionButtonList, cascadePopupPanel);
+                cascadePopupPanel.showRelativeToAndFitToScreen(cascadeButton);
+            } else {
+                cascadePopupPanel.hide();
             }
         };
     }
@@ -476,12 +435,9 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
 
     void registerSelectionChangeHandler(final ActionButtonDefinition<T> buttonDef) {
         // Update button definition whenever list model item selection changes
-        final IEventListener<EventArgs> itemSelectionChangeHandler = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                // Update action button on item selection change
-                buttonDef.update();
-            }
+        final IEventListener<EventArgs> itemSelectionChangeHandler = (ev, sender, args) -> {
+            // Update action button on item selection change
+            buttonDef.update();
         };
 
         addSelectionChangeListener(itemSelectionChangeHandler);
@@ -497,12 +453,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
      * @param widget The widget.
      */
     public void addContextMenuHandler(Widget widget) {
-        widget.addDomHandler(new ContextMenuHandler() {
-            @Override
-            public void onContextMenu(ContextMenuEvent event) {
-                AbstractActionPanel.this.onContextMenu(event);
-            }
-        }, ContextMenuEvent.getType());
+        widget.addDomHandler(event -> AbstractActionPanel.this.onContextMenu(event), ContextMenuEvent.getType());
     }
 
     /**
@@ -519,14 +470,11 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
 
         // Use deferred command to ensure that the context menu
         // is shown only after other event handlers do their job
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                // Avoid showing empty context menu
-                if (hasActionButtons()) {
-                    updateContextMenu(contextMenuBar, actionButtonList, contextPopupPanel);
-                    contextPopupPanel.showAndFitToScreen(eventX, eventY);
-                }
+        Scheduler.get().scheduleDeferred(() -> {
+            // Avoid showing empty context menu
+            if (hasActionButtons()) {
+                updateContextMenu(contextMenuBar, actionButtonList, contextPopupPanel);
+                contextPopupPanel.showAndFitToScreen(eventX, eventY);
             }
         });
     }
@@ -570,12 +518,9 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
                     menuBar.addItem(newMenu);
                 }
             } else {
-                MenuItem item = new MenuItem(buttonDef.getText(), new Command() {
-                    @Override
-                    public void execute() {
-                        popupPanel.hide();
-                        buttonDef.onClick(getSelectedItems());
-                    }
+                MenuItem item = new MenuItem(buttonDef.getText(), () -> {
+                    popupPanel.hide();
+                    buttonDef.onClick(getSelectedItems());
                 });
 
                 updateMenuItem(item, buttonDef);

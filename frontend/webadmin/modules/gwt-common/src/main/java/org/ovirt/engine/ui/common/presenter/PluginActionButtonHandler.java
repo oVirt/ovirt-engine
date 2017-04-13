@@ -16,18 +16,14 @@ public class PluginActionButtonHandler {
     @Inject
     public PluginActionButtonHandler(EventBus eventBus) {
         eventBus.addHandler(AddTabActionButtonEvent.getType(),
-                new AddTabActionButtonEvent.AddTabActionButtonHandler() {
-
-            @Override
-            public void onAddTabActionButton(AddTabActionButtonEvent event) {
+            event -> {
                 List<ActionButtonDefinition<?>> buttonDefinitionList = definitionMap.get(event.getHistoryToken());
                 if (buttonDefinitionList == null) {
                     buttonDefinitionList = new ArrayList<>();
                     definitionMap.put(event.getHistoryToken(), buttonDefinitionList);
                 }
                 buttonDefinitionList.add(event.getButtonDefinition());
-            }
-        });
+            });
     }
 
     /**

@@ -4,10 +4,6 @@ import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipWidth;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -28,19 +24,9 @@ public class TooltippedIcon extends FocusPanel {
         tooltip = createTooltip(image);
         setText(text);
 
-        addMouseOutHandler(new MouseOutHandler() {
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                image.setUrl(mouseOutImage.getSafeUri());
-            }
-        });
+        addMouseOutHandler(event -> image.setUrl(mouseOutImage.getSafeUri()));
 
-        addMouseOverHandler(new MouseOverHandler() {
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                image.setUrl(mouseInImage.getSafeUri());
-            }
-        });
+        addMouseOverHandler(event -> image.setUrl(mouseInImage.getSafeUri()));
     }
 
     public TooltippedIcon(SafeHtml text, Widget icon) {

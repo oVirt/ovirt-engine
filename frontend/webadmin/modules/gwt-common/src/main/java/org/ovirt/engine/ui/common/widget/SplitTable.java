@@ -8,21 +8,14 @@ import java.util.Set;
 import org.ovirt.engine.ui.common.widget.dialog.ShapedButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public abstract class SplitTable<M extends ListModel<T>, T> extends Composite {
 
@@ -75,18 +68,8 @@ public abstract class SplitTable<M extends ListModel<T>, T> extends Composite {
         excludedSelectionModel = (MultiSelectionModel) excludedTable.getSelectionModel();
         includedSelectionModel = (MultiSelectionModel) includedTable.getSelectionModel();
 
-        excludedItemsChangedListener = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                excludedSelectionModel.clear();
-            }
-        };
-        includedItemsChangedListener = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                includedSelectionModel.clear();
-            }
-        };
+        excludedItemsChangedListener = (ev, sender, args) -> excludedSelectionModel.clear();
+        includedItemsChangedListener = (ev, sender, args) -> includedSelectionModel.clear();
 
         addSelectionHandler(true);
         addSelectionHandler(false);
@@ -103,34 +86,24 @@ public abstract class SplitTable<M extends ListModel<T>, T> extends Composite {
     private void addSelectionHandler(boolean excludedTable) {
         final MultiSelectionModel<T> selectionModel = getSelectionModel(excludedTable);
         final ShapedButton button = getButton(excludedTable);
-        selectionModel.addSelectionChangeHandler(new Handler() {
-
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                button.setEnabled(!selectionModel.getSelectedSet().isEmpty());
-            }
-        });
+        selectionModel.addSelectionChangeHandler(event -> button.setEnabled(!selectionModel.getSelectedSet().isEmpty()));
     }
 
     private void addClickHandler(final boolean excludedTableIsSource) {
-        getButton(excludedTableIsSource).addClickHandler(new ClickHandler() {
+        getButton(excludedTableIsSource).addClickHandler(event -> {
+            MultiSelectionModel<T> sourceSelectionModel = getSelectionModel(excludedTableIsSource);
+            UICommand command = excludedTableIsSource ? onIncludeButtonPressed : onExcludeButtonPressed;
 
-            @Override
-            public void onClick(ClickEvent event) {
-                MultiSelectionModel<T> sourceSelectionModel = getSelectionModel(excludedTableIsSource);
-                UICommand command = excludedTableIsSource ? onIncludeButtonPressed : onExcludeButtonPressed;
+            if (command != null) {
+                command.execute();
+            }
 
-                if (command != null) {
-                    command.execute();
-                }
+            Set<T> selectedItems = sourceSelectionModel.getSelectedSet();
 
-                Set<T> selectedItems = sourceSelectionModel.getSelectedSet();
-
-                if (excludedTableIsSource) {
-                    includeItems(selectedItems, true);
-                } else {
-                    excludeItems(selectedItems, true);
-                }
+            if (excludedTableIsSource) {
+                includeItems(selectedItems, true);
+            } else {
+                excludeItems(selectedItems, true);
             }
         });
     }
@@ -141,24 +114,18 @@ public abstract class SplitTable<M extends ListModel<T>, T> extends Composite {
      * (excluding the item that was moved).
      */
     public void enableDoubleClickItemMoving() {
-        excludedTable.addSimulatedDoubleClickHandler(new CellPreviewEvent.Handler<EntityModel>() {
-            @Override
-            public void onCellPreview(CellPreviewEvent<EntityModel> event) {
-                T clickedItem = (T) event.getDisplay().getVisibleItem(event.getIndex());
+        excludedTable.addSimulatedDoubleClickHandler(event -> {
+            T clickedItem = (T) event.getDisplay().getVisibleItem(event.getIndex());
 
-                if (canMoveItemOnDoubleClick(excludedTable, event.getColumn())) {
-                    includeItems(Collections.singletonList(clickedItem), false);
-                }
+            if (canMoveItemOnDoubleClick(excludedTable, event.getColumn())) {
+                includeItems(Collections.singletonList(clickedItem), false);
             }
         });
-        includedTable.addSimulatedDoubleClickHandler(new CellPreviewEvent.Handler<EntityModel>() {
-            @Override
-            public void onCellPreview(CellPreviewEvent<EntityModel> event) {
-                T clickedItem = (T) event.getDisplay().getVisibleItem(event.getIndex());
+        includedTable.addSimulatedDoubleClickHandler(event -> {
+            T clickedItem = (T) event.getDisplay().getVisibleItem(event.getIndex());
 
-                if (canMoveItemOnDoubleClick(includedTable, event.getColumn())) {
-                    excludeItems(Collections.singletonList(clickedItem), false);
-                }
+            if (canMoveItemOnDoubleClick(includedTable, event.getColumn())) {
+                excludeItems(Collections.singletonList(clickedItem), false);
             }
         });
     }

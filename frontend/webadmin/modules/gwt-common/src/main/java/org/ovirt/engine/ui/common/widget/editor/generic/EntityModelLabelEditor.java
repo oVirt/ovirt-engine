@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
-import java.text.ParseException;
-
 import org.ovirt.engine.ui.common.widget.editor.AbstractValueBoxWithLabelEditor;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
@@ -20,12 +18,9 @@ public class EntityModelLabelEditor<T> extends AbstractValueBoxWithLabelEditor<T
      * @param renderer The renderer.
      */
     public EntityModelLabelEditor(Renderer<T> renderer) {
-        this(new EntityModelLabel<>(renderer, new Parser<T>() {
-            @Override
-            public T parse(CharSequence text) throws ParseException {
-                //Parser is not needed as its a read only field and value is not used.
-                return null;
-            }
+        this(new EntityModelLabel<>(renderer, text -> {
+            //Parser is not needed as its a read only field and value is not used.
+            return null;
         }));
     }
 

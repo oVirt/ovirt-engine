@@ -1,11 +1,6 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 
 /**
@@ -38,21 +33,13 @@ public class ModelBoundCheckBox extends CheckBox {
     }
 
     private void registerChangeHandler() {
-        addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                model.setIsSelected(event.getValue());
-            }
-        });
+        addValueChangeHandler(event -> model.setIsSelected(event.getValue()));
     }
 
     private void registerModelPropertyChangeListener() {
-        model.getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean isSelected = model.getIsSelected();
-                ModelBoundCheckBox.super.setValue(isSelected, true);
-            }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            boolean isSelected = model.getIsSelected();
+            ModelBoundCheckBox.super.setValue(isSelected, true);
         });
     }
 

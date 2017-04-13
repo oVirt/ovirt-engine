@@ -39,12 +39,9 @@ public class WebClientConsoleInvoker {
     public void invokeClient() {
         Frontend.getInstance().runQuery(VdcQueryType.SignString,
                 new SignStringParameters(createConnectionString(host, port, useSsl)),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
-                    @Override
-                    public void onSuccess(VdcQueryReturnValue returnValue) {
-                        String signedTicket = returnValue.getReturnValue();
-                        invokeClientNative(signedTicket);
-                    }
+                new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+                    String signedTicket = returnValue.getReturnValue();
+                    invokeClientNative(signedTicket);
                 }));
     }
 

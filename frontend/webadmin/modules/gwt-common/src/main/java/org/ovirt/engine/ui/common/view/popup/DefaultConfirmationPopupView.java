@@ -7,9 +7,6 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -48,15 +45,11 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
     public void edit(final ConfirmationModel object) {
         driver.edit(object);
 
-        object.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ArrayList<String> items = (ArrayList<String>) object.getItems();
+        object.getItemsChangedEvent().addListener((ev, sender, args) -> {
+            ArrayList<String> items = (ArrayList<String>) object.getItems();
 
-                for (String item : items) {
-                    descriptionPanel.add(new Label(getItemTextFormatted(item)));
-                }
+            for (String item : items) {
+                descriptionPanel.add(new Label(getItemTextFormatted(item)));
             }
         });
     }

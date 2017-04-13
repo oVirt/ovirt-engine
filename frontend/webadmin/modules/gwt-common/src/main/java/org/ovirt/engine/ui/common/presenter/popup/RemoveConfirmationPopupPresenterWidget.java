@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.common.presenter.popup;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
@@ -25,14 +22,11 @@ public class RemoveConfirmationPopupPresenterWidget extends AbstractModelBoundPo
     @Override
     public void init(final ConfirmationModel model) {
         updateReasonVisibility(model);
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
 
-                if ("ReasonVisible".equals(propName)) { //$NON-NLS-1$
-                    updateReasonVisibility(model);
-                }
+            if ("ReasonVisible".equals(propName)) { //$NON-NLS-1$
+                updateReasonVisibility(model);
             }
         });
         super.init(model);

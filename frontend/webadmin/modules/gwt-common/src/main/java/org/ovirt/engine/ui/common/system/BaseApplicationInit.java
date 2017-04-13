@@ -10,21 +10,15 @@ import org.ovirt.engine.ui.common.logging.ApplicationLogManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.widget.AlertManager;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Provider;
@@ -83,24 +77,16 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
 
         // Perform actual bootstrap via deferred command to ensure that
         // UncaughtExceptionHandler is effective during the bootstrap
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                performBootstrap();
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> performBootstrap());
     }
 
     void initUncaughtExceptionHandler() {
         // Prevent uncaught exceptions from escaping application code
-        GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-            @Override
-            public void onUncaughtException(Throwable t) {
-                applicationLogManager.logUncaughtException(t);
+        GWT.setUncaughtExceptionHandler(t -> {
+            applicationLogManager.logUncaughtException(t);
 
-                if (DisplayUncaughtUIExceptions.getValue()) {
-                    alertManager.showUncaughtExceptionAlert(t);
-                }
+            if (DisplayUncaughtUIExceptions.getValue()) {
+                alertManager.showUncaughtExceptionAlert(t);
             }
         });
     }
@@ -133,19 +119,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         final T loginModel = getLoginModel();
 
         // Add model login event handler
-        loginModel.getLoggedInEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                onLogin(loginModel);
-            }
-        });
+        loginModel.getLoggedInEvent().addListener((ev, sender, args) -> onLogin(loginModel));
 
-        loginModel.getCreateInstanceOnly().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                currentUserRole.setCreateInstanceOnly(loginModel.getCreateInstanceOnly().getEntity() );
-            }
-        });
+        loginModel.getCreateInstanceOnly().getEntityChangedEvent().addListener((ev, sender, args) -> currentUserRole.setCreateInstanceOnly(loginModel.getCreateInstanceOnly().getEntity() ));
     }
 
     /**
@@ -155,12 +131,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
 
     @Override
     public void onLogout() {
-        AsyncQuery<VdcReturnValueBase> query = new AsyncQuery<>(new AsyncCallback<VdcReturnValueBase>() {
-            @Override
-            public void onSuccess(VdcReturnValueBase returnValue) {
-                // Redirect to SSO Logout after the user has logged out successfully on backend.
-                Window.Location.assign(GWT.getModuleBaseURL() + "sso/logout"); //$NON-NLS-1$
-            }
+        AsyncQuery<VdcReturnValueBase> query = new AsyncQuery<>(returnValue -> {
+            // Redirect to SSO Logout after the user has logged out successfully on backend.
+            Window.Location.assign(GWT.getModuleBaseURL() + "sso/logout"); //$NON-NLS-1$
         });
         query.setHandleFailure(true);
 
@@ -209,12 +182,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         frontend.setEventsHandler(frontendEventsHandler);
         frontend.getFrontendFailureEvent().addListener(frontendFailureEventListener);
 
-        frontend.getFrontendNotLoggedInEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                user.sessionExpired();
-            }
-        });
+        frontend.getFrontendNotLoggedInEvent().addListener((ev, sender, args) -> user.sessionExpired());
 
         frontend.setFilterQueries(filterFrontendQueries());
     }
@@ -235,12 +203,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
 
         // Use deferred command because CommonModel change needs to happen
         // after all model providers have been properly initialized
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                lockInteractionManager.showLoadingIndicator();
-                getLoginModel().autoLogin(loggedUser);
-            }
+        Scheduler.get().scheduleDeferred(() -> {
+            lockInteractionManager.showLoadingIndicator();
+            getLoginModel().autoLogin(loggedUser);
         });
 
         user.setUserInfo(userInfo);

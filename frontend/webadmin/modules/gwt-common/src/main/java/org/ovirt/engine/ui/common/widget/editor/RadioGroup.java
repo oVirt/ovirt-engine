@@ -184,12 +184,9 @@ public class RadioGroup<K> extends Composite implements TakesValue<K>, HasConstr
                     }
                 };
 
-        radioButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                if (event.getValue()) {
-                    setValue(value, true);
-                }
+        radioButton.addValueChangeHandler(event -> {
+            if (event.getValue()) {
+                setValue(value, true);
             }
         });
         radioButton.getElement().getStyle().setMarginRight(20, Unit.PX);

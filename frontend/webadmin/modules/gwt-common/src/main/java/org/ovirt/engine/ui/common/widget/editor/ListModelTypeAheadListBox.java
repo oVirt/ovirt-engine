@@ -15,7 +15,6 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -23,8 +22,6 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -92,31 +89,18 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
         // not listening to focus because it would show the suggestions also after the whole browser
         // gets the focus back (after loosing it) if this was the last element with focus
-        handlerRegistrations.add(suggestBox.getValueBox().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                switchSuggestions();
-            }
-        }));
+        handlerRegistrations.add(suggestBox.getValueBox().addClickHandler(event -> switchSuggestions()));
 
-        handlerRegistrations.add(dropdownIcon.addDomHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    switchSuggestions();
-                }
-        }, ClickEvent.getType()));
+        handlerRegistrations.add(dropdownIcon.addDomHandler(event -> switchSuggestions(), ClickEvent.getType()));
 
         handlerRegistrations.add(getSuggestionMenu().getParent().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseDownEvent.getType()));
 
         // no need to do additional switchSuggestions() - it is processed by MenuBar itself
         handlerRegistrations.add(getSuggestionMenu().getParent().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseUpEvent.getType()));
 
-        handlerRegistrations.add(addValueChangeHandler(new ValueChangeHandler<T>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<T> event) {
-                // if the value has been changed using the mouse
-                setValue(event.getValue());
-            }
+        handlerRegistrations.add(addValueChangeHandler(event -> {
+            // if the value has been changed using the mouse
+            setValue(event.getValue());
         }));
 
     }
@@ -142,12 +126,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
         selectInMenu(getValue());
 
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute () {
-                setFocus(true);
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> setFocus(true));
     }
 
     protected void selectInMenu(T toSelect) {

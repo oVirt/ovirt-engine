@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
@@ -21,16 +20,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.DOM;
@@ -93,19 +83,11 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         selectedItems.clear();
     }
 
-    private IEventListener<EventArgs> itemsChangedEventListener = new IEventListener<EventArgs>() {
-        @Override
-        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            refreshTree();
-        }
-    };
+    private IEventListener<EventArgs> itemsChangedEventListener = (ev, sender, args) -> refreshTree();
 
-    private OpenHandler<TreeItem> treeOpenHandler = new OpenHandler<TreeItem>() {
-        @Override
-        public void onOpen(OpenEvent<TreeItem> event) {
-            TreeItem item = event.getTarget();
-            onTreeItemOpen(item);
-        }
+    private OpenHandler<TreeItem> treeOpenHandler = event -> {
+        TreeItem item = event.getTarget();
+        onTreeItemOpen(item);
     };
 
     public void clearTree() {
@@ -345,35 +327,17 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     }
 
     public void addSelectionHandler() {
-        tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
-            @Override
-            public void onSelection(SelectionEvent<TreeItem> event) {
-                onItemSelection(event.getSelectedItem(), false);
+        tree.addSelectionHandler(event -> onItemSelection(event.getSelectedItem(), false));
+
+        tree.addMouseDownHandler(event -> {
+            if (event.getNativeEvent().getButton() == NativeEvent.BUTTON_RIGHT) {
+                onItemSelection(findSelectedItem(event.getClientX(), event.getClientY()), true);
             }
         });
 
-        tree.addMouseDownHandler(new MouseDownHandler() {
-            @Override
-            public void onMouseDown(MouseDownEvent event) {
-                if (event.getNativeEvent().getButton() == NativeEvent.BUTTON_RIGHT) {
-                    onItemSelection(findSelectedItem(event.getClientX(), event.getClientY()), true);
-                }
-            }
-        });
+        tree.addKeyDownHandler(event -> isControlKeyDown = event.isControlKeyDown());
 
-        tree.addKeyDownHandler(new KeyDownHandler() {
-            @Override
-            public void onKeyDown(KeyDownEvent event) {
-                isControlKeyDown = event.isControlKeyDown();
-            }
-        });
-
-        tree.addKeyUpHandler(new KeyUpHandler() {
-            @Override
-            public void onKeyUp(KeyUpEvent event) {
-                isControlKeyDown = event.isControlKeyDown();
-            }
-        });
+        tree.addKeyUpHandler(event -> isControlKeyDown = event.isControlKeyDown());
     }
 
     private void onItemSelection(TreeItem item, boolean enforceSelection) {

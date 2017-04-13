@@ -14,9 +14,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.IscsiBondModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -152,16 +149,13 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         networksTable.asEditor().edit(model.getNetworks());
         connectionsTable.asEditor().edit(model.getStorageTargets());
 
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if (propName.equals("IsValid")) { //$NON-NLS-1$
-                    if (model.getIsValid()) {
-                        logicalNetworksPanel.markAsValid();
-                    } else {
-                        logicalNetworksPanel.markAsInvalid(model.getInvalidityReasons());
-                    }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if (propName.equals("IsValid")) { //$NON-NLS-1$
+                if (model.getIsValid()) {
+                    logicalNetworksPanel.markAsValid();
+                } else {
+                    logicalNetworksPanel.markAsInvalid(model.getInvalidityReasons());
                 }
             }
         });

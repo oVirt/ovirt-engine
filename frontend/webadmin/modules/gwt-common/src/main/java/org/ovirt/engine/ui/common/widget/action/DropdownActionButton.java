@@ -9,22 +9,12 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 
 public class DropdownActionButton<T> extends AbstractActionButton {
@@ -61,14 +51,11 @@ public class DropdownActionButton<T> extends AbstractActionButton {
 
     private void initDropdownButton() {
         dropdownButton = new ToggleButton(new Image(resources.triangle_down()));
-        dropdownButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (dropdownButton.isDown()) {
-                    menuPopup.asPopupPanel().showRelativeToAndFitToScreen(container);
-                } else {
-                    menuPopup.asPopupPanel().hide();
-                }
+        dropdownButton.addClickHandler(event -> {
+            if (dropdownButton.isDown()) {
+                menuPopup.asPopupPanel().showRelativeToAndFitToScreen(container);
+            } else {
+                menuPopup.asPopupPanel().hide();
             }
         });
     }
@@ -77,12 +64,9 @@ public class DropdownActionButton<T> extends AbstractActionButton {
         menuPopup = new MenuPanelPopup(true);
 
         for (final ActionButtonDefinition<T> buttonDef : actions) {
-            MenuItem menuItem = new MenuItem(buttonDef.getText(), new Command() {
-                @Override
-                public void execute() {
-                    menuPopup.asPopupPanel().hide();
-                    buttonDef.onClick(selectedItemsProvider.getSelectedItems());
-                }
+            MenuItem menuItem = new MenuItem(buttonDef.getText(), () -> {
+                menuPopup.asPopupPanel().hide();
+                buttonDef.onClick(selectedItemsProvider.getSelectedItems());
             });
             menuItem.addStyleName(style.menuItem());
             updateMenuItem(menuItem, buttonDef, selectedItemsProvider.getSelectedItems());
@@ -93,12 +77,7 @@ public class DropdownActionButton<T> extends AbstractActionButton {
 
         menuPopup.asPopupPanel().setAutoHideEnabled(true);
         menuPopup.asPopupPanel().addAutoHidePartner(dropdownButton.getElement());
-        menuPopup.asPopupPanel().addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-                dropdownButton.setDown(false);
-            }
-        });
+        menuPopup.asPopupPanel().addCloseHandler(event -> dropdownButton.setDown(false));
     }
 
     /**
@@ -114,30 +93,21 @@ public class DropdownActionButton<T> extends AbstractActionButton {
     }
 
     private void addMouseHandlers() {
-        button.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                container.removeStyleName(style.buttonMouseOver());
-                container.addStyleName(style.buttonMouseOut());
+        button.addClickHandler(event -> {
+            container.removeStyleName(style.buttonMouseOver());
+            container.addStyleName(style.buttonMouseOut());
+        });
+
+        container.addMouseOverHandler(event -> {
+            if (isEnabled()) {
+                container.removeStyleName(style.buttonMouseOut());
+                container.addStyleName(style.buttonMouseOver());
             }
         });
 
-        container.addMouseOverHandler(new MouseOverHandler() {
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                if (isEnabled()) {
-                    container.removeStyleName(style.buttonMouseOut());
-                    container.addStyleName(style.buttonMouseOver());
-                }
-            }
-        });
-
-        container.addMouseOutHandler(new MouseOutHandler() {
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                container.removeStyleName(style.buttonMouseOver());
-                container.addStyleName(style.buttonMouseOut());
-            }
+        container.addMouseOutHandler(event -> {
+            container.removeStyleName(style.buttonMouseOver());
+            container.addStyleName(style.buttonMouseOut());
         });
     }
 

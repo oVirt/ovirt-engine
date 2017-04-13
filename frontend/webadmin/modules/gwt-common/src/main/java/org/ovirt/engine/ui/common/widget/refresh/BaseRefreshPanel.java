@@ -15,14 +15,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
@@ -37,7 +29,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ToggleButton;
 
@@ -209,29 +200,20 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         menuPopup.setStylePrimaryName(style.refreshRateMenuPopup());
 
         // Add mouse hover events
-        addMouseOverHandler(new MouseOverHandler() {
-
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                // border: 1px solid #96B7D6;
-                Style border = getElement().getStyle();
-                border.setBorderWidth(1, Unit.PX);
-                border.setBorderStyle(BorderStyle.SOLID);
-                border.setBorderColor("#96B7D6"); //$NON-NLS-1$
-            }
-
+        addMouseOverHandler(event -> {
+            // border: 1px solid #96B7D6;
+            Style border = getElement().getStyle();
+            border.setBorderWidth(1, Unit.PX);
+            border.setBorderStyle(BorderStyle.SOLID);
+            border.setBorderColor("#96B7D6"); //$NON-NLS-1$
         });
 
-        addMouseOutHandler(new MouseOutHandler() {
-
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                // border: 1px solid transparent;
-                Style border = getElement().getStyle();
-                border.setBorderWidth(1, Unit.PX);
-                border.setBorderStyle(BorderStyle.SOLID);
-                border.setBorderColor("transparent"); //$NON-NLS-1$
-            }
+        addMouseOutHandler(event -> {
+            // border: 1px solid transparent;
+            Style border = getElement().getStyle();
+            border.setBorderWidth(1, Unit.PX);
+            border.setBorderStyle(BorderStyle.SOLID);
+            border.setBorderColor("transparent"); //$NON-NLS-1$
         });
 
         // Create refresh and refresh menu buttons
@@ -244,20 +226,10 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         // Add menu to the popup
         menuPopup.add(refreshOptionsMenu);
         menuPopup.addAutoHidePartner(refreshMenuButton.getElement());
-        menuPopup.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-                refreshMenuButton.setDown(false);
-            }
-        });
+        menuPopup.addCloseHandler(event -> refreshMenuButton.setDown(false));
 
         // Hide popup on window resize
-        Window.addResizeHandler(new ResizeHandler() {
-            @Override
-            public void onResize(ResizeEvent event) {
-                menuPopup.hide();
-            }
-        });
+        Window.addResizeHandler(event -> menuPopup.hide());
 
         // Create panel separator
         ImageResource separatorImg = RESOURCES.separator();
@@ -308,12 +280,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         refreshButton.setStylePrimaryName(style.refreshButton());
         refreshButton.addStyleName("brp_refreshButton_pfly_fix"); //$NON-NLS-1$
         refreshButton.setPixelSize(17, 17);
-        refreshButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                fireEvent(event);
-            }
-        });
+        refreshButton.addClickHandler(event -> fireEvent(event));
     }
 
     private void createRefreshMenuButton() {
@@ -322,19 +289,16 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         refreshMenuButton = new ToggleButton(refreshMenuIcon);
         refreshMenuButton.setStylePrimaryName(style.refreshMenuButton());
         refreshMenuButton.setPixelSize(13, 17);
-        refreshMenuButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // Show/Hide popup
-                if (refreshMenuButton.isDown()) {
-                    // Check selected item
-                    int globalRefreshRate = refreshManager.getCurrentRefreshRate();
-                    refreshOptionsMenu.selectItem(refreshOptionsMenu.getItemByRefreshRate(globalRefreshRate));
-                    menuPopup.showRelativeTo(refreshButton);
-                }
-                else {
-                    menuPopup.hide();
-                }
+        refreshMenuButton.addClickHandler(event -> {
+            // Show/Hide popup
+            if (refreshMenuButton.isDown()) {
+                // Check selected item
+                int globalRefreshRate = refreshManager.getCurrentRefreshRate();
+                refreshOptionsMenu.selectItem(refreshOptionsMenu.getItemByRefreshRate(globalRefreshRate));
+                menuPopup.showRelativeTo(refreshButton);
+            }
+            else {
+                menuPopup.hide();
             }
         });
     }
@@ -345,11 +309,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         refreshOptionsMenu.setStylePrimaryName(style.refreshRateMenu());
 
         // Create menu's title and add it as the first item
-        MenuItem title = new MenuItem(constants.refreshRate(), new Command() {
-            @Override
-            public void execute() {
-            }
-        });
+        MenuItem title = new MenuItem(constants.refreshRate(), () -> {});
         title.setEnabled(false);
         title.setStylePrimaryName(style.refreshMenuTitle());
         refreshOptionsMenu.addItem(title);

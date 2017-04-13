@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.common.widget.uicommon.snapshot.SnapshotsViewColumns;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
@@ -46,19 +45,9 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
-    private final IEventListener<EventArgs> entityChangedEvent = new IEventListener<EventArgs>() {
-        @Override
-        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            updateMemoryColumnVisibility();
-        }
-    };
+    private final IEventListener<EventArgs> entityChangedEvent = (ev, sender, args) -> updateMemoryColumnVisibility();
 
-    private final IEventListener<EventArgs> selectedItemChangedEvent = new IEventListener<EventArgs>() {
-        @Override
-        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            updateSnapshotInfo();
-        }
-    };
+    private final IEventListener<EventArgs> selectedItemChangedEvent = (ev, sender, args) -> updateSnapshotInfo();
 
     VmSnapshotInfoPanel vmSnapshotInfoPanel;
 
@@ -113,12 +102,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
 
         if (!getTable().getSelectionModel().isSelected(snapshot)) {
             // first let list of items get updated, only then select item
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    getTable().getSelectionModel().setSelected(snapshot, true);
-                }
-            });
+            Scheduler.get().scheduleDeferred(() -> getTable().getSelectionModel().setSelected(snapshot, true));
         }
     }
 
@@ -165,12 +149,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             protected UICommand resolveCommand() {
                 return getModel().getPreviewCommand();
             }
-        }, new DropdownActionButton<>(previewSubActions, new DropdownActionButton.SelectedItemsProvider<Snapshot>() {
-            @Override
-            public List<Snapshot> getSelectedItems() {
-                return getModel().getSelectedItems();
-            }
-        }));
+        }, new DropdownActionButton<>(previewSubActions, () -> getModel().getSelectedItems()));
 
         getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.commitSnapshot()) {
             @Override

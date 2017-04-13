@@ -14,14 +14,12 @@ import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.dom.client.Style.Clear;
 import com.google.gwt.dom.client.Style.Float;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -72,21 +70,11 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
     public AddRemoveRowWidget() {
         items = new LinkedList<>();
-        itemsChangedListener = new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                init(model);
-            }
-        };
-        propertyChangedListener = new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
-                    setEnabled(model.getIsChangable());
-                    updateEnabled();
-                }
+        itemsChangedListener = (ev, sender, args) -> init(model);
+        propertyChangedListener = (ev, sender, args) -> {
+            if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
+                setEnabled(model.getIsChangable());
+                updateEnabled();
             }
         };
     }
@@ -271,31 +259,25 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     }
 
     private Button createMinusButton(final Pair<T, V> item) {
-        final Button button = createButton(IconType.MINUS, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                final T value = item.getFirst();
-                final V widget = item.getSecond();
-                if (vetoRemoveWidget(item, value, widget)) {
-                    return;
-                }
-
-                doRemoveItem(item, value, widget);
+        final Button button = createButton(IconType.MINUS, event -> {
+            final T value = item.getFirst();
+            final V widget = item.getSecond();
+            if (vetoRemoveWidget(item, value, widget)) {
+                return;
             }
+
+            doRemoveItem(item, value, widget);
         });
 
         return button;
     }
 
     private Button createPlusButton(final Pair<T, V> item) {
-        final Button button = createButton(IconType.PLUS, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                V widget = item.getSecond();
-                getEntry(widget).removeLastButton();
-                Pair<T, V> item = addGhostEntry();
-                onAdd(item.getFirst(), item.getSecond());
-            }
+        final Button button = createButton(IconType.PLUS, event -> {
+            V widget = item.getSecond();
+            getEntry(widget).removeLastButton();
+            Pair<T, V> item1 = addGhostEntry();
+            onAdd(item1.getFirst(), item1.getSecond());
         });
 
         return button;

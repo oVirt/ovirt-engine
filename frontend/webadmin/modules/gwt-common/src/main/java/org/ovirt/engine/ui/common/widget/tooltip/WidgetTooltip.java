@@ -6,8 +6,6 @@ import org.ovirt.engine.ui.common.widget.WidgetDecorator;
 import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.Widget;
@@ -34,12 +32,9 @@ public class WidgetTooltip extends WidgetDecorator implements HasCleanup {
 
     @Override
     protected void decorateWidget(Widget w) {
-        w.addAttachHandler(new AttachEvent.Handler() {
-            @Override
-            public void onAttachOrDetach(AttachEvent event) {
-                WidgetTooltip.this.widgetAttached = event.isAttached();
-                scheduleTooltipUpdate();
-            }
+        w.addAttachHandler(event -> {
+            WidgetTooltip.this.widgetAttached = event.isAttached();
+            scheduleTooltipUpdate();
         });
     }
 
@@ -48,12 +43,9 @@ public class WidgetTooltip extends WidgetDecorator implements HasCleanup {
             return;
         }
 
-        Scheduler.get().scheduleFinally(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                applyTooltip();
-                tooltipUpdateScheduled = false;
-            }
+        Scheduler.get().scheduleFinally(() -> {
+            applyTooltip();
+            tooltipUpdateScheduled = false;
         });
 
         tooltipUpdateScheduled = true;
