@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ManagePolicyUnitPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.NullableButtonCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
@@ -116,12 +115,7 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
         };
 
         policyUnitTable.addColumn(removeButtonColumn, constants.empty(), "80px"); //$NON-NLS-1$
-        removeButtonColumn.setFieldUpdater(new FieldUpdater<PolicyUnit, String>() {
-            @Override
-            public void update(int index, PolicyUnit object, String value) {
-                model.remove(object);
-            }
-        });
+        removeButtonColumn.setFieldUpdater((index, object, value) -> model.remove(object));
     }
 
     @Override

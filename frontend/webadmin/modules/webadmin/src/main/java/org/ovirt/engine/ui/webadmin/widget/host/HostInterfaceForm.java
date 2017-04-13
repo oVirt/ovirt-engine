@@ -5,10 +5,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
@@ -34,23 +30,17 @@ public class HostInterfaceForm extends Composite {
             showModels(interfaceLineModels, vds);
         }
 
-        listModel.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                HostInterfaceListModel model = (HostInterfaceListModel) sender;
-                List<HostInterfaceLineModel> interfaceLineModels = (List<HostInterfaceLineModel>) model.getItems();
-                showModels(interfaceLineModels, vds);
-            }
+        listModel.getItemsChangedEvent().addListener((ev, sender, args) -> {
+            HostInterfaceListModel model = (HostInterfaceListModel) sender;
+            List<HostInterfaceLineModel> interfaceLineModels1 = (List<HostInterfaceLineModel>) model.getItems();
+            showModels(interfaceLineModels1, vds);
         });
 
-        listModel.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("isSelectionAvailable".equals(propName)) { //$NON-NLS-1$
-                    if (listModel.getItems() != null) {
-                        showModels((List<HostInterfaceLineModel>) listModel.getItems(), vds);
-                    }
+        listModel.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if ("isSelectionAvailable".equals(propName)) { //$NON-NLS-1$
+                if (listModel.getItems() != null) {
+                    showModels((List<HostInterfaceLineModel>) listModel.getItems(), vds);
                 }
             }
         });

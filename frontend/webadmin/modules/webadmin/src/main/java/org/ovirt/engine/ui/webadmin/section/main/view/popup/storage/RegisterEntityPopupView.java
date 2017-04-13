@@ -15,14 +15,10 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -102,44 +98,21 @@ public abstract class RegisterEntityPopupView<E, D extends ImportEntityData<E>, 
         registerEntityModel = model;
         driver.edit(model);
 
-        model.getEntities().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ListModel<D> entities = (ListModel<D>) sender;
-                D importEntityData = entities.getSelectedItem();
-                if (importEntityData != null) {
-                    registerEntityInfoPanel.updateTabsData(importEntityData);
-                }
+        model.getEntities().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            ListModel<D> entities = (ListModel<D>) sender;
+            D importEntityData = entities.getSelectedItem();
+            if (importEntityData != null) {
+                registerEntityInfoPanel.updateTabsData(importEntityData);
             }
         });
 
-        model.getCluster().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                createTables(model);
-            }
-        });
+        model.getCluster().getItemsChangedEvent().addListener((ev, sender, args) -> createTables(model));
 
-        model.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                refreshEntityTable();
-            }
-        });
+        model.getCluster().getSelectedItemChangedEvent().addListener((ev, sender, args) -> refreshEntityTable());
 
-        model.getClusterQuotasMap().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                refreshEntityTable();
-            }
-        });
+        model.getClusterQuotasMap().getEntityChangedEvent().addListener((ev, sender, args) -> refreshEntityTable());
 
-        model.getStorageQuota().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                refreshEntityTable();
-            }
-        });
+        model.getStorageQuota().getItemsChangedEvent().addListener((ev, sender, args) -> refreshEntityTable());
     }
 
     @Override
@@ -165,12 +138,9 @@ public abstract class RegisterEntityPopupView<E, D extends ImportEntityData<E>, 
                         object.getCluster().getSelectedItem().getName() : constants.empty();
             }
         };
-        column.setFieldUpdater(new FieldUpdater<D, String>() {
-            @Override
-            public void update(int index, D object, String value) {
-                object.selectClusterByName(value);
-                refreshEntityTable();
-            }
+        column.setFieldUpdater((index, object, value) -> {
+            object.selectClusterByName(value);
+            refreshEntityTable();
         });
 
         return column;
@@ -194,12 +164,7 @@ public abstract class RegisterEntityPopupView<E, D extends ImportEntityData<E>, 
                         object.getClusterQuota().getSelectedItem().getQuotaName() : constants.empty();
             }
         };
-        column.setFieldUpdater(new FieldUpdater<D, String>() {
-            @Override
-            public void update(int index, D object, String value) {
-                registerEntityModel.selectQuotaByName(value, object.getClusterQuota());
-            }
-        });
+        column.setFieldUpdater((index, object, value) -> registerEntityModel.selectQuotaByName(value, object.getClusterQuota()));
 
         return column;
     }

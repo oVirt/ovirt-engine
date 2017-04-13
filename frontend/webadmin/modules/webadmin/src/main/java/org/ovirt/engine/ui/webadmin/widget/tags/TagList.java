@@ -6,9 +6,6 @@ import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.common.widget.tree.ElementIdCellTree;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -82,18 +79,8 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
     }
 
     private void addModelListeners(final TagModelProvider modelProvider) {
-        modelProvider.getModel().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                expandTree(getDataDisplayWidget().getRootTreeNode());
-            }
-        });
-        modelProvider.getModel().getResetRequestedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                expandTree(getDataDisplayWidget().getRootTreeNode());
-            }
-        });
+        modelProvider.getModel().getItemsChangedEvent().addListener((ev, sender, args) -> expandTree(getDataDisplayWidget().getRootTreeNode()));
+        modelProvider.getModel().getResetRequestedEvent().addListener((ev, sender, args) -> expandTree(getDataDisplayWidget().getRootTreeNode()));
     }
 
     private void expandTree(TreeNode node) {

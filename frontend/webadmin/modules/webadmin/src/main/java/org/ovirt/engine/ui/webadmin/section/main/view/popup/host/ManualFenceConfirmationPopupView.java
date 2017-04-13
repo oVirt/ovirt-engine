@@ -11,10 +11,6 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -75,44 +71,36 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
         driver.edit(object);
 
         // Bind "Latch.IsAvailable"
-        object.getLatch().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    EntityModel entity = (EntityModel) sender;
-                    if (entity.getIsAvailable()) {
-                        latch.setVisible(true);
-                    }
+        object.getLatch().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                EntityModel entity = (EntityModel) sender;
+                if (entity.getIsAvailable()) {
+                    latch.setVisible(true);
                 }
             }
         });
 
-        object.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
+        object.getItemsChangedEvent().addListener((ev, sender, args) -> {
+            VDS vds = (VDS) object.getItems().iterator().next();
 
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                VDS vds = (VDS) object.getItems().iterator().next();
+            // Message
+            messageLabel.setText(messages.manaulFencePopupMessageLabel(vds.getName()));
 
-                // Message
-                messageLabel.setText(messages.manaulFencePopupMessageLabel(vds.getName()));
-
-                // Spm warning
-                VdsSpmStatus spmStatus = vds.getSpmStatus();
-                if (spmStatus == VdsSpmStatus.None) {
-                    spmWarningLabel.setText(constants.manaulFencePopupNoneSpmWarningLabel());
-                }
-                else if (spmStatus == VdsSpmStatus.SPM) {
-                    spmWarningLabel.setText(constants.manaulFencePopupSpmWarningLabel());
-                }
-                else if (spmStatus == VdsSpmStatus.Contending) {
-                    spmWarningLabel.setText(constants.manaulFencePopupContendingSpmWarningLabel());
-
-                }
-
-                // Warning
-                warningLabel.setText(constants.manaulFencePopupWarningLabel());
+            // Spm warning
+            VdsSpmStatus spmStatus = vds.getSpmStatus();
+            if (spmStatus == VdsSpmStatus.None) {
+                spmWarningLabel.setText(constants.manaulFencePopupNoneSpmWarningLabel());
             }
+            else if (spmStatus == VdsSpmStatus.SPM) {
+                spmWarningLabel.setText(constants.manaulFencePopupSpmWarningLabel());
+            }
+            else if (spmStatus == VdsSpmStatus.Contending) {
+                spmWarningLabel.setText(constants.manaulFencePopupContendingSpmWarningLabel());
+
+            }
+
+            // Warning
+            warningLabel.setText(constants.manaulFencePopupWarningLabel());
         });
     }
 

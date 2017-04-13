@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
@@ -40,12 +39,9 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
     protected void initMainTable() {
         this.table = new ListModelObjectCellTable<>();
 
-        AbstractCheckboxColumn<Object> cloneTemplateColumn = new AbstractCheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
-            @Override
-            public void update(int index, Object model, Boolean value) {
-                ((ImportTemplateData) model).getClone().setEntity(value);
-                table.asEditor().edit(importModel);
-            }
+        AbstractCheckboxColumn<Object> cloneTemplateColumn = new AbstractCheckboxColumn<Object>((index, model, value) -> {
+            ((ImportTemplateData) model).getClone().setEntity(value);
+            table.asEditor().edit(importModel);
         }) {
             @Override
             public Boolean getValue(Object model) {

@@ -11,10 +11,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.RolePopupPresenterWidget;
@@ -23,8 +19,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTree;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -113,37 +107,21 @@ public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> im
     }
 
     private void initRadioButtons() {
-        userRadioButtonEditor.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (userRadioButtonEditor.getValue()) {
-                    roleModel.getIsAdminRole().setEntity(false);
-                }
+        userRadioButtonEditor.addClickHandler(event -> {
+            if (userRadioButtonEditor.getValue()) {
+                roleModel.getIsAdminRole().setEntity(false);
             }
         });
-        adminRadioButtonEditor.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (adminRadioButtonEditor.getValue()) {
-                    roleModel.getIsAdminRole().setEntity(true);
-                }
+        adminRadioButtonEditor.addClickHandler(event -> {
+            if (adminRadioButtonEditor.getValue()) {
+                roleModel.getIsAdminRole().setEntity(true);
             }
         });
     }
 
     private void initExpandButtons() {
-        expandAllButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                expandTree();
-            }
-        });
-        collapseAllButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                collapseTree();
-            }
-        });
+        expandAllButton.addClickHandler(event -> expandTree());
+        collapseAllButton.addClickHandler(event -> collapseTree());
     }
 
     private void initTree() {
@@ -173,36 +151,27 @@ public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> im
         final EntityModel<Boolean> adminRole = object.getIsAdminRole();
 
         // Listen to Properties
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                RoleModel model = (RoleModel) sender;
-                String propertyName = args.propertyName;
-                if ("PermissionGroupModels".equals(propertyName)) { //$NON-NLS-1$
-                    updateTree(model);
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            RoleModel model = (RoleModel) sender;
+            String propertyName = args.propertyName;
+            if ("PermissionGroupModels".equals(propertyName)) { //$NON-NLS-1$
+                updateTree(model);
             }
         });
 
-        object.getIsAdminRole().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (adminRole.getEntity()) {
-                    adminRadioButtonEditor.setValue(true);
-                } else {
-                    userRadioButtonEditor.setValue(true);
-                }
-
+        object.getIsAdminRole().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (adminRole.getEntity()) {
+                adminRadioButtonEditor.setValue(true);
+            } else {
+                userRadioButtonEditor.setValue(true);
             }
+
         });
 
-        object.getIsAdminRole().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (!adminRole.getIsChangable()) {
-                    adminRadioButtonEditor.setEnabled(false);
-                    userRadioButtonEditor.setEnabled(false);
-                }
+        object.getIsAdminRole().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (!adminRole.getIsChangable()) {
+                adminRadioButtonEditor.setEnabled(false);
+                userRadioButtonEditor.setEnabled(false);
             }
         });
     }

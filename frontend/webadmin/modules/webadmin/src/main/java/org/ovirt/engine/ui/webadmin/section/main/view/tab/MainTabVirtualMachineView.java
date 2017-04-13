@@ -380,12 +380,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             public SafeHtml getTooltip() {
                 return SafeHtmlUtils.fromSafeConstant(constants.consoleVm());
             }
-        }, new DropdownActionButton<>(consoleOptionsSubActions, new DropdownActionButton.SelectedItemsProvider<VM>() {
-            @Override
-            public List<VM> getSelectedItems() {
-                return getMainModel().getSelectedItems();
-            }
-        }));
+        }, new DropdownActionButton<>(consoleOptionsSubActions, () -> getMainModel().getSelectedItems()));
 
         // TODO: separator
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.consoleOptions(),

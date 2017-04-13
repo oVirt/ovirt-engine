@@ -27,15 +27,10 @@ import org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -219,37 +214,25 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
         final StorageModel storageModel = object;
 
-        storageModel.getAvailableStorageDomainTypeItems().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                // Display the StorageTypes according to the selected StorageDomainFunction.
-                updateStorageTypesByDomainType(storageModel);
-            }
+        storageModel.getAvailableStorageDomainTypeItems().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            // Display the StorageTypes according to the selected StorageDomainFunction.
+            updateStorageTypesByDomainType(storageModel);
         });
 
-        storageModel.getAvailableStorageTypeItems().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                // Reveal the appropriate storage view according to the selected storage type
-                revealStorageView(storageModel);
-            }
+        storageModel.getAvailableStorageTypeItems().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            // Reveal the appropriate storage view according to the selected storage type
+            revealStorageView(storageModel);
         });
 
-        storageModel.getDataCenterAlert().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                datacenterAlertIcon.setVisible(storageModel.getDataCenterAlert().getIsAvailable());
-                datacenterAlertIcon.setTitle(storageModel.getDataCenterAlert().getEntity());
-            }
+        storageModel.getDataCenterAlert().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            datacenterAlertIcon.setVisible(storageModel.getDataCenterAlert().getIsAvailable());
+            datacenterAlertIcon.setTitle(storageModel.getDataCenterAlert().getEntity());
         });
 
-        warningLowSpaceIndicatorEditor.addKeyUpHandler(new KeyUpHandler() {
-            @Override
-            public void onKeyUp(KeyUpEvent event) {
-                if (!storageModel.isNewStorage()) {
-                    storageModel.getWarningLowSpaceSize().setEntity(
-                            ConstantsManager.getInstance().getMessages().bracketsWithGB(getWarningLowSpaceSize(storageModel)));
-                }
+        warningLowSpaceIndicatorEditor.addKeyUpHandler(event -> {
+            if (!storageModel.isNewStorage()) {
+                storageModel.getWarningLowSpaceSize().setEntity(
+                        ConstantsManager.getInstance().getMessages().bracketsWithGB(getWarningLowSpaceSize(storageModel)));
             }
         });
     }

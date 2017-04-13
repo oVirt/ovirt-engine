@@ -33,12 +33,7 @@ public class DnsServerEditor extends AbstractModelBoundPopupWidget<EntityModel<S
     public void edit(final EntityModel<String> model) {
         driver.edit(model);
         stringEditor.fireValueChangeOnKeyDown();
-        stringEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                ValueChangeEvent.fire(DnsServerEditor.this, model);
-            }
-        });
+        stringEditor.asValueBox().addValueChangeHandler(event -> ValueChangeEvent.fire(DnsServerEditor.this, model));
     }
 
     @Override

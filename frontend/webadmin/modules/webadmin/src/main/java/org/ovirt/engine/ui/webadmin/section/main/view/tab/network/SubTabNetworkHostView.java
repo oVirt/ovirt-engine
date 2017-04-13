@@ -35,7 +35,6 @@ import org.ovirt.engine.ui.webadmin.widget.host.InterfaceStatusImage;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -74,12 +73,9 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     }
 
     void initTableOverhead() {
-        viewRadioGroup.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (((RadioButton) event.getSource()).getValue()) {
-                    handleRadioButtonClick(event);
-                }
+        viewRadioGroup.addClickHandler(event -> {
+            if (((RadioButton) event.getSource()).getValue()) {
+                handleRadioButtonClick(event);
             }
         });
 

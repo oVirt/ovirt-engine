@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicMainTabAddedEv
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
@@ -98,12 +97,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> implements 
     protected void performPlaceTransition() {
         // Make sure all plugins that need pre-loading have been loaded already
         if (!pluginsReady) {
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                @Override
-                public void execute() {
-                    performPlaceTransition();
-                }
-            });
+            Scheduler.get().scheduleDeferred(() -> performPlaceTransition());
         } else {
             // Do the actual place transition
             super.performPlaceTransition();

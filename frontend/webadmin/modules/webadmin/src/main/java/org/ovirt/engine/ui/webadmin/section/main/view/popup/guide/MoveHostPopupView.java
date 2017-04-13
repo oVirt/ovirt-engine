@@ -21,7 +21,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.MoveHostPopupPresenterWidget;
 import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -111,12 +110,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
             }
         };
 
-        activateColumn.setFieldUpdater(new FieldUpdater<MoveHostData, Boolean>() {
-            @Override
-            public void update(int idx, MoveHostData object, Boolean value) {
-                object.setActivateHost(value);
-            }
-        });
+        activateColumn.setFieldUpdater((idx, object, value) -> object.setActivateHost(value));
 
         table.addColumn(activateColumn, constants.activateHost(), "60px"); //$NON-NLS-1$
     }

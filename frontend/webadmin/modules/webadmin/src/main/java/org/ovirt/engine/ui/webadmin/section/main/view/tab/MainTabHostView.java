@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -66,22 +65,16 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     }
 
     private void InitSpmPriorities() {
-        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
-            @Override
-            public void onSuccess(Integer returnValue) {
-                maxSpmPriority = returnValue;
-                InitSpmPriorities1();
-            }
+        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery<>(returnValue -> {
+            maxSpmPriority = returnValue;
+            InitSpmPriorities1();
         }));
     }
 
     private void InitSpmPriorities1() {
-        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery<>(new AsyncCallback<Integer>() {
-            @Override
-            public void onSuccess(Integer returnValue) {
-                defaultSpmPriority = returnValue;
-                InitSpmPriorities2();
-            }
+        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery<>(returnValue -> {
+            defaultSpmPriority = returnValue;
+            InitSpmPriorities2();
         }));
     }
 

@@ -4,13 +4,8 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.FenceAgentModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceAgentModelProvider;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
@@ -44,32 +39,23 @@ public class HostFenceAgentPopupPresenterWidget extends AbstractModelBoundPopupP
         provider.initializeModel(model);
         addTestButtonListener();
         addCiscoUcsPmTypeListener(model);
-        registerHandler(getView().getFencingOptionsAnchor().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Window.open(dynamicMessages.fencingOptionsUrl(), "_blank", null); //$NON-NLS-1$
-            }
+        registerHandler(getView().getFencingOptionsAnchor().addClickHandler(event -> {
+            Window.open(dynamicMessages.fencingOptionsUrl(), "_blank", null); //$NON-NLS-1$
         }));
     }
 
     private void addTestButtonListener() {
-        registerHandler(getView().getTestButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getView().flush();
-                getView().getTestButton().getCommand().execute();
-            }
+        registerHandler(getView().getTestButton().addClickHandler(event -> {
+            getView().flush();
+            getView().getTestButton().getCommand().execute();
         }));
     }
 
     private void addCiscoUcsPmTypeListener(final FenceAgentModel model) {
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("IsCiscoUcsPrimaryPmTypeSelected".equals(propName)) { //$NON-NLS-1$
-                    getView().updatePmSlotLabelText(model.isCiscoUcsPrimaryPmTypeSelected());
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if ("IsCiscoUcsPrimaryPmTypeSelected".equals(propName)) { //$NON-NLS-1$
+                getView().updatePmSlotLabelText(model.isCiscoUcsPrimaryPmTypeSelected());
             }
         });
     }

@@ -27,8 +27,6 @@ import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 /**
  * A TreeView Model for {@link TreeNodeModel} Nodes
@@ -187,18 +185,15 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         };
 
         // Drive selection
-        selectionModelChangeHandlerReg = selectionModel.addSelectionChangeHandler(new Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                Set<M> selectedSet = selectionModel.getSelectedSet();
-                HashSet<TreeNodeModel<?, ?>> removedSet = new HashSet<>();
-                updateSelectionSets(selectedSet, removedSet, roots);
-                for (M toSelect : selectedSet) {
-                    toSelect.setSelected(true);
-                }
-                for (TreeNodeModel<?, ?> toDeselect : removedSet) {
-                    toDeselect.setSelected(false);
-                }
+        selectionModelChangeHandlerReg = selectionModel.addSelectionChangeHandler(event -> {
+            Set<M> selectedSet = selectionModel.getSelectedSet();
+            HashSet<TreeNodeModel<?, ?>> removedSet = new HashSet<>();
+            updateSelectionSets(selectedSet, removedSet, roots);
+            for (M toSelect : selectedSet) {
+                toSelect.setSelected(true);
+            }
+            for (TreeNodeModel<?, ?> toDeselect : removedSet) {
+                toDeselect.setSelected(false);
             }
         });
     }

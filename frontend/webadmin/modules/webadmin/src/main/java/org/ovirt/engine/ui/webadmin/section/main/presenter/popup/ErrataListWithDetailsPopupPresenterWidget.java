@@ -7,13 +7,11 @@ import org.ovirt.engine.ui.uicommonweb.models.AbstractErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.AbstractErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ErrataFilterValue;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.ErrataTableView;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.inject.Inject;
 
 /**
@@ -73,29 +71,21 @@ public abstract class ErrataListWithDetailsPopupPresenterWidget<T extends
         //
         // Handle the query returning a new list of errata -> simple view update.
         //
-        changeListener = new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                getView().showErrataList();
-            }
-        };
+        changeListener = (ev, sender, args) -> getView().showErrataList();
         modelProvider.getModel().addItemsChangeListener(changeListener);
 
         // Handle the errata selection changing -> simple view update.
         //
-        getView().getErrataTable().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
+        getView().getErrataTable().addSelectionChangeHandler(event -> {
 
-                Erratum erratum = getView().getSelectedErratum();
+            Erratum erratum = getView().getSelectedErratum();
 
-                if (erratum == null) {
-                    getView().setErrataDetailPanelVisibilty(false);
-                }
-                else {
-                    getView().updateErrataDetailFormPanel(erratum);
-                    getView().setErrataDetailPanelVisibilty(true);
-                }
+            if (erratum == null) {
+                getView().setErrataDetailPanelVisibilty(false);
+            }
+            else {
+                getView().updateErrataDetailFormPanel(erratum);
+                getView().setErrataDetailPanelVisibilty(true);
             }
         });
     }

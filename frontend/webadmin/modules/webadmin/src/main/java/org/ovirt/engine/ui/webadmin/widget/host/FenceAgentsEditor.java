@@ -10,15 +10,10 @@ import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.FenceAgentListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.FenceAgentModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceAgentModelProvider;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -67,18 +62,14 @@ public class FenceAgentsEditor extends AddRemoveRowWidget<FenceAgentListModel, F
         if (addClickHandlerRegistration != null) {
             addClickHandlerRegistration.removeHandler();
         }
-        addClickHandlerRegistration = newAgentButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                if (!items.isEmpty()) {
-                    Pair<FenceAgentModel, FenceAgentWidget> modelWidgetPair = items.get(items.size() - 1);
-                    getEntry(modelWidgetPair.getSecond()).removeLastButton();
-                }
-                Pair<FenceAgentModel, FenceAgentWidget> item = addGhostEntry();
-                onAdd(item.getFirst(), item.getSecond());
-                item.getFirst().edit();
+        addClickHandlerRegistration = newAgentButton.addClickHandler(event -> {
+            if (!items.isEmpty()) {
+                Pair<FenceAgentModel, FenceAgentWidget> modelWidgetPair = items.get(items.size() - 1);
+                getEntry(modelWidgetPair.getSecond()).removeLastButton();
             }
+            Pair<FenceAgentModel, FenceAgentWidget> item = addGhostEntry();
+            onAdd(item.getFirst(), item.getSecond());
+            item.getFirst().edit();
         });
     }
 
@@ -95,65 +86,42 @@ public class FenceAgentsEditor extends AddRemoveRowWidget<FenceAgentListModel, F
     protected FenceAgentWidget createWidget(final FenceAgentModel model) {
         modelProvider.initializeModel(model);
         FenceAgentWidget widget = new FenceAgentWidget();
-        widget.addUpClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                listModel.moveUp(model);
-                updateButtonState();
-            }
+        widget.addUpClickHandler(event -> {
+            listModel.moveUp(model);
+            updateButtonState();
         });
-        widget.addDownClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                listModel.moveDown(model);
-                updateButtonState();
-            }
+        widget.addDownClickHandler(event -> {
+            listModel.moveDown(model);
+            updateButtonState();
         });
-        widget.addRemoveConcurrentGroupClickHandler(model, new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                listModel.removeConcurrent(model);
-                listModel.updateConcurrentList();
-            }
+        widget.addRemoveConcurrentGroupClickHandler(model, event -> {
+            listModel.removeConcurrent(model);
+            listModel.updateConcurrentList();
         });
         for (final FenceAgentModel concurrentModel: model.getConcurrentList()) {
             modelProvider.initializeModel(concurrentModel);
-            widget.addRemoveConcurrentGroupClickHandler(concurrentModel, new ClickHandler() {
-
-                @Override
-                public void onClick(ClickEvent event) {
-                    listModel.removeConcurrent(concurrentModel);
-                    listModel.updateConcurrentList();
-                }
+            widget.addRemoveConcurrentGroupClickHandler(concurrentModel, event -> {
+                listModel.removeConcurrent(concurrentModel);
+                listModel.updateConcurrentList();
             });
         }
         widget.edit(model);
-        model.getManagementIp().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                listModel.updateConcurrentList();
-                for (Pair<FenceAgentModel, FenceAgentWidget> modelWidgetPair: items) {
-                    modelWidgetPair.getSecond().refresh();
-                }
+        model.getManagementIp().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            listModel.updateConcurrentList();
+            for (Pair<FenceAgentModel, FenceAgentWidget> modelWidgetPair: items) {
+                modelWidgetPair.getSecond().refresh();
             }
         });
-        model.getConcurrentSelectList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (sender instanceof ListModel) {
-                    @SuppressWarnings("unchecked")
-                    ListModel<String> sourceListModel = (ListModel<String>) sender;
-                    if(sourceListModel.getItems() != null && !sourceListModel.getItems().isEmpty()
-                            && sourceListModel.getItems() instanceof List) {
-                        List<String> options = (List<String>) sourceListModel.getItems();
-                        if (!options.get(0).equals(sourceListModel.getSelectedItem())) {
-                            //Another option selected.
-                            listModel.makeConcurrent(model, sourceListModel.getSelectedItem());
-                        }
+        model.getConcurrentSelectList().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            if (sender instanceof ListModel) {
+                @SuppressWarnings("unchecked")
+                ListModel<String> sourceListModel = (ListModel<String>) sender;
+                if(sourceListModel.getItems() != null && !sourceListModel.getItems().isEmpty()
+                        && sourceListModel.getItems() instanceof List) {
+                    List<String> options = (List<String>) sourceListModel.getItems();
+                    if (!options.get(0).equals(sourceListModel.getSelectedItem())) {
+                        //Another option selected.
+                        listModel.makeConcurrent(model, sourceListModel.getSelectedItem());
                     }
                 }
             }

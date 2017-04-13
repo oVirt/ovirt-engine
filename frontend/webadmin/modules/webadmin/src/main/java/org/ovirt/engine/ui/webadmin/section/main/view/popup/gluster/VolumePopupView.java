@@ -19,15 +19,9 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -167,13 +161,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     }
 
     private void initAddBricksButton() {
-        addBricksButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                addBricksButton.getCommand().execute();
-            }
-        });
+        addBricksButton.addClickHandler(event -> addBricksButton.getCommand().execute());
     }
 
     private void initBricksCountLabel() {
@@ -190,32 +178,20 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         driver.edit(object);
         addBricksButton.setCommand(object.getAddBricksCommand());
 
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                VolumeModel model = (VolumeModel) sender;
-                if ("Bricks".equals(args.propertyName)) { //$NON-NLS-1$
-                    bricksCountEditor.setText(ConstantsManager.getInstance()
-                            .getMessages()
-                            .noOfBricksSelected(model.getBricks().getSelectedItems() == null ? 0 : model.getBricks()
-                                    .getSelectedItems()
-                                    .size()));
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            VolumeModel model = (VolumeModel) sender;
+            if ("Bricks".equals(args.propertyName)) { //$NON-NLS-1$
+                bricksCountEditor.setText(ConstantsManager.getInstance()
+                        .getMessages()
+                        .noOfBricksSelected(model.getBricks().getSelectedItems() == null ? 0 : model.getBricks()
+                                .getSelectedItems()
+                                .size()));
             }
         });
-        object.getOptimizeForVirtStore().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                virtStoreOptimiseWarning.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3);
-            }
-        });
-        object.getReplicaCount().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                virtStoreOptimiseWarning.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3);
-            }
-        });
+        object.getOptimizeForVirtStore().getEntityChangedEvent().addListener((ev, sender, args) ->
+                virtStoreOptimiseWarning.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3));
+        object.getReplicaCount().getEntityChangedEvent().addListener((ev, sender, args) ->
+                virtStoreOptimiseWarning.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3));
     }
 
     @Override

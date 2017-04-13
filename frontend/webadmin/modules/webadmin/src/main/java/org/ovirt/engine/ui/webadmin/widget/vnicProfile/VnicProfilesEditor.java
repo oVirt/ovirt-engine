@@ -5,9 +5,6 @@ import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
@@ -29,13 +26,7 @@ public class VnicProfilesEditor extends AddRemoveRowWidget<NetworkProfilesModel,
     @Override
     public void edit(final NetworkProfilesModel model) {
         super.edit(model);
-        model.getDcId().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                dcId = model.getDcId().getEntity();
-            }
-        });
+        model.getDcId().getEntityChangedEvent().addListener((ev, sender, args) -> dcId = model.getDcId().getEntity());
     }
 
     @Override

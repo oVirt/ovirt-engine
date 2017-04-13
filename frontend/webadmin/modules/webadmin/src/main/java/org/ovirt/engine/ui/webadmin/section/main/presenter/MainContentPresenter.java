@@ -40,18 +40,14 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
     protected void onBind() {
         super.onBind();
         registerHandler(getEventBus().addHandler(UpdateMainContentLayoutEvent.getType(),
-                new UpdateMainContentLayoutEvent.UpdateMainContentLayoutHandler() {
+                event -> {
+                    boolean subTabPanelVisible = event.isSubTabPanelVisible();
+                    getView().setSubTabPanelVisible(subTabPanelVisible);
 
-            @Override
-            public void onUpdateMainContentLayout(UpdateMainContentLayoutEvent event) {
-                boolean subTabPanelVisible = event.isSubTabPanelVisible();
-                getView().setSubTabPanelVisible(subTabPanelVisible);
-
-                if (!subTabPanelVisible) {
-                    // Clear sub tab panel slot to ensure consistent sub tab presenter lifecycle
-                    clearSlot(TYPE_SetSubTabPanelContent);
-                }
-            }
-        }));
+                    if (!subTabPanelVisible) {
+                        // Clear sub tab panel slot to ensure consistent sub tab presenter lifecycle
+                        clearSlot(TYPE_SetSubTabPanelContent);
+                    }
+                }));
     }
 }

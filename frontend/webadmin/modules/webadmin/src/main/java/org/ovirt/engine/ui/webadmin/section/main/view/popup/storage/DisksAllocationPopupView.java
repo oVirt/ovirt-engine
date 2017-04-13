@@ -8,9 +8,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAre
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
@@ -62,15 +59,12 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
         disksAllocationView.edit(object);
         disksAllocationModel = object;
 
-        object.getDynamicWarning().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                EntityModel ownerModel = (EntityModel) sender;
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+        object.getDynamicWarning().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            EntityModel ownerModel = (EntityModel) sender;
+            String propName = ((PropertyChangedEventArgs) args).propertyName;
 
-                if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
-                    warningMessage.setVisible(ownerModel.getIsAvailable());
-                }
+            if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
+                warningMessage.setVisible(ownerModel.getIsAvailable());
             }
         });
     }

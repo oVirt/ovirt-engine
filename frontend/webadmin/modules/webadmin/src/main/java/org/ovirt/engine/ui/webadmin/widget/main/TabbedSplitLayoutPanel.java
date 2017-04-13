@@ -6,7 +6,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
@@ -135,13 +134,9 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
                 collapseLeft.setVisible(true);
                 westPanel.add(collapseLeft);
                 size = getStoredStackPanelWidth(WEST_SPLITTER_KEY);
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-
-                    @Override
-                    public void execute() {
-                        LayoutData layout = (LayoutData) westPanel.getLayoutData();
-                        layout.oldSize = getStoredStackPanelWidth(WEST_SPLITTER_OLD_KEY);
-                    }
+                Scheduler.get().scheduleDeferred(() -> {
+                    LayoutData layout = (LayoutData) westPanel.getLayoutData();
+                    layout.oldSize = getStoredStackPanelWidth(WEST_SPLITTER_OLD_KEY);
                 });
             }
             westPanel.add(child);
@@ -163,14 +158,7 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
      * @return A new {@code PushButton}.
      */
     private PushButton createButton(ImageResource imageResource) {
-        PushButton result = new PushButton(new Image(imageResource), new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                toggleVisibleWestPanel();
-            }
-
-        });
+        PushButton result = new PushButton(new Image(imageResource), (ClickEvent event) -> toggleVisibleWestPanel());
         result.setVisible(false);
         result.addStyleName(style.sliderButton());
         result.addStyleName("tslp_sliderButton_pfly_fix"); //$NON-NLS-1$
@@ -212,12 +200,9 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
         // Defer actually updating the layout, so that if we receive many
         // mouse events before layout/paint occurs, we'll only update once.
         if (layoutCommand == null) {
-            layoutCommand = new ScheduledCommand() {
-                @Override
-                public void execute() {
-                    layoutCommand = null;
-                    forceLayout();
-                }
+            layoutCommand = () -> {
+                layoutCommand = null;
+                forceLayout();
             };
             Scheduler.get().scheduleDeferred(layoutCommand);
         }
@@ -229,13 +214,9 @@ public class TabbedSplitLayoutPanel extends SplitLayoutPanel {
     @Override
     public void onLoad() {
         super.onLoad();
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-
-            @Override
-            public void execute() {
-                determineButtonVisiblity();
-                positionLeftCollapseButton();
-            }
+        Scheduler.get().scheduleDeferred(() -> {
+            determineButtonVisiblity();
+            positionLeftCollapseButton();
         });
     }
 

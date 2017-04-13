@@ -4,9 +4,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeoRepSessionDetailsModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -25,14 +22,11 @@ public class VolumeGeoRepSessionDetailsPopUpPresenterWidget extends AbstractMode
     @Override
     public void init(final VolumeGeoRepSessionDetailsModel model) {
         super.init(model);
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if(args.propertyName.equalsIgnoreCase("selectedSessionSummaryRow")) {//$NON-NLS-1$
-                    GlusterGeoRepSessionDetails selectedSessionDetail = model.getGeoRepSessionSummary().getSelectedItem().getEntity();
-                    getView().setCheckPointCompletedAtVisibility(selectedSessionDetail.isCheckpointCompleted());
-                    getView().updateSessionDetailProperties(selectedSessionDetail);
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if(args.propertyName.equalsIgnoreCase("selectedSessionSummaryRow")) {//$NON-NLS-1$
+                GlusterGeoRepSessionDetails selectedSessionDetail = model.getGeoRepSessionSummary().getSelectedItem().getEntity();
+                getView().setCheckPointCompletedAtVisibility(selectedSessionDetail.isCheckpointCompleted());
+                getView().updateSessionDetailProperties(selectedSessionDetail);
             }
         });
     }

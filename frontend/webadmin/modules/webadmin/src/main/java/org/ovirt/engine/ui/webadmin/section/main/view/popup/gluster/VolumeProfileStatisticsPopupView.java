@@ -16,14 +16,10 @@ import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeProfileStatisticsModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeProfileStatisticsPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -234,55 +230,42 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
         bytesWritten.setText(object.getBytesWritten());
         nfsBytesWritten.setText(object.getNfsBytesWritten());
 
-        ClickHandler brickTabClickHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                object.queryBackend(true);
-            }
-        };
+        ClickHandler brickTabClickHandler = event -> object.queryBackend(true);
 
         brickRefreshIcon.setRefreshIconClickListener(brickTabClickHandler);
 
-        ClickHandler nfsTabClickHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                object.queryBackend(false);
-            }
-        };
+        ClickHandler nfsTabClickHandler = event -> object.queryBackend(false);
 
         nfsRefreshIcon.setRefreshIconClickListener(nfsTabClickHandler);
 
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName.equals("brickProfileRunTimeChanged")) {//$NON-NLS-1$
-                    profileRunTime.setText(object.getProfileRunTime());
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args.propertyName.equals("brickProfileRunTimeChanged")) {//$NON-NLS-1$
+                profileRunTime.setText(object.getProfileRunTime());
+            }
+            if (args.propertyName.equals("brickProfileDataRead")) {//$NON-NLS-1$
+                bytesRead.setText(object.getBytesRead());
+            }
+            if (args.propertyName.equals("brickProfileDataWritten")) {//$NON-NLS-1$
+                bytesWritten.setText(object.getBytesWritten());
+            }
+            if (args.propertyName.equals("nfsProfileRunTimeChanged")) {//$NON-NLS-1$
+                nfsProfileRunTime.setText(object.getNfsProfileRunTime());
+            }
+            if (args.propertyName.equals("nfsProfileDataRead")) {//$NON-NLS-1$
+                nfsBytesRead.setText(object.getNfsBytesRead());
+            }
+            if (args.propertyName.equals("nfsProfileDataWritten")) {//$NON-NLS-1$
+                nfsBytesWritten.setText(object.getNfsBytesWritten());
+            }
+            if(args.propertyName.equals("statusOfFetchingProfileStats")) {//$NON-NLS-1$
+                boolean disableErrorLabels = !object.isSuccessfulProfileStatsFetch();
+                if(!disableErrorLabels) {
+                    String url = object.getProfileExportUrl();
+                    boolean isBrickTabSelected = !url.contains(";nfsStatistics=true");//$NON-NLS-1$
+                    initAnchor(url, isBrickTabSelected ? brickProfileAnchor : nfsProfileAnchor);
                 }
-                if (args.propertyName.equals("brickProfileDataRead")) {//$NON-NLS-1$
-                    bytesRead.setText(object.getBytesRead());
-                }
-                if (args.propertyName.equals("brickProfileDataWritten")) {//$NON-NLS-1$
-                    bytesWritten.setText(object.getBytesWritten());
-                }
-                if (args.propertyName.equals("nfsProfileRunTimeChanged")) {//$NON-NLS-1$
-                    nfsProfileRunTime.setText(object.getNfsProfileRunTime());
-                }
-                if (args.propertyName.equals("nfsProfileDataRead")) {//$NON-NLS-1$
-                    nfsBytesRead.setText(object.getNfsBytesRead());
-                }
-                if (args.propertyName.equals("nfsProfileDataWritten")) {//$NON-NLS-1$
-                    nfsBytesWritten.setText(object.getNfsBytesWritten());
-                }
-                if(args.propertyName.equals("statusOfFetchingProfileStats")) {//$NON-NLS-1$
-                    boolean disableErrorLabels = !object.isSuccessfulProfileStatsFetch();
-                    if(!disableErrorLabels) {
-                        String url = object.getProfileExportUrl();
-                        boolean isBrickTabSelected = !url.contains(";nfsStatistics=true");//$NON-NLS-1$
-                        initAnchor(url, isBrickTabSelected ? brickProfileAnchor : nfsProfileAnchor);
-                    }
-                    bricksError.setVisible(disableErrorLabels);
-                    nfsError.setVisible(disableErrorLabels);
-                }
+                bricksError.setVisible(disableErrorLabels);
+                nfsError.setVisible(disableErrorLabels);
             }
         });
     }

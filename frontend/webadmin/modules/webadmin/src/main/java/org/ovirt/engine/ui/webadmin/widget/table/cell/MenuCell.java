@@ -15,13 +15,10 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.logical.shared.InitializeEvent;
-import com.google.gwt.event.logical.shared.InitializeHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.MenuItem;
 
@@ -89,22 +86,14 @@ public class MenuCell<T> extends AbstractCell<T> {
     }
 
     public void addMenuItem(final ActionButtonDefinition<T> buttonDef) {
-        final MenuItem menuItem = new MenuItem(buttonDef.getText(), new Command() {
-            @Override
-            public void execute() {
-                menuPanelPopup.asPopupPanel().hide();
-                buttonDef.onClick(null);
-            }
+        final MenuItem menuItem = new MenuItem(buttonDef.getText(), () -> {
+            menuPanelPopup.asPopupPanel().hide();
+            buttonDef.onClick(null);
         });
         menuItem.setEnabled(buttonDef.isEnabled(null));
 
         // Update button whenever its definition gets re-initialized
-        buttonDef.addInitializeHandler(new InitializeHandler() {
-            @Override
-            public void onInitialize(InitializeEvent event) {
-                menuItem.setEnabled(buttonDef.isEnabled(null));
-            }
-        });
+        buttonDef.addInitializeHandler(event -> menuItem.setEnabled(buttonDef.isEnabled(null)));
         menuPanelPopup.getMenuBar().addItem(menuItem);
     }
 

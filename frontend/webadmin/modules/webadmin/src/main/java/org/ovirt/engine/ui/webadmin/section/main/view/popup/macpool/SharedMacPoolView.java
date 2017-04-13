@@ -23,7 +23,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.inject.Inject;
 
 public class SharedMacPoolView extends Composite {
@@ -63,12 +62,8 @@ public class SharedMacPoolView extends Composite {
         authorizationTable = new PermissionListModelTable<>(permissionModelProvider, eventBus, clientStorage);
         authorizationTable.initTable();
 
-        authorizationTable.getTable().getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                permissionModelProvider.setSelectedItems(authorizationTable.getTable().getSelectedItems());
-            }
-        });
+        authorizationTable.getTable().getSelectionModel().addSelectionChangeHandler(event ->
+                permissionModelProvider.setSelectedItems(authorizationTable.getTable().getSelectedItems()));
 
         rootPanel = createRootPanel();
 
@@ -147,21 +142,18 @@ public class SharedMacPoolView extends Composite {
         });
 
 
-        macPoolTable.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                final List<MacPool> selectedItems = macPoolTable.getSelectedItems();
-                sharedMacPoolModelProvider.setSelectedItems(selectedItems);
+        macPoolTable.getSelectionModel().addSelectionChangeHandler(event -> {
+            final List<MacPool> selectedItems = macPoolTable.getSelectedItems();
+            sharedMacPoolModelProvider.setSelectedItems(selectedItems);
 
-                final PermissionListModel<MacPool> model = permissionModelProvider.getModel();
+            final PermissionListModel<MacPool> model = permissionModelProvider.getModel();
 
-                if (selectedItems.size() == 1) {
-                    model.setEntity(selectedItems.get(0));
-                    setupAuthorizationTableVisibility(true);
-                } else {
-                    model.setEntity(null);
-                    setupAuthorizationTableVisibility(false);
-                }
+            if (selectedItems.size() == 1) {
+                model.setEntity(selectedItems.get(0));
+                setupAuthorizationTableVisibility(true);
+            } else {
+                model.setEntity(null);
+                setupAuthorizationTableVisibility(false);
             }
         });
 

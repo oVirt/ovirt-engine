@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.refresh.ManualRefreshEvent;
-import org.ovirt.engine.ui.common.widget.refresh.ManualRefreshEvent.ManualRefreshHandler;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
@@ -55,13 +54,10 @@ public class SubTabHostInterfacePresenter
     @Override
     protected void onBind() {
         super.onBind();
-        registerHandler(getEventBus().addHandler(ManualRefreshEvent.getType(), new ManualRefreshHandler() {
-            @Override
-            public void onManualRefresh(ManualRefreshEvent event) {
-                if (SubTabHostInterfacePresenter.this.isVisible()
-                        && SubTabHostInterfacePresenter.this.getModelProvider().getModel().equals(event.getSource())) {
-                    getView().removeContent();
-                }
+        registerHandler(getEventBus().addHandler(ManualRefreshEvent.getType(), event -> {
+            if (SubTabHostInterfacePresenter.this.isVisible()
+                    && SubTabHostInterfacePresenter.this.getModelProvider().getModel().equals(event.getSource())) {
+                getView().removeContent();
             }
         }));
     }

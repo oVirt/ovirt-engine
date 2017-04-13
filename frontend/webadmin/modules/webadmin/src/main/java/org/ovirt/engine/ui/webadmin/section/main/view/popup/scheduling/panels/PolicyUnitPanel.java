@@ -13,10 +13,8 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragStartEvent;
-import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -49,33 +47,25 @@ public class PolicyUnitPanel extends FocusPanel {
         this.style = style;
         getElement().setTitle(policyUnit.getDescription());
         if (!locked && (policyUnit.isEnabled() || used)) {
-            addDomHandler(new ContextMenuHandler() {
-
-                @Override
-                public void onContextMenu(ContextMenuEvent event) {
-                    PolicyUnitPanel sourcePanel = (PolicyUnitPanel) event.getSource();
-                    NativeEvent nativeEvent = event.getNativeEvent();
-                    showContextMenu(sourcePanel, nativeEvent.getClientX(), nativeEvent.getClientY());
-                    event.stopPropagation();
-                    event.preventDefault();
-                }
-
+            addDomHandler(event -> {
+                PolicyUnitPanel sourcePanel = (PolicyUnitPanel) event.getSource();
+                NativeEvent nativeEvent = event.getNativeEvent();
+                showContextMenu(sourcePanel, nativeEvent.getClientX(), nativeEvent.getClientY());
+                event.stopPropagation();
+                event.preventDefault();
             }, ContextMenuEvent.getType());
             // enable d&d
             getElement().setDraggable(Element.DRAGGABLE_TRUE);
             // drag start
-            addBitlessDomHandler(new DragStartHandler() {
-                @Override
-                public void onDragStart(DragStartEvent event) {
-                    PolicyUnitPanel sourcePanel = (PolicyUnitPanel) event.getSource();
-                    lastDragData = getType() + " " + sourcePanel.policyUnit.getId() + " " + Boolean.toString(used); //$NON-NLS-1$ //$NON-NLS-2$
-                    event.setData("Text", lastDragData); //$NON-NLS-1$
-                    // show a ghost of the widget under cursor.
-                    NativeEvent nativeEvent = event.getNativeEvent();
-                    int x = nativeEvent.getClientX() - sourcePanel.getWidget().getAbsoluteLeft();
-                    int y = nativeEvent.getClientY() - sourcePanel.getWidget().getAbsoluteTop();
-                    event.getDataTransfer().setDragImage(sourcePanel.getWidget().getElement(), x, y);
-                }
+            addBitlessDomHandler(event -> {
+                PolicyUnitPanel sourcePanel = (PolicyUnitPanel) event.getSource();
+                lastDragData = getType() + " " + sourcePanel.policyUnit.getId() + " " + Boolean.toString(used); //$NON-NLS-1$ //$NON-NLS-2$
+                event.setData("Text", lastDragData); //$NON-NLS-1$
+                // show a ghost of the widget under cursor.
+                NativeEvent nativeEvent = event.getNativeEvent();
+                int x = nativeEvent.getClientX() - sourcePanel.getWidget().getAbsoluteLeft();
+                int y = nativeEvent.getClientY() - sourcePanel.getWidget().getAbsoluteTop();
+                event.getDataTransfer().setDragImage(sourcePanel.getWidget().getElement(), x, y);
             }, DragStartEvent.getType());
         }
     }
@@ -143,57 +133,37 @@ public class PolicyUnitPanel extends FocusPanel {
 
     protected void fillMenuBar(MenuBar menuBar) {
         if (used) {
-            menuBar.addItem(constants.removeFilter(), new Command() {
-
-                        @Override
-                        public void execute() {
-                            model.removeFilter(policyUnit);
-                            menuPopup.hide();
-                        }
-                    });
+            menuBar.addItem(constants.removeFilter(), () -> {
+                model.removeFilter(policyUnit);
+                menuPopup.hide();
+            });
         } else {
-            menuBar.addItem(constants.addFilter(), new Command() {
-
-                        @Override
-                        public void execute() {
-                            model.addFilter(policyUnit, used, 0);
-                            menuPopup.hide();
-                        }
-                    });
+            menuBar.addItem(constants.addFilter(), () -> {
+                model.addFilter(policyUnit, used, 0);
+                menuPopup.hide();
+            });
         }
     }
 
     protected void addSubMenu(MenuBar menuBar) {
         MenuBar subMenu = new MenuBar(true);
         if (position != 0) {
-            subMenu.addItem(constants.noPositionFilter(), new Command() {
-
-                @Override
-                public void execute() {
-                    model.addFilter(policyUnit, used, 0);
-                    menuPopup.hide();
-                }
+            subMenu.addItem(constants.noPositionFilter(), () -> {
+                model.addFilter(policyUnit, used, 0);
+                menuPopup.hide();
             });
         }
         if (position >= 0) {
-            subMenu.addItem(constants.firstFilter(), new Command() {
-
-                        @Override
-                        public void execute() {
-                            model.addFilter(policyUnit, used, -1);
-                            menuPopup.hide();
-                        }
-                    });
+            subMenu.addItem(constants.firstFilter(), () -> {
+                model.addFilter(policyUnit, used, -1);
+                menuPopup.hide();
+            });
         }
         if (position <= 0) {
-            subMenu.addItem(constants.lastFilter(), new Command() {
-
-                        @Override
-                        public void execute() {
-                            model.addFilter(policyUnit, used, 1);
-                            menuPopup.hide();
-                        }
-                    });
+            subMenu.addItem(constants.lastFilter(), () -> {
+                model.addFilter(policyUnit, used, 1);
+                menuPopup.hide();
+            });
         }
         menuBar.addItem(constants.position(), subMenu);
     }

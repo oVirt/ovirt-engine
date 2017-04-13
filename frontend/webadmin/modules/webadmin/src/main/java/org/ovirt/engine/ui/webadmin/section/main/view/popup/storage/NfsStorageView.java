@@ -11,9 +11,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -117,12 +114,9 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
         pathExampleLabel.setVisible(object.getPath().getIsChangable());
 
-        object.getMountOptions().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName.equals("Title")) { //$NON-NLS-1$
-                    mountOptionsEditor.setTitle(object.getMountOptions().getTitle());
-                }
+        object.getMountOptions().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args.propertyName.equals("Title")) { //$NON-NLS-1$
+                mountOptionsEditor.setTitle(object.getMountOptions().getTitle());
             }
         });
 

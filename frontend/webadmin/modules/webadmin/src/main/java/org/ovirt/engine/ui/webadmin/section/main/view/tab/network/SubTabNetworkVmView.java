@@ -28,7 +28,6 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -61,12 +60,9 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
     }
 
     private void initTableOverhead() {
-        viewRadioGroup.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (((RadioButton) event.getSource()).getValue()) {
-                    handleRadioButtonClick(event);
-                }
+        viewRadioGroup.addClickHandler(event -> {
+            if (((RadioButton) event.getSource()).getValue()) {
+                handleRadioButtonClick(event);
             }
         });
 

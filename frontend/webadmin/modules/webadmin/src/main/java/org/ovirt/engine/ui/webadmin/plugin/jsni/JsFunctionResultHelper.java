@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.plugin.jsni;
 
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler;
-import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ResultHandler;
 import com.google.gwt.core.client.JsArray;
 
 /**
@@ -90,17 +89,14 @@ public class JsFunctionResultHelper {
     /**
      * Invokes the native function, expecting String return value.
      *
-     * @see JsFunction#invoke(JsArray, String, ResultHandler, ErrorHandler)
+     * @see JsFunction#invoke(JsArray, String, org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ResultHandler, ErrorHandler)
      * @see #getResultAsString
      */
     public boolean invokeAsString(JsArray<?> args, ErrorHandler errorHandler) {
         clearResultInformation();
-        return function.invoke(args, JsFunction.RESULT_TYPE_STRING, new ResultHandler<String>() {
-            @Override
-            public void onResult(String result) {
-                JsFunctionResultHelper.this.resultValue = result;
-                JsFunctionResultHelper.this.resultType = JsFunction.RESULT_TYPE_STRING;
-            }
+        return function.invoke(args, JsFunction.RESULT_TYPE_STRING, (String result) -> {
+            JsFunctionResultHelper.this.resultValue = result;
+            JsFunctionResultHelper.this.resultType = JsFunction.RESULT_TYPE_STRING;
         }, errorHandler);
     }
 
@@ -111,17 +107,14 @@ public class JsFunctionResultHelper {
     /**
      * Invokes the native function, expecting Double return value.
      *
-     * @see JsFunction#invoke(JsArray, String, ResultHandler, ErrorHandler)
+     * @see JsFunction#invoke(JsArray, String, org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ResultHandler, ErrorHandler)
      * @see #getResultAsNumber
      */
     public boolean invokeAsNumber(JsArray<?> args, ErrorHandler errorHandler) {
         clearResultInformation();
-        return function.invoke(args, JsFunction.RESULT_TYPE_NUMBER, new ResultHandler<Double>() {
-            @Override
-            public void onResult(Double result) {
-                JsFunctionResultHelper.this.resultValue = result;
-                JsFunctionResultHelper.this.resultType = JsFunction.RESULT_TYPE_NUMBER;
-            }
+        return function.invoke(args, JsFunction.RESULT_TYPE_NUMBER, (Double result) -> {
+            JsFunctionResultHelper.this.resultValue = result;
+            JsFunctionResultHelper.this.resultType = JsFunction.RESULT_TYPE_NUMBER;
         }, errorHandler);
     }
 
@@ -132,17 +125,14 @@ public class JsFunctionResultHelper {
     /**
      * Invokes the native function, expecting Boolean return value.
      *
-     * @see JsFunction#invoke(JsArray, String, ResultHandler, ErrorHandler)
+     * @see JsFunction#invoke(JsArray, String, org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ResultHandler, ErrorHandler)
      * @see #getResultAsBoolean
      */
     public boolean invokeAsBoolean(JsArray<?> args, ErrorHandler errorHandler) {
         clearResultInformation();
-        return function.invoke(args, JsFunction.RESULT_TYPE_BOOLEAN, new ResultHandler<Boolean>() {
-            @Override
-            public void onResult(Boolean result) {
-                JsFunctionResultHelper.this.resultValue = result;
-                JsFunctionResultHelper.this.resultType = JsFunction.RESULT_TYPE_BOOLEAN;
-            }
+        return function.invoke(args, JsFunction.RESULT_TYPE_BOOLEAN, (Boolean result) -> {
+            JsFunctionResultHelper.this.resultValue = result;
+            JsFunctionResultHelper.this.resultType = JsFunction.RESULT_TYPE_BOOLEAN;
         }, errorHandler);
     }
 

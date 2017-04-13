@@ -20,9 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
@@ -118,13 +115,10 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         volumeCapacityDetailsLabel.setWidth("275px");//$NON-NLS-1$
         formBuilder.addFormItem(new FormItem(constants.volumeCapacityStatistics(), volumeCapacityDetailsLabel, 10, 0));
 
-        getDetailModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                VolumeGeneralModel model = (VolumeGeneralModel) sender;
-                if ("VolumeType".equals(args.propertyName)) { //$NON-NLS-1$
-                    translateVolumeType(model.getEntity());
-                }
+        getDetailModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            VolumeGeneralModel model = (VolumeGeneralModel) sender;
+            if ("VolumeType".equals(args.propertyName)) { //$NON-NLS-1$
+                translateVolumeType(model.getEntity());
             }
         });
         formBuilder.setRelativeColumnWidth(0, 4);

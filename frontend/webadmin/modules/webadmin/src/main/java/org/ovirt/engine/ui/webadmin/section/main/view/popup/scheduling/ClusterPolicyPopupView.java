@@ -17,9 +17,6 @@ import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.NewClusterPolicyModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -171,32 +168,22 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         driver.edit(model);
         setPanelModel(model);
         updateFilters(model);
-        model.getFiltersChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateFilters(model);
-                clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
-            }
+        model.getFiltersChangedEvent().addListener((ev, sender, args) -> {
+            updateFilters(model);
+            clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
         });
         updateFunctions(model);
-        model.getFunctionsChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateFunctions(model);
-                clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
-            }
+        model.getFunctionsChangedEvent().addListener((ev, sender, args) -> {
+            updateFunctions(model);
+            clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
         });
         customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
 
         clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
         updateTooltips(model);
-        model.getLoadBalanceList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateTooltips(model);
-                clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
-            }
+        model.getLoadBalanceList().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            updateTooltips(model);
+            clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
         });
     }
 

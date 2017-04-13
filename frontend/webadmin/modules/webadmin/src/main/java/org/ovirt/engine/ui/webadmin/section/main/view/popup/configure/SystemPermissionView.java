@@ -20,7 +20,6 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.inject.Inject;
 
 public class SystemPermissionView extends Composite {
@@ -120,13 +119,7 @@ public class SystemPermissionView extends Composite {
             }
         });
 
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                modelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());
-            }
-        });
+        table.getSelectionModel().addSelectionChangeHandler(event -> modelProvider.setSelectedItems(table.getSelectionModel().getSelectedList()));
     }
 
     protected Resources getTableHeaderlessResources() {

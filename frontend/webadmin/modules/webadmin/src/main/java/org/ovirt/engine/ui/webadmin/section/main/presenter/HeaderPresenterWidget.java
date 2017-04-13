@@ -9,8 +9,6 @@ import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -78,19 +76,11 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     protected void onBind() {
         super.onBind();
 
-        registerHandler(getView().getConfigureLink().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, configurePopupProvider.get());
-            }
-        }));
+        registerHandler(getView().getConfigureLink().addClickHandler(event ->
+                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, configurePopupProvider.get())));
 
-        registerHandler(getView().getAboutLink().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopupProvider.get());
-            }
-        }));
+        registerHandler(getView().getAboutLink().addClickHandler(event ->
+                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopupProvider.get())));
     }
 
     @Override

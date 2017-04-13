@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeGeoReplicatio
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -83,15 +82,8 @@ public class GlusterVolumeGeoReplicationSessionConfigPopupView extends AbstractM
                 constants.optionValueVolumeParameter(),
                 "200px");//$NON-NLS-1$
 
-        geoReplicationConfigTable.addColumn(new AbstractCheckboxColumn<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>>(true, new FieldUpdater<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>, Boolean>() {
-
-            @Override
-            public void update(int index,
-                    EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>> object,
-                    Boolean value) {
-                object.getEntity().setFirst(value);
-            }
-        }) {
+        geoReplicationConfigTable.addColumn(new AbstractCheckboxColumn<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>>(true,
+                (index, object, value) -> object.getEntity().setFirst(value)) {
 
             @Override
             protected boolean canEdit(EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>> object) {

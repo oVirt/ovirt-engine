@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.HasEnabled;
@@ -39,32 +36,20 @@ public class ImportVmsPopupPresenterWidget extends AbstractModelBoundPopupPresen
     }
 
     private void addDataCenterListener() {
-        getModel().getDataCenters().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev,
-                    Object sender,
-                    PropertyChangedEventArgs args) {
-                if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
-                    final boolean enabled = getModel().getDataCenters().getIsChangable();
-                    updateExportDomainLoadButtonEnabledState();
-                    getView().getLoadVmsFromVmwareButton().setEnabled(enabled);
-                    getView().getLoadOvaButton().setEnabled(enabled);
-                    getView().getLoadXenButton().setEnabled(enabled);
-                    getView().getLoadKvmButton().setEnabled(enabled);
-                }
+        getModel().getDataCenters().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
+                final boolean enabled = getModel().getDataCenters().getIsChangable();
+                updateExportDomainLoadButtonEnabledState();
+                getView().getLoadVmsFromVmwareButton().setEnabled(enabled);
+                getView().getLoadOvaButton().setEnabled(enabled);
+                getView().getLoadXenButton().setEnabled(enabled);
+                getView().getLoadKvmButton().setEnabled(enabled);
             }
         });
     }
 
     private void addExportDomainListener() {
-        getModel().getExportDomain().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev,
-                                    Object sender,
-                                    PropertyChangedEventArgs args) {
-                updateExportDomainLoadButtonEnabledState();
-            }
-        });
+        getModel().getExportDomain().getPropertyChangedEvent().addListener((ev, sender, args) -> updateExportDomainLoadButtonEnabledState());
     }
 
     private void updateExportDomainLoadButtonEnabledState() {

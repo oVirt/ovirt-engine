@@ -13,16 +13,10 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
@@ -56,14 +50,10 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
     public void init(final ClusterModel model) {
         super.init(model);
 
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if ("AllowClusterWithVirtGlusterEnabled".equals(propName)) { //$NON-NLS-1$
-                    getView().allowClusterWithVirtGlusterEnabled(model.getAllowClusterWithVirtGlusterEnabled());
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if ("AllowClusterWithVirtGlusterEnabled".equals(propName)) { //$NON-NLS-1$
+                getView().allowClusterWithVirtGlusterEnabled(model.getAllowClusterWithVirtGlusterEnabled());
             }
         });
         String spiceProxyInConfig =
@@ -73,55 +63,36 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
         getView().setSpiceProxyOverrideExplanation(messages.consoleOverrideSpiceProxyMessage(messages.consoleOverrideDefinedInGlobalConfig(),
                 spiceProxyMessage));
 
-        getModel().getVersion().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                final Version selectedVersion = getModel().getVersion().getSelectedItem();
-                if (selectedVersion == null) {
-                    return;
-                }
-
-                if (AsyncDataProvider.getInstance().isMigrationPoliciesSupported(selectedVersion)) {
-                    getView().getMigrationBandwidthLimitTypeEditor().setEnabled(true);
-                    updateCustomMigrationBandwidthLimitEnabledState(model, null);
-                } else {
-                    final String supportedVersions = StringUtils.join(
-                            AsyncDataProvider.getInstance().getMigrationPoliciesSupportedVersions(), ", "); //$NON-NLS-1$
-                    final String message = messages.onlyAvailableInCompatibilityVersions(supportedVersions);
-                    getView().getMigrationBandwidthLimitTypeEditor().disable(message);
-                    getView().getMigrationBandwidthLimitTypeEditor().setEnabled(false);
-                    updateCustomMigrationBandwidthLimitEnabledState(model, message);
-                }
+        getModel().getVersion().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            final Version selectedVersion = getModel().getVersion().getSelectedItem();
+            if (selectedVersion == null) {
+                return;
             }
-        });
 
-        getModel().getMigrationBandwidthLimitType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+            if (AsyncDataProvider.getInstance().isMigrationPoliciesSupported(selectedVersion)) {
+                getView().getMigrationBandwidthLimitTypeEditor().setEnabled(true);
                 updateCustomMigrationBandwidthLimitEnabledState(model, null);
+            } else {
+                final String supportedVersions = StringUtils.join(
+                        AsyncDataProvider.getInstance().getMigrationPoliciesSupportedVersions(), ", "); //$NON-NLS-1$
+                final String message = messages.onlyAvailableInCompatibilityVersions(supportedVersions);
+                getView().getMigrationBandwidthLimitTypeEditor().disable(message);
+                getView().getMigrationBandwidthLimitTypeEditor().setEnabled(false);
+                updateCustomMigrationBandwidthLimitEnabledState(model, message);
             }
         });
 
-        model.getMacPoolModel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+        getModel().getMigrationBandwidthLimitType().getSelectedItemChangedEvent().addListener((ev, sender, args) ->
+                updateCustomMigrationBandwidthLimitEnabledState(model, null));
 
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getView().updateMacPool(model.getMacPoolModel());
-            }
-        });
+        model.getMacPoolModel().getEntityChangedEvent().addListener((ev, sender, args) -> getView().updateMacPool(model.getMacPoolModel()));
 
         final UICommand addMacPoolCommand = model.getAddMacPoolCommand();
         if (addMacPoolCommand == null) {
             getView().makeMacPoolButtonInvisible();
         } else {
             getView().getMacPoolButton().setCommand(addMacPoolCommand);
-            registerHandler(getView().getMacPoolButton().addClickHandler(new ClickHandler() {
-
-                @Override
-                public void onClick(ClickEvent event) {
-                    getView().getMacPoolButton().getCommand().execute(model);
-                }
-            }));
+            registerHandler(getView().getMacPoolButton().addClickHandler(event -> getView().getMacPoolButton().getCommand().execute(model)));
         }
     }
 

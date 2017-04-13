@@ -17,10 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceMode
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCandidateEventArgs;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -39,8 +35,6 @@ import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
 import org.ovirt.engine.ui.webadmin.widget.footer.StatusPanel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -139,18 +133,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         externalNetworkList.setStyle(style);
         labelsList.setStyle(style);
 
-        networksOrLabels.addRadioButton(constants.networksPanel(), true, true, new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                onRadioButtonSelection(true);
-            }
-        });
-        networksOrLabels.addRadioButton(constants.labelsPanel(), false, true, new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                onRadioButtonSelection(false);
-            }
-        });
+        networksOrLabels.addRadioButton(constants.networksPanel(), true, true, event -> onRadioButtonSelection(true));
+        networksOrLabels.addRadioButton(constants.labelsPanel(), false, true, event -> onRadioButtonSelection(false));
     }
 
     private void onRadioButtonSelection(boolean networksPanelSelected) {
@@ -174,45 +158,37 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     @Override
     public void edit(HostSetupNetworksModel uicommonModel) {
         driver.edit(uicommonModel);
-        uicommonModel.getNicsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                // this is called after both networks and nics were retrieved
-                HostSetupNetworksModel model = (HostSetupNetworksModel) sender;
-                if (!keepStatusText) {
-                    initStatusPanel();
-                }
-                keepStatusText = false;
-                updateNetworks(model.getNetworkModels());
-                updateLabels(model.getNewNetworkLabelModel(), model.getLabelModels());
-                updateNics(model.getNicModels());
-                // mark as rendered
-                rendered = true;
+        uicommonModel.getNicsChangedEvent().addListener((ev, sender, args) -> {
+            // this is called after both networks and nics were retrieved
+            HostSetupNetworksModel model = (HostSetupNetworksModel) sender;
+            if (!keepStatusText) {
+                initStatusPanel();
             }
+            keepStatusText = false;
+            updateNetworks(model.getNetworkModels());
+            updateLabels(model.getNewNetworkLabelModel(), model.getLabelModels());
+            updateNics(model.getNicModels());
+            // mark as rendered
+            rendered = true;
         });
 
-        uicommonModel.getOperationCandidateEvent().addListener(new IEventListener<OperationCandidateEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends OperationCandidateEventArgs> ev,
-                    Object sender,
-                    OperationCandidateEventArgs args) {
+        uicommonModel.getOperationCandidateEvent().addListener((ev, sender, args) -> {
 
-                NetworkOperation candidate = args.getCandidate();
-                NetworkItemModel<?> op1 = args.getOp1();
-                NetworkItemModel<?> op2 = args.getOp2();
+            NetworkOperation candidate = args.getCandidate();
+            NetworkItemModel<?> op1 = args.getOp1();
+            NetworkItemModel<?> op2 = args.getOp2();
 
-                if (candidate == null) {
-                    setErrorStatus(constants.noValidActionSetupNetwork());
+            if (candidate == null) {
+                setErrorStatus(constants.noValidActionSetupNetwork());
+            } else {
+                if (candidate.isErroneousOperation()) {
+                    setErrorStatus(candidate.getMessage(op1, op2));
                 } else {
-                    if (candidate.isErroneousOperation()) {
-                        setErrorStatus(candidate.getMessage(op1, op2));
+                    if (candidate.isDisplayNetworkAffected(op1, op2)) {
+                        setWarningStatus(messages.moveDisplayNetworkWarning(candidate.getMessage(op1,
+                                op2)));
                     } else {
-                        if (candidate.isDisplayNetworkAffected(op1, op2)) {
-                            setWarningStatus(messages.moveDisplayNetworkWarning(candidate.getMessage(op1,
-                                    op2)));
-                        } else {
-                            setValidStatus(candidate.getMessage(op1, op2));
-                        }
+                        setValidStatus(candidate.getMessage(op1, op2));
                     }
                 }
             }

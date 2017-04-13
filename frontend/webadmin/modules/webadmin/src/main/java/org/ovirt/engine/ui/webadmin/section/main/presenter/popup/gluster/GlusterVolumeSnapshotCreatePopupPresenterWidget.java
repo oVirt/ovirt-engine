@@ -4,10 +4,6 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -25,40 +21,24 @@ public class GlusterVolumeSnapshotCreatePopupPresenterWidget extends AbstractMod
     public void init(final GlusterVolumeSnapshotModel model) {
         super.init(model);
 
-        model.getInterval().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getView().setCriticalIntervalLabelVisibility(model,
-                        Integer.parseInt(((ListModel<String>) sender).getSelectedItem()));
-            }
+        model.getInterval().getSelectedItemChangedEvent().addListener((ev, sender, args) -> getView().setCriticalIntervalLabelVisibility(model,
+                Integer.parseInt(((ListModel<String>) sender).getSelectedItem())));
+
+        model.getRecurrence().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            getView().updateVisibilities(model);
+            getView().setCriticalIntervalLabelVisibility(model,
+                    Integer.parseInt(model.getInterval().getSelectedItem()));
+            getView().setMessage(null);
         });
 
-        model.getRecurrence().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getView().updateVisibilities(model);
-                getView().setCriticalIntervalLabelVisibility(model,
-                        Integer.parseInt(model.getInterval().getSelectedItem()));
-                getView().setMessage(null);
-            }
-        });
+        model.getEndByOptions().getSelectedItemChangedEvent().addListener((ev, sender, args) -> getView().setEndDateVisibility(model));
 
-        model.getEndByOptions().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getView().setEndDateVisibility(model);
-            }
-        });
-
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if(args.propertyName.equalsIgnoreCase("validateAndSwitchAppropriateTab")) {//$NON-NLS-1$
-                    getView().handleValidationErrors(model);
-                    getView().switchTabBasedOnEditorInvalidity();
-                } else if(args.propertyName.equalsIgnoreCase("modelPropertiesChanged")) {//$NON-NLS-1$
-                    getView().handleValidationErrors(model);
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if(args.propertyName.equalsIgnoreCase("validateAndSwitchAppropriateTab")) {//$NON-NLS-1$
+                getView().handleValidationErrors(model);
+                getView().switchTabBasedOnEditorInvalidity();
+            } else if(args.propertyName.equalsIgnoreCase("modelPropertiesChanged")) {//$NON-NLS-1$
+                getView().handleValidationErrors(model);
             }
         });
     }

@@ -193,13 +193,9 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
 
     @Override
     public void setProviderClickHandler(final FieldUpdater<NetworkView, String> fieldUpdater) {
-        providerColumn.setFieldUpdater(new FieldUpdater<NetworkView, String>() {
-
-            @Override
-            public void update(int index, NetworkView object, String value) {
-                getTable().getSelectionModel().clear(); // this to avoid problems with a null active details model
-                fieldUpdater.update(index, object, value);
-            }
+        providerColumn.setFieldUpdater((index, object, value) -> {
+            getTable().getSelectionModel().clear(); // this to avoid problems with a null active details model
+            fieldUpdater.update(index, object, value);
         });
     }
 }

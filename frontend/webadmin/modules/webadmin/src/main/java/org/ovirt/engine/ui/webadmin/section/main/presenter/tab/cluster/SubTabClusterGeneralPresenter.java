@@ -8,14 +8,9 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -80,14 +75,11 @@ public class SubTabClusterGeneralPresenter
 
         // Listen for changes in the properties of the model in order
         // to update the alerts panel:
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName.contains("Alert")) { //$NON-NLS-1$
-                    updateAlerts(getView(), model);
-                } else if (args.propertyName.contains("consoleAddressPartiallyOverridden")) { //$NON-NLS-1$
-                    updateAlerts(getView(), model);
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args.propertyName.contains("Alert")) { //$NON-NLS-1$
+                updateAlerts(getView(), model);
+            } else if (args.propertyName.contains("consoleAddressPartiallyOverridden")) { //$NON-NLS-1$
+                updateAlerts(getView(), model);
             }
         });
     }
@@ -157,13 +149,7 @@ public class SubTabClusterGeneralPresenter
 
             // Add a listener to the anchor so that the command is executed when
             // it is clicked:
-            betweenAnchor.addClickHandler(
-                    new ClickHandler() {
-                        @Override
-                        public void onClick(ClickEvent event) {
-                            command.execute();
-                        }
-                    });
+            betweenAnchor.addClickHandler(event -> command.execute());
         }
 
         if (start < text.length()) {

@@ -19,8 +19,6 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.IsLockedImageTypeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.RoleTypeColumn;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -29,7 +27,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.inject.Inject;
 
 public class RoleView extends Composite {
@@ -94,36 +91,24 @@ public class RoleView extends Composite {
     private void initRolesFilterRadioButtons() {
         allRolesRadioButton.setValue(true);
 
-        allRolesRadioButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                if (event.getValue()) {
-                    roleModelProvider.getModel().setItemsFilter(null);
-                    roleModelProvider.getModel().forceRefresh();
-                }
+        allRolesRadioButton.addValueChangeHandler(event -> {
+            if (event.getValue()) {
+                roleModelProvider.getModel().setItemsFilter(null);
+                roleModelProvider.getModel().forceRefresh();
             }
         });
 
-        adminRolesRadioButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                if (event.getValue()) {
-                    roleModelProvider.getModel().setItemsFilter(RoleType.ADMIN);
-                    roleModelProvider.getModel().forceRefresh();
-                }
+        adminRolesRadioButton.addValueChangeHandler(event -> {
+            if (event.getValue()) {
+                roleModelProvider.getModel().setItemsFilter(RoleType.ADMIN);
+                roleModelProvider.getModel().forceRefresh();
             }
         });
 
-        userRolesRadioButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                if (event.getValue()) {
-                    roleModelProvider.getModel().setItemsFilter(RoleType.USER);
-                    roleModelProvider.getModel().forceRefresh();
-                }
+        userRolesRadioButton.addValueChangeHandler(event -> {
+            if (event.getValue()) {
+                roleModelProvider.getModel().setItemsFilter(RoleType.USER);
+                roleModelProvider.getModel().forceRefresh();
             }
         });
 
@@ -191,16 +176,12 @@ public class RoleView extends Composite {
 
         splitLayoutPanel.add(table);
 
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                roleModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());
-                if (table.getSelectionModel().getSelectedList().size() > 0) {
-                    setSubTabVisibility(true);
-                } else {
-                    setSubTabVisibility(false);
-                }
+        table.getSelectionModel().addSelectionChangeHandler(event -> {
+            roleModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());
+            if (table.getSelectionModel().getSelectedList().size() > 0) {
+                setSubTabVisibility(true);
+            } else {
+                setSubTabVisibility(false);
             }
         });
 
@@ -237,13 +218,8 @@ public class RoleView extends Composite {
             }
         });
 
-        permissionTable.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                permissionModelProvider.setSelectedItems(permissionTable.getSelectionModel().getSelectedList());
-            }
-        });
+        permissionTable.getSelectionModel().addSelectionChangeHandler(event ->
+                permissionModelProvider.setSelectedItems(permissionTable.getSelectionModel().getSelectedList()));
     }
 
     protected Resources getTableHeaderlessResources() {

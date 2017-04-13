@@ -6,7 +6,6 @@ import java.util.Queue;
 
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -50,16 +49,12 @@ public class AnimatedVerticalPanel extends VerticalPanel {
     }
 
     public void renderPending() {
-        Scheduler.get().scheduleFixedDelay(new RepeatingCommand() {
-
-            @Override
-            public boolean execute() {
-                if (pendingWidgtes.isEmpty()) {
-                    return false;
-                }
-                addFadeIn(pendingWidgtes.remove());
-                return !pendingWidgtes.isEmpty();
+        Scheduler.get().scheduleFixedDelay(() -> {
+            if (pendingWidgtes.isEmpty()) {
+                return false;
             }
+            addFadeIn(pendingWidgtes.remove());
+            return !pendingWidgtes.isEmpty();
         }, ADD_DELAY);
     }
 

@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.webadmin.widget.errata.ErrataFilterPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
@@ -117,12 +116,9 @@ public class ErrataTableView extends ResizeComposite {
 
         // Handle the filter panel's checkboxes values changing -> simple view update (re-run client-side filter)
         //
-        ValueChangeHandler<ErrataFilterValue> handler = new ValueChangeHandler<ErrataFilterValue>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<ErrataFilterValue> event) {
-                errataListModel.setItemsFilter(event.getValue());
-                errataListModel.reFilter();
-            }
+        ValueChangeHandler<ErrataFilterValue> handler = event -> {
+            errataListModel.setItemsFilter(event.getValue());
+            errataListModel.reFilter();
         };
         errataFilterPanel.addValueChangeHandler(handler);
     }

@@ -7,9 +7,6 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.event.shared.EventBus;
@@ -74,12 +71,9 @@ public class SubTabVirtualMachineGeneralPresenter
 
         // Listen for changes in the properties of the model in order
         // to update the alerts panel:
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName.contains("Alert")) { //$NON-NLS-1$
-                    updateAlerts(getView(), model);
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args.propertyName.contains("Alert")) { //$NON-NLS-1$
+                updateAlerts(getView(), model);
             }
         });
     }

@@ -24,7 +24,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ManageGlusterSwiftPopupPresenterWidget;
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
@@ -139,16 +138,13 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
                         }
                     }
                 };
-        startSwiftColumn.setFieldUpdater(new FieldUpdater<EntityModel, Boolean>() {
-            @Override
-            public void update(int index, EntityModel object, Boolean value) {
-                GlusterSwiftServiceModel swiftModel = (GlusterSwiftServiceModel) object;
-                swiftModel.getStartSwift().setEntity(value);
-                if (value) {
-                    swiftModel.getStopSwift().setEntity(false);
-                    swiftModel.getRestartSwift().setEntity(false);
-                    hostServicesTable.redraw();
-                }
+        startSwiftColumn.setFieldUpdater((index, object, value) -> {
+            GlusterSwiftServiceModel swiftModel = (GlusterSwiftServiceModel) object;
+            swiftModel.getStartSwift().setEntity(value);
+            if (value) {
+                swiftModel.getStopSwift().setEntity(false);
+                swiftModel.getRestartSwift().setEntity(false);
+                hostServicesTable.redraw();
             }
         });
         hostServicesTable.addColumn(startSwiftColumn, constants.startGlusterSwift());
@@ -168,17 +164,14 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
                 }
             }
         };
-        stopSwiftColumn.setFieldUpdater(new FieldUpdater<EntityModel, Boolean>() {
-            @Override
-            public void update(int index, EntityModel object, Boolean value) {
-                GlusterSwiftServiceModel swiftModel = (GlusterSwiftServiceModel) object;
-                if (swiftModel.getStopSwift().getIsChangable()) {
-                    swiftModel.getStopSwift().setEntity(value);
-                    if (value) {
-                        swiftModel.getStartSwift().setEntity(false);
-                        swiftModel.getRestartSwift().setEntity(false);
-                        hostServicesTable.redraw();
-                    }
+        stopSwiftColumn.setFieldUpdater((index, object, value) -> {
+            GlusterSwiftServiceModel swiftModel = (GlusterSwiftServiceModel) object;
+            if (swiftModel.getStopSwift().getIsChangable()) {
+                swiftModel.getStopSwift().setEntity(value);
+                if (value) {
+                    swiftModel.getStartSwift().setEntity(false);
+                    swiftModel.getRestartSwift().setEntity(false);
+                    hostServicesTable.redraw();
                 }
             }
         });
@@ -200,16 +193,13 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
                         }
                     }
                 };
-        restartSwiftColumn.setFieldUpdater(new FieldUpdater<EntityModel, Boolean>() {
-            @Override
-            public void update(int index, EntityModel object, Boolean value) {
-                GlusterSwiftServiceModel swiftModel = (GlusterSwiftServiceModel) object;
-                swiftModel.getRestartSwift().setEntity(value);
-                if (value) {
-                    swiftModel.getStartSwift().setEntity(false);
-                    swiftModel.getStopSwift().setEntity(false);
-                    hostServicesTable.redraw();
-                }
+        restartSwiftColumn.setFieldUpdater((index, object, value) -> {
+            GlusterSwiftServiceModel swiftModel = (GlusterSwiftServiceModel) object;
+            swiftModel.getRestartSwift().setEntity(value);
+            if (value) {
+                swiftModel.getStartSwift().setEntity(false);
+                swiftModel.getStopSwift().setEntity(false);
+                hostServicesTable.redraw();
             }
         });
         hostServicesTable.addColumn(restartSwiftColumn, constants.restartGlusterSwift());

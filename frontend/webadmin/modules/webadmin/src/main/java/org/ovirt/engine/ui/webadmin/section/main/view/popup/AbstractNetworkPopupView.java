@@ -39,10 +39,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractNetwork
 import org.ovirt.engine.ui.webadmin.widget.provider.ExternalSubnetWidget;
 import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor;
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -194,13 +191,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         externalProviderEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider>());
         qosEditor = new ListModelListBoxEditor<>(new NameRenderer<HostNetworkQos>());
         exportEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        exportEditor.asCheckBox().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                refreshClustersTable();
-            }
-        });
+        exportEditor.asCheckBox().addValueChangeHandler(event -> refreshClustersTable());
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         mtuEditor = new IntegerEntityModelTextBoxOnlyEditor();
@@ -331,12 +322,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
         }, constants.nameClusterHeader());
 
-        clustersTable.addColumn(new AbstractCheckboxColumn<NetworkClusterModel>(new FieldUpdater<NetworkClusterModel, Boolean>() {
-            @Override
-            public void update(int index, NetworkClusterModel model, Boolean value) {
-                model.setAttached(value);
-                refreshClustersTable();
-            }
+        clustersTable.addColumn(new AbstractCheckboxColumn<NetworkClusterModel>((index, model, value) -> {
+            model.setAttached(value);
+            refreshClustersTable();
         }) {
             @Override
             public Boolean getValue(NetworkClusterModel model) {
@@ -355,12 +343,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
 
         }, assignAllHeader, "80px"); //$NON-NLS-1$
-        clustersTable.addColumn(new AbstractCheckboxColumn<NetworkClusterModel>(new FieldUpdater<NetworkClusterModel, Boolean>() {
-            @Override
-            public void update(int index, NetworkClusterModel model, Boolean value) {
-                model.setRequired(value);
-                refreshClustersTable();
-            }
+        clustersTable.addColumn(new AbstractCheckboxColumn<NetworkClusterModel>((index, model, value) -> {
+            model.setRequired(value);
+            refreshClustersTable();
         }) {
             @Override
             public Boolean getValue(NetworkClusterModel model) {

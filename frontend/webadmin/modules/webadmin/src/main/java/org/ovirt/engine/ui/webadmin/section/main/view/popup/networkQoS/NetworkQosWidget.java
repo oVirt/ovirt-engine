@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.BaseNetworkQosModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
@@ -85,13 +84,9 @@ public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQ
 
         driver.initialize(this);
 
-        availabilityListener = new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    toggleVisibility();
-                }
+        availabilityListener = (ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                toggleVisibility();
             }
         };
     }

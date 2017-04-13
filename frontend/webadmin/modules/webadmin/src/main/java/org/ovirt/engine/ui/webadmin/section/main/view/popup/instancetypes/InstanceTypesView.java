@@ -24,7 +24,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.inject.Inject;
 
 public class InstanceTypesView extends Composite {
@@ -116,17 +115,13 @@ public class InstanceTypesView extends Composite {
 
         splitLayoutPanel.add(table);
 
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                instanceTypeModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());
-                if (table.getSelectionModel().getSelectedList().size() > 0) {
-                    setSubTabVisibility(true);
-                    detailTable.update();
-                } else {
-                    setSubTabVisibility(false);
-                }
+        table.getSelectionModel().addSelectionChangeHandler(event -> {
+            instanceTypeModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());
+            if (table.getSelectionModel().getSelectedList().size() > 0) {
+                setSubTabVisibility(true);
+                detailTable.update();
+            } else {
+                setSubTabVisibility(false);
             }
         });
 

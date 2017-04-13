@@ -49,10 +49,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -67,15 +65,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -647,102 +637,77 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         driver.edit(object);
         setTabIndexes(0);
 
-        object.getFetchResult().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                String fetchResultText = object.getFetchResult().getEntity();
-                if (ConstantsManager.getInstance().getConstants().errorLoadingFingerprint().equals(fetchResultText)) {
-                    fetchResult.addStyleName(style.fetchResultErrorLabel());
-                } else {
-                    fetchResult.removeStyleName(style.fetchResultErrorLabel());
-                }
-                fetchResult.setText(fetchResultText);
+        object.getFetchResult().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            String fetchResultText = object.getFetchResult().getEntity();
+            if (ConstantsManager.getInstance().getConstants().errorLoadingFingerprint().equals(fetchResultText)) {
+                fetchResult.addStyleName(style.fetchResultErrorLabel());
+            } else {
+                fetchResult.removeStyleName(style.fetchResultErrorLabel());
+            }
+            fetchResult.setText(fetchResultText);
+        });
+
+        object.getPkSection().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                setPkPasswordSectionVisiblity(false);
             }
         });
 
-        object.getPkSection().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    setPkPasswordSectionVisiblity(false);
-                }
-            }
-        });
+        object.getProviders().getSelectedItemChangedEvent().addListener((ev, sender, args) -> object.updateHosts());
 
-        object.getProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+        object.getExternalHostProviderEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            boolean showForemanProviders = object.getExternalHostProviderEnabled().getEntity();
+            boolean doProvisioning = object.externalProvisionEnabled();
+
+            providersEditor.setVisible(showForemanProviders);
+
+            // showing or hiding radio buttons
+            provisionedHostSection.setVisible(showForemanProviders && doProvisioning);
+            discoveredHostSection.setVisible(showForemanProviders && doProvisioning);
+
+            // disabling ip and name textbox when using provisioned hosts
+            hostAddressEditor.setEnabled(!(showForemanProviders && doProvisioning));
+
+            if (showForemanProviders && doProvisioning) {
                 object.updateHosts();
+                object.getIsDiscoveredHosts().setEntity(true);
+            } else {
+                if (doProvisioning) {
+                    object.cleanHostParametersFields();
+                }
+                hideProviderWidgets(object);
+                object.getIsDiscoveredHosts().setEntity(null);
             }
         });
 
-        object.getExternalHostProviderEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean showForemanProviders = object.getExternalHostProviderEnabled().getEntity();
-                boolean doProvisioning = object.externalProvisionEnabled();
-
-                providersEditor.setVisible(showForemanProviders);
-
-                // showing or hiding radio buttons
-                provisionedHostSection.setVisible(showForemanProviders && doProvisioning);
-                discoveredHostSection.setVisible(showForemanProviders && doProvisioning);
-
-                // disabling ip and name textbox when using provisioned hosts
-                hostAddressEditor.setEnabled(!(showForemanProviders && doProvisioning));
-
-                if (showForemanProviders && doProvisioning) {
-                    object.updateHosts();
-                    object.getIsDiscoveredHosts().setEntity(true);
-                } else {
-                    if (doProvisioning) {
-                        object.cleanHostParametersFields();
-                    }
-                    hideProviderWidgets(object);
-                    object.getIsDiscoveredHosts().setEntity(null);
+        object.getIsDiscoveredHosts().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (object.getIsDiscoveredHosts().getEntity() != null) {
+                if (object.getIsDiscoveredHosts().getEntity()) {
+                    rbDiscoveredHost.asRadioButton().setValue(true);
+                    showDiscoveredHostsWidgets(true);
+                } else if (!object.getIsDiscoveredHosts().getEntity()) {
+                    rbProvisionedHost.asRadioButton().setValue(true);
+                    showProvisionedHostsWidgets(true);
                 }
             }
         });
 
-        object.getIsDiscoveredHosts().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (object.getIsDiscoveredHosts().getEntity() != null) {
-                    if (object.getIsDiscoveredHosts().getEntity()) {
-                        rbDiscoveredHost.asRadioButton().setValue(true);
-                        showDiscoveredHostsWidgets(true);
-                    } else if (!object.getIsDiscoveredHosts().getEntity()) {
-                        rbProvisionedHost.asRadioButton().setValue(true);
-                        showProvisionedHostsWidgets(true);
+        nameEditor.asValueBox().addKeyDownHandler(event -> Scheduler.get().scheduleDeferred(() -> {
+            if (object.getExternalHostProviderEnabled().getEntity() &&
+                    Boolean.TRUE.equals(object.getIsDiscoveredHosts().getEntity())) {
+                ExternalHostGroup dhg =
+                        (ExternalHostGroup) object.getExternalHostGroups().getSelectedItem();
+                if (dhg != null) {
+                    String base = nameEditor.asEditor().getSubEditor().getValue();
+                    if (base == null) {
+                        base = constants.empty();
                     }
+                    String generatedHostName = base + "." + //$NON-NLS-1$
+                            (dhg.getDomainName() != null ? dhg.getDomainName() : constants.empty());
+                    object.getHost().setEntity(generatedHostName);
                 }
             }
-        });
-
-        nameEditor.asValueBox().addKeyDownHandler(new KeyDownHandler() {
-            @Override
-            public void onKeyDown(KeyDownEvent event) {
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                    @Override
-                    public void execute() {
-                        if (object.getExternalHostProviderEnabled().getEntity() &&
-                                Boolean.TRUE.equals(object.getIsDiscoveredHosts().getEntity())) {
-                            ExternalHostGroup dhg =
-                                    (ExternalHostGroup) object.getExternalHostGroups().getSelectedItem();
-                            if (dhg != null) {
-                                String base = nameEditor.asEditor().getSubEditor().getValue();
-                                if (base == null) {
-                                    base = constants.empty();
-                                }
-                                String generatedHostName = base + "." + //$NON-NLS-1$
-                                        (dhg.getDomainName() != null ? dhg.getDomainName() : constants.empty());
-                                object.getHost().setEntity(generatedHostName);
-                            }
-                        }
-                    }
-                });
-            }
-        });
+        }));
 
         rbPassword.setValue(true);
         rbPassword.setFocus(true);
@@ -751,32 +716,20 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         fetchSshFingerprint.hideLabel();
         object.setAuthenticationMethod(AuthenticationMethod.Password);
 
-        rbPassword.addFocusHandler(new FocusHandler() {
-            @Override
-            public void onFocus(FocusEvent event) {
-                object.setAuthenticationMethod(AuthenticationMethod.Password);
-                displayPassPkWindow(true);
-            }
+        rbPassword.addFocusHandler(event -> {
+            object.setAuthenticationMethod(AuthenticationMethod.Password);
+            displayPassPkWindow(true);
         });
 
-        rbPublicKey.addFocusHandler(new FocusHandler() {
-            @Override
-            public void onFocus(FocusEvent event) {
-                object.setAuthenticationMethod(AuthenticationMethod.PublicKey);
-                displayPassPkWindow(false);
-            }
+        rbPublicKey.addFocusHandler(event -> {
+            object.setAuthenticationMethod(AuthenticationMethod.PublicKey);
+            displayPassPkWindow(false);
         });
 
         updateHostsButton.setResource(resources.searchButtonImage());
 
         // Create SPM related controls.
-        IEventListener<EventArgs> spmListener = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-
-                createSpmControls(object);
-            }
-        };
+        IEventListener<EventArgs> spmListener = (ev, sender, args) -> createSpmControls(object);
 
         object.getSpmPriority().getItemsChangedEvent().addListener(spmListener);
         object.getSpmPriority().getSelectedItemChangedEvent().addListener(spmListener);
@@ -798,14 +751,11 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         hostedEngineTab.setVisible(object.getIsHeSystem() && object.getIsNew());
 
-        object.getHostedEngineWarning().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                EntityModel entity = (EntityModel) sender;
+        object.getHostedEngineWarning().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            EntityModel entity = (EntityModel) sender;
 
-                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    hostedEngineWarningLabel.setVisible(entity.getIsAvailable());
-                }
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                hostedEngineWarningLabel.setVisible(entity.getIsAvailable());
             }
         });
     }
@@ -900,12 +850,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             labelElement.addClassName(style.patternFlyRadio());
             rb.setValue(object.getSpmPriority().getSelectedItem() == model);
 
-            rb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                @Override
-                public void onValueChange(ValueChangeEvent<Boolean> e) {
-                    object.getSpmPriority().setSelectedItem(model);
-                }
-            });
+            rb.addValueChangeHandler(e -> object.getSpmPriority().setSelectedItem(model));
 
             Row row = new Row();
             Column column = new Column(ColumnSize.LG_12, rb);
@@ -981,14 +926,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         // Add a listener to the anchor so that the command is executed when
         // it is clicked:
-        betweenAnchor.addClickHandler(
-                new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        command.execute();
-                    }
-                }
-                );
+        betweenAnchor.addClickHandler(event -> command.execute());
 
         // Create the label for the text after the tag:
         final Label afterLabel = new Label(afterText);

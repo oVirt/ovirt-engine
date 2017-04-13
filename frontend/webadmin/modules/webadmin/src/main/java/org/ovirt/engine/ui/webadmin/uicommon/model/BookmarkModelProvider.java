@@ -14,15 +14,9 @@ import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -54,15 +48,12 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
 
         // Create selection model
         selectionModel = new SingleSelectionModel<>();
-        selectionModel.addSelectionChangeHandler(new Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                Bookmark selectedObject = selectionModel.getSelectedObject();
-                List<Bookmark> selectedItems = selectedObject != null
-                        ? new ArrayList<>(Arrays.asList(selectedObject))
-                        : new ArrayList<Bookmark>();
-                BookmarkModelProvider.this.setSelectedItems(selectedItems);
-            }
+        selectionModel.addSelectionChangeHandler(event -> {
+            Bookmark selectedObject = selectionModel.getSelectedObject();
+            List<Bookmark> selectedItems = selectedObject != null
+                    ? new ArrayList<>(Arrays.asList(selectedObject))
+                    : new ArrayList<Bookmark>();
+            BookmarkModelProvider.this.setSelectedItems(selectedItems);
         });
     }
 
@@ -71,54 +62,36 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         super.initializeModelHandlers(model);
 
         // Clear selection when a system tree node is selected
-        treeModelProvider.getModel().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (treeModelProvider.getModel().getSelectedItem() != null) {
-                    clearSelection();
-                }
+        treeModelProvider.getModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            if (treeModelProvider.getModel().getSelectedItem() != null) {
+                clearSelection();
             }
         });
 
         // Clear selection when a tag tree node is pinned
-        tagModelProvider.getModel().getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (tagModelProvider.getModel().getSelectedItems() != null
-                        && !tagModelProvider.getModel().getSelectedItems().isEmpty()) {
-                    clearSelection();
-                }
+        tagModelProvider.getModel().getSelectedItemsChangedEvent().addListener((ev, sender, args) -> {
+            if (tagModelProvider.getModel().getSelectedItems() != null
+                    && !tagModelProvider.getModel().getSelectedItems().isEmpty()) {
+                clearSelection();
             }
         });
 
         // Clear selection when a new tab is selected
-        commonModelProvider.get().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (commonModelProvider.get().getSelectedItem() != null) {
-                    clearSelection();
-                }
+        commonModelProvider.get().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            if (commonModelProvider.get().getSelectedItem() != null) {
+                clearSelection();
             }
         });
 
         // Clear selection when the search string is updated
-        commonModelProvider.get().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender,
-                    PropertyChangedEventArgs args) {
-                if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
-                    clearSelection();
-                }
+        commonModelProvider.get().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
+                clearSelection();
             }
         });
 
         // Clear tag selection when a tag is saved/edited/deleted
-        model.getItemSavedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                clearSelection();
-            }
-        });
+        model.getItemSavedEvent().addListener((ev, sender, args) -> clearSelection());
 
     }
 

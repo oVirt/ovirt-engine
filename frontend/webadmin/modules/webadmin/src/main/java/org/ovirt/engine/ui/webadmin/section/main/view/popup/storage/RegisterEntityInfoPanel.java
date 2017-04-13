@@ -32,7 +32,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -142,7 +141,7 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
         customSelectionCell.setStyle("input-group col-xs-11"); //$NON-NLS-1$
 
-        AbstractColumn column = new AbstractColumn<DiskImage, String>(customSelectionCell) {
+        AbstractColumn<DiskImage, String> column = new AbstractColumn<DiskImage, String>(customSelectionCell) {
             @Override
             public String getValue(DiskImage disk) {
                 List<Quota> quotas = (List<Quota>) registerEntityModel.getStorageQuota().getItems();
@@ -159,12 +158,9 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
                 return diskQuotaMap.get(disk.getId()).getQuotaName();
             }
         };
-        column.setFieldUpdater(new FieldUpdater<DiskImage, String>() {
-            @Override
-            public void update(int index, DiskImage disk, String value) {
-                Quota quota = registerEntityModel.getQuotaByName(value, (List<Quota>) registerEntityModel.getStorageQuota().getItems());
-                registerEntityModel.getDiskQuotaMap().getEntity().put(disk.getId(), quota);
-            }
+        column.setFieldUpdater((index, disk, value) -> {
+            Quota quota = registerEntityModel.getQuotaByName(value, (List<Quota>) registerEntityModel.getStorageQuota().getItems());
+            registerEntityModel.getDiskQuotaMap().getEntity().put(disk.getId(), quota);
         });
 
         return column;

@@ -25,9 +25,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -124,26 +121,16 @@ public class PluginUiFunctions implements HasHandlers {
      * Sets the content URL for existing dynamic tab.
      */
     public void setTabContentUrl(final String historyToken, final String contentUrl) {
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                SetDynamicTabContentUrlEvent.fire(PluginUiFunctions.this,
-                        historyToken, contentUrl);
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> SetDynamicTabContentUrlEvent.fire(PluginUiFunctions.this,
+                historyToken, contentUrl));
     }
 
     /**
      * Updates tab/place accessibility for existing dynamic tab.
      */
     public void setTabAccessible(final String historyToken, final boolean tabAccessible) {
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                SetDynamicTabAccessibleEvent.fire(PluginUiFunctions.this,
-                        historyToken, tabAccessible);
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> SetDynamicTabAccessibleEvent.fire(PluginUiFunctions.this,
+                historyToken, tabAccessible));
     }
 
     /**
@@ -218,12 +205,8 @@ public class PluginUiFunctions implements HasHandlers {
             final DialogButtonInterface dialogButtonInterface = buttons.get(i);
 
             if (dialogButtonInterface != null) {
-                popup.addFooterButton(dialogButtonInterface.getLabel(), new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        dialogButtonInterface.onClick().invoke(null, null);
-                    }
-                });
+                popup.addFooterButton(dialogButtonInterface.getLabel(),
+                        event -> dialogButtonInterface.onClick().invoke(null, null));
             }
         }
 
@@ -235,62 +218,37 @@ public class PluginUiFunctions implements HasHandlers {
      * Sets the content URL for existing modal dialog.
      */
     public void setDialogContentUrl(final String dialogToken, final String contentUrl) {
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                SetDynamicPopupContentUrlEvent.fire(PluginUiFunctions.this,
-                        dialogToken, contentUrl);
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> SetDynamicPopupContentUrlEvent.fire(PluginUiFunctions.this,
+                dialogToken, contentUrl));
     }
 
     /**
      * Closes an existing modal dialog.
      */
     public void closeDialog(final String dialogToken) {
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                CloseDynamicPopupEvent.fire(PluginUiFunctions.this,
-                        dialogToken);
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> CloseDynamicPopupEvent.fire(PluginUiFunctions.this,
+                dialogToken));
     }
 
     /**
      * Reveals the application place denoted by {@code historyToken}.
      */
     public void revealPlace(final String historyToken) {
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                placeManager.revealPlace(new PlaceRequest.Builder().nameToken(historyToken).build());
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> placeManager.revealPlace(new PlaceRequest.Builder().nameToken(historyToken).build()));
     }
 
     /**
      * Applies the given search string, which triggers transition to the corresponding application place.
      */
     public void setSearchString(final String searchString) {
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                ApplySearchStringEvent.fire(PluginUiFunctions.this, searchString);
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> ApplySearchStringEvent.fire(PluginUiFunctions.this, searchString));
     }
 
     /**
      * Shows an application-wide alert message.
      */
     public void showAlert(final AlertPanel.Type type, final String message, final AlertOptions options) {
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                alertManager.showAlert(type, SafeHtmlUtils.fromString(message), options.getAutoHideMs().intValue());
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> alertManager.showAlert(type, SafeHtmlUtils.fromString(message), options.getAutoHideMs().intValue()));
     }
 
     /**

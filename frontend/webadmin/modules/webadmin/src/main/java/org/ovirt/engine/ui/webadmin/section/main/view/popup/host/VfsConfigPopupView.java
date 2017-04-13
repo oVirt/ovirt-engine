@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -19,9 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigModel.AllNetworksSelector;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsConfigNetwork;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -29,8 +25,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -135,22 +129,10 @@ public class VfsConfigPopupView extends AbstractModelBoundPopupView<VfsConfigMod
         networks.asEditor().edit(model.getNetworks());
         initNetworksTable();
 
-        labelsWidget.addValueChangeHandler(new ValueChangeHandler<Set<String>>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Set<String>> event) {
-                refreshNetworksTable();
-            }
-        });
+        labelsWidget.addValueChangeHandler(event -> refreshNetworksTable());
 
         updateAllowedNetworksPanelVisibility(model);
-        model.getAllNetworksAllowed().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateAllowedNetworksPanelVisibility(model);
-            }
-        });
+        model.getAllNetworksAllowed().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateAllowedNetworksPanelVisibility(model));
     }
 
     private void updateAllowedNetworksPanelVisibility(final VfsConfigModel model) {

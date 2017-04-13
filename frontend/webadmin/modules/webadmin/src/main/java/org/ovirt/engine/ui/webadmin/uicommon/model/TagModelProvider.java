@@ -23,8 +23,6 @@ import org.ovirt.engine.ui.webadmin.widget.tags.TagItemCell;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -61,12 +59,7 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
 
         // Create selection model
         selectionModel = new SingleSelectionModel<>();
-        selectionModel.addSelectionChangeHandler(new Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                TagModelProvider.this.setSelectedItems(Arrays.asList(selectionModel.getSelectedObject()));
-            }
-        });
+        selectionModel.addSelectionChangeHandler(event -> TagModelProvider.this.setSelectedItems(Arrays.asList(selectionModel.getSelectedObject())));
 
     }
 
@@ -75,17 +68,14 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
         super.initializeModelHandlers(model);
 
         // Add model reset handler
-        model.getResetRequestedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (model.getItems() == null) {
-                    return;
-                }
-                Iterator<TagModel> iterator = model.getItems().iterator();
-                if (iterator.hasNext()) {
-                    TagModel root = model.cloneTagModel(iterator.next());
-                    updateDataProvider(Arrays.asList(root));
-                }
+        model.getResetRequestedEvent().addListener((ev, sender, args) -> {
+            if (model.getItems() == null) {
+                return;
+            }
+            Iterator<TagModel> iterator = model.getItems().iterator();
+            if (iterator.hasNext()) {
+                TagModel root = model.cloneTagModel(iterator.next());
+                updateDataProvider(Arrays.asList(root));
             }
         });
 

@@ -3,9 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDRModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,12 +21,7 @@ public class StorageDRPopupPresenterWidget extends AbstractModelBoundPopupPresen
     public void init(final StorageDRModel model) {
         super.init(model);
 
-        model.getFrequency().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getView().updateVisibilities(model);
-            }
-        });
+        model.getFrequency().getSelectedItemChangedEvent().addListener((ev, sender, args) -> getView().updateVisibilities(model));
 
     }
 

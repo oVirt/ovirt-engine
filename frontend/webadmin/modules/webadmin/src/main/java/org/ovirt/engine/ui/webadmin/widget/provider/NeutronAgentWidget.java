@@ -13,9 +13,6 @@ import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -101,14 +98,8 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     public void edit(final NeutronAgentModel model) {
         driver.edit(model);
         mappings.setExplanation(templates.italicText(model.getInterfaceMappingsExplanation().getEntity()));
-        model.getInterfaceMappingsExplanation().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                mappings.setExplanation(templates.italicText(model.getInterfaceMappingsExplanation()
-                        .getEntity()));
-            }
-        });
+        model.getInterfaceMappingsExplanation().getEntityChangedEvent().addListener((ev, sender, args) -> mappings.setExplanation(templates.italicText(model.getInterfaceMappingsExplanation()
+                .getEntity())));
     }
 
     @Override

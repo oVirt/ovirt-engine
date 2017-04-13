@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -67,24 +66,15 @@ public class ErrataFilterPanel extends Composite {
 
     public void addValueChangeHandler(final ValueChangeHandler<ErrataFilterValue> handler) {
 
-        ValueChangeHandler<Boolean> internalHandler = new ValueChangeHandler<Boolean>() {
+        ValueChangeHandler<Boolean> internalHandler = event -> {
+            // Do this deferred to give the javascript time to activate/deactivate the buttons.
+            Scheduler.get().scheduleDeferred(() -> {
+                // one of the checkboxes changed, but get all three checkbox values for the event
+                ErrataFilterValue value = new ErrataFilterValue(securityCheckbox.isActive(),
+                        bugCheckbox.isActive(), enhancementCheckbox.isActive());
 
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                // Do this deferred to give the javascript time to activate/deactivate the buttons.
-                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                    @Override
-                    public void execute() {
-                        // one of the checkboxes changed, but get all three checkbox values for the event
-                        ErrataFilterValue value = new ErrataFilterValue(securityCheckbox.isActive(),
-                                bugCheckbox.isActive(), enhancementCheckbox.isActive());
-
-                        handler.onValueChange(new ValueChangeEvent<ErrataFilterValue>(value) {});
-                    }
-                });
-            }
-
+                handler.onValueChange(new ValueChangeEvent<ErrataFilterValue>(value) {});
+            });
         };
 
         securityCheckbox.addValueChangeHandler(internalHandler);

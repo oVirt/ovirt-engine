@@ -10,19 +10,13 @@ import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.common.widget.tree.TreeModelWithElementId;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.widget.tree.SystemTreeItemCell;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -54,12 +48,8 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
 
         // Create selection model
         selectionModel = new SingleSelectionModel<>();
-        selectionModel.addSelectionChangeHandler(new Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                SystemTreeModelProvider.this.setSelectedItems(Arrays.asList(selectionModel.getSelectedObject()));
-            }
-        });
+        selectionModel.addSelectionChangeHandler(event ->
+                SystemTreeModelProvider.this.setSelectedItems(Arrays.asList(selectionModel.getSelectedObject())));
     }
 
     @Override
@@ -67,14 +57,11 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
         super.initializeModelHandlers(model);
 
         // Add model reset handler
-        model.getResetRequestedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ArrayList<SystemTreeItemModel> items = model.getItems();
-                if (items != null && !items.isEmpty()) {
-                    // Select first (root) tree item
-                    selectionModel.setSelected(items.get(0), true);
-                }
+        model.getResetRequestedEvent().addListener((ev, sender, args) -> {
+            ArrayList<SystemTreeItemModel> items = model.getItems();
+            if (items != null && !items.isEmpty()) {
+                // Select first (root) tree item
+                selectionModel.setSelected(items.get(0), true);
             }
         });
     }
@@ -97,11 +84,8 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
     public void setSelectedItem(Guid id) {
         display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED); // open small GWT workaround
         selectionModel.setSelected(getModel().getItemById(id), true);
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION); // close small GWT workaround
-            }
+        Scheduler.get().scheduleDeferred(() -> {
+            display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION); // close small GWT workaround
         });
     }
 

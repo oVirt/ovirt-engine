@@ -15,16 +15,11 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget.AlertType;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -103,12 +98,9 @@ public class SubTabHostGeneralInfoPresenter
 
         // Listen for changes in the properties of the model in order
         // to update the alerts panel:
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName.contains("Alert")) { //$NON-NLS-1$
-                    updateAlerts(getView(), model);
-                }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args.propertyName.contains("Alert")) { //$NON-NLS-1$
+                updateAlerts(getView(), model);
             }
         });
     }
@@ -217,14 +209,7 @@ public class SubTabHostGeneralInfoPresenter
 
         // Add a listener to the anchor so that the command is executed when
         // it is clicked:
-        betweenAnchor.addClickHandler(
-                new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        command.execute();
-                    }
-                }
-                );
+        betweenAnchor.addClickHandler(event -> command.execute());
 
         // Create the label for the text after the tag:
         final Label afterLabel = new Label(afterText);

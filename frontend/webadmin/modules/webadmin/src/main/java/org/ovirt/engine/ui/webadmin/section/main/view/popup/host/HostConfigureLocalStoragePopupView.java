@@ -19,9 +19,6 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipWidth;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.ConfigureLocalStorageModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -29,8 +26,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -183,42 +178,33 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
         // Data center edit button.
         dataCenterPanel.setVisible(false);
 
-        dataCenterButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
+        dataCenterButton.addClickHandler(clickEvent -> {
 
-                dataCenterPanel.setVisible(!dataCenterPanel.isVisible());
+            dataCenterPanel.setVisible(!dataCenterPanel.isVisible());
 
-                dataCenterButton.setText(dataCenterPanel.isVisible() ? constants.closeText() : constants.editText());
-                dataCenterNameEditor.setEnabled(dataCenterPanel.isVisible());
-            }
+            dataCenterButton.setText(dataCenterPanel.isVisible() ? constants.closeText() : constants.editText());
+            dataCenterNameEditor.setEnabled(dataCenterPanel.isVisible());
         });
 
 
         // Cluster edit button.
         clusterPanel.setVisible(false);
 
-        clusterButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
+        clusterButton.addClickHandler(clickEvent -> {
 
-                clusterPanel.setVisible(!clusterPanel.isVisible());
+            clusterPanel.setVisible(!clusterPanel.isVisible());
 
-                clusterButton.setText(clusterPanel.isVisible() ? constants.closeText() : constants.editText());
-                clusterNameEditor.setEnabled(clusterPanel.isVisible());
-            }
+            clusterButton.setText(clusterPanel.isVisible() ? constants.closeText() : constants.editText());
+            clusterNameEditor.setEnabled(clusterPanel.isVisible());
         });
 
 
         // Storage edit button.
-        storageButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
+        storageButton.addClickHandler(clickEvent -> {
 
-                storageNameEditor.setEnabled(!storageNameEditor.isEnabled());
+            storageNameEditor.setEnabled(!storageNameEditor.isEnabled());
 
-                storageButton.setText(storageNameEditor.isEnabled() ? constants.closeText() : constants.editText());
-            }
+            storageButton.setText(storageNameEditor.isEnabled() ? constants.closeText() : constants.editText());
         });
     }
 
@@ -305,36 +291,19 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
         optimizationForDesktopFormatter(model);
         optimizationCustomFormatter(model);
 
-        model.getCluster().getOptimizationForServer().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                optimizationForServerFormatter(model);
+        model.getCluster().getOptimizationForServer().getEntityChangedEvent().addListener((ev, sender, args) -> optimizationForServerFormatter(model));
+
+        model.getCluster().getOptimizationForDesktop().getEntityChangedEvent().addListener((ev, sender, args) -> optimizationForDesktopFormatter(model));
+
+        model.getCluster().getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (model.getCluster().getOptimizationCustom_IsSelected().getEntity()) {
+                optimizationCustomFormatter(model);
+                optimizationCustomEditor.setVisible(true);
             }
         });
 
-        model.getCluster().getOptimizationForDesktop().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                optimizationForDesktopFormatter(model);
-            }
-        });
-
-        model.getCluster().getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (model.getCluster().getOptimizationCustom_IsSelected().getEntity()) {
-                    optimizationCustomFormatter(model);
-                    optimizationCustomEditor.setVisible(true);
-                }
-            }
-        });
-
-        model.getCluster().getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                cpuThreadsPanel.setVisible(model.getCluster().getVersionSupportsCpuThreads().getEntity());
-            }
-        });
+        model.getCluster().getVersionSupportsCpuThreads().getEntityChangedEvent().addListener((ev, sender, args) ->
+                cpuThreadsPanel.setVisible(model.getCluster().getVersionSupportsCpuThreads().getEntity()));
     }
 
     private void optimizationForDesktopFormatter(ConfigureLocalStorageModel model) {

@@ -37,16 +37,11 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -369,51 +364,17 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                 model.getCancelImportCommand());
         driver.edit(model);
 
-        model.getProblemDescription().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            public void eventRaised(org.ovirt.engine.ui.uicompat.Event<? extends EventArgs> ev, Object object, EventArgs args) {
-                updateErrorAndWarning(model);
-            }
-        });
+        model.getProblemDescription().getEntityChangedEvent().addListener((ev, object, args) -> updateErrorAndWarning(model));
         updateErrorAndWarning(model);
 
         updatePanelsVisibility(model);
-        model.getImportSources().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updatePanelsVisibility(model);
-            }
-        });
+        model.getImportSources().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updatePanelsVisibility(model));
 
-        loadVmsFromExportDomainButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                model.loadVmsFromExportDomain();
-            }
-        });
-        loadVmsFromVmwareButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                model.loadVmsFromVmware();
-            }
-        });
-        loadOvaButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                model.loadVmFromOva();
-            }
-        });
-        loadXenButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                model.loadVmsFromXen();
-            }
-        });
-        loadKvmButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                model.loadVmsFromKvm();
-            }
-        });
+        loadVmsFromExportDomainButton.addClickHandler(event -> model.loadVmsFromExportDomain());
+        loadVmsFromVmwareButton.addClickHandler(event -> model.loadVmsFromVmware());
+        loadOvaButton.addClickHandler(event -> model.loadVmFromOva());
+        loadXenButton.addClickHandler(event -> model.loadVmsFromXen());
+        loadKvmButton.addClickHandler(event -> model.loadVmsFromKvm());
     }
 
     private void updateErrorAndWarning(ImportVmsModel model) {

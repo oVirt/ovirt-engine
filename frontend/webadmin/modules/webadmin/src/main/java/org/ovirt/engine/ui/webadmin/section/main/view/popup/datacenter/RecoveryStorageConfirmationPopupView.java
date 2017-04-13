@@ -15,10 +15,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextCol
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -95,29 +91,21 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         driver.edit(object);
 
         // Bind "Latch.IsAvailable"
-        object.getLatch().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    EntityModel entity = (EntityModel) sender;
-                    if (entity.getIsAvailable()) {
-                        latch.setVisible(true);
-                    }
+        object.getLatch().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                EntityModel entity = (EntityModel) sender;
+                if (entity.getIsAvailable()) {
+                    latch.setVisible(true);
                 }
             }
         });
 
-        object.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
+        object.getItemsChangedEvent().addListener((ev, sender, args) -> {
 
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+            // Message
+            messageLabel.setHTML(constants.dataCenterRecoveryStoragePopupMessageLabel());
 
-                // Message
-                messageLabel.setHTML(constants.dataCenterRecoveryStoragePopupMessageLabel());
-
-                selectNewDSDLabel.setText(constants.dataCenterRecoveryStoragePopupSelectNewDSDLabel());
-            }
+            selectNewDSDLabel.setText(constants.dataCenterRecoveryStoragePopupSelectNewDSDLabel());
         });
     }
 

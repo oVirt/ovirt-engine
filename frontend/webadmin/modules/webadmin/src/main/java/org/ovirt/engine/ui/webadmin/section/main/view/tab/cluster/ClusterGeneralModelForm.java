@@ -57,22 +57,16 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
 
         driver.initialize(this);
 
-        DefaultValueCondition virtServiceNotSupported = new DefaultValueCondition() {
-            @Override
-            public boolean showDefaultValue() {
-                boolean supportsVirtService = getModel().getEntity() != null
-                        && getModel().getEntity().supportsVirtService();
-                return !supportsVirtService;
-            }
+        DefaultValueCondition virtServiceNotSupported = () -> {
+            boolean supportsVirtService = getModel().getEntity() != null
+                    && getModel().getEntity().supportsVirtService();
+            return !supportsVirtService;
         };
 
-        DefaultValueCondition glusterServiceNotSupported = new DefaultValueCondition() {
-            @Override
-            public boolean showDefaultValue() {
-                boolean supportsGlusterService = getModel().getEntity() != null
-                        && getModel().getEntity().supportsGlusterService();
-                return !supportsGlusterService;
-            }
+        DefaultValueCondition glusterServiceNotSupported = () -> {
+            boolean supportsGlusterService = getModel().getEntity() != null
+                    && getModel().getEntity().supportsGlusterService();
+            return !supportsGlusterService;
         };
 
         boolean virtSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly);

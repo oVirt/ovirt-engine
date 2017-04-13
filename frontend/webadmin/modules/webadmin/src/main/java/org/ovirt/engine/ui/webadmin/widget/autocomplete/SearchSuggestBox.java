@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.webadmin.widget.autocomplete;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SuggestItemPartModel;
 import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -20,12 +18,9 @@ public class SearchSuggestBox extends SuggestBox implements HasElementId {
     public SearchSuggestBox(SuggestOracle suggestOracle) {
         super(suggestOracle, new TextBox(), new SearchSuggestionDisplay());
 
-        getTextBox().addFocusHandler(new FocusHandler() {
-            @Override
-            public void onFocus(FocusEvent event) {
-                // Show suggestion list box on focus
-                showSuggestionList();
-            }
+        getTextBox().addFocusHandler(event -> {
+            // Show suggestion list box on focus
+            showSuggestionList();
         });
 
     }

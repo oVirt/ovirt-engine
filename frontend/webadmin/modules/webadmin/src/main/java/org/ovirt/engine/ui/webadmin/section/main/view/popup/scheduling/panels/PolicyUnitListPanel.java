@@ -7,11 +7,8 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
-import com.google.gwt.event.dom.client.DragLeaveHandler;
 import com.google.gwt.event.dom.client.DragOverEvent;
-import com.google.gwt.event.dom.client.DragOverHandler;
 import com.google.gwt.event.dom.client.DropEvent;
-import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class PolicyUnitListPanel extends FlowPanel {
@@ -57,28 +54,16 @@ public class PolicyUnitListPanel extends FlowPanel {
 
     private void registerToDragEvents() {
         // drag over
-        addBitlessDomHandler(new DragOverHandler() {
-
-            @Override
-            public void onDragOver(DragOverEvent event) {
-                // without registering to this event dnd doesn't get triggered
-            }
+        addBitlessDomHandler(event -> {
+            // without registering to this event dnd doesn't get triggered
         }, DragOverEvent.getType());
         // drag leave
-        addBitlessDomHandler(new DragLeaveHandler() {
-
-            @Override
-            public void onDragLeave(DragLeaveEvent event) {
-                // without registering to this event dnd doesn't get triggered
-            }
+        addBitlessDomHandler(event -> {
+            // without registering to this event dnd doesn't get triggered
         }, DragLeaveEvent.getType());
-        addBitlessDomHandler(new DropHandler() {
-
-            @Override
-            public void onDrop(DropEvent event) {
-                event.preventDefault();
-                doDrag(event, true);
-            }
+        addBitlessDomHandler(event -> {
+            event.preventDefault();
+            doDrag(event, true);
         }, DropEvent.getType());
     }
 

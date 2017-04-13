@@ -15,17 +15,12 @@ import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -101,14 +96,11 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<Cluster, Cl
         localize();
         addStyles();
 
-        modelProvider.getModel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                Cluster entity = modelProvider.getModel().getEntity();
+        modelProvider.getModel().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            Cluster entity = modelProvider.getModel().getEntity();
 
-                if (entity != null) {
-                    setMainTabSelectedItem(entity);
-                }
+            if (entity != null) {
+                setMainTabSelectedItem(entity);
             }
         });
 
@@ -122,12 +114,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<Cluster, Cl
 
     private void initManageGlusterSwift() {
         manageGlusterSwiftButton.setCommand(getDetailModel().getManageGlusterSwiftCommand());
-        manageGlusterSwiftButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                manageGlusterSwiftButton.getCommand().execute();
-            }
-        });
+        manageGlusterSwiftButton.addClickHandler(event -> manageGlusterSwiftButton.getCommand().execute());
     }
 
     private void localize() {

@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
@@ -48,18 +47,15 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
         super.onBind();
 
         registerHandler(getTable().getSelectionModel()
-                .addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-                    @Override
-                    public void onSelectionChange(SelectionChangeEvent event) {
-                        // Update main model selection
-                        modelProvider.setSelectedItems(getSelectedItems());
+                .addSelectionChangeHandler(event -> {
+                    // Update main model selection
+                    modelProvider.setSelectedItems(getSelectedItems());
 
-                        // Let others know that the table selection has changed
-                        fireTableSelectionChangeEvent();
+                    // Let others know that the table selection has changed
+                    fireTableSelectionChangeEvent();
 
-                        // Reveal the appropriate place based on selection
-                        handlePlaceTransition();
-                    }
+                    // Reveal the appropriate place based on selection
+                    handlePlaceTransition();
                 }));
     }
 

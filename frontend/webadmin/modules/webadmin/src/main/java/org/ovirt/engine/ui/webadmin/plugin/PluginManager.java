@@ -10,12 +10,10 @@ import java.util.logging.Logger;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.webadmin.plugin.api.ApiOptions;
 import org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions;
-import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -53,12 +51,7 @@ public class PluginManager implements HasHandlers {
 
     }
 
-    private static final PluginInvocationCondition INVOKE_ANY_PLUGIN = new PluginInvocationCondition() {
-        @Override
-        public boolean canInvoke(Plugin plugin) {
-            return true;
-        }
-    };
+    private static final PluginInvocationCondition INVOKE_ANY_PLUGIN = plugin -> true;
 
     private static final Logger logger = Logger.getLogger(PluginManager.class.getName());
 
@@ -139,12 +132,7 @@ public class PluginManager implements HasHandlers {
             }
         }
 
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                maybeInvokePluginsReadyCallback();
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> maybeInvokePluginsReadyCallback());
     }
 
     /**
@@ -246,12 +234,9 @@ public class PluginManager implements HasHandlers {
 
         for (final Plugin plugin : getPlugins()) {
             if (!plugin.isInState(PluginState.IN_USE)) {
-                scheduleFunctionCommand(plugin.getName(), new Command() {
-                    @Override
-                    public void execute() {
-                        if (plugin.isInState(PluginState.IN_USE) && condition.canInvoke(plugin)) {
-                            invokePlugin(plugin, functionName, functionArgs);
-                        }
+                scheduleFunctionCommand(plugin.getName(), () -> {
+                    if (plugin.isInState(PluginState.IN_USE) && condition.canInvoke(plugin)) {
+                        invokePlugin(plugin, functionName, functionArgs);
                     }
                 });
             }
@@ -275,17 +260,14 @@ public class PluginManager implements HasHandlers {
         final String pluginName = plugin.getName();
         logger.info("Invoking event handler function [" + functionName + "] for plugin [" + pluginName + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        return plugin.getEventHandlerFunction(functionName).invoke(functionArgs, new ErrorHandler() {
-            @Override
-            public void onError(String message) {
-                logger.severe("Exception caught while invoking event handler function [" + functionName //$NON-NLS-1$
-                        + "] for plugin [" + pluginName + "]: " + message); //$NON-NLS-1$ //$NON-NLS-2$
+        return plugin.getEventHandlerFunction(functionName).invoke(functionArgs, message -> {
+            logger.severe("Exception caught while invoking event handler function [" + functionName //$NON-NLS-1$
+                    + "] for plugin [" + pluginName + "]: " + message); //$NON-NLS-1$ //$NON-NLS-2$
 
-                // Remove the given plugin from service
-                Document.get().getBody().removeChild(plugin.getIFrameElement());
-                plugin.markAsFailed();
-                logger.warning("Plugin [" + pluginName + "] removed from service due to failure"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
+            // Remove the given plugin from service
+            Document.get().getBody().removeChild(plugin.getIFrameElement());
+            plugin.markAsFailed();
+            logger.warning("Plugin [" + pluginName + "] removed from service due to failure"); //$NON-NLS-1$ //$NON-NLS-2$
         });
     }
 

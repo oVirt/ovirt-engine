@@ -45,9 +45,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
@@ -56,12 +53,9 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -73,8 +67,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.view.client.NoSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 
@@ -156,13 +148,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     private void initSubTabLayoutPanel() {
         if (subTabLayoutPanel == null) {
             subTabLayoutPanel = new TabLayoutPanel(CommonApplicationTemplates.TAB_BAR_HEIGHT, Unit.PX);
-            subTabLayoutPanel.addSelectionHandler(new SelectionHandler<Integer>() {
-
-                @Override
-                public void onSelection(SelectionEvent<Integer> event) {
-                    subTabLayoutPanelSelectionChanged(event.getSelectedItem());
-                }
-            });
+            subTabLayoutPanel.addSelectionHandler(event -> subTabLayoutPanelSelectionChanged(event.getSelectedItem()));
 
             initGeneralSubTabView();
 
@@ -275,14 +261,11 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         table.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
 
         AbstractCheckboxColumn<Object> collapseSnapshotsColumn =
-                new AbstractCheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
-            @Override
-            public void update(int index, Object model, Boolean value) {
-                        ((ImportVmData) model).getCollapseSnapshots().setEntity(value);
-                        customSelectionCellFormatType.setEnabled(value);
-                        diskTable.asEditor().edit(importModel.getImportDiskListModel());
-                    }
-                }) {
+                new AbstractCheckboxColumn<Object>((index, model, value) -> {
+                            ((ImportVmData) model).getCollapseSnapshots().setEntity(value);
+                            customSelectionCellFormatType.setEnabled(value);
+                            diskTable.asEditor().edit(importModel.getImportDiskListModel());
+                        }) {
             @Override
             public Boolean getValue(Object model) {
                 return ((ImportVmData) model).getCollapseSnapshots().getEntity();
@@ -308,12 +291,9 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         table.addColumn(collapseSnapshotsColumn, constants.collapseSnapshots(), "10px"); //$NON-NLS-1$
 
-        AbstractCheckboxColumn<Object> cloneVMColumn = new AbstractCheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
-            @Override
-            public void update(int index, Object model, Boolean value) {
-                ((ImportVmData) model).getClone().setEntity(value);
-                table.asEditor().edit(importModel);
-            }
+        AbstractCheckboxColumn<Object> cloneVMColumn = new AbstractCheckboxColumn<Object>((index, model, value) -> {
+            ((ImportVmData) model).getClone().setEntity(value);
+            table.asEditor().edit(importModel);
         }) {
             @Override
             public Boolean getValue(Object model) {
@@ -388,13 +368,10 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         table.addColumn(isObjectInSystemColumn, constants.vmInSetup(), "60px"); //$NON-NLS-1$
 
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                ImportVmData selectedObject =
-                        ((SingleSelectionModel<ImportVmData>) event.getSource()).getSelectedObject();
-                customSelectionCellFormatType.setEnabled(selectedObject.getCollapseSnapshots().getEntity());
-            }
+        table.getSelectionModel().addSelectionChangeHandler(event -> {
+            ImportVmData selectedObject =
+                    ((SingleSelectionModel<ImportVmData>) event.getSource()).getSelectedObject();
+            customSelectionCellFormatType.setEnabled(selectedObject.getCollapseSnapshots().getEntity());
         });
 
         ScrollPanel sp = new ScrollPanel();
@@ -542,20 +519,17 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             }
         };
 
-        allocationColumn.setFieldUpdater(new FieldUpdater<DiskImage, String>() {
-            @Override
-            public void update(int index, DiskImage disk, String value) {
-                VolumeType tempVolumeType = VolumeType.Sparse;
-                if (value.equals(constants.thinAllocation())) {
-                    tempVolumeType = VolumeType.Sparse;
-                } else if (value.equals(constants.preallocatedAllocation())) {
-                    tempVolumeType = VolumeType.Preallocated;
-                }
-                ImportDiskData importData =
-                        importModel.getDiskImportData(disk.getId());
-                if (importData != null) {
-                    importData.setSelectedVolumeType(tempVolumeType);
-                }
+        allocationColumn.setFieldUpdater((index, disk, value) -> {
+            VolumeType tempVolumeType = VolumeType.Sparse;
+            if (value.equals(constants.thinAllocation())) {
+                tempVolumeType = VolumeType.Sparse;
+            } else if (value.equals(constants.preallocatedAllocation())) {
+                tempVolumeType = VolumeType.Preallocated;
+            }
+            ImportDiskData importData =
+                    importModel.getDiskImportData(disk.getId());
+            if (importData != null) {
+                importData.setSelectedVolumeType(tempVolumeType);
             }
         });
 
@@ -596,13 +570,10 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             }
         };
 
-        storageDomainsColumn.setFieldUpdater(new FieldUpdater<DiskImage, String>() {
-            @Override
-            public void update(int index, DiskImage disk, String value) {
-                String storageDomainName = value.substring(0, value.lastIndexOf(" (")); //$NON-NLS-1$
-                importModel.getDiskImportData(disk.getId()).setSelectedStorageDomainString(storageDomainName);
-                diskTable.asEditor().edit(importModel.getImportDiskListModel());
-            }
+        storageDomainsColumn.setFieldUpdater((index, disk, value) -> {
+            String storageDomainName = value.substring(0, value.lastIndexOf(" (")); //$NON-NLS-1$
+            importModel.getDiskImportData(disk.getId()).setSelectedStorageDomainString(storageDomainName);
+            diskTable.asEditor().edit(importModel.getImportDiskListModel());
         });
 
         diskTable.addColumn(storageDomainsColumn, constants.storageDomainDisk(), "180px"); //$NON-NLS-1$
@@ -650,12 +621,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             }
         };
 
-        quotaColumn.setFieldUpdater(new FieldUpdater<DiskImage, String>() {
-            @Override
-            public void update(int index, DiskImage disk, String value) {
-                importModel.getDiskImportData(disk.getId()).setSelectedQuotaString(value);
-            }
-        });
+        quotaColumn.setFieldUpdater((index, disk, value) -> importModel.getDiskImportData(disk.getId()).setSelectedQuotaString(value));
         diskTable.addColumn(quotaColumn, constants.quota(), "100px"); //$NON-NLS-1$
     }
 
@@ -680,42 +646,34 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
         addStorageDomainsColumn();
 
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (ImportVmFromExportDomainModel.ON_DISK_LOAD.equals(args.propertyName)) {
-                    addStorageQuotaColumn();
-                    table.redraw();
-                    diskTable.asEditor().edit(object.getImportDiskListModel());
-                } else if (args.propertyName.equals("Message")) { //$NON-NLS-1$
-                    message.setText(object.getMessage());
-                    message.setVisible(StringUtils.isNotEmpty(object.getMessage()));
-                }
-                else if (args.propertyName.equals("InvalidVm")) { //$NON-NLS-1$
-                    table.redraw();
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (ImportVmFromExportDomainModel.ON_DISK_LOAD.equals(args.propertyName)) {
+                addStorageQuotaColumn();
+                table.redraw();
+                diskTable.asEditor().edit(object.getImportDiskListModel());
+            } else if (args.propertyName.equals("Message")) { //$NON-NLS-1$
+                message.setText(object.getMessage());
+                message.setVisible(StringUtils.isNotEmpty(object.getMessage()));
+            }
+            else if (args.propertyName.equals("InvalidVm")) { //$NON-NLS-1$
+                table.redraw();
             }
         });
 
         SingleSelectionModel<Object> selectionModel =
                 (SingleSelectionModel<Object>) table.getSelectionModel();
-        selectionModel.addSelectionChangeHandler(new Handler() {
-
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                if (!firstSelection) {
-                    object.setActiveDetailModel((HasEntity<?>) object.getDetailModels().get(0));
-                    setGeneralViewSelection(((ImportEntityData<?>) object.getSelectedItem()).getEntity());
-                    firstSelection = true;
-                }
-                splitLayoutPanel.clear();
-                splitLayoutPanel.addSouth(subTabLayoutPanel, 230);
-                ScrollPanel sp = new ScrollPanel();
-                sp.add(table);
-                splitLayoutPanel.add(sp);
-                table.getElement().getStyle().setPosition(Position.RELATIVE);
+        selectionModel.addSelectionChangeHandler(event -> {
+            if (!firstSelection) {
+                object.setActiveDetailModel((HasEntity<?>) object.getDetailModels().get(0));
+                setGeneralViewSelection(((ImportEntityData<?>) object.getSelectedItem()).getEntity());
+                firstSelection = true;
             }
-
+            splitLayoutPanel.clear();
+            splitLayoutPanel.addSouth(subTabLayoutPanel, 230);
+            ScrollPanel sp = new ScrollPanel();
+            sp.add(table);
+            splitLayoutPanel.add(sp);
+            table.getElement().getStyle().setPosition(Position.RELATIVE);
         });
 
         initSubTabLayoutPanel();

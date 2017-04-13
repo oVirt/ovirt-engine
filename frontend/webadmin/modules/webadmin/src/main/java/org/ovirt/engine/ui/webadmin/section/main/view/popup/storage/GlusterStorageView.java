@@ -13,9 +13,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.storage.GlusterStorageModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
@@ -116,17 +113,14 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
         driver.edit(object);
         glusterVolumesEditor.asEditor().setValue(object.getGlusterVolumes().getSelectedItem());
         pathExampleLabel.setVisible(object.getPath().getIsAvailable() && object.getPath().getIsChangable());
-        glusterStorageModel.getLinkGlusterVolume().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                // Editor, needs the example
-                boolean showEditor = !glusterStorageModel.getLinkGlusterVolume().getEntity();
-                pathEditorRow.setVisible(showEditor);
-                pathExampleLabel.setVisible(showEditor);
+        glusterStorageModel.getLinkGlusterVolume().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            // Editor, needs the example
+            boolean showEditor = !glusterStorageModel.getLinkGlusterVolume().getEntity();
+            pathEditorRow.setVisible(showEditor);
+            pathExampleLabel.setVisible(showEditor);
 
-                // List box, shouldn't have an example since you can only select one.
-                glusterVolumesRow.setVisible(!showEditor);
-            }
+            // List box, shouldn't have an example since you can only select one.
+            glusterVolumesRow.setVisible(!showEditor);
         });
 
     }

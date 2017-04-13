@@ -18,9 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmTemplateNameRenderer;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -204,15 +201,11 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         applicationsTable.setWidth("100%"); //$NON-NLS-1$
         applicationsTable.setRowData(new ArrayList<String>());
 
-        getDetailModel().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getDetailModel().getAppListModel().getItems() != null) {
-                    applicationsTable.setRowData(new ArrayList<>(getDetailModel().getAppListModel().getItems()));
-                } else {
-                    applicationsTable.setRowData(new ArrayList<String>());
-                }
+        getDetailModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (getDetailModel().getAppListModel().getItems() != null) {
+                applicationsTable.setRowData(new ArrayList<>(getDetailModel().getAppListModel().getItems()));
+            } else {
+                applicationsTable.setRowData(new ArrayList<String>());
             }
         });
     }

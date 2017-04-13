@@ -28,7 +28,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -106,12 +105,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImp
             }
         }, constants.nameNetworkHeader());
 
-        importedNetworks.addColumn(new AbstractEditTextColumn<ExternalNetwork>(new FieldUpdater<ExternalNetwork, String>() {
-            @Override
-            public void update(int index, ExternalNetwork model, String value) {
-                model.setDisplayName(value);
-            }
-        }) {
+        importedNetworks.addColumn(new AbstractEditTextColumn<ExternalNetwork>((index, model, value) -> model.setDisplayName(value)) {
             @Override
             public String getValue(ExternalNetwork model) {
                 return model.getDisplayName();
@@ -179,12 +173,9 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImp
                     }
                 };
 
-        importedNetworks.addColumn(new AbstractCheckboxColumn<ExternalNetwork>(new FieldUpdater<ExternalNetwork, Boolean>() {
-            @Override
-            public void update(int index, ExternalNetwork model, Boolean value) {
-                model.setPublicUse(value);
-                refreshImportedNetworks();
-            }
+        importedNetworks.addColumn(new AbstractCheckboxColumn<ExternalNetwork>((index, model, value) -> {
+            model.setPublicUse(value);
+            refreshImportedNetworks();
         }) {
             @Override
             public Boolean getValue(ExternalNetwork model) {

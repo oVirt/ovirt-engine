@@ -10,9 +10,6 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.EventNotificationModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
@@ -21,8 +18,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTree;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -110,19 +105,9 @@ public class ManageEventsPopupView extends AbstractModelBoundTreePopupView<Event
     }
 
     private void initExpandButtons() {
-        expandAllButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                expandTree();
-            }
-        });
+        expandAllButton.addClickHandler(event -> expandTree());
 
-        collapseAllButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                collapseTree();
-            }
-        });
+        collapseAllButton.addClickHandler(event -> collapseTree());
     }
 
     @Override
@@ -130,14 +115,11 @@ public class ManageEventsPopupView extends AbstractModelBoundTreePopupView<Event
         driver.edit(object);
 
         // Listen to Properties
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                EventNotificationModel model = (EventNotificationModel) sender;
-                String propertyName = args.propertyName;
-                if ("EventGroupModels".equals(propertyName)) { //$NON-NLS-1$
-                    updateTree(model);
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            EventNotificationModel model = (EventNotificationModel) sender;
+            String propertyName = args.propertyName;
+            if ("EventGroupModels".equals(propertyName)) { //$NON-NLS-1$
+                updateTree(model);
             }
         });
     }

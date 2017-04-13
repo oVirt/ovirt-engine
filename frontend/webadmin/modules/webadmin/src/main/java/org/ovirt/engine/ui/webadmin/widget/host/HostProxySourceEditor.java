@@ -15,8 +15,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceProxyModelProvider;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -66,18 +64,14 @@ public class HostProxySourceEditor extends AddRemoveRowWidget<ListModel<FencePro
         if (addClickHandlerRegistration != null) {
             addClickHandlerRegistration.removeHandler();
         }
-        addClickHandlerRegistration = newProxyButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                if (!items.isEmpty()) {
-                    Pair<FenceProxyModel, HostProxySourceWidget> modelWidgetPair = items.get(items.size() - 1);
-                    getEntry(modelWidgetPair.getSecond()).removeLastButton();
-                }
-                Pair<FenceProxyModel, HostProxySourceWidget> item = addGhostEntry();
-                onAdd(item.getFirst(), item.getSecond());
-                item.getFirst().edit(listModel);
+        addClickHandlerRegistration = newProxyButton.addClickHandler(event -> {
+            if (!items.isEmpty()) {
+                Pair<FenceProxyModel, HostProxySourceWidget> modelWidgetPair = items.get(items.size() - 1);
+                getEntry(modelWidgetPair.getSecond()).removeLastButton();
             }
+            Pair<FenceProxyModel, HostProxySourceWidget> item = addGhostEntry();
+            onAdd(item.getFirst(), item.getSecond());
+            item.getFirst().edit(listModel);
         });
     }
 
@@ -85,21 +79,13 @@ public class HostProxySourceEditor extends AddRemoveRowWidget<ListModel<FencePro
     protected HostProxySourceWidget createWidget(FenceProxyModel value) {
         modelProvider.initializeModel(value);
         final HostProxySourceWidget widget = new HostProxySourceWidget();
-        widget.addUpClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                proxyUp(widget.getModel());
-                updateButtonState();
-            }
+        widget.addUpClickHandler(event -> {
+            proxyUp(widget.getModel());
+            updateButtonState();
         });
-        widget.addDownClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                proxyDown(widget.getModel());
-                updateButtonState();
-            }
+        widget.addDownClickHandler(event -> {
+            proxyDown(widget.getModel());
+            updateButtonState();
         });
         widget.edit(value);
         return widget;

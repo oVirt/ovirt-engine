@@ -46,9 +46,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExternalProviderModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -57,12 +54,9 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.Impor
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
@@ -76,8 +70,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.view.client.NoSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 
@@ -193,12 +185,9 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     protected void initMainTable() {
         this.table = new ListModelObjectCellTable<>();
 
-        AbstractCheckboxColumn<ImportVmData> cloneVMColumn = new AbstractCheckboxColumn<ImportVmData>(new FieldUpdater<ImportVmData, Boolean>() {
-            @Override
-            public void update(int index, ImportVmData model, Boolean value) {
-                model.getClone().setEntity(value);
-                table.asEditor().edit(importModel);
-            }
+        AbstractCheckboxColumn<ImportVmData> cloneVMColumn = new AbstractCheckboxColumn<ImportVmData>((index, model, value) -> {
+            model.getClone().setEntity(value);
+            table.asEditor().edit(importModel);
         }) {
             @Override
             public Boolean getValue(ImportVmData model) {
@@ -328,38 +317,30 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         this.importModel = importModel;
         table.asEditor().edit(importModel);
 
-        importModel.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName.equals(ImportVmFromExternalProviderModel.ON_DISK_LOAD)) {
-                    table.asEditor().edit(table.asEditor().flush());
-                } else if (args.propertyName.equals("Message")) { ////$NON-NLS-1$
-                    message.setText(importModel.getMessage());
-                } else if (args.propertyName.equals("WinWithoutVirtioMessage")) { ////$NON-NLS-1$
-                    winWithoutVirtioMessage.setText(importModel.getWinWithoutVirtioMessage());
-                }
+        importModel.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args.propertyName.equals(ImportVmFromExternalProviderModel.ON_DISK_LOAD)) {
+                table.asEditor().edit(table.asEditor().flush());
+            } else if (args.propertyName.equals("Message")) { ////$NON-NLS-1$
+                message.setText(importModel.getMessage());
+            } else if (args.propertyName.equals("WinWithoutVirtioMessage")) { ////$NON-NLS-1$
+                winWithoutVirtioMessage.setText(importModel.getWinWithoutVirtioMessage());
             }
         });
 
         SingleSelectionModel<Object> selectionModel =
                 (SingleSelectionModel<Object>) table.getSelectionModel();
-        selectionModel.addSelectionChangeHandler(new Handler() {
-
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                if (!firstSelection) {
-                    importModel.setActiveDetailModel((HasEntity<?>) importModel.getDetailModels().get(0));
-                    setGeneralViewSelection(((ImportEntityData) importModel.getSelectedItem()).getEntity());
-                    firstSelection = true;
-                }
-                splitLayoutPanel.clear();
-                splitLayoutPanel.addSouth(subTabLayoutPanel, 230);
-                ScrollPanel sp = new ScrollPanel();
-                sp.add(table);
-                splitLayoutPanel.add(sp);
-                table.getElement().getStyle().setPosition(Position.RELATIVE);
+        selectionModel.addSelectionChangeHandler(event -> {
+            if (!firstSelection) {
+                importModel.setActiveDetailModel((HasEntity<?>) importModel.getDetailModels().get(0));
+                setGeneralViewSelection(((ImportEntityData) importModel.getSelectedItem()).getEntity());
+                firstSelection = true;
             }
-
+            splitLayoutPanel.clear();
+            splitLayoutPanel.addSouth(subTabLayoutPanel, 230);
+            ScrollPanel sp = new ScrollPanel();
+            sp.add(table);
+            splitLayoutPanel.add(sp);
+            table.getElement().getStyle().setPosition(Position.RELATIVE);
         });
 
         initSubTabLayoutPanel();
@@ -387,12 +368,9 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
             }
         };
 
-        networkColumn.setFieldUpdater(new FieldUpdater<VmNetworkInterface, String>() {
-            @Override
-            public void update(int index, VmNetworkInterface iface, String value) {
-                importModel.getNetworkImportData(iface).setSelectedNetworkName(value);
-                nicTable.asEditor().edit(importModel.getImportNetworkInterfaceListModel());
-            }
+        networkColumn.setFieldUpdater((index, iface, value) -> {
+            importModel.getNetworkImportData(iface).setSelectedNetworkName(value);
+            nicTable.asEditor().edit(importModel.getImportNetworkInterfaceListModel());
         });
 
         nicTable.addColumn(networkColumn, constants.networkNameInterface(), "150px"); //$NON-NLS-1$
@@ -419,12 +397,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
             }
         };
 
-        profileColumn.setFieldUpdater(new FieldUpdater<VmNetworkInterface, String>() {
-            @Override
-            public void update(int index, VmNetworkInterface iface, String value) {
-                importModel.getNetworkImportData(iface).setSelectedNetworkProfile(value);
-            }
-        });
+        profileColumn.setFieldUpdater((index, iface, value) -> importModel.getNetworkImportData(iface).setSelectedNetworkProfile(value));
 
         nicTable.addColumn(profileColumn, constants.profileNameInterface(), "150px"); //$NON-NLS-1$
     }
@@ -436,13 +409,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     private void initSubTabLayoutPanel() {
         if (subTabLayoutPanel == null) {
             subTabLayoutPanel = new TabLayoutPanel(CommonApplicationTemplates.TAB_BAR_HEIGHT, Unit.PX);
-            subTabLayoutPanel.addSelectionHandler(new SelectionHandler<Integer>() {
-
-                @Override
-                public void onSelection(SelectionEvent<Integer> event) {
-                    subTabLayoutPanelSelectionChanged(event.getSelectedItem());
-                }
-            });
+            subTabLayoutPanel.addSelectionHandler(event -> subTabLayoutPanelSelectionChanged(event.getSelectedItem()));
 
             initGeneralSubTabView();
 

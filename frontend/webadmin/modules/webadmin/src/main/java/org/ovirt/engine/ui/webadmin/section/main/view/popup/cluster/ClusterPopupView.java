@@ -49,10 +49,6 @@ import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -745,64 +741,35 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         optimizationForDesktopFormatter(object);
         optimizationCustomFormatter(object);
 
-        object.getOptimizationForServer().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                optimizationForServerFormatter(object);
+        object.getOptimizationForServer().getEntityChangedEvent().addListener((ev, sender, args) -> optimizationForServerFormatter(object));
+
+        object.getOptimizationForDesktop().getEntityChangedEvent().addListener((ev, sender, args) -> optimizationForDesktopFormatter(object));
+
+        object.getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (object.getOptimizationCustom_IsSelected().getEntity()) {
+                optimizationCustomFormatter(object);
+                optimizationCustomEditor.setVisible(true);
             }
         });
 
-        object.getOptimizationForDesktop().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                optimizationForDesktopFormatter(object);
-            }
+        object.getDataCenter().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            migrationTab.setVisible(object.isMigrationTabAvailable());
+            applyModeCustomizations();
         });
 
-        object.getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (object.getOptimizationCustom_IsSelected().getEntity()) {
-                    optimizationCustomFormatter(object);
-                    optimizationCustomEditor.setVisible(true);
-                }
-            }
-        });
+        object.getEnableOvirtService().getEntityChangedEvent().addListener((ev, sender, args) -> updateGlusterFencingPolicyVisibility(object));
 
-        object.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                migrationTab.setVisible(object.isMigrationTabAvailable());
-                applyModeCustomizations();
-            }
-        });
-
-        object.getEnableOvirtService().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateGlusterFencingPolicyVisibility(object);
-            }
-        });
-
-        object.getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
-                        && object.getIsNew());
-                updateGlusterFencingPolicyVisibility(object);
-            }
-
+        object.getEnableGlusterService().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
+                    && object.getIsNew());
+            updateGlusterFencingPolicyVisibility(object);
         });
         updateGlusterFencingPolicyVisibility(object);
         importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
                 && object.getIsNew());
 
-        object.getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                cpuThreadsRow.setVisible(object.getVersionSupportsCpuThreads().getEntity());
-            }
-        });
+        object.getVersionSupportsCpuThreads().getEntityChangedEvent().addListener((ev, sender, args) ->
+                cpuThreadsRow.setVisible(object.getVersionSupportsCpuThreads().getEntity()));
 
         schedulerOptimizationInfoIcon.setText(SafeHtmlUtils.fromTrustedString(
                 templates.italicText(object.getSchedulerOptimizationInfoMessage()).asString()
@@ -812,38 +779,28 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                         .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
         allowOverbookingRow.setVisible(allowOverbookingEditor.isVisible());
 
-        object.getVersion().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (object.getVersion().getSelectedItem() != null) {
-                    Version clusterVersion = object.getVersion().getSelectedItem();
-                    migrationPolicyDetails.setVisible(AsyncDataProvider.getInstance().isMigrationPoliciesSupported(clusterVersion));
-                }
+        object.getVersion().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (object.getVersion().getSelectedItem() != null) {
+                Version clusterVersion = object.getVersion().getSelectedItem();
+                migrationPolicyDetails.setVisible(AsyncDataProvider.getInstance().isMigrationPoliciesSupported(clusterVersion));
             }
         });
 
-        object.getAdditionalClusterFeatures().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                List<List<AdditionalFeature>> items = (List<List<AdditionalFeature>>) object.getAdditionalClusterFeatures().getItems();
-                // Hide the fields if there is no feature to show
-                additionalFeaturesExpander.setVisible(!items.get(0).isEmpty());
-                additionalFeaturesExpanderContent.setVisible(!items.get(0).isEmpty());
-            }
+        object.getAdditionalClusterFeatures().getItemsChangedEvent().addListener((ev, sender, args) -> {
+            List<List<AdditionalFeature>> items = (List<List<AdditionalFeature>>) object.getAdditionalClusterFeatures().getItems();
+            // Hide the fields if there is no feature to show
+            additionalFeaturesExpander.setVisible(!items.get(0).isEmpty());
+            additionalFeaturesExpanderContent.setVisible(!items.get(0).isEmpty());
         });
 
-        object.getMigrationPolicies().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                MigrationPolicy selectedPolicy = object.getMigrationPolicies().getSelectedItem();
-                if (selectedPolicy != null) {
-                    migrationPolicyDetails.setHTML(
-                            templates.migrationPolicyDetails(selectedPolicy.getName(), selectedPolicy.getDescription())
-                    );
-                } else {
-                    migrationPolicyDetails.setText(""); //$NON-NLS-1$
-                }
+        object.getMigrationPolicies().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            MigrationPolicy selectedPolicy = object.getMigrationPolicies().getSelectedItem();
+            if (selectedPolicy != null) {
+                migrationPolicyDetails.setHTML(
+                        templates.migrationPolicyDetails(selectedPolicy.getName(), selectedPolicy.getDescription())
+                );
+            } else {
+                migrationPolicyDetails.setText(""); //$NON-NLS-1$
             }
         });
     }

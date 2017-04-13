@@ -13,23 +13,18 @@ import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionWithInhe
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CpuProfilePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<CpuProfile, CpuProfileListModel> {
 
@@ -142,37 +137,23 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
         });
 
         // Add selection listener
-        getModel().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updatePermissionPanel();
-            }
-        });
+        getModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updatePermissionPanel());
 
-        getModel().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updatePermissionPanel();
-            }
-        });
+        getModel().getItemsChangedEvent().addListener((ev, sender, args) -> updatePermissionPanel());
     }
 
     private void updatePermissionPanel() {
         final CpuProfile cpuProfile = getModel().getSelectedItem();
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-            @Override
-            public void execute() {
-                if (permissionPanelVisible && cpuProfile == null) {
-                    splitLayoutPanel.clear();
-                    splitLayoutPanel.add(tableContainer);
-                    permissionPanelVisible = false;
-                } else if (!permissionPanelVisible && cpuProfile != null) {
-                    splitLayoutPanel.clear();
-                    splitLayoutPanel.addEast(permissionContainer, 600);
-                    splitLayoutPanel.add(tableContainer);
-                    permissionPanelVisible = true;
-                }
+        Scheduler.get().scheduleDeferred(() -> {
+            if (permissionPanelVisible && cpuProfile == null) {
+                splitLayoutPanel.clear();
+                splitLayoutPanel.add(tableContainer);
+                permissionPanelVisible = false;
+            } else if (!permissionPanelVisible && cpuProfile != null) {
+                splitLayoutPanel.clear();
+                splitLayoutPanel.addEast(permissionContainer, 600);
+                splitLayoutPanel.add(tableContainer);
+                permissionPanelVisible = true;
             }
         });
     }
@@ -180,11 +161,6 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
     @Override
     public void addModelListeners() {
         final SimpleActionTable<Permission> table = permissionListModelTable.getTable();
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                cpuProfilePermissionModelProvider.setSelectedItems(table.getSelectedItems());
-            }
-        });
+        table.getSelectionModel().addSelectionChangeHandler(event -> cpuProfilePermissionModelProvider.setSelectedItems(table.getSelectedItems()));
     }
 }

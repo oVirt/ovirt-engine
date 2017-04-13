@@ -14,9 +14,6 @@ import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -105,29 +102,18 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
 
     private void addModelListeners(final SystemTreeModelProvider modelProvider) {
         final SystemTreeModel treeModel = modelProvider.getModel();
-        treeModel.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (modelProvider.getModel().getSelectedItem() == null) {
-                    expandTree(getDataDisplayWidget().getRootTreeNode(), ITEM_LEVEL);
-                } else {
-                    expandPathUsingMap(getDataDisplayWidget().getRootTreeNode(), nodeStateMap);
-                }
+        treeModel.getItemsChangedEvent().addListener((ev, sender, args) -> {
+            if (modelProvider.getModel().getSelectedItem() == null) {
+                expandTree(getDataDisplayWidget().getRootTreeNode(), ITEM_LEVEL);
+            } else {
+                expandPathUsingMap(getDataDisplayWidget().getRootTreeNode(), nodeStateMap);
             }
         });
-        treeModel.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                expandPath(modelProvider.getSelectionModel().getSelectedObject());
-            }
-        });
-        treeModel.getBeforeItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                //Empty the state map so we can capture the new state.
-                nodeStateMap.clear();
-                getNodeOpenMap(getDataDisplayWidget().getRootTreeNode(), nodeStateMap );
-            }
+        treeModel.getSelectedItemChangedEvent().addListener((ev, sender, args) -> expandPath(modelProvider.getSelectionModel().getSelectedObject()));
+        treeModel.getBeforeItemsChangedEvent().addListener((ev, sender, args) -> {
+            //Empty the state map so we can capture the new state.
+            nodeStateMap.clear();
+            getNodeOpenMap(getDataDisplayWidget().getRootTreeNode(), nodeStateMap );
         });
     }
 

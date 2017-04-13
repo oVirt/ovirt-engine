@@ -20,18 +20,13 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHostsPopupPresenterWidget;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 public class MultipleHostsPopupView extends AbstractModelBoundPopupView<MultipleHostsModel> implements MultipleHostsPopupPresenterWidget.ViewDef {
@@ -112,13 +107,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
         };
         hostsTable.addColumn(nameColumn, constants.nameHost(), "50px"); //$NON-NLS-1$
 
-        nameColumn.setFieldUpdater(new FieldUpdater<EntityModel, String>() {
-
-            @Override
-            public void update(int index, EntityModel object, String value) {
-                ((HostDetailModel) object.getEntity()).setName(value);
-            }
-        });
+        nameColumn.setFieldUpdater((index, object, value) -> ((HostDetailModel) object.getEntity()).setName(value));
 
         hostsTable.addColumn(new AbstractEntityModelTextColumn<HostDetailModel>() {
             @Override
@@ -135,13 +124,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
             }
         };
         hostsTable.addColumn(passwordColumn, constants.hostPopupPasswordLabel(), "100px"); //$NON-NLS-1$
-        passwordColumn.setFieldUpdater(new FieldUpdater<EntityModel, String>() {
-
-            @Override
-            public void update(int index, EntityModel object, String value) {
-                ((HostDetailModel) object.getEntity()).setPassword(value);
-            }
-        });
+        passwordColumn.setFieldUpdater((index, object, value) -> ((HostDetailModel) object.getEntity()).setPassword(value));
 
         hostsTable.addColumn(new AbstractEntityModelTextColumn<HostDetailModel>() {
             @Override
@@ -153,13 +136,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
     }
 
     private void initButtons() {
-        applyPasswordButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                applyPasswordButton.getCommand().execute();
-            }
-        });
+        applyPasswordButton.addClickHandler(event -> applyPasswordButton.getCommand().execute());
     }
 
     private void localize() {
@@ -175,12 +152,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
         driver.edit(object);
         applyPasswordButton.setCommand(object.getApplyPasswordCommand());
         configureFirewallEditor.asCheckBox().setChecked(true);
-        configureFirewallEditor.asCheckBox().addClickListener(new ClickListener() {
-            @Override
-            public void onClick(Widget sender) {
-                object.setConfigureFirewall(configureFirewallEditor.asCheckBox().isChecked());
-            }
-        });
+        configureFirewallEditor.asCheckBox().addClickListener(sender -> object.setConfigureFirewall(configureFirewallEditor.asCheckBox().isChecked()));
     }
 
     @Override

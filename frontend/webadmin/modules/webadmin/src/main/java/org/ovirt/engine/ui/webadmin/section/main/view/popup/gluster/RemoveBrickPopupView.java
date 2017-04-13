@@ -11,10 +11,6 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.RemoveBrickModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -84,34 +80,23 @@ public class RemoveBrickPopupView extends AbstractModelBoundPopupView<RemoveBric
     public void edit(final RemoveBrickModel object) {
         driver.edit(object);
 
-        object.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ArrayList<String> items = (ArrayList<String>) object.getItems();
+        object.getItemsChangedEvent().addListener((ev, sender, args) -> {
+            ArrayList<String> items = (ArrayList<String>) object.getItems();
 
-                for (String item : items) {
-                    itemsAlert.add(new Label(getItemTextFormatted(item)));
-                }
+            for (String item : items) {
+                itemsAlert.add(new Label(getItemTextFormatted(item)));
             }
         });
 
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
 
-                if ("IsMigrationSupported".equals(propName)) { //$NON-NLS-1$
-                    migratePanel.setVisible(object.isMigrationSupported());
-                }
+            if ("IsMigrationSupported".equals(propName)) { //$NON-NLS-1$
+                migratePanel.setVisible(object.isMigrationSupported());
             }
         });
 
-        object.getMigrateData().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                warning.setVisible(!object.getMigrateData().getEntity());
-            }
-        });
+        object.getMigrateData().getEntityChangedEvent().addListener((ev, sender, args) -> warning.setVisible(!object.getMigrateData().getEntity()));
     }
 
     private String getItemTextFormatted(String itemText) {

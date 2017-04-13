@@ -8,13 +8,10 @@ import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox.Suggest
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox.SuggestionsTableResources;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.Element;
@@ -78,43 +75,32 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
         suggestionsTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
         // Add enter key press event handler
-        suggestionsTable.addDomHandler(new KeyDownHandler() {
-            @Override
-            public void onKeyDown(KeyDownEvent event) {
-                if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-                    onSelect();
-                }
-
-                if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-                    hideSuggestions();
-                }
-
+        suggestionsTable.addDomHandler(event -> {
+            if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+                onSelect();
             }
+
+            if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+                hideSuggestions();
+            }
+
         }, KeyDownEvent.getType());
 
         // Add click event handler
-        suggestionsTable.addDomHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                onSelect();
-            }
-        }, ClickEvent.getType());
+        suggestionsTable.addDomHandler(event -> onSelect(), ClickEvent.getType());
 
         return suggestionsTable;
     }
 
     private void onSelect() {
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                int selectedItemIndex = suggestionsTable.getSelectedItemIndex();
-                SearchSuggestion selectedSuggetion = suggestionDataProvider.getList().get(selectedItemIndex);
-                if (selectedSuggetion != null) {
-                    suggestBox.setText(selectedSuggetion.getReplacementString());
-                }
-                suggestionPopup.hide();
-                suggestBox.setFocus(true);
+        Scheduler.get().scheduleDeferred(() -> {
+            int selectedItemIndex = suggestionsTable.getSelectedItemIndex();
+            SearchSuggestion selectedSuggetion = suggestionDataProvider.getList().get(selectedItemIndex);
+            if (selectedSuggetion != null) {
+                suggestBox.setText(selectedSuggetion.getReplacementString());
             }
+            suggestionPopup.hide();
+            suggestBox.setFocus(true);
         });
     }
 
@@ -125,12 +111,7 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
             suggestionsTable.focusItemByIndex(suggestionsTable.getSelectedItemIndex());
 
             if (suggestionsTable.getSelectedItemIndex() == 0) {
-                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                    @Override
-                    public void execute() {
-                        suggestionsTable.getElement().getParentElement().setScrollTop(0);
-                    }
-                });
+                Scheduler.get().scheduleDeferred(() -> suggestionsTable.getElement().getParentElement().setScrollTop(0));
             }
         }
     }

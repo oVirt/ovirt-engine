@@ -22,16 +22,11 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -181,54 +176,30 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     }
 
     private void initButtons() {
-        addBrickButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                addBrickButton.getCommand().execute();
-                clearSelections();
-            }
+        addBrickButton.addClickHandler(event -> {
+            addBrickButton.getCommand().execute();
+            clearSelections();
         });
 
 
-        removeBricksButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                removeBricksButton.getCommand().execute();
-                clearSelections();
-                bricksTable.flush();
-                bricksTable.redraw();
-            }
+        removeBricksButton.addClickHandler(event -> {
+            removeBricksButton.getCommand().execute();
+            clearSelections();
+            bricksTable.flush();
+            bricksTable.redraw();
         });
 
 
-        removeAllBricksButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                removeAllBricksButton.getCommand().execute();
-                clearSelections();
-                bricksTable.flush();
-                bricksTable.redraw();
-            }
+        removeAllBricksButton.addClickHandler(event -> {
+            removeAllBricksButton.getCommand().execute();
+            clearSelections();
+            bricksTable.flush();
+            bricksTable.redraw();
         });
 
-        moveBricksUpButton.addClickHandler(new ClickHandler() {
+        moveBricksUpButton.addClickHandler(event -> moveBricksUpButton.getCommand().execute());
 
-            @Override
-            public void onClick(ClickEvent event) {
-                moveBricksUpButton.getCommand().execute();
-            }
-        });
-
-        moveBricksDownButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                moveBricksDownButton.getCommand().execute();
-            }
-        });
+        moveBricksDownButton.addClickHandler(event -> moveBricksDownButton.getCommand().execute());
     }
 
     private void clearSelections() {
@@ -265,12 +236,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
         forceWarning.setVisible(object.getForce().getEntity());
 
-        object.getForce().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                forceWarning.setVisible(object.getForce().getEntity());
-            }
-        });
+        object.getForce().getEntityChangedEvent().addListener((ev, sender, args) -> forceWarning.setVisible(object.getForce().getEntity()));
     }
 
     @Override

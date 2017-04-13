@@ -18,9 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingItem;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.register.VnicProfileMappingPopupPresenterWidget;
@@ -123,12 +120,7 @@ public class VnicProfileMappingPopupView
 
         refreshMappingsTable(model.getMappingModelRows());
 
-        model.getMappingModelRows().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                refreshMappingsTable(model.getMappingModelRows());
-            }
-        });
+        model.getMappingModelRows().getItemsChangedEvent().addListener((ev, sender, args) -> refreshMappingsTable(model.getMappingModelRows()));
         cluster.setLabel(constants.importVm_destCluster());
     }
 

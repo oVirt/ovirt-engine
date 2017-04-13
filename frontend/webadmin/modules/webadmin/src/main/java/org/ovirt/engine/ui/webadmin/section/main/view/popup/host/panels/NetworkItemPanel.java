@@ -21,20 +21,10 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragStartEvent;
-import com.google.gwt.event.dom.client.DragStartHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -72,13 +62,9 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
 
         dragImage.setVisible(false);
         Image editImage = new Image(resources.editHover());
-        actionButton = new PushButton(editImage, new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                dragImage.setVisible(false);
-                NetworkItemPanel.this.onAction();
-            }
+        actionButton = new PushButton(editImage, (ClickEvent event) -> {
+            dragImage.setVisible(false);
+            NetworkItemPanel.this.onAction();
         });
         actionButton.getDownFace().setImage(new Image(resources.editMouseDown()));
         actionButton.setPixelSize(editImage.getWidth(), editImage.getHeight());
@@ -87,19 +73,9 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
         this.style = style;
         init();
 
-        addMouseOverHandler(new MouseOverHandler() {
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                NetworkItemPanel.this.onMouseOver();
-            }
-        });
+        addMouseOverHandler(event -> NetworkItemPanel.this.onMouseOver());
 
-        addMouseOutHandler(new MouseOutHandler() {
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                NetworkItemPanel.this.onMouseOut();
-            }
-        });
+        addMouseOutHandler(event -> NetworkItemPanel.this.onMouseOut());
 
         //
         // add mousedown handler for hiding the InfoItemPopup tooltip.
@@ -107,12 +83,7 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
         // and on mousedown to initiate a drag, tooltips must be hidden
         // so they're not in the way of drop targets.
 
-        addMouseDownHandler(new MouseDownHandler() {
-            @Override
-            public void onMouseDown(MouseDownEvent event) {
-                NetworkItemPanel.this.tooltip.hide();
-            }
-        });
+        addMouseDownHandler(event -> NetworkItemPanel.this.tooltip.hide());
     }
 
     protected abstract Widget getContents();
@@ -143,35 +114,27 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
         initTooltip();
         setWidget(tooltip);
 
-        addDomHandler(new ContextMenuHandler() {
-
-            @Override
-            public void onContextMenu(ContextMenuEvent event) {
-                NetworkItemPanel<?> sourcePanel = (NetworkItemPanel<?>) event.getSource();
-                NativeEvent nativeEvent = event.getNativeEvent();
-                showContextMenu(sourcePanel, nativeEvent.getClientX(), nativeEvent.getClientY());
-                event.stopPropagation();
-                event.preventDefault();
-            }
-
+        addDomHandler(event -> {
+            NetworkItemPanel<?> sourcePanel = (NetworkItemPanel<?>) event.getSource();
+            NativeEvent nativeEvent = event.getNativeEvent();
+            showContextMenu(sourcePanel, nativeEvent.getClientX(), nativeEvent.getClientY());
+            event.stopPropagation();
+            event.preventDefault();
         }, ContextMenuEvent.getType());
 
         // drag start
         if (draggable) {
-            addBitlessDomHandler(new DragStartHandler() {
-                @Override
-                public void onDragStart(DragStartEvent event) {
-                    NetworkItemPanel<?> sourcePanel = (NetworkItemPanel<?>) event.getSource();
-                    // Required: set data for the event.
-                    lastDragData = sourcePanel.item.getType() + " " + sourcePanel.item.getName(); //$NON-NLS-1$
-                    event.setData("Text", lastDragData); //$NON-NLS-1$
+            addBitlessDomHandler(event -> {
+                NetworkItemPanel<?> sourcePanel = (NetworkItemPanel<?>) event.getSource();
+                // Required: set data for the event.
+                lastDragData = sourcePanel.item.getType() + " " + sourcePanel.item.getName(); //$NON-NLS-1$
+                event.setData("Text", lastDragData); //$NON-NLS-1$
 
-                    // show a ghost of the widget under cursor.
-                    NativeEvent nativeEvent = event.getNativeEvent();
-                    int x = nativeEvent.getClientX() - sourcePanel.getAbsoluteLeft();
-                    int y = nativeEvent.getClientY() - sourcePanel.getAbsoluteTop();
-                    event.getDataTransfer().setDragImage(sourcePanel.getElement(), x, y);
-                }
+                // show a ghost of the widget under cursor.
+                NativeEvent nativeEvent = event.getNativeEvent();
+                int x = nativeEvent.getClientX() - sourcePanel.getAbsoluteLeft();
+                int y = nativeEvent.getClientY() - sourcePanel.getAbsoluteTop();
+                event.getDataTransfer().setDragImage(sourcePanel.getElement(), x, y);
             }, DragStartEvent.getType());
         }
 
@@ -196,22 +159,12 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
             final List<NetworkCommand> commands = entry.getValue();
             if (entry.getKey().isUnary()) {
                 assert commands.size() == 1 : "Got a NetworkCommand List with more than one Unary Operation"; //$NON-NLS-1$
-                menu.addItem(entry.getKey().getVerb(item), new Command() {
-                    @Override
-                    public void execute() {
-                        executeCommand(entry.getKey(), commands.get(0));
-                    }
-                });
+                menu.addItem(entry.getKey().getVerb(item), () -> executeCommand(entry.getKey(), commands.get(0)));
             } else {
                 Collections.sort(commands, Comparator.comparing(NetworkCommand::getName, new LexoNumericComparator()));
                 MenuBar subMenu = subMenu();
                 for (final NetworkCommand command : commands) {
-                    subMenu.addItem(new MenuItem(command.getName(), new Command() {
-                        @Override
-                        public void execute() {
-                            executeCommand(entry.getKey(), command);
-                        }
-                    }));
+                    subMenu.addItem(new MenuItem(command.getName(), () -> executeCommand(entry.getKey(), command)));
                 }
                 menu.addItem(entry.getKey().getVerb(item), subMenu);
             }

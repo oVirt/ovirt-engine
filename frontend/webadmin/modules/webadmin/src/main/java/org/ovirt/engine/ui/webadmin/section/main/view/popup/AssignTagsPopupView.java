@@ -9,9 +9,6 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
@@ -70,14 +67,11 @@ public class AssignTagsPopupView extends AbstractModelBoundTreePopupView<TagList
         driver.edit(object);
 
         // Listen to Properties
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                TagListModel model = (TagListModel) sender;
-                String propertyName = args.propertyName;
-                if ("SelectionNodeList".equals(propertyName)) { //$NON-NLS-1$
-                    updateTree(model);
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            TagListModel model = (TagListModel) sender;
+            String propertyName = args.propertyName;
+            if ("SelectionNodeList".equals(propertyName)) { //$NON-NLS-1$
+                updateTree(model);
             }
         });
     }

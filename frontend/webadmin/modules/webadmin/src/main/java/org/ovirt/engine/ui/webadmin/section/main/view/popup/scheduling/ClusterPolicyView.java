@@ -24,7 +24,6 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.inject.Inject;
 
 public class ClusterPolicyView extends Composite {
@@ -149,16 +148,12 @@ public class ClusterPolicyView extends Composite {
 
         splitLayoutPanel.add(table);
 
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                clusterPolicyModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());
-                if (table.getSelectionModel().getSelectedList().size() > 0) {
-                    setSubTabVisibility(true);
-                } else {
-                    setSubTabVisibility(false);
-                }
+        table.getSelectionModel().addSelectionChangeHandler(event -> {
+            clusterPolicyModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());
+            if (table.getSelectionModel().getSelectedList().size() > 0) {
+                setSubTabVisibility(true);
+            } else {
+                setSubTabVisibility(false);
             }
         });
 

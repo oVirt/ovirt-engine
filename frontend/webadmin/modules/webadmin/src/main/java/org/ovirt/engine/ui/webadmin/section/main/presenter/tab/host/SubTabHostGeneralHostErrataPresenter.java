@@ -9,15 +9,10 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.HostErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -91,53 +86,32 @@ public class SubTabHostGeneralHostErrataPresenter
     public void initializeHandlers() {
         super.initializeHandlers();
 
-        registerHandler(getView().getTotalSecurity().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getView().getTotalSecurity().getCommand().execute();
-            }
-        }));
+        registerHandler(getView().getTotalSecurity().addClickHandler(event -> getView().getTotalSecurity().getCommand().execute()));
 
-        registerHandler(getView().getTotalBugFix().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getView().getTotalBugFix().getCommand().execute();
-            }
-        }));
+        registerHandler(getView().getTotalBugFix().addClickHandler(event -> getView().getTotalBugFix().getCommand().execute()));
 
-        registerHandler(getView().getTotalEnhancement().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getView().getTotalEnhancement().getCommand().execute();
-            }
-        }));
+        registerHandler(getView().getTotalEnhancement().addClickHandler(event -> getView().getTotalEnhancement().getCommand().execute()));
 
 
         // Handle the counts changing -> simple view update.
         //
-        errataCountModel.addErrataCountsChangeListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                // bus published message that the counts changed. update view.
-                ErrataCounts counts = errataCountModel.getErrataCounts();
-                getView().showCounts(counts);
-            }
+        errataCountModel.addErrataCountsChangeListener((ev, sender, args) -> {
+            // bus published message that the counts changed. update view.
+            ErrataCounts counts = errataCountModel.getErrataCounts();
+            getView().showCounts(counts);
         });
 
         // Handle the count model getting a query error -> simple view update.
         //
-        errataCountModel.addPropertyChangeListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("Message".equals(args.propertyName)) { //$NON-NLS-1$
-                    if (errataCountModel.getMessage() != null && !errataCountModel.getMessage().isEmpty()) {
-                        // bus published message that an error occurred communicating with Katello. Show the alert panel.
-                        getView().showErrorMessage(SafeHtmlUtils.fromString(errataCountModel.getMessage()));
-                    }
-                } else if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
-                    if (errataCountModel.getProgress() != null) {
-                        getView().showProgress();
-                    }
+        errataCountModel.addPropertyChangeListener((ev, sender, args) -> {
+            if ("Message".equals(args.propertyName)) { //$NON-NLS-1$
+                if (errataCountModel.getMessage() != null && !errataCountModel.getMessage().isEmpty()) {
+                    // bus published message that an error occurred communicating with Katello. Show the alert panel.
+                    getView().showErrorMessage(SafeHtmlUtils.fromString(errataCountModel.getMessage()));
+                }
+            } else if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
+                if (errataCountModel.getProgress() != null) {
+                    getView().showProgress();
                 }
             }
         });

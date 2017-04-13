@@ -19,9 +19,6 @@ import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkAttachmentModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -153,16 +150,11 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
         qosWidget.edit(object.getQosModel());
 
         enableDisableByBootProtocol(object);
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev,
-                    Object sender,
-                    PropertyChangedEventArgs args) {
-                NetworkAttachmentModel model = (NetworkAttachmentModel) sender;
-                String propertyName = args.propertyName;
-                if ("BootProtocolsAvailable".equals(propertyName)) { //$NON-NLS-1$
-                    enableDisableByBootProtocol(model);
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            NetworkAttachmentModel model = (NetworkAttachmentModel) sender;
+            String propertyName = args.propertyName;
+            if ("BootProtocolsAvailable".equals(propertyName)) { //$NON-NLS-1$
+                enableDisableByBootProtocol(model);
             }
         });
 

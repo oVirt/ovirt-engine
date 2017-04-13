@@ -5,9 +5,6 @@ import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.FenceAgentModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.shared.GWT;
@@ -70,12 +67,7 @@ public class FenceAgentConcurrentWidget extends AbstractModelBoundPopupWidget<Fe
             driver.edit(fenceAgentModel);
             this.model = fenceAgentModel;
             determineLabelValue(fenceAgentModel);
-            fenceAgentModel.getManagementIp().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    determineLabelValue(model);
-                }
-            });
+            fenceAgentModel.getManagementIp().getEntityChangedEvent().addListener((ev, sender, args) -> determineLabelValue(model));
         }
     }
 

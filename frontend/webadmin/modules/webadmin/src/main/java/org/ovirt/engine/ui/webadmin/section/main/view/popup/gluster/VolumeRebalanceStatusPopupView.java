@@ -17,9 +17,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextCol
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeRebalanceStatusModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
@@ -206,15 +203,12 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
 
         rebalanceHostsTable.asEditor().edit(object.getRebalanceSessions());
 
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName.equals("STATUS_UPDATED")) {//$NON-NLS-1$
-                    status.setVisible(object.isStatusAvailable());
-                }
-                else if (args.propertyName.equals("STOP_TIME_UPDATED")) {//$NON-NLS-1$
-                    stopTimeColumn.setVisible(object.isStopTimeVisible());
-                }
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args.propertyName.equals("STATUS_UPDATED")) {//$NON-NLS-1$
+                status.setVisible(object.isStatusAvailable());
+            }
+            else if (args.propertyName.equals("STOP_TIME_UPDATED")) {//$NON-NLS-1$
+                stopTimeColumn.setVisible(object.isStopTimeVisible());
             }
         });
     }

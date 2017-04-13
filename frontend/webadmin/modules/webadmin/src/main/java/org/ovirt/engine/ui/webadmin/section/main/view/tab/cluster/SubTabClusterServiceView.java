@@ -27,8 +27,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterServicePresenter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
@@ -179,21 +177,9 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<Cluster, Cl
     }
 
     private void initButtons() {
-        filterButton.addClickHandler(new ClickHandler() {
+        filterButton.addClickHandler(event -> getDetailModel().executeCommand(getDetailModel().getFilterServicesCommand()));
 
-            @Override
-            public void onClick(ClickEvent event) {
-                getDetailModel().executeCommand(getDetailModel().getFilterServicesCommand());
-            }
-        });
-
-        clearButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                getDetailModel().executeCommand(getDetailModel().getClearFilterServicesCommand());
-            }
-        });
+        clearButton.addClickHandler(event -> getDetailModel().executeCommand(getDetailModel().getClearFilterServicesCommand()));
     }
 
     @Override

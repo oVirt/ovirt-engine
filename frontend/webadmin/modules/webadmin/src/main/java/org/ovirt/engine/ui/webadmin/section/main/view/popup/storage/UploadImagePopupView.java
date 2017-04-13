@@ -10,10 +10,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDiskPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.ImageInfoForm;
 import org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.UploadImagePopupPresenterWidget;
@@ -21,12 +17,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.UploadI
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -133,25 +123,16 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
 
         model.setImageFileUploadElement(imageFileUpload.getElement());
 
-        imageFileUpload.addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent changeEvent) {
-                model.getImagePath().setEntity(imageFileUpload.getFilename());
+        imageFileUpload.addChangeHandler(changeEvent -> model.getImagePath().setEntity(imageFileUpload.getFilename()));
+
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("Message".equals(args.propertyName)) { //$NON-NLS-1$
+                setPanelMessage(uploadMessagePanel, model.getMessage());
             }
-        });
-
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("Message".equals(args.propertyName)) { //$NON-NLS-1$
-                    setPanelMessage(uploadMessagePanel, model.getMessage());
-                }
-                else if ("IsValid".equals(args.propertyName)) { //$NON-NLS-1$
-                    uploadMessagePanel.clear();
-                    if (!model.getIsValid() && !model.getInvalidityReasons().isEmpty()) {
-                        setPanelMessage(uploadMessagePanel, model.getInvalidityReasons().get(0));
-                    }
+            else if ("IsValid".equals(args.propertyName)) { //$NON-NLS-1$
+                uploadMessagePanel.clear();
+                if (!model.getIsValid() && !model.getInvalidityReasons().isEmpty()) {
+                    setPanelMessage(uploadMessagePanel, model.getInvalidityReasons().get(0));
                 }
             }
         });
@@ -163,23 +144,17 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
                 constants.uploadImageSourceLocal(),
                 model.getImageSourceLocalEnabled().getEntity(),
                 true,
-                new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        model.getImageSourceLocalEnabled().setEntity(true);
-                        setSourceVisibility(model);
-                    }
+                event -> {
+                    model.getImageSourceLocalEnabled().setEntity(true);
+                    setSourceVisibility(model);
                 });
         imageSourcePanel.addRadioButton(
                 constants.uploadImageSourceRemote(),
                 !model.getImageSourceLocalEnabled().getEntity(),
                 true,
-                new ValueChangeHandler<Boolean>() {
-                    @Override
-                    public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        model.getImageSourceLocalEnabled().setEntity(false);
-                        setSourceVisibility(model);
-                    }
+                event -> {
+                    model.getImageSourceLocalEnabled().setEntity(false);
+                    setSourceVisibility(model);
                 });
 
         setSourceVisibility(model);
@@ -191,27 +166,12 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         }
 
         imageInfoForm.initialize(model.getImageInfoModel());
-        model.getImageInfoModel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                model.setIsValid(model.getImageInfoModel().getIsValid());
-            }
-        });
+        model.getImageInfoModel().getEntityChangedEvent().addListener((ev, sender, args) -> model.setIsValid(model.getImageInfoModel().getIsValid()));
         model.getImageInfoModel().initialize(model.getImageFileUploadElement());
 
         // Add image upload click handler and label updater
-        imageFileUploadButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                imageFileUpload.getElement().<InputElement>cast().click();
-            }
-        });
-        imageFileUpload.addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent event) {
-                imageFileUploadLabel.setText(imageFileUpload.getFilename());
-            }
-        });
+        imageFileUploadButton.addClickHandler(event -> imageFileUpload.getElement().<InputElement>cast().click());
+        imageFileUpload.addChangeHandler(event -> imageFileUploadLabel.setText(imageFileUpload.getFilename()));
     }
 
     private void handleImageUploadBrowserSupport(final UploadImageModel model) {

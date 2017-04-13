@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacRangeModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -77,13 +76,8 @@ public class MacRangeEditor extends AbstractModelBoundPopupWidget<MacRangeModel>
         driver.edit(model);
         leftBound.fireValueChangeOnKeyDown();
         rightBound.fireValueChangeOnKeyDown();
-        IEventListener<EventArgs> textChangedListener = new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ValueChangeEvent.fire(MacRangeEditor.this, model);
-            }
-        };
+        IEventListener<EventArgs> textChangedListener =
+                (ev, sender, args) -> ValueChangeEvent.fire(MacRangeEditor.this, model);
         model.getLeftBound().getEntityChangedEvent().addListener(textChangedListener);
         model.getRightBound().getEntityChangedEvent().addListener(textChangedListener);
     }

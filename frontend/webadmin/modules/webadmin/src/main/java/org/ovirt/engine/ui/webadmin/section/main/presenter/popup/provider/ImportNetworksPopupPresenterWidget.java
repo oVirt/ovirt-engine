@@ -4,9 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.networks.BaseImportNetworksModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
@@ -24,13 +21,8 @@ public class ImportNetworksPopupPresenterWidget extends AbstractModelBoundPopupP
     @Override
     public void init(final BaseImportNetworksModel model) {
         super.init(model);
-        model.getErrors().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                getView().validateImportedNetworks((List<String>) model.getErrors().getItems());
-            }
-        });
+        model.getErrors().getItemsChangedEvent().addListener((ev, sender, args) ->
+                getView().validateImportedNetworks((List<String>) model.getErrors().getItems()));
     }
 
 }

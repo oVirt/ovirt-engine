@@ -37,8 +37,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.TaskStatusColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
@@ -56,9 +54,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.CellPreviewEvent.Handler;
-import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class AlertsEventsFooterView extends Composite implements AlertCountChangeHandler, TaskHandler {
 
@@ -277,103 +272,85 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     }
 
     void initButtonHandlers() {
-        alertButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (alertButton.getValue()) {
-                    eventButton.setValue(false);
-                    taskButton.setValue(false);
-                    tablePanel.clear();
-                    tablePanel.add(alertsTable);
+        alertButton.addClickHandler(event -> {
+            if (alertButton.getValue()) {
+                eventButton.setValue(false);
+                taskButton.setValue(false);
+                tablePanel.clear();
+                tablePanel.add(alertsTable);
 
-                    firstRowTablePanel.clear();
-                    firstRowTablePanel.add(_alertsTable);
+                firstRowTablePanel.clear();
+                firstRowTablePanel.add(_alertsTable);
 
-                    message.setText(constants.lastMsgEventFooter());
-                    collapseButton.setVisible(false);
-                }
-                else {
-                    alertButton.setValue(true);
-                }
+                message.setText(constants.lastMsgEventFooter());
+                collapseButton.setVisible(false);
+            }
+            else {
+                alertButton.setValue(true);
             }
         });
 
-        eventButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (eventButton.getValue()) {
-                    alertButton.setValue(false);
-                    taskButton.setValue(false);
-                    tablePanel.clear();
-                    tablePanel.add(eventsTable);
+        eventButton.addClickHandler(event -> {
+            if (eventButton.getValue()) {
+                alertButton.setValue(false);
+                taskButton.setValue(false);
+                tablePanel.clear();
+                tablePanel.add(eventsTable);
 
-                    firstRowTablePanel.clear();
-                    firstRowTablePanel.add(_eventsTable);
+                firstRowTablePanel.clear();
+                firstRowTablePanel.add(_eventsTable);
 
-                    message.setText(constants.lastMsgEventFooter());
-                    collapseButton.setVisible(false);
-                }
-                else {
-                    eventButton.setValue(true);
-                }
+                message.setText(constants.lastMsgEventFooter());
+                collapseButton.setVisible(false);
+            }
+            else {
+                eventButton.setValue(true);
             }
         });
 
-        taskButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (taskButton.getValue()) {
-                    alertButton.setValue(false);
-                    eventButton.setValue(false);
-                    tablePanel.clear();
-                    tablePanel.add(tasksTree);
+        taskButton.addClickHandler(event -> {
+            if (taskButton.getValue()) {
+                alertButton.setValue(false);
+                eventButton.setValue(false);
+                tablePanel.clear();
+                tablePanel.add(tasksTree);
 
-                    firstRowTablePanel.clear();
-                    firstRowTablePanel.add(_tasksTable);
+                firstRowTablePanel.clear();
+                firstRowTablePanel.add(_tasksTable);
 
-                    message.setText(constants.lastTaskEventFooter());
-                    collapseButton.setVisible(true);
-                }
-                else {
-                    taskButton.setValue(true);
-                }
+                message.setText(constants.lastTaskEventFooter());
+                collapseButton.setVisible(true);
+            }
+            else {
+                taskButton.setValue(true);
             }
         });
 
-        expandButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                String height = widgetPanel.getElement().getParentElement().getParentElement().getStyle().getHeight();
-                int offset = 26;
-                if (height.equals("26px")) { //$NON-NLS-1$
-                    offset = 162;
-                }
-                widgetPanel.getElement().getParentElement().getParentElement().getStyle().setHeight(offset, Unit.PX);
-                widgetPanel.getElement().getParentElement().getParentElement().getStyle().setBottom(0, Unit.PX);
-                Element e =
-                        (Element) widgetPanel.getElement()
-                                .getParentElement()
-                                .getParentElement()
-                                .getParentElement()
-                                .getChild(2);
-                e.getStyle().setBottom(offset, Unit.PX);
-                e =
-                        (Element) widgetPanel.getElement()
-                                .getParentElement()
-                                .getParentElement()
-                                .getParentElement()
-                                .getChild(3);
-                e.getStyle().setBottom(offset + 4, Unit.PX);
+        expandButton.addClickHandler(event -> {
+            String height = widgetPanel.getElement().getParentElement().getParentElement().getStyle().getHeight();
+            int offset = 26;
+            if (height.equals("26px")) { //$NON-NLS-1$
+                offset = 162;
             }
+            widgetPanel.getElement().getParentElement().getParentElement().getStyle().setHeight(offset, Unit.PX);
+            widgetPanel.getElement().getParentElement().getParentElement().getStyle().setBottom(0, Unit.PX);
+            Element e =
+                    (Element) widgetPanel.getElement()
+                            .getParentElement()
+                            .getParentElement()
+                            .getParentElement()
+                            .getChild(2);
+            e.getStyle().setBottom(offset, Unit.PX);
+            e =
+                    (Element) widgetPanel.getElement()
+                            .getParentElement()
+                            .getParentElement()
+                            .getParentElement()
+                            .getChild(3);
+            e.getStyle().setBottom(offset + 4, Unit.PX);
         });
 
-        collapseButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                tasksTree.collapseAllTasks();
-            }
-        });
+        collapseButton.addClickHandler(event -> tasksTree.collapseAllTasks());
     }
 
     void initTable(SimpleActionTable<AuditLog> table) {
@@ -441,24 +418,17 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             }
         });
 
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                List<AuditLog> selectedItems = table.getSelectionModel().getSelectedList();
-                AuditLog selectedItem = selectedItems != null && selectedItems.size() > 0 ? selectedItems.get(0) : null;
-                eventModelProvider.getModel().setSelectedItem(selectedItem);
-            }
+        table.getSelectionModel().addSelectionChangeHandler(event -> {
+            List<AuditLog> selectedItems = table.getSelectionModel().getSelectedList();
+            AuditLog selectedItem = selectedItems != null && selectedItems.size() > 0 ? selectedItems.get(0) : null;
+            eventModelProvider.getModel().setSelectedItem(selectedItem);
         });
 
-        table.addCellPreviewHandler(new Handler<AuditLog>() {
-
-            @Override
-            public void onCellPreview(CellPreviewEvent<AuditLog> event) {
-                if ("click".equals(event.getNativeEvent().getType())) { //$NON-NLS-1$
-                    if (event.getColumn() == DISMISS_COLUMN_INDEX) {
-                        AuditLog auditLog = event.getValue();
-                        eventModelProvider.getModel().dismissEvent(auditLog);
-                    }
+        table.addCellPreviewHandler(event -> {
+            if ("click".equals(event.getNativeEvent().getType())) { //$NON-NLS-1$
+                if (event.getColumn() == DISMISS_COLUMN_INDEX) {
+                    AuditLog auditLog = event.getValue();
+                    eventModelProvider.getModel().dismissEvent(auditLog);
                 }
             }
         });
@@ -510,24 +480,17 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             }
         });
 
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                List<AuditLog> selectedItems = table.getSelectionModel().getSelectedList();
-                AuditLog selectedItem = selectedItems != null && selectedItems.size() > 0 ? selectedItems.get(0) : null;
-                alertModelProvider.getModel().setSelectedItem(selectedItem);
-            }
+        table.getSelectionModel().addSelectionChangeHandler(event -> {
+            List<AuditLog> selectedItems = table.getSelectionModel().getSelectedList();
+            AuditLog selectedItem = selectedItems != null && selectedItems.size() > 0 ? selectedItems.get(0) : null;
+            alertModelProvider.getModel().setSelectedItem(selectedItem);
         });
 
-        table.addCellPreviewHandler(new Handler<AuditLog>() {
-
-            @Override
-            public void onCellPreview(CellPreviewEvent<AuditLog> event) {
-                if ("click".equals(event.getNativeEvent().getType())) { //$NON-NLS-1$
-                    if (event.getColumn() == DISMISS_COLUMN_INDEX) {
-                        AuditLog auditLog = event.getValue();
-                        alertModelProvider.getModel().dismissAlert(auditLog);
-                    }
+        table.addCellPreviewHandler(event -> {
+            if ("click".equals(event.getNativeEvent().getType())) { //$NON-NLS-1$
+                if (event.getColumn() == DISMISS_COLUMN_INDEX) {
+                    AuditLog auditLog = event.getValue();
+                    alertModelProvider.getModel().dismissAlert(auditLog);
                 }
             }
         });

@@ -57,13 +57,7 @@ public class SubTabProviderNetworkPresenter
     @Override
     protected void onBind() {
         super.onBind();
-        getView().setNetworkClickHandler(new FieldUpdater<NetworkView, String>() {
-
-            @Override
-            public void update(int index, NetworkView network, String value) {
-                systemTreeModelProvider.setSelectedItem(network.getId());
-            }
-        });
+        getView().setNetworkClickHandler((index, network, value) -> systemTreeModelProvider.setSelectedItem(network.getId()));
     }
 
 }

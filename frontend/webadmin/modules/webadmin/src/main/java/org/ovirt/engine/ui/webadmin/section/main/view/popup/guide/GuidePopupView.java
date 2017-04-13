@@ -14,16 +14,12 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterGuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuideModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -110,66 +106,63 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> i
     public void edit(GuideModel<?> object) {
         driver.edit(object);
 
-        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                GuideModel<?> guideModel = (GuideModel<?>) sender;
-                String propertyName = args.propertyName;
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            GuideModel<?> guideModel = (GuideModel<?>) sender;
+            String propertyName = args.propertyName;
 
-                if (PropertyChangedEventArgs.PROGRESS.equals(propertyName)) {
-                    if (guideModel.getProgress() == null) {
+            if (PropertyChangedEventArgs.PROGRESS.equals(propertyName)) {
+                if (guideModel.getProgress() == null) {
 
-                        // Check whether there any available actions.
-                        boolean hasAllowedActions =
-                                Stream.concat(guideModel.getCompulsoryActions().stream(),
-                                        guideModel.getOptionalActions().stream())
-                                        .anyMatch(UICommand::getIsExecutionAllowed);
+                    // Check whether there any available actions.
+                    boolean hasAllowedActions =
+                            Stream.concat(guideModel.getCompulsoryActions().stream(),
+                                    guideModel.getOptionalActions().stream())
+                                    .anyMatch(UICommand::getIsExecutionAllowed);
 
-                        // Choose an appropriate message matching the entity type (DC, Cluster or VM).
-                        String message = null;
-                        if (guideModel instanceof DataCenterGuideModel) {
-                            message = constants.guidePopupConfiguredDataCenterLabel();
-                        } else if (guideModel instanceof ClusterGuideModel) {
-                            message = constants.guidePopupConfiguredClusterLabel();
-                        } else if (guideModel instanceof VmGuideModel) {
-                            message = constants.guidePopupConfiguredVmLabel();
+                    // Choose an appropriate message matching the entity type (DC, Cluster or VM).
+                    String message = null;
+                    if (guideModel instanceof DataCenterGuideModel) {
+                        message = constants.guidePopupConfiguredDataCenterLabel();
+                    } else if (guideModel instanceof ClusterGuideModel) {
+                        message = constants.guidePopupConfiguredClusterLabel();
+                    } else if (guideModel instanceof VmGuideModel) {
+                        message = constants.guidePopupConfiguredVmLabel();
+                    }
+
+                    if (!hasAllowedActions) {
+                        if (!guideModel.getNote().getIsAvailable()) {
+                            infoLabel.setText(message);
                         }
-
-                        if (!hasAllowedActions) {
-                            if (!guideModel.getNote().getIsAvailable()) {
-                                infoLabel.setText(message);
-                            }
-                            else {
-                                infoLabel.setText(configurationCompleted);
-                                noteLabel.setText(guideModel.getNote().getEntity());
-                            }
-                            compulsorySection.setVisible(false);
-                            optionalSection.setVisible(false);
-                            // Rename dialog button.
-                            guideModel.getCommands().get(0).setTitle(null);
-                            guideModel.getCommands().get(0).setTitle(ConstantsManager.getInstance().getConstants().ok());
-                        } else if (guideModel.getCompulsoryActions().isEmpty()) {
+                        else {
                             infoLabel.setText(configurationCompleted);
-                            optionalSection.setVisible(true);
-                            compulsorySection.setVisible(false);
-                        } else if (guideModel.getOptionalActions().isEmpty()) {
-                            updateCreatedLabel(guideModel);
-                            optionalSection.setVisible(false);
-                            compulsorySection.setVisible(true);
-                            compulsoryActionsLabel.setVisible(true);
-                        } else {
-                            infoLabel.setText(unconfigured);
-                            optionalSection.setVisible(true);
-                            compulsorySection.setVisible(true);
-                            compulsoryActionsLabel.setVisible(false);
+                            noteLabel.setText(guideModel.getNote().getEntity());
                         }
+                        compulsorySection.setVisible(false);
+                        optionalSection.setVisible(false);
+                        // Rename dialog button.
+                        guideModel.getCommands().get(0).setTitle(null);
+                        guideModel.getCommands().get(0).setTitle(ConstantsManager.getInstance().getConstants().ok());
+                    } else if (guideModel.getCompulsoryActions().isEmpty()) {
+                        infoLabel.setText(configurationCompleted);
+                        optionalSection.setVisible(true);
+                        compulsorySection.setVisible(false);
+                    } else if (guideModel.getOptionalActions().isEmpty()) {
+                        updateCreatedLabel(guideModel);
+                        optionalSection.setVisible(false);
+                        compulsorySection.setVisible(true);
+                        compulsoryActionsLabel.setVisible(true);
+                    } else {
+                        infoLabel.setText(unconfigured);
+                        optionalSection.setVisible(true);
+                        compulsorySection.setVisible(true);
+                        compulsoryActionsLabel.setVisible(false);
                     }
+                }
 
-                    updateActionsPanels(guideModel);
-                } else if ("Window".equals(propertyName)) { //$NON-NLS-1$
-                    if (guideModel.getLastExecutedCommand().getName().equals("Cancel")) { //$NON-NLS-1$
-                        redrawActionsPanels();
-                    }
+                updateActionsPanels(guideModel);
+            } else if ("Window".equals(propertyName)) { //$NON-NLS-1$
+                if (guideModel.getLastExecutedCommand().getName().equals("Cancel")) { //$NON-NLS-1$
+                    redrawActionsPanels();
                 }
             }
         });
@@ -202,12 +195,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> i
         guideButton.getElement().setId("UiCommandButton_guideButton_" + command.getTitle()); //$NON-NLS-1$
         guideButton.setCustomContentStyle(style.actionButtonContent());
         guideButton.addStyleName(style.actionButton());
-        guideButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                command.execute();
-            }
-        });
+        guideButton.addClickHandler(event -> command.execute());
 
         VerticalPanel buttonContainer = new VerticalPanel();
         buttonContainer.add(guideButton);

@@ -15,10 +15,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.FenceAgentModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -129,22 +125,13 @@ public class FenceAgentWidget extends AbstractModelBoundPopupWidget<FenceAgentMo
             driver.edit(fenceAgentModel);
             this.model = fenceAgentModel;
             determineLabelValue(fenceAgentModel);
-            fenceAgentModel.getManagementIp().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    determineLabelValue(model);
-                }
-            });
+            fenceAgentModel.getManagementIp().getEntityChangedEvent().addListener((ev, sender, args) -> determineLabelValue(model));
             fenceAgentModel.getConcurrentSelectList().getPropertyChangedEvent().addListener(
-                    new IEventListener<PropertyChangedEventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender,
-                        PropertyChangedEventArgs args) {
-                    if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                        determineLabelValue(model);
-                    }
-                }
-            });
+                    (ev, sender, args) -> {
+                        if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                            determineLabelValue(model);
+                        }
+                    });
         }
     }
 

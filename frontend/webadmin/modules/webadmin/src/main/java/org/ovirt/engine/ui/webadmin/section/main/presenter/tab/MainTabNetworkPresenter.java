@@ -77,12 +77,7 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
     @Override
     protected void onBind() {
         super.onBind();
-        getView().setProviderClickHandler(new FieldUpdater<NetworkView, String> () {
-            @Override
-            public void update(int index, NetworkView network, String value) {
-                systemTreeModelProvider.setSelectedItem(network.getProvidedBy().getProviderId());
-            }
-        });
+        getView().setProviderClickHandler((index, network, value) -> systemTreeModelProvider.setSelectedItem(network.getProvidedBy().getProviderId()));
     }
 
 }

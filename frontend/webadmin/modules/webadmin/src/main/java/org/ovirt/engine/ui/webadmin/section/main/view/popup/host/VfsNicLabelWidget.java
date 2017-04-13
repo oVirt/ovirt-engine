@@ -5,9 +5,6 @@ import java.util.Set;
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.VfsNicLabelModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -52,13 +49,7 @@ public class VfsNicLabelWidget extends AddRemoveRowWidget<VfsNicLabelModel, List
         super.init(model);
         getModel().updateSuggestedLabels();
         for (ListModel<String> labelModel : model.getItems()) {
-            labelModel.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    selectedLabelsChanged();
-                }
-            });
+            labelModel.getSelectedItemChangedEvent().addListener((ev, sender, args) -> selectedLabelsChanged());
         }
     }
 
@@ -66,13 +57,7 @@ public class VfsNicLabelWidget extends AddRemoveRowWidget<VfsNicLabelModel, List
     protected void onAdd(ListModel<String> value, NicLabelEditor widget) {
         super.onAdd(value, widget);
         getModel().updateSuggestedLabels();
-        value.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                selectedLabelsChanged();
-            }
-        });
+        value.getSelectedItemChangedEvent().addListener((ev, sender, args) -> selectedLabelsChanged());
     }
 
     @Override

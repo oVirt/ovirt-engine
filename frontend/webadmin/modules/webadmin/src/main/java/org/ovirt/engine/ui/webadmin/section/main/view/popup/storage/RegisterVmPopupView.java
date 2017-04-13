@@ -17,9 +17,6 @@ import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.RegisterVmData;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -28,7 +25,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterVmPopupPresenterWidget;
 
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -55,22 +51,12 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
     public void edit(final RegisterVmModel model) {
         super.edit(model);
 
-        model.getEntities().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                addBadMacsValidationListener(model);
-            }
-        });
+        model.getEntities().getItemsChangedEvent().addListener((ev, sender, args) -> addBadMacsValidationListener(model));
     }
 
     private void addBadMacsValidationListener(RegisterVmModel model) {
         for(RegisterVmData vmData : model.getEntities().getItems()) {
-            vmData.getBadMacsExist().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    refreshEntityTable();
-                }
-            });
+            vmData.getBadMacsExist().getEntityChangedEvent().addListener((ev, sender, args) -> refreshEntityTable());
         }
     }
 
@@ -181,12 +167,7 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
                     }
                 };
 
-        reassignMacsColumn.setFieldUpdater(new FieldUpdater<RegisterVmData, Boolean>() {
-            @Override
-            public void update(int index, RegisterVmData object, Boolean value) {
-                object.getReassignMacs().setEntity(value);
-            }
-        });
+        reassignMacsColumn.setFieldUpdater((index, object, value) -> object.getReassignMacs().setEntity(value));
         return reassignMacsColumn;
     }
 

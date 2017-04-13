@@ -13,9 +13,6 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellList;
@@ -61,27 +58,23 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
         // TODO-GWT work around GWT issue with KeyboardSelectionPolicy.BOUND_TO_SELECTION
         // Using KeyboardSelectionPolicy.ENABLED instead and handling the input ourselves.
         // See https://github.com/gwtproject/gwt/issues/6309 for details.
-        display.addDomHandler(new KeyDownHandler() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public void onKeyDown(KeyDownEvent event) {
-                SingleSelectionModel<Bookmark> selectionModel = (SingleSelectionModel<Bookmark>) display.getSelectionModel();
-                if (selectionModel.getSelectedObject() != null) {
-                    Bookmark item = null;
-                    int index = display.getVisibleItems().indexOf(selectionModel.getSelectedObject());
-                    int key = event.getNativeEvent().getKeyCode();
+        display.addDomHandler(event -> {
+            SingleSelectionModel<Bookmark> selectionModel = (SingleSelectionModel<Bookmark>) display.getSelectionModel();
+            if (selectionModel.getSelectedObject() != null) {
+                Bookmark item = null;
+                int index = display.getVisibleItems().indexOf(selectionModel.getSelectedObject());
+                int key = event.getNativeEvent().getKeyCode();
 
-                    if (key == KeyCodes.KEY_UP) {
-                        item = display.getVisibleItems().get(index - 1);
-                    } else if (key == KeyCodes.KEY_DOWN) {
-                        item = display.getVisibleItems().get(index + 1);
-                    }
+                if (key == KeyCodes.KEY_UP) {
+                    item = display.getVisibleItems().get(index - 1);
+                } else if (key == KeyCodes.KEY_DOWN) {
+                    item = display.getVisibleItems().get(index + 1);
+                }
 
-                    if (item != null) {
-                        selectionModel.setSelected(item, true);
-                        event.stopPropagation();
-                        event.preventDefault();
-                    }
+                if (item != null) {
+                    selectionModel.setSelected(item, true);
+                    event.stopPropagation();
+                    event.preventDefault();
                 }
             }
         }, KeyDownEvent.getType());
@@ -122,12 +115,9 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     }
 
     void addScrollEventHandler(final ScrollPanel scrollPanel) {
-        scrollPanel.addScrollHandler(new ScrollHandler() {
-            @Override
-            public void onScroll(ScrollEvent event) {
-                if (scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()) {
-                    setProperVisibleRange();
-                }
+        scrollPanel.addScrollHandler(event -> {
+            if (scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()) {
+                setProperVisibleRange();
             }
         });
     }

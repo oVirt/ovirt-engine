@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterClusterSnapshotConf
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -86,13 +85,7 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends
         };
         configsTable.addColumn(valueColumn, constants.volumeSnapshotConfigValue(), "100px"); //$NON-NLS-1$
 
-        valueColumn.setFieldUpdater(new FieldUpdater<EntityModel<GlusterVolumeSnapshotConfig>, String>() {
-
-            @Override
-            public void update(int index, EntityModel<GlusterVolumeSnapshotConfig> object, String value) {
-                object.getEntity().setParamValue(value);
-            }
-        });
+        valueColumn.setFieldUpdater((index, object, value) -> object.getEntity().setParamValue(value));
     }
 
     @Override

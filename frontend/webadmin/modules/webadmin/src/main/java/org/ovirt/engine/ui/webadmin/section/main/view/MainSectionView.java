@@ -24,11 +24,8 @@ import org.ovirt.engine.ui.webadmin.widget.tags.TagList;
 import org.ovirt.engine.ui.webadmin.widget.tree.SystemTree;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -116,14 +113,11 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
         headerPanel.getElement().getParentElement().getStyle().setOverflow(Overflow.VISIBLE);
         //Enable double clicking to collapse/expand the stack panel (with the treeview).
         horizontalSplitLayoutPanel.setWidgetToggleDisplayAllowed(westStackPanel, true);
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                //Manually call onResize() so the tabs at the top are positioned correctly. For some reason
-                //doing setWidgetSize doesn't trigger the onResize event. Also this need to be deferred
-                //otherwise the handlers haven't been added yet, and the resize won't do anything.
-                westStackPanel.onResize();
-            }
+        Scheduler.get().scheduleDeferred(() -> {
+            //Manually call onResize() so the tabs at the top are positioned correctly. For some reason
+            //doing setWidgetSize doesn't trigger the onResize event. Also this need to be deferred
+            //otherwise the handlers haven't been added yet, and the resize won't do anything.
+            westStackPanel.onResize();
         });
     }
 
@@ -145,32 +139,28 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
                 }
             }
         };
-        panel.addSelectionHandler(new SelectionHandler<Integer>() {
-
-            @Override
-            public void onSelection(SelectionEvent<Integer> event) {
-                if (event == null) {
-                    return;
-                }
-                treeModelProvider.getModel().setSearchString(StringUtils.EMPTY);
-                treeModelProvider.getModel().refresh();
-                switch(event.getSelectedItem()) {
-                    case TREE_INDEX:
-                        bookmarkModelProvider.getModel().stopRefresh();
-                        tagModelProvider.getModel().stopRefresh();
-                        // Reset system tree to the root item.
-                        treeModelProvider.getModel().getResetCommand().execute();
-                        break;
-                    case BOOKMARK_INDEX:
-                        treeModelProvider.getModel().stopRefresh();
-                        tagModelProvider.getModel().stopRefresh();
-                        bookmarkModelProvider.getModel().executeBookmarksSearch();
-                        break;
-                    case TAG_INDEX:
-                        treeModelProvider.getModel().stopRefresh();
-                        bookmarkModelProvider.getModel().stopRefresh();
-                        break;
-                }
+        panel.addSelectionHandler(event -> {
+            if (event == null) {
+                return;
+            }
+            treeModelProvider.getModel().setSearchString(StringUtils.EMPTY);
+            treeModelProvider.getModel().refresh();
+            switch(event.getSelectedItem()) {
+                case TREE_INDEX:
+                    bookmarkModelProvider.getModel().stopRefresh();
+                    tagModelProvider.getModel().stopRefresh();
+                    // Reset system tree to the root item.
+                    treeModelProvider.getModel().getResetCommand().execute();
+                    break;
+                case BOOKMARK_INDEX:
+                    treeModelProvider.getModel().stopRefresh();
+                    tagModelProvider.getModel().stopRefresh();
+                    bookmarkModelProvider.getModel().executeBookmarksSearch();
+                    break;
+                case TAG_INDEX:
+                    treeModelProvider.getModel().stopRefresh();
+                    bookmarkModelProvider.getModel().stopRefresh();
+                    break;
             }
         });
 

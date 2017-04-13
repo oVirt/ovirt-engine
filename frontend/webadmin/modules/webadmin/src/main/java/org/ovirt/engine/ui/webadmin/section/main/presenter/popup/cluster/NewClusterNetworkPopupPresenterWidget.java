@@ -1,9 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster;
 
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NewNetworkModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,12 +21,8 @@ public class NewClusterNetworkPopupPresenterWidget extends NewNetworkPopupPresen
         // Let the parent do its work
         super.init(model);
 
-        model.getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ((ViewDef) getView()).setDataCenterName(model.getDataCenters().getSelectedItem().getName());
-            }
-        });
+        model.getDataCenters().getSelectedItemChangedEvent().addListener((ev, sender, args) ->
+                ((ViewDef) getView()).setDataCenterName(model.getDataCenters().getSelectedItem().getName()));
     }
 
 }

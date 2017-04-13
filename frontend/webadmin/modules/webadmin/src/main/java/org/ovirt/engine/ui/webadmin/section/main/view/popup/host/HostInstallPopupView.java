@@ -22,17 +22,12 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.InstallModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -191,16 +186,13 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @Override
     public void edit(final InstallModel model) {
         driver.edit(model);
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                InstallModel installModel = (InstallModel) sender;
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            InstallModel installModel = (InstallModel) sender;
 
-                if ("ValidationFailed".equals(args.propertyName)) { //$NON-NLS-1$
-                    if (installModel.getValidationFailed().getEntity() != null &&
-                            installModel.getValidationFailed().getEntity()) {
-                        tabPanel.switchTab(hostPopupGeneralTab);
-                    }
+            if ("ValidationFailed".equals(args.propertyName)) { //$NON-NLS-1$
+                if (installModel.getValidationFailed().getEntity() != null &&
+                        installModel.getValidationFailed().getEntity()) {
+                    tabPanel.switchTab(hostPopupGeneralTab);
                 }
             }
         });
@@ -210,20 +202,14 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         rbPassword.setValue(installedFailed);
         rbPublicKey.setValue(!installedFailed);
 
-        rbPassword.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                model.setAuthenticationMethod(AuthenticationMethod.Password);
-                displayPasswordField(true);
-            }
+        rbPassword.addValueChangeHandler(event -> {
+            model.setAuthenticationMethod(AuthenticationMethod.Password);
+            displayPasswordField(true);
         });
 
-        rbPublicKey.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                model.setAuthenticationMethod(AuthenticationMethod.PublicKey);
-                displayPasswordField(false);
-            }
+        rbPublicKey.addValueChangeHandler(event -> {
+            model.setAuthenticationMethod(AuthenticationMethod.PublicKey);
+            displayPasswordField(false);
         });
         // TODO: remove setIsChangeable when configured ssh username is enabled
         userNameEditor.setEnabled(false);
