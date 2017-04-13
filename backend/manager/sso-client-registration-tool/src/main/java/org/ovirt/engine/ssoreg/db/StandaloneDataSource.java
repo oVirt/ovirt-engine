@@ -1,8 +1,6 @@
 package org.ovirt.engine.ssoreg.db;
 
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -79,14 +77,11 @@ public class StandaloneDataSource implements DataSource {
         wrapper = (Connection) Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] { Connection.class },
-            new InvocationHandler() {
-                @Override
-                public Object invoke (Object proxy, Method method, Object[] args) throws Throwable {
-                    if (method.getName().equals("close")) {
-                        return null;
-                    }
-                    return method.invoke(connection, args);
+            (proxy, method, args) -> {
+                if (method.getName().equals("close")) {
+                    return null;
                 }
+                return method.invoke(connection, args);
             }
         );
     }
