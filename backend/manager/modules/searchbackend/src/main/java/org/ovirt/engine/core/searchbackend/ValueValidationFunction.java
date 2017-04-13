@@ -3,6 +3,7 @@ package org.ovirt.engine.core.searchbackend;
 /**
  * Interface for field validators.
  */
+@FunctionalInterface
 public interface ValueValidationFunction {
     /**
      * Checks if the field us valid.

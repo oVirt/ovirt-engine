@@ -194,97 +194,70 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     static final Regex validChar = new Regex("^[^\\<\\>&^!']*$");
 
-    public static final ValueValidationFunction validCharacters = new ValueValidationFunction() {
-        @Override
-        public boolean isValid(String field, String value) {
-            return validChar.isMatch(value);
-        }
-    };
+    public static final ValueValidationFunction validCharacters = (field, value) -> validChar.isMatch(value);
 
-    public static final ValueValidationFunction validDateTime = new ValueValidationFunction() {
-        @Override
-        public boolean isValid(String field, String value) {
-            Date test = DateUtils.parse(value);
-            if (test != null) {
-                return true;
-            } else { // check for enum
-                for (DateEnumForSearch val : DateEnumForSearch.values()) {
-                    if (val.name().equalsIgnoreCase(value)) {
-                        return true;
-                    }
-                }
-                // check for week before
-                for (DayOfWeek day : DayOfWeek.class.getEnumConstants()) {
-                    if (day.toString().equalsIgnoreCase(value)) {
-                        return true;
-                    }
+    public static final ValueValidationFunction validDateTime = (field, value) -> {
+        Date test = DateUtils.parse(value);
+        if (test != null) {
+            return true;
+        } else { // check for enum
+            for (DateEnumForSearch val : DateEnumForSearch.values()) {
+                if (val.name().equalsIgnoreCase(value)) {
+                    return true;
                 }
             }
+            // check for week before
+            for (DayOfWeek day : DayOfWeek.class.getEnumConstants()) {
+                if (day.toString().equalsIgnoreCase(value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    public static final ValueValidationFunction validTimeSpan = (field, value) -> TimeSpan.tryParse(value) != null;
+
+    public static final ValueValidationFunction validInteger = (field, value) -> IntegerCompat.tryParse(value) != null;
+
+    public static final ValueValidationFunction validDecimal = (field, value) -> {
+        try {
+            new BigDecimal(value); // No assignment, we just want to create a new instance and to see if there's an
+                                   // Exception
+            return true;
+        }
+        catch (NumberFormatException e) {
             return false;
         }
     };
 
-    public static final ValueValidationFunction validTimeSpan = new ValueValidationFunction() {
-        @Override
-        public boolean isValid(String field, String value) {
-            return TimeSpan.tryParse(value) != null;
+    public final ValueValidationFunction validateDateEnumValueByValueAC = (field, value) -> {
+        boolean retval = true;
+        IConditionValueAutoCompleter vlaueAc = getFieldValueAutoCompleter(field);
+        if (vlaueAc != null) { // check if this enum first
+            retval = vlaueAc.validate(value);
         }
-    };
-
-    public static final ValueValidationFunction validInteger = new ValueValidationFunction() {
-        @Override
-        public boolean isValid(String field, String value) {
-            return IntegerCompat.tryParse(value) != null;
-        }
-    };
-
-    public static final ValueValidationFunction validDecimal = new ValueValidationFunction() {
-        @Override
-        public boolean isValid(String field, String value) {
-            try {
-                new BigDecimal(value); // No assignment, we just want to create a new instance and to see if there's an
-                                       // Exception
-                return true;
-            }
-            catch (NumberFormatException e) {
-                return false;
-            }
-        }
-    };
-
-    public final ValueValidationFunction validateDateEnumValueByValueAC = new ValueValidationFunction() {
-        @Override
-        public boolean isValid(String field, String value) {
-            boolean retval = true;
-            IConditionValueAutoCompleter vlaueAc = getFieldValueAutoCompleter(field);
-            if (vlaueAc != null) { // check if this enum first
-                retval = vlaueAc.validate(value);
-            }
-            if (!retval) { // check for week before
-                for (DayOfWeek day : DayOfWeek.values()) {
-                    if (day.toString().equalsIgnoreCase(value)) {
-                        return true;
-                    }
+        if (!retval) { // check for week before
+            for (DayOfWeek day : DayOfWeek.values()) {
+                if (day.toString().equalsIgnoreCase(value)) {
+                    return true;
                 }
             }
-            if (!retval) { // check for free date
-                retval = DateUtils.parse(StringHelper.trim(value, '\'')) != null;
-            }
-
-            return retval;
         }
+        if (!retval) { // check for free date
+            retval = DateUtils.parse(StringHelper.trim(value, '\'')) != null;
+        }
+
+        return retval;
     };
 
-    public final ValueValidationFunction validateFieldValueByValueAC = new ValueValidationFunction() {
-        @Override
-        public boolean isValid(String field, String value) {
-            boolean retval = true;
-            IConditionValueAutoCompleter vlaueAc = getFieldValueAutoCompleter(field);
-            if (vlaueAc != null) {
-                retval = vlaueAc.validate(value);
-            }
-            return retval;
+    public final ValueValidationFunction validateFieldValueByValueAC = (field, value) -> {
+        boolean retval = true;
+        IConditionValueAutoCompleter vlaueAc = getFieldValueAutoCompleter(field);
+        if (vlaueAc != null) {
+            retval = vlaueAc.validate(value);
         }
+        return retval;
     };
 
     @Override
