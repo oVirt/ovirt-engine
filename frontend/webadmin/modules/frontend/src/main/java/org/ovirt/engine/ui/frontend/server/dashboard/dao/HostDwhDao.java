@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.frontend.server.dashboard.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,15 +42,12 @@ public class HostDwhDao extends BaseDao {
     public List<ResourceUsage> getHourlyCpuMemUsage() throws DashboardDataException {
         final List<ResourceUsage> result = new ArrayList<>();
 
-        runQuery(HOURLY_CPU_MEM_HISTORY, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                ResourceUsage resourceUsage = new ResourceUsage();
-                resourceUsage.setEpoch(rs.getTimestamp(DATE).getTime());
-                resourceUsage.setCpuValue(rs.getDouble(CPU_USAGE));
-                resourceUsage.setMemValue(rs.getDouble(MEM_USAGE));
-                result.add(resourceUsage);
-            }
+        runQuery(HOURLY_CPU_MEM_HISTORY, rs -> {
+            ResourceUsage resourceUsage = new ResourceUsage();
+            resourceUsage.setEpoch(rs.getTimestamp(DATE).getTime());
+            resourceUsage.setCpuValue(rs.getDouble(CPU_USAGE));
+            resourceUsage.setMemValue(rs.getDouble(MEM_USAGE));
+            result.add(resourceUsage);
         });
 
         return result;
@@ -61,12 +56,9 @@ public class HostDwhDao extends BaseDao {
     public ResourceUsage getLast5MinCpuMemUsage() throws DashboardDataException {
         final ResourceUsage result = new ResourceUsage();
 
-        runQuery(LAST5_MIN_CPU_MEM_AVERAGE, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                result.setCpuValue(rs.getDouble(CPU_USAGE));
-                result.setMemValue(rs.getDouble(MEM_USAGE));
-            }
+        runQuery(LAST5_MIN_CPU_MEM_AVERAGE, rs -> {
+            result.setCpuValue(rs.getDouble(CPU_USAGE));
+            result.setMemValue(rs.getDouble(MEM_USAGE));
         });
 
         return result;
@@ -75,12 +67,9 @@ public class HostDwhDao extends BaseDao {
     public ResourcesTotal getTotalCpuMemCount() throws DashboardDataException {
         final ResourcesTotal result = new ResourcesTotal();
 
-        runQuery(TOTAL_CPU_MEMORY_COUNT, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                result.setCpuTotal(rs.getInt(CPU_TOTAL));
-                result.setMemTotal(rs.getDouble(MEM_TOTAL));
-            }
+        runQuery(TOTAL_CPU_MEMORY_COUNT, rs -> {
+            result.setCpuTotal(rs.getInt(CPU_TOTAL));
+            result.setMemTotal(rs.getDouble(MEM_TOTAL));
         });
 
         return result;
@@ -95,16 +84,13 @@ public class HostDwhDao extends BaseDao {
     public List<TrendResources> getCpuUtilizationHosts() throws DashboardDataException {
         final List<TrendResources> result = new ArrayList<>();
 
-        runQuery(CPU_HOST_UTILIZATION, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                TrendResources usage = new TrendResources();
-                usage.setName(rs.getString(NAME));
-                usage.setUsed(rs.getDouble(CPU_USAGE_PERCENT));
-                usage.setTotal(rs.getDouble(CORES_HOST));
-                usage.setPreviousUsed(rs.getDouble(PREVIOUS_CPU_PERCENT));
-                result.add(usage);
-            }
+        runQuery(CPU_HOST_UTILIZATION, rs -> {
+            TrendResources usage = new TrendResources();
+            usage.setName(rs.getString(NAME));
+            usage.setUsed(rs.getDouble(CPU_USAGE_PERCENT));
+            usage.setTotal(rs.getDouble(CORES_HOST));
+            usage.setPreviousUsed(rs.getDouble(PREVIOUS_CPU_PERCENT));
+            result.add(usage);
         });
 
         return result;
@@ -119,16 +105,13 @@ public class HostDwhDao extends BaseDao {
     public List<TrendResources> getMemoryUtilizationHosts() throws DashboardDataException {
         final List<TrendResources> result = new ArrayList<>();
 
-        runQuery(MEM_HOST_UTILIZATION, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                TrendResources usage = new TrendResources();
-                usage.setName(rs.getString(NAME));
-                usage.setUsed(rs.getDouble(MEMORY_USAGE_PERCENT) * rs.getDouble(MEMORY_SIZE) / 100);
-                usage.setTotal(rs.getDouble(MEMORY_SIZE));
-                usage.setPreviousUsed(rs.getDouble(PREVIOUS_MEMORY_PERCENT) * rs.getDouble(MEMORY_SIZE) / 100);
-                result.add(usage);
-            }
+        runQuery(MEM_HOST_UTILIZATION, rs -> {
+            TrendResources usage = new TrendResources();
+            usage.setName(rs.getString(NAME));
+            usage.setUsed(rs.getDouble(MEMORY_USAGE_PERCENT) * rs.getDouble(MEMORY_SIZE) / 100);
+            usage.setTotal(rs.getDouble(MEMORY_SIZE));
+            usage.setPreviousUsed(rs.getDouble(PREVIOUS_MEMORY_PERCENT) * rs.getDouble(MEMORY_SIZE) / 100);
+            result.add(usage);
         });
 
         return result;

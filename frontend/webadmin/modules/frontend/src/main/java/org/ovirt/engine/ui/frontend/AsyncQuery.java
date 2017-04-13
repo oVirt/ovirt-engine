@@ -5,12 +5,7 @@ public class AsyncQuery<T> {
     /**
      * Null object singleton that represents an empty (no-op) query callback.
      */
-    private static final AsyncCallback EMPTY_CALLBACK = new AsyncCallback() {
-        @Override
-        public void onSuccess(Object returnValue) {
-            // Empty
-        }
-    };
+    private static final AsyncCallback EMPTY_CALLBACK = returnValue -> {};
 
     private final Object model;
     private final AsyncCallback<T> asyncCallback;

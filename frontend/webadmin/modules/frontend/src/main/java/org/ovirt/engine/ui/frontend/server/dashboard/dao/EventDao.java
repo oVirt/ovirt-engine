@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.frontend.server.dashboard.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,12 +25,7 @@ public class EventDao extends BaseDao {
     public Map<AuditLogSeverity, Integer> getEventStatusCount() throws DashboardDataException {
         final Map<AuditLogSeverity, Integer> result = new HashMap<>();
 
-        runQuery(AUDIT_LOG_COUNT, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                result.put(AuditLogSeverity.forValue(rs.getInt(SEVERITY)), rs.getInt(COUNT));
-            }
-        });
+        runQuery(AUDIT_LOG_COUNT, rs -> result.put(AuditLogSeverity.forValue(rs.getInt(SEVERITY)), rs.getInt(COUNT)));
 
         return result;
     }

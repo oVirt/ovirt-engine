@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.inject.Inject;
 
 /**
@@ -54,12 +53,7 @@ public class OperationProcessor {
         if (scheduler == null) {
             scheduler = Scheduler.get();
         }
-        scheduler.scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-                processAvailableOperations(manager);
-            }
-        });
+        scheduler.scheduleDeferred(() -> processAvailableOperations(manager));
     }
 
     /**

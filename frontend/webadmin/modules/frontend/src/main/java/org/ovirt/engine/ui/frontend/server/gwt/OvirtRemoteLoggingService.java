@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.logging.LogRecord;
 
 import javax.servlet.ServletConfig;
@@ -46,11 +45,8 @@ public class OvirtRemoteLoggingService extends RemoteServiceServlet implements R
       File symbolMapDirectory = new File(EngineLocalConfig.getInstance().getUsrDir(),
               "/gwt-symbols/" + applicationName + "/symbolMaps"); //$NON-NLS-1$ $NON-NLS-2$
       boolean symbolMapsDirectoryExists = symbolMapDirectory.exists() && symbolMapDirectory.isDirectory();
-      File[] files = symbolMapDirectory.listFiles(new FilenameFilter() {
-          @Override
-          public boolean accept(File dir, String name) {
-              return name != null && name.toLowerCase().endsWith("symbolmap"); //$NON-NLS-1$
-          }
+      File[] files = symbolMapDirectory.listFiles((dir, name) -> {
+          return name != null && name.toLowerCase().endsWith("symbolmap"); //$NON-NLS-1$
       });
       if(!symbolMapsDirectoryExists || files == null || files.length == 0) {
           log.info("GWT symbolmaps are not installed, " //$NON-NLS-1$

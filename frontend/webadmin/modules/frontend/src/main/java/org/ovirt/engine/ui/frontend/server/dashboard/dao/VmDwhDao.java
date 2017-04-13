@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.frontend.server.dashboard.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,12 +41,9 @@ public class VmDwhDao extends BaseDao {
     public VmStorage getVirtualStorageCount() throws DashboardDataException {
         final VmStorage result = new VmStorage();
 
-        runQuery(VIRTUAL_STORAGE_COUNT, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                result.setTotal(rs.getDouble(TOTAL_VMS) / 1024);
-                result.setUsed(rs.getDouble(USED_VMS) / 1024);
-            }
+        runQuery(VIRTUAL_STORAGE_COUNT, rs -> {
+            result.setTotal(rs.getDouble(TOTAL_VMS) / 1024);
+            result.setUsed(rs.getDouble(USED_VMS) / 1024);
         });
 
         return result;
@@ -57,14 +52,11 @@ public class VmDwhDao extends BaseDao {
     public ResourcesTotal getVirtualCpuMemCount() throws DashboardDataException {
         final ResourcesTotal result = new ResourcesTotal();
 
-        runQuery(VIRTUAL_CPU_MEMORY_COUNT, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                result.setCpuTotal(rs.getInt(CPU_TOTAL_VMS));
-                result.setCpuUsed(rs.getInt(CPU_USED_VMS));
-                result.setMemTotal(rs.getDouble(MEM_TOTAL_VMS) / 1024);
-                result.setMemUsed(rs.getDouble(MEM_USED_VMS) / 1024);
-            }
+        runQuery(VIRTUAL_CPU_MEMORY_COUNT, rs -> {
+            result.setCpuTotal(rs.getInt(CPU_TOTAL_VMS));
+            result.setCpuUsed(rs.getInt(CPU_USED_VMS));
+            result.setMemTotal(rs.getDouble(MEM_TOTAL_VMS) / 1024);
+            result.setMemUsed(rs.getDouble(MEM_USED_VMS) / 1024);
         });
 
         return result;
@@ -79,19 +71,16 @@ public class VmDwhDao extends BaseDao {
     public List<TrendResources> getCpuUtilizationVms() throws DashboardDataException {
         final List<TrendResources> result = new ArrayList<>();
 
-        runQuery(CPU_VM_UTILIZATION, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                TrendResources usage = new TrendResources();
-                usage.setName(rs.getString(NAME));
-                usage.setUsed(rs.getDouble(CPU_USAGE_PERCENT) * rs.getDouble(NUMBER_OF_SOCKETS)
-                        * rs.getDouble(VM_CPU_PER_SOCKET) / 100);
-                usage.setTotal(rs.getDouble(VM_CPU_PER_SOCKET) * rs.getDouble(NUMBER_OF_SOCKETS));
-                usage.setPreviousUsed(rs.getDouble(PREVIOUS_CPU_PERCENT)
-                        * rs.getDouble(NUMBER_OF_SOCKETS)
-                        * rs.getDouble(VM_CPU_PER_SOCKET) / 100);
-                result.add(usage);
-            }
+        runQuery(CPU_VM_UTILIZATION, rs -> {
+            TrendResources usage = new TrendResources();
+            usage.setName(rs.getString(NAME));
+            usage.setUsed(rs.getDouble(CPU_USAGE_PERCENT) * rs.getDouble(NUMBER_OF_SOCKETS)
+                    * rs.getDouble(VM_CPU_PER_SOCKET) / 100);
+            usage.setTotal(rs.getDouble(VM_CPU_PER_SOCKET) * rs.getDouble(NUMBER_OF_SOCKETS));
+            usage.setPreviousUsed(rs.getDouble(PREVIOUS_CPU_PERCENT)
+                    * rs.getDouble(NUMBER_OF_SOCKETS)
+                    * rs.getDouble(VM_CPU_PER_SOCKET) / 100);
+            result.add(usage);
         });
 
         return result;
@@ -106,16 +95,13 @@ public class VmDwhDao extends BaseDao {
     public List<TrendResources> getMemoryUtilizationVms() throws DashboardDataException {
         final List<TrendResources> result = new ArrayList<>();
 
-        runQuery(MEM_VM_UTILIZATION, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                TrendResources usage = new TrendResources();
-                usage.setName(rs.getString(NAME));
-                usage.setUsed(rs.getDouble(MEMORY_USAGE_PERCENT) * rs.getDouble(MEMORY_SIZE) / 100);
-                usage.setTotal(rs.getDouble(MEMORY_SIZE));
-                usage.setPreviousUsed(rs.getDouble(PREVIOUS_MEMORY_PERCENT) * rs.getDouble(MEMORY_SIZE) / 100);
-                result.add(usage);
-            }
+        runQuery(MEM_VM_UTILIZATION, rs -> {
+            TrendResources usage = new TrendResources();
+            usage.setName(rs.getString(NAME));
+            usage.setUsed(rs.getDouble(MEMORY_USAGE_PERCENT) * rs.getDouble(MEMORY_SIZE) / 100);
+            usage.setTotal(rs.getDouble(MEMORY_SIZE));
+            usage.setPreviousUsed(rs.getDouble(PREVIOUS_MEMORY_PERCENT) * rs.getDouble(MEMORY_SIZE) / 100);
+            result.add(usage);
         });
 
         return result;

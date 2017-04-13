@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.frontend.server.dashboard.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.ovirt.engine.ui.frontend.server.dashboard.DashboardDataException;
@@ -21,12 +18,7 @@ public class ClusterEngineDao extends BaseDao {
     public InventoryStatus getClusterInventorySummary() throws DashboardDataException {
         final InventoryStatus result = new InventoryStatus();
 
-        runQuery(CLUSTER_INVENTORY, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                result.setTotalCount(rs.getInt(COUNT));
-            }
-        });
+        runQuery(CLUSTER_INVENTORY, rs -> result.setTotalCount(rs.getInt(COUNT)));
 
         return result;
     }

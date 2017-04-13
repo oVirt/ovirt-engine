@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.frontend.server.dashboard.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.ovirt.engine.ui.frontend.server.dashboard.DashboardDataException;
@@ -22,12 +19,7 @@ public class HostEngineDao extends BaseDao {
     public InventoryStatus getHostInventoryStatus() throws DashboardDataException {
         final InventoryStatus result = new InventoryStatus();
 
-        runQuery(HOST_INVENTORY, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                processHostStatus(result, rs.getInt(STATUS));
-            }
-        });
+        runQuery(HOST_INVENTORY, rs -> processHostStatus(result, rs.getInt(STATUS)));
 
         return result;
     }

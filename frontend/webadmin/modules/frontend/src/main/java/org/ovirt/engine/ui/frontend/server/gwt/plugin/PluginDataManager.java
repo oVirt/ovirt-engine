@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.frontend.server.gwt.plugin;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -118,12 +117,7 @@ public class PluginDataManager {
         // Create a local working copy of current data mappings (avoid modifying 'live' data)
         Map<String, PluginData> currentDataMapCopy = new HashMap<>(currentDataMapSnapshot);
 
-        File[] descriptorFiles = pluginDataDir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return isJsonFile(pathname);
-            }
-        });
+        File[] descriptorFiles = pluginDataDir.listFiles(pathname -> isJsonFile(pathname));
 
         if (descriptorFiles == null) {
             log.warn("Cannot list UI plugin descriptor files in '{}'", pluginDataDir.getAbsolutePath()); //$NON-NLS-1$

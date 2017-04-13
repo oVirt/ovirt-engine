@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.frontend.server.dashboard.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.ovirt.engine.ui.frontend.server.dashboard.DashboardDataException;
@@ -22,12 +19,7 @@ public class DataCenterDao extends BaseDao {
     public InventoryStatus getDcInventoryStatus() throws DashboardDataException {
         final InventoryStatus result = new InventoryStatus();
 
-        runQuery(DC_INVENTORY, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                processDcStatus(result, rs.getInt(STATUS));
-            }
-        });
+        runQuery(DC_INVENTORY, rs -> processDcStatus(result, rs.getInt(STATUS)));
 
         return result;
     }

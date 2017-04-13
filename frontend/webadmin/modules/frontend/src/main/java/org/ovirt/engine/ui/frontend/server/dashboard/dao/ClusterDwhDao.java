@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.frontend.server.dashboard.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,14 +23,9 @@ public class ClusterDwhDao extends BaseDao {
     public List<ClusterResourceAverage> getClusterCpuAndMemoryAverage() throws DashboardDataException {
         final List<ClusterResourceAverage> result = new ArrayList<>();
 
-        runQuery(CLUSTER_LAST_24_AVERAGE, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                result.add(new ClusterResourceAverage(rs.getString(NAME),
-                        rs.getDouble(CPU_AVERAGE),
-                        rs.getDouble(MEM_AVERAGE)));
-            }
-        });
+        runQuery(CLUSTER_LAST_24_AVERAGE, rs -> result.add(new ClusterResourceAverage(rs.getString(NAME),
+                rs.getDouble(CPU_AVERAGE),
+                rs.getDouble(MEM_AVERAGE))));
 
         return result;
     }

@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.frontend.server.dashboard.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -23,12 +20,8 @@ public class GlusterVolumeEngineDao extends BaseDao {
     public InventoryStatus getVolumeInventoryStatus() throws DashboardDataException {
         final InventoryStatus result = new InventoryStatus();
 
-        runQuery(GLUSTER_VOLUME_INVENTORY, new QueryResultCallback() {
-            @Override
-            public void onResult(ResultSet rs) throws SQLException {
-                processVolumeStatus(result, rs.getString(STATUS), rs.getInt(BRICKS_NOT_UP));
-            }
-        });
+        runQuery(GLUSTER_VOLUME_INVENTORY,
+                rs -> processVolumeStatus(result, rs.getString(STATUS), rs.getInt(BRICKS_NOT_UP)));
 
         return result;
     }

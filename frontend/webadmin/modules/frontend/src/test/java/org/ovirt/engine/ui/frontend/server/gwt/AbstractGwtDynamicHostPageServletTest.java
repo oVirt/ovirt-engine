@@ -245,12 +245,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     }
 
     ArgumentMatcher<GetConfigurationValueParameters> configValueParams(final ConfigurationValues configValue) {
-        return new ArgumentMatcher<GetConfigurationValueParameters>() {
-            @Override
-            public boolean matches(GetConfigurationValueParameters argument) {
-                return argument.getConfigValue() == configValue;
-            }
-        };
+        return argument -> argument.getConfigValue() == configValue;
     }
 
 }

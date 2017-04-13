@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.IFrontendEventsHandler.MessageFormatter;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
-import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent.AsyncOperationCompleteHandler;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.ui.frontend.communication.StorageCallback;
@@ -41,7 +40,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
@@ -168,13 +166,9 @@ public class Frontend implements HasHandlers {
         this.vdsmErrorsTranslator = vdsmErrorsTranslator;
         eventBus = gwtEventBus;
 
-        eventBus.addHandler(AsyncOperationCompleteEvent.getType(), new AsyncOperationCompleteHandler() {
-
-            @Override
-            public void onAsyncOperationComplete(AsyncOperationCompleteEvent event) {
-                if (event.isAction() && event.isSuccess()) {
-                    RefreshActiveModelEvent.fire(Frontend.this, true);
-                }
+        eventBus.addHandler(AsyncOperationCompleteEvent.getType(), event -> {
+            if (event.isAction() && event.isSuccess()) {
+                RefreshActiveModelEvent.fire(Frontend.this, true);
             }
         });
     }
@@ -613,14 +607,11 @@ public class Frontend implements HasHandlers {
             if (scheduler == null) {
                 scheduler = Scheduler.get();
             }
-            scheduler.scheduleDeferred(new ScheduledCommand() {
-                @Override
-                public void execute() {
-                    if (callback != null) {
-                        List<VdcReturnValueBase> emptyResult = new ArrayList<>();
-                        callback.executed(new FrontendMultipleActionAsyncResult(actionType,
-                                parameters, emptyResult, state));
-                    }
+            scheduler.scheduleDeferred(() -> {
+                if (callback != null) {
+                    List<VdcReturnValueBase> emptyResult = new ArrayList<>();
+                    callback.executed(new FrontendMultipleActionAsyncResult(actionType,
+                            parameters, emptyResult, state));
                 }
             });
         } else {
@@ -787,34 +778,31 @@ public class Frontend implements HasHandlers {
         }
 
         runAction(actionTypes.get(0), parameters.get(0),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(final FrontendActionAsyncResult result) {
-                        VdcReturnValueBase returnValue = result.getReturnValue();
-                        boolean success = returnValue != null && returnValue.getSucceeded();
-                        if (success || failureCallback == null) {
-                            IFrontendActionAsyncCallback callback = callbacks.get(0);
-                            if (callback != null) {
-                                callback.executed(result);
-                            }
-                            if (aggregateErrors && returnValue != null && (!returnValue.isValid() || !returnValue.getSucceeded())) {
-                                failedActions.add(actionTypes.get(0));
-                                failedReturnValues.add(returnValue);
-                            }
-                            actionTypes.remove(0);
-                            parameters.remove(0);
-                            callbacks.remove(0);
-                            runMultipleActions(actionTypes,
-                                    parameters,
-                                    callbacks,
-                                    failureCallback,
-                                    state,
-                                    aggregateErrors,
-                                    failedActions,
-                                    failedReturnValues);
-                        } else {
-                            failureCallback.executed(result);
+                result -> {
+                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    boolean success = returnValue != null && returnValue.getSucceeded();
+                    if (success || failureCallback == null) {
+                        IFrontendActionAsyncCallback callback = callbacks.get(0);
+                        if (callback != null) {
+                            callback.executed(result);
                         }
+                        if (aggregateErrors && returnValue != null && (!returnValue.isValid() || !returnValue.getSucceeded())) {
+                            failedActions.add(actionTypes.get(0));
+                            failedReturnValues.add(returnValue);
+                        }
+                        actionTypes.remove(0);
+                        parameters.remove(0);
+                        callbacks.remove(0);
+                        runMultipleActions(actionTypes,
+                                parameters,
+                                callbacks,
+                                failureCallback,
+                                state,
+                                aggregateErrors,
+                                failedActions,
+                                failedReturnValues);
+                    } else {
+                        failureCallback.executed(result);
                     }
                 }, state, !aggregateErrors || failureCallback != null);
     }
