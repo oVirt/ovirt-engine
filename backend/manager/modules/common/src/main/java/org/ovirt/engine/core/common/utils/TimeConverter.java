@@ -1,30 +1,17 @@
 package org.ovirt.engine.core.common.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class TimeConverter {
 
-    private static List<TimeUnit> orderedTimeUnits;
-
-    static {
-        orderedTimeUnits = new ArrayList<>();
-        for (TimeUnit timeUnit : TimeUnit.values()) {
-            orderedTimeUnits.add(timeUnit);
-        }
-        Collections.sort(orderedTimeUnits, Collections.reverseOrder(new Comparator<TimeUnit>() {
-            @Override
-            public int compare(TimeUnit unit1, TimeUnit unit2) {
-                if (TimeUnit.MICROSECONDS.convert(1L, unit1) < TimeUnit.MICROSECONDS.convert(1L, unit2)) {
-                    return -1;
-                }
-                return 1;
-            }
-        }));
-    }
+    private static final List<TimeUnit> orderedTimeUnits =
+            Arrays.stream(TimeUnit.values())
+                    .sorted(Comparator.comparing((TimeUnit u) -> TimeUnit.MICROSECONDS.convert(1L, u)).reversed())
+                    .collect(Collectors.toList());
 
     /*
      * This method converts an input time interval (interval) in an input unit(fromUnit) to a desired output
