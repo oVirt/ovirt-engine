@@ -8,11 +8,9 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -82,23 +80,14 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         super(eventBus, view);
         this.listModelProvider = listModelProvider;
 
-        registerHandler(getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
-            @Override
-            public void onUserPortalModelInit(UserPortalModelInitEvent event) {
-                updateListModel(listModelProvider.getModel());
-            }
-        }));
+        registerHandler(getEventBus().addHandler(UserPortalModelInitEvent.getType(),
+                event -> updateListModel(listModelProvider.getModel())));
 
         updateListModel(listModelProvider.getModel());
     }
 
     void addSelectedItemChangeHandler() {
-        selectedItemChangeListener = new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                setVmStyle();
-            }
-        };
+        selectedItemChangeListener = (ev, sender, args) -> setVmStyle();
         listModel.getSelectedItemChangedEvent().addListener(selectedItemChangeListener);
     }
 
@@ -129,30 +118,10 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         registerHandler(getView().addDoubleClickHandler(this));
 
         // Add buttons to the view
-        registerHandler(getView().addRunButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                executeCommand(getRunCommand());
-            }
-        }));
-        registerHandler(getView().addShutdownButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                executeCommand(getShutdownCommand());
-            }
-        }));
-        registerHandler(getView().addSuspendButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                executeCommand(getSuspendCommand());
-            }
-        }));
-        registerHandler(getView().addRebootButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                executeCommand(getRebootCommand());
-            }
-        }));
+        registerHandler(getView().addRunButton().addClickHandler(event -> executeCommand(getRunCommand())));
+        registerHandler(getView().addShutdownButton().addClickHandler(event -> executeCommand(getShutdownCommand())));
+        registerHandler(getView().addSuspendButton().addClickHandler(event -> executeCommand(getSuspendCommand())));
+        registerHandler(getView().addRebootButton().addClickHandler(clickEvent -> executeCommand(getRebootCommand())));
     }
 
     @Override

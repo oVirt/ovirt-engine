@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresent
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 import org.ovirt.engine.ui.userportal.utils.ConnectAutomaticallyManager;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -70,12 +69,8 @@ public class MainTabBasicPresenter extends AbstractModelActivationPresenter<User
         this.vmDetails = vmDetails;
 
         connectAutomaticallyManager.registerModel(provider.getModel());
-        getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
-            @Override
-            public void onUserPortalModelInit(UserPortalModelInitEvent event) {
-                connectAutomaticallyManager.registerModel(provider.getModel());
-            }
-        });
+        getEventBus().addHandler(UserPortalModelInitEvent.getType(),
+                event -> connectAutomaticallyManager.registerModel(provider.getModel()));
     }
 
     @Override

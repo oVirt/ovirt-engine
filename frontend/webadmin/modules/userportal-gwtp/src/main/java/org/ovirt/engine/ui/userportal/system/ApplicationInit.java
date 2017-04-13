@@ -10,9 +10,6 @@ import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
@@ -75,17 +72,14 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
 
         // Login model "IsENGINEUser" property determines the availability
         // of the "Extended" main tab and starts the actual login operation
-        loginModel.getIsENGINEUser().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                Boolean isEngineUser = loginModel.getIsENGINEUser().getEntity();
+        loginModel.getIsENGINEUser().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            Boolean isEngineUser = loginModel.getIsENGINEUser().getEntity();
 
-                if (isEngineUser != null) {
-                    userRole.setEngineUser(isEngineUser);
+            if (isEngineUser != null) {
+                userRole.setEngineUser(isEngineUser);
 
-                    // Proceed with login operation
-                    performLogin(loginModel);
-                }
+                // Proceed with login operation
+                performLogin(loginModel);
             }
         });
     }

@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
@@ -80,12 +79,7 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
 
         if (shouldRenderCell(model)) {
             // deferred because first the row has to be selected and then the console can be shown
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                @Override
-                public void execute() {
-                    command.execute(model);
-                }
-            });
+            Scheduler.get().scheduleDeferred(() -> command.execute(model));
         }
     }
 

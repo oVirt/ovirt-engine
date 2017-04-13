@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtended
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableTableModelProvider;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
@@ -56,24 +55,21 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
         super.onBind();
 
         registerHandler(getView().getTable().getSelectionModel()
-                .addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-                    @Override
-                    public void onSelectionChange(SelectionChangeEvent event) {
-                        // Update model selection
-                        modelProvider.setSelectedItems(getSelectedItems());
+                .addSelectionChangeHandler(event -> {
+                    // Update model selection
+                    modelProvider.setSelectedItems(getSelectedItems());
 
-                        // Let others know that the table selection has changed
-                        fireTableSelectionChangeEvent();
+                    // Let others know that the table selection has changed
+                    fireTableSelectionChangeEvent();
 
-                        // Update the layout
-                        updateLayout();
+                    // Update the layout
+                    updateLayout();
 
-                        // Reveal the appropriate place based on selection
-                        if (hasSelection()) {
-                            placeManager.revealPlace(getSubTabRequest());
-                        } else {
-                            placeManager.revealPlace(getSideTabRequest());
-                        }
+                    // Reveal the appropriate place based on selection
+                    if (hasSelection()) {
+                        placeManager.revealPlace(getSubTabRequest());
+                    } else {
+                        placeManager.revealPlace(getSideTabRequest());
                     }
                 }));
     }

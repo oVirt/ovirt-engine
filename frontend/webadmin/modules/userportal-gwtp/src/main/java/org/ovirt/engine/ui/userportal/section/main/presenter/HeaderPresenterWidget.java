@@ -8,8 +8,6 @@ import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -53,12 +51,8 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     protected void onBind() {
         super.onBind();
 
-        registerHandler(getView().getAboutLink().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopupProvider.get());
-            }
-        }));
+        registerHandler(getView().getAboutLink().addClickHandler(event ->
+                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopupProvider.get())));
     }
 
     @Override

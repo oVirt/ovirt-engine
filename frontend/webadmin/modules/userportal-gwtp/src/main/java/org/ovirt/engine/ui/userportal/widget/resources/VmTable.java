@@ -24,10 +24,6 @@ import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.OpenEvent;
-import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -159,21 +155,9 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
     }
 
     protected void listenOnSelectionChange() {
-        openHandler = vmTree.addOpenHandler(new OpenHandler<TreeItem>() {
-            @Override
-            public void onOpen(OpenEvent<TreeItem> event) {
-                setSelectionToModel();
-            }
+        openHandler = vmTree.addOpenHandler(event -> setSelectionToModel());
 
-        });
-
-        closeHandler = vmTree.addCloseHandler(new CloseHandler<TreeItem>() {
-
-            @Override
-            public void onClose(CloseEvent<TreeItem> event) {
-                setSelectionToModel();
-            }
-        });
+        closeHandler = vmTree.addCloseHandler(event -> setSelectionToModel());
     }
 
     private void setSelectionToModel() {
@@ -335,18 +319,14 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
         return new StyledCompositeCell<>(
                 new ArrayList<HasCell<EntityModel, ?>>(Arrays.asList(diskImageColumn, driveMappingColumn)),
-                new StyledCompositeCell.StyledProvider<EntityModel>() {
-
-                    @Override
-                    public String styleStringOf(HasCell<EntityModel, ?> cell) {
-                        if (cell == diskImageColumn) {
-                            return "float: left"; //$NON-NLS-1$
-                        } else if (cell == driveMappingColumn) {
-                            return "float: left; padding-top: 4px; padding-left: 5px;"; //$NON-NLS-1$
-                        }
-
-                        return null;
+                cell -> {
+                    if (cell == diskImageColumn) {
+                        return "float: left"; //$NON-NLS-1$
+                    } else if (cell == driveMappingColumn) {
+                        return "float: left; padding-top: 4px; padding-left: 5px;"; //$NON-NLS-1$
                     }
+
+                    return null;
                 });
 
     }
@@ -370,19 +350,15 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
         return new StyledCompositeCell<>(
                 new ArrayList<HasCell<EntityModel, ?>>(Arrays.asList(vmImageColumn, nameColumn)),
-                new StyledCompositeCell.StyledProvider<EntityModel>() {
+                cell -> {
+                    if (cell == vmImageColumn) {
+                        return "float: left"; //$NON-NLS-1$
+                    } else if (cell == nameColumn) {
+                        return "float: left; padding-top: 4px;"; //$NON-NLS-1$
 
-                    @Override
-                    public String styleStringOf(HasCell<EntityModel, ?> cell) {
-                        if (cell == vmImageColumn) {
-                            return "float: left"; //$NON-NLS-1$
-                        } else if (cell == nameColumn) {
-                            return "float: left; padding-top: 4px;"; //$NON-NLS-1$
-
-                        }
-
-                        return null;
                     }
+
+                    return null;
                 });
     }
 

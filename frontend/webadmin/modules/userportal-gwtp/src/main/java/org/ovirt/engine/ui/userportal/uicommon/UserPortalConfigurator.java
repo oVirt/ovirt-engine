@@ -1,15 +1,10 @@
 package org.ovirt.engine.ui.userportal.uicommon;
 
-import java.util.List;
-
-import org.ovirt.engine.core.common.console.ConsoleOptions.WanColorDepth;
-import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.ContextSensitiveHelpManager;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
@@ -87,22 +82,13 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     private void updateWANDisableEffects(final ConsoleClient spice) {
-        AsyncDataProvider.getInstance().getWANDisableEffects(new AsyncQuery<>(new AsyncCallback<List<WanDisableEffects>>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(List<WanDisableEffects> returnValue) {
-                spice.getOptions().setWanDisableEffects(returnValue);
-            }
-        }));
+        AsyncDataProvider.getInstance().getWANDisableEffects(new AsyncQuery<>(
+                returnValue -> spice.getOptions().setWanDisableEffects(returnValue)));
     }
 
     private void updateWanColorDepthOptions(final ConsoleClient spice) {
-        AsyncDataProvider.getInstance().getWANColorDepth(new AsyncQuery<>(new AsyncCallback<WanColorDepth>() {
-            @Override
-            public void onSuccess(WanColorDepth returnValue) {
-                spice.getOptions().setWanColorDepth(returnValue);
-            }
-        }));
+        AsyncDataProvider.getInstance().getWANColorDepth(new AsyncQuery<>(
+                returnValue -> spice.getOptions().setWanColorDepth(returnValue)));
     }
 
     @Override

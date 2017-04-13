@@ -15,9 +15,6 @@ import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
@@ -29,8 +26,6 @@ import org.ovirt.engine.ui.userportal.widget.QuotaStorageProgressBar;
 import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
 import org.ovirt.engine.ui.userportal.widget.resources.VmTable;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -175,12 +170,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize();
 
-        modelProvider.getModel().getUsedQuotaPercentage().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                initQuotaList(model);
-            }
-        });
+        modelProvider.getModel().getUsedQuotaPercentage().getEntityChangedEvent().addListener((ev, sender, args) -> initQuotaList(model));
 
         setResizeHandler();
 
@@ -190,13 +180,10 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     }
 
     private void setResizeHandler() {
-        Window.addResizeHandler(new ResizeHandler() {
-            @Override
-            public void onResize(ResizeEvent resizeEvent) {
-                vcpuExpanderContent.setHeight(numOrZero(infoBoxCpu.getOffsetHeight() - INFO_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
-                memoryExpanderContent.setHeight(numOrZero(infoBoxMemory.getOffsetHeight() - INFO_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
-                vmTable.setHeight(numOrZero(bottomLayoutPanel.getOffsetHeight() - STORAGE_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
-            }
+        Window.addResizeHandler(resizeEvent -> {
+            vcpuExpanderContent.setHeight(numOrZero(infoBoxCpu.getOffsetHeight() - INFO_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
+            memoryExpanderContent.setHeight(numOrZero(infoBoxMemory.getOffsetHeight() - INFO_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
+            vmTable.setHeight(numOrZero(bottomLayoutPanel.getOffsetHeight() - STORAGE_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
         });
     }
 

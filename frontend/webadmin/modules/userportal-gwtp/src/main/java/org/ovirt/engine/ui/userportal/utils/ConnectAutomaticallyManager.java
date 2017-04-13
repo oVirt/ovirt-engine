@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.UserProfile;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -81,27 +79,19 @@ public class ConnectAutomaticallyManager {
 
         @Override
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            AsyncDataProvider.getInstance().getUserProfile(model.asyncQuery(new AsyncCallback<VdcQueryReturnValue>() {
-                @Override
-                public void onSuccess(VdcQueryReturnValue returnValue) {
-                    UserProfile profile = returnValue.getReturnValue();
-                    Boolean connectAutomatically = profile == null ? Boolean.TRUE :
-                            profile.isUserPortalVmLoginAutomatically();
-                    if (connectAutomatically) {
-                        handleConnectAutomatically();
-                    }
+            AsyncDataProvider.getInstance().getUserProfile(model.asyncQuery(returnValue -> {
+                UserProfile profile = returnValue.getReturnValue();
+                Boolean connectAutomatically = profile == null ? Boolean.TRUE :
+                        profile.isUserPortalVmLoginAutomatically();
+                if (connectAutomatically) {
+                    handleConnectAutomatically();
                 }
             }));
         }
 
         private void handleConnectAutomatically() {
             if (model.getCanConnectAutomatically() && !alreadyOpened) {
-                AsyncDataProvider.getInstance().getIsPasswordDelegationPossible(new AsyncQuery<>(new AsyncCallback<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean returnValue) {
-                        connect(returnValue);
-                    }
-                }));
+                AsyncDataProvider.getInstance().getIsPasswordDelegationPossible(new AsyncQuery<>(returnValue -> connect(returnValue)));
             }
         }
 

@@ -26,7 +26,6 @@ import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetai
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
-import org.ovirt.engine.ui.userportal.widget.extended.vm.AbstractConsoleButtonCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleButtonCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleEditButtonCell;
 import org.ovirt.engine.ui.userportal.widget.table.UserPortalSimpleActionTable;
@@ -145,16 +144,13 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         ConsoleButtonCell openConsoleCell = new ConsoleButtonCell(
                 resources.sideTabExtendedVmStyle().enabledConsoleButton(),
                 resources.sideTabExtendedVmStyle().disabledConsoleButton(),
-                new AbstractConsoleButtonCell.ConsoleButtonCommand() {
-                    @Override
-                    public void execute(UserPortalItemModel model) {
-                        try {
-                            if (!model.isPool()) {
-                            model.getVmConsoles().connect();
-                            }
-                        } catch (VmConsoles.ConsoleConnectException e) {
-                            errorPopupManager.show(e.getLocalizedErrorMessage());
+                model -> {
+                    try {
+                        if (!model.isPool()) {
+                        model.getVmConsoles().connect();
                         }
+                    } catch (VmConsoles.ConsoleConnectException e) {
+                        errorPopupManager.show(e.getLocalizedErrorMessage());
                     }
                 }) {
             @Override
@@ -175,12 +171,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         ConsoleEditButtonCell consoleEditCell = new ConsoleEditButtonCell(
                 resources.sideTabExtendedVmStyle().enabledEditConsoleButton(),
                 resources.sideTabExtendedVmStyle().disabledEditConsoleButton(),
-                new AbstractConsoleButtonCell.ConsoleButtonCommand() {
-                    @Override
-                    public void execute(UserPortalItemModel model) {
-                        getModel().getEditConsoleCommand().execute();
-                    }
-                }) {
+                model -> getModel().getEditConsoleCommand().execute()) {
             @Override
             public SafeHtml getTooltip(UserPortalItemModel value) {
                 return SafeHtmlUtils.fromSafeConstant(constants.editConsoleLabel());

@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.utils.ConnectAutomaticallyManager;
 import com.google.gwt.event.shared.EventBus;
@@ -59,12 +58,9 @@ public class MainTabExtendedPresenter extends TabContainerPresenter<MainTabExten
 
         connectAutomaticallyManager.registerModel(provider.getModel());
 
-        getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
-            @Override
-            public void onUserPortalModelInit(UserPortalModelInitEvent event) {
-                connectAutomaticallyManager.unregisterModels();
-                connectAutomaticallyManager.registerModel(provider.getModel());
-            }
+        getEventBus().addHandler(UserPortalModelInitEvent.getType(), event -> {
+            connectAutomaticallyManager.unregisterModels();
+            connectAutomaticallyManager.registerModel(provider.getModel());
         });
     }
 
