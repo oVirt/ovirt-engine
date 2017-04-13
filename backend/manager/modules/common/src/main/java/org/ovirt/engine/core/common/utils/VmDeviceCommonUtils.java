@@ -196,16 +196,7 @@ public class VmDeviceCommonUtils {
             deviceIdToIfaceName.put(iface.getId(), iface.getName());
         }
 
-        Collections.sort(pluggedInterfaces, new Comparator<VmDevice>() {
-            @Override
-            public int compare(VmDevice first, VmDevice second) {
-                Guid firstDeviceId = first.getId().getDeviceId();
-                Guid secondDeviceId = second.getId().getDeviceId();
-                String firstIfaceName = deviceIdToIfaceName.get(firstDeviceId);
-                String secondIfaceName = deviceIdToIfaceName.get(secondDeviceId);
-                return firstIfaceName.compareTo(secondIfaceName);
-            }
-        });
+        Collections.sort(pluggedInterfaces, Comparator.comparing(d -> deviceIdToIfaceName.get(d.getId().getDeviceId())));
 
         return pluggedInterfaces;
     }
