@@ -60,29 +60,11 @@ public class ReversibleFlow {
 
         PreparingEnlistment enlistment = new PreparingEnlistment(context);
 
-        enlistment.getPreparedEvent().addListener(
-            new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    preparedHandler();
-                }
-            });
+        enlistment.getPreparedEvent().addListener((ev, sender, args) -> preparedHandler());
 
-        enlistment.getRollbackEvent().addListener(
-            new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    rollbackHandler();
-                }
-            });
+        enlistment.getRollbackEvent().addListener((ev, sender, args) -> rollbackHandler());
 
-        enlistment.getDoneEvent().addListener(
-            new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    doneOnPrepareHandler();
-                }
-            });
+        enlistment.getDoneEvent().addListener((ev, sender, args) -> doneOnPrepareHandler());
 
         IEnlistmentNotification notification = notifications.get(prepareIndex);
         notification.prepare(enlistment);
@@ -92,13 +74,7 @@ public class ReversibleFlow {
 
         Enlistment enlistment = new Enlistment(context);
 
-        enlistment.getDoneEvent().addListener(
-            new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    doneOnCommitHandler();
-                }
-            });
+        enlistment.getDoneEvent().addListener((ev, sender, args) -> doneOnCommitHandler());
 
         IEnlistmentNotification notification = notifications.get(commitIndex);
         notification.commit(enlistment);
@@ -108,13 +84,7 @@ public class ReversibleFlow {
 
         Enlistment enlistment = new Enlistment(context);
 
-        enlistment.getDoneEvent().addListener(
-            new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    doneOnRollbackHandler();
-                }
-            });
+        enlistment.getDoneEvent().addListener((ev, sender, args) -> doneOnRollbackHandler());
 
         IEnlistmentNotification notification = notifications.get(rollbackIndex);
         notification.rollback(enlistment);

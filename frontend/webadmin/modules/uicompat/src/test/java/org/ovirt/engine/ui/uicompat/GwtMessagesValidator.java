@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicompat;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -223,12 +222,7 @@ public class GwtMessagesValidator {
      */
     private static File[] getMessagesLocalePropertiesFiles(final File currentDir, final String fileNamePrefix)
             throws URISyntaxException {
-        return currentDir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.matches("^" + fileNamePrefix + "_[a-zA-Z]{2}.*\\.properties$");
-            }
-        });
+        return currentDir.listFiles((dir, name) -> name.matches("^" + fileNamePrefix + "_[a-zA-Z]{2}.*\\.properties$"));
     }
 
     /**
