@@ -2,7 +2,6 @@ package org.ovirt.engine.core.utils.osinfo;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -41,12 +40,7 @@ public enum OsInfoPreferencesLoader implements OsLoader {
     void load(Path directoryPath) {
         File dir = directoryPath.toFile();
         if (dir.exists()) {
-            File[] files = directoryPath.toFile().listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(".properties");
-                }
-            });
+            File[] files = directoryPath.toFile().listFiles((dir1, name) -> name.endsWith(".properties"));
 
             // load files by name order. 00-osinfo.properties should be loaded first
             if (files != null) {

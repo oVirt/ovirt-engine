@@ -50,40 +50,32 @@ public class PKIResources {
         }
     }
 
+    @FunctionalInterface
     private interface IFormatter {
         String toString(Certificate cert, String alias);
     }
 
-    private static IFormatter formatPEM = new IFormatter() {
-        public String toString(Certificate cert, String alias) {
-            try {
-                return String.format(
-                        "-----BEGIN CERTIFICATE-----%1$c" +
-                        "%2$s" +
-                        "-----END CERTIFICATE-----%1$c",
-                    '\n',
-                    new Base64(
-                        76,
-                        new byte[] { (byte)'\n' }
-                    ).encodeToString(
-                        cert.getEncoded()
-                    )
-                );
-            }
-            catch (CertificateEncodingException e) {
-                throw new RuntimeException(e);
-            }
+    private static IFormatter formatPEM = (cert, alias) -> {
+        try {
+            return String.format(
+                    "-----BEGIN CERTIFICATE-----%1$c" +
+                    "%2$s" +
+                    "-----END CERTIFICATE-----%1$c",
+                '\n',
+                new Base64(
+                    76,
+                    new byte[] { (byte)'\n' }
+                ).encodeToString(
+                    cert.getEncoded()
+                )
+            );
+        }
+        catch (CertificateEncodingException e) {
+            throw new RuntimeException(e);
         }
     };
 
-    private static IFormatter formatOpenSSH = new IFormatter() {
-        public String toString(Certificate cert, String alias) {
-            return OpenSSHUtils.getKeyString(
-                cert.getPublicKey(),
-                alias
-            );
-        }
-    };
+    private static IFormatter formatOpenSSH = (cert, alias) -> OpenSSHUtils.getKeyString(cert.getPublicKey(), alias);
 
     public enum Format {
 
