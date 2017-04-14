@@ -35,18 +35,7 @@ public class MigrateVMActionRunner extends SortedMultipleActionsRunnerBase {
             vms.put(cmd.getVmId(), vmDao.get(cmd.getVmId()));
         }
 
-        Collections.sort(commands, Collections.reverseOrder(new Comparator<CommandBase<?>>() {
-
-            private final VmsComparer vmComparator = new VmsComparer();
-
-            @Override
-            public int compare(CommandBase<?> o1, CommandBase<?> o2) {
-                VM vm1 = vms.get(o1.getVmId());
-                VM vm2 = vms.get(o2.getVmId());
-
-                return vmComparator.compare(vm1, vm2);
-            }
-
-        }));
+        Collections.sort(commands,
+                Comparator.comparing((CommandBase<?> c) -> vms.get(c.getVmId()), new VmsComparer()).reversed());
     }
 }

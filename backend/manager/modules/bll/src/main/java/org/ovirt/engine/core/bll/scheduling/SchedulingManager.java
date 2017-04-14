@@ -722,21 +722,7 @@ public class SchedulingManager implements BackendService {
     }
 
     private void sortFilters(ArrayList<Guid> filters, final Map<Guid, Integer> filterPositionMap) {
-        Collections.sort(filters, new Comparator<Guid>() {
-            @Override
-            public int compare(Guid filter1, Guid filter2) {
-                Integer position1 = getPosition(filterPositionMap.get(filter1));
-                Integer position2 = getPosition(filterPositionMap.get(filter2));
-                return position1 - position2;
-            }
-
-            private Integer getPosition(Integer position) {
-                if (position == null) {
-                    position = 0;
-                }
-                return position;
-            }
-        });
+        Collections.sort(filters, Comparator.comparingInt(f -> filterPositionMap.getOrDefault(f, 0)));
     }
 
     private Optional<Guid> runFunctions(SelectorInstance selector,
