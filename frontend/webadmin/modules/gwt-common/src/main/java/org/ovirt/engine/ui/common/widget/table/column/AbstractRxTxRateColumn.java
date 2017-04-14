@@ -36,27 +36,9 @@ public abstract class AbstractRxTxRateColumn<T> extends AbstractRenderedTextColu
 
     @Override
     public void makeSortable() {
-        makeSortable(new Comparator<T>() {
-
-            private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-            @Override
-            public int compare(T o1, T o2) {
-                String text1 = getValue(o1);
-                String text2 = getValue(o2);
-                if (text1.equals(text2)) {
-                    return 0;
-                } else if (RxTxRateRenderer.isEmpty(text1) || RxTxRateRenderer.isEmpty(text2)) {
-                    return RxTxRateRenderer.isEmpty(text1) ? -1 : 1;
-                } else if (RxTxRateRenderer.isZero(text1) || RxTxRateRenderer.isZero(text2)) {
-                    return RxTxRateRenderer.isZero(text1) ? -1 : 1;
-                } else if (RxTxRateRenderer.isSmall(text1) || RxTxRateRenderer.isSmall(text2)) {
-                    return RxTxRateRenderer.isSmall(text1) ? -1 : 1;
-                } else {
-                    return lexoNumeric.compare(text1, text2);
-                }
-            }
-        });
+        makeSortable(Comparator.comparing((T t) -> !RxTxRateRenderer.isEmpty(getValue(t)))
+                .thenComparing(t -> !RxTxRateRenderer.isZero(getValue(t)))
+                .thenComparing(t -> !RxTxRateRenderer.isSmall(getValue(t)))
+                .thenComparing(this::getValue, new LexoNumericComparator()));
     }
-
 }
