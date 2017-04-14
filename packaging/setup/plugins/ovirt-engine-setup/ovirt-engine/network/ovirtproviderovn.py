@@ -262,3 +262,47 @@ class Plugin(plugin.PluginBase):
     )
     def _misc(self):
         self._add_provider_to_db()
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CLOSEUP,
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
+        ),
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
+        ),
+        condition=lambda self: (
+            self._enabled
+        )
+    )
+    def _restart_services(self):
+        if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+            for service in OvnEnv.ENGINE_MACHINE_OVN_SERVICES:
+                self.services.startup(
+                    name=service,
+                    state=True,
+                )
+                for state in (False, True):
+                    self.services.state(
+                        name=service,
+                        state=state,
+                    )
+        else:
+            self.dialog.note(
+                text=_(
+                    'Some services were not restarted automatically \n'
+                    'in developer mode and must be restarted manually.\n'
+                    'Please execute the following commands to start them:\n'
+                    '    {commands}'
+                ).format(
+                    commands=(
+                        '\n    '.join(
+                            'systemctl restart ' + name
+                            for name in OvnEnv.ENGINE_MACHINE_OVN_SERVICES
+                        )
+                    )
+                ),
+            )
+
+
+# vim: expandtab tabstop=4 shiftwidth=4

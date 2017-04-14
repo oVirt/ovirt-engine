@@ -850,5 +850,15 @@ class OvnEnv(object):
     def OVIRT_PROVIDER_OVN_PASSWORD(self):
         return 'OVESETUP_OVN/ovirtProviderOvnPassword'
 
+    OVIRT_PROVIDER_OVN_SERVICE = 'ovirt-provider-ovn'
+    OPENVSWITCH_SERVICE = 'openvswitch'
+    OVN_NORTHD_SERVICE = 'ovn-northd'
+
+    ENGINE_MACHINE_OVN_SERVICES = (
+        OPENVSWITCH_SERVICE,
+        OVN_NORTHD_SERVICE,
+        OVIRT_PROVIDER_OVN_SERVICE,
+    )
+
 
 # vim: expandtab tabstop=4 shiftwidth=4
