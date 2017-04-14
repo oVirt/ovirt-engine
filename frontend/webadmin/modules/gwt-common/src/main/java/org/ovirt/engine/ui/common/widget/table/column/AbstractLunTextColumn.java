@@ -35,12 +35,7 @@ public abstract class AbstractLunTextColumn extends AbstractSafeHtmlColumn<LunMo
     public abstract String getRawValue(LunModel object);
 
     public void makeSortable() {
-        makeSortable(new Comparator<LunModel>() {
-            @Override
-            public int compare(LunModel o1, LunModel o2) {
-                return LexoNumericComparator.comp(getRawValue(o1), getRawValue(o2));
-            }
-        });
+        makeSortable(Comparator.comparing(this::getRawValue, new LexoNumericComparator()));
     }
 
 }

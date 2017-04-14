@@ -60,15 +60,8 @@ public class VmDeviceGeneralTypeColumn<T> extends AbstractSafeHtmlColumn<T> {
     }
 
     public void makeSortable() {
-        makeSortable(new Comparator<T>() {
-
-            @Override
-            public int compare(T o1, T o2) {
-                String type1 = (getDeviceFromObject(o1) == null) ? null : getDeviceFromObject(o1).getType().getValue();
-                String type2 = (getDeviceFromObject(o2) == null) ? null : getDeviceFromObject(o2).getType().getValue();
-                return LexoNumericComparator.comp(type1, type2);
-            }
-        });
+        makeSortable(Comparator.comparing((T o) -> getDeviceFromObject(o) != null)
+                .thenComparing(o -> getDeviceFromObject(o).getType().getValue(), new LexoNumericComparator()));
     }
 
     private VmDevice getDeviceFromObject(T object) {

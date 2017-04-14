@@ -48,15 +48,7 @@ public abstract class AbstractTextColumn<T> extends AbstractColumn<T, String> {
      * Enables default <em>client-side</em> sorting for this column, by the String ordering of the displayed text.
      */
     public void makeSortable() {
-        makeSortable(new Comparator<T>() {
-
-            private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-            @Override
-            public int compare(T arg0, T arg1) {
-                return lexoNumeric.compare(getValue(arg0), getValue(arg1));
-            }
-        });
+        makeSortable(Comparator.comparing(this::getValue, new LexoNumericComparator()));
     }
 
 }

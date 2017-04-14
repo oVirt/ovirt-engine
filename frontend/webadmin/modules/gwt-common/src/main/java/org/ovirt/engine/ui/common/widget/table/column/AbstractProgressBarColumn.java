@@ -68,13 +68,7 @@ public abstract class AbstractProgressBarColumn<T> extends AbstractSafeHtmlColum
      * getProgressValue method.
      */
     public void makeSortable() {
-        makeSortable(new Comparator<T>() {
-
-            @Override
-            public int compare(T arg0, T arg1) {
-                return getProgressValue(arg0).compareTo(getProgressValue(arg1));
-            }
-        });
+        makeSortable(Comparator.comparing(this::getProgressValue));
     }
 
     /**

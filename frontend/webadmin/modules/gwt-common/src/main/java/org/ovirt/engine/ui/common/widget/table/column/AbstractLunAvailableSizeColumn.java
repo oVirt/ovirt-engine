@@ -52,14 +52,7 @@ public abstract class AbstractLunAvailableSizeColumn extends AbstractColumn<LunM
     }
 
     public void makeSortable() {
-        makeSortable(new Comparator<LunModel>() {
-            @Override
-            public int compare(LunModel o1, LunModel o2) {
-                int val1 = o1.getAdditionalAvailableSize();
-                int val2 = o2.getAdditionalAvailableSize();
-                return Integer.compare(val1, val2);
-            }
-        });
+        makeSortable(Comparator.comparingInt(LunModel::getAdditionalAvailableSize));
     }
 
 }

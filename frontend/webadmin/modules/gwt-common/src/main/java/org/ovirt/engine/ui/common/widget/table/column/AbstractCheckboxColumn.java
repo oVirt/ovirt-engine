@@ -78,19 +78,7 @@ public abstract class AbstractCheckboxColumn<T> extends AbstractColumn<T, Boolea
      * Enables default <em>client-side</em> sorting for this column, by displaying values of false before true.
      */
     public void makeSortable() {
-        makeSortable(new Comparator<T>() {
-
-            @Override
-            public int compare(T o1, T o2) {
-                boolean value1 = (getValue(o1) == null) ? false : getValue(o1);
-                boolean value2 = (getValue(o2) == null) ? false : getValue(o2);
-                if (value1 == value2) {
-                    return 0;
-                } else {
-                    return value1 ? 1 : -1;
-                }
-            }
-        });
+        makeSortable(Comparator.comparing(t -> !(getValue(t) == null ? false : getValue(t))));
     }
 
     @Override

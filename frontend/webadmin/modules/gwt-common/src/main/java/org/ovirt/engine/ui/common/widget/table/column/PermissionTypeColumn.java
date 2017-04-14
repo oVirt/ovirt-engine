@@ -20,17 +20,7 @@ public class PermissionTypeColumn extends AbstractImageResourceColumn<Permission
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public PermissionTypeColumn() {
-        makeSortable(new Comparator<Permission>() {
-
-            @Override
-            public int compare(Permission o1, Permission o2) {
-                if (getValue(o1).equals(getValue(o2))) {
-                    return 0;
-                } else {
-                    return resources.userImage().equals(getValue(o1)) ? -1 : 1;
-                }
-            }
-        });
+        makeSortable(Comparator.comparing(p -> !resources.userImage().equals(getValue(p))));
     }
 
     @Override

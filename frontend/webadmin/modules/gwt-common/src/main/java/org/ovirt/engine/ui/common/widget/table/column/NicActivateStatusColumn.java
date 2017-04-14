@@ -35,15 +35,7 @@ public class NicActivateStatusColumn<T> extends AbstractSafeHtmlColumn<T> {
     }
 
     public void makeSortable() {
-        makeSortable(new Comparator<T>() {
-
-            private final SimpleStatusImageComparator imageComparator = new SimpleStatusImageComparator();
-
-            @Override
-            public int compare(T o1, T o2) {
-                return imageComparator.compare(getImage(o1), getImage(o2));
-            }
-        });
+        makeSortable(Comparator.comparing(this::getImage, new SimpleStatusImageComparator()));
     }
 
     @Override
