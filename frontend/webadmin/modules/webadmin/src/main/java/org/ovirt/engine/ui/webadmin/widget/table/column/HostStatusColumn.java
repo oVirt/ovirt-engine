@@ -35,14 +35,8 @@ public class HostStatusColumn<S> extends AbstractColumn<S, VDS> {
     }
 
     public void makeSortable() {
-        makeSortable(new Comparator<S>() {
-            @Override
-            public int compare(S o1, S o2) {
-                VDSStatus status1 = (getValue(o1) == null) ? null : getValue(o1).getStatus();
-                VDSStatus status2 = (getValue(o2) == null) ? null : getValue(o2).getStatus();
-                return Linq.IdentifiableComparator.compare(status1, status2);
-            }
-        });
+        makeSortable(Comparator.comparing(
+                o -> getValue(o) == null ? null : getValue(o).getStatus(), Linq.IdentifiableComparator));
     }
 
     @Override

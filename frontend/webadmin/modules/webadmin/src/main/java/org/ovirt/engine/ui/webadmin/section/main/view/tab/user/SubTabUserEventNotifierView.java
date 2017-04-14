@@ -50,14 +50,7 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
                 return Enum.valueOf(AuditLogType.class, object.getEventUpName());
             }
         };
-        eventNameColumn.makeSortable(new Comparator<EventSubscriber>() {
-            private final LexoNumericComparator lexoNumericComparator = new LexoNumericComparator();
-
-            @Override
-            public int compare(EventSubscriber o1, EventSubscriber o2) {
-                return lexoNumericComparator.compare(o1.getEventUpName(), o2.getEventUpName());
-            }
-        });
+        eventNameColumn.makeSortable(Comparator.comparing(EventSubscriber::getEventUpName, new LexoNumericComparator()));
         getTable().addColumn(eventNameColumn, constants.eventNameEventNotifier());
 
         getTable().addActionButton(new WebAdminButtonDefinition<EventSubscriber>(constants.manageEventsEventNotifier()) {

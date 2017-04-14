@@ -94,14 +94,7 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<User
                                 dateFormat.format(session.getSessionStartTime());
                     }
                 };
-        sessionStartColumn.makeSortable(
-            new Comparator<UserSession>() {
-                @Override
-                public int compare(UserSession s1, UserSession s2) {
-                    return s1.getSessionStartTime().compareTo(s2.getSessionStartTime());
-                }
-            }
-        );
+        sessionStartColumn.makeSortable(Comparator.comparing(UserSession::getSessionStartTime));
         getTable().addColumn(sessionStartColumn, constants.sessionStartTime(), "200px"); //$NON-NLS-1$
 
         AbstractTextColumn<UserSession> sessionLastActiveColumn =
@@ -113,14 +106,7 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<User
                                 dateFormat.format(session.getSessionLastActiveTime());
                     }
                 };
-        sessionLastActiveColumn.makeSortable(
-            new Comparator<UserSession>() {
-                @Override
-                public int compare(UserSession s1, UserSession s2) {
-                    return s1.getSessionLastActiveTime().compareTo(s2.getSessionLastActiveTime());
-                }
-            }
-        );
+        sessionLastActiveColumn.makeSortable(Comparator.comparing(UserSession::getSessionLastActiveTime));
         getTable().addColumn(sessionLastActiveColumn, constants.sessionLastActiveTime(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<UserSession>(constants.terminateSession()) {

@@ -61,12 +61,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
 
         VolumeStatusColumn statusColumn = new VolumeStatusColumn(model.getStartCommand());
         statusColumn.setContextMenuTitle(constants.statusVolume());
-        statusColumn.makeSortable(new Comparator<GlusterVolumeEntity>() {
-            @Override
-            public int compare(GlusterVolumeEntity o1, GlusterVolumeEntity o2) {
-                return GlusterVolumeUtils.getVolumeStatus(o1).ordinal() - GlusterVolumeUtils.getVolumeStatus(o2).ordinal();
-            }
-        });
+        statusColumn.makeSortable(Comparator.comparingInt(g -> GlusterVolumeUtils.getVolumeStatus(g).ordinal()));
         getTable().addColumn(statusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<GlusterVolumeEntity> nameColumn = new AbstractTextColumn<GlusterVolumeEntity>() {

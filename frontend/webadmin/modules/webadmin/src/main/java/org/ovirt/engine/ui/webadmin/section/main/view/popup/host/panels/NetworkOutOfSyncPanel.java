@@ -37,12 +37,7 @@ public class NetworkOutOfSyncPanel extends FlowPanel {
     }
 
     private void sortReportedConfigurationList(){
-        Comparator<ReportedConfiguration> reportedConfigurationComparator = new Comparator<ReportedConfiguration>() {
-            @Override public int compare(ReportedConfiguration reportedConfiguration, ReportedConfiguration t1) {
-                return reportedConfiguration.getType().getName().compareTo(t1.getType().getName());
-            }
-        };
-        Collections.sort(reportedConfigurationList, reportedConfigurationComparator);
+        Collections.sort(reportedConfigurationList, Comparator.comparing(r -> r.getType().getName()));
     }
 
     public Widget outOfSyncTableAsWidget() {

@@ -276,31 +276,14 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private void initSorting() {
         hostStatus.makeSortable();
         nameColumn.makeSortable();
-        hostOutOfSync.makeSortable(new PairFirstComparator<VdsNetworkInterface, VDS>(new Comparator<VdsNetworkInterface>() {
-                    @Override
-                    public int compare(VdsNetworkInterface o1, VdsNetworkInterface o2) {
-                        return Boolean.compare(extractSyncStatus(o1), extractSyncStatus(o2));
-                    }
-
-                    private boolean extractSyncStatus(VdsNetworkInterface iface) {
-                        return (iface != null) && iface.getNetworkImplementationDetails().isInSync();
-                    }
-        }));
+        hostOutOfSync.makeSortable(new PairFirstComparator<>(Comparator.comparing(i -> i != null && i.getNetworkImplementationDetails().isInSync())));
 
         clusterColumn.makeSortable();
         dcColumn.makeSortable();
         nicStatusColumn.makeSortable(new SimpleStatusColumnComparator<>(nicStatusColumn));
-        nicColumn.makeSortable(new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
+        nicColumn.makeSortable(Comparator.comparing(o -> o.getFirst() == null ? null : o.getFirst().getName(),
+                new LexoNumericComparator()));
 
-            private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-            @Override
-            public int compare(PairQueryable<VdsNetworkInterface, VDS> o1, PairQueryable<VdsNetworkInterface, VDS> o2) {
-                String name1 = (o1.getFirst() == null) ? null : o1.getFirst().getName();
-                String name2 = (o2.getFirst() == null) ? null : o2.getFirst().getName();
-                return lexoNumeric.compare(name1, name2);
-            }
-        });
         speedColumn.makeSortable();
         nicRxColumn.makeSortable();
         nicTxColumn.makeSortable();

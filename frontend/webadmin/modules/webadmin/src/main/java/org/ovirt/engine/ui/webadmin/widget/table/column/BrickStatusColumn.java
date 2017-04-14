@@ -28,12 +28,7 @@ public class BrickStatusColumn extends AbstractColumn<GlusterBrickEntity, Gluste
     }
 
     public void makeSortable() {
-        makeSortable(new Comparator<GlusterBrickEntity>() {
-            @Override
-            public int compare(GlusterBrickEntity o1, GlusterBrickEntity o2) {
-                return o1.getStatus().ordinal() - o2.getStatus().ordinal();
-            }
-        });
+        makeSortable(Comparator.comparingInt(g -> g.getStatus().ordinal()));
     }
 
     @Override

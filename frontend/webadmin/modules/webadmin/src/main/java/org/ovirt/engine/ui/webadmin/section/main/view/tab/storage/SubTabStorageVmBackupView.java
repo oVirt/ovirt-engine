@@ -157,12 +157,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
                 return object.getVmCreationDate();
             }
         };
-        creationDateColumn.makeSortable(new Comparator<VM>() {
-            @Override
-            public int compare(VM vm1, VM vm2) {
-                return vm1.getVmCreationDate().compareTo(vm2.getVmCreationDate());
-            }
-        });
+        creationDateColumn.makeSortable(Comparator.comparing(VM::getVmCreationDate));
         getTable().addColumn(creationDateColumn, constants.creationDateVm(), "95px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> exportDateColumn = new AbstractFullDateTimeColumn<VM>() {
@@ -171,12 +166,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
                 return object.getExportDate();
             }
         };
-        exportDateColumn.makeSortable(new Comparator<VM>() {
-            @Override
-            public int compare(VM vm1, VM vm2) {
-                return vm1.getExportDate().compareTo(vm2.getExportDate());
-            }
-        });
+        exportDateColumn.makeSortable(Comparator.comparing(VM::getExportDate));
         getTable().addColumn(exportDateColumn, constants.exportDateVm(), "95px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.restoreVm()) {

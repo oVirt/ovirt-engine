@@ -83,12 +83,7 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
             }
 
         };
-        usedColumn.makeSortable(new Comparator<QuotaStorage>() {
-            @Override
-            public int compare(QuotaStorage quotaStorage1, QuotaStorage quotaStorage2) {
-                return quotaStorage1.getStorageSizeGBUsage().compareTo(quotaStorage2.getStorageSizeGBUsage());
-            }
-        });
+        usedColumn.makeSortable(Comparator.comparingDouble(QuotaStorage::getStorageSizeGBUsage));
         getTable().addColumn(usedColumn, constants.usedStorageTotalQuotaStorage(), "400px"); //$NON-NLS-1$
     }
 }

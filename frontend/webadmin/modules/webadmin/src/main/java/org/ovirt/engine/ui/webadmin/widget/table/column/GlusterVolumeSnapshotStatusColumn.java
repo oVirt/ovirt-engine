@@ -25,12 +25,7 @@ public class GlusterVolumeSnapshotStatusColumn extends AbstractColumn<GlusterVol
     }
 
     public void makeSortable() {
-        makeSortable(new Comparator<GlusterVolumeSnapshotEntity>() {
-            @Override
-            public int compare(GlusterVolumeSnapshotEntity o1, GlusterVolumeSnapshotEntity o2) {
-                return o1.getStatus().ordinal() - o2.getStatus().ordinal();
-            }
-        });
+        makeSortable(Comparator.comparingInt(g -> g.getStatus().ordinal()));
     }
 
     @Override

@@ -45,14 +45,8 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
     }
 
     public void makeSortable() {
-        makeSortable(new Comparator<T>() {
-            @Override
-            public int compare(T o1, T o2) {
-                VMStatus status1 = (getValue(o1) == null) ? null : getValue(o1).getStatus();
-                VMStatus status2 = (getValue(o2) == null) ? null : getValue(o2).getStatus();
-                return Linq.IdentifiableComparator.compare(status1, status2);
-            }
-        });
+        makeSortable(Comparator.comparing(
+                o -> getValue(o) == null ? null : getValue(o).getStatus(), Linq.IdentifiableComparator));
     }
 
     @Override

@@ -203,14 +203,7 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
                     }
                 });
             } else {
-                Collections.sort(commands, new Comparator<NetworkCommand>() {
-                    private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-                    @Override
-                    public int compare(NetworkCommand com1, NetworkCommand com2) {
-                        return lexoNumeric.compare(com1.getName(), com2.getName());
-                    }
-                });
+                Collections.sort(commands, Comparator.comparing(NetworkCommand::getName, new LexoNumericComparator()));
                 MenuBar subMenu = subMenu();
                 for (final NetworkCommand command : commands) {
                     subMenu.addItem(new MenuItem(command.getName(), new Command() {
