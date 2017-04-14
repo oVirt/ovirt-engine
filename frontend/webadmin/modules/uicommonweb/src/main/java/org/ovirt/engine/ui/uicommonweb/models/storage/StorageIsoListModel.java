@@ -101,12 +101,7 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
                 if (returnValue != null && returnValue.getReturnValue() != null && returnValue.getSucceeded()) {
                     repoImageList = returnValue.getReturnValue();
 
-                    Collections.sort(repoImageList, new Comparator<RepoImage>() {
-                        @Override
-                        public int compare(RepoImage a, RepoImage b) {
-                            return a.getRepoImageId().compareToIgnoreCase(b.getRepoImageId());
-                        }
-                    });
+                    Collections.sort(repoImageList, Comparator.comparing(RepoImage::getRepoImageId));
                 }
 
                 setItems(repoImageList);

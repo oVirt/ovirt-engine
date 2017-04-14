@@ -87,14 +87,7 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
     }
 
     private SortedSet<SanTargetModel> getTargetsSet() {
-        return new TreeSet<>(new Comparator<SanTargetModel>() {
-            LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-            @Override
-            public int compare(SanTargetModel targetModel1, SanTargetModel targetModel2) {
-                return lexoNumeric.compare(targetModel1.getEntity().getIqn(), targetModel2.getEntity().getIqn());
-            }
-        });
+        return new TreeSet<>(Comparator.comparing(t -> t.getEntity().getIqn(), new LexoNumericComparator()));
     }
 
     private List<SanTargetModel> getSanTargetModels(Iterator<StorageServerConnections> itemsIterator) {

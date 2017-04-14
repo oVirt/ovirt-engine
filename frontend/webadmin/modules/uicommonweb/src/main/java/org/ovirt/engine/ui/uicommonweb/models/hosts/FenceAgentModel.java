@@ -51,13 +51,8 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
     private static final String ON_REMOVE = "OnRemove"; //$NON-NLS-1$
     private static final String CANCEL = "Cancel"; //$NON-NLS-1$
 
-    public static final Comparator<FenceAgentModel> orderComparable = new Comparator<FenceAgentModel>() {
-
-        @Override
-        public int compare(FenceAgentModel model1, FenceAgentModel model2) {
-            return model1.getOrder().getEntity() - model2.getOrder().getEntity();
-        }
-    };
+    public static final Comparator<FenceAgentModel> orderComparable =
+            Comparator.comparing(f -> f.getOrder().getEntity());
 
     final UIConstants constants = ConstantsManager.getInstance().getConstants();
     final UIMessages messages = ConstantsManager.getInstance().getMessages();

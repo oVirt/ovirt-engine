@@ -35,21 +35,9 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
         setHashName("virtual_machines"); //$NON-NLS-1$
         setAvailableInModes(ApplicationMode.VirtOnly);
 
-        setComparator(new Comparator<PairQueryable<VmNetworkInterface, VM>>() {
-
-            @Override
-            public int compare(PairQueryable<VmNetworkInterface, VM> paramT1,
-                    PairQueryable<VmNetworkInterface, VM> paramT2) {
-                int compareValue =
-                        paramT1.getSecond().getClusterName().compareTo(paramT2.getSecond().getClusterName());
-
-                if (compareValue != 0) {
-                    return compareValue;
-                }
-
-                return paramT1.getSecond().getName().compareTo(paramT2.getSecond().getName());
-            }
-        });
+        setComparator(
+                Comparator.comparing((PairQueryable<VmNetworkInterface, VM> p) -> p.getSecond().getClusterName())
+                        .thenComparing(p -> p.getSecond().getName()));
 
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 

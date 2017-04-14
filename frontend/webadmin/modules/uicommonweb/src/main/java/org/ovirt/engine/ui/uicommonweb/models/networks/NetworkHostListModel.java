@@ -33,21 +33,9 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
         setHelpTag(HelpTag.hosts);
         setHashName("hosts"); //$NON-NLS-1$
 
-        setComparator(new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
-
-            @Override
-            public int compare(PairQueryable<VdsNetworkInterface, VDS> arg0,
-                    PairQueryable<VdsNetworkInterface, VDS> arg1) {
-                int compareValue =
-                        arg0.getSecond().getClusterName().compareTo(arg1.getSecond().getClusterName());
-
-                if (compareValue != 0) {
-                    return compareValue;
-                }
-
-                return arg0.getSecond().getName().compareTo(arg1.getSecond().getName());
-            }
-        });
+        setComparator(
+                Comparator.comparing((PairQueryable<VdsNetworkInterface, VDS> p) -> p.getSecond()
+                        .getClusterName()).thenComparing(p -> p.getSecond().getName()));
 
         setSetupNetworksCommand(new UICommand("SetupNetworks", this)); //$NON-NLS-1$
 

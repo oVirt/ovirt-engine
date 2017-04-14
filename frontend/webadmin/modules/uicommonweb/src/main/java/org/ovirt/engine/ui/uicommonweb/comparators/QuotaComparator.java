@@ -12,51 +12,22 @@ public class QuotaComparator {
     /**
      * Comparator for the description field in {@code Quota}.
      */
-    public static final Comparator<Quota> DESCRIPTION = new Comparator<Quota>() {
-        @Override
-        public int compare(Quota quota1, Quota quota2) {
-            return lexoNumeric.compare(quota1.getDescription(), quota2.getDescription());
-        }
-    };
+    public static final Comparator<Quota> DESCRIPTION = Comparator.comparing(Quota::getDescription, lexoNumeric);
 
     /**
      * Comparator for the quota name field in {@code Quota}.
      */
-    public static final Comparator<Quota> NAME = new Comparator<Quota>() {
-        @Override
-        public int compare(Quota quota1, Quota quota2) {
-            return lexoNumeric.compare(quota1.getQuotaName(), quota2.getQuotaName());
-        }
-    };
+    public static final Comparator<Quota> NAME = Comparator.comparing(Quota::getName, lexoNumeric);
 
     /**
      * Comparator for the description field in {@code Quota}.
      */
-    public static final Comparator<Quota> DATA_CENTER = new Comparator<Quota>() {
-        @Override
-        public int compare(Quota quota1, Quota quota2) {
-            return lexoNumeric.compare(quota1.getStoragePoolName(), quota2.getStoragePoolName());
-        }
-    };
+    public static final Comparator<Quota> DATA_CENTER = Comparator.comparing(Quota::getStoragePoolName, lexoNumeric);
 
     /**
      * Comparator adapter. Quota with topId will be the first in sorted list.
      */
     public static Comparator<Quota> withTopId(final Guid topId, final Comparator<Quota> defaultComparator) {
-        return new Comparator<Quota>() {
-            @Override
-            public int compare(Quota quota1, Quota quota2) {
-                boolean top1 = quota1.getId().equals(topId);
-                boolean top2 = quota2.getId().equals(topId);
-
-                if (top1 && !top2) {
-                    return -1;
-                }
-                if (top2 && !top1) {
-                    return 1;
-                }
-                return defaultComparator.compare(quota1, quota2);
-            }
-        };
+        return Comparator.comparing((Quota q) -> !q.getId().equals(topId)).thenComparing(defaultComparator);
     }
 }

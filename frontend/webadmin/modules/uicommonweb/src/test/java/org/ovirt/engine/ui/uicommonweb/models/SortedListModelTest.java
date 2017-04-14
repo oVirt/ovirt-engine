@@ -61,21 +61,11 @@ public class SortedListModelTest {
     SortedListModel<TestItem> testedModel;
 
     Comparator<TestItem> makeValueComparator() {
-        return new Comparator<TestItem>() {
-            @Override
-            public int compare(TestItem a, TestItem b) {
-                return a.value - b.value;
-            }
-        };
+        return Comparator.comparingInt(t -> t.value);
     }
 
     Comparator<TestItem> makeSaltComparator() {
-        return new Comparator<TestItem>() {
-            @Override
-            public int compare(TestItem a, TestItem b) {
-                return a.salt - b.salt;
-            }
-        };
+        return Comparator.comparingInt(t -> t.salt);
     }
 
     @Before

@@ -654,13 +654,7 @@ public class VolumeBrickModel extends Model {
     }
 
     public void setHostList(List<VDS> hosts) {
-        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-        Collections.sort(hosts, new Comparator<VDS>() {
-            @Override
-            public int compare(VDS host0, VDS host1) {
-                return lexoNumeric.compare(host0.getHostName(), host1.getHostName());
-            }
-        });
+        Collections.sort(hosts, Comparator.comparing(VDS::getHostName, new LexoNumericComparator()));
         getServers().setItems(hosts);
     }
 

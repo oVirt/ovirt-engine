@@ -35,21 +35,9 @@ public class NetworkTemplateListModel extends SearchableListModel<NetworkView, P
         setHashName("templates"); //$NON-NLS-1$
         setAvailableInModes(ApplicationMode.VirtOnly);
 
-        setComparator(new Comparator<PairQueryable<VmNetworkInterface, VmTemplate>>() {
-
-            @Override
-            public int compare(PairQueryable<VmNetworkInterface, VmTemplate> paramT1,
-                    PairQueryable<VmNetworkInterface, VmTemplate> paramT2) {
-                int compareValue =
-                        paramT1.getSecond().getClusterName().compareTo(paramT2.getSecond().getClusterName());
-
-                if (compareValue != 0) {
-                    return compareValue;
-                }
-
-                return paramT1.getSecond().getName().compareTo(paramT2.getSecond().getName());
-            }
-        });
+        setComparator(Comparator
+                .comparing((PairQueryable<VmNetworkInterface, VmTemplate> p) -> p.getSecond().getClusterName())
+                .thenComparing(p -> p.getSecond().getName()));
 
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         updateActionAvailability();

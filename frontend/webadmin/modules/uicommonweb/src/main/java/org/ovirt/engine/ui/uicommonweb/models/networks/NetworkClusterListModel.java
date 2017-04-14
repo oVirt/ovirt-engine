@@ -28,12 +28,7 @@ public class NetworkClusterListModel extends SearchableListModel<NetworkView, Pa
     private UICommand manageCommand;
 
     private final Comparator<ClusterNetworkModel> manageModelComparator =
-            new Comparator<ClusterNetworkModel>() {
-                @Override
-                public int compare(ClusterNetworkModel o1, ClusterNetworkModel o2) {
-                    return o1.getCluster().getName().compareTo(o2.getCluster().getName());
-                }
-            };
+            Comparator.comparing(c -> c.getCluster().getName());
 
     public NetworkClusterListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());

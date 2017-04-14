@@ -58,17 +58,10 @@ public class MacPoolModel extends EntityModel<MacPool> {
         for (MacRange range : getEntity().getRanges()) {
             rangeModels.add(new MacRangeModel(range));
         }
-        Collections.sort(rangeModels, new Comparator<MacRangeModel>() {
+        Collections.sort(rangeModels,
+                Comparator.comparing((MacRangeModel m) -> m.getLeftBound().getEntity())
+                        .thenComparing(m -> m.getRightBound().getEntity()));
 
-            @Override
-            public int compare(MacRangeModel range1, MacRangeModel range2) {
-                int res = range1.getLeftBound().getEntity().compareTo(range2.getLeftBound().getEntity());
-                if (res == 0) {
-                    res = range1.getRightBound().getEntity().compareTo(range2.getRightBound().getEntity());
-                }
-                return res;
-            }
-        });
         macRanges.setItems(rangeModels);
     }
 

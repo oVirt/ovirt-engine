@@ -68,12 +68,8 @@ public class ImportDiskData {
 
     public StorageDomain getSelectedStorageDomain() {
         if (selectedStorageDomain == null && !storageDomains.isEmpty()) {
-            selectedStorageDomain = Collections.max(storageDomains, new Comparator<StorageDomain>() {
-                @Override
-                public int compare(StorageDomain storageDomain1, StorageDomain storageDomain2) {
-                    return storageDomain1.getAvailableDiskSize().compareTo(storageDomain2.getAvailableDiskSize());
-                }
-            });
+            selectedStorageDomain =
+                    Collections.max(storageDomains, Comparator.comparing(StorageDomain::getAvailableDiskSize));
         }
 
         return selectedStorageDomain;

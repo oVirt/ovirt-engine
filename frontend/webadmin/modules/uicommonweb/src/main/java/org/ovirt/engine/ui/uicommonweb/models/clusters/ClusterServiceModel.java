@@ -161,16 +161,9 @@ public class ClusterServiceModel extends EntityModel<Cluster> {
         ServiceType serviceType = serviceTypeList.getSelectedItem();
         ArrayList<EntityModel<GlusterServerService>> list = new ArrayList<>();
         List<GlusterServerService> serviceList = new ArrayList<>(getActualServiceList());
-        Collections.sort(serviceList, new Comparator<GlusterServerService>() {
-            @Override
-            public int compare(GlusterServerService o1, GlusterServerService o2) {
-                if(o1.getHostName().compareTo(o2.getHostName()) == 0) {
-                    return o1.getServiceType().toString().compareTo(o2.getServiceType().toString());
-                } else {
-                    return o1.getHostName().compareTo(o2.getHostName());
-                }
-            }
-        });
+        Collections.sort(serviceList,
+                Comparator.comparing(GlusterServerService::getHostName)
+                        .thenComparing(g -> g.getServiceType().toString()));
         for (GlusterServerService service : serviceList) {
             if ((selectedVds == null || service.getHostName().equals(selectedVds.getHostName()))
                     && (serviceType == null || service.getServiceType() == serviceType)) {

@@ -11,30 +11,15 @@ public class UserGroupComparator {
     /**
      * Comparator for the group name field in {@code UserGroup}.
      */
-    public static final Comparator<UserGroup> NAME = new Comparator<UserGroup>() {
-        @Override
-        public int compare(UserGroup userGroup1, UserGroup userGroup2) {
-            return lexoNumeric.compare(userGroup1.getGroupName(), userGroup2.getGroupName());
-        }
-    };
+    public static final Comparator<UserGroup> NAME = Comparator.comparing(UserGroup::getGroupName, lexoNumeric);
 
     /**
      * Comparator for the namespace field in {@code UserGroup}.
      */
-    public static final Comparator<UserGroup> NAMESPACE = new Comparator<UserGroup>() {
-        @Override
-        public int compare(UserGroup userGroup1, UserGroup userGroup2) {
-            return lexoNumeric.compare(userGroup1.getNamespace(), userGroup2.getNamespace());
-        }
-    };
+    public static final Comparator<UserGroup> NAMESPACE = Comparator.comparing(UserGroup::getNamespace, lexoNumeric);
 
     /**
      * Comparator for the authorization provider (authz) field in {@code UserGroup}.
      */
-    public static final Comparator<UserGroup> AUTHZ = new Comparator<UserGroup>() {
-        @Override
-        public int compare(UserGroup userGroup1, UserGroup userGroup2) {
-            return lexoNumeric.compare(userGroup1.getAuthz(), userGroup2.getAuthz());
-        }
-    };
+    public static final Comparator<UserGroup> AUTHZ = Comparator.comparing(UserGroup::getAuthz, lexoNumeric);
 }

@@ -370,16 +370,9 @@ public class AsyncDataProvider {
                 Map<Version, List<MigrationPolicy>> policiesByVersion = (Map<Version, List<MigrationPolicy>>) returnValue;
 
                 for (List<MigrationPolicy> policies : policiesByVersion.values()) {
-                    Collections.sort(policies, new Comparator<MigrationPolicy>() {
-                        @Override
-                        public int compare(MigrationPolicy m1, MigrationPolicy m2) {
-                            // the empty one is always the first
-                            if (NoMigrationPolicy.ID.equals(m1.getId())) {
-                                return -1;
-                            }
-                            return m1.getName().compareTo(m2.getName());
-                        }
-                    });
+                    Collections.sort(policies,
+                            Comparator.comparing((MigrationPolicy m) -> !NoMigrationPolicy.ID.equals(m.getId()))
+                                    .thenComparing(MigrationPolicy::getName));
                 }
 
                 return policiesByVersion;
@@ -2632,12 +2625,7 @@ public class AsyncDataProvider {
 
     private void initOsIds() {
         osIds = new ArrayList<>(osNames.keySet());
-        Collections.sort(osIds, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return osNames.get(o1).compareTo(osNames.get(o2));
-            }
-        });
+        Collections.sort(osIds, Comparator.comparing(o -> osNames.get(o)));
     }
 
     public void initOsArchitecture() {
@@ -2726,12 +2714,7 @@ public class AsyncDataProvider {
             }
         }
 
-        Collections.sort(osIds, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return osNames.get(o1).compareTo(osNames.get(o2));
-            }
-        });
+        Collections.sort(osIds, Comparator.comparing(o -> osNames.get(o)));
 
         return osIds;
     }
