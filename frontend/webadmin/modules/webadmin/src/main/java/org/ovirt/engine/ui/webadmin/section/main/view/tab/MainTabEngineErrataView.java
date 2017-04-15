@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEngineErrataPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabTableView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.ErrataTableView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVirtualMachineView.ViewIdHandler;
 import org.ovirt.engine.ui.webadmin.widget.errata.ErrataFilterPanel;
 
 import com.google.gwt.core.client.GWT;
