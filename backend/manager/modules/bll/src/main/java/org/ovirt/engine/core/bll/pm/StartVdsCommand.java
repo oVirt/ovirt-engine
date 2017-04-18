@@ -65,7 +65,7 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
         if (getParameters().isChangeHostToMaintenanceOnStart()) {
             setStatus(VDSStatus.Maintenance);
         } else {
-            setStatus(VDSStatus.NonResponsive);
+            setStatus(VDSStatus.Reboot);
         }
     }
 
@@ -128,7 +128,6 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
 
     @Override
     protected void teardown() {
-        // TODO Auto-generated method stub
-
+        runSleepOnReboot();
     }
 }

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -120,7 +121,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     private void mockVdsDynamicDao() {
         VdsDynamic currentVds = new VdsDynamic();
         currentVds.setId(FENCECD_HOST_ID);
-        currentVds.setStatus(VDSStatus.NonResponsive);
+        currentVds.setStatus(VDSStatus.Reboot);
         when(vdsDynamicDao.get(FENCECD_HOST_ID)).thenReturn(currentVds);
     }
 
@@ -184,6 +185,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     @Test
     public void onSuccessReturnValueOk() {
         mockExecutor(true);
+        doNothing().when(command).teardown();
         command.executeCommand();
         assertTrue(command.getReturnValue().getSucceeded());
         Object commandReturnValue = command.getReturnValue().getActionReturnValue();
@@ -202,6 +204,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     @Test
     public void onSuccessAudit() {
         mockExecutor(true);
+        doNothing().when(command).teardown();
         command.executeCommand();
         verify(auditLogDirector, times(2)).log(any(AuditLogableBase.class), any(AuditLogType.class));
 
