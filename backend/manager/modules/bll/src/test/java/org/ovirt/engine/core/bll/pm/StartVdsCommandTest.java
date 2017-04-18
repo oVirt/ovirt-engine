@@ -91,7 +91,7 @@ public class StartVdsCommandTest extends BaseCommandTest {
     private void mockVdsDynamicDao() {
         VdsDynamic currentVds = new VdsDynamic();
         currentVds.setId(FENCECD_HOST_ID);
-        currentVds.setStatus(VDSStatus.NonResponsive);
+        currentVds.setStatus(VDSStatus.Reboot);
         when(vdsDynamicDao.get(FENCECD_HOST_ID)).thenReturn(currentVds);
     }
 
