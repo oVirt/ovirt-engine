@@ -66,16 +66,6 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
     }
 
     @Override
-    protected RestartVdsReturnValue createReturnValue() {
-        return new RestartVdsReturnValue();
-    }
-
-    @Override
-    public RestartVdsReturnValue getReturnValue() {
-        return (RestartVdsReturnValue) super.getReturnValue();
-    }
-
-    @Override
     protected boolean validate() {
         FenceValidator fenceValidator = new FenceValidator();
         List<String> messages = getReturnValue().getValidationMessages();
@@ -130,7 +120,9 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         }
         if (wasSkippedDueToPolicy(returnValue)) {
             // fence execution was skipped due to fencing policy, host should be alive
-            getReturnValue().setSkippedDueToFencingPolicy(true);
+            RestartVdsResult restartVdsResult = new RestartVdsResult();
+            restartVdsResult.setSkippedDueToFencingPolicy(true);
+            setActionReturnValue(restartVdsResult);
             setSucceeded(false);
             setVdsStatus(VDSStatus.NonResponsive);
             return;
