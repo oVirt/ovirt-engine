@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcer;
@@ -19,12 +21,11 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,8 @@ public class AffinityRulesEnforcementManager implements BackendService {
     @Inject
     private BackendInternal backend;
     @Inject
-    private SchedulerUtilQuartzImpl scheduler;
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     @PostConstruct
     protected void wakeup() {
@@ -69,24 +71,27 @@ public class AffinityRulesEnforcementManager implements BackendService {
      * refresh method is called each interval of AffinityRulesEnforcementManager. It will try to find a broken affinity rule, choose a VM then, migrate it in order
      * to fix the breakage.
      */
-    @OnTimerMethodAnnotation("refresh")
     public void refresh() {
+        try {
+            log.debug("Affinity Rules Enforcement Manager interval reached.");
 
-        log.debug("Affinity Rules Enforcement Manager interval reached.");
-
-        final List<VM> vmCandidates = new ArrayList<>();
-        for (Cluster cluster : clusterDao.getWithoutMigratingVms()) {
-            if (!cluster.isInUpgradeMode()) {
-                final VM candidate = rulesEnforcer.chooseNextVmToMigrate(cluster);
-                if (candidate != null) {
-                    vmCandidates.add(candidate);
+            final List<VM> vmCandidates = new ArrayList<>();
+            for (Cluster cluster : clusterDao.getWithoutMigratingVms()) {
+                if (!cluster.isInUpgradeMode()) {
+                    final VM candidate = rulesEnforcer.chooseNextVmToMigrate(cluster);
+                    if (candidate != null) {
+                        vmCandidates.add(candidate);
+                    }
                 }
             }
-        }
 
-        // Trigger migrations
-        for (VM vm : vmCandidates) {
-            migrateVM(vm);
+            // Trigger migrations
+            for (VM vm : vmCandidates) {
+                migrateVM(vm);
+            }
+        } catch (Throwable t) {
+            log.error("Exception in refreshing affinity rules: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
         }
     }
 
@@ -101,11 +106,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
     }
 
     private void scheduleJobs(long regularInterval, long initialInterval) {
-        scheduler.scheduleAFixedDelayJob(
-                this,
-                "refresh",
-                new Class[] {},
-                new Object[] {},
+        executor.scheduleWithFixedDelay(this::refresh,
                 initialInterval,
                 regularInterval,
                 TimeUnit.MINUTES);

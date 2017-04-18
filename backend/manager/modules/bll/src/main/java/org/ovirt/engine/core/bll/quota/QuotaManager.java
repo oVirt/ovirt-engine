@@ -9,9 +9,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -26,12 +28,11 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,14 +46,16 @@ public class QuotaManager implements BackendService {
     private final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
     private final List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<>();
     private final List<Integer> nonCountableQutoaVmStatusesList = new ArrayList<>();
-    @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
 
     @Inject
     private QuotaDao quotaDao;
 
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     // constructor is exposed only for Java test. //TODO remove it when arquillian test used.
     protected QuotaManager() {
@@ -61,11 +64,7 @@ public class QuotaManager implements BackendService {
     @PostConstruct
     private void init() {
         int quotaCacheIntervalInMinutes = Config.<Integer>getValue(ConfigValues.QuotaCacheIntervalInMinutes);
-        schedulerUtil.scheduleAFixedDelayJob(
-                this,
-                "updateQuotaCache",
-                new Class[] {},
-                new Object[] {},
+        executor.scheduleWithFixedDelay(this::updateQuotaCache,
                 1,
                 quotaCacheIntervalInMinutes,
                 TimeUnit.MINUTES
@@ -1073,8 +1072,16 @@ public class QuotaManager implements BackendService {
     /**
      * InitializeCache is called by SchedulerUtilQuartzImpl.
      */
-    @OnTimerMethodAnnotation("updateQuotaCache")
-    public synchronized void updateQuotaCache() {
+    private synchronized void updateQuotaCache() {
+        try {
+            updateQuotaCacheImpl();
+        } catch (Throwable t) {
+            log.error("Exception in updating quota cache: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
+    }
+
+    private synchronized void updateQuotaCacheImpl() {
         if (!isCacheUpdateNeeded()) {
             return;
         }

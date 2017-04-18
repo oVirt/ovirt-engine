@@ -6,21 +6,22 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,37 +31,39 @@ public class DataCenterCompatibilityChecker implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(DataCenterCompatibilityChecker.class);
 
     @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
-
-    @Inject
     private StoragePoolDao storagePoolDao;
 
     @Inject
     private AuditLogDirector auditLogDirector;
 
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
+
     @PostConstruct
     private void init() {
         log.info("Start initializing {}", getClass().getSimpleName());
-        schedulerUtil.scheduleAFixedDelayJob(this,
-                "onTimer",
-                new Class[]{},
-                new Object[]{},
+        executor.scheduleWithFixedDelay(this::checkCompatibility,
                 0,
                 7,
                 TimeUnit.DAYS);
         log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
-    @OnTimerMethodAnnotation("onTimer")
-    public void onTimer() {
-        Optional<Version> retVal = Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels).stream()
-                .max(Comparator.naturalOrder());
-        if (retVal.isPresent()) {
-            Version version = retVal.get();
-            storagePoolDao.getAll().stream()
-                    .filter(storagePool -> version.compareTo(storagePool.getCompatibilityVersion()) > 0)
-                    .forEach(storagePool -> logAlert(version, storagePool));
+    private void checkCompatibility() {
+        try {
+            Optional<Version> retVal = Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels).stream()
+                    .max(Comparator.naturalOrder());
+            if (retVal.isPresent()) {
+                Version version = retVal.get();
+                storagePoolDao.getAll().stream()
+                        .filter(storagePool -> version.compareTo(storagePool.getCompatibilityVersion()) > 0)
+                        .forEach(storagePool -> logAlert(version, storagePool));
 
+            }
+        } catch (Throwable t) {
+            log.error("Failed to check certification validity: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
         }
     }
 

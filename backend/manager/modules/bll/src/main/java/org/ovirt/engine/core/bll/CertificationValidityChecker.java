@@ -9,23 +9,24 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.slf4j.Logger;
@@ -37,9 +38,6 @@ public class CertificationValidityChecker implements BackendService {
     private static Logger log = LoggerFactory.getLogger(CertificationValidityChecker.class);
 
     @Inject
-    private SchedulerUtilQuartzImpl scheduler;
-
-    @Inject
     private AuditLogDirector auditLogDirector;
 
     @Inject
@@ -48,24 +46,23 @@ public class CertificationValidityChecker implements BackendService {
     @Inject
     private ResourceManager resourceManager;
 
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
+
     @PostConstruct
     public void scheduleJob() {
         double interval = Config.<Double>getValue(ConfigValues.CertificationValidityCheckTimeInHours);
         final int HOURS_TO_MINUTES = 60;
         long intervalInMinutes = Math.round(interval * HOURS_TO_MINUTES);
 
-        scheduler.scheduleAFixedDelayJob(
-                this,
-                "checkCertificationValidity",
-                new Class[0],
-                new Object[0],
+        executor.scheduleWithFixedDelay(this::checkCertificationValidity,
                 10,
                 intervalInMinutes,
                 TimeUnit.MINUTES);
     }
 
-    @OnTimerMethodAnnotation("checkCertificationValidity")
-    public void checkCertificationValidity() {
+    private void checkCertificationValidity() {
         try {
             if (!checkCertificate(EngineEncryptionUtils.getCertificate(EngineLocalConfig.getInstance().getPKICACert()),
                     AuditLogType.ENGINE_CA_CERTIFICATION_HAS_EXPIRED,
@@ -88,9 +85,9 @@ public class CertificationValidityChecker implements BackendService {
                     .stream()
                     .filter(host -> host.getStatus() == VDSStatus.Up || host.getStatus() == VDSStatus.NonOperational)
                     .forEach(this::checkHostCertificateValidity);
-        } catch (Exception e) {
-            log.error("Failed to check certification validity: {}", e.getMessage());
-            log.error("Exception", e);
+        } catch (Throwable t) {
+            log.error("Failed to check certification validity: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
         }
     }
 

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -12,7 +11,8 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.concurrent.TimeUnit;
+
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -34,7 +34,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AffinityRulesEnforcementManagerTest {
@@ -53,8 +52,6 @@ public class AffinityRulesEnforcementManagerTest {
     @Mock
     private ClusterDao clusterDao;
     @Mock
-    private SchedulerUtilQuartzImpl scheduler;
-    @Mock
     private BackendInternal backend;
 
     @Mock
@@ -63,6 +60,9 @@ public class AffinityRulesEnforcementManagerTest {
     VM vm1;
     @Mock
     VM vm2;
+
+    @Mock
+    private ManagedScheduledExecutorService executor;
 
     @InjectMocks
     @Spy
@@ -140,14 +140,4 @@ public class AffinityRulesEnforcementManagerTest {
         verify(arem, never()).migrateVM(any());
     }
 
-    @Test
-    public void shouldScheduleRegularInterval() {
-        verify(scheduler).scheduleAFixedDelayJob(any(),
-                eq("refresh"),
-                eq(new Class[] {}),
-                eq(new Object[] {}),
-                eq(1L),
-                anyLong(),
-                eq(TimeUnit.MINUTES));
-    }
 }

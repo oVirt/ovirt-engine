@@ -5,17 +5,17 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +23,6 @@ import org.slf4j.LoggerFactory;
 public class HostUpdatesCheckerService implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(HostUpdatesCheckerService.class);
-
-    @Inject
-    private SchedulerUtilQuartzImpl scheduler;
 
     @Inject
     private VdsDao hostDao;
@@ -37,6 +34,10 @@ public class HostUpdatesCheckerService implements BackendService {
     @ThreadPools(ThreadPools.ThreadPoolType.HostUpdatesChecker)
     private ManagedExecutorService executor;
 
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService scheduledExecutor;
+
     @PostConstruct
     public void scheduleJob() {
         double availableUpdatesRefreshRate = Config.<Double> getValue(ConfigValues.HostPackagesUpdateTimeInHours);
@@ -44,23 +45,23 @@ public class HostUpdatesCheckerService implements BackendService {
             final int HOURS_TO_MINUTES = 60;
             long rateInMinutes = Math.round(availableUpdatesRefreshRate * HOURS_TO_MINUTES);
 
-            scheduler.scheduleAFixedDelayJob(
-                    this,
-                    "availableUpdates",
-                    new Class[0],
-                    new Object[0],
+            scheduledExecutor.scheduleWithFixedDelay(this::availableUpdates,
                     15,
                     rateInMinutes,
                     TimeUnit.MINUTES);
         }
     }
 
-    @OnTimerMethodAnnotation("availableUpdates")
-    public void availableUpdates() {
-        hostDao.getAll()
-                .stream()
-                .filter(h -> h.getStatus().isEligibleForCheckUpdates())
-                .forEach(this::submitCheckUpdatesForHost);
+    private void availableUpdates() {
+        try {
+            hostDao.getAll()
+                    .stream()
+                    .filter(h -> h.getStatus().isEligibleForCheckUpdates())
+                    .forEach(this::submitCheckUpdatesForHost);
+        } catch (Throwable t) {
+            log.error("Exception in checking for available updates: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
     }
 
     private void submitCheckUpdatesForHost(VDS host) {

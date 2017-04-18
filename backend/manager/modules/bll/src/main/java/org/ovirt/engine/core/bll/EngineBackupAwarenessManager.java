@@ -7,20 +7,21 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.EngineBackupLogDao;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,9 +31,6 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public class EngineBackupAwarenessManager implements BackendService {
-
-    @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
 
     private enum BackupScope {
         DB("db"),
@@ -55,6 +53,9 @@ public class EngineBackupAwarenessManager implements BackendService {
     private AuditLogDirector auditLogDirector;
     @Inject
     private EngineBackupLogDao engineBackupLogDao;
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     /**
      * Initializes the backup h Check Manager
@@ -65,10 +66,7 @@ public class EngineBackupAwarenessManager implements BackendService {
         Integer backupCheckPeriodInHours = Config.<Integer>getValue(ConfigValues.BackupCheckPeriodInHours);
         // disable feature if value is negative
         if (backupCheckPeriodInHours > 0) {
-            schedulerUtil.scheduleAFixedDelayJob(this,
-                    "backupCheck",
-                    new Class[] {},
-                    new Object[] {},
+            executor.scheduleWithFixedDelay(this::backupCheck,
                     backupCheckPeriodInHours,
                     backupCheckPeriodInHours,
                     TimeUnit.HOURS);
@@ -76,17 +74,21 @@ public class EngineBackupAwarenessManager implements BackendService {
         }
     }
 
-    @OnTimerMethodAnnotation("backupCheck")
-    public void backupCheck() {
-        // skip backup check if previous operation is not completed yet
-        if (lock.tryLock()) {
-            try {
-                log.info("Backup check started.");
-                doBackupCheck();
-                log.info("Backup check completed.");
-            } finally {
-                lock.unlock();
+    private void backupCheck() {
+        try {
+            // skip backup check if previous operation is not completed yet
+            if (lock.tryLock()) {
+                try {
+                    log.info("Backup check started.");
+                    doBackupCheck();
+                    log.info("Backup check completed.");
+                } finally {
+                    lock.unlock();
+                }
             }
+        } catch (Throwable t) {
+            log.error("Exception in backupCheck: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
         }
     }
 

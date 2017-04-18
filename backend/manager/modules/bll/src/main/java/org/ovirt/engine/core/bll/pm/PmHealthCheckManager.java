@@ -10,9 +10,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.pm.PowerManagementHelper.AgentsIterator;
@@ -27,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
@@ -34,11 +37,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +57,9 @@ public class PmHealthCheckManager implements BackendService {
     private VdsDao vdsDao;
     @Inject
     private AlertDirector alertDirector;
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     /**
      * Initializes the PM Health Check Manager
@@ -66,10 +69,7 @@ public class PmHealthCheckManager implements BackendService {
         if(Config.<Boolean>getValue(ConfigValues.PMHealthCheckEnabled)) {
             log.info("Start initializing {}", getClass().getSimpleName());
             Integer pmHealthCheckInterval = Config.<Integer> getValue(ConfigValues.PMHealthCheckIntervalInSec);
-            Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(this,
-                    "pmHealthCheck",
-                    new Class[] {},
-                    new Object[] {},
+            executor.scheduleWithFixedDelay(this::pmHealthCheck,
                     pmHealthCheckInterval,
                     pmHealthCheckInterval,
                     TimeUnit.SECONDS);
@@ -79,22 +79,26 @@ public class PmHealthCheckManager implements BackendService {
         log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
-    @OnTimerMethodAnnotation("pmHealthCheck")
-    public void pmHealthCheck() {
-        // skip PM health check if previous operation is not completed yet
-        if (lock.tryLock()) {
-            try {
-                log.info("Power Management Health Check started.");
-                List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
-                for (VDS host : hosts) {
-                    if (host.isPmEnabled()) {
-                        pmHealthCheck(host);
+    private void pmHealthCheck() {
+        try {
+            // skip PM health check if previous operation is not completed yet
+            if (lock.tryLock()) {
+                try {
+                    log.info("Power Management Health Check started.");
+                    List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
+                    for (VDS host : hosts) {
+                        if (host.isPmEnabled()) {
+                            pmHealthCheck(host);
+                        }
                     }
+                    log.info("Power Management Health Check completed.");
+                } finally {
+                    lock.unlock();
                 }
-                log.info("Power Management Health Check completed.");
-            } finally {
-                lock.unlock();
             }
+        } catch (Throwable t) {
+            log.error("Exception in checking PM health: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
         }
     }
 

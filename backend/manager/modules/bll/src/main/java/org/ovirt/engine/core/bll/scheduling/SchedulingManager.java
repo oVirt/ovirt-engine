@@ -21,9 +21,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
@@ -57,6 +59,7 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
@@ -68,8 +71,6 @@ import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +106,9 @@ public class SchedulingManager implements BackendService {
     private ExternalSchedulerBroker externalBroker;
     @Inject
     private VfScheduler vfScheduler;
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     private PendingResourceManager pendingResourceManager;
 
@@ -858,11 +862,7 @@ public class SchedulingManager implements BackendService {
     private void enableLoadBalancer() {
         if (Config.<Boolean>getValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start scheduling to enable vds load balancer");
-            Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(
-                    this,
-                    "performLoadBalancing",
-                    new Class[] {},
-                    new Object[] {},
+            executor.scheduleWithFixedDelay(this::performLoadBalancing,
                     Config.<Integer>getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
                     Config.<Integer>getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
                     TimeUnit.MINUTES);
@@ -875,11 +875,7 @@ public class SchedulingManager implements BackendService {
         if (Config.<Boolean>getValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start HA Reservation check");
             Integer interval = Config.<Integer> getValue(ConfigValues.VdsHaReservationIntervalInMinutes);
-            Injector.get(SchedulerUtilQuartzImpl.class).scheduleAFixedDelayJob(
-                    this,
-                    "performHaResevationCheck",
-                    new Class[] {},
-                    new Object[] {},
+            executor.scheduleWithFixedDelay(this::performHaResevationCheck,
                     interval,
                     interval,
                     TimeUnit.MINUTES);
@@ -888,8 +884,16 @@ public class SchedulingManager implements BackendService {
 
     }
 
-    @OnTimerMethodAnnotation("performHaResevationCheck")
-    public void performHaResevationCheck() {
+    private void performHaResevationCheck() {
+        try {
+            performHaResevationCheckImpl();
+        } catch (Throwable t) {
+            log.error("Exception in performing HA Reservation check: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
+    }
+
+    public void performHaResevationCheckImpl() {
 
         log.debug("HA Reservation check timer entered.");
         List<Cluster> clusters = clusterDao.getAll();
@@ -935,8 +939,16 @@ public class SchedulingManager implements BackendService {
         return logable;
     }
 
-    @OnTimerMethodAnnotation("performLoadBalancing")
-    public void performLoadBalancing() {
+    private void performLoadBalancing() {
+        try {
+            performLoadBalancingImpl();
+        } catch (Throwable t) {
+            log.error("Exception in performing load balancing: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
+    }
+
+    private void performLoadBalancingImpl() {
         log.debug("Load Balancer timer entered.");
         List<Cluster> clusters = clusterDao.getAll();
         for (Cluster cluster : clusters) {

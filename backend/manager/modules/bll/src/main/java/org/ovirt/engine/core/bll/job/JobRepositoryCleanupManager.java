@@ -4,15 +4,16 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.dao.JobDao;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +29,11 @@ public class JobRepositoryCleanupManager implements BackendService {
     private int failedJobTime;
 
     @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
+    private JobDao jobDao;
 
     @Inject
-    private JobDao jobDao;
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     private JobRepositoryCleanupManager() {
     }
@@ -46,10 +48,7 @@ public class JobRepositoryCleanupManager implements BackendService {
         failedJobTime = Config.<Integer> getValue(ConfigValues.FailedJobCleanupTimeInMinutes);
 
         Integer cleanupFrequency = Config.<Integer> getValue(ConfigValues.JobCleanupRateInMinutes);
-        schedulerUtil.scheduleAFixedDelayJob(this,
-                "completed_jobs_cleanup",
-                new Class[] {},
-                new Object[] {},
+        executor.scheduleWithFixedDelay(this::cleanCompletedJob,
                 cleanupFrequency,
                 cleanupFrequency,
                 TimeUnit.MINUTES);
@@ -63,8 +62,7 @@ public class JobRepositoryCleanupManager implements BackendService {
      * <li>The failed jobs will be deleted after {@code ConfigValues#FailedJobCleanupTimeInMinutes}.</li>
      * </ul>
      */
-    @OnTimerMethodAnnotation("completed_jobs_cleanup")
-    public void cleanCompletedJob() {
+    private void cleanCompletedJob() {
 
         Date succeededJobsDeleteTime =
                 new Date(System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(succeededJobTime, TimeUnit.MINUTES));
@@ -73,9 +71,9 @@ public class JobRepositoryCleanupManager implements BackendService {
 
         try {
             jobDao.deleteCompletedJobs(succeededJobsDeleteTime, failedJobsDeleteTime);
-        } catch (RuntimeException e) {
-            log.error("Failed to delete completed jobs: {}", e.getMessage());
-            log.debug("Exception", e);
+        } catch (Throwable t) {
+            log.error("Failed to delete completed jobs: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
         }
     }
 }

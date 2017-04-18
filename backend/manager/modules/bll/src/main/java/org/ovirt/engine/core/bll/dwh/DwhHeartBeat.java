@@ -4,18 +4,19 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeepingVariable;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.dwh.DwhHistoryTimekeepingDao;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,15 +41,16 @@ public class DwhHeartBeat implements BackendService {
      */
     private DwhHistoryTimekeeping heartBeatVar;
     @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
-    @Inject
     private DwhHistoryTimekeepingDao dwhHistoryTimekeepingDao;
+
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     /**
      * Update {@code dwh_history_timekeeping} table to notify DWH, that engine is up an running
      */
-    @OnTimerMethodAnnotation(DWH_HEART_BEAT_METHOD)
-    public void engineIsRunningNotification() {
+    private void engineIsRunningNotification() {
         try {
             log.debug("DWH Heart Beat - Start");
             TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew, () -> {
@@ -57,9 +59,9 @@ public class DwhHeartBeat implements BackendService {
                 return null;
             });
             log.debug("DWH Heart Beat - End");
-        } catch (Exception ex) {
-            log.error("Error updating DWH Heart Beat: {}", ex.getMessage());
-            log.debug("Exception", ex);
+        } catch (Throwable t) {
+            log.error("Error updating DWH Heart Beat: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
         }
     }
 
@@ -72,10 +74,7 @@ public class DwhHeartBeat implements BackendService {
         heartBeatVar = new DwhHistoryTimekeeping();
         heartBeatVar.setVariable(DwhHistoryTimekeepingVariable.HEART_BEAT);
 
-        schedulerUtil.scheduleAFixedDelayJob(this,
-                DWH_HEART_BEAT_METHOD,
-                new Class[] {},
-                new Object[] {},
+        executor.scheduleWithFixedDelay(this::engineIsRunningNotification,
                 0,
                 Config.<Integer>getValue(ConfigValues.DwhHeartBeatInterval),
                 TimeUnit.SECONDS);
