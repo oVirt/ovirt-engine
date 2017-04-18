@@ -10,8 +10,10 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -32,8 +35,6 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +54,6 @@ public abstract class AutoStartVmsRunner implements BackendService {
     private AuditLogDirector auditLogDirector;
 
     @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
-
-    @Inject
     private LockManager lockManager;
 
     @Inject
@@ -73,6 +71,10 @@ public abstract class AutoStartVmsRunner implements BackendService {
     @Inject
     private SnapshotDao snapshotDao;
 
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
+
     /** Records of VMs that need to be started */
     private CopyOnWriteArraySet<AutoStartVmToRestart> autoStartVmsToRestart;
 
@@ -82,11 +84,8 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
         int autoStartVmsRunnerIntervalInSeconds =
                 Config.<Integer>getValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
-        schedulerUtil.scheduleAFixedDelayJob(
-                this,
-                "startFailedAutoStartVms",
-                new Class[] {},
-                new Object[] {},
+        executor.scheduleWithFixedDelay(
+                this::startFailedAutoStartVms,
                 autoStartVmsRunnerIntervalInSeconds,
                 autoStartVmsRunnerIntervalInSeconds,
                 TimeUnit.SECONDS);
@@ -108,8 +107,16 @@ public abstract class AutoStartVmsRunner implements BackendService {
         autoStartVmsToRestart.addAll(vmsToAdd);
     }
 
-    @OnTimerMethodAnnotation("startFailedAutoStartVms")
-    public void startFailedAutoStartVms() {
+    private void startFailedAutoStartVms() {
+        try {
+            startFailedAutoStartVmsImpl();
+        } catch (Throwable t) {
+            log.error("Exception in startFailedAutoStartVms: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
+    }
+
+    private void startFailedAutoStartVmsImpl() {
         LinkedList<AutoStartVmToRestart> vmsToRemove = new LinkedList<>();
         final DateTime iterationStartTime = DateTime.getNow();
         final Date nextTimeOfRetryToRun = iterationStartTime.addSeconds(RETRY_TO_RUN_AUTO_START_VM_INTERVAL);
