@@ -127,7 +127,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         }
 
         boolean shouldBeFenced = getVds().shouldVdsBeFenced();
-        RestartVdsReturnValue restartVdsResult = null;
+        VdcReturnValueBase restartVdsResult = null;
         if (shouldBeFenced) {
             getParameters().setParentCommand(VdcActionType.VdsNotRespondingTreatment);
             VdcReturnValueBase retVal;
@@ -163,14 +163,15 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             getParameters().setFencingPolicy(fencingPolicy);
 
             waitUntilSkipFencingIfSDActiveAllowed(fencingPolicy.isSkipFencingIfSDActive());
-            restartVdsResult = (RestartVdsReturnValue) runInternalAction(VdcActionType.RestartVds,
+            restartVdsResult = runInternalAction(VdcActionType.RestartVds,
                     getParameters(), cloneContext().withoutExecutionContext());
         } else {
             setCommandShouldBeLogged(false);
             log.info("Host '{}' ({}) not fenced since it's status is ok, or it doesn't exist anymore.",
                     getVdsName(), getVdsId());
         }
-        if (restartVdsResult != null && restartVdsResult.isSkippedDueToFencingPolicy()) {
+        if (restartVdsResult != null
+                && restartVdsResult.<RestartVdsResult>getActionReturnValue().isSkippedDueToFencingPolicy()) {
             // fencing was skipped, fire an alert and suppress standard command logging
             AuditLogableBase alb = Injector.injectMembers(new AuditLogableBase(getVds().getId()));
             alb.setRepeatable(true);

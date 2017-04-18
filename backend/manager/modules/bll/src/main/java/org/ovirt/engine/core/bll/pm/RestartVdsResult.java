@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.pm;
 
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import java.io.Serializable;
 
-public class RestartVdsReturnValue extends VdcReturnValueBase {
+public class RestartVdsResult implements Serializable {
 
     private boolean skippedDueToFencingPolicy;
 
