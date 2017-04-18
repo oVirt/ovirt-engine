@@ -102,7 +102,6 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -580,8 +579,7 @@ public class VmHandler implements BackendService {
      */
     public void warnMemorySizeLegal(VmBase vm, Version clusterVersion) {
         if (! VmValidationUtils.isMemorySizeLegal(vm.getOsId(), vm.getMemSizeMb(), clusterVersion)) {
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-            logable.setVmId(vm.getId());
+            AuditLogableBase logable = new AuditLogableBase();
             logable.addCustomValue("VmName", vm.getName());
             logable.addCustomValue("VmMemInMb", String.valueOf(vm.getMemSizeMb()));
             logable.addCustomValue("VmMinMemInMb",
