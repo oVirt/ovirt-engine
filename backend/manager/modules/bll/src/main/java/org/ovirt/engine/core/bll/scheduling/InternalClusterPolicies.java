@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.ClusterInMaintenanceFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CompatibilityVersionFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuOverloadPolicyUnit;
@@ -51,6 +52,40 @@ public class InternalClusterPolicies {
                 .isDefault()
                 .setBalancer(NoneBalancePolicyUnit.class)
 
+                .addFilters(PinToHostPolicyUnit.class)
+                .addFilters(LabelFilterPolicyUnit.class)
+                .addFilters(CPUPolicyUnit.class)
+                .addFilters(CpuLevelFilterPolicyUnit.class)
+                .addFilters(CpuOverloadPolicyUnit.class)
+                .addFilters(EmulatedMachineFilterPolicyUnit.class)
+                .addFilters(HostDeviceFilterPolicyUnit.class)
+                .addFilters(HostedEngineHAClusterFilterPolicyUnit.class)
+                .addFilters(MemoryPolicyUnit.class)
+                .addFilters(MigrationPolicyUnit.class)
+                .addFilters(VmAffinityFilterPolicyUnit.class)
+                .addFilters(VmToHostAffinityFilterPolicyUnit.class)
+                .addFilters(NetworkPolicyUnit.class)
+                .addFilters(CpuPinningPolicyUnit.class)
+                .addFilters(CompatibilityVersionFilterPolicyUnit.class)
+                .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
+
+                .addFunction(2, EvenDistributionCPUWeightPolicyUnit.class)
+                .addFunction(1, EvenDistributionMemoryWeightPolicyUnit.class)
+                .addFunction(99, PreferredHostsWeightPolicyUnit.class)
+                .addFunction(1, HostedEngineHAClusterWeightPolicyUnit.class)
+                .addFunction(1, HaReservationWeightPolicyUnit.class)
+                .addFunction(1, VmAffinityWeightPolicyUnit.class)
+                .addFunction(10, VmToHostAffinityWeightPolicyUnit.class)
+
+                .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
+                .set(PolicyUnitParameter.HIGH_UTILIZATION, "80")
+                .register();
+
+        createBuilder("7677771e-5eab-422e-83fa-dc04080d21b7")
+                .name("cluster_maintenance")
+                .setBalancer(NoneBalancePolicyUnit.class)
+
+                .addFilters(ClusterInMaintenanceFilterPolicyUnit.class)
                 .addFilters(PinToHostPolicyUnit.class)
                 .addFilters(LabelFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)

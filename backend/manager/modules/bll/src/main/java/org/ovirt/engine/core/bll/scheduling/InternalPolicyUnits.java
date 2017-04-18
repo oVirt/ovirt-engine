@@ -9,6 +9,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.policyunits.BasicWeightSelectorPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.ClusterInMaintenanceFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CompatibilityVersionFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuOverloadPolicyUnit;
@@ -49,6 +50,7 @@ public class InternalPolicyUnits {
     private static final Set<Class<? extends PolicyUnitImpl>> enabledUnits = new HashSet<>();
 
     static {
+        enabledUnits.add(ClusterInMaintenanceFilterPolicyUnit.class);
         enabledUnits.add(CpuLevelFilterPolicyUnit.class);
         enabledUnits.add(CpuOverloadPolicyUnit.class);
         enabledUnits.add(CPUPolicyUnit.class);
