@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
@@ -975,14 +976,14 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
-        ArrayList<String> lunIds = new ArrayList<>();
+        HashSet<String> lunIds = new HashSet<>();
         for (LunModel lun : sanModel.getAddedLuns()) {
             lunIds.add(lun.getLunId());
         }
 
         AddSANStorageDomainParameters params = new AddSANStorageDomainParameters(storageDomain);
         params.setVdsId(host.getId());
-        params.setLunIds(lunIds);
+        params.setLunIds(new ArrayList<>(lunIds));
         params.setForce(force);
         Frontend.getInstance().runAction(VdcActionType.AddSANStorageDomain, params,
                 new IFrontendActionAsyncCallback() {
