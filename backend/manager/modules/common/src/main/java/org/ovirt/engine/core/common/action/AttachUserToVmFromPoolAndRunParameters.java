@@ -8,24 +8,13 @@ public class AttachUserToVmFromPoolAndRunParameters extends VmPoolUserParameters
 
     private static final long serialVersionUID = -5672324868972973061L;
 
-    private boolean internal;
-
     private boolean vmPrestarted;
 
     public AttachUserToVmFromPoolAndRunParameters() {
     }
 
-    public AttachUserToVmFromPoolAndRunParameters(Guid vmPoolId, Guid userId, boolean internal) {
+    public AttachUserToVmFromPoolAndRunParameters(Guid vmPoolId, Guid userId) {
         super(vmPoolId, userId);
-        setInternal(internal);
-    }
-
-    public boolean isInternal() {
-        return internal;
-    }
-
-    private void setInternal(boolean value) {
-        internal = value;
     }
 
     public boolean isVmPrestarted() {

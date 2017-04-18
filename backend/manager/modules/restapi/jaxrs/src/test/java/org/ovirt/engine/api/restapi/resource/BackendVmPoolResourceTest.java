@@ -68,8 +68,8 @@ public class BackendVmPoolResourceTest
         setUpGetVmExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.AttachUserToVmFromPoolAndRun,
                                            AttachUserToVmFromPoolAndRunParameters.class,
-                                           new String[] { "VmPoolId", "Internal" },
-                                           new Object[] { GUIDS[0], Boolean.FALSE },
+                                           new String[] { "VmPoolId" },
+                                           new Object[] { GUIDS[0] },
                                            GUIDS[0]));
 
         verifyTestAllocateVmActionResponse(resource.allocateVm(new Action()));
