@@ -426,12 +426,10 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
             if (!getSucceeded()) {
                 return AuditLogType.UPDATE_OVF_FOR_STORAGE_DOMAIN_FAILED;
             }
-
-            if (!SYSTEM_USER_NAME.equals(this.getUserName())) {
-                return AuditLogType.USER_UPDATE_OVF_STORE;
-            }
+        } else if (getActionState() == CommandActionState.END_SUCCESS &&
+                !SYSTEM_USER_NAME.equals(this.getUserName())) {
+            return AuditLogType.USER_UPDATE_OVF_STORE;
         }
-
         return super.getAuditLogTypeValue();
     }
 
