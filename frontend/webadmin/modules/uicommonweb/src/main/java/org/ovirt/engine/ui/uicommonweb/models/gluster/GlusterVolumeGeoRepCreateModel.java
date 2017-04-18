@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -288,8 +287,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
     }
 
     public boolean validate() {
-        getSlaveVolumes().validateSelectedItem(new IValidation[] { new NotEmptyValidation(), new LengthValidation(128),
-                new AsciiNameValidation() });
+        getSlaveVolumes().validateSelectedItem(new IValidation[] { new NotEmptyValidation(), new LengthValidation(128)});
         getSlaveHosts().validateSelectedItem(new IValidation[] { new NotEmptyValidation(), new LengthValidation(128)});
         return getSlaveVolumes().getIsValid() && getSlaveHosts().getIsValid();
     }
