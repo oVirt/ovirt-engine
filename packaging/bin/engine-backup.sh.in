@@ -17,7 +17,7 @@
 #
 
 # Clean the environment, see bz 1172191
-[ -z "${BACKUP_ENV_CLEAN}" ] && exec -c env -i PATH="${PATH}" BACKUP_ENV_CLEAN=1 "$0" "$@"
+[ -z "${BACKUP_ENV_CLEAN}" ] && exec -c env -i PATH="${PATH}" TMPDIR="${TMPDIR}" BACKUP_ENV_CLEAN=1 "$0" "$@"
 
 # Instead of loading prolog here, like the other scripts, we included its
 # content here, slightly modified, to allow it to work without engine
@@ -248,6 +248,8 @@ USAGE:
     The option --scope can be passed more than once, with different scopes.
  --file=FILE                        file to use during backup or restore
  --log=FILE                         log file to use during backup or restore
+ --tmpdir=DIR                       Set temporary directory parent. See also mktemp(1).
+                                    Defaults to \$TMPDIR, if set, otherwise to /tmp.
  --archive-compressor=COMPRESSOR
     Use COMPRESSOR to compress the backup file, can be one of:
     gzip
@@ -560,6 +562,9 @@ parseArgs() {
 			--log=*)
 				LOG="${v}"
 			;;
+			--tmpdir=*)
+				TMPDIR="${v}"
+			;;
 			--archive-compressor=*)
 				ARCHIVE_COMPRESS_OPTION=$(compressor_to_tar_option "${v}")
 				[ $? != 0 ] && die "failed parsing compressor"
@@ -777,6 +782,9 @@ parseArgs() {
 		esac
 	done
 
+	[ -z "${TMPDIR}" ] && TMPDIR=/tmp
+	export TMPDIR
+
 	if [ -z "${SCOPE}" ]; then
 		set_scope "${DEFAULT_SCOPE}"
 	fi
@@ -786,6 +794,7 @@ verifyArgs() {
 	[ -n "${MODE}" ] || die "--mode=<backup|restore|verify> is missing"
 	[ -n "${FILE}" ] || die "--file is missing"
 	[ -n "${LOG}" ] || die "--log is missing"
+	[ -d "${TMPDIR}" ] || die "Temporary directory ${TMPDIR} is missing or not a directory"
 	if [ "${MODE}" == "restore" ] ; then
 		[ -e "${FILE}" ] || die "${FILE} does not exist"
 	fi

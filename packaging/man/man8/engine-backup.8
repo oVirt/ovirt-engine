@@ -24,6 +24,11 @@ file to use during backup or restore
 log file to use
 .RE
 .PP
+\fB\-\-tmpdir\fR=\fITEMP_DIR\fR
+.RS 4
+Parent of temporary directory to create (using mktemp(1)). Defaults to the TMPDIR environment variable if set, otherwise to /tmp.
+.RE
+.PP
 \fB\-\-change\-db\-credentials\fR
 .RS 4
 activate the following options, to restore the database to a different location etc. If used, existing credentials are ignored.
@@ -69,6 +74,11 @@ set a secured connection
 validate host
 .RE
 .SH ENVIRONMENT VARIABLES
+.PP
+\fBTMPDIR\fR
+.RS 4
+Parent of temporary directory to create (using mktemp(1)).
+.RE
 .PP
 \fBOVIRT_ENGINE_DATABASE_PASSWORD\fR
 .RS 4
