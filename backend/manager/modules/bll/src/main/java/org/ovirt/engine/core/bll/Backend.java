@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -94,7 +93,6 @@ import org.ovirt.engine.core.utils.OsRepositoryImpl;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 import org.ovirt.engine.core.utils.osinfo.OsInfoPreferencesLoader;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmMigrationProgressMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -303,12 +301,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         serviceLoader.load(AutoRecoveryManager.class);
 
         initExecutionMessageDirector();
-
-        taskSchedulers.select(SchedulerUtilQuartzImpl.class).get()
-                .scheduleAFixedDelayJob(sessionDataContainer,
-                "cleanExpiredUsersSessions", new Class[] {}, new Object[] {},
-                1,
-                1, TimeUnit.MINUTES);
 
         // Set start-up time
         _startedAt = DateTime.getNow();

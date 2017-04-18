@@ -12,13 +12,17 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.core.aaa.AcctUtils;
@@ -29,8 +33,8 @@ import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.dao.EngineSessionDao;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +45,10 @@ public class SessionDataContainer {
 
     @Inject
     SsoSessionUtils ssoSessionUtils;
+
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService scheduledExecutorService;
 
     private static class SessionInfo {
         private ConcurrentMap<String, Object> contentOfSession = new ConcurrentHashMap<>();
@@ -71,6 +79,14 @@ public class SessionDataContainer {
 
     @Inject
     private EngineSessionDao engineSessionDao;
+
+    @PostConstruct
+    private void init() {
+        scheduledExecutorService.scheduleAtFixedRate(this::cleanExpiredUsersSessions,
+                1,
+                1, TimeUnit.MINUTES);
+
+    }
 
     public String generateEngineSessionId() {
         String engineSessionId;
@@ -206,8 +222,16 @@ public class SessionDataContainer {
     /**
      * Will run the process of cleaning expired sessions.
      */
-    @OnTimerMethodAnnotation("cleanExpiredUsersSessions")
     public final void cleanExpiredUsersSessions() {
+        try {
+            cleanExpiredUsersSessionsImpl();
+        } catch (Throwable t) {
+            log.error("Exception in cleanExpiredUsersSessions: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
+    }
+
+    public final void cleanExpiredUsersSessionsImpl() {
         Date now = new Date();
         Iterator<Entry<String, SessionInfo>>  iter = sessionInfoMap.entrySet().iterator();
         Set<String> tokens = sessionInfoMap.values().stream()
