@@ -12,14 +12,14 @@ public class CreateVGVDSCommandParameters extends ValidateStorageDomainVDSComman
         setForce(force);
     }
 
-    private List<String> privateDeviceList;
+    private List<String> deviceList;
 
     public List<String> getDeviceList() {
-        return privateDeviceList;
+        return deviceList;
     }
 
     private void setDeviceList(List<String> value) {
-        privateDeviceList = value;
+        deviceList = value;
     }
 
     private boolean force;
