@@ -48,7 +48,7 @@ public class OAuthAuthorizeServlet extends HttpServlet {
             String state = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, "");
             String appUrl = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_APP_URL, "");
             String engineUrl = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_ENGINE_URL, "");
-            String redirectUri = SsoUtils.getParameter(request, SsoConstants.HTTP_PARAM_REDIRECT_URI);
+            String redirectUri = request.getParameter(SsoConstants.HTTP_PARAM_REDIRECT_URI);
             SsoUtils.validateClientRequest(request, clientId, null, scope, redirectUri);
 
             if (!responseType.equals("code")) {

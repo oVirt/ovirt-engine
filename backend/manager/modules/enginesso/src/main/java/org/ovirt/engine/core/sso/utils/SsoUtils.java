@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -191,8 +190,8 @@ public class SsoUtils {
 
     public static String[] getClientIdClientSecret(HttpServletRequest request) throws Exception {
         String[] retVal = new String[2];
-        retVal[0] = getParameter(request, SsoConstants.HTTP_PARAM_CLIENT_ID);
-        retVal[1] = getParameter(request, SsoConstants.HTTP_PARAM_CLIENT_SECRET);
+        retVal[0] = request.getParameter(SsoConstants.HTTP_PARAM_CLIENT_ID);
+        retVal[1] = request.getParameter(SsoConstants.HTTP_PARAM_CLIENT_SECRET);
         if (StringUtils.isEmpty(retVal[0]) && StringUtils.isEmpty(retVal[1])) {
             retVal = getClientIdClientSecretFromHeader(request);
         }
@@ -233,13 +232,6 @@ public class SsoUtils {
         return retVal;
     }
 
-    public static String getParameter(HttpServletRequest request, String paramName)
-            throws UnsupportedEncodingException {
-        String value = request.getParameter(paramName);
-        return value == null ?
-                null : decode(new String(value.getBytes(StandardCharsets.UTF_8)));
-    }
-
     public static String getFormParameter(HttpServletRequest request, String paramName)
             throws UnsupportedEncodingException {
         String value = request.getParameter(paramName);
@@ -247,16 +239,12 @@ public class SsoUtils {
     }
 
     public static String getRequestParameter(HttpServletRequest request, String paramName) throws Exception {
-        String value = getParameter(request, paramName);
+        String value = request.getParameter(paramName);
         if (value == null) {
             throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
                     String.format(SsoConstants.ERR_CODE_INVALID_REQUEST_MSG, paramName));
         }
         return value;
-    }
-
-    public static String decode(String value) throws UnsupportedEncodingException {
-        return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
     }
 
     public static String getRequestParameters(HttpServletRequest request) {
@@ -388,7 +376,7 @@ public class SsoUtils {
             ssoSession.setAppUrl(getRequestParameter(request, SsoConstants.HTTP_PARAM_APP_URL, ""));
             ssoSession.setClientId(getClientId(request));
             ssoSession.setScope(getScopeRequestParameter(request, ""));
-            ssoSession.setRedirectUri(getParameter(request, SsoConstants.HTTP_PARAM_REDIRECT_URI));
+            ssoSession.setRedirectUri(request.getParameter(SsoConstants.HTTP_PARAM_REDIRECT_URI));
         }
         return ssoSession;
     }
