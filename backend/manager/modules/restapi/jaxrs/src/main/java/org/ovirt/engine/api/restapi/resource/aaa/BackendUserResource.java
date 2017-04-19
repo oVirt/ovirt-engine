@@ -16,7 +16,6 @@ import org.ovirt.engine.api.restapi.resource.BackendUserTagsResource;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -69,12 +68,6 @@ public class BackendUserResource
     @Override
     public SshPublicKeysResource getSshPublicKeysResource() {
         return inject(new BackendSSHPublicKeysResource(guid));
-    }
-
-    public User getUserByNameAndDomain(String userName, String domainName) {
-        return performGet(VdcQueryType.GetDbUserByUserNameAndDomain,
-                new GetDbUserByUserNameAndDomainQueryParameters(userName, domainName),
-                BaseResource.class);
     }
 
     @Override

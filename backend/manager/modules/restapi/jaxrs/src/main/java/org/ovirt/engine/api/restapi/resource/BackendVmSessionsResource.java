@@ -12,6 +12,8 @@ import org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -79,18 +81,39 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
     }
 
     /**
-     * The console user, if exists, is a real ovirt-user. Use its name to get ID and herf information, and set them
-     * inside the user object, inside the session.
+     * The console user, if exists, is a real ovirt-user. Use its name to get ID and href information, and set them
+     * inside the user object, inside the session. If user is not found in database, those information won't be set.
      */
     private void setSessionUser(Session session) {
-        User user =
-                getUserResource().getUserByNameAndDomain(session.getUser().getUserName(),
-                        session.getUser().getDomain().getName());
-        if (user != null) {
-            session.getUser().setId(user.getId());
-            session.getUser().setHref(user.getHref());
-            session.getUser().getDomain().setId(user.getDomain().getId());
-            session.getUser().getDomain().setHref(user.getDomain().getHref());
+        // Get the user entity and don't fail if user is not found in database:
+        DbUser entity = getEntity(
+            DbUser.class,
+            VdcQueryType.GetDbUserByUserNameAndDomain,
+            new GetDbUserByUserNameAndDomainQueryParameters(
+                session.getUser().getUserName(),
+                session.getUser().getDomain().getName()
+            ),
+            "",
+            false,
+            false
+        );
+
+        // Map the database user to model user:
+        if (entity != null) {
+            User user = BackendApiResource.getInstance()
+                .getUsersResource()
+                .getUserResource(entity.getId().toString())
+                .get();
+            /**
+             * TODO: It's enough to set user ID and href, we don't have to set also domain, please consider this
+             * when moving to API version 5.
+             */
+            if (user != null) {
+                session.getUser().setId(user.getId());
+                session.getUser().setHref(user.getHref());
+                session.getUser().getDomain().setId(user.getDomain().getId());
+                session.getUser().getDomain().setHref(user.getDomain().getHref());
+            }
         }
     }
 
