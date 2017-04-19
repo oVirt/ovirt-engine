@@ -146,6 +146,10 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
         dest.setBoot(source.isBoot());
         dest.setPassDiscard(source.isPassDiscard());
         dest.setDiskInterface(source.getDiskInterface());
+        dest.setUsingScsiReservation(source.isUsingScsiReservation());
+        dest.setPlugged(source.isPlugged());
+        dest.setLogicalName(source.getLogicalName());
+        dest.setReadOnly(source.isReadOnly());
     }
 
     @Override
@@ -163,11 +167,15 @@ public class DiskVmElement implements BusinessEntity<VmDeviceId> {
                 passDiscard == that.passDiscard &&
                 diskInterface == that.diskInterface &&
                 usingScsiReservation == that.usingScsiReservation &&
-                id != null ? id.equals(that.id) : that.id == null;
+                plugged == that.plugged &&
+                Objects.equals(logicalName, that.logicalName) &&
+                readOnly == that.readOnly &&
+                Objects.equals(id, that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, boot, passDiscard, diskInterface, usingScsiReservation);
+        return Objects.hash(id, boot, passDiscard, diskInterface, usingScsiReservation, plugged,
+                logicalName, readOnly);
     }
 }
