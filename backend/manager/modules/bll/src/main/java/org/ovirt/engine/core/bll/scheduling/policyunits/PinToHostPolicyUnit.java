@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
@@ -38,6 +39,8 @@ public class PinToHostPolicyUnit extends PolicyUnitImpl {
                 for (VDS host : hosts) {
                     if (vm.getDedicatedVmForVdsList().contains(host.getId())) {
                         dedicatedHostsList.add(host);
+                    } else {
+                        messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__NOT_PINNED_TO_HOST.name());
                     }
                 }
                 return dedicatedHostsList;
@@ -49,6 +52,10 @@ public class PinToHostPolicyUnit extends PolicyUnitImpl {
             }
 
             // if flow reaches here, the VM is pinned but there is no dedicated host.
+            hosts.stream()
+                    .map(VDS::getId)
+                    .forEach(id -> messages.addMessage(id, EngineMessage.VAR__DETAIL__NOT_PINNED_TO_HOST.name()));
+
             return Collections.emptyList();
         }
 

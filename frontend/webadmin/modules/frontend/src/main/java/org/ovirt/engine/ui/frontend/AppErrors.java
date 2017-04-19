@@ -2513,6 +2513,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__CLUSTER_IN_MAINTENANCE();
 
+    String VAR__DETAIL__NOT_PINNED_TO_HOST();
+
     String VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE();
 
     String VM_NUMA_NODE_MORE_NODES_THAN_CPUS();
