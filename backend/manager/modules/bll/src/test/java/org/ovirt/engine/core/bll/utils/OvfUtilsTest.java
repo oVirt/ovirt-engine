@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.utils;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -31,6 +32,12 @@ public class OvfUtilsTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testIsExternalVM() throws Exception {
+        XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
+        assertFalse("VM should not be external VM", OvfUtils.isExternalVM(xmlDocument));
     }
 
     @Test
