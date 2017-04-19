@@ -11,12 +11,8 @@
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
     <ui:style>
-        .errorLabel, .differentClusterWarning {
+        .errorLabel {
             color: #CD2127;
-        }
-
-        .differentClusterWarning {
-            font-weight: bold;
         }
 
         .container {
@@ -40,17 +36,6 @@
                 <b:Row>
                     <e:ListModelListBoxEditor ui:field="hostsListEditor" label="{constants.vmMigratePopupHostsListLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
-                <d:AdvancedParametersExpander ui:field="advancedOptionsExpander"/>
-                <g:FlowPanel ui:field="advancedOptionsExpanderContent">
-                    <b:Row>
-                        <b:Column size="SM_12">
-                            <g:Label text="{constants.migrationToDifferentClusterWarning}" addStyleNames="{style.differentClusterWarning}" />
-                        </b:Column>
-                    </b:Row>
-                    <b:Row>
-                        <e:ListModelListBoxEditor ui:field="clustersEditor" label="{constants.hostClusterVmPopup}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
-                    </b:Row>
-                </g:FlowPanel>
                 <b:Row>
                     <b:Column size="SM_12">
                         <g:Label ui:field="message1" addStyleNames="{style.errorLabel}" />

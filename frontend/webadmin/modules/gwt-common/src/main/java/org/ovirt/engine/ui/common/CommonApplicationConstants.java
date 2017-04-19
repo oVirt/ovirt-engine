@@ -533,8 +533,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String priorForRunMigrationQueueVmPopup();
 
-    String migrationToDifferentClusterWarning();
-
     String watchdog();
 
     String memAllocVmPopup();

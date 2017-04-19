@@ -1242,13 +1242,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         model.startProgress();
 
-        Guid targetClusterId = model.getClusters().getSelectedItem() != null ? model.getClusters().getSelectedItem().getId() : null;
-
         if (model.getIsAutoSelect()) {
             ArrayList<VdcActionParametersBase> list = new ArrayList<>();
             for (Object item : getSelectedItems()) {
-                VM a = (VM) item;
-                list.add(new MigrateVmParameters(true, a.getId(), targetClusterId));
+                VM vm = (VM) item;
+                list.add(new MigrateVmParameters(true, vm.getId(), vm.getClusterId()));
             }
 
             Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVm, list,
@@ -1263,14 +1261,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         else {
             ArrayList<VdcActionParametersBase> list = new ArrayList<>();
             for (Object item : getSelectedItems()) {
-                VM a = (VM) item;
+                VM vm = (VM) item;
 
-                if (a.getRunOnVds().equals(model.getHosts().getSelectedItem().getId())) {
+                if (vm.getRunOnVds().equals(model.getHosts().getSelectedItem().getId())) {
                     continue;
                 }
 
-                list.add(new MigrateVmToServerParameters(true, a.getId(), model.getHosts()
-                        .getSelectedItem().getId(), targetClusterId));
+                list.add(new MigrateVmToServerParameters(true, vm.getId(), model.getHosts()
+                        .getSelectedItem().getId(), vm.getClusterId()));
             }
 
             Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVmToServer, list,

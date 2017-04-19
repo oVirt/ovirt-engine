@@ -1,11 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
-import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
@@ -14,12 +11,12 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.MigrateModel;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.inject.Inject;
 
 public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel>
@@ -56,19 +53,6 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
     @Ignore
     Label message3;
 
-    @UiField
-    @Ignore
-    AdvancedParametersExpander advancedOptionsExpander;
-
-    @UiField
-    @Ignore
-    Panel advancedOptionsExpanderContent;
-
-    @UiField(provided = true)
-    @Path(value = "clusters.selectedItem")
-    @WithElementId("clusters")
-    public ListModelListBoxEditor<Cluster> clustersEditor;
-
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationMessages messages = AssetProvider.getMessages();
@@ -79,8 +63,6 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        advancedOptionsExpander.initWithContent(advancedOptionsExpanderContent.getElement());
-
         localize();
         driver.initialize(this);
     }
@@ -90,8 +72,6 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         selectDestinationHostEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
 
         hostsListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
-
-        clustersEditor = new ListModelListBoxEditor<>(new NameRenderer<Cluster>());
     }
 
     void localize() {
