@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -31,6 +32,7 @@ import org.w3c.dom.NodeList;
 public class OvfUtils {
     private static final String TEMPLATE_ENTITY_TYPE = "<TemplateType>";
     private static final String ENTITY_NAME = "<Name>";
+    private static final String VM_ORIGIN = "Origin";
     private static final String END_ENTITY_NAME = "</Name>";
     private static final String OVF_FILE_EXT = ".ovf";
     private static final int GUID_LENGTH = Guid.Empty.toString().length();
@@ -122,6 +124,17 @@ public class OvfUtils {
                 try {
                     XmlDocument xmlDocument = new XmlDocument(ovfData);
                     archType = getOsSection(xmlDocument);
+                    if (isExternalVM(xmlDocument)) {
+                        log.warn(
+                                "Retrieve an external OVF Entity from storage domain ID '{}' for entity ID '{}'," +
+                                        " entity name '{}' and VM Type of '{}'." +
+                                        " This OVF will be ignored since external VMs should not be restored.",
+                                storageDomainId,
+                                getEntityId(fileEntry.getKey()),
+                                getEntityName(ovfData),
+                                vmType.name());
+                        continue;
+                    }
                     updateUnregisteredDisksWithVMs(unregisteredDisks, entityId, vmName, xmlDocument);
                 } catch (Exception e) {
                     log.error("Could not parse VM's disks or architecture, file name: {}, content size: {}, error: {}",
@@ -153,6 +166,19 @@ public class OvfUtils {
         log.info("Finish to fetch OVF files from tar file. The number of OVF entities are {}",
                 ovfEntityDataFromTar.size());
         return ovfEntityDataFromTar;
+    }
+
+    public static boolean isExternalVM(XmlDocument xmlDocument) {
+        XmlNode content = xmlDocument.selectSingleNode("//*/Content");
+        NodeList nodeList = content.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeName().equals(VM_ORIGIN) && node.getChildNodes().item(0) != null) {
+                Integer originType = Integer.valueOf(node.getChildNodes().item(0).getNodeValue());
+                return OriginType.EXTERNAL == OriginType.forValue(originType);
+            }
+        }
+        return false;
     }
 
     public static void updateUnregisteredDisksWithVMs(List<UnregisteredDisk> unregisteredDisks,
