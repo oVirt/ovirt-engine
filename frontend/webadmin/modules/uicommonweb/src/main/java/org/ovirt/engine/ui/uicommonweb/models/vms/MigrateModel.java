@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,7 +24,6 @@ public class MigrateModel extends Model {
 
     private ListModel<VDS> privateHosts;
     private VmListModel<?> parentModel;
-    private VM vm;
 
     public ListModel<VDS> getHosts() {
         return privateHosts;
@@ -33,16 +31,6 @@ public class MigrateModel extends Model {
 
     private void setHosts(ListModel<VDS> value) {
         privateHosts = value;
-    }
-
-    private ListModel<Cluster> clusters;
-
-    public ListModel<Cluster> getClusters() {
-        return clusters;
-    }
-
-    public void setClusters(ListModel<Cluster> clusters) {
-        this.clusters = clusters;
     }
 
     private ArrayList<VM> privateVmList;
@@ -161,45 +149,18 @@ public class MigrateModel extends Model {
 
         setSelectDestinationHost_IsSelected(new EntityModel<Boolean>());
         getSelectDestinationHost_IsSelected().getEntityChangedEvent().addListener(this);
-
-        setClusters(new ListModel<Cluster>());
-        getClusters().getSelectedItemChangedEvent().addListener(this);
     }
 
     public void initializeModel() {
-        if (vm.getClusterId() == null) {
-            return;
-        }
-
-        AsyncDataProvider.getInstance().getClusterList(
-                new AsyncQuery<>(new AsyncCallback<List<Cluster>>() {
-
-                    @Override
-                    public void onSuccess(List<Cluster> clusterList) {
-                        List<Cluster> onlyWithArchitecture = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusterList);
-                        List<Cluster> onlyVirt = AsyncDataProvider.getInstance().getClusterByServiceList(onlyWithArchitecture, true, false);
-
-
-                        Cluster selected = null;
-                        for (Cluster cluster : onlyVirt) {
-                            if (cluster.getId().equals(vm.getClusterId())) {
-                                selected = cluster;
-                                break;
-                            }
-                        }
-
-                        clusters.setItems(onlyVirt, selected != null ? selected : Linq.firstOrNull(onlyVirt));
-                    }
-                }),
-                vm.getStoragePoolId());
+        loadHosts();
     }
 
     private void loadHosts() {
-        Cluster selectedCluster = clusters.getSelectedItem();
-        if (selectedCluster == null) {
+        if (privateVmList == null || privateVmList.isEmpty()) {
             return;
         }
 
+        final String clusterName = privateVmList.get(0).getClusterName();
         AsyncDataProvider.getInstance().getUpHostListByCluster(new AsyncQuery<>(
                 new AsyncCallback<List<VDS>>() {
                     @SuppressWarnings("unchecked")
@@ -207,7 +168,7 @@ public class MigrateModel extends Model {
                     public void onSuccess(List<VDS> returnValue) {
                         postMigrateGetUpHosts(privateVmList, returnValue);
                     }
-                }), selectedCluster.getName());
+                }), clusterName);
     }
 
     private void postMigrateGetUpHosts(List<VM> selectedVms, List<VDS> hosts) {
@@ -285,9 +246,6 @@ public class MigrateModel extends Model {
             }
             setIsSameVdsMessageVisible(gethasSameVdsMessage());
         }
-        else if (sender == getClusters()) {
-            loadHosts();
-        }
         else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getSelectHostAutomatically_IsSelected()) {
                 setIsAutoSelect(getSelectHostAutomatically_IsSelected().getEntity());
@@ -296,9 +254,5 @@ public class MigrateModel extends Model {
                 setIsAutoSelect(!getSelectDestinationHost_IsSelected().getEntity());
             }
         }
-    }
-
-    public void setVm(VM vm) {
-        this.vm = vm;
     }
 }
