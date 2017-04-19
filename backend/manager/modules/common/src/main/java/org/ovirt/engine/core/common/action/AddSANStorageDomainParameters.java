@@ -10,7 +10,7 @@ public class AddSANStorageDomainParameters extends StorageDomainManagementParame
     private List<String> lunIds;
 
     public List<String> getLunIds() {
-        return lunIds == null ? new ArrayList<String>() : lunIds;
+        return lunIds == null ? new ArrayList<>() : lunIds;
     }
 
     public void setLunIds(List<String> value) {
