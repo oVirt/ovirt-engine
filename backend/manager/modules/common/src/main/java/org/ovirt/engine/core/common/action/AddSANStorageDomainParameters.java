@@ -7,14 +7,14 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 
 public class AddSANStorageDomainParameters extends StorageDomainManagementParameter {
     private static final long serialVersionUID = 6386931158747982426L;
-    private List<String> privateLunIds;
+    private List<String> lunIds;
 
     public List<String> getLunIds() {
-        return privateLunIds == null ? new ArrayList<String>() : privateLunIds;
+        return lunIds == null ? new ArrayList<String>() : lunIds;
     }
 
     public void setLunIds(List<String> value) {
-        privateLunIds = value;
+        lunIds = value;
     }
 
     private boolean force;
