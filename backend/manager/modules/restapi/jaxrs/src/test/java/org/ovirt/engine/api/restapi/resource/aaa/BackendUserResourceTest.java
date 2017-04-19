@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
@@ -18,7 +17,6 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -62,17 +60,6 @@ public class BackendUserResourceTest
         setUpGetEntityExpectations();
 
         verifyModel(resource.get(), 0);
-    }
-
-    @Test
-    public void testGetUserByName() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserNameAndDomain,
-                GetDbUserByUserNameAndDomainQueryParameters.class,
-                new String[] { "UserName", "DomainName" },
-                new Object[] { "admin", "internal" },
-                getEntity(0));
-        verifyModel(resource.getUserByNameAndDomain("admin", "internal"), 0);
     }
 
     @Test

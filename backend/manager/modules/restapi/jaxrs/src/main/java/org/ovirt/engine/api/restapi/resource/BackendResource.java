@@ -106,7 +106,7 @@ public class BackendResource extends BaseBackendResource {
         return getEntity(clz, query, queryParams, identifier, notFoundAs404, false);
     }
 
-    private <T> T getEntity(Class<T> clz,
+    public <T> T getEntity(Class<T> clz,
                               VdcQueryType query,
                               VdcQueryParametersBase queryParams,
                               String identifier,
