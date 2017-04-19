@@ -1,18 +1,19 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 
 public class AddSANStorageDomainParameters extends StorageDomainManagementParameter {
     private static final long serialVersionUID = 6386931158747982426L;
-    private ArrayList<String> privateLunIds;
+    private List<String> privateLunIds;
 
-    public ArrayList<String> getLunIds() {
+    public List<String> getLunIds() {
         return privateLunIds == null ? new ArrayList<String>() : privateLunIds;
     }
 
-    public void setLunIds(ArrayList<String> value) {
+    public void setLunIds(List<String> value) {
         privateLunIds = value;
     }
 
