@@ -1,13 +1,12 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateVGVDSCommandParameters extends ValidateStorageDomainVDSCommandParameters {
-    public CreateVGVDSCommandParameters(Guid vdsId, Guid storageDomainId, ArrayList<String> deviceList, boolean force) {
+    public CreateVGVDSCommandParameters(Guid vdsId, Guid storageDomainId, List<String> deviceList, boolean force) {
         super(vdsId, storageDomainId);
         setDeviceList(deviceList);
         setForce(force);
