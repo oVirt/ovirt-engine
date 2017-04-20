@@ -36,16 +36,6 @@ public class AsyncQuery<T> {
         this.handleFailure = handleFailure;
     }
 
-    public AsyncQuery<T> handleFailure() {
-        setHandleFailure(true);
-        return this;
-    }
-
-    public AsyncQuery<T> withConverter(Converter<T> converter) {
-        this.converterCallback = converter;
-        return this;
-    }
-
     public boolean isHandleFailure() {
         return handleFailure;
     }
