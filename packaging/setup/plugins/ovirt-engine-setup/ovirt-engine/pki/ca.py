@@ -225,7 +225,8 @@ class Plugin(plugin.PluginBase):
             )
         )
 
-    _PKI_ENTRIES = (
+    _COMMON_ENTITIES = (
+        # TODO split these up to their own plugins and add there to ENTITIES
         {
             'name': 'engine',
             'extract': False,
@@ -317,7 +318,7 @@ class Plugin(plugin.PluginBase):
         return res
 
     def _enrollCertificates(self, renew, uninstall_files):
-        for entry in self._PKI_ENTRIES:
+        for entry in self.environment[oenginecons.PKIEnv.ENTITIES]:
             self.logger.debug(
                 "processing: '%s'[renew=%s]",
                 entry['name'],
@@ -409,6 +410,12 @@ class Plugin(plugin.PluginBase):
             oenginecons.ConfigEnv.PKI_RENEWAL_DOC_URL,
             oenginecons.Defaults.DEFAULT_PKI_RENEWAL_DOC_URL
         )
+        self.environment[oenginecons.PKIEnv.ENTITIES] = []
+        self.environment[
+            oenginecons.PKIEnv.ENTITIES
+        ].extend(
+            self._COMMON_ENTITIES
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -483,7 +490,7 @@ class Plugin(plugin.PluginBase):
                 entry['name'],
                 entry['extract']
             )
-            for entry in self._PKI_ENTRIES
+            for entry in self.environment[oenginecons.PKIEnv.ENTITIES]
         ]:
             if self.environment[oenginecons.PKIEnv.RENEW] is None:
                 self.environment[

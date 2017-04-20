@@ -650,6 +650,8 @@ class PKIEnv(object):
     def RENEW(self):
         return 'OVESETUP_PKI/renew'
 
+    ENTITIES = 'OVESETUP_PKI/entities'
+
 
 @util.export
 @util.codegen
@@ -819,8 +821,6 @@ class RemoveEnv(object):
         return 'OVESETUP_REMOVE/engineDatabase'
 
 
-# vim: expandtab tabstop=4 shiftwidth=4
-
 @util.export
 @util.codegen
 @osetupattrsclass
@@ -849,3 +849,6 @@ class OvnEnv(object):
     )
     def OVIRT_PROVIDER_OVN_PASSWORD(self):
         return 'OVESETUP_OVN/ovirtProviderOvnPassword'
+
+
+# vim: expandtab tabstop=4 shiftwidth=4
