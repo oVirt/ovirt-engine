@@ -678,7 +678,7 @@ public class AsyncDataProvider {
             Guid storagePoolId,
             boolean forceRefresh,
             ImageFileType imageFileType,
-            Converter<List<String>> converterCallBack) {
+            Converter<List<String>, List<RepoImage>> converterCallBack) {
 
         aQuery.converterCallback = converterCallBack;
 
@@ -1245,7 +1245,7 @@ public class AsyncDataProvider {
         query.converterCallback = new ListConverter<NetworkQoS>() {
 
             @Override
-            public List<NetworkQoS> convert(Object returnValue) {
+            public List<NetworkQoS> convert(List<NetworkQoS> returnValue) {
                 List<NetworkQoS> qosList = super.convert(returnValue);
                 qosList.add(0, NetworkQoSModel.EMPTY_QOS);
                 return qosList;
@@ -1258,7 +1258,7 @@ public class AsyncDataProvider {
         query.converterCallback = new ListConverter<HostNetworkQos>() {
 
             @Override
-            public List<HostNetworkQos> convert(Object returnValue) {
+            public List<HostNetworkQos> convert(List<HostNetworkQos> returnValue) {
                 List<HostNetworkQos> qosList = super.convert(returnValue);
                 qosList.add(0, NetworkModel.EMPTY_HOST_NETWORK_QOS);
                 return qosList;
@@ -2113,7 +2113,8 @@ public class AsyncDataProvider {
 
             // run converter
             if (aQuery.converterCallback != null) {
-                returnValue = aQuery.converterCallback.convert(returnValue);
+                Converter<T, T> converter = (Converter<T, T>) aQuery.converterCallback;
+                returnValue = converter.convert(returnValue);
             }
             if (returnValue != null) {
                 cachedConfigValues.put(config_key, returnValue);
@@ -2129,14 +2130,14 @@ public class AsyncDataProvider {
                 QuotaEnforcementTypeEnum.HARD_ENFORCEMENT }));
     }
 
-    private static class TemplateConverter implements Converter<List<VmTemplate>> {
+    private static class TemplateConverter implements Converter<List<VmTemplate>, List<VmTemplate>> {
 
         @Override
-        public List<VmTemplate> convert(Object source) {
+        public List<VmTemplate> convert(List<VmTemplate> source) {
             List<VmTemplate> list = new ArrayList<>();
             if (source != null) {
                 VmTemplate blankTemplate = null;
-                for (VmTemplate template : (List<VmTemplate>) source) {
+                for (VmTemplate template : source) {
                     if (template.getId().equals(Guid.Empty)) {
                         blankTemplate = template;
                     } else if (template.getStatus() == VmTemplateStatus.OK) {
@@ -2925,14 +2926,14 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetClusterEditWarnings, new ClusterEditParameters(cluster), aQuery);
     }
 
-    private static class CastingConverter<T> implements Converter<T> {
+    private static class CastingConverter<T extends S, S> implements Converter<T, S> {
         @Override
-        public T convert(Object source) {
+        public T convert(S source) {
             return (T) source;
         }
     }
 
-    private static class DefaultValueConverter<T> extends CastingConverter<T> {
+    private static class DefaultValueConverter<T extends S, S> extends CastingConverter<T, S> {
 
         private final T defaultValue;
 
@@ -2941,36 +2942,36 @@ public class AsyncDataProvider {
         }
 
         @Override
-        public T convert(Object returnValue) {
+        public T convert(S returnValue) {
             T value = super.convert(returnValue);
             return value != null ? value : defaultValue;
         }
     }
 
-    private static class StringConverter extends DefaultValueConverter<String> {
+    private static class StringConverter extends DefaultValueConverter<String, String> {
         public StringConverter() {
             super("");
         }
     }
 
-    private static class ListConverter<T> implements Converter<List<T>> {
+    private static class ListConverter<T> implements Converter<List<T>, List<T>> {
         @Override
-        public List<T> convert(Object source) {
-            return source != null ? (List<T>) source : new ArrayList<T>();
+        public List<T> convert(List<T> source) {
+            return source != null ? source : new ArrayList<T>();
         }
     }
 
-    private static class MapConverter<K, V> implements Converter<Map<K, V>> {
+    private static class MapConverter<K, V> implements Converter<Map<K, V>, Map<K, V>> {
         @Override
-        public Map<K, V> convert(Object source) {
-            return source != null ? (Map<K, V>) source : new HashMap<K, V>();
+        public Map<K, V> convert(Map<K, V> source) {
+            return source != null ? source : new HashMap<K, V>();
         }
     }
 
-    private static class SetConverter<T> implements Converter<Set<T>> {
+    private static class SetConverter<T> implements Converter<Set<T>, Set<T>> {
         @Override
-        public Set<T> convert(Object source) {
-            return source != null ? (Set<T>) source : new HashSet<T>();
+        public Set<T> convert(Set<T> source) {
+            return source != null ? source : new HashSet<T>();
         }
     }
 
@@ -2986,7 +2987,7 @@ public class AsyncDataProvider {
         }
 
         @Override
-        public List<T> convert(Object source) {
+        public List<T> convert(List<T> source) {
             List<T> list = super.convert(source);
             Collections.sort(list, comparator);
             return list;
@@ -2999,22 +3000,21 @@ public class AsyncDataProvider {
         }
     }
 
-    private static class IsNonEmptyCollectionConverter implements Converter<Boolean> {
+    private static class IsNonEmptyCollectionConverter<T> implements Converter<Boolean, Collection<T>> {
         @Override
-        public Boolean convert(Object source) {
+        public Boolean convert(Collection<T> source) {
             if (source != null) {
-                return !((Collection<?>) source).isEmpty();
+                return !source.isEmpty();
             }
 
             return false;
         }
     }
 
-    private static class GetFirstConverter<T> implements Converter<T> {
+    private static class GetFirstConverter<T> implements Converter<T, Iterable<T>> {
         @Override
-        public T convert(Object source) {
-            Iterable<T> iterable = (Iterable<T>) source;
-            Iterator<T> iterator = iterable.iterator();
+        public T convert(Iterable<T> source) {
+            Iterator<T> iterator = source.iterator();
             while (iterator.hasNext()) {
                 return iterator.next();
             }
@@ -3047,13 +3047,12 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    private static class RepoImageToImageFileNameAsyncConverter implements Converter<List<String>> {
+    private static class RepoImageToImageFileNameAsyncConverter implements Converter<List<String>, List<RepoImage>> {
         @Override
-        public List<String> convert(Object source) {
+        public List<String> convert(List<RepoImage> source) {
             if (source != null) {
-                ArrayList<RepoImage> repoList = (ArrayList<RepoImage>) source;
                 ArrayList<String> fileNameList = new ArrayList<>();
-                for (RepoImage repoImage : repoList) {
+                for (RepoImage repoImage : source) {
                     if (desiredImage(repoImage)) {
                         fileNameList.add(transform(fileNameList, repoImage));
                     }
@@ -3105,7 +3104,7 @@ public class AsyncDataProvider {
         return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageXhrMaxRetries);
     }
 
-    private static final class QuotaConverter implements Converter<List<Quota>> {
+    private static final class QuotaConverter implements Converter<List<Quota>, List<Quota>> {
         private final Guid topId;
 
         public QuotaConverter(Guid topId) {
@@ -3113,8 +3112,7 @@ public class AsyncDataProvider {
         }
 
         @Override
-        public List<Quota> convert(Object returnValue) {
-            List<Quota> quotaList = (List<Quota>) returnValue;
+        public List<Quota> convert(List<Quota> quotaList) {
             if (quotaList != null && !quotaList.isEmpty()) {
                 Comparator<Quota> comparator = (topId == null) ? QuotaComparator.NAME :
                         QuotaComparator.withTopId(topId, QuotaComparator.NAME);

@@ -9,7 +9,7 @@ public class AsyncQuery<T> {
 
     private final Object model;
     private final AsyncCallback<T> asyncCallback;
-    public Converter<T> converterCallback = null;
+    public Converter<T, ?> converterCallback = null;
     private boolean handleFailure;
 
     public AsyncQuery() {
@@ -52,7 +52,7 @@ public class AsyncQuery<T> {
         return asyncCallback;
     }
 
-    public Converter<T> getConverter() {
+    public Converter<T, ?> getConverter() {
         return converterCallback;
     }
 

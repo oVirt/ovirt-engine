@@ -87,7 +87,7 @@ public class FrontendTest {
     @Mock
     AsyncCallback mockAsyncCallback;
     @Mock
-    Converter<Object> mockConverter;
+    Converter<Object, Object> mockConverter;
     @Mock
     EventBus mockEventBus;
     @Mock
