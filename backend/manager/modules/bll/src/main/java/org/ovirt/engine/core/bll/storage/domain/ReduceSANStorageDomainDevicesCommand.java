@@ -179,12 +179,12 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
             return false;
         }
 
-        if (!validateReduceDeviceSupported()) {
-            return false;
-        }
-
         if (!getStorageDomain().getStorageType().isBlockDomain()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+        }
+
+        if (!validateReduceDeviceSupported()) {
+            return false;
         }
 
         if (!validateDevices()) {
