@@ -23,9 +23,11 @@ for exe in "${PYFLAKES}" "${PEP8}"; do
 done
 
 if ! which "${ISORT}" > /dev/null 2>&1; then
-    echo "WARNING: tool '${ISORT}' is missing" >&2
+	echo "WARNING: tool '${ISORT}' is missing" >&2
 else
-    "${ISORT}" --check ${FILES} || ret=1
+	"${ISORT}" --check ${FILES} || ret=1
+	echo isort --diff:
+	"${ISORT}" --diff ${FILES}
 fi
 
 exit ${ret}
